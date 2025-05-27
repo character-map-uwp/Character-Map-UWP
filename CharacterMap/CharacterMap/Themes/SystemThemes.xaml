@@ -5,6 +5,7 @@
     xmlns:converters="using:CharacterMap.Converters"
     xmlns:core="using:CharacterMap.Core"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)">
 
     <CharacterCasing x:Key="TitleCasing">Normal</CharacterCasing>
@@ -292,7 +293,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ContentDialog">
-                    <Border x:Name="Container">
+                    <Border x:Name="Container" VisualStateManager.CustomVisualStateManager="{StaticResource VSM}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="DialogShowingStates">
                                 <VisualStateGroup.Transitions>
@@ -750,5 +751,131 @@
         </Grid>
     </ControlTemplate>
 
+
+
+
+
+    <CircleEase x:Key="RbEase" EasingMode="EaseInOut" />
+
+    <!--<SolidColorBrush x:Key="RadioButtonsButtonForeground" Color="White" />
+    <StaticResource x:Key="RadioButtonsButtonSelectedForeground" ResourceKey="TextOnAccentFillColorPrimary" />-->
+
+    <Style x:Name="RadioButtonsButtonStyle" TargetType="RadioButton">
+        <Setter Property="MinHeight" Value="36" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="core:Properties.Color" Value="White" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <ContentPresenter
+                        x:Name="Presenter"
+                        Padding="8 4"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Background="Transparent"
+                        Content="{TemplateBinding Content}"
+                        Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                        TextLineBounds="Tight"
+                        VisualStateManager.CustomVisualStateManager="{StaticResource VSM}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup>
+                                <VisualState x:Name="Checked">
+                                    <VisualState.Setters>
+                                        <Setter Target="Presenter.(ContentPresenter.Foreground).(SolidColorBrush.Color)" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(core:Properties.Color)}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Unchecked">
+                                    <VisualState.Setters>
+                                        <Setter Target="Presenter.(ContentPresenter.Foreground).(SolidColorBrush.Color)" Value="{ThemeResource TextFillColorPrimary}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Indeterminate" />
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition
+                                        GeneratedDuration="0:0:0.2"
+                                        GeneratedEasingFunction="{StaticResource RbEase}"
+                                        From="*"
+                                        To="Unchecked" />
+                                    <VisualTransition
+                                        GeneratedDuration="0:0:0.4"
+                                        GeneratedEasingFunction="{StaticResource RbEase}"
+                                        From="*"
+                                        To="Checked" />
+                                </VisualStateGroup.Transitions>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </ContentPresenter>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="DefaultRadioButtonsThemeStyle" TargetType="muxc:RadioButtons">
+        <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource PivotNavButtonBackgroundThemeBrush}" />
+        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="controls:SelectorVisualElement.ElementTemplate" Value="{StaticResource RadioSelectorTemplate}" />
+        <Setter Property="Tag">
+            <Setter.Value>
+                <x:Double>8</x:Double>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="muxc:RadioButtons">
+                    <Grid
+                        x:Name="ControlRoot"
+                        Background="{TemplateBinding Background}"
+                        BackgroundTransition="{StaticResource QuickBackgroundTransition}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+
+                        <muxc:ItemsRepeater x:Name="InnerRepeater">
+                            <muxc:ItemsRepeater.Layout>
+                                <primitives:ColumnMajorUniformToLargestGridLayout
+                                    ColumnSpacing="{TemplateBinding Tag}"
+                                    RowSpacing="{TemplateBinding Tag}"
+                                    MaxColumns="{Binding MaxColumns, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                            </muxc:ItemsRepeater.Layout>
+                        </muxc:ItemsRepeater>
+
+                        <ContentPresenter
+                            x:Name="SelectorPresenter"
+                            x:Load="False"
+                            Canvas.ZIndex="-1"
+                            Content="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(controls:SelectorVisualElement.Element)}" />
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="ControlRoot.Opacity" Value="0.4" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="SelectorStateGroup">
+                                <VisualState x:Name="NoSelectorState" />
+                                <VisualState x:Name="SelectorState">
+                                    <VisualState.StateTriggers>
+                                        <StateTrigger IsActive="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(controls:SelectorVisualElement.Element), Converter={StaticResource NullConverter}, ConverterParameter='Inverse'}" />
+                                    </VisualState.StateTriggers>
+                                    <VisualState.Setters>
+                                        <Setter Target="SelectorPresenter.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource DefaultRadioButtonsThemeStyle}" TargetType="muxc:RadioButtons" />
 
 </ResourceDictionary>

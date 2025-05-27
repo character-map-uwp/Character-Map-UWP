@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Windows.Foundation.Collections;
 using Windows.System;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Text;
@@ -91,6 +92,7 @@ public enum MaterialCornerStyle
 [AttachedProperty<bool>("IsContainerEnabled", true)] // Is the parent ItemContainer enabled?
 [AttachedProperty<MaterialCornerStyle>("MaterialCornerStyle", MaterialCornerStyle.None)]
 [AttachedProperty<ThemeIcon>("ThemeIcon")]
+[AttachedProperty<Color>("Color")]
 public partial class Properties : DependencyObject
 {
     #region FILTER 

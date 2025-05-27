@@ -430,6 +430,7 @@
     <Grid
         x:Name="LayoutRoot"
         DataContext="{x:Bind ViewModel}"
+        VisualStateManager.CustomVisualStateManager="{StaticResource VSM}"
         d:Background="{ThemeResource DefaultPageBackgroundBrush}"
         d:BackgroundTransition="{StaticResource RootBackgroundTransition}">
         <Grid.RowDefinitions>
@@ -2576,7 +2577,7 @@
                         <Setter Target="SplitterContainer.Visibility" Value="Visible" />
                         <Setter Target="CharGridColumn.Width" Value="*" />
                         <!--<Setter Target="SplitterColumn.Width" Value="10" />-->
-                        <Setter Target="PreviewColumn.Width" Value="{x:Bind ViewModel.Settings.LastColumnWidth, Mode=OneWay}" />
+                        <Setter Target="PreviewColumn.Width" Value="{Binding Settings.LastColumnWidth, Mode=OneWay, FallbackValue=200, TargetNullValue=200}" />
                         <Setter Target="PreviewColumn.MinWidth" Value="150" />
                     </VisualState.Setters>
                 </VisualState>

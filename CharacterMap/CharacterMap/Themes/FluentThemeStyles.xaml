@@ -42,15 +42,7 @@
     <CornerRadius x:Key="ButtonCornerRadius">100</CornerRadius>
     <CornerRadius x:Key="ControlCornerRadius">6</CornerRadius>
 
-    <controls:CompositionTransition
-        x:Key="DefaultSelectorTransition"
-        KeySpline="0.8, 0, 0.2, 1"
-        Duration="0:0:0.4" />
 
-    <controls:CompositionTransition
-        x:Key="QuickCompositionTransition"
-        KeySpline="0.395, 0.56, 0.06, 0.95"
-        Duration="0:0:0.15" />
 
 
     <FontFamily x:Key="ContentControlThemeFontFamily">Segoe UI Variable Text, XamlAutoFontFamily</FontFamily>
@@ -95,6 +87,15 @@
 
 
     <!--  MISC CONTROLS  -->
+
+    <DataTemplate x:Key="RadioSelectorTemplate">
+        <controls:SelectorVisualElement
+            Fill="{ThemeResource SelectorHighlightBrush}"
+            OffsetTransition="{StaticResource DefaultSelectorTransition}"
+            SizeTransition="{StaticResource DefaultSelectorTransition}"
+            VisualCornerRadius="4 4"
+            VisualInset="0 0 2 2" />
+    </DataTemplate>
 
     <DataTemplate x:Name="PointerSelectorVisualTemplate">
         <controls:SelectorVisualElement
@@ -155,7 +156,8 @@
                         ContentTransitions="{TemplateBinding ContentTransitions}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         RenderTransformOrigin="0.5 0.5"
-                        TextWrapping="Wrap">
+                        TextWrapping="Wrap"
+                        VisualStateManager.CustomVisualStateManager="{StaticResource VSM}">
                         <ContentPresenter.RenderTransform>
                             <CompositeTransform />
                         </ContentPresenter.RenderTransform>
@@ -270,7 +272,7 @@
                         FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
                         FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
                         PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
-                        PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
+                        PointerOverBackground="Transparent"
                         PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
                         PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
                         ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
@@ -300,7 +302,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="DefaultThemeGridViewItemStyle" TargetType="GridViewItem">
+    <Style x:Key="DefaultThemeGridViewItemStyle" TargetType="SelectorItem">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
@@ -317,7 +319,7 @@
         <Setter Property="FocusVisualMargin" Value="-2" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="GridViewItem">
+                <ControlTemplate TargetType="SelectorItem">
                     <ContentPresenter
                         x:Name="ContentPresenter"
                         Margin="{TemplateBinding Padding}"
@@ -358,7 +360,7 @@
                                 </VisualState>
 
                                 <VisualState x:Name="Selected">
-                                    <VisualState.Setters>
+                                    <!--<VisualState.Setters>
                                         <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                                         <Setter Target="ContentPresenter.BorderThickness" Value="1" />
                                     </VisualState.Setters>
@@ -366,7 +368,7 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
+                                    </Storyboard>-->
                                 </VisualState>
 
                                 <VisualState x:Name="PointerOverSelected">
@@ -425,7 +427,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="GridViewItem">
                     <ListViewItemPresenter
-                        x:Name="Root"
+                        x:Name="RootyTooty"
                         HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                         VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                         CheckBoxBrush="{ThemeResource GridViewItemCheckBoxBrush}"
@@ -477,46 +479,11 @@
         </Setter>
     </Style>
 
-    <Style TargetType="muxc:RadioButtons">
-        <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
-        <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="muxc:RadioButtons">
-                    <Grid
-                        x:Name="ControlRoot"
-                        Background="{TemplateBinding Background}"
-                        BackgroundTransition="{StaticResource QuickBackgroundTransition}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="Disabled">
-                                    <VisualState.Setters>
-                                        <Setter Target="ControlRoot.Opacity" Value="0.4" />
-                                    </VisualState.Setters>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                        <muxc:ItemsRepeater x:Name="InnerRepeater">
-                            <muxc:ItemsRepeater.Layout>
-                                <primitives:ColumnMajorUniformToLargestGridLayout 
-                                    ColumnSpacing="{TemplateBinding Tag}" 
-                                    RowSpacing="{ThemeResource RadioButtonsRowSpacing}"
-                                    MaxColumns="{Binding MaxColumns, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                            </muxc:ItemsRepeater.Layout>
-                        </muxc:ItemsRepeater>
-                        <ContentPresenter Canvas.ZIndex="-1" Content="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(controls:SelectorVisualElement.Element)}" />
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
+
+
+
+
+
 
     <Style x:Key="DescriptionContentStyle" TargetType="ContentPresenter">
         <Setter Property="FontSize" Value="12.666" />
@@ -862,7 +829,7 @@
                                 </VisualState>
 
                                 <VisualState x:Name="Selected">
-                                    <VisualState.Setters>
+                                    <!--<VisualState.Setters>
                                         <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                                         <Setter Target="ContentPresenter.BorderThickness" Value="1" />
                                     </VisualState.Setters>
@@ -870,7 +837,7 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
+                                    </Storyboard>-->
                                 </VisualState>
 
                                 <VisualState x:Name="PointerOverSelected">
@@ -905,14 +872,14 @@
     </Style>
 
     <DataTemplate x:Key="FontListGroupHeaderTemplate">
-        <controls:UXButton
+        <controls:ExtendedListViewItem
             x:Name="Root"
             Margin="0"
             Padding="0"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
             IsHitTestVisible="True"
-            Style="{StaticResource TransparentButton}">
+            Style="{StaticResource DefaultThemeListViewItemStyle}">
             <Grid>
                 <Border
                     Margin="15,0"
@@ -928,12 +895,19 @@
                     FontWeight="SemiBold"
                     Text="{Binding Key}" />
             </Grid>
-        </controls:UXButton>
+        </controls:ExtendedListViewItem>
     </DataTemplate>
 
-    <Style x:Key="FontListGridViewItemStyle" BasedOn="{StaticResource DefaultGridViewItemStyle}" TargetType="GridViewItem">
+    <Style x:Key="FontListGridViewItemStyle" BasedOn="{StaticResource DefaultThemeGridViewItemStyle}" TargetType="SelectorItem">
         <Setter Property="core:Properties.PointerOverAnimation" Value="Text" />
         <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ExtendedGridViewItem">
+                    <ContentPresenter Background="Transparent" Content="{TemplateBinding Content}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style TargetType="toolkit:GridSplitter">
@@ -1323,6 +1297,11 @@
         <Setter Property="h:FluentAnimation.PointerOverOffset" Value="3" />
         <Setter Property="h:FluentAnimation.Pressed" Value="ContentPresenter" />
         <Setter Property="h:FluentAnimation.UsePointerOver" Value="True" />
+    </Style>
+
+    <Style BasedOn="{StaticResource DefaultRadioButtonsThemeStyle}" TargetType="muxc:RadioButtons">
+        <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
     </Style>
 
 
@@ -2265,7 +2244,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="AutoSuggestBox">
-                    <Grid x:Name="LayoutRoot">
+                    <Grid x:Name="LayoutRoot" VisualStateManager.CustomVisualStateManager="{StaticResource VSM}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="DropDownStates">
                                 <VisualStateGroup.Transitions>
@@ -2415,7 +2394,8 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}">
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        VisualStateManager.CustomVisualStateManager="{StaticResource VSM}">
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">

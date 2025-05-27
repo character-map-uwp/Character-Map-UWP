@@ -6069,4 +6069,40 @@
         <Setter Property="CornerRadius" Value="0" />
     </Style>
 
+
+    <Style x:Name="RadioButtonsButtonStyle" TargetType="RadioButton">
+        <Setter Property="MinHeight" Value="24" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="Foreground" Value="{ThemeResource TextForegroundBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RadioButton">
+                    <ContentPresenter
+                        x:Name="Presenter"
+                        Padding="8 4"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Background="Transparent"
+                        Content="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource TitleConverter}}"
+                        FontWeight="SemiLight"
+                        Foreground="{ThemeResource TextForegroundBrush}"
+                        TextLineBounds="Tight">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup>
+                                <VisualState x:Name="Checked">
+                                    <VisualState.Setters>
+                                        <Setter Target="Presenter.FontWeight" Value="Black" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Unchecked" />
+                                <VisualState x:Name="Indeterminate" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </ContentPresenter>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
 </ResourceDictionary>

@@ -15,8 +15,10 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListViewHeaderItem">
-                    <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}"
-                                      Loaded="ContentPresenter_Loaded"/>
+                    <ContentPresenter
+                        Content="{TemplateBinding Content}"
+                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                        Loaded="ContentPresenter_Loaded" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

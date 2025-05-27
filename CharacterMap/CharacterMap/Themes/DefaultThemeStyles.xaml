@@ -2714,5 +2714,13 @@
         </Setter>
     </Style>
 
+    <DataTemplate x:Key="RadioSelectorTemplate">
+        <controls:SelectorVisualElement
+            Fill="{ThemeResource SelectorHighlightBrush}"
+            OffsetTransition="{StaticResource DefaultSelectorTransition}"
+            SizeTransition="{StaticResource DefaultSelectorTransition}"
+            VisualCornerRadius="4 4"
+            VisualInset="0 0 2 2" />
+    </DataTemplate>
 
 </ResourceDictionary>

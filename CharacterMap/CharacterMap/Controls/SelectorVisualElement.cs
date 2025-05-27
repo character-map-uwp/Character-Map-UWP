@@ -45,6 +45,7 @@ public enum SelectionVisualType
 [DependencyProperty<FrameworkElement>("Target")] // Set to a ListView or RadioButtons to automatically attach
 [DependencyProperty<FrameworkElement>("DisplayTarget")]
 [AttachedProperty<SelectorVisualElement>("Element")]
+[AttachedProperty<DataTemplate>("ElementTemplate")]
 public partial class SelectorVisualElement : FrameworkElement
 {
     private ShapeVisual _shapes;
@@ -331,6 +332,18 @@ public partial class SelectorVisualElement : FrameworkElement
     {
         if (e.NewValue is SelectorVisualElement newValue)
             newValue.Target = (FrameworkElement)d;
+    }
+
+    static partial void OnElementTemplateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement f)
+        {
+            if (e.OldValue is not null && e.NewValue is null)
+                SetElement(f, null);
+
+            if (e.NewValue is DataTemplate t)
+                SetElement(f, (SelectorVisualElement)t.LoadContent());
+        }
     }
 }
 

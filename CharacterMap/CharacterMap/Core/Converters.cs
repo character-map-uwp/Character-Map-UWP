@@ -84,7 +84,12 @@ public static class Converters
     };
 
     public static string GetLocalizedEnumName(Enum a)
-        => Localization.Get($"{a.GetType().Name}_{a}");
+    {
+        if (ResourceHelper.IsZuneTheme())
+            return Localization.Get($"{a.GetType().Name}_{a}").ToLower();
+        else
+            return Localization.Get($"{a.GetType().Name}_{a}");
+    }
 
     public static string GetFormat(string key, object arg)
         => Localization.Get(key, arg);

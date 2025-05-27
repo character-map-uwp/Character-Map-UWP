@@ -4,6 +4,7 @@
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
     xmlns:helpers="using:CharacterMap.Helpers"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls">
 
     <ResourceDictionary.ThemeDictionaries>
@@ -20,6 +21,9 @@
             <SolidColorBrush x:Key="ControlPressedBackgroundBrush" Color="#CCE4F7" />
             <SolidColorBrush x:Key="ControlHighlightBackgroundBrush" Color="#0078D7" />
             <SolidColorBrush x:Key="ControlHighlightContrastForegroundBrush" Color="White" />
+            <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="Black" />
+            <Color x:Key="TextOnAccentFillColorPrimary">Black</Color>
+            <Color x:Key="TextFillColorPrimary">Black</Color>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="DefaultHostBrush" Color="Transparent" />
@@ -34,6 +38,9 @@
             <SolidColorBrush x:Key="ControlPressedBackgroundBrush" Color="#CCE4F7" />
             <SolidColorBrush x:Key="ControlHighlightBackgroundBrush" Color="#0078D7" />
             <SolidColorBrush x:Key="ControlHighlightContrastForegroundBrush" Color="White" />
+            <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="Black" />
+            <Color x:Key="TextOnAccentFillColorPrimary">Black</Color>
+            <Color x:Key="TextFillColorPrimary">Black</Color>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
@@ -42,6 +49,8 @@
     <x:Boolean x:Key="SupportsShadows">False</x:Boolean>
     <x:Boolean x:Key="SupportsTabs">False</x:Boolean>
     <CharacterCasing x:Key="TitleCasing">Normal</CharacterCasing>
+
+    <StaticResource x:Key="SelectorHightlightBrush" ResourceKey="ControlPointerOverBackgroundBrush" />
 
     <!--  Override system generated accent colors  -->
     <Color x:Key="SystemAccentColorLight1">#FF1D85D7</Color>
@@ -70,6 +79,27 @@
     <BrushTransition x:Key="ThemeBackgroundTransition" Duration="0:0:0.1" />
     <StaticResource x:Key="AltHostBrush" ResourceKey="DefaultPageBackgroundBrush" />
     <SolidColorBrush x:Key="InfoBarBackgroundBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="RadioButtonsButtonForeground" Color="Black" />
+    <Color x:Key="RadioButtonsButtonSelectedForeground">Black</Color>
+
+    <DataTemplate x:Key="RadioSelectorTemplate">
+        <controls:SelectorVisualElement
+            Fill="{ThemeResource ControlPointerOverBackgroundBrush}"
+            OffsetTransition="{StaticResource DefaultSelectorTransition}"
+            SizeTransition="{StaticResource DefaultSelectorTransition}"
+            Stroke="{ThemeResource ControlActiveBorderBrush}"
+            StrokeThickness="1"
+            VisualCornerRadius="0 0"
+            VisualInset="0 0 3 3" />
+    </DataTemplate>
+
+    <Style x:Key="RadioButtonsButtonStyle" BasedOn="{StaticResource RadioButtonsButtonStyle}" TargetType="RadioButton">
+        <Setter Property="core:Properties.Color" Value="Black" />
+    </Style>
+
+    <Style BasedOn="{StaticResource DefaultRadioButtonsThemeStyle}" TargetType="muxc:RadioButtons">
+        <Setter Property="CornerRadius" Value="0" />
+    </Style>
 
 
 

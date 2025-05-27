@@ -391,7 +391,7 @@
 
     </UserControl.Resources>
 
-    <Grid x:Name="LayoutRoot">
+    <Grid x:Name="LayoutRoot" VisualStateManager.CustomVisualStateManager="{StaticResource VSM}">
 
         <controls:ModalPagePresenter
             x:Name="Presenter"

@@ -17,6 +17,17 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Core;
 
+public class VSM : VisualStateManager
+{
+    protected override bool GoToStateCore(Control control, FrameworkElement templateRoot, string stateName, VisualStateGroup group, VisualState state, bool useTransitions)
+    {
+        if (ResourceHelper.AppSettings.UseSelectionAnimations is false)
+            useTransitions = false;
+
+        return base.GoToStateCore(control, templateRoot, stateName, group, state, useTransitions);
+    }
+}
+
 public class Pool<T> where T : new()
 {
     Queue<T> _pool { get; } = new();

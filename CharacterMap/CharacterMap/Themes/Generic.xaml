@@ -10,12 +10,10 @@
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Default">
-            <SolidColorBrush x:Key="SystemControlSplitterPointerOver" Color="{ThemeResource SystemBaseLowColor}" />
-            <SolidColorBrush x:Key="SystemControlSplitterPressed" Color="{ThemeResource SystemBaseHighColor}" />
+           
         </ResourceDictionary>
         <ResourceDictionary x:Key="HighContrast">
-            <SolidColorBrush x:Key="SystemControlSplitterPointerOver" Color="{ThemeResource SystemColorHighlightColor}" />
-            <SolidColorBrush x:Key="SystemControlSplitterPressed" Color="{ThemeResource SystemColorHighlightColor}" />
+           
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
@@ -141,7 +139,7 @@
     </Style>
 
     <Style TargetType="toolkit:InAppNotification">
-        <Setter Property="Background" Value="{ThemeResource SystemAccentColorDark1}" />
+        <Setter Property="Background" Value="{ThemeResource SliderTrackValueFill}" />
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
         <Setter Property="Visibility" Value="Collapsed" />
@@ -166,7 +164,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="toolkit:InAppNotification">
-                    <Grid>
+                    <Grid VisualStateManager.CustomVisualStateManager="{StaticResource VSM}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="State">
                                 <VisualState x:Name="Collapsed">
@@ -1252,7 +1250,8 @@
                         x:Name="Root"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}">
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        VisualStateManager.CustomVisualStateManager="{StaticResource VSM}">
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ScrollingIndicatorStates">

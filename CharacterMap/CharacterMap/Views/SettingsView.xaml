@@ -35,6 +35,7 @@
             <Setter Property="Margin" Value="0 12 0 4" />
         </Style>
 
+        <Style BasedOn="{StaticResource RadioButtonsButtonStyle}" TargetType="RadioButton" />
     </UserControl.Resources>
 
     <Grid x:Name="Root">
@@ -248,23 +249,24 @@
                                     ContentPlacement="Bottom"
                                     Description="{core:Localizer Key=SettingsCharLabelDesc/Text}">
                                     <StackPanel>
-                                        <controls:UXComboBox
-                                            MinWidth="160"
+
+                                        <muxc:RadioButtons
                                             ItemsSource="{x:Bind ViewModel.Annotations}"
+                                            MaxColumns="3"
                                             SelectedItem="{Binding Settings.GlyphAnnotation, Mode=TwoWay}">
-                                            <ComboBox.ItemTemplate>
+                                            <muxc:RadioButtons.ItemTemplate>
                                                 <DataTemplate x:DataType="models:GlyphAnnotation">
                                                     <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:GlyphAnnotation))}" />
                                                 </DataTemplate>
-                                            </ComboBox.ItemTemplate>
-                                        </controls:UXComboBox>
+                                            </muxc:RadioButtons.ItemTemplate>
+                                        </muxc:RadioButtons>
 
                                         <Border
                                             Margin="0 12 0 0"
                                             HorizontalAlignment="Left"
                                             BorderBrush="{ThemeResource PivotNavButtonBackgroundThemeBrush}"
                                             BorderThickness="1"
-                                            CornerRadius="4">
+                                            CornerRadius="{StaticResource ControlCornerRadius}">
                                             <StackPanel
                                                 Padding="4 4 0 0"
                                                 h:CompositionFactory.CornerRadius="4"
@@ -352,71 +354,15 @@
                                     ContentPlacement="Bottom"
                                     Description="{core:Localizer Key=SettingsFontListDescription/Text}">
                                     <StackPanel>
-                                        <Panel.Resources>
-                                            <CircleEase x:Key="Ease" EasingMode="EaseInOut" />
-                                            <Style TargetType="RadioButton">
-                                                <Setter Property="MinHeight" Value="36" />
-                                                <Setter Property="VerticalAlignment" Value="Stretch" />
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate TargetType="RadioButton">
-                                                            <ContentPresenter
-                                                                x:Name="Presenter"
-                                                                Margin="8 4"
-                                                                HorizontalContentAlignment="Center"
-                                                                VerticalContentAlignment="Center"
-                                                                Background="Transparent"
-                                                                Content="{TemplateBinding Content}"
-                                                                Foreground="White"
-                                                                TextLineBounds="Tight">
-                                                                <VisualStateManager.VisualStateGroups>
-                                                                    <VisualStateGroup>
-                                                                        <VisualState x:Name="Checked">
-                                                                            <VisualState.Setters>
-                                                                                <Setter Target="Presenter.(ContentPresenter.Foreground).(SolidColorBrush.Color)" Value="{ThemeResource TextOnAccentFillColorPrimary}" />
-                                                                            </VisualState.Setters>
-                                                                        </VisualState>
-                                                                        <VisualState x:Name="Unchecked" />
-                                                                        <VisualState x:Name="Indeterminate" />
-                                                                        <VisualStateGroup.Transitions>
-                                                                            <VisualTransition
-                                                                                GeneratedDuration="0:0:0.4"
-                                                                                GeneratedEasingFunction="{StaticResource Ease}"
-                                                                                From="*"
-                                                                                To="Unchecked" />
-                                                                            <VisualTransition
-                                                                                GeneratedDuration="0:0:0.4"
-                                                                                GeneratedEasingFunction="{StaticResource Ease}"
-                                                                                From="*"
-                                                                                To="Checked" />
-                                                                        </VisualStateGroup.Transitions>
-                                                                    </VisualStateGroup>
-                                                                </VisualStateManager.VisualStateGroups>
-                                                            </ContentPresenter>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </Panel.Resources>
-
                                         <Grid>
                                             <muxc:RadioButtons
                                                 x:Name="FontTypeRadios"
-                                                HorizontalAlignment="Left"
                                                 MaxColumns="2"
                                                 SelectionChanged="FontTypeRadios_SelectionChanged">
-                                                <controls:SelectorVisualElement.Element>
-                                                    <controls:SelectorVisualElement
-                                                        Fill="{ThemeResource SelectorHighlightBrush}"
-                                                        OffsetTransition="{StaticResource DefaultSelectorTransition}"
-                                                        SizeTransition="{StaticResource DefaultSelectorTransition}"
-                                                        VisualCornerRadius="4 4" />
-                                                </controls:SelectorVisualElement.Element>
                                                 <RadioButton x:Uid="RbUseActualFont" />
                                                 <RadioButton x:Uid="RbUseSystemFont" />
                                             </muxc:RadioButtons>
                                         </Grid>
-
 
                                         <ContentPresenter
                                             Margin="0 12 0 8"
@@ -426,16 +372,8 @@
 
                                         <muxc:RadioButtons
                                             x:Name="FontListFontSizeRadios"
-                                            HorizontalAlignment="Left"
                                             MaxColumns="3"
                                             SelectedIndex="{Binding Settings.FontListFontSizeIndex, Mode=TwoWay}">
-                                            <controls:SelectorVisualElement.Element>
-                                                <controls:SelectorVisualElement
-                                                    Fill="{ThemeResource SelectorHighlightBrush}"
-                                                    OffsetTransition="{StaticResource DefaultSelectorTransition}"
-                                                    SizeTransition="{StaticResource DefaultSelectorTransition}"
-                                                    VisualCornerRadius="4 4" />
-                                            </controls:SelectorVisualElement.Element>
                                             <RadioButton Content="{core:Localizer Key=FontListSizeNormal}" />
                                             <RadioButton Content="{core:Localizer Key=FontListSizeLarge}" />
                                             <RadioButton Content="{core:Localizer Key=FontListSizeLarger}" />
@@ -660,6 +598,7 @@
                                     <StackPanel>
                                         <muxc:RadioButtons
                                             x:Name="FontNamingSelection"
+                                            controls:SelectorVisualElement.ElementTemplate="{x:Null}"
                                             Background="{x:Null}"
                                             BorderThickness="0"
                                             SelectionChanged="FontNamingSelection_SelectionChanged">

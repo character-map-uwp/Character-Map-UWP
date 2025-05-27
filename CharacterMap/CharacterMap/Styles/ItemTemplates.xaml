@@ -96,7 +96,6 @@
         </StackPanel>
     </DataTemplate>
 
-
     <DataTemplate x:Key="FontListItemTemplate" x:DataType="core:InstalledFont">
         <Grid
             Name="TemplateContent"
