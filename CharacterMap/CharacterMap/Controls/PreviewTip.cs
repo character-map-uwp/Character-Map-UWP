@@ -12,13 +12,20 @@ namespace CharacterMap.Controls;
 public enum PreviewPlacement
 {
     RightEdgeTopAligned,
-    BottomEdgeLeftAligned
+    BottomEdgeLeftAligned,
+    Center
 }
 
 public partial class PreviewTip : ContentControl
 {
+    public event EventHandler<object> ContentChanged;
+
+
     public double HorizontalOffset { get; set; }
     public double VerticalOffset { get; set; }
+
+    public double HorizontalPadding { get; set; }
+    public double VerticalPadding { get; set; }
 
     public PreviewPlacement Placement { get; set; } = PreviewPlacement.RightEdgeTopAligned;
     public FrameworkElement Target { get; set; }
@@ -41,6 +48,12 @@ public partial class PreviewTip : ContentControl
         this.DefaultStyleKey = typeof(PreviewTip);
         this.Loaded += OnLoaded;
         _v = this.EnableCompositionTranslation().GetElementVisual();
+    }
+
+    protected override void OnContentChanged(object oldContent, object newContent)
+    {
+        base.OnContentChanged(oldContent, newContent);
+        ContentChanged?.Invoke(this, newContent);
     }
 
     protected override void OnApplyTemplate()
@@ -136,6 +149,8 @@ public partial class PreviewTip : ContentControl
         
         if (Placement == PreviewPlacement.RightEdgeTopAligned)
         {
+            // This path is used for the main Left-hand font list
+
             var rect = item.GetBoundingRect((FrameworkElement)Window.Current.Content);
 
             // Let CenterPoint animation know item size
@@ -144,6 +159,20 @@ public partial class PreviewTip : ContentControl
             // Position to the top edge of the item
             var y = (rect.Value.Top + VerticalOffset);
             t = new Vector3((float)HorizontalOffset, (float)y, 0f);
+        }
+        else if (Placement == PreviewPlacement.Center)
+        {
+            // This path is intended for the main character map grid
+
+            CompositionFactory.StartCentering(_rv);
+
+            var rect = item.GetBoundingRect((FrameworkElement)this.Parent);
+            t = new(
+                Math.Max((float)HorizontalPadding, (float)(rect.Value.Left+ (rect.Value.Width / 2d) - this.ActualWidth /2d)), 
+                Math.Max((float)VerticalPadding, (float)(rect.Value.Top + (rect.Value.Height /2d) - this.ActualHeight / 2d)), 
+                0f);
+
+            t = t + new Vector3((float)HorizontalOffset, (float)VerticalOffset, 0f);
         }
         else
         {

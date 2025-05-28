@@ -23,7 +23,7 @@ namespace CharacterMap.Models
         /// <summary>
         /// Typography to pass to DirectText control
         /// </summary>
-        public TypographyFeatureInfo DXTypography { get; }
+        public TypographyFeatureInfo DXTypography => Typography is not null && Typography.Count > 0 ? Typography[0] : null;
 
         /// <summary>
         /// If set to true, XAML rendering cannot properly display all variations of this rendering
@@ -58,7 +58,6 @@ namespace CharacterMap.Models
             Analysis = analysis;
 
             DefaultTypography = typography?.Where(t => t.Feature != CanvasTypographyFeatureName.None).FirstOrDefault();
-            DXTypography = typography.FirstOrDefault();
 
             Axis = axis?.Copy();
 

@@ -54,12 +54,25 @@ DirectText::DirectText()
     this->RegisterPropertyChangedCallback(DirectText::ForegroundProperty, c);
     this->RegisterPropertyChangedCallback(DirectText::FlowDirectionProperty, c);
     this->RegisterPropertyChangedCallback(DirectText::RequestedThemeProperty, c);
+
+    this->Loaded += ref new Windows::UI::Xaml::RoutedEventHandler(this, &CharacterMapCX::Controls::DirectText::OnLoaded);
+    this->Unloaded += ref new Windows::UI::Xaml::RoutedEventHandler(this, &CharacterMapCX::Controls::DirectText::OnUnloaded);
 }
 
 void DirectText::OnPropChanged(DependencyObject^ d, DependencyProperty^ p)
 {
     DirectText^ c = (DirectText^)d;
     c->Update();
+}
+
+void CharacterMapCX::Controls::DirectText::OnLoaded(Platform::Object^ sender, RoutedEventArgs^ e)
+{
+    EnsureCanvas();
+}
+
+void CharacterMapCX::Controls::DirectText::OnUnloaded(Platform::Object^ sender, RoutedEventArgs^ e)
+{
+    DestroyCanvas(m_canvas);
 }
 
 void DirectText::OnApplyTemplate()
@@ -83,19 +96,8 @@ void DirectText::OnApplyTemplate()
 
     if (DesignMode::DesignModeEnabled)
         return;
-
-    if (m_canvas == nullptr)
-    {
-        m_canvas = (CanvasControl^)GetTemplateChild("TextCanvas");
-        if (m_canvas != nullptr)
-        {
-            m_drawToken = m_canvas->Draw +=
-                ref new TypedEventHandler<CanvasControl^, CanvasDrawEventArgs^>(this, &DirectText::OnDraw);
-            m_canvas->CreateResources +=
-                ref new TypedEventHandler<CanvasControl^, CanvasCreateResourcesEventArgs^>(this, &DirectText::OnCreateResources);
-        }
-    }
-
+   
+    EnsureCanvas();
     Update();
 }
 
@@ -307,6 +309,55 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
     return targetsize;
 }
+
+void CharacterMapCX::Controls::DirectText::EnsureCanvas()
+{
+    if (m_canvas == nullptr && GetTemplateChild("Root") != nullptr)
+    {
+        auto root = (Border^)GetTemplateChild("Root");
+
+        if (root->Child != nullptr && static_cast<CanvasControl^>(root->Child) != nullptr)
+        {
+            // This shouldn't ever get called, but just in case...
+            DestroyCanvas(static_cast<CanvasControl^>(root->Child));
+        }
+
+        m_canvas = ref new CanvasControl();
+        m_canvas->HorizontalAlignment = Windows::UI::Xaml::HorizontalAlignment::Stretch;
+        m_canvas->VerticalAlignment = Windows::UI::Xaml::VerticalAlignment::Stretch;
+        m_canvas->UseSharedDevice = false;
+        root->Child = m_canvas;
+
+        m_drawToken = m_canvas->Draw +=
+            ref new TypedEventHandler<CanvasControl^, CanvasDrawEventArgs^>(this, &DirectText::OnDraw);
+        m_createToken = m_canvas->CreateResources +=
+            ref new TypedEventHandler<CanvasControl^, CanvasCreateResourcesEventArgs^>(this, &DirectText::OnCreateResources);
+    }
+}
+
+void CharacterMapCX::Controls::DirectText::DestroyCanvas(CanvasControl^ control)
+{
+    if (control != nullptr)
+    {
+        auto parent = VisualTreeHelper::GetParent(control);
+
+        control->Draw -= m_drawToken;
+        control->CreateResources -= m_createToken;
+
+        control->RemoveFromVisualTree();
+        control = nullptr;
+
+        if (parent != nullptr)
+        {
+            auto b = static_cast<Border^>(parent);
+            b->Child = nullptr;
+        }
+    }
+
+    m_canvas = nullptr;
+}
+
+
 
 void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
 {

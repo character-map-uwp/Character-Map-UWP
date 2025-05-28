@@ -3,6 +3,7 @@
 using CharacterMapCX.Controls;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Toolkit.Uwp.UI.Controls;
+using System.Collections.Generic;
 using Windows.Foundation.Metadata;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -14,7 +15,7 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls;
 
-internal class CharacterGridViewTemplateSettings
+public record CharacterGridViewTemplateSettings
 {
     public FontFamily FontFamily { get; set; }
     public DWriteFontFace FontFace { get; set; }
@@ -31,8 +32,10 @@ internal class CharacterGridViewTemplateSettings
 [DependencyProperty<FontFamily>("ItemFontFamily")]
 [DependencyProperty<DWriteFontFace>("ItemFontFace")]
 [DependencyProperty<TypographyFeatureInfo>("ItemTypography")]
+[DependencyProperty<CharacterRenderingOptions>("Options")]
 [DependencyProperty<FontVariant>("ItemFontVariant")]
 [DependencyProperty<GlyphAnnotation>("ItemAnnotation")]
+[DependencyProperty<DataTemplate>("VariationTemplate")]
 [AttachedProperty<ItemTooltipData>("ToolTipData")]
 public partial class CharacterGridView : GridView
 {
@@ -77,13 +80,13 @@ public partial class CharacterGridView : GridView
 
     #endregion
 
-    private XamlDirect _xamlDirect = null;
+    public static XamlDirect _xamlDirect = null;
 
     private CharacterGridViewTemplateSettings _templateSettings = null;
 
     public CharacterGridView()
     {
-        _xamlDirect = XamlDirect.GetDefault();
+        _xamlDirect ??= XamlDirect.GetDefault();
         _templateSettings = new ();
 
         this.ContainerContentChanging += OnContainerContentChanging;
@@ -106,7 +109,7 @@ public partial class CharacterGridView : GridView
         if (!args.InRecycleQueue && args.ItemContainer is GridViewItem item)
         {
             Character c = ((Character)args.Item);
-            UpdateContainer(item.ContentTemplateRoot, c);
+            UpdateContainer(item.ContentTemplateRoot, c, ref _templateSettings);
             args.Handled = true;
 
             item.DataContext = c;
@@ -144,61 +147,27 @@ public partial class CharacterGridView : GridView
                             if (ShowVariationsInToolTips && TypographyAnalyzer.GetCharacterVariants(data.Variant, data.Char) is { Count: > 1 } list)
                             {
                                 // Store current template settings - we need to change these to render the variations
-                                var size = _templateSettings.Size;
-                                var typo = _templateSettings.Typography;
-                                var anno = _templateSettings.Annotation;
-
-                                // Set values we will use for the variations
-                                _templateSettings.Size = 40;
-                                _templateSettings.Annotation = GlyphAnnotation.None;
+                                var og = _templateSettings;
                                 
-                                // Brush we will as BG use to show each variation
-                                SolidColorBrush bg = new ()  { 
-                                    Color = tt.ActualTheme == ElementTheme.Dark ? Colors.White : Colors.Black, 
-                                    Opacity =  0.05 
-                                };
+                                // Set values we will use for the variations
+                                _templateSettings = _templateSettings with { Size = 40, Annotation = GlyphAnnotation.None };
 
-                                StackPanel s = new();
-                                s.Children.Add(t);
+                                StackPanel s =
+                                    BuildVariationsPanel(
+                                        data.Char, 
+                                        this.VariationTemplate, 
+                                        list, 
+                                        Options,
+                                        tt.ActualTheme,
+                                        ref _templateSettings);
 
-                                // Add variation header block
-                                s.Children.Add(new TextBlock
-                                {
-                                    Margin = new Thickness(0, 8, 0, 4),
-                                    Text = $"{list.Count} {Localization.Get("TypographyVariationsSelectorRun/Text")}",
-                                    Opacity = 0.7
-                                });
+                                // inject header
+                                s.Children.Insert(0, t);
 
-                                // add variation container panel
-                                WrapPanel panel = new() { HorizontalSpacing = 4, VerticalSpacing = 4 };
-                                s.Children.Add(panel);
-
-                                bool material = ResourceHelper.AppSettings.ApplicationDesignTheme == 4;
-
-                                // Manually add each character
-                                foreach (var variation in list)
-                                {
-                                    _templateSettings.Typography = variation;
-
-                                    var item = (Grid)this.ItemTemplate.LoadContent();
-                                    item.DataContext = data.Char;
-                                    item.Background = bg;
-                                    if (material is false)
-                                        item.CornerRadius = new CornerRadius(4);
-                                    else
-                                        Properties.SetMaterialCornerStyle(item, MaterialCornerStyle.Default);
-
-                                    panel.Children.Add(item);
-                                    UpdateContainer(item, data.Char);
-                                }
-
-                                // Add everything to the tooltip
                                 tt.Content = s;
 
                                 // Restore template settings
-                                _templateSettings.Size = size;
-                                _templateSettings.Typography = typo;
-                                _templateSettings.Annotation = anno;
+                                _templateSettings = og;
                             }
                             else
                             {
@@ -206,6 +175,14 @@ public partial class CharacterGridView : GridView
                             }
                         }
                     };
+
+                    t.Unloaded += (d, e) =>
+                    {
+                        if (d is ToolTip tt)
+                            tt.Content = null;
+                    };
+
+                    //LeakTrackingService.Register(t);
                     ToolTipService.SetToolTip(item, t);
                 }
 
@@ -227,6 +204,82 @@ public partial class CharacterGridView : GridView
         }
     }
 
+    public static StackPanel BuildVariationsPanel(
+        Character c,
+        DataTemplate template,
+        List<TypographyFeatureInfo> list,
+        CharacterRenderingOptions options,
+        ElementTheme theme,
+        ref CharacterGridViewTemplateSettings settings)
+    {
+        // Brush we will as BG use to show each variation
+        SolidColorBrush bg = new()
+        {
+            Color = theme == ElementTheme.Dark ? Colors.White : Colors.Black,
+            Opacity = 0.05
+        };
+
+        StackPanel s = new();
+
+        // Add variation header block
+        s.Children.Add(new TextBlock
+        {
+            Margin = new Thickness(0, 8, 0, 4),
+            Text = $"{list.Count} {Localization.Get("TypographyVariationsSelectorRun/Text")}",
+            Opacity = 0.7
+        });
+
+        WrapPanel panel = new() { HorizontalSpacing = 4, VerticalSpacing = 4 };
+        s.Children.Add(panel);
+
+        bool material = ResourceHelper.AppSettings.ApplicationDesignTheme == 4;
+
+        // Manually add each character
+        foreach (var variation in list)
+        {
+            options = options with { Typography = [variation] };
+
+            // Create container
+            Border item = new() { Height = 40, Width = 40 };
+            item.DataContext = c;
+            item.Background = bg;
+
+            // Load content
+            var content = (DirectText)template.LoadContent();
+            content.Margin = new Thickness(8);
+            content.Loaded += Content_Loaded;
+            Core.Properties.SetOptions(content, options);
+            content.FontSize = 12;
+            item.Child = content;
+
+            // Give it some styleeee
+            if (material is false)
+                item.CornerRadius = new CornerRadius(4);
+            else
+                Properties.SetMaterialCornerStyle(item, MaterialCornerStyle.Default);
+
+            panel.Children.Add(item);
+        }
+
+        return s;
+    }
+
+    private static void Content_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is DirectText t)
+        {
+            t.Loaded -= Content_Loaded;
+            LeakTrackingService.Register(t);
+            LeakTrackingService.Register(t.InternalCanvas);
+        }
+    }
+
+    private static void T_Unloaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is DirectText t)
+            t.Unloaded -= T_Unloaded;
+    }
+
     private void Item_DoubleTapped(object sender, Windows.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
     {
         if (sender is GridViewItem item)
@@ -241,7 +294,10 @@ public partial class CharacterGridView : GridView
     #region Item Template Handling
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    void UpdateContainer(UIElement item, Character c)
+    static void UpdateContainer(
+        UIElement item, 
+        Character c, 
+        ref CharacterGridViewTemplateSettings _templateSettings)
     {
         // Perf considerations:
         // 1 - Batch rendering updates by suspending rendering until all properties are set

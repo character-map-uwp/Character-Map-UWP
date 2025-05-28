@@ -166,26 +166,6 @@
                 d:Text="{core:Localizer Key=EditSuggestionsItem/Text}" />
         </MenuFlyout>
 
-        <Popup x:Name="CharacterPopup">
-            <Grid Width="300" Height="400">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="100" />
-                </Grid.RowDefinitions>
-
-                <TextBlock
-                    x:Name="PopupChar"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                    FontSize="150" />
-
-                <StackPanel Grid.Row="1">
-                    <TextBlock />
-                </StackPanel>
-            </Grid>
-        </Popup>
-
         <Storyboard x:Name="GridToTypeBase">
             <DoubleAnimation
                 Storyboard.TargetName="SearchBox"
@@ -1194,6 +1174,7 @@
 
 
 
+
             <!--  The One And Only, The Character Map  -->
             <Grid
                 x:Name="CharGridRoot"
@@ -1225,12 +1206,24 @@
                     ItemFontVariant="{x:Bind ViewModel.SelectedVariant, Mode=OneWay}"
                     ItemTypography="{x:Bind ViewModel.SelectedTypography, Mode=OneWay}"
                     ItemsSource="{Binding Source={StaticResource CharacterSource}}"
+                    Options="{x:Bind ViewModel.RenderingOptions, Mode=OneWay}"
                     SelectedItem="{Binding SelectedChar, Mode=TwoWay}"
                     SelectionMode="Single"
                     ShowColorGlyphs="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
                     ShowVariationsInToolTips="True"
                     ShowsScrollingPlaceholders="False"
                     Style="{StaticResource CharacterMapStyle}">
+                    <controls:CharacterGridView.VariationTemplate>
+                        <DataTemplate>
+                            <cxc:DirectText
+                                x:Name="Text"
+                                VerticalAlignment="Center"
+                                FontSize="20"
+                                IsCharacterFitEnabled="True"
+                                IsTextScaleFactorEnabled="False"
+                                Text="{Binding}" />
+                        </DataTemplate>
+                    </controls:CharacterGridView.VariationTemplate>
                     <GridView.Header>
                         <StackPanel
                             x:Name="InfoHeader"
@@ -1808,7 +1801,7 @@
                                 FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                 FontSize="12"
                                 IsTextSelectionEnabled="True"
-                                Text="{x:Bind ViewModel.GetCharName(ViewModel.SelectedChar), Mode=OneWay}"
+                                Text="{x:Bind ViewModel.SelectedCharName, Mode=OneWay}"
                                 TextWrapping="Wrap"
                                 d:Text="Latin Small Letter A" />
                             <TextBlock
@@ -2354,7 +2347,58 @@
 
         </Grid>
 
+        <Border
+            x:Name="PreviewTipRoot"
+            Grid.RowSpan="4"
+            Canvas.ZIndex="22">
+            <controls:PreviewTip
+                x:Name="CharMapPreview"
+                Width="300"
+                MinHeight="300"
+                core:Properties.Options="{x:Bind ViewModel.RenderingOptions, Mode=OneWay}"
+                ContentChanged="CharMapPreview_ContentChanged"
+                HorizontalPadding="8"
+                Placement="Center"
+                Target="{x:Bind CharGrid}"
+                VerticalPadding="6">
+                <controls:PreviewTip.ContentTemplate>
+                    <DataTemplate x:DataType="models:Character">
+                        <StackPanel Padding="4">
 
+                            <Border
+                                Width="250"
+                                Height="250"
+                                Margin="0 12"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Top">
+                                <cxc:DirectText
+                                    x:Name="Text"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    core:Properties.Options="{Binding ElementName=CharMapPreview, Path=(core:Properties.Options)}"
+                                    FontSize="128"
+                                    IsCharacterFitEnabled="True"
+                                    IsTextScaleFactorEnabled="False"
+                                    Text="{Binding Char}" />
+                            </Border>
+
+                            <TextBlock Text="{Binding ElementName=CharMapPreview, Path=(core:Properties.Name)}" />
+                            <Grid>
+                                <TextBlock
+                                    HorizontalAlignment="Left"
+                                    Style="{StaticResource CharItemUnicodeStyle}"
+                                    Text="{Binding UnicodeString}" />
+                                <TextBlock
+                                    HorizontalAlignment="Right"
+                                    Style="{StaticResource CharItemUnicodeStyle}"
+                                    Text="{Binding UnicodeIndex}" />
+                            </Grid>
+                        </StackPanel>
+                    </DataTemplate>
+                </controls:PreviewTip.ContentTemplate>
+
+            </controls:PreviewTip>
+        </Border>
 
         <!--  Notification Presenter  -->
         <Grid

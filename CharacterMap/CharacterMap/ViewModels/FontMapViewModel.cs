@@ -87,6 +87,7 @@ public partial class FontMapViewModel : ViewModelBase
     [ObservableProperty] string _titlePrefix;
     [ObservableProperty] string _xamlPath;
     [ObservableProperty] string _sequence = string.Empty;
+    [ObservableProperty] string _selectedCharName;
     [ObservableProperty] FontItem _selectedFont;
     [ObservableProperty] FontFamily _fontFamily;
     [ObservableProperty] FolderContents _folder;
@@ -413,9 +414,11 @@ public partial class FontMapViewModel : ViewModelBase
             SelectedCharAnalysis = new();
             IsSvgChar = false;
             SelectedCharVariations = new();
+            SelectedCharName = string.Empty;
             return;
         }
 
+        SelectedCharName = GetCharName(SelectedChar);
         SelectedCharAnalysis = GetCharAnalysis(SelectedChar);
         SelectedCharVariations = TypographyAnalyzer.GetCharacterVariants(SelectedVariant, SelectedChar);
         IsSvgChar = SelectedCharAnalysis.GlyphFormats.Contains(GlyphImageFormat.Svg);

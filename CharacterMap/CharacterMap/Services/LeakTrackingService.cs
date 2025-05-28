@@ -9,7 +9,7 @@ namespace CharacterMap.Services;
 /// </summary>
 public static class LeakTrackingService
 {
-    static List<(string, WeakReference)> _pool { get; } = new List<(string, WeakReference)>();
+    static List<(string, WeakReference<object>)> _pool { get; } = new List<(string, WeakReference<object>)>();
 
     /// <summary>
     /// Timespan between checking which items are alive
@@ -64,10 +64,11 @@ public static class LeakTrackingService
         GC.Collect();
         ProcessMemoryReport report = MemoryManager.GetProcessMemoryReport();
 
-        foreach ((string key, WeakReference reference) entry in _pool.ToList())
+        foreach ((string key, WeakReference<object> reference) entry in _pool.ToList())
         {
             var weakRef = entry.reference;
-            bool isAlive = weakRef.IsAlive || weakRef.Target != null;
+
+            bool isAlive = weakRef.TryGetTarget(out _);
             if (!isAlive)
                 _pool.Remove(entry);
 
@@ -102,7 +103,7 @@ public static class LeakTrackingService
         long id = _objectid;
 
         string actualKey = string.Format("{0}-{1}", id, key);
-        _pool.Add((actualKey, new WeakReference(obj)));
+        _pool.Add((actualKey, new (obj)));
 
         Log(String.Format("LeakTrackingService: Added {0} as {1}", key, actualKey));
 

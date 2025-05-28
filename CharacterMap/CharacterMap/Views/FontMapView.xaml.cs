@@ -1183,6 +1183,12 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
         //Composition.SetThemeShadow(CopySequenceRoot, 20, CharGrid);
     }
+
+    private void CharMapPreview_ContentChanged(object sender, object e)
+    {
+        if (e is Character c)
+            Core.Properties.SetName(CharMapPreview, ViewModel.GetCharName(e as Character));
+    }
 }
 
 
