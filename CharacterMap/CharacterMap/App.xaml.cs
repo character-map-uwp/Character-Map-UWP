@@ -20,6 +20,8 @@ sealed partial class App : Application
         //Set app language
         if (ResourceHelper.AppSettings.GetUserLanguageID() is string language)
             Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = language;
+        else
+            Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = string.Empty;
 
         CoreApplication.EnablePrelaunch(true);
 

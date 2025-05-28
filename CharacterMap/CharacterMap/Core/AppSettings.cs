@@ -294,7 +294,7 @@ public class AppSettings : INotifyPropertyChanged
             {
                 // The chosen language is no longer supported by the app.
                 // Remove the saved setting value.
-                LocalSettings.Values.Remove(nameof(AppLanguage));
+                LocalSettings.Values.Remove("AppLang2");
             }
         }
 
