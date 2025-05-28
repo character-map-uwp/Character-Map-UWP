@@ -121,6 +121,8 @@
         ImageSource="/Assets/ZBG.png"
         Stretch="Fill" />
 
+    <StaticResource x:Key="DefaultWindowBackgroundBrush" ResourceKey="DefaultPageBackgroundBrush" />
+
     <SolidColorBrush x:Key="DefaultHostBrush" Color="Transparent" />
     <SolidColorBrush x:Key="ScrollBarBorderBrush" Color="#B8B5B5" />
     <SolidColorBrush x:Key="ControlFocusedAccentBrush" Color="#FA6EC9" />

@@ -2638,7 +2638,7 @@
                         <!--<Setter Target="MoreSwitchView.(core:Properties.UseAttachedStates)" Value="True" />-->
                         <Setter Target="ViewToggleButton.(core:Properties.UseAttachedStates)" Value="True" />
                         <Setter Target="ViewRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
-                        <Setter Target="BackgroundBorder.Visibility" Value="Collapsed" />
+                        <!--<Setter Target="BackgroundBorder.Visibility" Value="Collapsed" />-->
                         <Setter Target="CopyTopBorder.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
@@ -2681,7 +2681,7 @@
                 <VisualState x:Name="ChildViewState" />
                 <VisualState x:Name="StandaloneViewState">
                     <VisualState.Setters>
-                        <Setter Target="BackgroundBorder.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
+                        <Setter Target="BackgroundBorder.Background" Value="{ThemeResource DefaultWindowBackgroundBrush}" />
                         <Setter Target="SearchContainer.Margin" Value="0 6 0 0" />
                     </VisualState.Setters>
                 </VisualState>

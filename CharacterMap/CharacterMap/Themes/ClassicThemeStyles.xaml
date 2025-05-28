@@ -11,6 +11,7 @@
         <ResourceDictionary x:Key="Default">
             <SolidColorBrush x:Key="DefaultHostBrush" Color="Transparent" />
             <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="#191919" />
+            <SolidColorBrush x:Key="DefaultWindowBackgroundBrush" Color="#191919" />
             <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#0C0C0C" />
             <SolidColorBrush x:Key="ControlForegroundBrush" Color="White" />
             <SolidColorBrush x:Key="CardBorderBrush" Color="#535353" />
@@ -28,6 +29,7 @@
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="DefaultHostBrush" Color="Transparent" />
             <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="#F0F0F0" />
+            <SolidColorBrush x:Key="DefaultWindowBackgroundBrush" Color="#F0F0F0" />
             <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#FDFDFD" />
             <SolidColorBrush x:Key="ControlForegroundBrush" Color="Black" />
             <SolidColorBrush x:Key="CardBorderBrush" Color="#DCDCDC" />

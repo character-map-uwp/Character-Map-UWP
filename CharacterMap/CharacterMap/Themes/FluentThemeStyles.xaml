@@ -17,6 +17,7 @@
             <StaticResource x:Key="AltHostBrush" ResourceKey="CardBackgroundFillColorDefaultBrush" />
             <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="Transparent" />
             <StaticResource x:Key="TopCardBrush" ResourceKey="LayerOnMicaBaseAltFillColorDefaultBrush" />
+            <StaticResource x:Key="DefaultWindowBackgroundBrush" ResourceKey="LayerOnMicaBaseAltFillColorDefaultBrush" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <Color x:Key="SolidBackgroundFillColorBase">#F3F3F3</Color>
@@ -25,6 +26,7 @@
             <StaticResource x:Key="AltHostBrush" ResourceKey="CardBackgroundFillColorDefaultBrush" />
             <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="Transparent" />
             <StaticResource x:Key="TopCardBrush" ResourceKey="LayerOnMicaBaseAltFillColorDefaultBrush" />
+            <StaticResource x:Key="DefaultWindowBackgroundBrush" ResourceKey="LayerOnMicaBaseAltFillColorDefaultBrush" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

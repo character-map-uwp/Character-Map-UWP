@@ -8,9 +8,11 @@
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Default">
             <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="Black" />
+            <SolidColorBrush x:Key="DefaultWindowBackgroundBrush" Color="Black" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="White" />
+            <SolidColorBrush x:Key="DefaultWindowBackgroundBrush" Color="White" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
