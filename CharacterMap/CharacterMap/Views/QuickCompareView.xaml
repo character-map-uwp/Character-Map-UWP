@@ -941,6 +941,7 @@
                 <VisualState x:Name="FUIThemeState">
                     <VisualState.Setters>
                         <Setter Target="RadioButtons.Margin" Value="-2 -2 0 0" />
+                        <Setter Target="RadioButtons.Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
                         <Setter Target="Presenter.Background" Value="Transparent" />
                         <Setter Target="Presenter.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
                     </VisualState.Setters>

@@ -264,7 +264,7 @@
                                         <Border
                                             Margin="0 12 0 0"
                                             HorizontalAlignment="Left"
-                                            BorderBrush="{ThemeResource PivotNavButtonBackgroundThemeBrush}"
+                                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                                             BorderThickness="1"
                                             CornerRadius="{StaticResource ControlCornerRadius}">
                                             <StackPanel
@@ -385,7 +385,7 @@
                                             Margin="0 12 0 0"
                                             HorizontalAlignment="Left"
                                             Background="{ThemeResource DefaultHostBrush}"
-                                            BorderBrush="{ThemeResource PivotNavButtonBackgroundThemeBrush}"
+                                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                                             BorderThickness="1"
                                             CornerRadius="4"
                                             FontFamily="{StaticResource ContentControlThemeFontFamily}"

@@ -9,9 +9,9 @@
     CornerRadius="{StaticResource PopupCornerRadius}"
     SecondaryButtonClick="{x:Bind Hide}"
     SecondaryButtonStyle="{StaticResource DefaultThemeButtonStyle}"
+    SecondaryButtonText="{core:Localizer Key=BtnTextClose/Content}"
     Style="{StaticResource DefaultThemeContentDialogStyle}"
     mc:Ignorable="d"
-    SecondaryButtonText="{core:Localizer Key=BtnTextClose/Content}"
     d:Title="{core:Localizer Key=InstallDialog/Title}">
 
     <Grid>

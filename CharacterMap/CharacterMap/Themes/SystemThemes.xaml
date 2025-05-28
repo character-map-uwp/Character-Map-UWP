@@ -764,6 +764,7 @@
         <Setter Property="MinHeight" Value="36" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="core:Properties.Color" Value="Black" />
+        <Setter Property="FontSize" Value="12.666" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RadioButton">

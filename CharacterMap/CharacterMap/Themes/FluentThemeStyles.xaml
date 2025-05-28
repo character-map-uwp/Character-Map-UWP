@@ -90,11 +90,13 @@
 
     <DataTemplate x:Key="RadioSelectorTemplate">
         <controls:SelectorVisualElement
-            Fill="{ThemeResource SelectorHighlightBrush}"
+            Fill="{ThemeResource CardBackgroundFillColorDefaultBrush}"
             OffsetTransition="{StaticResource DefaultSelectorTransition}"
             SizeTransition="{StaticResource DefaultSelectorTransition}"
+            Stroke="{ThemeResource CardStrokeColorDefaultSolidBrush}"
+            StrokeThickness="1"
             VisualCornerRadius="4 4"
-            VisualInset="0 0 2 2" />
+            VisualInset="0 0 3 3" />
     </DataTemplate>
 
     <DataTemplate x:Name="PointerSelectorVisualTemplate">
@@ -1300,8 +1302,15 @@
     </Style>
 
     <Style BasedOn="{StaticResource DefaultRadioButtonsThemeStyle}" TargetType="muxc:RadioButtons">
-        <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+        <Setter Property="Background" Value="{ThemeResource DefaultHostBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+    </Style>
+
+
+
+    <Style x:Key="RadioButtonsButtonStyle" BasedOn="{StaticResource RadioButtonsButtonStyle}" TargetType="RadioButton">
+        <Setter Property="core:Properties.Color" Value="{ThemeResource TextFillColorPrimary}" />
     </Style>
 
 
