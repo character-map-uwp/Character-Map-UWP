@@ -158,8 +158,7 @@ public partial class CharacterGridView : GridView
                                         this.VariationTemplate, 
                                         list, 
                                         Options,
-                                        tt.ActualTheme,
-                                        ref _templateSettings);
+                                        tt.ActualTheme);
 
                                 // inject header
                                 s.Children.Insert(0, t);
@@ -209,8 +208,7 @@ public partial class CharacterGridView : GridView
         DataTemplate template,
         List<TypographyFeatureInfo> list,
         CharacterRenderingOptions options,
-        ElementTheme theme,
-        ref CharacterGridViewTemplateSettings settings)
+        ElementTheme theme)
     {
         // Brush we will as BG use to show each variation
         SolidColorBrush bg = new()

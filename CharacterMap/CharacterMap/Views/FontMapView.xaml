@@ -2357,6 +2357,7 @@
                 MinHeight="300"
                 core:Properties.Options="{x:Bind ViewModel.RenderingOptions, Mode=OneWay}"
                 ContentChanged="CharMapPreview_ContentChanged"
+                HideAfterDelay="True"
                 HorizontalPadding="8"
                 Placement="Center"
                 Target="{x:Bind CharGrid}"
@@ -2393,10 +2394,10 @@
                                     Style="{StaticResource CharItemUnicodeStyle}"
                                     Text="{Binding UnicodeIndex}" />
                             </Grid>
+                            <ContentPresenter Content="{Binding ElementName=CharMapPreview, Path=(core:Properties.Footer)}" />
                         </StackPanel>
                     </DataTemplate>
                 </controls:PreviewTip.ContentTemplate>
-
             </controls:PreviewTip>
         </Border>
 

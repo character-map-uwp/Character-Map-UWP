@@ -9,7 +9,7 @@ namespace CharacterMap.Services;
 /// </summary>
 public static class LeakTrackingService
 {
-    static List<(string, WeakReference<object>)> _pool { get; } = new List<(string, WeakReference<object>)>();
+    static List<(string, WeakReference<object>)> _pool { get; } = [];
 
     /// <summary>
     /// Timespan between checking which items are alive
@@ -23,7 +23,7 @@ public static class LeakTrackingService
     /// </summary>
     public static Action<String> Log { get; set; }
 
-    private static StringBuilder _sb { get; } = new StringBuilder();
+    private static StringBuilder _sb { get; } = new ();
 
     private static bool _isActive = false;
     private static long _objectid = 0;

@@ -27,10 +27,13 @@ public partial class PreviewTip : ContentControl
     public double HorizontalPadding { get; set; }
     public double VerticalPadding { get; set; }
 
+    public bool HideAfterDelay { get; set; }
+
     public PreviewPlacement Placement { get; set; } = PreviewPlacement.RightEdgeTopAligned;
     public FrameworkElement Target { get; set; }
 
-    Debouncer _debouncer = new();
+    Debouncer _debouncer { get; } = new();
+    Debouncer _hideBouncer { get; } = new();
 
     Visual _v = null; // Visual of control itself
     Visual _rv = null; // Visual of control's internal LayoutRoot
@@ -108,8 +111,19 @@ public partial class PreviewTip : ContentControl
             {
                 item.PointerEntered -= ItemContainer_PointerEntered;
                 item.PointerEntered += ItemContainer_PointerEntered;
+
+                if (HideAfterDelay)
+                {
+                    item.PointerExited -= Item_PointerExited;
+                    item.PointerExited += Item_PointerExited;
+                }
             }
         }
+    }
+
+    private void Item_PointerExited(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+    {
+        _hideBouncer.Debounce(800, Hide);
     }
 
 
@@ -125,6 +139,8 @@ public partial class PreviewTip : ContentControl
     {
         if (IsEnabled is false)
             return;
+
+        _hideBouncer.Cancel();
 
         if (_root.Visibility is Visibility.Collapsed)
         {
@@ -165,14 +181,26 @@ public partial class PreviewTip : ContentControl
             // This path is intended for the main character map grid
 
             CompositionFactory.StartCentering(_rv);
+            //this.Measure(new Size(2000, 2000));
+            //this.Arrange(new Rect(0,0, this.DesiredSize.Width, this.DesiredSize.Height));
 
-            var rect = item.GetBoundingRect((FrameworkElement)this.Parent);
+            var parent = (FrameworkElement)this.Parent;
+            var rect = item.GetBoundingRect(parent).Value;
             t = new(
-                Math.Max((float)HorizontalPadding, (float)(rect.Value.Left+ (rect.Value.Width / 2d) - this.ActualWidth /2d)), 
-                Math.Max((float)VerticalPadding, (float)(rect.Value.Top + (rect.Value.Height /2d) - this.ActualHeight / 2d)), 
+                Math.Max((float)HorizontalPadding, (float)(rect.Left+ (rect.Width / 2d) - 150)), 
+                Math.Max((float)VerticalPadding, (float)(rect.Top + (rect.Height /2d) - 150)), 
                 0f);
 
+            // Apply offset
             t = t + new Vector3((float)HorizontalOffset, (float)VerticalOffset, 0f);
+
+            // Clamp to the right and bottom of display area
+            // Note: these calculations are VERY specific to the layout of our app,
+            // does not work as a generic solution.
+            //t = new Vector3(
+            //    (float)Math.Min(t.X, parent.ActualWidth - this.ActualWidth - HorizontalPadding),
+            //    (float)Math.Min(t.Y, parent.ActualHeight - this.ActualHeight - VerticalPadding),
+            //    0f);
         }
         else
         {
@@ -195,20 +223,25 @@ public partial class PreviewTip : ContentControl
     void TrySetClamping()
     {
         // Current logic only supports clamping for FontList
-        if (Placement is not PreviewPlacement.RightEdgeTopAligned)
+        if (Placement is PreviewPlacement.BottomEdgeLeftAligned)
             return;
 
         var parent = ((FrameworkElement)this.Parent).GetElementVisual();
         var props = _v.Properties;
+        props.InsertScalar("XP", (float)HorizontalPadding);
+        props.InsertScalar("YP", (float)VerticalPadding);
 
-        // Clamp Y translation
-        string exp = "Vector3(0f, Min(0f, p.Size.Y - rv.Size.Y - props.Translation.Y - 8), 0f)";
+        // Clamp translation
+        string exp = "Vector3(Min(0, p.Size.X - rv.Size.X - props.Translation.X - props.XP), Min(0, p.Size.Y - rv.Size.Y - props.Translation.Y - props.YP), 0f)";
+        
         _rv.Properties.StartAnimation(
             _v.CreateExpressionAnimation(CompositionFactory.TRANSLATION)
                 .SetExpression(exp)
                 .SetParameter("p", parent)
                 .SetParameter("rv", _rv)
                 .SetParameter("props", props));
+
+
 
         // Set centre point to sync with the middle of the highlighted item taking into 
         // account the offset induced by the clamping set above
@@ -227,6 +260,8 @@ public partial class PreviewTip : ContentControl
     {
         if (IsEnabled is false)
             return;
+
+        _hideBouncer.Cancel();
 
         if (_root.Visibility is Visibility.Collapsed)
         {
@@ -264,6 +299,7 @@ public partial class PreviewTip : ContentControl
     void Hide()
     {
         _debouncer.Cancel();
+        _hideBouncer.Cancel();
 
         if (_root is null)
             return;
@@ -296,6 +332,12 @@ public partial class PreviewTip : ContentControl
         {
             args.ItemContainer.PointerEntered -= ItemContainer_PointerEntered;
             args.ItemContainer.PointerEntered += ItemContainer_PointerEntered;
+
+            if (HideAfterDelay)
+            {
+                args.ItemContainer.PointerExited -= Item_PointerExited;
+                args.ItemContainer.PointerExited += Item_PointerExited;
+            }
         }
     }
 

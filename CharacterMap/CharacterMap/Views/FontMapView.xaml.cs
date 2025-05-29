@@ -1187,7 +1187,23 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     private void CharMapPreview_ContentChanged(object sender, object e)
     {
         if (e is Character c)
+        {
             Core.Properties.SetName(CharMapPreview, ViewModel.GetCharName(e as Character));
+
+            if (TypographyAnalyzer.GetCharacterVariants(ViewModel.RenderingOptions.Variant, c) is { Count: > 1 } list)
+                // Prepare Typography
+                Core.Properties.SetFooter(CharMapPreview,
+                    CharacterGridView.BuildVariationsPanel(
+                        c,
+                        CharGrid.VariationTemplate,
+                        list,
+                        ViewModel.RenderingOptions,
+                        CharMapPreview.ActualTheme));
+            else
+                Core.Properties.SetFooter(CharMapPreview, null);
+        }
+        else
+            Core.Properties.SetFooter(CharMapPreview, null);
     }
 }
 

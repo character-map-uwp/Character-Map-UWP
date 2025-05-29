@@ -75,6 +75,62 @@ void CharacterMapCX::Controls::DirectText::OnUnloaded(Platform::Object^ sender, 
     DestroyCanvas(m_canvas);
 }
 
+void DirectText::OnCreateResources(CanvasControl^ sender, CanvasCreateResourcesEventArgs^ args)
+{
+    Update();
+};
+
+
+void CharacterMapCX::Controls::DirectText::EnsureCanvas()
+{
+    if (m_canvas == nullptr && GetTemplateChild("Root") != nullptr)
+    {
+        auto root = (Border^)GetTemplateChild("Root");
+
+        if (root->Child != nullptr && static_cast<CanvasControl^>(root->Child) != nullptr)
+        {
+            // This shouldn't ever get called, but just in case...
+            DestroyCanvas(static_cast<CanvasControl^>(root->Child));
+        }
+
+        m_canvas = ref new CanvasControl();
+        m_canvas->HorizontalAlignment = Windows::UI::Xaml::HorizontalAlignment::Stretch;
+        m_canvas->VerticalAlignment = Windows::UI::Xaml::VerticalAlignment::Stretch;
+        m_canvas->UseSharedDevice = true;
+        root->Child = m_canvas;
+
+        m_drawToken = m_canvas->Draw +=
+            ref new TypedEventHandler<CanvasControl^, CanvasDrawEventArgs^>(this, &DirectText::OnDraw);
+        m_createToken = m_canvas->CreateResources +=
+            ref new TypedEventHandler<CanvasControl^, CanvasCreateResourcesEventArgs^>(this, &DirectText::OnCreateResources);
+    }
+}
+
+void CharacterMapCX::Controls::DirectText::DestroyCanvas(CanvasControl^ control)
+{
+    m_textLayout = nullptr;
+	m_brush = nullptr;
+
+    if (control != nullptr)
+    {
+        //auto parent = VisualTreeHelper::GetParent(control);
+
+        control->Draw -= m_drawToken;
+        control->CreateResources -= m_createToken;
+
+        control->RemoveFromVisualTree();
+
+        auto b = this->GetTemplateChild("Root");
+        if (b != nullptr)
+        {
+            auto parent = static_cast<Border^>(b);
+            parent->Child = nullptr;
+        }
+    }
+
+    m_canvas = nullptr;
+}
+
 void DirectText::OnApplyTemplate()
 {
    /* if (gd == nullptr)
@@ -310,55 +366,6 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
     return targetsize;
 }
 
-void CharacterMapCX::Controls::DirectText::EnsureCanvas()
-{
-    if (m_canvas == nullptr && GetTemplateChild("Root") != nullptr)
-    {
-        auto root = (Border^)GetTemplateChild("Root");
-
-        if (root->Child != nullptr && static_cast<CanvasControl^>(root->Child) != nullptr)
-        {
-            // This shouldn't ever get called, but just in case...
-            DestroyCanvas(static_cast<CanvasControl^>(root->Child));
-        }
-
-        m_canvas = ref new CanvasControl();
-        m_canvas->HorizontalAlignment = Windows::UI::Xaml::HorizontalAlignment::Stretch;
-        m_canvas->VerticalAlignment = Windows::UI::Xaml::VerticalAlignment::Stretch;
-        m_canvas->UseSharedDevice = false;
-        root->Child = m_canvas;
-
-        m_drawToken = m_canvas->Draw +=
-            ref new TypedEventHandler<CanvasControl^, CanvasDrawEventArgs^>(this, &DirectText::OnDraw);
-        m_createToken = m_canvas->CreateResources +=
-            ref new TypedEventHandler<CanvasControl^, CanvasCreateResourcesEventArgs^>(this, &DirectText::OnCreateResources);
-    }
-}
-
-void CharacterMapCX::Controls::DirectText::DestroyCanvas(CanvasControl^ control)
-{
-    if (control != nullptr)
-    {
-        auto parent = VisualTreeHelper::GetParent(control);
-
-        control->Draw -= m_drawToken;
-        control->CreateResources -= m_createToken;
-
-        control->RemoveFromVisualTree();
-        control = nullptr;
-
-        if (parent != nullptr)
-        {
-            auto b = static_cast<Border^>(parent);
-            b->Child = nullptr;
-        }
-    }
-
-    m_canvas = nullptr;
-}
-
-
-
 void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
 {
     if (m_textLayout == nullptr)
@@ -494,7 +501,3 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
     m_render = false;
 }
 
-void DirectText::OnCreateResources(CanvasControl^ sender, CanvasCreateResourcesEventArgs^ args)
-{
-    Update();
-};
