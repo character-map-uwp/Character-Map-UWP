@@ -1814,4 +1814,7 @@ Requires a restart to take effect.</value>
   <data name="FontListSizeLarger" xml:space="preserve">
     <value>Larger</value>
   </data>
+  <data name="CanvasFontInformationSupportedScriptLanguageTag" xml:space="preserve">
+    <value>Supported Languages</value>
+  </data>
 </root>

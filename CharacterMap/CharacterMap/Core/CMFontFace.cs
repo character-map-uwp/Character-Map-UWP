@@ -279,6 +279,8 @@ public partial class CMFontFace : IDisposable
             || infos.TryGetValue("en-us", out value))
             return new(name, new string[1] { value }, info);
 
+        string[] values = null;
+
         // For design tag, cache the full language names (metadata only stores short tags)
         if (info is CanvasFontInformation.DesignScriptLanguageTag
             && _designLangRawSearch is null)
@@ -286,11 +288,12 @@ public partial class CMFontFace : IDisposable
             _designLangRawSearch = new(name, infos.Select(i => UnicodeScriptTags.GetBaseTag(i.Value)).ToArray(), info);
         }
 
+        if (info is CanvasFontInformation.DesignScriptLanguageTag or CanvasFontInformation.SupportedScriptLanguageTag)
+            values = infos.Select(i => UnicodeScriptTags.GetName(i.Value)).ToArray();
+
         return new(
             name,
-            info is CanvasFontInformation.DesignScriptLanguageTag
-                ? infos.Select(i => UnicodeScriptTags.GetName(i.Value)).ToArray()
-                : infos.Select(i => i.Value).ToArray(),
+            values ?? infos.Select(i => i.Value).ToArray(),
             info);
     }
 
@@ -338,6 +341,7 @@ public partial class CMFontFace
         CanvasFontInformation.Description,
         CanvasFontInformation.VersionStrings,
         CanvasFontInformation.DesignScriptLanguageTag,
+        CanvasFontInformation.SupportedScriptLanguageTag,
         CanvasFontInformation.Designer,
         CanvasFontInformation.DesignerUrl,
         CanvasFontInformation.FontVendorUrl,
