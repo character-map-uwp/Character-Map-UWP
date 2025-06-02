@@ -40,9 +40,18 @@ public class Pool<T> where T : new()
         return new();
     }
 
-    public void Return(T value)
+    public virtual void Return(T value)
     {
         _pool.Enqueue(value);
+    }
+}
+
+public class StringBuilderPool : Pool<StringBuilder>
+{
+    public override void Return(StringBuilder value)
+    {
+        value.Clear();
+        base.Return(value);
     }
 }
 
@@ -51,6 +60,8 @@ public static class Utils
     public static CanvasDevice CanvasDevice { get; } = CanvasDevice.GetSharedDevice();
 
     public static NativeInterop GetInterop() => Ioc.Default.GetService<NativeInterop>();
+
+    public static StringBuilderPool BuilderPool { get; } = new();
 
     public static void RunOnDispatcher(this DependencyObject d, Action a)
     {
@@ -438,14 +449,12 @@ public static class Utils
         return FlowDirection.LeftToRight;
     }
 
-    static Pool<StringBuilder> _builderPool { get; } = new Pool<StringBuilder>();
-
     /// <summary>
     /// Not thread safe.
     /// </summary>
     public static string Humanise(string input, bool title)
     {
-        var sb = _builderPool.Request();
+        var sb = BuilderPool.Request();
 
         try
         {
@@ -475,7 +484,7 @@ public static class Utils
         finally
         {
             sb.Clear();
-            _builderPool.Return(sb);
+            BuilderPool.Return(sb);
         }
     }
 
@@ -533,7 +542,7 @@ public static class Utils
     {
         var right = Math.Ceiling(rect.Width);
         var bottom = Math.Ceiling(rect.Height);
-        StringBuilder sb = _builderPool.Request();
+        StringBuilder sb = BuilderPool.Request();
 
         try
         {
@@ -567,7 +576,7 @@ public static class Utils
         finally
         {
             sb.Clear();
-            _builderPool.Return(sb);
+            BuilderPool.Return(sb);
         }
     }
 
@@ -578,7 +587,7 @@ public static class Utils
 
     public static Task WriteSvgAsync(string xml, IStorageFile file)
     {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new ();
         sb.AppendLine("<!-- Exported by Character Map UWP -->");
         sb.Append(xml);
         return FileIO.WriteTextAsync(file, sb.ToString()).AsTask();

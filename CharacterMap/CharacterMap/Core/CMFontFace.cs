@@ -254,8 +254,7 @@ public partial class CMFontFace : IDisposable
     private List<FaceMetadataInfo> GetFontInformation()
          => INFORMATIONS.Select(ReadInfoKey)
                         .Where(s => s != null && !string.IsNullOrWhiteSpace(s.Value))
-                        .Append(
-                            new FaceMetadataInfo("Embedding Licensing Rights", [Face.GetEmbeddingType().ToString()], CanvasFontInformation.LicenseDescription))
+                        .Append(GetEmbeddingMetadata())
                         .ToList();
 
     /// <summary>
@@ -281,7 +280,7 @@ public partial class CMFontFace : IDisposable
 
         string[] values = null;
 
-        // For design tag, cache the full language names (metadata only stores short tags)
+        // For design tag, cache the tag for later use in search
         if (info is CanvasFontInformation.DesignScriptLanguageTag
             && _designLangRawSearch is null)
         {
@@ -312,6 +311,35 @@ public partial class CMFontFace : IDisposable
             return faceInfo;
 
         return null;
+    }
+
+    FaceMetadataInfo GetEmbeddingMetadata()
+    {
+        StringBuilder sb = Utils.BuilderPool.Request();
+        try
+        {
+            foreach (var info in Face.GetEmbeddingType().ToString().Split(',').Select(s => s.Trim()))
+            {
+                if (sb.Length > 0)
+                {
+                    sb.AppendLine();
+                    sb.AppendLine();
+                }
+
+                sb.Append(Localization.Get($"EmbeddingType{info}"));
+            }
+
+            return new(
+                Localization.Get("CanvasFontInformationEmbeddingRights"),
+                [sb.ToString()],
+                CanvasFontInformation.LicenseDescription);
+        }
+        finally
+        {
+            Utils.BuilderPool.Return(sb);
+        }
+
+
     }
 
 
