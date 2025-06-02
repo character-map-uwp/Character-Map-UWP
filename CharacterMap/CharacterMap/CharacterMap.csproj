@@ -286,8 +286,8 @@
     <Compile Include="Helpers\CompositionFactory.cs" />
     <Compile Include="Helpers\FlyoutHelper.cs" />
     <Compile Include="Core\FontFinder.cs" />
-    <Compile Include="Core\FontVariant.cs" />
-    <Compile Include="Core\InstalledFont.cs" />
+    <Compile Include="Core\CMFontFace.cs" />
+    <Compile Include="Core\CMFontFamily.cs" />
     <Compile Include="Models\PanoseFamily.cs" />
     <Compile Include="Core\PanoseParser.cs" />
     <Compile Include="Core\TypographyAnalyzer.cs" />

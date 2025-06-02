@@ -31,7 +31,7 @@ internal class CharacterGridViewTemplateSettings
 [DependencyProperty<FontFamily>("ItemFontFamily")]
 [DependencyProperty<DWriteFontFace>("ItemFontFace")]
 [DependencyProperty<TypographyFeatureInfo>("ItemTypography")]
-[DependencyProperty<FontVariant>("ItemFontVariant")]
+[DependencyProperty<CMFontFace>("ItemFontVariant")]
 [DependencyProperty<GlyphAnnotation>("ItemAnnotation")]
 [AttachedProperty<ItemTooltipData>("ToolTipData")]
 public partial class CharacterGridView : GridView
@@ -93,7 +93,7 @@ public partial class CharacterGridView : GridView
     public class ItemTooltipData
     {
         public Character Char { get; set; }
-        public FontVariant Variant { get; set; }
+        public CMFontFace Variant { get; set; }
         public GridViewItem Container { get; set; }
     }
 

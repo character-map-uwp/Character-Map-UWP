@@ -134,8 +134,8 @@ public partial class FontMapViewModel : ViewModelBase
             SelectedVariant = null;
     }
 
-    private FontVariant _selectedVariant;
-    public FontVariant SelectedVariant
+    private CMFontFace _selectedVariant;
+    public CMFontFace SelectedVariant
     {
         get => _selectedVariant;
         set
@@ -304,7 +304,7 @@ public partial class FontMapViewModel : ViewModelBase
         SetDefaultChar(last);
     }
 
-    private void LoadVariant(FontVariant variant)
+    private void LoadVariant(CMFontFace variant)
     {
         try
         {
@@ -358,7 +358,7 @@ public partial class FontMapViewModel : ViewModelBase
             });
         }
     }
-    private IReadOnlyList<Suggestion> GetRampOptions(FontVariant variant)
+    private IReadOnlyList<Suggestion> GetRampOptions(CMFontFace variant)
     {
         if (variant == null)
             return new List<Suggestion>();

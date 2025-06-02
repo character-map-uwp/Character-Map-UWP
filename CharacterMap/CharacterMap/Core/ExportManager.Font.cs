@@ -14,7 +14,7 @@ public static partial class ExportManager
             RequestExportFontFile(ops.Variant);
     }
 
-    public static async void RequestExportFontFile(FontVariant variant)
+    public static async void RequestExportFontFile(CMFontFace variant)
     {
         var scheme = ResourceHelper.AppSettings.ExportNamingScheme;
 
@@ -41,7 +41,7 @@ public static partial class ExportManager
         WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(null, false)));
     }
 
-    static List<IGrouping<string, FontVariant>> GetGrouped(IList<FontVariant> fonts)
+    static List<IGrouping<string, CMFontFace>> GetGrouped(IList<CMFontFace> fonts)
     {
         return fonts.Where(f => DirectWrite.IsFontLocal(f.Face)).GroupBy(f => DirectWrite.GetFileName(f.Face)).ToList();
     }
@@ -55,7 +55,7 @@ public static partial class ExportManager
     }
 
     internal static async Task ExportFontsAsZipAsync(
-        List<FontVariant> fonts,
+        List<CMFontFace> fonts,
         string name,
         Action<string> callback = null)
     {
@@ -101,7 +101,7 @@ public static partial class ExportManager
     }
 
     internal static async Task ExportFontsToFolderAsync(
-        List<FontVariant> fonts,
+        List<CMFontFace> fonts,
         Action<string> callback = null)
     {
         callback?.Invoke($"0%");
@@ -129,7 +129,7 @@ public static partial class ExportManager
         }
     }
 
-    private static async Task<bool> TryWriteToFileAsync(FontVariant font, StorageFile file)
+    private static async Task<bool> TryWriteToFileAsync(CMFontFace font, StorageFile file)
     {
         try
         {
@@ -146,13 +146,13 @@ public static partial class ExportManager
         return false;
     }
 
-    private static string GetFileName(FontVariant font, ExportNamingScheme scheme)
+    private static string GetFileName(CMFontFace font, ExportNamingScheme scheme)
     {
-        var group = new List<FontVariant> { font }.GroupBy(v => DirectWrite.GetFileName(v.Face)).First();
+        var group = new List<CMFontFace> { font }.GroupBy(v => DirectWrite.GetFileName(v.Face)).First();
         return GetFileName(group, scheme, ResourceHelper.AppSettings.FontExportIncludeVersion);
     }
 
-    private static string GetFileName(IGrouping<string, FontVariant> group, ExportNamingScheme scheme, bool includeVersion)
+    private static string GetFileName(IGrouping<string, CMFontFace> group, ExportNamingScheme scheme, bool includeVersion)
     {
         string fileName = null;
         string ext = ".otf";
@@ -178,7 +178,7 @@ public static partial class ExportManager
             ext = ".otf";
 
         // Get the default font for the group
-        FontVariant font = Utils.GetDefaultVariant(group.ToList());
+        CMFontFace font = Utils.GetDefaultVariant(group.ToList());
 
         // If we don't have a file name, get one from our default font
         if (string.IsNullOrWhiteSpace(fileName))

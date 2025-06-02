@@ -100,7 +100,7 @@ public static class Converters
 
     private static FontFamily _previewFamily = null;
 
-    public static FontFamily GetPreviewFontSource(FontVariant variant)
+    public static FontFamily GetPreviewFontSource(CMFontFace variant)
     {
         if (_settings == null)
         {

@@ -2,7 +2,7 @@
 
 public class AddToCollectionResult
 {
-    public AddToCollectionResult(bool success, IReadOnlyList<InstalledFont> fonts, IFontCollection collection)
+    public AddToCollectionResult(bool success, IReadOnlyList<CMFontFamily> fonts, IFontCollection collection)
     {
         Success = success;
         Fonts = fonts;
@@ -11,8 +11,8 @@ public class AddToCollectionResult
         Collection = collection;
     }
 
-    public InstalledFont Font { get; }
-    public IReadOnlyList<InstalledFont> Fonts { get; }
+    public CMFontFamily Font { get; }
+    public IReadOnlyList<CMFontFamily> Fonts { get; }
     public bool Success { get; }
     public IFontCollection Collection { get; }
 
@@ -21,7 +21,7 @@ public class AddToCollectionResult
         if (Fonts is null) 
             return string.Empty;
 
-        if (Fonts.Count == 1 && Fonts[0] is InstalledFont font)
+        if (Fonts.Count == 1 && Fonts[0] is CMFontFamily font)
             return font.Name;
         else
             return $"{Fonts.Count} fonts";

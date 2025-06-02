@@ -14,7 +14,7 @@ public record FaceMetadataInfo(string Key, string[] Values, CanvasFontInformatio
 /// Represents an instance of a FontFace
 /// </summary>
 [System.Diagnostics.DebuggerDisplay("{FamilyName} {PreferredName}")]
-public partial class FontVariant : IDisposable
+public partial class CMFontFace : IDisposable
 {
     /* Using a character cache avoids a lot of unnecessary allocations */
     private static Dictionary<int, Character> _characters { get; } = [];
@@ -80,7 +80,7 @@ public partial class FontVariant : IDisposable
 
     public DWriteFontFace Face { get; }
 
-    public FontVariant(DWriteFontFace face, StorageFile file)
+    public CMFontFace(DWriteFontFace face, StorageFile file)
     {
         DWriteProperties dwProps = face.Properties;
         Face = face;
@@ -160,7 +160,7 @@ public partial class FontVariant : IDisposable
 
     /// <summary>
     /// Load an analysis without a glyph search map. Callers later using the cached analysis and expecting a search map should
-    /// take care to ensure it's created by manually calling <see cref="TypographyAnalyzer.PrepareSearchMap(FontVariant, FontAnalysis)"/>
+    /// take care to ensure it's created by manually calling <see cref="TypographyAnalyzer.PrepareSearchMap(CMFontFace, FontAnalysis)"/>
     /// </summary>
     /// <returns></returns>
     private FontAnalysis GetAnalysisInternal() => _analysis ??= TypographyAnalyzer.Analyze(this, false);
@@ -322,11 +322,11 @@ public partial class FontVariant : IDisposable
 }
 
 
-public partial class FontVariant
+public partial class CMFontFace
 {
-    public static FontVariant CreateDefault(DWriteFontFace face)
+    public static CMFontFace CreateDefault(DWriteFontFace face)
     {
-        return new FontVariant(face, null)
+        return new CMFontFace(face, null)
         {
             PreferredName = "",
             Characters = [ new(0) ]

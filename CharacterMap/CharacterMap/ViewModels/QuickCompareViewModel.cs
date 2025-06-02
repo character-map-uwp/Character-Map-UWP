@@ -38,9 +38,9 @@ public partial class QuickCompareViewModel : ViewModelBase
 
     public string FilterTitle { get => Get<string>(); set => Set(value); }
 
-    public InstalledFont SelectedFont { get => Get<InstalledFont>(); set => Set(value); }
+    public CMFontFamily SelectedFont { get => Get<CMFontFamily>(); set => Set(value); }
 
-    public ObservableCollection<InstalledFont> FontList { get => Get<ObservableCollection<InstalledFont>>(); set => Set(value); }
+    public ObservableCollection<CMFontFamily> FontList { get => Get<ObservableCollection<CMFontFamily>>(); set => Set(value); }
 
     private BasicFontFilter _fontListFilter = BasicFontFilter.All;
     public BasicFontFilter FontListFilter
@@ -180,7 +180,7 @@ public partial class QuickCompareViewModel : ViewModelBase
     {
         try
         {
-            IEnumerable<InstalledFont> fontList = _folder?.Fonts ?? FontFinder.Fonts;
+            IEnumerable<CMFontFamily> fontList = _folder?.Fonts ?? FontFinder.Fonts;
 
             if (collection != null)
             {

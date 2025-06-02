@@ -53,7 +53,7 @@ public static class FlyoutHelper
 {
     private static UserCollectionsService _collections { get; } = Ioc.Default.GetService<UserCollectionsService>();
 
-    public static void RequestDelete(InstalledFont font)
+    public static void RequestDelete(CMFontFamily font)
     {
         MainViewModel main = Ioc.Default.GetService<MainViewModel>();
         var d = new ContentDialog
@@ -91,7 +91,7 @@ public static class FlyoutHelper
     /// <param name="headerContent"></param>
     public static void CreateMenu(
         MenuFlyout menu,
-        InstalledFont font,
+        CMFontFamily font,
         CharacterRenderingOptions options,
         FrameworkElement headerContent,
         FlyoutArgs args)
@@ -107,13 +107,13 @@ public static class FlyoutHelper
 
         static void OpenInNewWindow(object s, RoutedEventArgs args)
         {
-            if (s is FrameworkElement f && f.Tag is InstalledFont fnt)
+            if (s is FrameworkElement f && f.Tag is CMFontFamily fnt)
                 _ = FontMapView.CreateNewViewForFontAsync(fnt, null, f.DataContext as CharacterRenderingOptions);
         }
 
         static void OpenInNewTab(object s, RoutedEventArgs args)
         {
-            if (s is FrameworkElement f && f.Tag is InstalledFont fnt)
+            if (s is FrameworkElement f && f.Tag is CMFontFamily fnt)
                 WeakReferenceMessenger.Default.Send(new OpenTabMessage(fnt));
         }
 
@@ -133,7 +133,7 @@ public static class FlyoutHelper
         static void Export_Click(object sender, RoutedEventArgs e)
         {
             if (sender is FrameworkElement f &&
-                f.Tag is InstalledFont fnt
+                f.Tag is CMFontFamily fnt
                 && f.DataContext is CharacterRenderingOptions o)
             {
                 WeakReferenceMessenger.Default.Send(new ExportRequestedMessage());
@@ -142,7 +142,7 @@ public static class FlyoutHelper
 
         static void DeleteClick(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuFlyoutItem item && item.Tag is InstalledFont fnt)
+            if (sender is MenuFlyoutItem item && item.Tag is CMFontFamily fnt)
             {
                 RequestDelete(fnt);
             }
@@ -173,7 +173,7 @@ public static class FlyoutHelper
 
         void OpenFaceCompare(object sender, RoutedEventArgs e)
         {
-            if (sender is FrameworkElement f && f.Tag is InstalledFont fnt)
+            if (sender is FrameworkElement f && f.Tag is CMFontFamily fnt)
             {
                 _ = QuickCompareView.CreateWindowAsync(new(false, new(fnt.Variants.ToList()) { IsFamilyCompare = true }));
             }
@@ -322,7 +322,7 @@ public static class FlyoutHelper
         return item;
     }
 
-    public static void TryAddRemoveFromCollection(MenuFlyout menu, InstalledFont font, IFontCollection col, BasicFontFilter filter)
+    public static void TryAddRemoveFromCollection(MenuFlyout menu, CMFontFamily font, IFontCollection col, BasicFontFilter filter)
     {
         if (col is not UserFontCollection collection)
             return;
@@ -347,7 +347,7 @@ public static class FlyoutHelper
             async void RemoveFrom_Click(object sender, RoutedEventArgs e)
             {
                 if (sender is FrameworkElement f
-                    && f.DataContext is InstalledFont fnt
+                    && f.DataContext is CMFontFamily fnt
                     && f.Tag is UserFontCollection collection)
                 {
                     await _collections.RemoveFromCollectionAsync(fnt, collection);
@@ -374,13 +374,13 @@ public static class FlyoutHelper
     /// <param name="menu"></param>
     /// <param name="font"></param>
     /// <returns></returns>
-    public static MenuFlyoutSubItem AddCollectionItems(MenuFlyout menu, InstalledFont font, IReadOnlyList<InstalledFont> fonts, string key = null, FlyoutArgs args = null)
+    public static MenuFlyoutSubItem AddCollectionItems(MenuFlyout menu, CMFontFamily font, IReadOnlyList<CMFontFamily> fonts, string key = null, FlyoutArgs args = null)
     {
         #region Event Handlers
 
         static async void AddToSymbolFonts_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is FrameworkElement f && f.DataContext is IReadOnlyList<InstalledFont> fnts)
+            if (sender is FrameworkElement f && f.DataContext is IReadOnlyList<CMFontFamily> fnts)
             {
                 var result = await _collections.AddToCollectionAsync(
                     fnts,
@@ -405,7 +405,7 @@ public static class FlyoutHelper
         #endregion
 
         bool multiMode = font is null && fonts is not null;
-        IReadOnlyList<InstalledFont> items = fonts ?? [font];
+        IReadOnlyList<CMFontFamily> items = fonts ?? [font];
         Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
         Style substyle = ResourceHelper.Get<Style>("ThemeMenuFlyoutSubItemStyle");
 
@@ -473,7 +473,7 @@ public static class FlyoutHelper
                         m.Click += async (s, a) =>
                         {
                             if (s is FrameworkElement f
-                                && f.DataContext is IReadOnlyList<InstalledFont> fnts
+                                && f.DataContext is IReadOnlyList<CMFontFamily> fnts
                                 && f.Tag is UserFontCollection clct)
                             {
                                 AddToCollectionResult result = await _collections.AddToCollectionAsync(fnts, clct);

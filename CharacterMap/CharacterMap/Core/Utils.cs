@@ -127,7 +127,7 @@ public static class Utils
         return TryCopyToClipboardInternalAsync(s, c, viewModel);
     }
 
-    public static FontVariant GetDefaultVariant(IList<FontVariant> variants)
+    public static CMFontFace GetDefaultVariant(IList<CMFontFace> variants)
     {
         return variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Style == FontStyle.Normal && v.DirectWriteProperties.Stretch == FontStretch.Normal)
                 ?? variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Style == FontStyle.Normal)
@@ -343,7 +343,7 @@ public static class Utils
         return s.ToString();
     }
 
-    public static bool TryGetVersion(FontVariant variant, out double version)
+    public static bool TryGetVersion(CMFontFace variant, out double version)
     {
         /*
          * A non-exhaustive, best attempt, minimum effort approach to wrangling 

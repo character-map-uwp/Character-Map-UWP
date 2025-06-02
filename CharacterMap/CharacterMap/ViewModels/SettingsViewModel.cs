@@ -32,7 +32,7 @@ public partial class SettingsViewModel : ViewModelBase
 
     [ObservableProperty] string _rampInput;
     [ObservableProperty] FontFamily _previewFontSource;
-    [ObservableProperty] List<InstalledFont> _previewFonts;
+    [ObservableProperty] List<CMFontFamily> _previewFonts;
     [ObservableProperty] bool _isCollectionExportEnabled = true;
     [ObservableProperty] bool _isSystemExportEnabled = true;
     [ObservableProperty] ObservableCollection<String> _rampOptions = null;
@@ -63,7 +63,7 @@ public partial class SettingsViewModel : ViewModelBase
         _originalDesign = Settings.ApplicationDesignTheme;
     }
 
-    public void UpdatePreviews(InstalledFont font, CharacterRenderingOptions options)
+    public void UpdatePreviews(CMFontFamily font, CharacterRenderingOptions options)
     {
         font ??= FontFinder.DefaultFont;
         GlyphNameModel.SetOptions(font, options);

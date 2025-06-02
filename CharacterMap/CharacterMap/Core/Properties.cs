@@ -1519,7 +1519,7 @@ public partial class Properties : DependencyObject
             // Try use fonts default preview string if we're not providing one.
             // Useful for Segoe UI emoji / other symbol fonts with specific
             // preview strings that would show nothing by default
-            else if (e.NewValue is FontVariant variant)
+            else if (e.NewValue is CMFontFace variant)
                 text = variant.TryGetSampleText() ?? text;
 
             // Set TextBlock text

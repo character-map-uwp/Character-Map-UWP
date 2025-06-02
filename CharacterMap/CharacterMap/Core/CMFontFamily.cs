@@ -3,11 +3,11 @@
 /// <summary>
 /// Represents an entire FontFamily (currently under the WWS definition)
 /// </summary>
-public class InstalledFont : IComparable, IEquatable<InstalledFont>
+public class CMFontFamily : IComparable, IEquatable<CMFontFamily>
 {
-    private List<FontVariant> _variants;
+    private List<CMFontFace> _variants;
 
-    private List<FontVariant> _simulatedVariants;
+    private List<CMFontFace> _simulatedVariants;
 
     private List<object> _allVariants;
 
@@ -15,7 +15,7 @@ public class InstalledFont : IComparable, IEquatable<InstalledFont>
 
     public bool IsSymbolFont => _variants[0].DirectWriteProperties.IsSymbolFont;
 
-    public IList<FontVariant> Variants => _variants;
+    public IList<CMFontFace> Variants => _variants;
 
     /// <summary>
     /// Identifies if a font family has any REAL different font faces
@@ -30,19 +30,19 @@ public class InstalledFont : IComparable, IEquatable<InstalledFont>
 
     public bool HasImportedFiles { get; private set; }
 
-    private FontVariant _defaultVariant;
-    public FontVariant DefaultVariant => _defaultVariant ??= Utils.GetDefaultVariant(Variants);
+    private CMFontFace _defaultVariant;
+    public CMFontFace DefaultVariant => _defaultVariant ??= Utils.GetDefaultVariant(Variants);
 
     public List<object> AllVariants => _allVariants ??= CreateVariants();
 
 
-    private InstalledFont(string name)
+    private CMFontFamily(string name)
     {
         Name = name;
         _variants = new();
     }
 
-    public InstalledFont(string name, DWriteFontFace face, StorageFile file = null) : this(name)
+    public CMFontFamily(string name, DWriteFontFace face, StorageFile file = null) : this(name)
     {
         AddVariant(face, file);
     }
@@ -87,25 +87,30 @@ public class InstalledFont : IComparable, IEquatable<InstalledFont>
         //FontFace = null;
     }
 
-    public InstalledFont Clone()
+    public CMFontFamily Clone()
     {
-        return new InstalledFont(this.Name)
+        return new CMFontFamily(this.Name)
         {
             _variants = this._variants.ToList(),
             HasImportedFiles = this.HasImportedFiles
         };
     }
 
-    public static InstalledFont CreateDefault(DWriteFontFace face)
+    public static CMFontFamily CreateDefault(DWriteFontFace face)
     {
-        InstalledFont font = new ("Segoe UI");
-        font._variants.Add(FontVariant.CreateDefault(face));
+        CMFontFamily font = new ("Segoe UI");
+        font._variants.Add(CMFontFace.CreateDefault(face));
         return font;
     }
 
+
+
+
+    #region IComparable, IEquatable
+
     public int CompareTo(object obj)
     {
-        if (obj is InstalledFont f)
+        if (obj is CMFontFamily f)
             return Name.CompareTo(f.Name);
 
         return 0;
@@ -113,10 +118,10 @@ public class InstalledFont : IComparable, IEquatable<InstalledFont>
 
     public override bool Equals(object obj)
     {
-        return Equals(obj as InstalledFont);
+        return Equals(obj as CMFontFamily);
     }
 
-    public bool Equals(InstalledFont other)
+    public bool Equals(CMFontFamily other)
     {
         return other is not null &&
                Name == other.Name;
@@ -126,19 +131,21 @@ public class InstalledFont : IComparable, IEquatable<InstalledFont>
     {
         int hashCode = -1425556920;
         hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
-        hashCode = hashCode * -1521134295 + EqualityComparer<IList<FontVariant>>.Default.GetHashCode(Variants);
+        hashCode = hashCode * -1521134295 + EqualityComparer<IList<CMFontFace>>.Default.GetHashCode(Variants);
         hashCode = hashCode * -1521134295 + HasImportedFiles.GetHashCode();
-        hashCode = hashCode * -1521134295 + EqualityComparer<FontVariant>.Default.GetHashCode(DefaultVariant);
+        hashCode = hashCode * -1521134295 + EqualityComparer<CMFontFace>.Default.GetHashCode(DefaultVariant);
         return hashCode;
     }
 
-    public static bool operator ==(InstalledFont left, InstalledFont right)
+    public static bool operator ==(CMFontFamily left, CMFontFamily right)
     {
-        return EqualityComparer<InstalledFont>.Default.Equals(left, right);
+        return EqualityComparer<CMFontFamily>.Default.Equals(left, right);
     }
 
-    public static bool operator !=(InstalledFont left, InstalledFont right)
+    public static bool operator !=(CMFontFamily left, CMFontFamily right)
     {
         return !(left == right);
     }
+
+    #endregion
 }

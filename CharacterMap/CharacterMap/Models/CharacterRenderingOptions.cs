@@ -9,8 +9,8 @@ namespace CharacterMap.Models
 {
     public record CharacterRenderingOptions
     {
-        public InstalledFont Family { get; init; }
-        public FontVariant Variant { get; }
+        public CMFontFamily Family { get; init; }
+        public CMFontFace Variant { get; }
         public float FontSize { get; init; }
         public CanvasTextLayoutAnalysis Analysis { get; init; }
         public IReadOnlyList<TypographyFeatureInfo> Typography { get; init; }
@@ -30,12 +30,12 @@ namespace CharacterMap.Models
         /// </summary>
         public bool RequiresNativeRender { get; }
 
-        public static CharacterRenderingOptions CreateDefault(InstalledFont font)
+        public static CharacterRenderingOptions CreateDefault(CMFontFamily font)
         {
             return CreateDefault(font.DefaultVariant, font);
         }
 
-        public static CharacterRenderingOptions CreateDefault(FontVariant variant, InstalledFont fam = null)
+        public static CharacterRenderingOptions CreateDefault(CMFontFace variant, CMFontFamily fam = null)
         {
             CharacterRenderingOptions options = new(
                 variant,
@@ -50,7 +50,7 @@ namespace CharacterMap.Models
             return options;
         }
 
-        public CharacterRenderingOptions(FontVariant variant, List<TypographyFeatureInfo> typography, float fontSize, CanvasTextLayoutAnalysis analysis, IReadOnlyList<DWriteFontAxis> axis)
+        public CharacterRenderingOptions(CMFontFace variant, List<TypographyFeatureInfo> typography, float fontSize, CanvasTextLayoutAnalysis analysis, IReadOnlyList<DWriteFontAxis> axis)
         {
             Variant = variant;
             Typography = typography;

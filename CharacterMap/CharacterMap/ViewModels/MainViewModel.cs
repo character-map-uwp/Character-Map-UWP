@@ -53,9 +53,9 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty] bool _hasFonts;
     [ObservableProperty] bool _isFontSetExpired;
     [ObservableProperty] bool _isCollectionExportEnabled = true;
-    [ObservableProperty] ObservableCollection<AlphaKeyGroup<InstalledFont>> _groupedFontList;
+    [ObservableProperty] ObservableCollection<AlphaKeyGroup<CMFontFamily>> _groupedFontList;
     [ObservableProperty] BasicFontFilter _fontListFilter = BasicFontFilter.All;
-    [ObservableProperty] List<InstalledFont> _fontList;
+    [ObservableProperty] List<CMFontFamily> _fontList;
 
     public FontItem CurrentFont => Fonts.Count > 0 && TabIndex < Fonts.Count && TabIndex > -1
         ? Fonts[TabIndex] : null;
@@ -85,8 +85,8 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
-    private InstalledFont _selectedFont;
-    public InstalledFont SelectedFont
+    private CMFontFamily _selectedFont;
+    public CMFontFamily SelectedFont
     {
         get => _selectedFont;
         set
@@ -288,7 +288,7 @@ public partial class MainViewModel : ViewModelBase
             return;
         try
         {
-            IEnumerable<InstalledFont> fontList = Folder?.Fonts ?? FontFinder.Fonts;
+            IEnumerable<CMFontFamily> fontList = Folder?.Fonts ?? FontFinder.Fonts;
 
             if (collection != null)
             {
@@ -419,7 +419,7 @@ public partial class MainViewModel : ViewModelBase
             {
                 // 1.1. Ensure the saved font hasn't been deleted. If it hasn't, 
                 //      add it to the list.
-                if (FontFinder.FontDictionary.TryGetValue(list[i], out InstalledFont font))
+                if (FontFinder.FontDictionary.TryGetValue(list[i], out CMFontFamily font))
                 {
                     // 1.2. The selected font face (or another in the family) may have been
                     //      deleted making the stored index invalid. Make sure the index is
@@ -428,7 +428,7 @@ public partial class MainViewModel : ViewModelBase
                     if ((faceIdx < font.AllVariants.Count) is false)
                         faceIdx = font.AllVariants.IndexOf(font.DefaultVariant);
 
-                    FontVariant sel = font.AllVariants[faceIdx] as FontVariant;
+                    CMFontFace sel = font.AllVariants[faceIdx] as CMFontFace;
                     sel ??= font.DefaultVariant;
 
                     Fonts.Add(new(font)
@@ -452,7 +452,7 @@ public partial class MainViewModel : ViewModelBase
             {
                 // If no fonts have been restored, either this is a first run, or user has uninstalled
                 // all the previously open fonts. In this case we use the first font we can find.
-                if (FontList.FirstOrDefault() is InstalledFont first)
+                if (FontList.FirstOrDefault() is CMFontFamily first)
                 {
                     Fonts.Add(new(first));
                     SelectedFont = first;
@@ -469,7 +469,7 @@ public partial class MainViewModel : ViewModelBase
                 // 3. Try to restore SelectedFont & TabIndex.
                 //    First, check if the SelectedFont still actually exists, as the user may have
                 //    uninstalled it between application runs.
-                if (FontFinder.FontDictionary.TryGetValue(Settings.LastSelectedFontName, out InstalledFont last))
+                if (FontFinder.FontDictionary.TryGetValue(Settings.LastSelectedFontName, out CMFontFamily last))
                 {
                     // 3.1. Restore TabIndex.
                     //      If a font was removed between runs TabIndex may no longer be valid,
@@ -497,7 +497,7 @@ public partial class MainViewModel : ViewModelBase
                 SelectedFont = Fonts[TabIndex].Font;
             }
         }
-        else if (FontList.FirstOrDefault() is InstalledFont first)
+        else if (FontList.FirstOrDefault() is CMFontFamily first)
         {
             // Fallback to first font available
             Fonts.Add(new(first));
@@ -515,13 +515,13 @@ public partial class MainViewModel : ViewModelBase
             // 1. Cache last selected now as setting GroupedFontList can change it.
             //    Use TabIndex as SelectedFont may be inaccurate when inside a filter
             //    with tabs that aren't inside the current FontList
-            InstalledFont selected =
+            CMFontFamily selected =
                 Fonts.Count > 0
                         ? (TabIndex > -1 ? Fonts[TabIndex].Font : SelectedFont)
                         : Fonts.FirstOrDefault()?.Font;
 
             // 2. Group the font list
-            var list = AlphaKeyGroup<InstalledFont>.CreateGroups(FontList, f => f.Name.Substring(0, 1));
+            var list = AlphaKeyGroup<CMFontFamily>.CreateGroups((IEnumerable<CMFontFamily>)FontList, f => f.Name.Substring(0, 1));
             GroupedFontList = new(list);
             HasFonts = FontList.Count > 0;
 
@@ -574,7 +574,7 @@ public partial class MainViewModel : ViewModelBase
         IsCreating = false;
     }
 
-    private void OpenTab(InstalledFont font)
+    private void OpenTab(CMFontFamily font)
     {
         Fonts.Insert(TabIndex + 1, new(font));
     }
@@ -603,14 +603,14 @@ public partial class MainViewModel : ViewModelBase
         StorageFile file = result.Imported.FirstOrDefault() ?? result.Existing.FirstOrDefault();
         if (file != null
             && FontList.FirstOrDefault(f =>
-            f.HasImportedFiles && f.DefaultVariant.FileName == file.Name) is InstalledFont font)
+            f.HasImportedFiles && f.DefaultVariant.FileName == file.Name) is CMFontFamily font)
         {
             SelectedFont = font;
             FontListCreated?.Invoke(this, EventArgs.Empty);
         }
     }
 
-    internal async void TryRemoveFont(InstalledFont font)
+    internal async void TryRemoveFont(CMFontFamily font)
     {
         IsLoadingFonts = true;
 

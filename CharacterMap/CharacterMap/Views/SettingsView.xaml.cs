@@ -54,7 +54,7 @@ public sealed partial class SettingsView : ViewBase
         _navHelper.BackRequested += (s, e) => Hide();
     }
 
-    public void Show(CharacterRenderingOptions options, InstalledFont font, int idx = 0)
+    public void Show(CharacterRenderingOptions options, CMFontFamily font, int idx = 0)
     {
         if (IsOpen)
         {

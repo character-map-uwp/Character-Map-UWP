@@ -21,7 +21,7 @@ public class FolderContents
     /// </summary>
     public bool UseQuickCompare { get; }
 
-    public Dictionary<string, InstalledFont> FontCache { get; }
+    public Dictionary<string, CMFontFamily> FontCache { get; }
 
     /// <summary>
     /// The original StorageItem source the content was loaded from. 
@@ -42,9 +42,9 @@ public class FolderContents
 
     public bool IsFamilyCompare { get; set; }
 
-    public IReadOnlyList<InstalledFont> Fonts { get; private set; }
+    public IReadOnlyList<CMFontFamily> Fonts { get; private set; }
 
-    public IReadOnlyList<FontVariant> Variants { get; private set; }
+    public IReadOnlyList<CMFontFace> Variants { get; private set; }
 
 
     public FolderContents(IStorageItem source, StorageFolder tempFolder)
@@ -55,7 +55,7 @@ public class FolderContents
         FontCache = new();
     }
 
-    public FolderContents(IReadOnlyList<FontVariant> fonts)
+    public FolderContents(IReadOnlyList<CMFontFace> fonts)
     {
         UseQuickCompare = true;
         Variants = fonts;

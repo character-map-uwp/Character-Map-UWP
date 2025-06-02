@@ -138,7 +138,7 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
     private void Button_PointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
     {
         if (sender is Button b && e.GetCurrentPoint(b).Properties.IsMiddleButtonPressed
-            && b.Content is InstalledFont font)
+            && b.Content is CMFontFamily font)
         {
             _ = FontMapView.CreateNewViewForFontAsync(font);
         }
@@ -252,7 +252,7 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
 
     private void ItemClick(object sender, RoutedEventArgs e)
     {
-        if (sender is Button b && b.Content is InstalledFont font && Repeater is ListViewBase list)
+        if (sender is Button b && b.Content is CMFontFamily font && Repeater is ListViewBase list)
         {
             if (ResourceHelper.AllowAnimation)
             {
@@ -287,7 +287,7 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
             ContextFlyout.SetItemsDataContext(b.Content);
             ContextFlyout.ShowAt(b);
         }
-        else if (sender is Button bu && bu.Content is InstalledFont font)
+        else if (sender is Button bu && bu.Content is CMFontFamily font)
         {
             // 1. Clear the context menu
             while (MainContextFlyout.Items.Count > 1)
@@ -313,11 +313,11 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
         if (sender is MenuFlyoutItem item)
         {
             if (item.DataContext is CharacterRenderingOptions o
-                && FontFinder.Fonts.FirstOrDefault(f => f.Variants.Contains(o.Variant)) is InstalledFont font)
+                && FontFinder.Fonts.FirstOrDefault(f => f.Variants.Contains(o.Variant)) is CMFontFamily font)
             {
                 _ = FontMapView.CreateNewViewForFontAsync(font, null, o);
             }
-            else if (item.DataContext is InstalledFont f)
+            else if (item.DataContext is CMFontFamily f)
             {
                 _ = FontMapView.CreateNewViewForFontAsync(f);
             }

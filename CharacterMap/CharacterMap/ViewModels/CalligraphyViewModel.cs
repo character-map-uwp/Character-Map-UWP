@@ -20,7 +20,7 @@ public partial class CalligraphyViewModel : ViewModelBase
 
     [ObservableProperty] InkStrokeManager _inkManager = null;
 
-    public FontVariant Face { get; }
+    public CMFontFace Face { get; }
 
     public CharacterRenderingOptions Options { get; }
 
