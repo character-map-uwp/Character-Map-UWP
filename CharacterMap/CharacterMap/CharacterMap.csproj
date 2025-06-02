@@ -456,8 +456,6 @@
     <Content Include="Assets\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\FileAssociationTile.png" />
-    <Content Include="Assets\RobotoFlex.ttf" />
-    <Content Include="Assets\Material.otf" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\ZBG.png" />
     <Content Include="Assets\ZuneAssets\HoverOverlay.png" />
