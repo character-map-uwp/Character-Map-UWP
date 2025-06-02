@@ -9,12 +9,8 @@
     xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml">
 
     <ResourceDictionary.ThemeDictionaries>
-        <ResourceDictionary x:Key="Default">
-           
-        </ResourceDictionary>
-        <ResourceDictionary x:Key="HighContrast">
-           
-        </ResourceDictionary>
+        <ResourceDictionary x:Key="Default" />
+        <ResourceDictionary x:Key="HighContrast" />
     </ResourceDictionary.ThemeDictionaries>
 
     <Style TargetType="controls:XamlTitleBar">

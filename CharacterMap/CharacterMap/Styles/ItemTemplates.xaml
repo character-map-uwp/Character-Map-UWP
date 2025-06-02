@@ -45,7 +45,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="FontListItemTemplateSimple" x:DataType="core:InstalledFont">
+    <DataTemplate x:Key="FontListItemTemplateSimple" x:DataType="core:CMFontFamily">
         <Grid Padding="0 4" Background="Transparent">
             <TextBlock
                 Padding="5"
@@ -60,7 +60,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="FontListToolTipTemplate" x:DataType="core:InstalledFont">
+    <DataTemplate x:Key="FontListToolTipTemplate" x:DataType="core:CMFontFamily">
         <StackPanel Spacing="8">
             <TextBlock
                 FontSize="12.666"
@@ -96,7 +96,7 @@
         </StackPanel>
     </DataTemplate>
 
-    <DataTemplate x:Key="FontListItemTemplate" x:DataType="core:InstalledFont">
+    <DataTemplate x:Key="FontListItemTemplate" x:DataType="core:CMFontFamily">
         <Grid
             Name="TemplateContent"
             ColumnSpacing="12"

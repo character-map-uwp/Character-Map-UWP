@@ -173,7 +173,7 @@
 
         <Style BasedOn="{StaticResource CompareCardStyle}" TargetType="controls:ContentGroup" />
 
-        <DataTemplate x:Key="GridTemplate" x:DataType="core:InstalledFont">
+        <DataTemplate x:Key="GridTemplate" x:DataType="core:CMFontFamily">
 
             <!--  Canvas is required for maximum performance when updating properties  -->
             <controls:ContentGroup Width="400" Height="250">
@@ -219,7 +219,7 @@
             </controls:ContentGroup>
         </DataTemplate>
 
-        <DataTemplate x:Key="StackTemplate" x:DataType="core:InstalledFont">
+        <DataTemplate x:Key="StackTemplate" x:DataType="core:CMFontFamily">
             <controls:ContentGroup VerticalAlignment="Stretch">
                 <controls:ContentGroup.Text>
                     <TextBlock>
@@ -704,7 +704,7 @@
                                     Layout="{StaticResource GridLayout}"
                                     VerticalCacheLength="0.5">
                                     <muxc:ItemsRepeater.ItemTemplate>
-                                        <DataTemplate x:DataType="core:FontVariant">
+                                        <DataTemplate x:DataType="core:CMFontFace">
                                             <Button
                                                 Margin="0"
                                                 IsHitTestVisible="False"
