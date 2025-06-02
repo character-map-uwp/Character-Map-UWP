@@ -254,6 +254,8 @@ public partial class FontVariant : IDisposable
     private List<FaceMetadataInfo> GetFontInformation()
          => INFORMATIONS.Select(ReadInfoKey)
                         .Where(s => s != null && !string.IsNullOrWhiteSpace(s.Value))
+                        .Append(
+                            new FaceMetadataInfo("Embedding Licensing Rights", [Face.GetEmbeddingType().ToString()], CanvasFontInformation.LicenseDescription))
                         .ToList();
 
     /// <summary>

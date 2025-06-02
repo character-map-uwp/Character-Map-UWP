@@ -88,6 +88,15 @@ public partial class BasicFontFilter
     public static BasicFontFilter All { get; }
         = new((f, c) => f, Localization.Get("OptionAllFonts/Text"));
 
+#if DEBUG
+    public static BasicFontFilter fsTypeDebug { get; }
+       = new((f, c) => f.Where(v=> v.Variants.Any(a =>
+       {
+           var t = a.Face.GetEmbeddingType();
+           return a.Face.fsType > 8;
+       })), "fsType");
+#endif
+
     public static BasicFontFilter SymbolFonts { get; }
         = new((f, c) => f.Where(v => v.IsSymbolFont || c.SymbolCollection.Fonts.Contains(v.Name)), Localization.Get("OptionSymbolFonts/Text"));
 
