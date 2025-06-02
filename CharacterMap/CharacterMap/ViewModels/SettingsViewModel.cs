@@ -131,7 +131,8 @@ public partial class SettingsViewModel : ViewModelBase
         return [
              new("Latest Update (June 2025)", // June 2025
                 "- Hidden variable font axis are now visible and editable in Type Ramp View\n" +
-                "- Added option in Settings->Layout->Font List Display to increase font size of the main font list"),
+                "- Added option in Settings->Layout->Font List Display to increase font size of the main font list\n" +
+                "- Added Font Embedding Rights and Supported Script information to Font Face Information flyout"),
              new("2024.8.0.0 (November 2024)", // November 2024
                 "- Simulated font faces are now grouped separately from real fonts faces\n" +
                 "- Added option in Settings->Advanced to hide showing simulated font faces"),
