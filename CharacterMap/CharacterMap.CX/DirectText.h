@@ -153,6 +153,11 @@ namespace CharacterMapCX
 				void set(bool value) { SetValue(IsTextWrappingEnabledProperty, value); }
 			}
 
+			property CanvasControl^ InternalCanvas
+			{
+				CanvasControl^ get() { return m_canvas; }
+			}
+
 #pragma endregion
 
 		private:
@@ -168,6 +173,7 @@ namespace CharacterMapCX
 			static DependencyProperty^ _IsCharacterFitEnabledProperty;
 
 			Windows::Foundation::EventRegistrationToken m_drawToken;
+			Windows::Foundation::EventRegistrationToken m_createToken;
 
 			ComPtr<ID2D1SolidColorBrush> m_brush;
 			ComPtr<IDWriteTextLayout> m_textLayout;
@@ -195,6 +201,12 @@ namespace CharacterMapCX
 				m_isStale = true;
 				this->InvalidateMeasure();
 			}
+
+			void EnsureCanvas();
+			void DestroyCanvas(CanvasControl^ control);
+
+			void OnLoaded(Platform::Object^ sender, RoutedEventArgs^ e);
+			void OnUnloaded(Platform::Object^ sender, RoutedEventArgs^ e);
 
 			void OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args);
 			void OnCreateResources(CanvasControl^ sender, CanvasCreateResourcesEventArgs^ args);
