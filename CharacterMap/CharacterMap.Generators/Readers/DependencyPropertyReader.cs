@@ -47,14 +47,14 @@ internal record class DPData
     // Terrible way of doing this
     private bool IsPrimitive(string type)
     {
-        return type is "bool" or "int" or "double" or "float"
+        return type is "bool" or "int" or "double" or "float" or "Duration" or "Color"
                 or "Visibility" or "CornerRadius" or "CharacterCasing"
                 or "FlowDirection" or "ContentPlacement" or "GridLength"
                 or "Orientation" or "GlyphAnnotation" or "FlyoutPlacementMode"
                 or "TextWrapping" or "Stretch" or "Thickness"
                 or "TextAlignment" or "TimeSpan" or "BlendEffectMode"
                 or "Point" or "TextLineBounds" or "MaterialCornerMode"
-                or "ThemeIcon";
+                or "ThemeIcon" or "SelectionVisualType";
     }
 }
 

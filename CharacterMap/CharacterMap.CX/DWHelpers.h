@@ -1,5 +1,6 @@
 #pragma once
 #include <basetsd.h>
+#include <d2d1.h>
 
 template <class T> void SafeRelease(T** ppT)
 {
@@ -26,4 +27,21 @@ namespace
 
 		return ref new Platform::String(buffer);
 	}
+	
+	float ToNormalizedFloat(uint8_t v)
+	{
+		return static_cast<float>(v) / 255.0f;
+	}
+   
+
+	D2D1_COLOR_F ToD2DColor(Windows::UI::Color const& color)
+	{
+		return D2D1::ColorF(
+			ToNormalizedFloat(color.R),
+			ToNormalizedFloat(color.G),
+			ToNormalizedFloat(color.B),
+			ToNormalizedFloat(color.A));
+	}
+
+
 }

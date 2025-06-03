@@ -100,6 +100,13 @@ public class AppSettings : INotifyPropertyChanged
         set => BroadcastSet(value);
     }
 
+
+    public int FontListFontSizeIndex
+    {
+        get => Get(0);
+        set => BroadcastSet(value);
+    }
+
     public int MaxSearchResult
     {
         get => Get(101, "MSR");
@@ -287,7 +294,7 @@ public class AppSettings : INotifyPropertyChanged
             {
                 // The chosen language is no longer supported by the app.
                 // Remove the saved setting value.
-                LocalSettings.Values.Remove(nameof(AppLanguage));
+                LocalSettings.Values.Remove("AppLang2");
             }
         }
 

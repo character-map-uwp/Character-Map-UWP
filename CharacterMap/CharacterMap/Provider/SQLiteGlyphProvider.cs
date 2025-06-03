@@ -69,7 +69,7 @@ public partial class SQLiteGlyphProvider : IGlyphDataProvider
     }
 
 
-    public string GetCharacterDescription(int unicodeIndex, FontVariant variant)
+    public string GetCharacterDescription(int unicodeIndex, CMFontFace variant)
     {
         string desc = null;
 
@@ -108,7 +108,7 @@ public partial class SQLiteGlyphProvider : IGlyphDataProvider
 
     #region SEARCH
 
-    public Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, FontVariant variant)
+    public Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, CMFontFace variant)
     {
         if (string.IsNullOrWhiteSpace(query))
             return Task.FromResult(GlyphService.EMPTY_SEARCH);
@@ -127,17 +127,17 @@ public partial class SQLiteGlyphProvider : IGlyphDataProvider
         return SearchUnicodeAsync(query, variant);
     }
 
-    private Task<IReadOnlyList<IGlyphData>> SearchUnicodeAsync(string query, FontVariant variant)
+    private Task<IReadOnlyList<IGlyphData>> SearchUnicodeAsync(string query, CMFontFace variant)
     {
         return InternalSearchAsync(UNICODE_SEARCH_TABLE, nameof(UnicodeGlyphData), query, variant);
     }
 
-    private Task<IReadOnlyList<IGlyphData>> SearchMDL2Async(string query, FontVariant variant)
+    private Task<IReadOnlyList<IGlyphData>> SearchMDL2Async(string query, CMFontFace variant)
     {
         return InternalSearchAsync(MDL2_SEARCH_TABLE, nameof(MDL2Glyph), query, variant);
     }
 
-    private Task<IReadOnlyList<IGlyphData>> InternalSearchAsync(string ftsTable, string table, string query, FontVariant variant)
+    private Task<IReadOnlyList<IGlyphData>> InternalSearchAsync(string ftsTable, string table, string query, CMFontFace variant)
     {
         return Task.Run<IReadOnlyList<IGlyphData>>(() =>
         {

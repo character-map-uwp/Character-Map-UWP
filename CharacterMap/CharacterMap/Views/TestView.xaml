@@ -3,12 +3,15 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CharacterMap.Controls"
+    xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:CharacterMap.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d"
-    d:DesignWidth="600">
+    d:DesignWidth="600"
+    d:RequestedTheme="Dark">
     <Page.Resources>
         <Style TargetType="controls:MenuButton">
             <Setter Property="FontSize" Value="12" />
@@ -1374,6 +1377,44 @@
                     <ComboBoxItem Content="Item 1" />
                 </ComboBox>
             </controls:SettingsPresenter>
+
+            <Grid Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                <Grid.Resources>
+                    <ResourceDictionary>
+                        <ResourceDictionary.MergedDictionaries>
+                            <muxc:XamlControlsResources ControlsResourcesVersion="2">
+                                <ResourceDictionary.MergedDictionaries>
+                                    <ResourceDictionary Source="ms-appx:///Themes/SystemThemes.xaml" />
+                                    <ResourceDictionary Source="ms-appx:///Themes/FluentThemeStyles.xaml" />
+                                </ResourceDictionary.MergedDictionaries>
+
+                                <Style BasedOn="{StaticResource RadioButtonsButtonStyle}" TargetType="RadioButton" />
+
+                            </muxc:XamlControlsResources>
+                        </ResourceDictionary.MergedDictionaries>
+                    </ResourceDictionary>
+                </Grid.Resources>
+
+                <muxc:RadioButtons MaxColumns="3" SelectedIndex="0">
+                    <RadioButton Content="{core:Localizer Key=FontListSizeNormal}" />
+                    <RadioButton Content="{core:Localizer Key=FontListSizeLarge}" />
+                    <RadioButton Content="{core:Localizer Key=FontListSizeLarger}" />
+                </muxc:RadioButtons>
+
+                <Border
+                    HorizontalAlignment="Left"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4">
+                    <RadioButton Content="{core:Localizer Key=FontListSizeNormal}" />
+
+                </Border>
+
+            </Grid>
+
+
+
         </StackPanel>
 
     </Grid>

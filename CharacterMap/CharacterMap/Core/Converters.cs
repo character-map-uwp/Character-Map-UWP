@@ -84,7 +84,12 @@ public static class Converters
     };
 
     public static string GetLocalizedEnumName(Enum a)
-        => Localization.Get($"{a.GetType().Name}_{a}");
+    {
+        if (ResourceHelper.IsZuneTheme())
+            return Localization.Get($"{a.GetType().Name}_{a}").ToLower();
+        else
+            return Localization.Get($"{a.GetType().Name}_{a}");
+    }
 
     public static string GetFormat(string key, object arg)
         => Localization.Get(key, arg);
@@ -94,7 +99,8 @@ public static class Converters
 
 
     private static FontFamily _previewFamily = null;
-    public static FontFamily GetPreviewFontSource(FontVariant variant)
+
+    public static FontFamily GetPreviewFontSource(CMFontFace variant)
     {
         if (_settings == null)
         {
@@ -107,7 +113,11 @@ public static class Converters
             && !_userCollections.SymbolCollection.Fonts.Contains(variant.FamilyName))
             return new FontFamily(variant.Source);
 
-        return _previewFamily ??= ResourceHelper.Get<FontFamily>("ContentControlThemeFontFamily");
+
+        return Composition.GetCached<FontFamily>(Window.Current.Compositor, "PFS", () =>
+        {
+            return ResourceHelper.Get<FontFamily>("ContentControlThemeFontFamily");
+        });
     }
 
     public static string GetFileSize(int fileSize)

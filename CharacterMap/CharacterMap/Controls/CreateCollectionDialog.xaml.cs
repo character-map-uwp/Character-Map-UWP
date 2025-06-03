@@ -21,7 +21,7 @@ public partial class CreateCollectionDialogTemplateSettings : ViewModelBase
     [ObservableProperty] string _filterDesigner;
     [ObservableProperty] string _resultsLabel;
     
-    [ObservableProperty] IReadOnlyList<InstalledFont> _resultsPreview = [];
+    [ObservableProperty] IReadOnlyList<CMFontFamily> _resultsPreview = [];
 
     public double MinWidth => IsSmartCollection ? 450 : 0;
 
@@ -170,9 +170,9 @@ public sealed partial class CreateCollectionDialog : ContentDialog
             {
                 UserFontCollection collection = await collections.CreateCollectionAsync(TemplateSettings.CollectionTitle);
 
-                if (this.DataContext is InstalledFont font)
+                if (this.DataContext is CMFontFamily font)
                     result = await collections.AddToCollectionAsync(font, collection);
-                else if (this.DataContext is IReadOnlyList<InstalledFont> fonts)
+                else if (this.DataContext is IReadOnlyList<CMFontFamily> fonts)
                     result = await collections.AddToCollectionAsync(fonts, collection);
                 else if (this.DataContext is null)
                     result = new AddToCollectionResult(true, null, collection);

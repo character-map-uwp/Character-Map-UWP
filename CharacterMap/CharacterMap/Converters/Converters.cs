@@ -119,3 +119,17 @@ public class VisibilityConverter : IValueConverter
         throw new NotImplementedException();
     }
 }
+
+public class IsNullConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        bool r = parameter is null ? true : false;
+        return value is null ? r : !r;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+}

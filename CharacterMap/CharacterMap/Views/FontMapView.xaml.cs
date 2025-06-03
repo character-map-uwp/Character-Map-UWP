@@ -19,10 +19,10 @@ public class VariantTemplateSelector : DataTemplateSelector
     public DataTemplate VariantTemplate { get; set; }
 
     protected override DataTemplate SelectTemplateCore(object item)
-        => item is FontVariant ? VariantTemplate : HeaderTemplate;
+        => item is CMFontFace ? VariantTemplate : HeaderTemplate;
 
     protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
-        => item is FontVariant ? VariantTemplate : HeaderTemplate;
+        => item is CMFontFace ? VariantTemplate : HeaderTemplate;
 }
 
 [DependencyProperty("TitleLeftContent")]
@@ -295,10 +295,10 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 case VirtualKey.P:
                     FlyoutHelper.PrintRequested();
                     break;
-                case VirtualKey.S when ViewModel.SelectedVariant is FontVariant v:
+                case VirtualKey.S when ViewModel.SelectedVariant is CMFontFace v:
                     ExportManager.RequestExportFontFile(v);
                     break;
-                case VirtualKey.E when ViewModel.SelectedVariant is FontVariant:
+                case VirtualKey.E when ViewModel.SelectedVariant is CMFontFace:
                     Messenger.Send(new ExportRequestedMessage());
                     break;
                 case VirtualKey.Add:
@@ -321,7 +321,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 case VirtualKey.K:
                     _ = QuickCompareView.CreateWindowAsync(new(false));
                     break;
-                case VirtualKey.Q when ViewModel.SelectedVariant is FontVariant va:
+                case VirtualKey.Q when ViewModel.SelectedVariant is CMFontFace va:
                     _ = QuickCompareView.AddAsync(ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy() });
                     break;
                 case VirtualKey.I:
@@ -509,7 +509,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         UpdateCopyPane();
     }
 
-    private string UpdateStatusBarLabel(FontVariant variant, bool keepCasing)
+    private string UpdateStatusBarLabel(CMFontFace variant, bool keepCasing)
     {
         if (variant == null)
             return string.Empty;
@@ -1188,7 +1188,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
 public partial class FontMapView
 {
-    public static async Task CreateNewViewForFontAsync(InstalledFont font, StorageFile sourceFile = null, CharacterRenderingOptions options = null)
+    public static async Task CreateNewViewForFontAsync(CMFontFamily font, StorageFile sourceFile = null, CharacterRenderingOptions options = null)
     {
         void CreateView()
         {

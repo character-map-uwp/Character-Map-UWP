@@ -11,6 +11,7 @@
 
 
 using namespace Platform;
+using namespace Windows::Foundation;
 using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Controls;
 using namespace Windows::UI::Xaml::Data;
@@ -152,6 +153,11 @@ namespace CharacterMapCX
 				void set(bool value) { SetValue(IsTextWrappingEnabledProperty, value); }
 			}
 
+			property CanvasControl^ InternalCanvas
+			{
+				CanvasControl^ get() { return m_canvas; }
+			}
+
 #pragma endregion
 
 		private:
@@ -167,12 +173,20 @@ namespace CharacterMapCX
 			static DependencyProperty^ _IsCharacterFitEnabledProperty;
 
 			Windows::Foundation::EventRegistrationToken m_drawToken;
+			Windows::Foundation::EventRegistrationToken m_createToken;
+
+			ComPtr<ID2D1SolidColorBrush> m_brush;
+			ComPtr<IDWriteTextLayout> m_textLayout;
 			CanvasControl^ m_canvas;
-			CanvasTextLayout^ m_layout;
 			bool m_isStale;
 			bool m_render;
 			double m_minWidth = 1.0;
 			double m_targetScale = 1.0;
+			UINT32 textLength = 0;
+
+			Rect drawBounds;
+			Rect layoutBounds;
+
 
 			void OnPropChanged(DependencyObject^ d, DependencyProperty^ p);
 
@@ -187,6 +201,12 @@ namespace CharacterMapCX
 				m_isStale = true;
 				this->InvalidateMeasure();
 			}
+
+			void EnsureCanvas();
+			void DestroyCanvas(CanvasControl^ control);
+
+			void OnLoaded(Platform::Object^ sender, RoutedEventArgs^ e);
+			void OnUnloaded(Platform::Object^ sender, RoutedEventArgs^ e);
 
 			void OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args);
 			void OnCreateResources(CanvasControl^ sender, CanvasCreateResourcesEventArgs^ args);

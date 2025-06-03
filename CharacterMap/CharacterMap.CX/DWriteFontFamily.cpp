@@ -2,7 +2,6 @@
 #include "pch.h"
 #include "DWriteFontFamily.h"
 
-using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
 using namespace Platform;

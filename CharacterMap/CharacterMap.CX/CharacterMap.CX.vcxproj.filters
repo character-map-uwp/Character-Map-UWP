@@ -113,6 +113,12 @@
       <Filter>DWrite</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="DWriteFontSimulations.h">
+      <Filter>DWrite</Filter>
+    </ClInclude>
+    <ClInclude Include="OS2TableReader.h">
+      <Filter>Tables</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Themes\Generic.xaml" />

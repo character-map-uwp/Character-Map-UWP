@@ -267,7 +267,8 @@
         AllowDrop="True"
         DragOver="Grid_DragOver"
         Drop="Grid_Drop"
-        KeyDown="LayoutRoot_KeyDown">
+        KeyDown="LayoutRoot_KeyDown"
+        VisualStateManager.CustomVisualStateManager="{StaticResource VSM}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="{StaticResource PaneGridWidth}" />
             <ColumnDefinition Width="*" />
@@ -783,6 +784,7 @@
                                         core:Properties.ItemContainerBackgroundTransition="{StaticResource BackgroundTransition}"
                                         core:Properties.ToolTipPlacement="Bottom"
                                         ContainerContentChanging="LstFontFamily_ContainerContentChanging"
+                                        FontSize="{Binding ElementName=PageRoot, Path=FontListFontSize}"
                                         IsItemClickEnabled="False"
                                         IsSwipeEnabled="False"
                                         ItemContainerTransitions="{StaticResource NoTransitions}"
@@ -792,12 +794,12 @@
                                         SelectionChanged="LstFontFamily_SelectionChanged"
                                         SelectionMode="Single"
                                         ShowsScrollingPlaceholders="False">
-                                        <ListView.GroupStyle>
+                                        <ListViewBase.GroupStyle>
                                             <GroupStyle
                                                 HeaderContainerStyle="{ThemeResource FontListHeaderItem}"
                                                 HeaderTemplate="{StaticResource FontListGroupHeaderTemplate}"
                                                 HidesIfEmpty="True" />
-                                        </ListView.GroupStyle>
+                                        </ListViewBase.GroupStyle>
                                         <d:ListView.Items>
                                             <ListViewItem>
                                                 <Grid ColumnSpacing="12">
@@ -843,13 +845,19 @@
                                     </controls:ExtendedListView>
                                 </SemanticZoom.ZoomedInView>
                                 <SemanticZoom.ZoomedOutView>
-                                    <GridView
+                                    <controls:ExtendedGridView
                                         x:Name="ZoomGridView"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         ItemContainerStyle="{StaticResource FontListGridViewItemStyle}"
-                                        ItemsSource="{Binding CollectionGroups, Source={StaticResource GroupedFontList}}">
-                                        <GridView.ItemTemplate>
+                                        ItemsSource="{Binding CollectionGroups, Source={StaticResource GroupedFontList}}"
+                                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                        ScrollViewer.HorizontalScrollMode="Disabled"
+                                        ScrollViewer.IsHorizontalRailEnabled="False"
+                                        ScrollViewer.IsVerticalRailEnabled="True"
+                                        ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                        ScrollViewer.VerticalScrollMode="Enabled">
+                                        <ListViewBase.ItemTemplate>
                                             <DataTemplate>
                                                 <Border Width="64" Height="64">
                                                     <TextBlock
@@ -862,11 +870,13 @@
                                                         Text="{Binding Group.Key}" />
                                                 </Border>
                                             </DataTemplate>
-                                        </GridView.ItemTemplate>
-                                    </GridView>
+                                        </ListViewBase.ItemTemplate>
+                                    </controls:ExtendedGridView>
                                 </SemanticZoom.ZoomedOutView>
                             </SemanticZoom>
+
                         </Border>
+
                     </Grid>
 
                     <!--  Pane Footer  -->
@@ -1069,6 +1079,7 @@
                                     helpers:FluentAnimation.PointerOver="FluentContentPresenter"
                                     helpers:FluentAnimation.PointerOverOffset="-2"
                                     helpers:FluentAnimation.UsePointerOver="True"
+                                    AutomationProperties.Name="{core:Localizer Key='SettingsHeader/Text'}"
                                     Click="BtnSettings_OnClick"
                                     Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
                                     Label="{core:Localizer Key='SettingsHeader/Text'}"
@@ -1351,6 +1362,16 @@
                         <Setter Target="OverlayPaneRootBackground.Background" Value="{ThemeResource SystemChromeMediumColor}" />
                         <Setter Target="FontMap.Margin" Value="0 0 2 0" />
                         <Setter Target="FontMap.Padding" Value="0 0 0 4" />
+                        <Setter Target="ZoomGridView.SelectorVisual">
+                            <Setter.Value>
+                                <controls:SelectorVisualElement
+                                    OffsetTransition="{StaticResource QuickCompositionTransition}"
+                                    SizeTransition="{StaticResource QuickCompositionTransition}"
+                                    Stroke="{ThemeResource AppBarButtonBackgroundPointerOver}"
+                                    StrokeThickness="4"
+                                    VisualOffset="-2 -2" />
+                            </Setter.Value>
+                        </Setter>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ClassicThemeState">

@@ -2,11 +2,11 @@
 
 public class ModalClosedMessage { }
 
-public record class CollectionUpdatedArgs(IReadOnlyList<InstalledFont> Fonts, UserFontCollection Collection, bool IsAdd)
+public record class CollectionUpdatedArgs(IReadOnlyList<CMFontFamily> Fonts, UserFontCollection Collection, bool IsAdd)
 {
     public string GetTitle()
     {
-        if (Fonts.Count == 1 && Fonts[0] is InstalledFont font)
+        if (Fonts.Count == 1 && Fonts[0] is CMFontFamily font)
             return font.Name;
         else
             return $"{Fonts.Count} fonts";
@@ -14,7 +14,7 @@ public record class CollectionUpdatedArgs(IReadOnlyList<InstalledFont> Fonts, Us
 
     public string GetMessage()
     {
-        if (Fonts.Count == 1 && Fonts[0] is InstalledFont font)
+        if (Fonts.Count == 1 && Fonts[0] is CMFontFamily font)
         {
             if (IsAdd)
                 return $"{font.Name} was added to the \"{Collection.Name}\" collection";
@@ -64,6 +64,8 @@ public class EditSuggestionsRequested { }
 public class AdvancedOptionsRequested { }
 
 public class ToggleCompactOverlayMessage { }
+
+public record class OpenTabMessage(CMFontFamily Font);
 
 public record class AppSettingsChangedMessage(string PropertyName);
 

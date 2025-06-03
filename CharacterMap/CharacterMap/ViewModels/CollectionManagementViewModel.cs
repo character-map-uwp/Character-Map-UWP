@@ -5,7 +5,7 @@ public partial class CollectionManagementViewModel : ViewModelBase
     protected override bool CaptureContext => true;
 
     #region Properties
-    List <InstalledFont> _systemFontList;
+    List <CMFontFamily> _systemFontList;
 
     [ObservableProperty] string _collectionExportProgress;
     [ObservableProperty] bool _isSaving = false;
@@ -14,17 +14,17 @@ public partial class CollectionManagementViewModel : ViewModelBase
 
     [ObservableProperty] string _query = null;
     [ObservableProperty] List<IFontCollection> _collections;
-    [ObservableProperty] ObservableCollection<InstalledFont> _fontList;
-    [ObservableProperty] ObservableCollection<InstalledFont> _collectionFonts;
+    [ObservableProperty] ObservableCollection<CMFontFamily> _fontList;
+    [ObservableProperty] ObservableCollection<CMFontFamily> _collectionFonts;
 
     public bool IsSmartCollection => _selectedCollection is SmartFontCollection;
     public bool IsUserCollection => _selectedCollection is UserFontCollection;
 
     public bool IsSelectedEditable => SelectedCollection is not null && SelectedCollection != CollectionService.SymbolCollection;
 
-    public ObservableCollection<InstalledFont> SelectedFonts = new();
+    public ObservableCollection<CMFontFamily> SelectedFonts = new();
 
-    public ObservableCollection<InstalledFont> SelectedCollectionFonts = new();
+    public ObservableCollection<CMFontFamily> SelectedCollectionFonts = new();
     public UserCollectionsService CollectionService { get; private set; } = null;
 
     private IFontCollection _selectedCollection;

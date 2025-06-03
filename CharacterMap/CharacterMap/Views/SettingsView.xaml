@@ -12,6 +12,7 @@
     xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
+    x:Name="SettingsRoot"
     DataContext="{x:Bind}"
     Loaded="View_Loaded"
     TabFocusNavigation="Cycle"
@@ -34,6 +35,7 @@
             <Setter Property="Margin" Value="0 12 0 4" />
         </Style>
 
+        <Style BasedOn="{StaticResource RadioButtonsButtonStyle}" TargetType="RadioButton" />
     </UserControl.Resources>
 
     <Grid x:Name="Root">
@@ -247,23 +249,24 @@
                                     ContentPlacement="Bottom"
                                     Description="{core:Localizer Key=SettingsCharLabelDesc/Text}">
                                     <StackPanel>
-                                        <controls:UXComboBox
-                                            MinWidth="160"
+
+                                        <muxc:RadioButtons
                                             ItemsSource="{x:Bind ViewModel.Annotations}"
+                                            MaxColumns="3"
                                             SelectedItem="{Binding Settings.GlyphAnnotation, Mode=TwoWay}">
-                                            <ComboBox.ItemTemplate>
+                                            <muxc:RadioButtons.ItemTemplate>
                                                 <DataTemplate x:DataType="models:GlyphAnnotation">
                                                     <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:GlyphAnnotation))}" />
                                                 </DataTemplate>
-                                            </ComboBox.ItemTemplate>
-                                        </controls:UXComboBox>
+                                            </muxc:RadioButtons.ItemTemplate>
+                                        </muxc:RadioButtons>
 
                                         <Border
                                             Margin="0 12 0 0"
                                             HorizontalAlignment="Left"
-                                            BorderBrush="{ThemeResource PivotNavButtonBackgroundThemeBrush}"
+                                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                                             BorderThickness="1"
-                                            CornerRadius="4">
+                                            CornerRadius="{StaticResource ControlCornerRadius}">
                                             <StackPanel
                                                 Padding="4 4 0 0"
                                                 h:CompositionFactory.CornerRadius="4"
@@ -351,19 +354,30 @@
                                     ContentPlacement="Bottom"
                                     Description="{core:Localizer Key=SettingsFontListDescription/Text}">
                                     <StackPanel>
+                                        <Grid>
+                                            <muxc:RadioButtons
+                                                x:Name="FontTypeRadios"
+                                                MaxColumns="2"
+                                                SelectionChanged="FontTypeRadios_SelectionChanged">
+                                                <RadioButton x:Uid="RbUseActualFont" />
+                                                <RadioButton x:Uid="RbUseSystemFont" />
+                                            </muxc:RadioButtons>
+                                        </Grid>
 
-                                        <controls:UXRadioButton
-                                            x:Name="UseActualFont"
-                                            x:Uid="RbUseActualFont"
-                                            Checked="UseActualFont_Checked"
-                                            GroupName="FontList"
-                                            d:Content="{core:Localizer Key=RbUseActualFont/Content}" />
-                                        <controls:UXRadioButton
-                                            x:Name="UseSystemFont"
-                                            x:Uid="RbUseSystemFont"
-                                            Checked="UseSystemFont_Checked"
-                                            GroupName="FontList"
-                                            d:Content="{core:Localizer Key=RbUseSystemFont/Content}" />
+                                        <ContentPresenter
+                                            Margin="0 12 0 8"
+                                            Content="Change the font size"
+                                            Style="{StaticResource DescriptionContentStyle}"
+                                            d:Content="{core:Localizer Key=SettingsFontImportDescription/Text}" />
+
+                                        <muxc:RadioButtons
+                                            x:Name="FontListFontSizeRadios"
+                                            MaxColumns="3"
+                                            SelectedIndex="{Binding Settings.FontListFontSizeIndex, Mode=TwoWay}">
+                                            <RadioButton Content="{core:Localizer Key=FontListSizeNormal}" />
+                                            <RadioButton Content="{core:Localizer Key=FontListSizeLarge}" />
+                                            <RadioButton Content="{core:Localizer Key=FontListSizeLarger}" />
+                                        </muxc:RadioButtons>
 
                                         <ListView
                                             x:Name="LstFontFamily"
@@ -371,10 +385,11 @@
                                             Margin="0 12 0 0"
                                             HorizontalAlignment="Left"
                                             Background="{ThemeResource DefaultHostBrush}"
-                                            BorderBrush="{ThemeResource PivotNavButtonBackgroundThemeBrush}"
+                                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                                             BorderThickness="1"
                                             CornerRadius="4"
                                             FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                            FontSize="{Binding ElementName=SettingsRoot, Path=FontListFontSize}"
                                             IsHitTestVisible="False"
                                             IsItemClickEnabled="False"
                                             IsSwipeEnabled="False"
@@ -396,7 +411,6 @@
 
                                         <TextBlock x:Uid="SettingsFontListPreviewHint" Style="{StaticResource HintStyle}" />
                                     </StackPanel>
-
                                 </controls:SettingsPresenter>
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsEnablePaneHeader/Text}" Description="{core:Localizer Key=SettingsEnablePaneDescription/Text}">
@@ -584,6 +598,7 @@
                                     <StackPanel>
                                         <muxc:RadioButtons
                                             x:Name="FontNamingSelection"
+                                            controls:SelectorVisualElement.ElementTemplate="{x:Null}"
                                             Background="{x:Null}"
                                             BorderThickness="0"
                                             SelectionChanged="FontNamingSelection_SelectionChanged">

@@ -173,7 +173,7 @@
 
         <Style BasedOn="{StaticResource CompareCardStyle}" TargetType="controls:ContentGroup" />
 
-        <DataTemplate x:Key="GridTemplate" x:DataType="core:InstalledFont">
+        <DataTemplate x:Key="GridTemplate" x:DataType="core:CMFontFamily">
 
             <!--  Canvas is required for maximum performance when updating properties  -->
             <controls:ContentGroup Width="400" Height="250">
@@ -219,7 +219,7 @@
             </controls:ContentGroup>
         </DataTemplate>
 
-        <DataTemplate x:Key="StackTemplate" x:DataType="core:InstalledFont">
+        <DataTemplate x:Key="StackTemplate" x:DataType="core:CMFontFamily">
             <controls:ContentGroup VerticalAlignment="Stretch">
                 <controls:ContentGroup.Text>
                     <TextBlock>
@@ -361,11 +361,11 @@
                                 </VisualStateGroup>
                                 <VisualStateGroup x:Name="CheckStates">
                                     <VisualState x:Name="Checked">
-                                        <Storyboard>
+                                        <!--<Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonForeground}" />
                                             </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
+                                        </Storyboard>-->
                                     </VisualState>
                                     <VisualState x:Name="Unchecked" />
                                     <VisualState x:Name="Indeterminate" />
@@ -391,7 +391,7 @@
 
     </UserControl.Resources>
 
-    <Grid x:Name="LayoutRoot">
+    <Grid x:Name="LayoutRoot" VisualStateManager.CustomVisualStateManager="{StaticResource VSM}">
 
         <controls:ModalPagePresenter
             x:Name="Presenter"
@@ -532,7 +532,16 @@
                             <muxc:RadioButtons
                                 x:Name="RadioButtons"
                                 Margin="-8 -2 0 0"
-                                MaxColumns="2">
+                                MaxColumns="2"
+                                SelectedIndex="0">
+                                <controls:SelectorVisualElement.Element>
+                                    <controls:SelectorVisualElement
+                                        Fill="{ThemeResource SelectorHighlightBrush}"
+                                        OffsetTransition="{StaticResource DefaultSelectorTransition}"
+                                        SizeTransition="{StaticResource DefaultSelectorTransition}"
+                                        VisualCornerRadius="4 4"
+                                        VisualInset="0 0 2 2" />
+                                </controls:SelectorVisualElement.Element>
                                 <RadioButton
                                     x:Uid="LayoutGridToggle"
                                     core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
@@ -695,7 +704,7 @@
                                     Layout="{StaticResource GridLayout}"
                                     VerticalCacheLength="0.5">
                                     <muxc:ItemsRepeater.ItemTemplate>
-                                        <DataTemplate x:DataType="core:FontVariant">
+                                        <DataTemplate x:DataType="core:CMFontFace">
                                             <Button
                                                 Margin="0"
                                                 IsHitTestVisible="False"
@@ -932,7 +941,8 @@
                 <VisualState x:Name="FUIThemeState">
                     <VisualState.Setters>
                         <Setter Target="RadioButtons.Margin" Value="-2 -2 0 0" />
-                        <Setter Target="Presenter.Background" Value="Transparent" />
+                        <Setter Target="RadioButtons.Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                        <Setter Target="Presenter.Background" Value="{ThemeResource DefaultWindowBackgroundBrush}" />
                         <Setter Target="Presenter.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
                     </VisualState.Setters>
                 </VisualState>

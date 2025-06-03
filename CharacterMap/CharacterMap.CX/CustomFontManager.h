@@ -43,5 +43,6 @@ namespace CharacterMapCX {
         CustomFontManager(ComPtr<IDWriteFactory7> sharedFactory);
         ComPtr<IDWriteFontCollection3> GetFontCollection(Platform::String^ path);
         ComPtr<IDWriteFactory7> const& GetIsolatedFactory();
+        ComPtr<IDWriteTextAnalyzer2> const& GetTextAnalyzer();
     };
 }

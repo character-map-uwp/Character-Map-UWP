@@ -144,7 +144,7 @@ public static class FontImporter
     /// </summary>
     /// <param name="font"></param>
     /// <returns></returns>
-    internal static async Task<bool> TryRemoveFontAsync(InstalledFont font)
+    internal static async Task<bool> TryRemoveFontAsync(CMFontFamily font)
     {
         font.PrepareForDelete();
 
@@ -274,7 +274,7 @@ public static class FontImporter
     //
     //------------------------------------------------------
 
-    internal static async Task<InstalledFont> LoadFromFileAsync(StorageFile file)
+    internal static async Task<CMFontFamily> LoadFromFileAsync(StorageFile file)
     {
         await FontFinder.InitialiseAsync().ConfigureAwait(false);
 
@@ -289,7 +289,7 @@ public static class FontImporter
         var localFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName).AsTask().ConfigureAwait(false);
 
         // 3. Load fonts from file
-        Dictionary<string, InstalledFont> resultList = new();
+        Dictionary<string, CMFontFamily> resultList = new();
         DWriteFontSet fontSet = Utils.GetInterop().GetFonts(localFile).Inflate();
         foreach (var font in fontSet.Fonts)
             FontFinder.AddFont(resultList, font, localFile);

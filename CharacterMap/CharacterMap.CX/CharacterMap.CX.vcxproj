@@ -283,6 +283,7 @@
     <ClInclude Include="DWriteFontFace.h" />
     <ClInclude Include="DWriteFontFamily.h" />
     <ClInclude Include="DWriteFontSet.h" />
+    <ClInclude Include="DWriteFontSimulations.h" />
     <ClInclude Include="DWriteFontSource.h" />
     <ClInclude Include="DWriteKnownFontAxisValues.h" />
     <ClInclude Include="DWriteNamedFontAxisValue.h" />
@@ -296,6 +297,7 @@
     <ClInclude Include="LifeSpanTracker.h" />
     <ClInclude Include="LockUtils.h" />
     <ClInclude Include="MetaTableReader.h" />
+    <ClInclude Include="OS2TableReader.h" />
     <ClInclude Include="PathData.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="NativeInterop.h" />

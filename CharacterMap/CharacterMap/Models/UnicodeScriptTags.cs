@@ -231,6 +231,14 @@ internal class UnicodeScriptTags
             var parts = padded.Split('-');
             var script = parts[0].Length == 4 ? parts[0] : parts[1];
 
+            try
+            {
+                CultureInfo clt = new(padded);
+                if (clt.EnglishName.StartsWith("Unknown") is false)
+                    return clt.DisplayName;
+            }
+            catch { }
+
             if (Scripts.TryGetValue(script, out name))
             {
                 // Try convert the ISO 639-1 language tag to full name

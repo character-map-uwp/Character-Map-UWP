@@ -782,7 +782,8 @@
                         x:Name="LayoutRoot"
                         Padding="{TemplateBinding Padding}"
                         Background="Transparent"
-                        BackgroundTransition="{StaticResource RootBackgroundTransition}">
+                        BackgroundTransition="{StaticResource RootBackgroundTransition}"
+                        VisualStateManager.CustomVisualStateManager="{StaticResource VSM}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition x:Name="LeftColumn" Width="0" />
                             <ColumnDefinition Width="*" />

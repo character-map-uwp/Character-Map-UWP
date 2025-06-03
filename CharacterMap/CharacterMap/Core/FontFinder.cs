@@ -11,11 +11,11 @@ public class FontFinder
     private static SemaphoreSlim _loadSemaphore { get; } = new(1, 1);
 
 
-    public static Dictionary<string, InstalledFont> FontDictionary { get; private set; }
-    public static IReadOnlyList<InstalledFont> Fonts { get; private set; }
-    public static IReadOnlyList<InstalledFont> ImportedFonts { get; private set; }
+    public static Dictionary<string, CMFontFamily> FontDictionary { get; private set; }
+    public static IReadOnlyList<CMFontFamily> Fonts { get; private set; }
+    public static IReadOnlyList<CMFontFamily> ImportedFonts { get; private set; }
 
-    public static InstalledFont DefaultFont { get; private set; }
+    public static CMFontFamily DefaultFont { get; private set; }
     public static bool HasAppxFonts { get; private set; }
     public static bool HasRemoteFonts { get; private set; }
     public static bool HasVariableFonts { get; private set; }
@@ -56,7 +56,7 @@ public class FontFinder
                             && f.Properties.Style == FontStyle.Normal);
 
                 if (segoe != null)
-                    DefaultFont = InstalledFont.CreateDefault(segoe);
+                    DefaultFont = CMFontFamily.CreateDefault(segoe);
             }
         }
         finally
@@ -113,7 +113,7 @@ public class FontFinder
 
             // Load in System Fonts
             DWriteFontSet systemFonts = init.Result;
-            Dictionary<string, InstalledFont> resultList = new(systemFonts.Fonts.Count);
+            Dictionary<string, CMFontFamily> resultList = new(systemFonts.Fonts.Count);
             UpdateMeta(systemFonts);
 
             /* Add imported fonts */
@@ -165,7 +165,7 @@ public class FontFinder
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static List<InstalledFont> CreateFontList(Dictionary<string, InstalledFont> fonts)
+    public static List<CMFontFamily> CreateFontList(Dictionary<string, CMFontFamily> fonts)
     {
         return fonts.OrderBy(f => f.Key).Select(f =>
         {
@@ -188,7 +188,7 @@ public class FontFinder
         HasVariableFonts = true;
     }
 
-    internal static List<FontVariant> GetImportedVariants(bool includeSimulations = false)
+    internal static List<CMFontFace> GetImportedVariants(bool includeSimulations = false)
     {
         return Fonts.Where(f => f.HasImportedFiles)
                     .SelectMany(f => f.Variants.Where(v => v.IsImported 
@@ -196,7 +196,7 @@ public class FontFinder
                     .ToList();
     }
 
-    internal static List<FontVariant> GetSystemVariants(bool includeSimulations = false)
+    internal static List<CMFontFace> GetSystemVariants(bool includeSimulations = false)
     {
         return Fonts.SelectMany(f => f.Variants.Where(v => v.IsImported is false
                         && (includeSimulations ? true : v.DirectWriteProperties.IsSimulated is false)))
@@ -208,7 +208,7 @@ public class FontFinder
      */
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void AddFont(
-        IDictionary<string, InstalledFont> fontList,
+        IDictionary<string, CMFontFamily> fontList,
         DWriteFontFace font,
         StorageFile file = null)
     {
@@ -227,7 +227,7 @@ public class FontFinder
                 }
                 else
                 {
-                    fontList[familyName] = new InstalledFont(familyName, font, file);
+                    fontList[familyName] = new CMFontFamily(familyName, font, file);
                 }
             }
         }
@@ -262,22 +262,22 @@ public class FontFinder
     /// </summary>
     /// <param name="font"></param>
     /// <returns></returns>
-    internal static Task<bool> RemoveFontAsync(InstalledFont font)
+    internal static Task<bool> RemoveFontAsync(CMFontFamily font)
     {
         Fonts = null;
         return FontImporter.TryRemoveFontAsync(font);
     }
 
-    public static bool IsMDL2(FontVariant variant) => variant != null && (
+    public static bool IsMDL2(CMFontFace variant) => variant != null && (
         variant.FamilyName.Contains("MDL2") || variant.FamilyName.Contains("Fluent Icons"));
 
-    public static bool IsSystemSymbolFamily(FontVariant variant) => variant != null && (
+    public static bool IsSystemSymbolFamily(CMFontFace variant) => variant != null && (
         variant.FamilyName.Equals("Segoe MDL2 Assets") || variant.FamilyName.Equals("Segoe Fluent Icons"));
 
 
     public static FontQueryResults QueryFontList(
         string query, 
-        IEnumerable<InstalledFont> fontList, 
+        IEnumerable<CMFontFamily> fontList, 
         UserCollectionsService fontCollections,
         IFontCollection collection = null,
         BasicFontFilter filter = null)

@@ -31,20 +31,20 @@ public static class Unicode
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool ContainsRange(FontVariant v, UnicodeRange range)
+    public static bool ContainsRange(CMFontFace v, UnicodeRange range)
     {
         return v.UnicodeRanges.Any(r => r.First <= range.End && range.Start <= r.Last);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool SupportsScript(FontVariant v, UnicodeRange range)
+    public static bool SupportsScript(CMFontFace v, UnicodeRange range)
     {
         // Filters out fonts that support less than two glyphs in the script range
         return v.UnicodeRanges.Any(r => r.First <= range.End && range.Start <= r.Last && ((r.Last - r.First) > 1));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool ContainsEmoji(FontVariant v)
+    public static bool ContainsEmoji(CMFontFace v)
     {
         return ContainsRange(v, UnicodeRange.Emoticons)
             || ContainsRange(v, UnicodeRange.Dingbats)
@@ -52,7 +52,7 @@ public static class Unicode
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool ContainsEmojiSymbols(FontVariant v)
+    public static bool ContainsEmojiSymbols(CMFontFace v)
     {
         return ContainsRange(v, UnicodeRange.SymbolsExtended)
             || ContainsRange(v, UnicodeRange.MiscSymbols)
@@ -82,7 +82,7 @@ public static class Unicode
         return chars.ToList();
     }
 
-    public static List<UnicodeRangeModel> GetCategories(FontVariant variant, bool mdl2)
+    public static List<UnicodeRangeModel> GetCategories(CMFontFace variant, bool mdl2)
     {
         var ranges = variant.GetRanges();
         var cats = UnicodeRanges.All

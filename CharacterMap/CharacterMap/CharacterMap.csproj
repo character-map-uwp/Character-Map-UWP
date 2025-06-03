@@ -216,6 +216,7 @@
     </Compile>
     <Compile Include="Controls\CharacterPickerButton.cs" />
     <Compile Include="Controls\PreviewTip.cs" />
+    <Compile Include="Controls\SelectorVisualElement.cs" />
     <Compile Include="Controls\SuggestionBox.cs" />
     <Compile Include="Controls\Toolkit\AdaptiveGridView.cs" />
     <Compile Include="Controls\UXButton.cs" />
@@ -285,8 +286,8 @@
     <Compile Include="Helpers\CompositionFactory.cs" />
     <Compile Include="Helpers\FlyoutHelper.cs" />
     <Compile Include="Core\FontFinder.cs" />
-    <Compile Include="Core\FontVariant.cs" />
-    <Compile Include="Core\InstalledFont.cs" />
+    <Compile Include="Core\CMFontFace.cs" />
+    <Compile Include="Core\CMFontFamily.cs" />
     <Compile Include="Models\PanoseFamily.cs" />
     <Compile Include="Core\PanoseParser.cs" />
     <Compile Include="Core\TypographyAnalyzer.cs" />
@@ -455,8 +456,6 @@
     <Content Include="Assets\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\FileAssociationTile.png" />
-    <Content Include="Assets\RobotoFlex.ttf" />
-    <Content Include="Assets\Material.otf" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\ZBG.png" />
     <Content Include="Assets\ZuneAssets\HoverOverlay.png" />

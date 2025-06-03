@@ -6,6 +6,7 @@
 #include <dwrite_3.h>
 #include "ColorTextAnalyzer.h"
 #include "DWriteProperties.h"
+#include "OS2TableReader.h"
 #include <vector>
 
 using namespace Microsoft::Graphics::Canvas;
@@ -37,10 +38,7 @@ namespace CharacterMapCX
 
 		property CanvasFontFileFormatType FileFormatType
 		{
-			CanvasFontFileFormatType get() {
-				return static_cast<CanvasFontFileFormatType>(
-					GetFontFace()->GetType());
-			}
+			CanvasFontFileFormatType get() { return static_cast<CanvasFontFileFormatType>(GetFontFace()->GetType()); }
 		}
 
 		property DWriteProperties^ Properties
@@ -138,6 +136,34 @@ namespace CharacterMapCX
 			return static_cast<INT32>(out[0]);
 		}
 
+		FontEmbeddingType GetEmbeddingType()
+		{
+			if (!m_loadedEmbed)
+			{
+				const void* tableData;
+				UINT32 tableSize;
+				BOOL exists;
+				void* context;
+				auto face = GetFontFace();
+				ThrowIfFailed(face->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('O', 'S', '/', '2'), &tableData, &tableSize, &context, &exists));
+
+				if (exists)
+				{
+					auto reader = ref new OS2TableReader(tableData, tableSize);
+					m_embeddingType = reader->EmbeddingType;
+					delete reader;
+				}
+				else
+					m_embeddingType = FontEmbeddingType::Installable;
+
+				face->ReleaseFontTable(&tableData);
+				m_loadedEmbed = true;
+			}
+
+			return m_embeddingType;
+		}
+
+
 	internal:
 		DWriteFontFace(ComPtr <IDWriteFontFace3> face)
 		{
@@ -180,6 +206,7 @@ namespace CharacterMapCX
 					ThrowIfFailed(m_face->GetFontFaceReference(&ref));
 				else
 					ThrowIfFailed(m_font->GetFontFaceReference(&ref));
+
 				m_fontResource = ref;
 			}
 
@@ -225,7 +252,10 @@ namespace CharacterMapCX
 	private:
 		inline DWriteFontFace() { }
 
+		bool m_loadedEmbed = false;
 		bool m_hasMetrics = false;
+
+		FontEmbeddingType m_embeddingType = FontEmbeddingType::Installable;
 		DWRITE_FONT_METRICS1 m_metrics{};
 		CanvasFontFace^ m_fontFace = nullptr;
 		ComPtr<IDWriteFontFaceReference> m_fontResource = nullptr;

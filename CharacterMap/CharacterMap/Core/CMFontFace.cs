@@ -14,7 +14,7 @@ public record FaceMetadataInfo(string Key, string[] Values, CanvasFontInformatio
 /// Represents an instance of a FontFace
 /// </summary>
 [System.Diagnostics.DebuggerDisplay("{FamilyName} {PreferredName}")]
-public partial class FontVariant : IDisposable
+public partial class CMFontFace : IDisposable
 {
     /* Using a character cache avoids a lot of unnecessary allocations */
     private static Dictionary<int, Character> _characters { get; } = [];
@@ -80,7 +80,7 @@ public partial class FontVariant : IDisposable
 
     public DWriteFontFace Face { get; }
 
-    public FontVariant(DWriteFontFace face, StorageFile file)
+    public CMFontFace(DWriteFontFace face, StorageFile file)
     {
         DWriteProperties dwProps = face.Properties;
         Face = face;
@@ -160,7 +160,7 @@ public partial class FontVariant : IDisposable
 
     /// <summary>
     /// Load an analysis without a glyph search map. Callers later using the cached analysis and expecting a search map should
-    /// take care to ensure it's created by manually calling <see cref="TypographyAnalyzer.PrepareSearchMap(FontVariant, FontAnalysis)"/>
+    /// take care to ensure it's created by manually calling <see cref="TypographyAnalyzer.PrepareSearchMap(CMFontFace, FontAnalysis)"/>
     /// </summary>
     /// <returns></returns>
     private FontAnalysis GetAnalysisInternal() => _analysis ??= TypographyAnalyzer.Analyze(this, false);
@@ -254,6 +254,7 @@ public partial class FontVariant : IDisposable
     private List<FaceMetadataInfo> GetFontInformation()
          => INFORMATIONS.Select(ReadInfoKey)
                         .Where(s => s != null && !string.IsNullOrWhiteSpace(s.Value))
+                        .Append(GetEmbeddingMetadata())
                         .ToList();
 
     /// <summary>
@@ -277,18 +278,21 @@ public partial class FontVariant : IDisposable
             || infos.TryGetValue("en-us", out value))
             return new(name, new string[1] { value }, info);
 
-        // For design tag, cache the full language names (metadata only stores short tags)
+        string[] values = null;
+
+        // For design tag, cache the tag for later use in search
         if (info is CanvasFontInformation.DesignScriptLanguageTag
             && _designLangRawSearch is null)
         {
             _designLangRawSearch = new(name, infos.Select(i => UnicodeScriptTags.GetBaseTag(i.Value)).ToArray(), info);
         }
 
+        if (info is CanvasFontInformation.DesignScriptLanguageTag or CanvasFontInformation.SupportedScriptLanguageTag)
+            values = infos.Select(i => UnicodeScriptTags.GetName(i.Value)).ToArray();
+
         return new(
             name,
-            info is CanvasFontInformation.DesignScriptLanguageTag
-                ? infos.Select(i => UnicodeScriptTags.GetName(i.Value)).ToArray()
-                : infos.Select(i => i.Value).ToArray(),
+            values ?? infos.Select(i => i.Value).ToArray(),
             info);
     }
 
@@ -309,6 +313,35 @@ public partial class FontVariant : IDisposable
         return null;
     }
 
+    FaceMetadataInfo GetEmbeddingMetadata()
+    {
+        StringBuilder sb = Utils.BuilderPool.Request();
+        try
+        {
+            foreach (var info in Face.GetEmbeddingType().ToString().Split(',').Select(s => s.Trim()))
+            {
+                if (sb.Length > 0)
+                {
+                    sb.AppendLine();
+                    sb.AppendLine();
+                }
+
+                sb.Append(Localization.Get($"EmbeddingType{info}"));
+            }
+
+            return new(
+                Localization.Get("CanvasFontInformationEmbeddingRights"),
+                [sb.ToString()],
+                CanvasFontInformation.LicenseDescription);
+        }
+        finally
+        {
+            Utils.BuilderPool.Return(sb);
+        }
+
+
+    }
+
 
 
 
@@ -320,11 +353,11 @@ public partial class FontVariant : IDisposable
 }
 
 
-public partial class FontVariant
+public partial class CMFontFace
 {
-    public static FontVariant CreateDefault(DWriteFontFace face)
+    public static CMFontFace CreateDefault(DWriteFontFace face)
     {
-        return new FontVariant(face, null)
+        return new CMFontFace(face, null)
         {
             PreferredName = "",
             Characters = [ new(0) ]
@@ -336,6 +369,7 @@ public partial class FontVariant
         CanvasFontInformation.Description,
         CanvasFontInformation.VersionStrings,
         CanvasFontInformation.DesignScriptLanguageTag,
+        CanvasFontInformation.SupportedScriptLanguageTag,
         CanvasFontInformation.Designer,
         CanvasFontInformation.DesignerUrl,
         CanvasFontInformation.FontVendorUrl,

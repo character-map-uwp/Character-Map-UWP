@@ -2,10 +2,7 @@
 #include "ColorTextAnalyzer.h"
 #include "GlyphImageFormat.h"
 
-using namespace Microsoft::WRL;
 using namespace CharacterMapCX;
-using namespace Microsoft::Graphics::Canvas::Text;
-
 
 ColorTextAnalyzer::ColorTextAnalyzer(
 	ComPtr<ID2D1Factory> d2dFactory,

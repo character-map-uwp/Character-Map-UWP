@@ -430,6 +430,7 @@
     <Grid
         x:Name="LayoutRoot"
         DataContext="{x:Bind ViewModel}"
+        VisualStateManager.CustomVisualStateManager="{StaticResource VSM}"
         d:Background="{ThemeResource DefaultPageBackgroundBrush}"
         d:BackgroundTransition="{StaticResource RootBackgroundTransition}">
         <Grid.RowDefinitions>
@@ -744,9 +745,9 @@
                         <ComboBox.ItemTemplateSelector>
                             <views:VariantTemplateSelector>
                                 <views:VariantTemplateSelector.VariantTemplate>
-                                    <DataTemplate x:DataType="core:FontVariant">
+                                    <DataTemplate x:DataType="core:CMFontFace">
                                         <TextBlock
-                                            FontFamily="{x:Bind core:Converters.GetPreviewFontSource((core:FontVariant))}"
+                                            FontFamily="{x:Bind core:Converters.GetPreviewFontSource((core:CMFontFace))}"
                                             FontStretch="{x:Bind DirectWriteProperties.Stretch}"
                                             FontStyle="{x:Bind DirectWriteProperties.Style}"
                                             FontWeight="{x:Bind DirectWriteProperties.Weight}"
@@ -1424,15 +1425,15 @@
 
                             <AppBarButton
                                 x:Uid="AddButton"
+                                core:Properties.ThemeIcon="Add"
                                 Click="AppBarButton_Click"
-                                Icon="Add"
                                 IsEnabled="{x:Bind core:Converters.IsNotNull(ViewModel.SelectedChar), Mode=OneWay}"
                                 d:Label="{core:Localizer Key=AddButton/Label}" />
                             <AppBarButton
                                 x:Uid="BtnCopyGlyph"
                                 Grid.Row="1"
+                                core:Properties.ThemeIcon="Copy"
                                 Click="{x:Bind ViewModel.CopySequence}"
-                                Icon="Copy"
                                 IsEnabled="{x:Bind core:Converters.IsNotNullOrEmpty(ViewModel.Sequence), Mode=OneWay}"
                                 d:Label="{core:Localizer Key=BtnCopyGlyph/Label}"
                                 d:ToolTipService.ToolTip="{core:Localizer Key=BtnCopyGlyph/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}" />
@@ -1498,6 +1499,7 @@
                         VerticalAlignment="Center"
                         helpers:FluentAnimation.PointerOver="FluentContentPresenter"
                         helpers:FluentAnimation.PointerOverOffset="-2"
+                        AutomationProperties.Name="{core:Localizer Key=TypeRampFlowButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}"
                         Click="TypeRampFlowButton_Click"
                         Style="{StaticResource MapInfoButtonStyle}"
                         d:ToolTipService.ToolTip="{core:Localizer Key=TypeRampFlowButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
@@ -1531,7 +1533,6 @@
                                     </Grid.ColumnDefinitions>
                                     <Slider
                                         x:Name="AxisSlider"
-                                        Header="{x:Bind Label}"
                                         Maximum="{x:Bind Maximum}"
                                         Minimum="{x:Bind Minimum}"
                                         SmallChange="0.1"
@@ -1539,15 +1540,23 @@
                                         Style="{StaticResource DefaultThemeSliderStyle}"
                                         ValueChanged="Slider_ValueChanged"
                                         Value="{x:Bind Value, Mode=TwoWay}">
-                                        <Slider.HeaderTemplate>
-                                            <DataTemplate>
+                                        <Slider.Header>
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
                                                 <TextBlock
                                                     Margin="0 0 0 -8"
                                                     FontSize="12"
                                                     Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                                    Text="{Binding}" />
-                                            </DataTemplate>
-                                        </Slider.HeaderTemplate>
+                                                    Text="{x:Bind Label}" />
+
+                                                <FontIcon
+                                                    x:Name="Hidden"
+                                                    x:Load="{x:Bind IsHidden}"
+                                                    Margin="0 2 0 -6"
+                                                    core:Properties.ThemeIcon="Hidden"
+                                                    FontSize="12"
+                                                    Opacity="0.4" />
+                                            </StackPanel>
+                                        </Slider.Header>
                                     </Slider>
                                     <Button
                                         x:Uid="BtnReset"
@@ -2568,7 +2577,7 @@
                         <Setter Target="SplitterContainer.Visibility" Value="Visible" />
                         <Setter Target="CharGridColumn.Width" Value="*" />
                         <!--<Setter Target="SplitterColumn.Width" Value="10" />-->
-                        <Setter Target="PreviewColumn.Width" Value="{x:Bind ViewModel.Settings.LastColumnWidth, Mode=OneWay}" />
+                        <Setter Target="PreviewColumn.Width" Value="{Binding Settings.LastColumnWidth, Mode=OneWay, FallbackValue=200, TargetNullValue=200}" />
                         <Setter Target="PreviewColumn.MinWidth" Value="150" />
                     </VisualState.Setters>
                 </VisualState>
@@ -2629,7 +2638,7 @@
                         <!--<Setter Target="MoreSwitchView.(core:Properties.UseAttachedStates)" Value="True" />-->
                         <Setter Target="ViewToggleButton.(core:Properties.UseAttachedStates)" Value="True" />
                         <Setter Target="ViewRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
-                        <Setter Target="BackgroundBorder.Visibility" Value="Collapsed" />
+                        <!--<Setter Target="BackgroundBorder.Visibility" Value="Collapsed" />-->
                         <Setter Target="CopyTopBorder.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
@@ -2672,7 +2681,7 @@
                 <VisualState x:Name="ChildViewState" />
                 <VisualState x:Name="StandaloneViewState">
                     <VisualState.Setters>
-                        <Setter Target="BackgroundBorder.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
+                        <Setter Target="BackgroundBorder.Background" Value="{ThemeResource DefaultWindowBackgroundBrush}" />
                         <Setter Target="SearchContainer.Margin" Value="0 6 0 0" />
                     </VisualState.Setters>
                 </VisualState>

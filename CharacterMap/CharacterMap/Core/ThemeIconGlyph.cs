@@ -45,8 +45,8 @@ public enum ThemeIcon
     Back,
 
     ViewClose,
-
     FilledSquare,
+    Hidden,
 
     // TODO
     NewTab,
@@ -157,6 +157,7 @@ public class ThemeIconGlyph : MarkupExtension
         [ThemeIcon.FilledSquare] = V(0xE73B),
         [ThemeIcon.DragIndicator] = V(0xE784),
         [ThemeIcon.DragDropHint] = V(0xE7C9),
+        [ThemeIcon.Hidden] = V(0xEd1a),
 
 
 

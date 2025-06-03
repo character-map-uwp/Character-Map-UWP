@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Windows.Foundation.Collections;
 using Windows.System;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Text;
@@ -91,6 +92,7 @@ public enum MaterialCornerStyle
 [AttachedProperty<bool>("IsContainerEnabled", true)] // Is the parent ItemContainer enabled?
 [AttachedProperty<MaterialCornerStyle>("MaterialCornerStyle", MaterialCornerStyle.None)]
 [AttachedProperty<ThemeIcon>("ThemeIcon")]
+[AttachedProperty<Color>("Color")]
 public partial class Properties : DependencyObject
 {
     #region FILTER 
@@ -1517,7 +1519,7 @@ public partial class Properties : DependencyObject
             // Try use fonts default preview string if we're not providing one.
             // Useful for Segoe UI emoji / other symbol fonts with specific
             // preview strings that would show nothing by default
-            else if (e.NewValue is FontVariant variant)
+            else if (e.NewValue is CMFontFace variant)
                 text = variant.TryGetSampleText() ?? text;
 
             // Set TextBlock text

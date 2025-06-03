@@ -17,6 +17,7 @@
             <StaticResource x:Key="AltHostBrush" ResourceKey="CardBackgroundFillColorDefaultBrush" />
             <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="Transparent" />
             <StaticResource x:Key="TopCardBrush" ResourceKey="LayerOnMicaBaseAltFillColorDefaultBrush" />
+            <StaticResource x:Key="DefaultWindowBackgroundBrush" ResourceKey="LayerOnMicaBaseAltFillColorDefaultBrush" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <Color x:Key="SolidBackgroundFillColorBase">#F3F3F3</Color>
@@ -25,8 +26,11 @@
             <StaticResource x:Key="AltHostBrush" ResourceKey="CardBackgroundFillColorDefaultBrush" />
             <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="Transparent" />
             <StaticResource x:Key="TopCardBrush" ResourceKey="LayerOnMicaBaseAltFillColorDefaultBrush" />
+            <StaticResource x:Key="DefaultWindowBackgroundBrush" ResourceKey="LayerOnMicaBaseAltFillColorDefaultBrush" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
+
+    <TextTrimming x:Key="MenuFlyoutItemTextTrimming">CharacterEllipsis</TextTrimming>
 
     <x:Boolean x:Key="SupportsFluentAnimation">True</x:Boolean>
     <x:Boolean x:Key="SupportsShadows">False</x:Boolean>
@@ -39,6 +43,7 @@
 
     <CornerRadius x:Key="ButtonCornerRadius">100</CornerRadius>
     <CornerRadius x:Key="ControlCornerRadius">6</CornerRadius>
+
 
 
 
@@ -84,6 +89,29 @@
 
 
     <!--  MISC CONTROLS  -->
+
+    <DataTemplate x:Key="RadioSelectorTemplate">
+        <controls:SelectorVisualElement
+            Fill="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+            OffsetTransition="{StaticResource DefaultSelectorTransition}"
+            SizeTransition="{StaticResource DefaultSelectorTransition}"
+            Stroke="{ThemeResource CardStrokeColorDefaultSolidBrush}"
+            StrokeThickness="1"
+            VisualCornerRadius="4 4"
+            VisualInset="0 0 3 3" />
+    </DataTemplate>
+
+    <DataTemplate x:Name="PointerSelectorVisualTemplate">
+        <controls:SelectorVisualElement
+            Fill="{ThemeResource ListViewItemBackgroundPointerOver}"
+            OffsetTransition="{StaticResource QuickCompositionTransition}"
+            SizeTransition="{StaticResource QuickCompositionTransition}"
+            VisualCornerRadius="4 4" />
+    </DataTemplate>
+
+    <Style TargetType="controls:ExtendedListView">
+        <Setter Property="SelectorTemplate" Value="{StaticResource PointerSelectorVisualTemplate}" />
+    </Style>
 
     <Style TargetType="controls:PreviewTip">
         <Setter Property="Foreground" Value="{ThemeResource ToolTipForegroundBrush}" />
@@ -132,7 +160,8 @@
                         ContentTransitions="{TemplateBinding ContentTransitions}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         RenderTransformOrigin="0.5 0.5"
-                        TextWrapping="Wrap">
+                        TextWrapping="Wrap"
+                        VisualStateManager.CustomVisualStateManager="{StaticResource VSM}">
                         <ContentPresenter.RenderTransform>
                             <CompositeTransform />
                         </ContentPresenter.RenderTransform>
@@ -247,7 +276,7 @@
                         FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
                         FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
                         PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
-                        PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
+                        PointerOverBackground="Transparent"
                         PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
                         PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
                         ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
@@ -277,7 +306,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="DefaultThemeGridViewItemStyle" TargetType="GridViewItem">
+    <Style x:Key="DefaultThemeGridViewItemStyle" TargetType="SelectorItem">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
@@ -294,7 +323,7 @@
         <Setter Property="FocusVisualMargin" Value="-2" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="GridViewItem">
+                <ControlTemplate TargetType="SelectorItem">
                     <ContentPresenter
                         x:Name="ContentPresenter"
                         Margin="{TemplateBinding Padding}"
@@ -335,7 +364,7 @@
                                 </VisualState>
 
                                 <VisualState x:Name="Selected">
-                                    <VisualState.Setters>
+                                    <!--<VisualState.Setters>
                                         <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                                         <Setter Target="ContentPresenter.BorderThickness" Value="1" />
                                     </VisualState.Setters>
@@ -343,7 +372,7 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
+                                    </Storyboard>-->
                                 </VisualState>
 
                                 <VisualState x:Name="PointerOverSelected">
@@ -402,7 +431,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="GridViewItem">
                     <ListViewItemPresenter
-                        x:Name="Root"
+                        x:Name="RootyTooty"
                         HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                         VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                         CheckBoxBrush="{ThemeResource GridViewItemCheckBoxBrush}"
@@ -454,44 +483,17 @@
         </Setter>
     </Style>
 
-    <Style TargetType="muxc:RadioButtons">
-        <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
-        <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="muxc:RadioButtons">
-                    <Grid
-                        x:Name="ControlRoot"
-                        Background="{TemplateBinding Background}"
-                        BackgroundTransition="{StaticResource QuickBackgroundTransition}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="Disabled">
-                                    <VisualState.Setters>
-                                        <Setter Target="ControlRoot.Opacity" Value="0.4" />
-                                    </VisualState.Setters>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                        <muxc:ItemsRepeater x:Name="InnerRepeater">
-                            <muxc:ItemsRepeater.Layout>
-                                <primitives:ColumnMajorUniformToLargestGridLayout
-                                    ColumnSpacing="{TemplateBinding Tag}"
-                                    RowSpacing="{ThemeResource RadioButtonsRowSpacing}"
-                                    MaxColumns="{Binding MaxColumns, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                            </muxc:ItemsRepeater.Layout>
-                        </muxc:ItemsRepeater>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+
+
+
+
+
+
+    <Style x:Key="DescriptionContentStyle" TargetType="ContentPresenter">
+        <Setter Property="FontSize" Value="12.666" />
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
     </Style>
 
     <Style x:Key="DefaultSettingsPresenterStyle" TargetType="controls:SettingsPresenter">
@@ -618,10 +620,7 @@
                                     Grid.Row="1"
                                     Margin="0 2 0 0"
                                     Content="{TemplateBinding Description}"
-                                    FontFamily="{TemplateBinding FontFamily}"
-                                    FontSize="12.666"
-                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    TextWrapping="Wrap"
+                                    Style="{StaticResource DescriptionContentStyle}"
                                     Visibility="Collapsed" />
                             </Grid>
 
@@ -834,7 +833,7 @@
                                 </VisualState>
 
                                 <VisualState x:Name="Selected">
-                                    <VisualState.Setters>
+                                    <!--<VisualState.Setters>
                                         <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                                         <Setter Target="ContentPresenter.BorderThickness" Value="1" />
                                     </VisualState.Setters>
@@ -842,7 +841,7 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
+                                    </Storyboard>-->
                                 </VisualState>
 
                                 <VisualState x:Name="PointerOverSelected">
@@ -877,14 +876,14 @@
     </Style>
 
     <DataTemplate x:Key="FontListGroupHeaderTemplate">
-        <controls:UXButton
+        <controls:ExtendedListViewItem
             x:Name="Root"
             Margin="0"
             Padding="0"
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
             IsHitTestVisible="True"
-            Style="{StaticResource TransparentButton}">
+            Style="{StaticResource DefaultThemeListViewItemStyle}">
             <Grid>
                 <Border
                     Margin="15,0"
@@ -900,12 +899,19 @@
                     FontWeight="SemiBold"
                     Text="{Binding Key}" />
             </Grid>
-        </controls:UXButton>
+        </controls:ExtendedListViewItem>
     </DataTemplate>
 
-    <Style x:Key="FontListGridViewItemStyle" BasedOn="{StaticResource DefaultGridViewItemStyle}" TargetType="GridViewItem">
+    <Style x:Key="FontListGridViewItemStyle" BasedOn="{StaticResource DefaultThemeGridViewItemStyle}" TargetType="SelectorItem">
         <Setter Property="core:Properties.PointerOverAnimation" Value="Text" />
         <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ExtendedGridViewItem">
+                    <ContentPresenter Background="Transparent" Content="{TemplateBinding Content}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style TargetType="toolkit:GridSplitter">
@@ -1295,6 +1301,18 @@
         <Setter Property="h:FluentAnimation.PointerOverOffset" Value="3" />
         <Setter Property="h:FluentAnimation.Pressed" Value="ContentPresenter" />
         <Setter Property="h:FluentAnimation.UsePointerOver" Value="True" />
+    </Style>
+
+    <Style BasedOn="{StaticResource DefaultRadioButtonsThemeStyle}" TargetType="muxc:RadioButtons">
+        <Setter Property="Background" Value="{ThemeResource DefaultHostBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+    </Style>
+
+
+
+    <Style x:Key="RadioButtonsButtonStyle" BasedOn="{StaticResource RadioButtonsButtonStyle}" TargetType="RadioButton">
+        <Setter Property="core:Properties.Color" Value="{ThemeResource TextFillColorPrimary}" />
     </Style>
 
 
@@ -2237,7 +2255,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="AutoSuggestBox">
-                    <Grid x:Name="LayoutRoot">
+                    <Grid x:Name="LayoutRoot" VisualStateManager.CustomVisualStateManager="{StaticResource VSM}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="DropDownStates">
                                 <VisualStateGroup.Transitions>
@@ -2312,7 +2330,7 @@
                                     <Border.RenderTransform>
                                         <CompositeTransform x:Name="PopupTransform" />
                                     </Border.RenderTransform>
-                                    <ListView
+                                    <controls:ExtendedListView
                                         x:Name="SuggestionsList"
                                         MaxHeight="{TemplateBinding MaxSuggestionListHeight}"
                                         Margin="{ThemeResource AutoSuggestListPadding}"
@@ -2324,7 +2342,7 @@
                                         ItemContainerTransitions="{StaticResource NoTransitions}"
                                         ItemTemplate="{TemplateBinding ItemTemplate}"
                                         ItemTemplateSelector="{TemplateBinding ItemTemplateSelector}">
-                                        <ListView.GroupStyle>
+                                        <controls:ExtendedListView.GroupStyle>
                                             <GroupStyle HidesIfEmpty="True">
                                                 <GroupStyle.HeaderContainerStyle>
                                                     <Style TargetType="ListViewHeaderItem">
@@ -2349,8 +2367,8 @@
                                                     </Style>
                                                 </GroupStyle.HeaderContainerStyle>
                                             </GroupStyle>
-                                        </ListView.GroupStyle>
-                                    </ListView>
+                                        </controls:ExtendedListView.GroupStyle>
+                                    </controls:ExtendedListView>
                                 </Border>
 
                             </Border>
@@ -2387,7 +2405,8 @@
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}">
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        VisualStateManager.CustomVisualStateManager="{StaticResource VSM}">
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">

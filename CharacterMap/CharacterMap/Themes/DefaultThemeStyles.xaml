@@ -8,9 +8,11 @@
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Default">
             <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="Black" />
+            <SolidColorBrush x:Key="DefaultWindowBackgroundBrush" Color="Black" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="White" />
+            <SolidColorBrush x:Key="DefaultWindowBackgroundBrush" Color="White" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
@@ -2714,5 +2716,13 @@
         </Setter>
     </Style>
 
+    <DataTemplate x:Key="RadioSelectorTemplate">
+        <controls:SelectorVisualElement
+            Fill="{ThemeResource SelectorHighlightBrush}"
+            OffsetTransition="{StaticResource DefaultSelectorTransition}"
+            SizeTransition="{StaticResource DefaultSelectorTransition}"
+            VisualCornerRadius="4 4"
+            VisualInset="0 0 2 2" />
+    </DataTemplate>
 
 </ResourceDictionary>

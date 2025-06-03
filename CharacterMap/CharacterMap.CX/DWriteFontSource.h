@@ -1,8 +1,5 @@
 #pragma once
 
-// Underlying type is unsigned int for Flags. Must be explicitly specified
-using namespace Platform::Metadata;
-
 namespace CharacterMapCX
 {
 	public enum class DWriteFontSource : int
