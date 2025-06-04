@@ -119,7 +119,7 @@ public static class FlyoutHelper
 
         static void SaveFont_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuFlyoutItem item && item.DataContext is CharacterRenderingOptions opts)
+            if (sender is MenuFlyoutItem item && Properties.GetTag(item) is CharacterRenderingOptions opts)
             {
                 ExportManager.RequestExportFont(opts, true);
             }
@@ -134,7 +134,7 @@ public static class FlyoutHelper
         {
             if (sender is FrameworkElement f &&
                 f.Tag is CMFontFamily fnt
-                && f.DataContext is CharacterRenderingOptions o)
+                && Properties.GetTag(f) is CharacterRenderingOptions o)
             {
                 WeakReferenceMessenger.Default.Send(new ExportRequestedMessage());
             }
@@ -151,7 +151,7 @@ public static class FlyoutHelper
         static void AddToQuickCompare(object sender, RoutedEventArgs e)
         {
             if (sender is FrameworkElement f
-                && f.DataContext is CharacterRenderingOptions o)
+                && Properties.GetTag(f) is CharacterRenderingOptions o)
             {
                 _ = QuickCompareView.AddAsync(o);
             }
@@ -160,7 +160,7 @@ public static class FlyoutHelper
         void OpenCalligraphy(object sender, RoutedEventArgs e)
         {
             if (sender is FrameworkElement f
-                && f.DataContext is CharacterRenderingOptions o)
+                && Properties.GetTag(f) is CharacterRenderingOptions o)
             {
                 _ = CalligraphyView.CreateWindowAsync(o, args?.PreviewText);
             }
@@ -186,9 +186,10 @@ public static class FlyoutHelper
                 Text = key.StartsWith("~") ? key.Remove(0, 1) : Localization.Get(key),
                 Icon = Icon(icon),
                 Tag = font,
-                DataContext = options,
                 Style = style
             };
+
+            Properties.SetTag(item, options);
 
             item.Click += handler;
 
@@ -307,6 +308,12 @@ public static class FlyoutHelper
         }
     }
 
+    public static T SetAttachedTag<T>(this T item, object o) where T : MenuFlyoutItemBase
+    {
+        Properties.SetTag(item, o);
+        return item;
+    }
+
     public static T SetAnimation<T>(this T item) where T : MenuFlyoutItemBase
     {
         if (ResourceHelper.AllowAnimation && ResourceHelper.SupportFluentAnimation)
@@ -380,7 +387,7 @@ public static class FlyoutHelper
 
         static async void AddToSymbolFonts_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is FrameworkElement f && f.DataContext is IReadOnlyList<CMFontFamily> fnts)
+            if (sender is FrameworkElement f && Properties.GetTag(f) is IReadOnlyList<CMFontFamily> fnts)
             {
                 var result = await _collections.AddToCollectionAsync(
                     fnts,
@@ -398,7 +405,7 @@ public static class FlyoutHelper
         static void CreateCollection_Click(object sender, RoutedEventArgs e)
         {
             _ = new CreateCollectionDialog()
-                   .SetDataContext(((FrameworkElement)sender).DataContext)
+                   .SetDataContext(Properties.GetTag((FrameworkElement)sender))
                    .ShowAsync();
         }
 
@@ -422,11 +429,11 @@ public static class FlyoutHelper
         {
             Text = Localization.Get("NewCollectionItem/Text"),
             Icon = Icon(ThemeIcon.Add),
-            DataContext = items,
             Style = style
         };
 
         newCollection.Click += CreateCollection_Click;
+        newCollection.SetAttachedTag(items);
 
         if (parent.Items != null)
         {
@@ -441,10 +448,10 @@ public static class FlyoutHelper
                 {
                     Text = Localization.Get("OptionSymbolFonts/Text"),
                     IsEnabled = multiMode || !_collections.SymbolCollection.Fonts.Contains(font.Name),
-                    DataContext = items,
                     Style = style,
                     Tag = args?.AddToCollectionCommand
                 };
+                symb.SetAttachedTag(items);
                 symb.Click += AddToSymbolFonts_Click;
                 parent.Items.Add(symb);
             }
@@ -462,18 +469,17 @@ public static class FlyoutHelper
                         _collections.Items.Select(item => new MenuFlyoutItem
                         {
                             Tag = item,
-                            DataContext = items,
                             Text = item.Name,
                             Style = style,
                             IsEnabled = multiMode || !item.Fonts.Contains(font.Name)
-                        }.SetAnimation()))
+                        }.SetAttachedTag(items).SetAnimation()))
                 {
                     if (m.IsEnabled)
                     {
                         m.Click += async (s, a) =>
                         {
                             if (s is FrameworkElement f
-                                && f.DataContext is IReadOnlyList<CMFontFamily> fnts
+                                && Properties.GetTag(f) is IReadOnlyList<CMFontFamily> fnts
                                 && f.Tag is UserFontCollection clct)
                             {
                                 AddToCollectionResult result = await _collections.AddToCollectionAsync(fnts, clct);
