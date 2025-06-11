@@ -78,6 +78,8 @@ public partial class ZoomHelper : DependencyObject, IAttached
             {
                 this.ZoomRequested?.Invoke(this, delta * ScaleFactor);
             }
+
+            e.Handled = true;
         }
     }
 }

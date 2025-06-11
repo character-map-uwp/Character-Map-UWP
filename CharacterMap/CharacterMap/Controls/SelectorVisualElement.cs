@@ -40,10 +40,14 @@ public enum SelectionVisualType
 [DependencyProperty<CompositionTransition>("OffsetTransition")]
 [DependencyProperty<SolidColorBrush>("Fill")]
 [DependencyProperty<SolidColorBrush>("Stroke")]
+[DependencyProperty<SolidColorBrush>("BarFill")]
 [DependencyProperty<SelectionVisualType>("Mode")]
 [DependencyProperty<double>("StrokeThickness")]
 [DependencyProperty<FrameworkElement>("Target")] // Set to a ListView or RadioButtons to automatically attach
 [DependencyProperty<FrameworkElement>("DisplayTarget")]
+[DependencyProperty<Point>("BarSize")]
+[DependencyProperty<double>("BarPadding")]
+[DependencyProperty<Point>("BarCornerRadius", "new Point(2,2)")]
 [AttachedProperty<SelectorVisualElement>("Element")]
 [AttachedProperty<DataTemplate>("ElementTemplate")]
 public partial class SelectorVisualElement : FrameworkElement
@@ -51,8 +55,17 @@ public partial class SelectorVisualElement : FrameworkElement
     private ShapeVisual _shapes;
     private ContainerVisual _container;
     private CompositionRoundedRectangleGeometry _rect;
+    private CompositionRoundedRectangleGeometry _bar;
     private CompositionColorBrush _fillBrush;
     private CompositionColorBrush _strokeBrush;
+    private CompositionColorBrush _barFillBrush;
+    private CompositionPropertySet _props;
+
+    private ExpressionAnimation _exp;
+
+    string barXY => "Vector2(" +
+            "((Container.Size.X - this.Target.Size.X) / 2)," +
+            "Container.Size.Y - this.Target.Size.Y - props.Padding)";
 
 
     private List<(DependencyProperty, long)> _tokens { get; } = [];
@@ -60,9 +73,9 @@ public partial class SelectorVisualElement : FrameworkElement
     public SelectorVisualElement()
     {
         this.IsHitTestVisible = false;
-
         this.Loaded += SelectorVisual_Loaded;
         this.Unloaded += SelectorVisual_Unloaded;
+        _props = this.GetElementVisual().Compositor.CreatePropertySet();
     }
 
     void Update()
@@ -73,12 +86,6 @@ public partial class SelectorVisualElement : FrameworkElement
         CreateVisual();
         _rect.CornerRadius = VisualCornerRadius.ToVector2();
     }
-
-    //partial void OnVisualCornerRadiusChanged(Point o, Point n)
-    //{
-    //    if (_rect is not null)
-    //        _rect.CornerRadius = n.ToVector2();
-    //}
 
     Color GetColor(SolidColorBrush b)
     {
@@ -99,12 +106,34 @@ public partial class SelectorVisualElement : FrameworkElement
         if (_strokeBrush is not null)
             _strokeBrush.Color = GetColor(n);
     }
-    
+
+    partial void OnBarFillChanged(SolidColorBrush o, SolidColorBrush n)
+    {
+        if (_barFillBrush is not null)
+            _barFillBrush.Color = GetColor(n);
+    }
 
     partial void OnStrokeThicknessChanged(double o, double n)
     {
         if (_shapes is not null && _shapes.Shapes.FirstOrDefault() is CompositionSpriteShape s)
             s.StrokeThickness = (float)n;
+    }
+
+    partial void OnBarSizeChanged(Point o, Point n)
+    {
+        if (_bar is not null)
+            _bar.Size = n.ToVector2();
+    }
+
+    partial void OnBarPaddingChanged(double o, double n)
+    {
+        _props?.InsertScalar("Padding", (float)BarPadding);
+    }
+
+    partial void OnBarCornerRadiusChanged(Point o, Point n)
+    {
+        if (_bar is not null)
+            _bar.CornerRadius = n.ToVector2();
     }
 
     void CreateVisual()
@@ -116,10 +145,12 @@ public partial class SelectorVisualElement : FrameworkElement
 
         _fillBrush = c.CreateColorBrush(GetColor(Fill));
         _strokeBrush = c.CreateColorBrush(GetColor(Stroke));
+        _barFillBrush = c.CreateColorBrush(GetColor(BarFill));
 
         _rect = c.CreateRoundedRectangleGeometry();
         _rect.CornerRadius = VisualCornerRadius.ToVector2();
 
+        // Create background shape
         var s = c.CreateSpriteShape(_rect);
 
         s.StrokeBrush = _strokeBrush;
@@ -131,6 +162,24 @@ public partial class SelectorVisualElement : FrameworkElement
 
         _container = c.CreateContainerVisual();
         _container.Children.InsertAtTop(_shapes);
+
+        // Create bar shape
+        _bar = c.CreateRoundedRectangleGeometry();
+        _bar.CornerRadius = BarCornerRadius.ToVector2();
+        _bar.Size = BarSize.ToVector2();
+        var bs = c.CreateSpriteShape(_bar);
+        bs.FillBrush = _barFillBrush;
+        _props.InsertScalar("Padding", (float)BarPadding);
+
+        // Position bar
+        _exp = bs.CreateExpressionAnimation("Offset.XY")
+            .SetExpression(barXY)
+            .SetParameter("Container", _rect)
+            .SetParameter("props", _props);
+
+        _shapes.Shapes.Add(bs);
+
+        _bar.StartAnimation(_exp);
 
         if (DisplayTarget is null)
             this.SetChildVisual(_container);

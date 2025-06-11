@@ -92,6 +92,10 @@
 
     <DataTemplate x:Key="RadioSelectorTemplate">
         <controls:SelectorVisualElement
+            BarCornerRadius="2 2"
+            BarFill="{ThemeResource AccentFillColorTertiaryBrush}"
+            BarPadding="3"
+            BarSize="24, 3"
             Fill="{ThemeResource CardBackgroundFillColorDefaultBrush}"
             OffsetTransition="{StaticResource DefaultSelectorTransition}"
             SizeTransition="{StaticResource DefaultSelectorTransition}"
