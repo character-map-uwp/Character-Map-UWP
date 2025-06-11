@@ -481,5 +481,17 @@ public class AppSettings : INotifyPropertyChanged
         }
     }
 
+    public void IncreaseFontListSize()
+    {
+        if (FontListFontSizeIndex < (int)FontListFontSize.Larger)
+            FontListFontSizeIndex++;
+    }
+
+    public void DecreaseFontListSize()
+    {
+        if (FontListFontSizeIndex > 0)
+            FontListFontSizeIndex--;
+    }
+
     #endregion
 }

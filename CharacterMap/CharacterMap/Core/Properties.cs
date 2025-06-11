@@ -48,9 +48,9 @@ public enum MaterialCornerStyle
 [AttachedProperty<string>("IconString")]
 [AttachedProperty<IconElement>("Icon")]
 [AttachedProperty<DevOption>]
-[AttachedProperty<FlyoutBase>("TargetContextFlyout")]  
-[AttachedProperty<TransitionCollection>("ItemContainerTransitions")]  
-[AttachedProperty<TransitionCollection>("ChildrenTransitions")]  
+[AttachedProperty<FlyoutBase>("TargetContextFlyout")]
+[AttachedProperty<TransitionCollection>("ItemContainerTransitions")]
+[AttachedProperty<TransitionCollection>("ChildrenTransitions")]
 [AttachedProperty<bool>("UseAttachedStates")] // Allows an element to run Storyboards from it's own resources on VisualState events
 [AttachedProperty<bool>("SetContainerBackgroundTransition")] // Helper property for ItemContainerBackgroundTransition
 [AttachedProperty<BrushTransition>("ItemContainerBackgroundTransition")] // When attached to a ListView, automatically sets ItemContainer BackgroundTransitions
@@ -91,8 +91,9 @@ public enum MaterialCornerStyle
 [AttachedProperty<object>("PreviewStringTrigger")] // Sets a contextually aware preview string to Font List ToolTip
 [AttachedProperty<bool>("IsContainerEnabled", true)] // Is the parent ItemContainer enabled?
 [AttachedProperty<MaterialCornerStyle>("MaterialCornerStyle", MaterialCornerStyle.None)]
-[AttachedProperty<ThemeIcon>("ThemeIcon")]
-[AttachedProperty<Color>("Color")]
+[AttachedProperty<ThemeIcon>]
+[AttachedProperty<Color>]
+[AttachedProperty<ZoomHelper>]
 public partial class Properties : DependencyObject
 {
     #region FILTER 
@@ -236,7 +237,7 @@ public partial class Properties : DependencyObject
         if (d is InkToolbar t && e.NewValue is InkToolbarToolButton b)
             t.ActiveTool = b;
     }
-    
+
     #endregion
 
     #region TabViewItem IsCompact
@@ -762,7 +763,7 @@ public partial class Properties : DependencyObject
             }
         }
 
-       
+
     }
 
     static partial void OnPointerOverAnimationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -1267,7 +1268,7 @@ public partial class Properties : DependencyObject
             var temp = ToolTipService.GetToolTip(d);
             if (temp is null) // Bad little hack to allow x:UID setters (or equivalent) to run
                 await Task.Yield();
-            
+
             if (ToolTipService.GetToolTip(d) is { } tt)
             {
                 if (tt is ToolTip t)
@@ -1416,7 +1417,7 @@ public partial class Properties : DependencyObject
             static void B_Click(object sender, RoutedEventArgs e)
             {
                 var link = GetHyperlink((DependencyObject)sender);
-                if (!string.IsNullOrWhiteSpace(link) 
+                if (!string.IsNullOrWhiteSpace(link)
                     && Uri.TryCreate(link, UriKind.RelativeOrAbsolute, out Uri uri))
                     _ = Launcher.LaunchUriAsync(uri);
             }
@@ -1427,9 +1428,9 @@ public partial class Properties : DependencyObject
 
     #region Cursor
 
-    private static readonly object _cursorLock = new ();
-    private static readonly CoreCursor _defaultCursor = new (CoreCursorType.Arrow, 1);
-    private static readonly Dictionary<CoreCursorType, CoreCursor> _cursors = new () { { CoreCursorType.Arrow, _defaultCursor } };
+    private static readonly object _cursorLock = new();
+    private static readonly CoreCursor _defaultCursor = new(CoreCursorType.Arrow, 1);
+    private static readonly Dictionary<CoreCursorType, CoreCursor> _cursors = new() { { CoreCursorType.Arrow, _defaultCursor } };
 
     static partial void OnCursorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -1510,7 +1511,7 @@ public partial class Properties : DependencyObject
             //var v = GetTag(l);
 
             // If we have an active "char" search we want to show this characters in the ToolTip instead
-            if (t.GetFirstAncestorOfType<PreviewTip>() is { } pt 
+            if (t.GetFirstAncestorOfType<PreviewTip>() is { } pt
                 && GetTag(pt) is MainViewModel vm
                 && vm.FontSearch is { Length: > 4 } query
                 && FontFinder.IsQuery(query, Localization.Get("CharacterFilter"), "char:", out string q))
@@ -1567,7 +1568,7 @@ public partial class Properties : DependencyObject
         if (d is FrameworkElement f && e.NewValue is not null && (MaterialCornerStyle)e.NewValue is MaterialCornerStyle mode)
         {
             f.SizeChanged -= OnSizeChanged;
-            
+
             if (mode is not MaterialCornerStyle.None)
             {
                 f.SizeChanged += OnSizeChanged;
@@ -1632,7 +1633,7 @@ public partial class Properties : DependencyObject
 
         static FontIcon Make(ThemeIcon ti, FontIcon source = null)
         {
-            FontIcon f = source ?? new ();
+            FontIcon f = source ?? new();
 
             if (ThemeIconGlyph.GetWithFallback(ti) is { } result)
             {
@@ -1645,6 +1646,22 @@ public partial class Properties : DependencyObject
             }
 
             return f;
+        }
+    }
+
+    #endregion
+
+    #region ZoomHelper
+
+    static partial void OnZoomHelperChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement element)
+        {
+            if (e.OldValue is ZoomHelper oldHelper)
+                oldHelper.Detach(element);
+
+            if (e.NewValue is ZoomHelper newHelper)
+                newHelper.Attach(element);
         }
     }
 

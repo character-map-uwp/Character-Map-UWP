@@ -202,6 +202,11 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
         UpdateFontSize(v);
     }
 
+    private void ZoomHelper_ZoomRequested(object sender, double e)
+    {
+        FontSizeSlider.Value += e;
+    }
+
     void SetText(object t, string text)
     {
         if (t is TextBlock tb)

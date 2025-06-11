@@ -1231,6 +1231,9 @@
                     ShowVariationsInToolTips="True"
                     ShowsScrollingPlaceholders="False"
                     Style="{StaticResource CharacterMapStyle}">
+                    <core:Properties.ZoomHelper>
+                        <helpers:ZoomHelper ZoomInRequested="{x:Bind ViewModel.IncreaseCharacterSize}" ZoomOutRequested="{x:Bind ViewModel.DecreaseCharacterSize}" />
+                    </core:Properties.ZoomHelper>
                     <GridView.Header>
                         <StackPanel
                             x:Name="InfoHeader"

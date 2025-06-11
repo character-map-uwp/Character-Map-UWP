@@ -595,7 +595,16 @@
                         </Grid>
                     </StackPanel>
 
-                    <Grid x:Name="FontsRoot" Grid.Row="1">
+                    <Grid
+                        x:Name="FontsRoot"
+                        Grid.Row="1"
+                        Background="Transparent">
+                        <core:Properties.ZoomHelper>
+                            <helpers:ZoomHelper
+                                Mode="Delta"
+                                ScaleFactor="0.033"
+                                ZoomRequested="ZoomHelper_ZoomRequested" />
+                        </core:Properties.ZoomHelper>
                         <Border
                             x:Name="ListingViewRoot"
                             Margin="0 0 -24 0"

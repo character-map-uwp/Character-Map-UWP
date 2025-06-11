@@ -244,6 +244,7 @@
     <Compile Include="Core\ExportManager.Font.cs" />
     <Compile Include="Core\FontImporter.cs" />
     <Compile Include="Core\ThemeIconGlyph.cs" />
+    <Compile Include="Helpers\ZoomHelper.cs" />
     <Compile Include="Models\ExportOptions.cs" />
     <Compile Include="Models\FileNameWriter.cs" />
     <Compile Include="Core\Index.cs" />
