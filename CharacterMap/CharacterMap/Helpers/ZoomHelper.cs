@@ -1,6 +1,9 @@
+using Microsoft.UI.Xaml.Controls;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Helpers;
 
@@ -16,12 +19,15 @@ public enum ZoomTriggerMode
     Delta
 }
 
-[DependencyProperty<double>("Threshold", 60d)]
+[DependencyProperty<double>("Threshold", 60d)] // ScrollWheel threshold for triggering a "ZoomIn/Out" event
 [DependencyProperty<ZoomTriggerMode>("Mode", ZoomTriggerMode.Threshold)]
 [DependencyProperty<double>("ScaleFactor", 1d)] // Scale factor for Delta mode
+[DependencyProperty<bool>("TriggerWhenFocused")]
 public partial class ZoomHelper : DependencyObject, IAttached
 {
-    FrameworkElement _target = null;
+    public const double DefaultSliderScaleFactor = 0.033d;
+
+    public FrameworkElement Target { get; private set; }
 
     public event EventHandler ZoomInRequested;
 
@@ -32,26 +38,28 @@ public partial class ZoomHelper : DependencyObject, IAttached
     public void Attach(FrameworkElement element)
     {
         // 1. Clear existing target
-        if (_target is not null)
-            _target.PointerWheelChanged -= _target_PointerWheelChanged;
+        if (Target is not null)
+            Target.PointerWheelChanged -= _target_PointerWheelChanged;
 
         // 2. Set new target
-        _target = element;
+        Target = element;
 
-        if (_target is null)
+        if (Target is null)
             return;
 
         // 3. Hook events to target
-        _target.PointerWheelChanged -= _target_PointerWheelChanged;
-        _target.PointerWheelChanged += _target_PointerWheelChanged;
+        Target.PointerWheelChanged -= _target_PointerWheelChanged;
+        Target.PointerWheelChanged += _target_PointerWheelChanged;
     }
+
+   
 
     public void Detach(FrameworkElement target)
     {
         if (target is not null)
         {
             target.PointerWheelChanged -= _target_PointerWheelChanged;
-            _target = null;
+            Target = null;
         }
     }
 
@@ -61,7 +69,8 @@ public partial class ZoomHelper : DependencyObject, IAttached
         var ctrlState = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
         bool isCtrlPressed = (ctrlState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down;
 
-        if (isCtrlPressed)
+        if (isCtrlPressed 
+            || (TriggerWhenFocused && Target is Control c && c.ContainsFocus()))
         {
             // Get the delta of the scroll wheel
             var pointerPoint = e.GetCurrentPoint(sender as FrameworkElement);

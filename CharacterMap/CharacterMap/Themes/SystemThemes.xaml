@@ -4,6 +4,7 @@
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:converters="using:CharacterMap.Converters"
     xmlns:core="using:CharacterMap.Core"
+    xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)">
@@ -120,7 +121,7 @@
         <Setter Property="core:Properties.PointerOverAnimation" Value="Root" />
     </Style>
 
-
+    <Style x:Key="ControlSurfaceBorderStyle" TargetType="Border" />
 
     <Style x:Key="DefaultThemeGridViewItemStyle" TargetType="GridViewItem">
         <Setter Property="Background" Value="Transparent" />
@@ -819,6 +820,7 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="controls:SelectorVisualElement.ElementTemplate" Value="{StaticResource RadioSelectorTemplate}" />
+        <Setter Property="core:Properties.UseZoomHelper" Value="True" />
         <Setter Property="Tag">
             <Setter.Value>
                 <x:Double>8</x:Double>

@@ -1,5 +1,7 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using SQLite;
+using System.Collections;
+using System.Diagnostics.Contracts;
 using System.IO.Compression;
 using Windows.System;
 using Windows.UI.Core;
@@ -167,5 +169,13 @@ public static class Extensions
             return source.Remove(idx);
 
         return source;
+    }
+
+    public static int ItemsCount(this RadioButtons b)
+    {
+        if (b.ItemsSource is IList l)
+            return l.Count;
+
+        return b.Items.Count;
     }
 }

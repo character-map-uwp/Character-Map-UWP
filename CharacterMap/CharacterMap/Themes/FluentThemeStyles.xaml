@@ -90,19 +90,22 @@
 
     <!--  MISC CONTROLS  -->
 
+    <Style x:Key="RadioSelectorElementStyle" TargetType="controls:SelectorVisualElement">
+        <Setter Property="BarCornerRadius" Value="2,2" />
+        <Setter Property="BarFill" Value="{ThemeResource AccentFillColorTertiaryBrush}" />
+        <Setter Property="BarPadding" Value="3" />
+        <Setter Property="BarSize" Value="24,3" />
+        <Setter Property="Fill" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+        <Setter Property="OffsetTransition" Value="{StaticResource DefaultSelectorTransition}" />
+        <Setter Property="SizeTransition" Value="{StaticResource DefaultSelectorTransition}" />
+        <Setter Property="Stroke" Value="{ThemeResource CardStrokeColorDefaultSolidBrush}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="VisualCornerRadius" Value="4,4" />
+        <Setter Property="VisualInset" Value="0,0,3,3" />
+    </Style>
+
     <DataTemplate x:Key="RadioSelectorTemplate">
-        <controls:SelectorVisualElement
-            BarCornerRadius="2 2"
-            BarFill="{ThemeResource AccentFillColorTertiaryBrush}"
-            BarPadding="3"
-            BarSize="24, 3"
-            Fill="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-            OffsetTransition="{StaticResource DefaultSelectorTransition}"
-            SizeTransition="{StaticResource DefaultSelectorTransition}"
-            Stroke="{ThemeResource CardStrokeColorDefaultSolidBrush}"
-            StrokeThickness="1"
-            VisualCornerRadius="4 4"
-            VisualInset="0 0 3 3" />
+        <controls:SelectorVisualElement Style="{StaticResource RadioSelectorElementStyle}" />
     </DataTemplate>
 
     <DataTemplate x:Name="PointerSelectorVisualTemplate">
@@ -1317,6 +1320,15 @@
 
     <Style x:Key="RadioButtonsButtonStyle" BasedOn="{StaticResource RadioButtonsButtonStyle}" TargetType="RadioButton">
         <Setter Property="core:Properties.Color" Value="{ThemeResource TextFillColorPrimary}" />
+    </Style>
+
+    <Style x:Key="ControlSurfaceBorderStyle" TargetType="Border">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="Background" Value="{ThemeResource DefaultHostBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+        <Setter Property="Transitions" Value="{StaticResource RepositionTransitions}" />
     </Style>
 
 
@@ -2806,6 +2818,7 @@
 
     <Style x:Key="DefaultThemeSliderStyle" BasedOn="{StaticResource DefaultSliderStyle}" TargetType="Slider">
         <Setter Property="h:FluentAnimation.PointerOver" Value="HorizontalThumb" />
+        <Setter Property="core:Properties.UseZoomHelper" Value="True" />
     </Style>
 
 

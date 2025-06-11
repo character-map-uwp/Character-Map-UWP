@@ -523,7 +523,7 @@
                         <Grid x:Name="SecondRow">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="12" />
                                 <ColumnDefinition Width="20" />
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="30" />
@@ -533,32 +533,34 @@
                                 x:Name="RadioButtons"
                                 Margin="-8 -2 0 0"
                                 MaxColumns="2"
-                                SelectedIndex="0">
-                                <controls:SelectorVisualElement.Element>
-                                    <controls:SelectorVisualElement
-                                        Fill="{ThemeResource SelectorHighlightBrush}"
-                                        OffsetTransition="{StaticResource DefaultSelectorTransition}"
-                                        SizeTransition="{StaticResource DefaultSelectorTransition}"
-                                        VisualCornerRadius="4 4"
-                                        VisualInset="0 0 2 2" />
-                                </controls:SelectorVisualElement.Element>
+                                SelectedIndex="0"
+                                SelectionChanged="RadioButtons_SelectionChanged">
+                                <controls:SelectorVisualElement.ElementTemplate>
+                                    <DataTemplate>
+                                        <controls:SelectorVisualElement BarSize="12 3" Style="{StaticResource RadioSelectorElementStyle}" />
+                                    </DataTemplate>
+                                </controls:SelectorVisualElement.ElementTemplate>
                                 <RadioButton
                                     x:Uid="LayoutGridToggle"
                                     core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
-                                    Click="GridView_Click"
                                     IsChecked="True">
                                     <FontIcon core:Properties.ThemeIcon="GridView" />
                                 </RadioButton>
-                                <RadioButton
-                                    x:Uid="LayoutListToggle"
-                                    core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
-                                    Click="ListView_Click">
+                                <RadioButton x:Uid="LayoutListToggle" core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle">
                                     <FontIcon core:Properties.ThemeIcon="ListView" />
                                 </RadioButton>
                             </muxc:RadioButtons>
 
+                            <Border
+                                x:Name="SliderBorder"
+                                Grid.Column="2"
+                                Grid.ColumnSpan="3"
+                                HorizontalAlignment="Stretch"
+                                Style="{StaticResource ControlSurfaceBorderStyle}" />
+
                             <TextBlock
                                 Grid.Column="2"
+                                Margin="8 0 0 0"
                                 VerticalAlignment="Center"
                                 IsTextScaleFactorEnabled="False"
                                 Text="A">
@@ -570,13 +572,14 @@
                             <Slider
                                 x:Name="FontSizeSlider"
                                 Grid.Column="3"
-                                Margin="0 0 4 0"
+                                Margin="8,2,4,0"
                                 CornerRadius="0"
                                 Maximum="64"
                                 Minimum="10"
                                 Style="{StaticResource DefaultThemeSliderStyle}"
                                 ValueChanged="FontSizeSlider_ValueChanged"
                                 Value="40" />
+
 
                             <TextBlock
                                 Grid.Column="4"
@@ -757,14 +760,10 @@
                                     </muxc:ItemsRepeater.ItemTemplate>
                                 </muxc:ItemsRepeater>
                             </ScrollViewer>
-
-
-
                         </Grid>
                     </Grid>
                 </Grid>
             </Grid>
-
         </controls:ModalPagePresenter>
 
         <!--  Notification Presenter  -->
@@ -949,8 +948,9 @@
                 <VisualState x:Name="DefaultThemeState" />
                 <VisualState x:Name="FUIThemeState">
                     <VisualState.Setters>
-                        <Setter Target="RadioButtons.Margin" Value="-2 -2 0 0" />
+                        <Setter Target="SliderBorder.Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
                         <Setter Target="RadioButtons.Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                        <Setter Target="RadioButtons.Margin" Value="-2 -2 0 0" />
                         <Setter Target="Presenter.Background" Value="{ThemeResource DefaultWindowBackgroundBrush}" />
                         <Setter Target="Presenter.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
                     </VisualState.Setters>

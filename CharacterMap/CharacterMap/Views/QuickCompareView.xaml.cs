@@ -340,14 +340,15 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
         ViewModel.SelectedFont = null;
     }
 
-    private void GridView_Click(object sender, RoutedEventArgs e)
+    private void RadioButtons_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        GoToState(GridLayoutState.Name);
-    }
-
-    private void ListView_Click(object sender, RoutedEventArgs e)
-    {
-        GoToState(StackLayoutState.Name);
+        if (sender is RadioButtons b)
+        {
+            if (b.SelectedIndex == 0)
+                GoToState(GridLayoutState.Name);
+            else if (b.SelectedIndex == 1)
+                GoToState(StackLayoutState.Name);
+        }
     }
 
     private void ViewStates_CurrentStateChanging(object sender, VisualStateChangedEventArgs e)

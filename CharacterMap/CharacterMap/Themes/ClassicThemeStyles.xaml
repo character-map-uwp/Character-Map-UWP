@@ -180,6 +180,8 @@
 
     <!--  MISC TEMPLATES  -->
 
+    <Style x:Key="ControlSurfaceBorderStyle" TargetType="Border" />
+
     <DataTemplate x:Key="DefaultControlHeaderTemplate">
         <ContentPresenter
             Margin="0 12 0 0"

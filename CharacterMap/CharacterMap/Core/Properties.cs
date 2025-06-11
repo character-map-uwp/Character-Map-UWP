@@ -94,6 +94,7 @@ public enum MaterialCornerStyle
 [AttachedProperty<ThemeIcon>]
 [AttachedProperty<Color>]
 [AttachedProperty<ZoomHelper>]
+[AttachedProperty<bool>("UseZoomHelper")]
 public partial class Properties : DependencyObject
 {
     #region FILTER 
@@ -1662,6 +1663,74 @@ public partial class Properties : DependencyObject
 
             if (e.NewValue is ZoomHelper newHelper)
                 newHelper.Attach(element);
+        }
+    }
+
+    #endregion
+
+    #region UseZoomHelper
+
+    static partial void OnUseZoomHelperChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement element && e.NewValue is bool b)
+        {
+            if (b)
+            {
+                ZoomHelper helper = new() { TriggerWhenFocused = true };
+                SetZoomHelper(element, helper);
+
+                if (element is RadioButtons)
+                {
+                    helper.ZoomInRequested += ZoomIn;
+                    helper.ZoomOutRequested += ZoomOut;
+                }
+
+                if (element is Slider)
+                {
+                    helper.Mode = ZoomTriggerMode.Delta;
+                    helper.ZoomRequested += Zoom;
+                }
+            }
+            else
+            {
+                if (GetZoomHelper(element) is ZoomHelper old)
+                {
+                    old.ZoomInRequested -= ZoomIn;
+                    old.ZoomOutRequested -= ZoomOut;
+                    old.ZoomRequested -= Zoom;
+                }
+
+                SetZoomHelper(element, null);
+            }
+
+            static void ZoomIn(object sender, EventArgs e)
+            {
+                if (sender is not ZoomHelper z)
+                    return;
+
+                if (z.Target is RadioButtons r
+                    && r.SelectedIndex < r.ItemsCount() - 1)
+                    r.SelectedIndex++;
+
+            }
+            static void ZoomOut(object sender, EventArgs e)
+            {
+                if (sender is not ZoomHelper z)
+                    return;
+
+                if (z.Target is RadioButtons r
+                    && r.SelectedIndex > 0)
+                    r.SelectedIndex--;
+            }
+
+            static void Zoom(object sender, double e)
+            {
+                if (sender is not ZoomHelper z)
+                    return;
+
+                if (z.Target is Slider s)
+                    s.Value += e > 0 ? s.LargeChange : -s.LargeChange;
+            }
         }
     }
 

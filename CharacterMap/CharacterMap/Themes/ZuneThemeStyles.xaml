@@ -277,6 +277,8 @@
 
     <!--  DEFAULT TEMPLATES  -->
 
+    <Style x:Key="ControlSurfaceBorderStyle" TargetType="Border" />
+
     <Style TargetType="controls:PreviewTip">
         <Setter Property="Foreground" Value="{StaticResource ControlForegroundBrush}" />
         <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}" />
