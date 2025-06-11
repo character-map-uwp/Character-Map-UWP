@@ -25,6 +25,8 @@ public class QuickCompareArgs
 
 public partial class QuickCompareViewModel : ViewModelBase
 {
+    public const string MultiToken = $"{nameof(QuickCompareViewModel)}Multi";
+
     public static WindowInformation QuickCompareWindow { get; set; }
 
     protected override bool TrackAnimation => true;
@@ -101,14 +103,25 @@ public partial class QuickCompareViewModel : ViewModelBase
             {
                 // This is the universal quick-compare window
                 QuickFonts = new();
+
                 Register<CharacterRenderingOptions>(m =>
                 {
                     // Only add the font variant if it's not already in the list.
-                    // Once we start accepting custom typography this comparison
-                    // will have to change.
                     if (!QuickFonts.Any(q => m.IsCompareMatch(q)))
                         QuickFonts.Add(m);
                 }, nameof(QuickCompareViewModel));
+
+                Register<CharacterRenderingOptions>(m =>
+                {
+                    // Only add the font variant if it's not already in the list.
+                    foreach (var f in m.Family.Variants)
+                    {
+                        var ops = m with { Variant = f };
+                        if (!QuickFonts.Any(q => ops.IsCompareMatch(q)))
+                            QuickFonts.Add(ops);
+                    }
+                    
+                }, MultiToken);
             }
             else
             {

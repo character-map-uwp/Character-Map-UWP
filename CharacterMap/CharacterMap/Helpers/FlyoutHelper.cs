@@ -157,6 +157,15 @@ public static class FlyoutHelper
             }
         }
 
+        static void AddToQuickCompareMulti(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement f
+                && Properties.GetTag(f) is CharacterRenderingOptions o)
+            {
+                _ = QuickCompareView.AddAsync(o, true);
+            }
+        }
+
         void OpenCalligraphy(object sender, RoutedEventArgs e)
         {
             if (sender is FrameworkElement f
@@ -208,7 +217,10 @@ public static class FlyoutHelper
         {
             menu.Items.Clear();
             MenuFlyoutSubItem coll;
+
+            bool qc = args.IsFolderView is false && isExternalFile is false;
             {
+
                 // HORRIBLE Hacks, because MenuFlyoutSubItem never updates it's UI tree after the first
                 // render meaning we can't dynamically update items. Instead we need to make an entirely
                 // menu every time it opens.
@@ -245,7 +257,11 @@ public static class FlyoutHelper
                         Create("ExportCharactersLabel/Text", ThemeIcon.Save, Export_Click, VirtualKey.E);
                 }
 
-                // 3. Add "Add to Collection" button
+                // 3. Add "Add to quick compare" button if we're viewing a variant
+                if (qc)
+                    Create("AddToQuickCompare/Text", ThemeIcon.AddTo, AddToQuickCompare, VirtualKey.Q);
+
+                // 4. Add "Add to Collection" button
                 if (isExternalFile is false && args.IsFolderView is false)
                 {
                     coll = AddCollectionItems(menu, font, null, args: args);
@@ -253,7 +269,7 @@ public static class FlyoutHelper
                 }
             }
 
-            // 4. Add "Remove from Collection" item
+            // 5. Add "Remove from Collection" item
             // Only show the "Remove from Collection" menu item if:
             //  -- we are not in a stand-alone window
             //  AND
@@ -267,7 +283,7 @@ public static class FlyoutHelper
                 TryAddRemoveFromCollection(menu, font, main.SelectedCollection, main.FontListFilter);
             }
 
-            // 5. Add "Print" Button
+            // 6. Add "Print" Button
             if (showAdvanced && args.IsTabContext is false)
             {
                 if (Windows.Graphics.Printing.PrintManager.IsSupported())
@@ -277,7 +293,7 @@ public static class FlyoutHelper
                 }
             }
 
-            // 6. Add "Delete Font" button
+            // 7. Add "Delete Font" button
             if (!standalone
                 && !args.IsFolderView
                 && !args.IsTabContext
@@ -289,20 +305,20 @@ public static class FlyoutHelper
                     del.AddKeyboardAccelerator(VirtualKey.Delete, VirtualKeyModifiers.Control);
             }
 
-            // 7. Handle compare options
-            bool qc = args.IsFolderView is false && showAdvanced && isExternalFile is false;
-            if (qc || font.HasVariants)
+            // 8. Handle compare options
+            if (font.HasVariants)
                 menu.AddSeparator();
 
-            // 7.1. Add "Compare Fonts button"
             if (font.HasVariants)
+            {
+                // 8.1. Add "Compare Fonts button"
                 Create($"~{string.Format(Localization.Get("CompareFacesCountLabel/Text"), font.Variants.Count)}", ThemeIcon.CompareFonts, OpenFaceCompare);
+                
+                // 8.2. Add "Add all to quick compare" button
+                Create($"~{string.Format(Localization.Get("AddMultiToQuickCompare/Text"), font.Variants.Count)}", ThemeIcon.Add, AddToQuickCompareMulti);
+            }
 
-            // 7.2. Add "Add to quick compare" button if we're viewing a variant
-            if (qc)
-                Create("AddToQuickCompare/Text", ThemeIcon.Add, AddToQuickCompare, VirtualKey.Q);
-
-            // 8. Add Calligraphy button
+            // 9. Add Calligraphy button
             menu.AddSeparator();
             Create("CalligraphyLabel/Text", ThemeIcon.Calligraphy, OpenCalligraphy, VirtualKey.I);
         }

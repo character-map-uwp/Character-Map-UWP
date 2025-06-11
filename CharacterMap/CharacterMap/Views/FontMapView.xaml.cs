@@ -731,7 +731,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             FlyoutHelper.CreateMenu(
                 MoreMenu,
                 item.Font,
-                ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy() },
+                ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy(), Family = ViewModel.SelectedFont.Font },
                 this.Tag as FrameworkElement,
                 new()
                 {

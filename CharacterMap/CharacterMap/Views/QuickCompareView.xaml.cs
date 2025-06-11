@@ -499,7 +499,7 @@ public partial class QuickCompareView
         return view;
     }
 
-    public static async Task AddAsync(CharacterRenderingOptions options)
+    public static async Task AddAsync(CharacterRenderingOptions options, bool wholeFamily = false)
     {
         // 1. Ensure QuickCompare Window exists
         var window = await CreateWindowAsync(new(true));
@@ -507,7 +507,10 @@ public partial class QuickCompareView
         // 2. Add selected font to QuickCompare
         await QuickCompareViewModel.QuickCompareWindow.CoreView.Dispatcher.ExecuteAsync(() =>
         {
-            WeakReferenceMessenger.Default.Send(options, nameof(QuickCompareViewModel));
+            WeakReferenceMessenger.Default.Send(options, 
+                wholeFamily 
+                    ? QuickCompareViewModel.MultiToken
+                    : nameof(QuickCompareViewModel));
         });
 
         // 3. Try switch to view.

@@ -9,8 +9,11 @@ namespace CharacterMap.Models
 {
     public record CharacterRenderingOptions
     {
+
+        private static DWriteAxisComparer _axisComparer { get; } = new();
+
         public CMFontFamily Family { get; init; }
-        public CMFontFace Variant { get; }
+        public CMFontFace Variant { get; init; }
         public float FontSize { get; init; }
         public CanvasTextLayoutAnalysis Analysis { get; init; }
         public IReadOnlyList<TypographyFeatureInfo> Typography { get; init; }
@@ -105,9 +108,51 @@ namespace CharacterMap.Models
             return object.ReferenceEquals(this, o) ||
                 (o.Variant == this.Variant
                     && o.DefaultTypography == this.DefaultTypography
-                    && o.Axis == this.Axis);
+                    && AreSameAxis());
 
-            // && o.IsColourFontEnabled == this.IsColourFontEnabled);
+            bool AreSameAxis()
+            {
+                if (o.Axis.Count == 0 && this.Axis.Count == 0)
+                    return true;
+
+                if (o.Axis.Count != this.Axis.Count)
+                    return false;
+
+                bool same = true;
+                for (int i = 0; i < o.Axis.Count; i++)
+                {
+                    var a = o.Axis[i];
+                    var b = this.Axis[i];
+
+                    //if (a != b)
+                    if (_axisComparer.Equals(a, b) is false)
+                    {
+                        same = false;
+                        break;
+                    }
+                }
+
+                // TODO: this is borked
+                return same;
+            }
         }
+    }
+}
+
+public class DWriteAxisComparer : IEqualityComparer<DWriteFontAxis>
+{
+    public bool Equals(DWriteFontAxis x, DWriteFontAxis y)
+    {
+        return x.Tag == y.Tag &&
+               x.Value == y.Value;
+    }
+
+    public int GetHashCode(DWriteFontAxis obj)
+    {
+        int hash = 269;
+        hash = (hash * 47) + obj.Tag.GetHashCode();
+        hash = (hash * 47) + obj.Value.GetHashCode();
+        hash = (hash * 47) + obj.Label.GetHashCode();
+        return hash;
     }
 }
