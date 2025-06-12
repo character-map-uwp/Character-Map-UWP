@@ -49,6 +49,7 @@ public enum MaterialCornerStyle
 [AttachedProperty<IconElement>("Icon")]
 [AttachedProperty<DevOption>]
 [AttachedProperty<FlyoutBase>("TargetContextFlyout")]
+[AttachedProperty<bool>("SetContextFlyoutContext")]
 [AttachedProperty<TransitionCollection>("ItemContainerTransitions")]
 [AttachedProperty<TransitionCollection>("ChildrenTransitions")]
 [AttachedProperty<bool>("UseAttachedStates")] // Allows an element to run Storyboards from it's own resources on VisualState events
@@ -398,6 +399,9 @@ public partial class Properties : DependencyObject
         {
             if (GetTargetContextFlyout(sender) is FlyoutBase f)
             {
+                if (GetSetContextFlyoutContext(sender) && f is MenuFlyout menu)
+                    menu.SetItemsDataContext(((FrameworkElement)sender).DataContext);
+                
                 args.TryGetPosition(sender, out Windows.Foundation.Point p);
                 f.ShowAt(sender, new() { Position = p });
             }

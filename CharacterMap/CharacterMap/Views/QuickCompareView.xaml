@@ -133,6 +133,22 @@
                 Icon="NewWindow"
                 Style="{StaticResource ThemeMenuFlyoutItemStyle}"
                 d:Text="{core:Localizer Key=OpenInNewWindow/Text}" />
+            <MenuFlyoutItem
+                x:Uid="AddMultiToQuickCompare"
+                core:Properties.ThemeIcon="Add"
+                Click="AddFamilyToQC_Click"
+                Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
+        </MenuFlyout>
+
+        <MenuFlyout
+            x:Name="FaceContextFlyout"
+            AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
+            MenuFlyoutPresenterStyle="{StaticResource FontListFlyoutStyle}">
+            <MenuFlyoutItem
+                x:Uid="AddToQuickCompare"
+                core:Properties.ThemeIcon="AddTo"
+                Click="AddToQC_Click"
+                Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
         </MenuFlyout>
 
         <MenuFlyout
@@ -717,45 +733,51 @@
                                     VerticalCacheLength="0.5">
                                     <muxc:ItemsRepeater.ItemTemplate>
                                         <DataTemplate x:DataType="core:CMFontFace">
-                                            <Button
-                                                Margin="0"
-                                                IsHitTestVisible="False"
-                                                Style="{StaticResource QuickCompareContainerStyle}">
-                                                <controls:ContentGroup Style="{StaticResource CompareCardStyle}">
-                                                    <controls:ContentGroup.Text>
-                                                        <TextBlock
-                                                            FontSize="{StaticResource ControlContentThemeFontSize}"
-                                                            Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                                            Text="{x:Bind PreferredName}" />
-                                                    </controls:ContentGroup.Text>
-                                                    <controls:ContentGroup.SecondaryContent>
-                                                        <Grid>
+                                            <Border
+                                                core:Properties.SetContextFlyoutContext="True"
+                                                core:Properties.TargetContextFlyout="{StaticResource FaceContextFlyout}"
+                                                Background="Transparent"
+                                                DataContext="{x:Bind}">
+                                                <Button
+                                                    Margin="0"
+                                                    IsHitTestVisible="False"
+                                                    Style="{StaticResource QuickCompareContainerStyle}">
+                                                    <controls:ContentGroup Style="{StaticResource CompareCardStyle}">
+                                                        <controls:ContentGroup.Text>
                                                             <TextBlock
-                                                                x:Name="XAMLRender"
-                                                                sdk17_x:Load="{x:Bind core:Converters.False(SupportsCOLRv1Rendering), FallbackValue=False}"
-                                                                FontFamily="{x:Bind DisplaySource}"
-                                                                FontStretch="{x:Bind DirectWriteProperties.Stretch}"
-                                                                FontStyle="{x:Bind DirectWriteProperties.Style}"
-                                                                FontWeight="{x:Bind DirectWriteProperties.Weight}"
-                                                                IsColorFontEnabled="True"
-                                                                TextTrimming="CharacterEllipsis"
-                                                                TextWrapping="Wrap" />
-                                                            <sdk17_cx:DirectText
-                                                                x:Name="DWriteRender"
-                                                                x:Load="{x:Bind SupportsCOLRv1Rendering, FallbackValue=False}"
-                                                                FallbackFont="{x:Bind core:FontFinder.Fallback}"
-                                                                FontFace="{x:Bind Face}"
-                                                                FontFamily="{Binding Source}"
-                                                                FontStretch="{x:Bind DirectWriteProperties.Stretch}"
-                                                                FontStyle="{x:Bind DirectWriteProperties.Style}"
-                                                                FontWeight="{x:Bind DirectWriteProperties.Weight}"
-                                                                IsColorFontEnabled="True"
-                                                                IsTextWrappingEnabled="True"
-                                                                Typography="{x:Bind core:TypographyFeatureInfo.None}" />
-                                                        </Grid>
-                                                    </controls:ContentGroup.SecondaryContent>
-                                                </controls:ContentGroup>
-                                            </Button>
+                                                                FontSize="{StaticResource ControlContentThemeFontSize}"
+                                                                Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                                Text="{x:Bind PreferredName}" />
+                                                        </controls:ContentGroup.Text>
+                                                        <controls:ContentGroup.SecondaryContent>
+                                                            <Grid>
+                                                                <TextBlock
+                                                                    x:Name="XAMLRender"
+                                                                    sdk17_x:Load="{x:Bind core:Converters.False(SupportsCOLRv1Rendering), FallbackValue=False}"
+                                                                    FontFamily="{x:Bind DisplaySource}"
+                                                                    FontStretch="{x:Bind DirectWriteProperties.Stretch}"
+                                                                    FontStyle="{x:Bind DirectWriteProperties.Style}"
+                                                                    FontWeight="{x:Bind DirectWriteProperties.Weight}"
+                                                                    IsColorFontEnabled="True"
+                                                                    TextTrimming="CharacterEllipsis"
+                                                                    TextWrapping="Wrap" />
+                                                                <sdk17_cx:DirectText
+                                                                    x:Name="DWriteRender"
+                                                                    x:Load="{x:Bind SupportsCOLRv1Rendering, FallbackValue=False}"
+                                                                    FallbackFont="{x:Bind core:FontFinder.Fallback}"
+                                                                    FontFace="{x:Bind Face}"
+                                                                    FontFamily="{Binding Source}"
+                                                                    FontStretch="{x:Bind DirectWriteProperties.Stretch}"
+                                                                    FontStyle="{x:Bind DirectWriteProperties.Style}"
+                                                                    FontWeight="{x:Bind DirectWriteProperties.Weight}"
+                                                                    IsColorFontEnabled="True"
+                                                                    IsTextWrappingEnabled="True"
+                                                                    Typography="{x:Bind core:TypographyFeatureInfo.None}" />
+                                                            </Grid>
+                                                        </controls:ContentGroup.SecondaryContent>
+                                                    </controls:ContentGroup>
+                                                </Button>
+                                            </Border>
                                         </DataTemplate>
                                     </muxc:ItemsRepeater.ItemTemplate>
                                 </muxc:ItemsRepeater>

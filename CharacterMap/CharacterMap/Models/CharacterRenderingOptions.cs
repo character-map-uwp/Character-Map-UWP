@@ -11,6 +11,7 @@ namespace CharacterMap.Models
     {
 
         private static DWriteAxisComparer _axisComparer { get; } = new();
+        private static IReadOnlyList<DWriteFontAxis> _emptyAxis { get; } = new List<DWriteFontAxis>();
 
         public CMFontFamily Family { get; init; }
         public CMFontFace Variant { get; init; }
@@ -45,7 +46,7 @@ namespace CharacterMap.Models
                 new() { TypographyFeatureInfo.None },
                 64,
                 null,
-                null)
+                _emptyAxis)
             {
                 Family = fam
             };
@@ -63,7 +64,7 @@ namespace CharacterMap.Models
             DefaultTypography = typography?.Where(t => t.Feature != CanvasTypographyFeatureName.None).FirstOrDefault();
             DXTypography = typography.FirstOrDefault();
 
-            Axis = axis?.Copy();
+            Axis = axis?.Copy() ?? _emptyAxis;
 
             //IsVariation = Axis != null && Axis.Where(a => a.Value != a.DefaultValue).ToList() is List<DWriteFontAxis> a && a.Count > 0;
             RequiresNativeRender = Variant.DirectWriteProperties.HasVariations || Variant.SupportsCOLRv1Rendering;
@@ -112,7 +113,8 @@ namespace CharacterMap.Models
 
             bool AreSameAxis()
             {
-                if (o.Axis.Count == 0 && this.Axis.Count == 0)
+                if ((o.Axis == this.Axis)
+                    || (o.Axis.Count == 0 && this.Axis.Count == 0))
                     return true;
 
                 if (o.Axis.Count != this.Axis.Count)

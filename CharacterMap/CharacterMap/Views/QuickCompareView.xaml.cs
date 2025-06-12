@@ -295,7 +295,7 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
         else if (sender is Button bu && bu.Content is CMFontFamily font)
         {
             // 1. Clear the context menu
-            while (MainContextFlyout.Items.Count > 1)
+            while (MainContextFlyout.Items.Count > 2)
                 MainContextFlyout.Items.Remove(MainContextFlyout.Items[^1]);
 
             // 2. Rebuild with the correct collection information
@@ -325,6 +325,41 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
             else if (item.DataContext is CMFontFamily f)
             {
                 _ = FontMapView.CreateNewViewForFontAsync(f);
+            }
+        }
+    }
+
+
+    private void AddFamilyToQC_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem item)
+        {
+            if (item.DataContext is CharacterRenderingOptions o
+                && FontFinder.Fonts.FirstOrDefault(f => f.Variants.Contains(o.Variant)) is CMFontFamily font)
+            {
+                _ = QuickCompareView.AddAsync(o, true);
+            }
+            else if (item.DataContext is CMFontFamily f)
+            {
+                _ = QuickCompareView.AddAsync(
+                        CharacterRenderingOptions.CreateDefault(f), true);
+            }
+        }
+    }
+
+    private void AddToQC_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem item)
+        {
+            if (item.DataContext is CharacterRenderingOptions o
+                && FontFinder.Fonts.FirstOrDefault(f => f.Variants.Contains(o.Variant)) is CMFontFamily font)
+            {
+                _ = QuickCompareView.AddAsync(o);
+            }
+            else if (item.DataContext is CMFontFace face)
+            {
+                _ = QuickCompareView.AddAsync(
+                        CharacterRenderingOptions.CreateDefault(face, ViewModel.SelectedFont));
             }
         }
     }

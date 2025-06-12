@@ -37,6 +37,9 @@ public partial class ZoomHelper : DependencyObject, IAttached
 
     public void Attach(FrameworkElement element)
     {
+        /* Note: At some point this will be extended to 
+         * support Pinch-to-zoom gestures on trackpads */
+
         // 1. Clear existing target
         if (Target is not null)
             Target.PointerWheelChanged -= _target_PointerWheelChanged;

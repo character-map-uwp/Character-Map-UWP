@@ -1026,7 +1026,7 @@ Default variant copied.</value>
     <value>Add to quick compare</value>
   </data>
 	<data name="AddMultiToQuickCompare.Text" xml:space="preserve">
-    <value>Add {0} faces to quick compare</value>
+    <value>Add family to quick compare</value>
   </data>
   <data name="CompareFontsButton.Text" xml:space="preserve">
     <value>Compare all Fonts</value>
