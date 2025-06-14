@@ -312,10 +312,11 @@ public static class FlyoutHelper
             if (font.HasVariants)
             {
                 // 8.1. Add "Compare Fonts button"
+                // NOTE: count is not used on updated translation, left because old translations may still use it
                 Create($"~{string.Format(Localization.Get("CompareFacesCountLabel/Text"), font.Variants.Count)}", ThemeIcon.CompareFonts, OpenFaceCompare);
                 
                 // 8.2. Add "Add all to quick compare" button
-                Create($"~{string.Format(Localization.Get("AddMultiToQuickCompare/Text"), font.Variants.Count)}", ThemeIcon.Add, AddToQuickCompareMulti);
+                Create("AddMultiToQuickCompare/Text", ThemeIcon.Add, AddToQuickCompareMulti);
             }
 
             // 9. Add Calligraphy button

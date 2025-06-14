@@ -832,7 +832,7 @@
                     <Grid
                         x:Name="ControlRoot"
                         Background="{TemplateBinding Background}"
-                        BackgroundTransition="{StaticResource QuickBackgroundTransition}"
+                        BackgroundTransition="{StaticResource QuickBrushTransition}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}">

@@ -527,6 +527,7 @@
             <Setter.Value>
                 <Style TargetType="ContentPresenter">
                     <Setter Property="BorderThickness" Value="0 0 0 1" />
+                    <Setter Property="core:Properties.BackgroundTransition" Value="{StaticResource QuickBrushTransition}" />
                     <Setter Property="Background" Value="{ThemeResource LayerFillColorDefaultBrush}" />
                     <Setter Property="Padding" Value="16 8 16 8" />
                     <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
@@ -1324,6 +1325,7 @@
 
     <Style x:Key="ControlSurfaceBorderStyle" TargetType="Border">
         <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="core:Properties.BackgroundTransition" Value="{StaticResource QuickBrushTransition}" />
         <Setter Property="Background" Value="{ThemeResource DefaultHostBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
         <Setter Property="BorderThickness" Value="1" />
@@ -1717,7 +1719,7 @@
                             <VisualStateGroup x:Name="ActiveStates">
                                 <VisualState x:Name="IsActive">
                                     <VisualState.Setters>
-                                        <Setter Target="FluentContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}" />
+                                        <Setter Target="FluentContentPresenter.Foreground" Value="White" />
                                         <Setter Target="Root.Background" Value="{ThemeResource SystemControlForegroundAccentBrush}" />
                                     </VisualState.Setters>
                                 </VisualState>
@@ -1774,7 +1776,7 @@
                                 VerticalAlignment="Center"
                                 h:CompositionFactory.OpacityDuration="0:0:0.1"
                                 AutomationProperties.AccessibilityView="Raw"
-                                Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                Foreground="{Binding ElementName=FluentContentPresenter, Path=Foreground}"
                                 IsHitTestVisible="False"
                                 Visibility="Collapsed">
                                 <av:AnimatedChevronDownSmallVisualSource />
@@ -1782,7 +1784,7 @@
                                     <muxc:FontIconSource
                                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                         FontSize="12"
-                                        Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
+                                        Foreground="{Binding ElementName=FluentContentPresenter, Path=Foreground}"
                                         Glyph="&#xE70D;" />
                                 </muxc:AnimatedIcon.FallbackIconSource>
                             </muxc:AnimatedIcon>

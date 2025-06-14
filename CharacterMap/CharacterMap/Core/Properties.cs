@@ -96,6 +96,7 @@ public enum MaterialCornerStyle
 [AttachedProperty<Color>]
 [AttachedProperty<ZoomHelper>]
 [AttachedProperty<bool>("UseZoomHelper")]
+[AttachedProperty<BrushTransition>("BackgroundTransition")]
 public partial class Properties : DependencyObject
 {
     #region FILTER 
@@ -1737,6 +1738,21 @@ public partial class Properties : DependencyObject
             }
         }
     }
+
+    #endregion
+
+    #region BackgroundTransition
+
+    static partial void OnBackgroundTransitionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is Border b)
+            b.BackgroundTransition = e.NewValue as BrushTransition;
+        else if (d is ContentPresenter cp)
+            cp.BackgroundTransition = e.NewValue as BrushTransition;
+        else if (d is Panel p)
+            p.BackgroundTransition = e.NewValue as BrushTransition;
+    }
+
 
     #endregion
 }
