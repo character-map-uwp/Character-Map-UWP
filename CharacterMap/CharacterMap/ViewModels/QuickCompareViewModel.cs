@@ -81,6 +81,8 @@ public partial class QuickCompareViewModel : ViewModelBase
 
     public bool IsQuickCompare { get; }
 
+    public bool IsQuickCompareView { get; }
+
     public bool IsFolderMode { get; }
 
     FolderContents _folder = null;
@@ -92,6 +94,7 @@ public partial class QuickCompareViewModel : ViewModelBase
         //      two different things. We can have many windows with IsQuickCompare
         //      behaviour, but only one can act as the main QuickCompare singleton.
 
+        IsQuickCompareView = args.IsQuickCompare;
         IsQuickCompare = args.IsQuickCompare || (args.Folder?.UseQuickCompare is bool b && b);
 
         if (DesignMode.DesignModeEnabled)
@@ -161,7 +164,7 @@ public partial class QuickCompareViewModel : ViewModelBase
 
     public void Deactivated()
     {
-        if (IsQuickCompare)
+        if (IsQuickCompareView)
             QuickCompareWindow = null;
 
         Messenger.UnregisterAll(this);
