@@ -178,4 +178,23 @@ public static class Extensions
 
         return b.Items.Count;
     }
+
+    /// <summary>
+    /// Calculates the intersection region of two rectangles
+    /// </summary>
+    /// <param name="rect1">The first rectangle</param>
+    /// <param name="rect2">The second rectangle</param>
+    /// <returns>A rectangle representing the intersection region, or an empty rectangle if there is no intersection</returns>
+    public static Rect GetIntersection(this Rect rect1, Rect rect2)
+    {
+        double left = Math.Max(rect1.X, rect2.X);
+        double top = Math.Max(rect1.Y, rect2.Y);
+        double right = Math.Min(rect1.X + rect1.Width, rect2.X + rect2.Width);
+        double bottom = Math.Min(rect1.Y + rect1.Height, rect2.Y + rect2.Height);
+
+        if (right >= left && bottom >= top)
+            return new Rect(left, top, right - left, bottom - top);
+
+        return Rect.Empty;
+    }
 }

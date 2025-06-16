@@ -94,7 +94,7 @@
         <Setter Property="BarCornerRadius" Value="2,2" />
         <Setter Property="BarFill" Value="{ThemeResource AccentFillColorTertiaryBrush}" />
         <Setter Property="BarPadding" Value="3" />
-        <Setter Property="BarSize" Value="24,3" />
+        <Setter Property="BarSize" Value="12,3" />
         <Setter Property="Fill" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
         <Setter Property="OffsetTransition" Value="{StaticResource DefaultSelectorTransition}" />
         <Setter Property="SizeTransition" Value="{StaticResource DefaultSelectorTransition}" />

@@ -250,16 +250,16 @@
                                     Description="{core:Localizer Key=SettingsCharLabelDesc/Text}">
                                     <StackPanel>
 
-                                        <muxc:RadioButtons
+                                        <controls:UXRadioButtons
                                             ItemsSource="{x:Bind ViewModel.Annotations}"
                                             MaxColumns="3"
                                             SelectedItem="{Binding Settings.GlyphAnnotation, Mode=TwoWay}">
-                                            <muxc:RadioButtons.ItemTemplate>
+                                            <controls:UXRadioButtons.ItemTemplate>
                                                 <DataTemplate x:DataType="models:GlyphAnnotation">
                                                     <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:GlyphAnnotation))}" />
                                                 </DataTemplate>
-                                            </muxc:RadioButtons.ItemTemplate>
-                                        </muxc:RadioButtons>
+                                            </controls:UXRadioButtons.ItemTemplate>
+                                        </controls:UXRadioButtons>
 
                                         <Border
                                             Margin="0 12 0 0"
@@ -355,13 +355,13 @@
                                     Description="{core:Localizer Key=SettingsFontListDescription/Text}">
                                     <StackPanel>
                                         <Grid>
-                                            <muxc:RadioButtons
+                                            <controls:UXRadioButtons
                                                 x:Name="FontTypeRadios"
                                                 MaxColumns="2"
                                                 SelectionChanged="FontTypeRadios_SelectionChanged">
                                                 <RadioButton x:Uid="RbUseActualFont" />
                                                 <RadioButton x:Uid="RbUseSystemFont" />
-                                            </muxc:RadioButtons>
+                                            </controls:UXRadioButtons>
                                         </Grid>
 
                                         <ContentPresenter
@@ -370,14 +370,14 @@
                                             Style="{StaticResource DescriptionContentStyle}"
                                             d:Content="{core:Localizer Key=SettingsFontImportDescription/Text}" />
 
-                                        <muxc:RadioButtons
+                                        <controls:UXRadioButtons
                                             x:Name="FontListFontSizeRadios"
                                             MaxColumns="3"
                                             SelectedIndex="{Binding Settings.FontListFontSizeIndex, Mode=TwoWay}">
                                             <RadioButton Content="{core:Localizer Key=FontListSizeNormal}" />
                                             <RadioButton Content="{core:Localizer Key=FontListSizeLarge}" />
                                             <RadioButton Content="{core:Localizer Key=FontListSizeLarger}" />
-                                        </muxc:RadioButtons>
+                                        </controls:UXRadioButtons>
 
                                         <ListView
                                             x:Name="LstFontFamily"

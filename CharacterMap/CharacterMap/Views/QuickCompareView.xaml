@@ -545,7 +545,7 @@
                                 <ColumnDefinition Width="30" />
                             </Grid.ColumnDefinitions>
 
-                            <muxc:RadioButtons
+                            <controls:UXRadioButtons
                                 x:Name="RadioButtons"
                                 Margin="-8 -2 0 0"
                                 MaxColumns="2"
@@ -565,7 +565,7 @@
                                 <RadioButton x:Uid="LayoutListToggle" core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle">
                                     <FontIcon core:Properties.ThemeIcon="ListView" />
                                 </RadioButton>
-                            </muxc:RadioButtons>
+                            </controls:UXRadioButtons>
 
                             <Border
                                 x:Name="SliderBorder"

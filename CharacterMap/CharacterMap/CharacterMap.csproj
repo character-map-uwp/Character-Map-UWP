@@ -235,6 +235,7 @@
     <Compile Include="Controls\UnhandledExceptionDialog.xaml.cs">
       <DependentUpon>UnhandledExceptionDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\UXRadioButtons.cs" />
     <Compile Include="Controls\UXSlider.cs" />
     <Compile Include="Converters\Converters.cs" />
     <Compile Include="Core\AlphaKeyGroup.cs" />
