@@ -183,6 +183,8 @@ public partial class Properties : DependencyObject
     {
         if (s is DirectText d)
         {
+            d.BlockUpdates = true;
+
             if (e.NewValue is CharacterRenderingOptions o)
             {
                 d.Axis = o.Axis;
@@ -207,6 +209,8 @@ public partial class Properties : DependencyObject
                 d.ClearValue(DirectText.IsColorFontEnabledProperty);
                 d.ClearValue(DirectText.TypographyProperty);
             }
+
+            d.Update();
         }
         else if (s is TextBlock t)
         {
