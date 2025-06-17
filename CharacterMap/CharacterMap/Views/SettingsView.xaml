@@ -59,6 +59,11 @@
             </VisualStateGroup>
             <VisualStateGroup x:Name="ThemeStatesGroup">
                 <VisualState x:Name="DefaultThemeState" />
+                <VisualState x:Name="FUIThemeState">
+                    <VisualState.Setters>
+                        <Setter Target="MenuColumn.(controls:SelectorVisualElement.ElementTemplate)" Value="{StaticResource VerticalRadioSelectorTemplate}" />
+                    </VisualState.Setters>
+                </VisualState>
                 <VisualState x:Name="ClassicThemeState">
                     <VisualState.Setters>
                         <Setter Target="Presenter.TitleBackgroundBrush" Value="Transparent" />
@@ -66,8 +71,14 @@
                 </VisualState>
                 <VisualState x:Name="ZuneThemeState">
                     <VisualState.Setters>
-                        <Setter Target="MenuColumn.Spacing" Value="8" />
-                        <Setter Target="MenuColumn.Padding" Value="20 0 0 0" />
+                        <Setter Target="MenuColumn.Margin" Value="20 20 0 0" />
+                        <Setter Target="MenuColumn.LayoutTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <muxc:StackLayout Orientation="Vertical" Spacing="8" />
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -93,12 +104,20 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel
+                <controls:UXRadioButtons
                     x:Name="MenuColumn"
                     Width="256"
                     Margin="0 24 0 0"
-                    ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
-                    Style="{StaticResource SettingsMenuStyle}">
+                    VerticalAlignment="Top"
+                    controls:SelectorVisualElement.ElementTemplate="{x:Null}"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    MaxColumns="1">
+                    <controls:UXRadioButtons.LayoutTemplate>
+                        <DataTemplate>
+                            <muxc:StackLayout Orientation="Vertical" Spacing="0" />
+                        </DataTemplate>
+                    </controls:UXRadioButtons.LayoutTemplate>
 
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
@@ -115,6 +134,7 @@
                     </controls:MenuButton>
 
                     <controls:MenuButton
+                        HorizontalAlignment="Stretch"
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsAdvancedUILabel/Text')}"
                         Tag="UserInterfaceAdvancedPanel"
@@ -184,7 +204,7 @@
                         ThemeIcon="About"
                         d:Content="{core:Localizer Key=SettingsAboutLabel/Text}" />
 
-                </StackPanel>
+                </controls:UXRadioButtons>
 
                 <Border
                     x:Name="ContentBorder"

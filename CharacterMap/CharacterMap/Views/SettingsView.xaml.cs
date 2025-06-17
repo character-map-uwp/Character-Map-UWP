@@ -94,9 +94,8 @@ public sealed partial class SettingsView : ViewBase
         void SetIndex(int i)
         {
             if (IsLoaded)
-                MenuColumn.Children.OfType<MenuButton>().ElementAt(i).IsChecked = true;
+                MenuColumn.Items.OfType<MenuButton>().ElementAt(i).IsChecked = true;
         }
-
     }
 
     public void Hide()
@@ -141,7 +140,7 @@ public sealed partial class SettingsView : ViewBase
     private void View_Loaded(object sender, RoutedEventArgs e)
     {
         UpdateStyle();
-        ((RadioButton)MenuColumn.Children.ElementAt(_requested)).IsChecked = true;
+        ((RadioButton)MenuColumn.Items.ElementAt(_requested)).IsChecked = true;
     }
 
 

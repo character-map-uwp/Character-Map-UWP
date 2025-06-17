@@ -11,6 +11,7 @@ namespace CharacterMap.Controls;
 /// </summary>
 [AttachedProperty<double>("ColumnSpacing")]
 [AttachedProperty<double>("RowSpacing")]
+[AttachedProperty<DataTemplate>("LayoutTemplate", null)]
 public partial class UXRadioButtons : RadioButtons
 {
     public event TypedEventHandler<UXRadioButtons, ItemsRepeaterElementPreparedEventArgs> ElementPrepared;
@@ -22,6 +23,17 @@ public partial class UXRadioButtons : RadioButtons
     public UXRadioButtons()
     {
         this.DefaultStyleKey = typeof(RadioButtons);
+        this.Loaded += UXRadioButtons_Loaded;
+    }
+
+    private void UXRadioButtons_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (SelectorVisualElement.GetElement(this) is not { } selector)
+            return;
+
+        selector.MoveTo(
+            this.GetFirstLevelDescendantsOfType<RadioButton>().FirstOrDefault(r => r.IsChecked.HasValue && r.IsChecked.Value),
+            this);
     }
 
     protected override void OnApplyTemplate()
@@ -73,6 +85,17 @@ public partial class UXRadioButtons : RadioButtons
         }
     }
 
+    static partial void OnLayoutTemplateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    { 
+        if (d is ItemsRepeater repeater)
+        {
+            if (e.NewValue is DataTemplate t && t.LoadContent() is Layout l)
+                repeater.Layout = l;
+            else
+                repeater.Layout = null;
+        }
+    }
+
     // TODO : Handle PointerOver if selection changes by ScrollWheel
 
 
@@ -118,10 +141,13 @@ public partial class UXRadioButtons : RadioButtons
         if (SelectorVisualElement.GetElement(this) is not { } selector)
             return;
 
+        // get current point
         var point = e.GetCurrentPoint(this).Position.ToVector2();
 
-        // move container
-        selector.MoveX((point - _prevPoint).X);
+        // move container by delta
+        selector.Move(point - _prevPoint);
+
+        // store current point for next delta calculation
         _prevPoint = point;
     }
 
@@ -133,12 +159,16 @@ public partial class UXRadioButtons : RadioButtons
         int i = 0;
         int index = 0;
         var radios = this.GetFirstLevelDescendantsOfType<RadioButton>().ToList();
+        var orientation = selector.Orientation;
         foreach (var rb in radios)
         {
             var intersect = rb.GetBoundingRect(this).Value.GetIntersection(bounds);
             if (intersect != Rect.Empty)
             {
-                if (match == Rect.Empty || match.Width < intersect.Width)
+                if (match == Rect.Empty ||
+                    (orientation == Orientation.Horizontal 
+                        ? match.Width < intersect.Width
+                        : match.Height < intersect.Height))
                 {
                     match = intersect;
                     index = i;

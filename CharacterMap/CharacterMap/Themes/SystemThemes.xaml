@@ -823,10 +823,21 @@
         <Setter Property="core:Properties.UseZoomHelper" Value="True" />
         <Setter Property="controls:UXRadioButtons.ColumnSpacing" Value="8" />
         <Setter Property="controls:UXRadioButtons.RowSpacing" Value="8" />
+        <Setter Property="controls:UXRadioButtons.LayoutTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <primitives:ColumnMajorUniformToLargestGridLayout
+                        ColumnSpacing="{Binding Path=(controls:UXRadioButtons.ColumnSpacing), RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                        RowSpacing="{Binding Path=(controls:UXRadioButtons.ColumnSpacing), RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                        MaxColumns="{Binding MaxColumns, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="muxc:RadioButtons">
                     <Grid x:Name="ControlRoot">
+                        <Grid.Resources />
 
                         <Border
                             x:Name="BorderRoot"
@@ -836,14 +847,11 @@
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding CornerRadius}" />
 
-                        <muxc:ItemsRepeater x:Name="InnerRepeater">
-                            <muxc:ItemsRepeater.Layout>
-                                <primitives:ColumnMajorUniformToLargestGridLayout
-                                    ColumnSpacing="{Binding Path=(controls:UXRadioButtons.ColumnSpacing), RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                    RowSpacing="{Binding Path=(controls:UXRadioButtons.ColumnSpacing), RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                    MaxColumns="{Binding MaxColumns, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                            </muxc:ItemsRepeater.Layout>
-                        </muxc:ItemsRepeater>
+
+                        <muxc:ItemsRepeater
+                            x:Name="InnerRepeater"
+                            Margin="{TemplateBinding Padding}"
+                            controls:UXRadioButtons.LayoutTemplate="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(controls:UXRadioButtons.LayoutTemplate)}" />
 
                         <ContentPresenter
                             x:Name="SelectorPresenter"
@@ -881,5 +889,11 @@
     <Style BasedOn="{StaticResource DefaultRadioButtonsThemeStyle}" TargetType="muxc:RadioButtons" />
 
     <Style BasedOn="{StaticResource DefaultRadioButtonsThemeStyle}" TargetType="controls:UXRadioButtons" />
+
+    <Style x:Key="VerticalRadioSelectorElementStyle" TargetType="controls:SelectorVisualElement" />
+
+    <DataTemplate x:Key="VerticalRadioSelectorTemplate">
+        <controls:SelectorVisualElement Style="{StaticResource VerticalRadioSelectorElementStyle}" />
+    </DataTemplate>
 
 </ResourceDictionary>

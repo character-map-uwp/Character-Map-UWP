@@ -3,6 +3,7 @@ using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 
@@ -54,6 +55,7 @@ public enum SelectorInteractionState
 [DependencyProperty<Point>("BarSize")]
 [DependencyProperty<double>("BarPadding")]
 [DependencyProperty<Point>("BarCornerRadius", "new Point(2,2)")]
+[DependencyProperty<Orientation>("Orientation", "Orientation.Horizontal")]
 [AttachedProperty<SelectorVisualElement>("Element")]
 [AttachedProperty<DataTemplate>("ElementTemplate")]
 public partial class SelectorVisualElement : FrameworkElement
@@ -71,9 +73,13 @@ public partial class SelectorVisualElement : FrameworkElement
 
     private ExpressionAnimation _exp;
 
-    string barXY => "Vector2(" +
+    string barXY_horizontal => "Vector2(" +
             "((Container.Size.X - Bar.Size.X) / 2) + 2," + // TODO: Why + 2? Is is StrokeThickness?
             "Container.Size.Y - Bar.Size.Y - props.Padding)";
+
+    string barXY_vertical => "Vector2(" +
+            "props.Padding, " +
+            "((Container.Size.Y - Bar.Size.Y) / 2) + 2)";
 
 
     private List<(DependencyProperty, long)> _tokens { get; } = [];
@@ -205,10 +211,13 @@ public partial class SelectorVisualElement : FrameworkElement
                 .AddKeyFrame(1, "this.FinalValue")
                 .SetDuration(0.3));
 
+        var str = this.Orientation is Orientation.Horizontal
+            ? barXY_horizontal
+            : barXY_vertical;
 
         // Position bar
         _exp = bs.CreateExpressionAnimation("Offset.XY")
-            .SetExpression(barXY)
+            .SetExpression(str)
             .SetParameter("Container", _rect)
             .SetParameter("Bar", _bar)
             .SetParameter("props", _props);
@@ -331,31 +340,13 @@ public partial class SelectorVisualElement : FrameworkElement
     }
 
 
-    partial void OnModeChanged(SelectionVisualType o, SelectionVisualType n)
-    {
-        OnTargetChanged(Target, Target);
-    }
-
-    partial void OnDisplayTargetChanged(FrameworkElement o, FrameworkElement n)
-    {
-        if (o is FrameworkElement old)
-        {
-            old.SetChildVisual(null);
-        }
-        
-        if (n is FrameworkElement newValue)
-        {
-            this.SetChildVisual(null);
-            newValue.SetChildVisual(_container);
-        }
-        else
-        {
-            this.SetChildVisual(null);
-        }
 
 
-    }
-
+    //------------------------------------------------------
+    //
+    // XAML Lifecycle
+    //
+    //------------------------------------------------------
 
     #region Lifecycle
 
@@ -369,14 +360,36 @@ public partial class SelectorVisualElement : FrameworkElement
     {
         Unregister();
 
-        _containerShapes?.Dispose();
-        _containerShapes = null;
+        static void Dispose<T>(ref T d) where T : class, IDisposable
+        {
+            d?.Dispose();
+            d = null;
+        }
 
-        _rect?.Dispose();
-        _rect = null;
+        this.SetChildVisual(null);
 
-        _fillBrush?.Dispose();
-        _fillBrush = null;
+        Dispose(ref _container);
+        Dispose(ref _containerShapes);
+        Dispose(ref _barShapes);
+        Dispose(ref _rect);
+        Dispose(ref _bar);
+        Dispose(ref _fillBrush);
+        Dispose(ref _strokeBrush);
+        Dispose(ref _barFillBrush);
+        Dispose(ref _barSprite);
+
+
+        //private ShapeVisual _containerShapes;
+        //private ShapeVisual _barShapes;
+        //private ContainerVisual _container;
+        //private CompositionRoundedRectangleGeometry _rect;
+        //private CompositionRoundedRectangleGeometry _bar;
+        //private CompositionColorBrush _fillBrush;
+        //private CompositionColorBrush _strokeBrush;
+        //private CompositionColorBrush _barFillBrush;
+        //private CompositionPropertySet _props;
+        //private CompositionSpriteShape _barSprite;
+
     }
 
     void Register()
@@ -409,6 +422,37 @@ public partial class SelectorVisualElement : FrameworkElement
     #endregion
 
 
+
+
+
+    //------------------------------------------------------
+    //
+    // Attached Properties
+    //
+    //------------------------------------------------------
+
+    partial void OnDisplayTargetChanged(FrameworkElement o, FrameworkElement n)
+    {
+        if (o is FrameworkElement old)
+        {
+            old.SetChildVisual(null);
+        }
+
+        if (n is FrameworkElement newValue)
+        {
+            this.SetChildVisual(null);
+            newValue.SetChildVisual(_container);
+        }
+        else
+        {
+            this.SetChildVisual(null);
+        }
+    }
+
+    partial void OnModeChanged(SelectionVisualType o, SelectionVisualType n)
+    {
+        OnTargetChanged(Target, Target);
+    }
 
     partial void OnTargetChanged(FrameworkElement o, FrameworkElement n)
     {
@@ -446,6 +490,15 @@ public partial class SelectorVisualElement : FrameworkElement
         }
     }
 
+
+
+
+    //------------------------------------------------------
+    //
+    // Drag Handling
+    //
+    //------------------------------------------------------
+
     internal void SetState(SelectorInteractionState state)
     {
         if (_barSprite is null)
@@ -455,17 +508,40 @@ public partial class SelectorVisualElement : FrameworkElement
         //_barSprite.Offset = BarSize.ToVector2()/2f;
 
         if (state is SelectorInteractionState.PointerOver)
-            _bar.Size = new((float)BarSize.X * 2f, (float)BarSize.Y);
+        {
+            if (this.Orientation == Orientation.Horizontal)
+                _bar.Size = new((float)BarSize.X * 2f, (float)BarSize.Y);
+            else
+                _bar.Size = new((float)BarSize.X, (float)BarSize.Y * 1.5f);
+
+        }
         else
             _bar.Size = BarSize.ToVector2();
     }
+
+
+
+
+    //------------------------------------------------------
+    //
+    // Drag Handling
+    //
+    //------------------------------------------------------
 
     public void StartMove()
     {
         SetOffset(false);
     }
 
-    public void MoveX(float offset)
+    public void Move(Vector2 offset)
+    {
+        if (this.Orientation == Orientation.Horizontal)
+            MoveX(offset.X);
+        else
+            MoveY(offset.Y);
+    }
+
+    void MoveX(float offset)
     {
         var target = _containerShapes.Offset + new Vector3(offset, 0, 0);
         if (target.X < 0)
@@ -476,6 +552,22 @@ public partial class SelectorVisualElement : FrameworkElement
             var max = parent.ActualWidth - _rect.Size.X;
             if (target.X > max)
                 target = target with { X = (float)max };
+        }
+
+        _containerShapes.Offset = target;
+    }
+
+    void MoveY(float offset)
+    {
+        var target = _containerShapes.Offset + new Vector3(0, offset, 0);
+        if (target.Y < 0)
+            target = target with { Y = 0 };
+
+        if (VisualTreeHelper.GetParent(this) is FrameworkElement parent)
+        {
+            var max = parent.ActualHeight - _rect.Size.Y;
+            if (target.Y > max)
+                target = target with { Y = (float)max };
         }
 
         _containerShapes.Offset = target;
@@ -496,6 +588,14 @@ public partial class SelectorVisualElement : FrameworkElement
     }
 }
 
+
+
+
+//------------------------------------------------------
+//
+// RadioButtons helpers
+//
+//------------------------------------------------------
 
 partial class SelectorVisualElement // RADIOBUTTONS
 {
@@ -575,6 +675,15 @@ partial class SelectorVisualElement // RADIOBUTTONS
         this.MoveTo(target, b);
     }
 }
+
+
+
+
+//------------------------------------------------------
+//
+// ListView helpers
+//
+//------------------------------------------------------
 
 partial class SelectorVisualElement // EXTENDEDLISTVIEW
 {

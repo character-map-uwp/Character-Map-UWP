@@ -7,7 +7,9 @@ using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Markup;
 
 namespace CharacterMap.Helpers;
 
@@ -196,5 +198,17 @@ public static class Extensions
             return new Rect(left, top, right - left, bottom - top);
 
         return Rect.Empty;
+    }
+
+    public static T Bind<T>(this T element, DependencyProperty property, object source, string path)
+        where T : DependencyObject
+    {
+        BindingOperations.SetBinding(element, property, new Binding
+        {
+            Source = source,
+            Path = new(path)
+        });
+
+        return element;
     }
 }

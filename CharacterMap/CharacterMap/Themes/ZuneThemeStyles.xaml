@@ -6,6 +6,7 @@
     xmlns:cv="using:CharacterMap.Converters"
     xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls">
 
     <CharacterCasing x:Key="TitleCasing">Lower</CharacterCasing>
@@ -6107,6 +6108,84 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style x:Key="DefaultRadioButtonsThemeStyle" TargetType="muxc:RadioButtons">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="core:Properties.UseZoomHelper" Value="True" />
+        <Setter Property="controls:UXRadioButtons.ColumnSpacing" Value="8" />
+        <Setter Property="controls:UXRadioButtons.RowSpacing" Value="8" />
+        <Setter Property="controls:UXRadioButtons.LayoutTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <primitives:ColumnMajorUniformToLargestGridLayout
+                        ColumnSpacing="{Binding Path=(controls:UXRadioButtons.ColumnSpacing), RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                        RowSpacing="{Binding Path=(controls:UXRadioButtons.ColumnSpacing), RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                        MaxColumns="{Binding MaxColumns, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="muxc:RadioButtons">
+                    <Grid x:Name="ControlRoot">
+                        <Grid.Resources />
+
+                        <Border
+                            x:Name="BorderRoot"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}" />
+
+
+                        <muxc:ItemsRepeater
+                            x:Name="InnerRepeater"
+                            Margin="{TemplateBinding Padding}"
+                            controls:UXRadioButtons.LayoutTemplate="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(controls:UXRadioButtons.LayoutTemplate)}" />
+
+                        <!--<ContentPresenter
+                            x:Name="SelectorPresenter"
+                            x:Load="False"
+                            Canvas.ZIndex="-1"
+                            Content="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(controls:SelectorVisualElement.Element)}" />-->
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="ControlRoot.Opacity" Value="0.4" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <!--<VisualStateGroup x:Name="SelectorStateGroup">
+                                <VisualState x:Name="NoSelectorState" />
+                                <VisualState x:Name="SelectorState">
+                                    <VisualState.StateTriggers>
+                                        <StateTrigger IsActive="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(controls:SelectorVisualElement.Element), Converter={StaticResource NullConverter}, ConverterParameter='Inverse'}" />
+                                    </VisualState.StateTriggers>
+                                    <VisualState.Setters>
+                                        <Setter Target="SelectorPresenter.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>-->
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource DefaultRadioButtonsThemeStyle}" TargetType="muxc:RadioButtons" />
+
+    <Style BasedOn="{StaticResource DefaultRadioButtonsThemeStyle}" TargetType="controls:UXRadioButtons" />
+
+    <!--  Not used - exists to prevent settings VSM crash  -->
+    <DataTemplate x:Key="VerticalRadioSelectorTemplate">
+        <controls:SelectorVisualElement />
+    </DataTemplate>
+
 
 
 </ResourceDictionary>
