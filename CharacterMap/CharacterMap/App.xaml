@@ -29,7 +29,6 @@
             <x:Double x:Key="TitleRowHeight">45</x:Double>
             <GridLength x:Key="TitleRowGridHeight">45</GridLength>
 
-
             <ResourceDictionary.MergedDictionaries>
 
                 <themes:DefaultTheme />
@@ -125,6 +124,7 @@
                         <Setter Property="MinHeight" Value="40" />
                         <Setter Property="MinWidth" Value="160" />
                     </Style>
+
 
                 </ResourceDictionary>
 

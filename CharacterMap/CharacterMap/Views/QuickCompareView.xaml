@@ -547,19 +547,11 @@
 
                             <controls:UXRadioButtons
                                 x:Name="RadioButtons"
+                                ColumnSpacing="0"
                                 Margin="-8 -2 0 0"
                                 MaxColumns="2"
                                 SelectedIndex="0"
                                 SelectionChanged="RadioButtons_SelectionChanged">
-                                <controls:SelectorVisualElement.ElementTemplate>
-                                    <DataTemplate>
-                                        <controls:SelectorVisualElement
-                                            BarPadding="2"
-                                            BarSize="12 3"
-                                            Style="{StaticResource RadioSelectorElementStyle}"
-                                            VisualInset="-1 -1 0 -1" />
-                                    </DataTemplate>
-                                </controls:SelectorVisualElement.ElementTemplate>
                                 <RadioButton
                                     x:Uid="LayoutGridToggle"
                                     core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
@@ -979,6 +971,17 @@
                         <Setter Target="RadioButtons.Margin" Value="-2 -2 0 0" />
                         <Setter Target="Presenter.Background" Value="{ThemeResource DefaultWindowBackgroundBrush}" />
                         <Setter Target="Presenter.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
+                        <Setter Target="RadioButtons.(controls:SelectorVisualElement.ElementTemplate)">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <controls:SelectorVisualElement
+                                        BarPadding="2"
+                                        BarSize="12 3"
+                                        Style="{StaticResource RadioSelectorElementStyle}"
+                                        VisualInset="-1 -1 0 -1" />
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ClassicThemeState">

@@ -427,6 +427,9 @@ public partial class SelectorVisualElement : FrameworkElement
 
     static partial void OnElementChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
+        if (e.OldValue is SelectorVisualElement oldValue)
+            oldValue.Target = null;
+
         if (e.NewValue is SelectorVisualElement newValue)
             newValue.Target = (FrameworkElement)d;
     }
