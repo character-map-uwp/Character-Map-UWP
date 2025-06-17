@@ -553,7 +553,11 @@
                                 SelectionChanged="RadioButtons_SelectionChanged">
                                 <controls:SelectorVisualElement.ElementTemplate>
                                     <DataTemplate>
-                                        <controls:SelectorVisualElement BarSize="12 3" Style="{StaticResource RadioSelectorElementStyle}" />
+                                        <controls:SelectorVisualElement
+                                            BarPadding="2"
+                                            BarSize="12 3"
+                                            Style="{StaticResource RadioSelectorElementStyle}"
+                                            VisualInset="-1 -1 0 -1" />
                                     </DataTemplate>
                                 </controls:SelectorVisualElement.ElementTemplate>
                                 <RadioButton

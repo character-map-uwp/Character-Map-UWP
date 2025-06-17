@@ -72,7 +72,7 @@ public partial class SelectorVisualElement : FrameworkElement
     private ExpressionAnimation _exp;
 
     string barXY => "Vector2(" +
-            "((Container.Size.X - Bar.Size.X) / 2)," +
+            "((Container.Size.X - Bar.Size.X) / 2) + 2," + // TODO: Why + 2? Is is StrokeThickness?
             "Container.Size.Y - Bar.Size.Y - props.Padding)";
 
 
@@ -146,6 +146,12 @@ public partial class SelectorVisualElement : FrameworkElement
     {
         if (_bar is not null)
             _bar.CornerRadius = n.ToVector2();
+    }
+
+    partial void OnVisualCornerRadiusChanged(Point o, Point n)
+    {
+        if (_rect is not null)
+            _rect.CornerRadius = VisualCornerRadius.ToVector2();
     }
 
     void CreateVisual()
@@ -279,7 +285,12 @@ public partial class SelectorVisualElement : FrameworkElement
         _containerShapes.Size = size2;
         _barShapes.Size = size2;
         _container.Size = size2;
-        _rect.Size = size;
+
+        if (size.LengthSquared() > VisualCornerRadius.ToVector2().LengthSquared())
+        {
+            _rect.Size = size - VisualCornerRadius.ToVector2();
+            _rect.Offset = VisualCornerRadius.ToVector2() / 2f;
+        }
     }
 
     void SetOffset(bool animate)
@@ -507,6 +518,9 @@ partial class SelectorVisualElement // RADIOBUTTONS
                 RadioMoveTo(nrb, nrb.SelectedIndex);
             }
 
+            if (nrb.GetFirstDescendantOfType<FrameworkElement>("BorderRoot") is { } b)
+                this.DisplayTarget = b;
+
             nrb.SelectionChanged -= Radios_Selection;
             nrb.SelectionChanged += Radios_Selection;
         }
@@ -523,6 +537,10 @@ partial class SelectorVisualElement // RADIOBUTTONS
             {
                 rb.SizeChanged -= Radios_SizeChanged;
                 rb.SizeChanged += Radios_SizeChanged;
+
+                if (rb.GetFirstDescendantOfType<FrameworkElement>("BorderRoot") is { } b)
+                    this.DisplayTarget = b;
+
                 RadioMoveTo(rb, rb.SelectedIndex);
             }
         }

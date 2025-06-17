@@ -9,7 +9,9 @@ namespace CharacterMap.Controls;
 /// <summary>
 /// Extends RadioButtons with native selector visual support and additional useful events
 /// </summary>
-public class UXRadioButtons : RadioButtons
+[AttachedProperty<double>("ColumnSpacing")]
+[AttachedProperty<double>("RowSpacing")]
+public partial class UXRadioButtons : RadioButtons
 {
     public event TypedEventHandler<UXRadioButtons, ItemsRepeaterElementPreparedEventArgs> ElementPrepared;
 
@@ -70,6 +72,8 @@ public class UXRadioButtons : RadioButtons
             }
         }
     }
+
+    // TODO : Handle PointerOver if selection changes by ScrollWheel
 
 
 
