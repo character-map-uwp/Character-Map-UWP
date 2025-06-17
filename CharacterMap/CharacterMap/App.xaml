@@ -55,6 +55,7 @@
                     <BrushTransition x:Key="RootBackgroundTransition" Duration="0:0:0.25" />
                     <BrushTransition x:Key="QuickBackgroundTransition" Duration="0:0:0.1" />
                     <BrushTransition x:Key="BackgroundTransition" Duration="0:0:0.15" />
+                    <BrushTransition x:Key="QuickBrushTransition" Duration="0:0:0.06" />
 
                     <controls:CompositionTransition
                         x:Key="DefaultSelectorTransition"
