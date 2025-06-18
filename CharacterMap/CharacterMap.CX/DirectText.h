@@ -35,9 +35,18 @@ namespace CharacterMapCX
 
 			DirectText();
 
+			property bool BlockUpdates;
+
 			virtual void OnApplyTemplate() override;
 
 			virtual Windows::Foundation::Size MeasureOverride(Windows::Foundation::Size size) override;
+
+			void Update()
+			{
+				BlockUpdates = false;
+				m_isStale = true;
+				this->InvalidateMeasure();
+			}
 
 			#pragma region Dependency Properties
 
@@ -193,13 +202,9 @@ namespace CharacterMapCX
 			static void OnRenderPropertyChanged(DependencyObject^ d, DependencyPropertyChangedEventArgs^ e)
 			{
 				DirectText^ c = (DirectText^)d;
-				c->Update();
-			}
 
-			void Update()
-			{
-				m_isStale = true;
-				this->InvalidateMeasure();
+				if (!c->BlockUpdates)
+					c->Update();
 			}
 
 			void EnsureCanvas();

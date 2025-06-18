@@ -130,9 +130,12 @@ public partial class SettingsViewModel : ViewModelBase
         // application rather than bug-fixes or visual changes.
         return [
              new("Latest Update (June 2025)", // June 2025
+                "- Added ability to use Ctrl + ScrollWheel to change font size in Font List Pane, Character Map and Quick Compare\n" +
+                "- Whole Font Families can now be added to Quick Compare\n" +
+                "- Font Families and individual Font Faces can be added to Quick Compare from the Compare Fonts view\n" +
                 "- Hidden variable font axis are now visible and editable in Type Ramp View\n" +
                 "- Added option in Settings->Layout->Font List Display to increase font size of the main font list\n" +
-                "- Added Font Embedding Rights and Supported Script information to Font Face Information flyout"),
+                "- Added Font Embedding Rights and Supported Script information to Font Face Properties flyout"),
              new("2024.8.0.0 (November 2024)", // November 2024
                 "- Simulated font faces are now grouped separately from real fonts faces\n" +
                 "- Added option in Settings->Advanced to hide showing simulated font faces"),

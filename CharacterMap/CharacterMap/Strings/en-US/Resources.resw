@@ -1025,6 +1025,9 @@ Default variant copied.</value>
   <data name="AddToQuickCompare.Text" xml:space="preserve">
     <value>Add to quick compare</value>
   </data>
+  <data name="AddMultiToQuickCompare.Text" xml:space="preserve">
+    <value>Add family to quick compare</value>
+  </data>
   <data name="CompareFontsButton.Text" xml:space="preserve">
     <value>Compare all Fonts</value>
   </data>
@@ -1230,7 +1233,8 @@ Requires a restart to take effect.</value>
     <value>Compare Font Faces</value>
   </data>
   <data name="CompareFacesCountLabel.Text" xml:space="preserve">
-    <value>Compare {0} font faces</value>
+    <value>Compare family</value>
+    <comment>Label removed</comment>
   </data>
   <data name="CompareFamilyTitle.Text" xml:space="preserve">
     <value>Compare {0}</value>
@@ -1818,7 +1822,7 @@ Requires a restart to take effect.</value>
     <value>Supported Languages</value>
   </data>
   <data name="CanvasFontInformationEmbeddingRights" xml:space="preserve">
-    <value>Font Embedding Rights</value>
+    <value>Embedding Rights</value>
   </data>
   <data name="EmbeddingTypeInstallable" xml:space="preserve">
     <value>Installable embedding: the font may be embedded, and may be permanently installed for use on a remote systems, or for use by other users. The user of the remote system acquires the identical rights, obligations and licenses for that font as the original purchaser of the font, and is subject to the same end-user license agreement, copyright, design patent, and/or trademark as was the original purchaser.</value>
@@ -1838,5 +1842,4 @@ Requires a restart to take effect.</value>
   <data name="EmbeddingTypeBitmapOnly" xml:space="preserve">
     <value>Bitmap embedding only: only bitmaps contained in the font may be embedded. No outline data may be embedded. If there are no bitmaps available in the font, then the font is considered unembeddable and the embedding services will fail.</value>
   </data>
-
 </root>

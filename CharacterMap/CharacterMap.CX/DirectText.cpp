@@ -62,7 +62,8 @@ DirectText::DirectText()
 void DirectText::OnPropChanged(DependencyObject^ d, DependencyProperty^ p)
 {
     DirectText^ c = (DirectText^)d;
-    c->Update();
+    if (!c->BlockUpdates)
+        c->Update();
 }
 
 void CharacterMapCX::Controls::DirectText::OnLoaded(Platform::Object^ sender, RoutedEventArgs^ e)
@@ -350,6 +351,7 @@ void CharacterMapCX::Controls::DirectText::DestroyCanvas(CanvasControl^ control)
         if (parent != nullptr)
         {
             auto b = static_cast<Border^>(parent);
+            VisualTreeHelper::DisconnectChildrenRecursive(b);
             b->Child = nullptr;
         }
     }
@@ -460,7 +462,10 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
         // Note: something is wrong here causing the right hand side to clip slightly.
         //       currently we use 4 as a magic number to avoid this in 90% of cases.
         //       need to figure out what's up at some point.
-        left += m_canvas->ActualWidth - db.Width - 4;
+
+        // NB: Win2D Sample gallery actually has a note on this, remember to look
+        // at it sometime
+        left += m_canvas->ActualWidth - db.Width - 4; 
     }
 
    /* auto fam = m_layout->DefaultFontFamily;

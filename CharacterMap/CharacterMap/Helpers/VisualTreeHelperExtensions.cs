@@ -25,7 +25,21 @@ public static class VisualTreeHelperExtensions
         else
             return start.GetDescendantsOfType<T>(applyTemplate).FirstOrDefault(predicate);
     }
-        
+
+    /// <summary>
+    /// Gets the first descendant that is of the given type with the given name
+    /// </summary>
+    /// <remarks>
+    /// Returns null if not found.
+    /// </remarks>
+    /// <typeparam name="T">Type of descendant to look for.</typeparam>
+    /// <param name="start">The start object.</param>
+    /// <returns></returns>
+    public static T GetFirstDescendantOfType<T>(this DependencyObject start, string name, bool applyTemplate = false) where T : FrameworkElement
+    {
+        return GetFirstDescendantOfType<T>(start, f => f.Name == name, applyTemplate);
+    }
+
 
     /// <summary>
     /// Gets the descendants of the given type.

@@ -706,6 +706,7 @@
                 VerticalAlignment="Top"
                 Canvas.ZIndex="12">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
@@ -714,451 +715,449 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <toolkit:WrapPanel
-                    x:Name="OptionsPanel"
-                    x:FieldModifier="public"
-                    HorizontalAlignment="Stretch"
-                    ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
-                    HorizontalSpacing="8"
-                    Orientation="Horizontal">
 
-                    <controls:UXComboBox
-                        x:Name="WeightSelector"
-                        MinWidth="160"
-                        Margin="0 -1 0 0"
-                        VerticalAlignment="Stretch"
-                        FontSize="12"
-                        FontWeight="SemiBold"
-                        IsEnabled="{Binding SelectedFont.Font.HasAnyVariants}"
-                        ItemsSource="{Binding SelectedFont.Font.AllVariants}"
-                        SelectedItem="{Binding SelectedFont.Selected, Mode=TwoWay}"
-                        Style="{StaticResource VariantComboBoxStyle}"
-                        ToolTipMemberPath="PreferredName">
-                        <controls:UXComboBox.SecondaryContent>
-                            <TextBlock
-                                x:Name="SelectorLabel"
-                                FontSize="12"
-                                FontWeight="Normal"
-                                Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                Text="{x:Bind UpdateStatusBarLabel(ViewModel.SelectedVariant, SelectorLabel.IsHitTestVisible), Mode=OneWay}" />
-                        </controls:UXComboBox.SecondaryContent>
-                        <ComboBox.ItemTemplateSelector>
-                            <views:VariantTemplateSelector>
-                                <views:VariantTemplateSelector.VariantTemplate>
-                                    <DataTemplate x:DataType="core:CMFontFace">
-                                        <TextBlock
-                                            FontFamily="{x:Bind core:Converters.GetPreviewFontSource((core:CMFontFace))}"
-                                            FontStretch="{x:Bind DirectWriteProperties.Stretch}"
-                                            FontStyle="{x:Bind DirectWriteProperties.Style}"
-                                            FontWeight="{x:Bind DirectWriteProperties.Weight}"
-                                            Text="{x:Bind PreferredName}" />
-                                    </DataTemplate>
-                                </views:VariantTemplateSelector.VariantTemplate>
-                                <views:VariantTemplateSelector.HeaderTemplate>
-                                    <DataTemplate>
-                                        <Border
-                                            Margin="-12 0 -12 -4"
-                                            Padding="12 0"
-                                            BorderBrush="{ThemeResource TextFillColorDisabledBrush}"
-                                            BorderThickness="0 0 0 1">
+
+                <Border Grid.Column="1" Style="{StaticResource ControlSurfaceBorderStyle}">
+                    <toolkit:WrapPanel
+                        x:Name="OptionsPanel"
+                        x:FieldModifier="public"
+                        HorizontalAlignment="Stretch"
+                        ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
+                        HorizontalSpacing="8"
+                        Orientation="Horizontal">
+                        <controls:UXComboBox
+                            x:Name="WeightSelector"
+                            MinWidth="160"
+                            Margin="0 -1 0 0"
+                            VerticalAlignment="Stretch"
+                            FontSize="12"
+                            FontWeight="SemiBold"
+                            IsEnabled="{Binding SelectedFont.Font.HasAnyVariants}"
+                            ItemsSource="{Binding SelectedFont.Font.AllVariants}"
+                            SelectedItem="{Binding SelectedFont.Selected, Mode=TwoWay}"
+                            Style="{StaticResource VariantComboBoxStyle}"
+                            ToolTipMemberPath="PreferredName">
+                            <controls:UXComboBox.SecondaryContent>
+                                <TextBlock
+                                    x:Name="SelectorLabel"
+                                    FontSize="12"
+                                    FontWeight="Normal"
+                                    Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                    Text="{x:Bind UpdateStatusBarLabel(ViewModel.SelectedVariant, SelectorLabel.IsHitTestVisible), Mode=OneWay}" />
+                            </controls:UXComboBox.SecondaryContent>
+                            <ComboBox.ItemTemplateSelector>
+                                <views:VariantTemplateSelector>
+                                    <views:VariantTemplateSelector.VariantTemplate>
+                                        <DataTemplate x:DataType="core:CMFontFace">
                                             <TextBlock
-                                                x:Name="T"
-                                                Margin="0 8 0 4"
-                                                core:Properties.IsContainerEnabled="False"
-                                                Text="{Binding}" />
-                                        </Border>
-
-                                    </DataTemplate>
-                                </views:VariantTemplateSelector.HeaderTemplate>
-                            </views:VariantTemplateSelector>
-                        </ComboBox.ItemTemplateSelector>
-                    </controls:UXComboBox>
-
-                    <controls:UXButton
-                        x:Name="FontPropertiesButton"
-                        x:Uid="FontPropertiesButton"
-                        VerticalAlignment="Stretch"
-                        IsHintVisible="True"
-                        Style="{ThemeResource MapInfoButtonStyle}"
-                        d:Label="Info"
-                        d:ToolTipService.ToolTip="{core:Localizer Key=FontPropertiesButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
-                        <FontIcon
-                            Margin="0,0,-2,0"
-                            VerticalAlignment="Center"
-                            core:Properties.ThemeIcon="FontInfo"
-                            FontSize="18" />
-                        <Button.Flyout>
-                            <Flyout
-                                core:Properties.UseExpandContractAnimation="True"
-                                win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
-                                Opened="InfoFlyout_Opened"
-                                Opening="InfoFlyout_Opening">
-                                <ScrollViewer x:Name="InfoScroller">
-                                    <Border MinWidth="300" MaxWidth="400">
-                                        <StackPanel Padding="12 24" Spacing="12">
-                                            <Panel.Resources>
-                                                <Style BasedOn="{StaticResource BaseTextStyle}" TargetType="TextBlock">
-                                                    <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
-                                                    <Setter Property="Opacity" Value="0.5" />
-                                                    <Setter Property="TextWrapping" Value="Wrap" />
-                                                    <Setter Property="VerticalAlignment" Value="Top" />
-                                                </Style>
-                                                <Style x:Key="Value" BasedOn="{StaticResource BaseTextStyle}" TargetType="TextBlock">
-                                                    <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
-                                                    <Setter Property="Opacity" Value="1" />
-                                                    <Setter Property="Grid.Column" Value="1" />
-                                                    <Setter Property="TextWrapping" Value="Wrap" />
-                                                    <Setter Property="VerticalAlignment" Value="Top" />
-                                                    <Setter Property="IsTextSelectionEnabled" Value="True" />
-                                                </Style>
-                                            </Panel.Resources>
-                                            <TextBlock
-                                                x:Uid="FontPropTitle"
-                                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                                FontWeight="Bold"
-                                                d:Text="{core:Localizer Key=FontPropTitle/Text}" />
-                                            <controls:AutoGrid RowSpacing="8">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition />
-                                                    <ColumnDefinition />
-                                                </Grid.ColumnDefinitions>
-
-                                                <TextBlock x:Uid="FontPropFamily" d:Text="{core:Localizer Key=FontPropFamily/Text}" />
+                                                FontFamily="{x:Bind core:Converters.GetPreviewFontSource((core:CMFontFace))}"
+                                                FontStretch="{x:Bind DirectWriteProperties.Stretch}"
+                                                FontStyle="{x:Bind DirectWriteProperties.Style}"
+                                                FontWeight="{x:Bind DirectWriteProperties.Weight}"
+                                                Text="{x:Bind PreferredName}" />
+                                        </DataTemplate>
+                                    </views:VariantTemplateSelector.VariantTemplate>
+                                    <views:VariantTemplateSelector.HeaderTemplate>
+                                        <DataTemplate>
+                                            <Border
+                                                Margin="-12 0 -12 -4"
+                                                Padding="12 0"
+                                                BorderBrush="{ThemeResource TextFillColorDisabledBrush}"
+                                                BorderThickness="0 0 0 1">
                                                 <TextBlock
-                                                    Grid.Row="0"
-                                                    Style="{StaticResource Value}"
-                                                    Text="{Binding SelectedFont.Font.Name}" />
+                                                    x:Name="T"
+                                                    Margin="0 8 0 4"
+                                                    core:Properties.IsContainerEnabled="False"
+                                                    Text="{Binding}" />
+                                            </Border>
 
-                                                <TextBlock x:Uid="FontPropFace" d:Text="{core:Localizer Key=FontPropFace/Text}" />
-                                                <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.PreferredName}" />
+                                        </DataTemplate>
+                                    </views:VariantTemplateSelector.HeaderTemplate>
+                                </views:VariantTemplateSelector>
+                            </ComboBox.ItemTemplateSelector>
+                        </controls:UXComboBox>
 
-                                                <TextBlock x:Uid="FontPropCharCount" d:Text="{core:Localizer Key=FontPropCharCount/Text}" />
-                                                <TextBlock Style="{StaticResource Value}" Text="{x:Bind ViewModel.SelectedVariant.Characters.Count, Mode=OneWay}" />
-
-                                                <TextBlock x:Uid="FontPropCount" d:Text="{core:Localizer Key=FontPropCount/Text}" />
-                                                <TextBlock Style="{StaticResource Value}" Text="{x:Bind ViewModel.SelectedVariant.Face.GlyphCount, Mode=OneWay}" />
-
-                                                <TextBlock x:Uid="FontPropType" d:Text="{core:Localizer Key=FontPropType/Text}" />
-                                                <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.Face.FileFormatType}" />
-
-                                                <TextBlock x:Uid="FontPropSymbol" d:Text="{core:Localizer Key=FontPropSymbol/Text}" />
-                                                <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.DirectWriteProperties.IsSymbolFont}" />
-
-                                                <TextBlock x:Uid="FontPropMonospaced" d:Text="{core:Localizer Key=FontPropMonospaced/Text}" />
-                                                <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.DirectWriteProperties.IsMonospacedFont}" />
-
-                                                <TextBlock x:Uid="FontPropSimulated" d:Text="{core:Localizer Key=FontPropSimulated/Text}" />
-                                                <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.DirectWriteProperties.IsSimulated}" />
-
-                                                <TextBlock x:Uid="FontPropStyle" d:Text="{core:Localizer Key=FontPropStyle/Text}" />
-                                                <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.DirectWriteProperties.Style}" />
-
-                                                <TextBlock x:Uid="FontPropStretch" d:Text="{core:Localizer Key=FontPropStretch/Text}" />
-                                                <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.DirectWriteProperties.Stretch}" />
-
-                                                <TextBlock x:Uid="FontPropWeight" d:Text="{core:Localizer Key=FontPropWeight/Text}" />
-                                                <TextBlock Style="{StaticResource Value}" Text="{x:Bind core:Converters.GetWeightName(ViewModel.SelectedVariant.DirectWriteProperties.Weight), Mode=OneWay}" />
-
+                        <controls:UXButton
+                            x:Name="FontPropertiesButton"
+                            x:Uid="FontPropertiesButton"
+                            VerticalAlignment="Stretch"
+                            IsHintVisible="True"
+                            Style="{ThemeResource MapInfoButtonStyle}"
+                            d:Label="Info"
+                            d:ToolTipService.ToolTip="{core:Localizer Key=FontPropertiesButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
+                            <FontIcon
+                                Margin="0,0,-2,0"
+                                VerticalAlignment="Center"
+                                core:Properties.ThemeIcon="FontInfo"
+                                FontSize="18" />
+                            <Button.Flyout>
+                                <Flyout
+                                    core:Properties.UseExpandContractAnimation="True"
+                                    win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
+                                    Opened="InfoFlyout_Opened"
+                                    Opening="InfoFlyout_Opening">
+                                    <ScrollViewer x:Name="InfoScroller">
+                                        <Border MinWidth="300" MaxWidth="400">
+                                            <StackPanel Padding="12 24" Spacing="12">
+                                                <Panel.Resources>
+                                                    <Style BasedOn="{StaticResource BaseTextStyle}" TargetType="TextBlock">
+                                                        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
+                                                        <Setter Property="Opacity" Value="0.5" />
+                                                        <Setter Property="TextWrapping" Value="Wrap" />
+                                                        <Setter Property="VerticalAlignment" Value="Top" />
+                                                    </Style>
+                                                    <Style x:Key="Value" BasedOn="{StaticResource BaseTextStyle}" TargetType="TextBlock">
+                                                        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
+                                                        <Setter Property="Opacity" Value="1" />
+                                                        <Setter Property="Grid.Column" Value="1" />
+                                                        <Setter Property="TextWrapping" Value="Wrap" />
+                                                        <Setter Property="VerticalAlignment" Value="Top" />
+                                                        <Setter Property="IsTextSelectionEnabled" Value="True" />
+                                                    </Style>
+                                                </Panel.Resources>
                                                 <TextBlock
-                                                    x:Name="FontPropColourFormats"
-                                                    x:Load="{x:Bind ViewModel.SelectedVariant.Face.Properties.IsColorFont, Mode=OneWay, FallbackValue=False}"
-                                                    x:Uid="FontPropColourFormats"
-                                                    d:Text="{core:Localizer Key=FontPropColourFormats/Text}" />
-                                                <TextBlock
-                                                    x:Name="FontProperColourFormatsValue"
-                                                    x:Load="{x:Bind ViewModel.SelectedVariant.Face.Properties.IsColorFont, Mode=OneWay, FallbackValue=False}"
-                                                    Style="{StaticResource Value}"
-                                                    Text="{x:Bind core:Converters.GetColourGlyphFormats(ViewModel.SelectedVariantAnalysis), Mode=OneWay}" />
+                                                    x:Uid="FontPropTitle"
+                                                    FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                                    FontWeight="Bold"
+                                                    d:Text="{core:Localizer Key=FontPropTitle/Text}" />
+                                                <controls:AutoGrid RowSpacing="8">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition />
+                                                        <ColumnDefinition />
+                                                    </Grid.ColumnDefinitions>
 
-                                                <TextBlock
-                                                    x:Name="FontPropCOLRVersion"
-                                                    x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.HasCOLRGlyphs, Mode=OneWay, FallbackValue=False}"
-                                                    x:Uid="FontPropCOLRVersion"
-                                                    d:Text="{core:Localizer Key=FontPropCOLRVersion/Text}" />
-                                                <TextBlock
-                                                    x:Name="FontProperCOLRVersionValue"
-                                                    x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.HasCOLRGlyphs, Mode=OneWay, FallbackValue=False}"
-                                                    Style="{StaticResource Value}"
-                                                    Text="{x:Bind ViewModel.SelectedVariantAnalysis.COLRVersion, Mode=OneWay}" />
+                                                    <TextBlock x:Uid="FontPropFamily" d:Text="{core:Localizer Key=FontPropFamily/Text}" />
+                                                    <TextBlock
+                                                        Grid.Row="0"
+                                                        Style="{StaticResource Value}"
+                                                        Text="{Binding SelectedFont.Font.Name}" />
 
-                                                <TextBlock x:Uid="FontPropFileSize" d:Text="{core:Localizer Key=FontPropFileSize/Text}" />
-                                                <TextBlock Style="{StaticResource Value}" Text="{x:Bind core:Converters.GetFileSize(ViewModel.SelectedVariantAnalysis.FileSize), Mode=OneWay}" />
+                                                    <TextBlock x:Uid="FontPropFace" d:Text="{core:Localizer Key=FontPropFace/Text}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.PreferredName}" />
 
-                                                <TextBlock
-                                                    x:Name="FontPropSrc"
-                                                    x:Load="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.IsRemote, Mode=OneWay, FallbackValue=False}"
-                                                    x:Uid="FontPropInstallType"
-                                                    d:Text="{core:Localizer Key=FontPropInstallType/Text}" />
-                                                <TextBlock
-                                                    x:Name="FontPropSrcValue"
-                                                    x:Load="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.IsRemote, Mode=OneWay, FallbackValue=False}"
-                                                    Style="{StaticResource Value}"
-                                                    Text="{core:Localizer Key='DWriteSourceRemoteFontProvider'}" />
+                                                    <TextBlock x:Uid="FontPropCharCount" d:Text="{core:Localizer Key=FontPropCharCount/Text}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{x:Bind ViewModel.SelectedVariant.Characters.Count, Mode=OneWay}" />
+
+                                                    <TextBlock x:Uid="FontPropCount" d:Text="{core:Localizer Key=FontPropCount/Text}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{x:Bind ViewModel.SelectedVariant.Face.GlyphCount, Mode=OneWay}" />
+
+                                                    <TextBlock x:Uid="FontPropType" d:Text="{core:Localizer Key=FontPropType/Text}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.Face.FileFormatType}" />
+
+                                                    <TextBlock x:Uid="FontPropSymbol" d:Text="{core:Localizer Key=FontPropSymbol/Text}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.DirectWriteProperties.IsSymbolFont}" />
+
+                                                    <TextBlock x:Uid="FontPropMonospaced" d:Text="{core:Localizer Key=FontPropMonospaced/Text}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.DirectWriteProperties.IsMonospacedFont}" />
+
+                                                    <TextBlock x:Uid="FontPropSimulated" d:Text="{core:Localizer Key=FontPropSimulated/Text}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.DirectWriteProperties.IsSimulated}" />
+
+                                                    <TextBlock x:Uid="FontPropStyle" d:Text="{core:Localizer Key=FontPropStyle/Text}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.DirectWriteProperties.Style}" />
+
+                                                    <TextBlock x:Uid="FontPropStretch" d:Text="{core:Localizer Key=FontPropStretch/Text}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.DirectWriteProperties.Stretch}" />
+
+                                                    <TextBlock x:Uid="FontPropWeight" d:Text="{core:Localizer Key=FontPropWeight/Text}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{x:Bind core:Converters.GetWeightName(ViewModel.SelectedVariant.DirectWriteProperties.Weight), Mode=OneWay}" />
+
+                                                    <TextBlock
+                                                        x:Name="FontPropColourFormats"
+                                                        x:Load="{x:Bind ViewModel.SelectedVariant.Face.Properties.IsColorFont, Mode=OneWay, FallbackValue=False}"
+                                                        x:Uid="FontPropColourFormats"
+                                                        d:Text="{core:Localizer Key=FontPropColourFormats/Text}" />
+                                                    <TextBlock
+                                                        x:Name="FontProperColourFormatsValue"
+                                                        x:Load="{x:Bind ViewModel.SelectedVariant.Face.Properties.IsColorFont, Mode=OneWay, FallbackValue=False}"
+                                                        Style="{StaticResource Value}"
+                                                        Text="{x:Bind core:Converters.GetColourGlyphFormats(ViewModel.SelectedVariantAnalysis), Mode=OneWay}" />
+
+                                                    <TextBlock
+                                                        x:Name="FontPropCOLRVersion"
+                                                        x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.HasCOLRGlyphs, Mode=OneWay, FallbackValue=False}"
+                                                        x:Uid="FontPropCOLRVersion"
+                                                        d:Text="{core:Localizer Key=FontPropCOLRVersion/Text}" />
+                                                    <TextBlock
+                                                        x:Name="FontProperCOLRVersionValue"
+                                                        x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.HasCOLRGlyphs, Mode=OneWay, FallbackValue=False}"
+                                                        Style="{StaticResource Value}"
+                                                        Text="{x:Bind ViewModel.SelectedVariantAnalysis.COLRVersion, Mode=OneWay}" />
+
+                                                    <TextBlock x:Uid="FontPropFileSize" d:Text="{core:Localizer Key=FontPropFileSize/Text}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{x:Bind core:Converters.GetFileSize(ViewModel.SelectedVariantAnalysis.FileSize), Mode=OneWay}" />
+
+                                                    <TextBlock
+                                                        x:Name="FontPropSrc"
+                                                        x:Load="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.IsRemote, Mode=OneWay, FallbackValue=False}"
+                                                        x:Uid="FontPropInstallType"
+                                                        d:Text="{core:Localizer Key=FontPropInstallType/Text}" />
+                                                    <TextBlock
+                                                        x:Name="FontPropSrcValue"
+                                                        x:Load="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.IsRemote, Mode=OneWay, FallbackValue=False}"
+                                                        Style="{StaticResource Value}"
+                                                        Text="{core:Localizer Key='DWriteSourceRemoteFontProvider'}" />
 
 
-                                                <!--<TextBlock x:Uid="FontPropInstallType" d:Text="{core:Localizer Key=FontPropInstallType/Text}" />
+                                                    <!--<TextBlock x:Uid="FontPropInstallType" d:Text="{core:Localizer Key=FontPropInstallType/Text}" />
                                                 <TextBlock Style="{StaticResource Value}" Text="{x:Bind ViewModel.SelectedVariant.GetProviderName(), Mode=OneWay}" />-->
 
-                                                <TextBlock
-                                                    x:Name="FontPropXaml"
-                                                    x:Load="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=False}"
-                                                    x:Uid="FontPropXaml"
-                                                    Grid.Column="0"
-                                                    Grid.ColumnSpan="2"
-                                                    Padding="0,4,0,0"
-                                                    d:Text="{core:Localizer Key=FontPropXaml/Text}" />
+                                                    <TextBlock
+                                                        x:Name="FontPropXaml"
+                                                        x:Load="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=False}"
+                                                        x:Uid="FontPropXaml"
+                                                        Grid.Column="0"
+                                                        Grid.ColumnSpan="2"
+                                                        Padding="0,4,0,0"
+                                                        d:Text="{core:Localizer Key=FontPropXaml/Text}" />
+
+                                                    <TextBlock
+                                                        x:Name="FontPropXamlValue"
+                                                        x:Load="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=False}"
+                                                        Grid.Column="0"
+                                                        Grid.ColumnSpan="2"
+                                                        Margin="0,-4,0,0"
+                                                        Style="{StaticResource Value}"
+                                                        Text="{x:Bind ViewModel.XamlPath, Mode=OneWay}" />
+
+                                                    <TextBlock
+                                                        x:Uid="FontPropFilePath"
+                                                        Grid.Column="0"
+                                                        Grid.ColumnSpan="2"
+                                                        Visibility="{x:Bind ShowFilePath(ViewModel.SelectedVariantAnalysis.FilePath, ViewModel.SelectedVariant.IsImported), Mode=OneWay, FallbackValue=Collapsed}"
+                                                        d:Text="{core:Localizer Key=FontPropFilePath/Text}" />
+                                                    <TextBlock
+                                                        Grid.Column="0"
+                                                        Grid.ColumnSpan="2"
+                                                        Margin="0,-4,0,0"
+                                                        Style="{StaticResource Value}"
+                                                        Text="{x:Bind ViewModel.SelectedVariantAnalysis.FilePath, Mode=OneWay}"
+                                                        Visibility="{x:Bind ShowFilePath(ViewModel.SelectedVariantAnalysis.FilePath, ViewModel.SelectedVariant.IsImported), Mode=OneWay, FallbackValue=Collapsed}" />
+
+                                                </controls:AutoGrid>
+
+                                                <ItemsControl ItemsSource="{Binding SelectedVariant.FontInformation}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Spacing="12" />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <StackPanel>
+                                                                <TextBlock
+                                                                    Opacity="0.5"
+                                                                    Style="{StaticResource BaseTextStyle}"
+                                                                    Text="{Binding Key}" />
+                                                                <TextBlock
+                                                                    IsTextSelectionEnabled="True"
+                                                                    Style="{StaticResource Value}"
+                                                                    Text="{Binding Value}" />
+                                                            </StackPanel>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
 
                                                 <TextBlock
-                                                    x:Name="FontPropXamlValue"
-                                                    x:Load="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=False}"
-                                                    Grid.Column="0"
-                                                    Grid.ColumnSpan="2"
-                                                    Margin="0,-4,0,0"
-                                                    Style="{StaticResource Value}"
-                                                    Text="{x:Bind ViewModel.XamlPath, Mode=OneWay}" />
+                                                    x:Uid="FontPropPanoseTitle"
+                                                    FontWeight="Bold"
+                                                    Visibility="{x:Bind ViewModel.SelectedVariant.Panose.HasPanose, Mode=OneWay}"
+                                                    d:Text="{core:Localizer Key=FontPropPanoseTitle/Text}" />
 
-                                                <TextBlock
-                                                    x:Uid="FontPropFilePath"
-                                                    Grid.Column="0"
-                                                    Grid.ColumnSpan="2"
-                                                    Visibility="{x:Bind ShowFilePath(ViewModel.SelectedVariantAnalysis.FilePath, ViewModel.SelectedVariant.IsImported), Mode=OneWay, FallbackValue=Collapsed}"
-                                                    d:Text="{core:Localizer Key=FontPropFilePath/Text}" />
-                                                <TextBlock
-                                                    Grid.Column="0"
-                                                    Grid.ColumnSpan="2"
-                                                    Margin="0,-4,0,0"
-                                                    Style="{StaticResource Value}"
-                                                    Text="{x:Bind ViewModel.SelectedVariantAnalysis.FilePath, Mode=OneWay}"
-                                                    Visibility="{x:Bind ShowFilePath(ViewModel.SelectedVariantAnalysis.FilePath, ViewModel.SelectedVariant.IsImported), Mode=OneWay, FallbackValue=Collapsed}" />
+                                                <ItemsControl ItemsSource="{x:Bind ViewModel.SelectedVariant.Panose.GetValues(), Mode=OneWay}" Visibility="{x:Bind ViewModel.SelectedVariant.Panose.HasPanose, Mode=OneWay}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Spacing="8" />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Grid>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="*" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <TextBlock
+                                                                    Opacity="0.5"
+                                                                    Style="{StaticResource BaseTextStyle}"
+                                                                    Text="{Binding Key}" />
+                                                                <TextBlock
+                                                                    IsTextSelectionEnabled="True"
+                                                                    Style="{StaticResource Value}"
+                                                                    Text="{Binding Value}" />
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </StackPanel>
+                                        </Border>
 
-                                            </controls:AutoGrid>
+                                    </ScrollViewer>
+                                </Flyout>
+                            </Button.Flyout>
+                        </controls:UXButton>
 
-                                            <ItemsControl ItemsSource="{Binding SelectedVariant.FontInformation}">
-                                                <ItemsControl.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <StackPanel Spacing="12" />
-                                                    </ItemsPanelTemplate>
-                                                </ItemsControl.ItemsPanel>
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <StackPanel>
-                                                            <TextBlock
-                                                                Opacity="0.5"
-                                                                Style="{StaticResource BaseTextStyle}"
-                                                                Text="{Binding Key}" />
-                                                            <TextBlock
-                                                                IsTextSelectionEnabled="True"
-                                                                Style="{StaticResource Value}"
-                                                                Text="{Binding Value}" />
-                                                        </StackPanel>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
+                        <controls:UXButton
+                            x:Name="FontOptionsButton"
+                            x:Uid="FontOptionsButton"
+                            VerticalAlignment="Stretch"
+                            helpers:FluentAnimation.PointerOver="DropDownGlyph"
+                            IsHintVisible="True"
+                            Style="{ThemeResource MapInfoButtonStyle}"
+                            Visibility="Collapsed"
+                            d:Label="{core:Localizer Key=FontOptionsButton/Label}"
+                            d:ToolTipService.ToolTip="{core:Localizer Key=FontOptionsButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
+                            <FontIcon
+                                Margin="0,0,-2,0"
+                                FontSize="18"
+                                Glyph="{core:ThemeIconGlyph Icon=RenderingOptions}"
+                                Style="{StaticResource ThemeFontIconStyle}" />
+                            <Button.Flyout>
+                                <Flyout
+                                    core:Properties.UseExpandContractAnimation="True"
+                                    win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
+                                    Placement="Bottom">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
 
-                                            <TextBlock
-                                                x:Uid="FontPropPanoseTitle"
-                                                FontWeight="Bold"
-                                                Visibility="{x:Bind ViewModel.SelectedVariant.Panose.HasPanose, Mode=OneWay}"
-                                                d:Text="{core:Localizer Key=FontPropPanoseTitle/Text}" />
-
-                                            <ItemsControl ItemsSource="{x:Bind ViewModel.SelectedVariant.Panose.GetValues(), Mode=OneWay}" Visibility="{x:Bind ViewModel.SelectedVariant.Panose.HasPanose, Mode=OneWay}">
-                                                <ItemsControl.ItemsPanel>
-                                                    <ItemsPanelTemplate>
-                                                        <StackPanel Spacing="8" />
-                                                    </ItemsPanelTemplate>
-                                                </ItemsControl.ItemsPanel>
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <Grid>
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="*" />
-                                                                <ColumnDefinition Width="*" />
-                                                            </Grid.ColumnDefinitions>
-                                                            <TextBlock
-                                                                Opacity="0.5"
-                                                                Style="{StaticResource BaseTextStyle}"
-                                                                Text="{Binding Key}" />
-                                                            <TextBlock
-                                                                IsTextSelectionEnabled="True"
-                                                                Style="{StaticResource Value}"
-                                                                Text="{Binding Value}" />
-                                                        </Grid>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </StackPanel>
-                                    </Border>
-
-                                </ScrollViewer>
-                            </Flyout>
-                        </Button.Flyout>
-                    </controls:UXButton>
-
-                    <controls:UXButton
-                        x:Name="FontOptionsButton"
-                        x:Uid="FontOptionsButton"
-                        VerticalAlignment="Stretch"
-                        helpers:FluentAnimation.PointerOver="DropDownGlyph"
-                        IsHintVisible="True"
-                        Style="{ThemeResource MapInfoButtonStyle}"
-                        Visibility="Collapsed"
-                        d:Label="{core:Localizer Key=FontOptionsButton/Label}"
-                        d:ToolTipService.ToolTip="{core:Localizer Key=FontOptionsButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
-                        <FontIcon
-                            Margin="0,0,-2,0"
-                            FontSize="18"
-                            Glyph="{core:ThemeIconGlyph Icon=RenderingOptions}"
-                            Style="{StaticResource ThemeFontIconStyle}" />
-                        <Button.Flyout>
-                            <Flyout
-                                core:Properties.UseExpandContractAnimation="True"
-                                win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
-                                Placement="Bottom">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="*" />
-                                    </Grid.RowDefinitions>
-
-                                    <controls:ExtendedListView
-                                        x:Name="OptionsList"
-                                        Grid.Row="1"
-                                        Width="300"
-                                        Padding="0"
-                                        ItemContainerTransitions="{StaticResource NoTransitions}"
-                                        ItemsSource="{x:Bind ViewModel.TypographyFeatures, Mode=OneWay}"
-                                        SelectedItem="{Binding SelectedTypography, Mode=TwoWay}"
-                                        SelectionMode="Single"
-                                        ShowsScrollingPlaceholders="False"
-                                        SingleSelectionFollowsFocus="True">
-                                        <!--<ListView.ItemContainerStyle>
+                                        <controls:ExtendedListView
+                                            x:Name="OptionsList"
+                                            Grid.Row="1"
+                                            Width="300"
+                                            Padding="0"
+                                            ItemContainerTransitions="{StaticResource NoTransitions}"
+                                            ItemsSource="{x:Bind ViewModel.TypographyFeatures, Mode=OneWay}"
+                                            SelectedItem="{Binding SelectedTypography, Mode=TwoWay}"
+                                            SelectionMode="Single"
+                                            ShowsScrollingPlaceholders="False"
+                                            SingleSelectionFollowsFocus="True">
+                                            <!--<ListView.ItemContainerStyle>
                                             <Style BasedOn="{StaticResource DefaultThemeListViewItemStyle}" TargetType="ListViewItem">
                                                 <Setter Property="core:Properties.PointerOverAnimation" Value="Name" />
                                                 <Setter Property="VerticalContentAlignment" Value="Center" />
                                             </Style>
                                         </ListView.ItemContainerStyle>-->
-                                        <ListView.Header>
-                                            <StackPanel Margin="12,4" Spacing="12">
-                                                <TextBlock
-                                                    x:Name="ColorHeader"
-                                                    x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.ContainsVectorColorGlyphs, Mode=OneWay}"
-                                                    x:Uid="FontDisplayHeader"
-                                                    FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                                    FontWeight="Bold"
-                                                    Opacity="0.5"
-                                                    d:Text="{core:Localizer Key=FontDisplayHeader/Text}" />
-                                                <ToggleSwitch
-                                                    x:Name="ColorGlyphToggle"
-                                                    x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.ContainsVectorColorGlyphs, Mode=OneWay}"
-                                                    x:Uid="ColorGlyphToggle"
-                                                    VerticalAlignment="Bottom"
-                                                    IsOn="{Binding ShowColorGlyphs, Mode=TwoWay}"
-                                                    d:OffContent="{core:Localizer Key=ColorGlyphToggle/OffContent}"
-                                                    d:OnContent="{core:Localizer Key=ColorGlyphToggle/OnContent}" />
-                                                <TextBlock
-                                                    x:Uid="TypographyVariantsHeader"
-                                                    Margin="0,12,0,0"
-                                                    FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                                    FontWeight="Bold"
-                                                    Opacity="0.5"
-                                                    Visibility="{x:Bind ViewModel.SelectedVariant.HasXamlTypographyFeatures, Mode=OneWay}"
-                                                    d:Text="{core:Localizer Key=TypographyVariantsHeader/Text}" />
-                                            </StackPanel>
-                                        </ListView.Header>
-                                        <ListView.ItemTemplate>
-                                            <DataTemplate x:DataType="core:TypographyFeatureInfo">
-                                                <TextBlock
-                                                    x:Name="TemplateContent"
-                                                    Margin="12 0"
-                                                    Text="{x:Bind DisplayName}" />
-                                            </DataTemplate>
-                                        </ListView.ItemTemplate>
-                                    </controls:ExtendedListView>
-                                </Grid>
-                            </Flyout>
-                        </Button.Flyout>
-                    </controls:UXButton>
+                                            <ListView.Header>
+                                                <StackPanel Margin="12,4" Spacing="12">
+                                                    <TextBlock
+                                                        x:Name="ColorHeader"
+                                                        x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.ContainsVectorColorGlyphs, Mode=OneWay}"
+                                                        x:Uid="FontDisplayHeader"
+                                                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                                        FontWeight="Bold"
+                                                        Opacity="0.5"
+                                                        d:Text="{core:Localizer Key=FontDisplayHeader/Text}" />
+                                                    <ToggleSwitch
+                                                        x:Name="ColorGlyphToggle"
+                                                        x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.ContainsVectorColorGlyphs, Mode=OneWay}"
+                                                        x:Uid="ColorGlyphToggle"
+                                                        VerticalAlignment="Bottom"
+                                                        IsOn="{Binding ShowColorGlyphs, Mode=TwoWay}"
+                                                        d:OffContent="{core:Localizer Key=ColorGlyphToggle/OffContent}"
+                                                        d:OnContent="{core:Localizer Key=ColorGlyphToggle/OnContent}" />
+                                                    <TextBlock
+                                                        x:Uid="TypographyVariantsHeader"
+                                                        Margin="0,12,0,0"
+                                                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                                        FontWeight="Bold"
+                                                        Opacity="0.5"
+                                                        Visibility="{x:Bind ViewModel.SelectedVariant.HasXamlTypographyFeatures, Mode=OneWay}"
+                                                        d:Text="{core:Localizer Key=TypographyVariantsHeader/Text}" />
+                                                </StackPanel>
+                                            </ListView.Header>
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate x:DataType="core:TypographyFeatureInfo">
+                                                    <TextBlock
+                                                        x:Name="TemplateContent"
+                                                        Margin="12 0"
+                                                        Text="{x:Bind DisplayName}" />
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </controls:ExtendedListView>
+                                    </Grid>
+                                </Flyout>
+                            </Button.Flyout>
+                        </controls:UXButton>
 
-                    <controls:UXButton
-                        x:Name="ViewToggleButton"
-                        x:Uid="ViewToggleButton"
-                        helpers:FluentAnimation.PointerOver="FluentContentPresenter"
-                        helpers:FluentAnimation.PointerOverOffset="-2"
-                        Click="{x:Bind ViewModel.ChangeDisplayMode}"
-                        Style="{ThemeResource MapInfoButtonStyle}"
-                        ToolTipService.ToolTip="{core:Localizer Key=LblSwitchToTypeRamp/Text}"
-                        d:Label="{core:Localizer Key=ViewToggleButton/Label}">
-                        <Button.Resources>
-                            <Storyboard x:Key="Released">
-                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Icon" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)">
-                                    <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="540">
-                                        <EasingDoubleKeyFrame.EasingFunction>
-                                            <CircleEase EasingMode="EaseOut" />
-                                        </EasingDoubleKeyFrame.EasingFunction>
-                                    </EasingDoubleKeyFrame>
-                                </DoubleAnimationUsingKeyFrames>
-                            </Storyboard>
-                            <Storyboard x:Key="Pressed">
-                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Icon" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)">
-                                    <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                                    <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="-20" />
-                                </DoubleAnimationUsingKeyFrames>
-                            </Storyboard>
-                        </Button.Resources>
-                        <FontIcon
-                            x:Name="Icon"
-                            Margin="0,0,-2,0"
-                            FontSize="18"
-                            Glyph="{core:ThemeIconGlyph Icon=ViewSwitch}"
-                            RenderTransformOrigin="0.5 0.5"
-                            Style="{StaticResource ThemeFontIconStyle}">
-                            <FontIcon.RenderTransform>
-                                <CompositeTransform />
-                            </FontIcon.RenderTransform>
-                        </FontIcon>
-                    </controls:UXButton>
+                        <controls:UXButton
+                            x:Name="ViewToggleButton"
+                            x:Uid="ViewToggleButton"
+                            helpers:FluentAnimation.PointerOver="FluentContentPresenter"
+                            helpers:FluentAnimation.PointerOverOffset="-2"
+                            Click="{x:Bind ViewModel.ChangeDisplayMode}"
+                            Style="{ThemeResource MapInfoButtonStyle}"
+                            ToolTipService.ToolTip="{core:Localizer Key=LblSwitchToTypeRamp/Text}"
+                            d:Label="{core:Localizer Key=ViewToggleButton/Label}">
+                            <Button.Resources>
+                                <Storyboard x:Key="Released">
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Icon" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)">
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="540">
+                                            <EasingDoubleKeyFrame.EasingFunction>
+                                                <CircleEase EasingMode="EaseOut" />
+                                            </EasingDoubleKeyFrame.EasingFunction>
+                                        </EasingDoubleKeyFrame>
+                                    </DoubleAnimationUsingKeyFrames>
+                                </Storyboard>
+                                <Storyboard x:Key="Pressed">
+                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Icon" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)">
+                                        <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                                        <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="-20" />
+                                    </DoubleAnimationUsingKeyFrames>
+                                </Storyboard>
+                            </Button.Resources>
+                            <FontIcon
+                                x:Name="Icon"
+                                Margin="0,0,-2,0"
+                                FontSize="18"
+                                Glyph="{core:ThemeIconGlyph Icon=ViewSwitch}"
+                                RenderTransformOrigin="0.5 0.5"
+                                Style="{StaticResource ThemeFontIconStyle}">
+                                <FontIcon.RenderTransform>
+                                    <CompositeTransform />
+                                </FontIcon.RenderTransform>
+                            </FontIcon>
+                        </controls:UXButton>
 
-                    <controls:UXButton
-                        x:Name="CharacterFilterButton"
-                        x:Uid="CharacterFilterButton"
-                        VerticalAlignment="Stretch"
-                        IsActive="{x:Bind ViewModel.IsFiltered, Mode=OneWay}"
-                        IsHintVisible="True"
-                        Loaded="{x:Bind helpers:CompositionFactory.SetStandardFadeInOut}"
-                        Style="{ThemeResource MapInfoButtonStyle}"
-                        d:Label="{core:Localizer Key=CharacterFilterButton/Label}"
-                        d:ToolTipService.ToolTip="{core:Localizer Key=CharacterFilterButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
-                        <FontIcon
-                            Margin="0,0,-2,0"
-                            FontSize="18"
-                            Glyph="{core:ThemeIconGlyph Icon=Filter}"
-                            Style="{StaticResource ThemeFontIconStyle}" />
-                        <Button.Flyout>
-                            <Flyout
-                                x:Name="CatFlyout"
-                                core:Properties.UseExpandContractAnimation="True"
-                                FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
-                                Opened="{x:Bind CatFlyoutContent.OnOpening}">
-                                <controls:CategoryFlyout
-                                    x:Name="CatFlyoutContent"
-                                    AcceptClicked="CategoryFlyout_AcceptClicked"
-                                    Flyout="{x:Bind CatFlyout}"
-                                    SourceCategories="{x:Bind ViewModel.SelectedGlyphCategories, Mode=OneWay}" />
-                            </Flyout>
-                        </Button.Flyout>
-                    </controls:UXButton>
+                        <controls:UXButton
+                            x:Name="CharacterFilterButton"
+                            x:Uid="CharacterFilterButton"
+                            VerticalAlignment="Stretch"
+                            IsActive="{x:Bind ViewModel.IsFiltered, Mode=OneWay}"
+                            IsHintVisible="True"
+                            Loaded="{x:Bind helpers:CompositionFactory.SetStandardFadeInOut}"
+                            Style="{ThemeResource MapInfoButtonStyle}"
+                            d:Label="{core:Localizer Key=CharacterFilterButton/Label}"
+                            d:ToolTipService.ToolTip="{core:Localizer Key=CharacterFilterButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
+                            <FontIcon
+                                Margin="0,0,-2,0"
+                                FontSize="18"
+                                Glyph="{core:ThemeIconGlyph Icon=Filter}"
+                                Style="{StaticResource ThemeFontIconStyle}" />
+                            <Button.Flyout>
+                                <Flyout
+                                    x:Name="CatFlyout"
+                                    core:Properties.UseExpandContractAnimation="True"
+                                    FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
+                                    Opened="{x:Bind CatFlyoutContent.OnOpening}">
+                                    <controls:CategoryFlyout
+                                        x:Name="CatFlyoutContent"
+                                        AcceptClicked="CategoryFlyout_AcceptClicked"
+                                        Flyout="{x:Bind CatFlyout}"
+                                        SourceCategories="{x:Bind ViewModel.SelectedGlyphCategories, Mode=OneWay}" />
+                                </Flyout>
+                            </Button.Flyout>
+                        </controls:UXButton>
 
-                </toolkit:WrapPanel>
+                    </toolkit:WrapPanel>
+                </Border>
 
-                <!--
-                    core:Properties.ClickAnimation="FluentContentPresenter|Scale"
-                    core:Properties.ClickAnimationOffset="0.8"
-                    core:Properties.PointerOverAnimation=""
-                -->
                 <controls:UXButton
                     x:Name="MoreOptionsButton"
                     x:Uid="BtnMoreIcon"
-                    Grid.Column="1"
+                    Grid.Column="2"
                     VerticalAlignment="Top"
                     core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                     helpers:FluentAnimation.PointerOver="FluentContentPresenter"
@@ -1231,6 +1230,9 @@
                     ShowVariationsInToolTips="True"
                     ShowsScrollingPlaceholders="False"
                     Style="{StaticResource CharacterMapStyle}">
+                    <core:Properties.ZoomHelper>
+                        <helpers:ZoomHelper ZoomInRequested="{x:Bind ViewModel.IncreaseCharacterSize}" ZoomOutRequested="{x:Bind ViewModel.DecreaseCharacterSize}" />
+                    </core:Properties.ZoomHelper>
                     <GridView.Header>
                         <StackPanel
                             x:Name="InfoHeader"

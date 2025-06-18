@@ -91,6 +91,21 @@ namespace CharacterMapCX
 			return  { static_cast<DWRITE_FONT_AXIS_TAG>(m_tag_raw), this->Value };
 		}
 
+		// Static equality operators
+		static bool operator==(DWriteFontAxis^ left, DWriteFontAxis^ right)
+		{
+			if (Object::ReferenceEquals(left, nullptr))
+				return Object::ReferenceEquals(right, nullptr);
+
+			return left->Tag == right->Tag && left->Value == right->Value;
+		}
+
+		static bool operator!=(DWriteFontAxis^ left, DWriteFontAxis^ right)
+		{
+			return left->Tag != right->Tag || left->Value != right->Value;
+		}
+		
+
 	private:
 		inline DWriteFontAxis() { };
 

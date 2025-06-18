@@ -4,6 +4,7 @@
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:converters="using:CharacterMap.Converters"
     xmlns:core="using:CharacterMap.Core"
+    xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)">
@@ -120,7 +121,7 @@
         <Setter Property="core:Properties.PointerOverAnimation" Value="Root" />
     </Style>
 
-
+    <Style x:Key="ControlSurfaceBorderStyle" TargetType="Border" />
 
     <Style x:Key="DefaultThemeGridViewItemStyle" TargetType="GridViewItem">
         <Setter Property="Background" Value="Transparent" />
@@ -763,7 +764,7 @@
     <Style x:Name="RadioButtonsButtonStyle" TargetType="RadioButton">
         <Setter Property="MinHeight" Value="36" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
-        <Setter Property="core:Properties.Color" Value="Black" />
+        <Setter Property="core:Properties.Color" Value="White" />
         <Setter Property="FontSize" Value="12.666" />
         <Setter Property="Template">
             <Setter.Value>
@@ -798,7 +799,7 @@
                                         From="*"
                                         To="Unchecked" />
                                     <VisualTransition
-                                        GeneratedDuration="0:0:0.4"
+                                        GeneratedDuration="0:0:0.2"
                                         GeneratedEasingFunction="{StaticResource RbEase}"
                                         From="*"
                                         To="Checked" />
@@ -812,37 +813,45 @@
     </Style>
 
     <Style x:Key="DefaultRadioButtonsThemeStyle" TargetType="muxc:RadioButtons">
-        <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource PivotNavButtonBackgroundThemeBrush}" />
+        <Setter Property="Background" Value="{ThemeResource SolidBackgroundFillColorBaseBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorSecondaryBrush}" />
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="controls:SelectorVisualElement.ElementTemplate" Value="{StaticResource RadioSelectorTemplate}" />
-        <Setter Property="Tag">
+        <Setter Property="core:Properties.UseZoomHelper" Value="True" />
+        <Setter Property="controls:UXRadioButtons.ColumnSpacing" Value="8" />
+        <Setter Property="controls:UXRadioButtons.RowSpacing" Value="8" />
+        <Setter Property="controls:UXRadioButtons.LayoutTemplate">
             <Setter.Value>
-                <x:Double>8</x:Double>
+                <DataTemplate>
+                    <primitives:ColumnMajorUniformToLargestGridLayout
+                        ColumnSpacing="{Binding Path=(controls:UXRadioButtons.ColumnSpacing), RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                        RowSpacing="{Binding Path=(controls:UXRadioButtons.ColumnSpacing), RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                        MaxColumns="{Binding MaxColumns, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                </DataTemplate>
             </Setter.Value>
         </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="muxc:RadioButtons">
-                    <Grid
-                        x:Name="ControlRoot"
-                        Background="{TemplateBinding Background}"
-                        BackgroundTransition="{StaticResource QuickBackgroundTransition}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}">
+                    <Grid x:Name="ControlRoot">
+                        <Grid.Resources />
 
-                        <muxc:ItemsRepeater x:Name="InnerRepeater">
-                            <muxc:ItemsRepeater.Layout>
-                                <primitives:ColumnMajorUniformToLargestGridLayout
-                                    ColumnSpacing="{TemplateBinding Tag}"
-                                    RowSpacing="{TemplateBinding Tag}"
-                                    MaxColumns="{Binding MaxColumns, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                            </muxc:ItemsRepeater.Layout>
-                        </muxc:ItemsRepeater>
+                        <Border
+                            x:Name="BorderRoot"
+                            Background="{TemplateBinding Background}"
+                            BackgroundTransition="{StaticResource QuickBrushTransition}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}" />
+
+
+                        <muxc:ItemsRepeater
+                            x:Name="InnerRepeater"
+                            Margin="{TemplateBinding Padding}"
+                            controls:UXRadioButtons.LayoutTemplate="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(controls:UXRadioButtons.LayoutTemplate)}" />
 
                         <ContentPresenter
                             x:Name="SelectorPresenter"
@@ -878,5 +887,13 @@
     </Style>
 
     <Style BasedOn="{StaticResource DefaultRadioButtonsThemeStyle}" TargetType="muxc:RadioButtons" />
+
+    <Style BasedOn="{StaticResource DefaultRadioButtonsThemeStyle}" TargetType="controls:UXRadioButtons" />
+
+    <Style x:Key="VerticalRadioSelectorElementStyle" TargetType="controls:SelectorVisualElement" />
+
+    <DataTemplate x:Key="VerticalRadioSelectorTemplate">
+        <controls:SelectorVisualElement Style="{StaticResource VerticalRadioSelectorElementStyle}" />
+    </DataTemplate>
 
 </ResourceDictionary>

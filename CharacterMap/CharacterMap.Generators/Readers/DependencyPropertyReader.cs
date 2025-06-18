@@ -54,7 +54,7 @@ internal record class DPData
                 or "TextWrapping" or "Stretch" or "Thickness"
                 or "TextAlignment" or "TimeSpan" or "BlendEffectMode"
                 or "Point" or "TextLineBounds" or "MaterialCornerMode"
-                or "ThemeIcon" or "SelectionVisualType";
+                or "ThemeIcon" or "SelectionVisualType" or "ZoomTriggerMode";
     }
 }
 
@@ -69,7 +69,7 @@ public class DependencyPropertyReader : SyntaxReader
         "    public static readonly DependencyProperty {0}Property =\r\n" +
         "        DependencyProperty.Register(nameof({0}), typeof({2}), typeof({1}), new PropertyMetadata({3}, (d, e) =>\r\n" +
         "        {{\r\n" +
-        "            if (d is {1} o && e.NewValue is {2} i)\r\n" +
+        "            if (d is {1} o)\r\n" +
         //"            {{\r\n" +
         "                o.On{0}Changed({4}, {5});\r\n" +
         // "            }}\r\n" +

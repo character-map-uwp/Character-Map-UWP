@@ -90,16 +90,21 @@
             OffsetTransition="{StaticResource DefaultSelectorTransition}"
             SizeTransition="{StaticResource DefaultSelectorTransition}"
             Stroke="{ThemeResource ControlActiveBorderBrush}"
-            StrokeThickness="1"
+            StrokeThickness="2"
             VisualCornerRadius="0 0"
-            VisualInset="0 0 3 3" />
+            VisualInset="0 0 2 2" />
     </DataTemplate>
 
     <Style x:Key="RadioButtonsButtonStyle" BasedOn="{StaticResource RadioButtonsButtonStyle}" TargetType="RadioButton">
         <Setter Property="core:Properties.Color" Value="Black" />
+        <Setter Property="FontSize" Value="12" />
     </Style>
 
     <Style BasedOn="{StaticResource DefaultRadioButtonsThemeStyle}" TargetType="muxc:RadioButtons">
+        <Setter Property="CornerRadius" Value="0" />
+    </Style>
+
+    <Style BasedOn="{StaticResource DefaultRadioButtonsThemeStyle}" TargetType="controls:UXRadioButtons">
         <Setter Property="CornerRadius" Value="0" />
     </Style>
 
@@ -179,6 +184,8 @@
 
 
     <!--  MISC TEMPLATES  -->
+
+    <Style x:Key="ControlSurfaceBorderStyle" TargetType="Border" />
 
     <DataTemplate x:Key="DefaultControlHeaderTemplate">
         <ContentPresenter

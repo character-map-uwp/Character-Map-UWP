@@ -59,6 +59,11 @@
             </VisualStateGroup>
             <VisualStateGroup x:Name="ThemeStatesGroup">
                 <VisualState x:Name="DefaultThemeState" />
+                <VisualState x:Name="FUIThemeState">
+                    <VisualState.Setters>
+                        <Setter Target="MenuColumn.(controls:SelectorVisualElement.ElementTemplate)" Value="{StaticResource VerticalRadioSelectorTemplate}" />
+                    </VisualState.Setters>
+                </VisualState>
                 <VisualState x:Name="ClassicThemeState">
                     <VisualState.Setters>
                         <Setter Target="Presenter.TitleBackgroundBrush" Value="Transparent" />
@@ -66,8 +71,14 @@
                 </VisualState>
                 <VisualState x:Name="ZuneThemeState">
                     <VisualState.Setters>
-                        <Setter Target="MenuColumn.Spacing" Value="8" />
-                        <Setter Target="MenuColumn.Padding" Value="20 0 0 0" />
+                        <Setter Target="MenuColumn.Margin" Value="20 20 0 0" />
+                        <Setter Target="MenuColumn.LayoutTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <muxc:StackLayout Orientation="Vertical" Spacing="8" />
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -93,12 +104,20 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel
+                <controls:UXRadioButtons
                     x:Name="MenuColumn"
                     Width="256"
                     Margin="0 24 0 0"
-                    ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
-                    Style="{StaticResource SettingsMenuStyle}">
+                    VerticalAlignment="Top"
+                    controls:SelectorVisualElement.ElementTemplate="{x:Null}"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    MaxColumns="1">
+                    <controls:UXRadioButtons.LayoutTemplate>
+                        <DataTemplate>
+                            <muxc:StackLayout Orientation="Vertical" Spacing="0" />
+                        </DataTemplate>
+                    </controls:UXRadioButtons.LayoutTemplate>
 
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
@@ -115,6 +134,7 @@
                     </controls:MenuButton>
 
                     <controls:MenuButton
+                        HorizontalAlignment="Stretch"
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsAdvancedUILabel/Text')}"
                         Tag="UserInterfaceAdvancedPanel"
@@ -184,7 +204,7 @@
                         ThemeIcon="About"
                         d:Content="{core:Localizer Key=SettingsAboutLabel/Text}" />
 
-                </StackPanel>
+                </controls:UXRadioButtons>
 
                 <Border
                     x:Name="ContentBorder"
@@ -250,16 +270,16 @@
                                     Description="{core:Localizer Key=SettingsCharLabelDesc/Text}">
                                     <StackPanel>
 
-                                        <muxc:RadioButtons
+                                        <controls:UXRadioButtons
                                             ItemsSource="{x:Bind ViewModel.Annotations}"
                                             MaxColumns="3"
                                             SelectedItem="{Binding Settings.GlyphAnnotation, Mode=TwoWay}">
-                                            <muxc:RadioButtons.ItemTemplate>
+                                            <controls:UXRadioButtons.ItemTemplate>
                                                 <DataTemplate x:DataType="models:GlyphAnnotation">
                                                     <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:GlyphAnnotation))}" />
                                                 </DataTemplate>
-                                            </muxc:RadioButtons.ItemTemplate>
-                                        </muxc:RadioButtons>
+                                            </controls:UXRadioButtons.ItemTemplate>
+                                        </controls:UXRadioButtons>
 
                                         <Border
                                             Margin="0 12 0 0"
@@ -355,13 +375,13 @@
                                     Description="{core:Localizer Key=SettingsFontListDescription/Text}">
                                     <StackPanel>
                                         <Grid>
-                                            <muxc:RadioButtons
+                                            <controls:UXRadioButtons
                                                 x:Name="FontTypeRadios"
                                                 MaxColumns="2"
                                                 SelectionChanged="FontTypeRadios_SelectionChanged">
                                                 <RadioButton x:Uid="RbUseActualFont" />
                                                 <RadioButton x:Uid="RbUseSystemFont" />
-                                            </muxc:RadioButtons>
+                                            </controls:UXRadioButtons>
                                         </Grid>
 
                                         <ContentPresenter
@@ -370,14 +390,14 @@
                                             Style="{StaticResource DescriptionContentStyle}"
                                             d:Content="{core:Localizer Key=SettingsFontImportDescription/Text}" />
 
-                                        <muxc:RadioButtons
+                                        <controls:UXRadioButtons
                                             x:Name="FontListFontSizeRadios"
                                             MaxColumns="3"
                                             SelectedIndex="{Binding Settings.FontListFontSizeIndex, Mode=TwoWay}">
                                             <RadioButton Content="{core:Localizer Key=FontListSizeNormal}" />
                                             <RadioButton Content="{core:Localizer Key=FontListSizeLarge}" />
                                             <RadioButton Content="{core:Localizer Key=FontListSizeLarger}" />
-                                        </muxc:RadioButtons>
+                                        </controls:UXRadioButtons>
 
                                         <ListView
                                             x:Name="LstFontFamily"

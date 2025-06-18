@@ -119,7 +119,7 @@ public static class FlyoutHelper
 
         static void SaveFont_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuFlyoutItem item && item.DataContext is CharacterRenderingOptions opts)
+            if (sender is MenuFlyoutItem item && Properties.GetTag(item) is CharacterRenderingOptions opts)
             {
                 ExportManager.RequestExportFont(opts, true);
             }
@@ -134,7 +134,7 @@ public static class FlyoutHelper
         {
             if (sender is FrameworkElement f &&
                 f.Tag is CMFontFamily fnt
-                && f.DataContext is CharacterRenderingOptions o)
+                && Properties.GetTag(f) is CharacterRenderingOptions o)
             {
                 WeakReferenceMessenger.Default.Send(new ExportRequestedMessage());
             }
@@ -151,16 +151,25 @@ public static class FlyoutHelper
         static void AddToQuickCompare(object sender, RoutedEventArgs e)
         {
             if (sender is FrameworkElement f
-                && f.DataContext is CharacterRenderingOptions o)
+                && Properties.GetTag(f) is CharacterRenderingOptions o)
             {
                 _ = QuickCompareView.AddAsync(o);
+            }
+        }
+
+        static void AddToQuickCompareMulti(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement f
+                && Properties.GetTag(f) is CharacterRenderingOptions o)
+            {
+                _ = QuickCompareView.AddAsync(o, true);
             }
         }
 
         void OpenCalligraphy(object sender, RoutedEventArgs e)
         {
             if (sender is FrameworkElement f
-                && f.DataContext is CharacterRenderingOptions o)
+                && Properties.GetTag(f) is CharacterRenderingOptions o)
             {
                 _ = CalligraphyView.CreateWindowAsync(o, args?.PreviewText);
             }
@@ -186,9 +195,10 @@ public static class FlyoutHelper
                 Text = key.StartsWith("~") ? key.Remove(0, 1) : Localization.Get(key),
                 Icon = Icon(icon),
                 Tag = font,
-                DataContext = options,
                 Style = style
             };
+
+            Properties.SetTag(item, options);
 
             item.Click += handler;
 
@@ -207,7 +217,10 @@ public static class FlyoutHelper
         {
             menu.Items.Clear();
             MenuFlyoutSubItem coll;
+
+            bool qc = args.IsFolderView is false && isExternalFile is false;
             {
+
                 // HORRIBLE Hacks, because MenuFlyoutSubItem never updates it's UI tree after the first
                 // render meaning we can't dynamically update items. Instead we need to make an entirely
                 // menu every time it opens.
@@ -244,7 +257,11 @@ public static class FlyoutHelper
                         Create("ExportCharactersLabel/Text", ThemeIcon.Save, Export_Click, VirtualKey.E);
                 }
 
-                // 3. Add "Add to Collection" button
+                // 3. Add "Add to quick compare" button if we're viewing a variant
+                if (qc)
+                    Create("AddToQuickCompare/Text", ThemeIcon.AddTo, AddToQuickCompare, VirtualKey.Q);
+
+                // 4. Add "Add to Collection" button
                 if (isExternalFile is false && args.IsFolderView is false)
                 {
                     coll = AddCollectionItems(menu, font, null, args: args);
@@ -252,7 +269,7 @@ public static class FlyoutHelper
                 }
             }
 
-            // 4. Add "Remove from Collection" item
+            // 5. Add "Remove from Collection" item
             // Only show the "Remove from Collection" menu item if:
             //  -- we are not in a stand-alone window
             //  AND
@@ -266,7 +283,7 @@ public static class FlyoutHelper
                 TryAddRemoveFromCollection(menu, font, main.SelectedCollection, main.FontListFilter);
             }
 
-            // 5. Add "Print" Button
+            // 6. Add "Print" Button
             if (showAdvanced && args.IsTabContext is false)
             {
                 if (Windows.Graphics.Printing.PrintManager.IsSupported())
@@ -276,7 +293,7 @@ public static class FlyoutHelper
                 }
             }
 
-            // 6. Add "Delete Font" button
+            // 7. Add "Delete Font" button
             if (!standalone
                 && !args.IsFolderView
                 && !args.IsTabContext
@@ -288,23 +305,30 @@ public static class FlyoutHelper
                     del.AddKeyboardAccelerator(VirtualKey.Delete, VirtualKeyModifiers.Control);
             }
 
-            // 7. Handle compare options
-            bool qc = args.IsFolderView is false && showAdvanced && isExternalFile is false;
-            if (qc || font.HasVariants)
+            // 8. Handle compare options
+            if (font.HasVariants)
                 menu.AddSeparator();
 
-            // 7.1. Add "Compare Fonts button"
             if (font.HasVariants)
+            {
+                // 8.1. Add "Compare Fonts button"
+                // NOTE: count is not used on updated translation, left because old translations may still use it
                 Create($"~{string.Format(Localization.Get("CompareFacesCountLabel/Text"), font.Variants.Count)}", ThemeIcon.CompareFonts, OpenFaceCompare);
+                
+                // 8.2. Add "Add all to quick compare" button
+                Create("AddMultiToQuickCompare/Text", ThemeIcon.Add, AddToQuickCompareMulti);
+            }
 
-            // 7.2. Add "Add to quick compare" button if we're viewing a variant
-            if (qc)
-                Create("AddToQuickCompare/Text", ThemeIcon.Add, AddToQuickCompare, VirtualKey.Q);
-
-            // 8. Add Calligraphy button
+            // 9. Add Calligraphy button
             menu.AddSeparator();
             Create("CalligraphyLabel/Text", ThemeIcon.Calligraphy, OpenCalligraphy, VirtualKey.I);
         }
+    }
+
+    public static T SetAttachedTag<T>(this T item, object o) where T : MenuFlyoutItemBase
+    {
+        Properties.SetTag(item, o);
+        return item;
     }
 
     public static T SetAnimation<T>(this T item) where T : MenuFlyoutItemBase
@@ -380,7 +404,7 @@ public static class FlyoutHelper
 
         static async void AddToSymbolFonts_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is FrameworkElement f && f.DataContext is IReadOnlyList<CMFontFamily> fnts)
+            if (sender is FrameworkElement f && Properties.GetTag(f) is IReadOnlyList<CMFontFamily> fnts)
             {
                 var result = await _collections.AddToCollectionAsync(
                     fnts,
@@ -398,7 +422,7 @@ public static class FlyoutHelper
         static void CreateCollection_Click(object sender, RoutedEventArgs e)
         {
             _ = new CreateCollectionDialog()
-                   .SetDataContext(((FrameworkElement)sender).DataContext)
+                   .SetDataContext(Properties.GetTag((FrameworkElement)sender))
                    .ShowAsync();
         }
 
@@ -422,11 +446,11 @@ public static class FlyoutHelper
         {
             Text = Localization.Get("NewCollectionItem/Text"),
             Icon = Icon(ThemeIcon.Add),
-            DataContext = items,
             Style = style
         };
 
         newCollection.Click += CreateCollection_Click;
+        newCollection.SetAttachedTag(items);
 
         if (parent.Items != null)
         {
@@ -441,10 +465,10 @@ public static class FlyoutHelper
                 {
                     Text = Localization.Get("OptionSymbolFonts/Text"),
                     IsEnabled = multiMode || !_collections.SymbolCollection.Fonts.Contains(font.Name),
-                    DataContext = items,
                     Style = style,
                     Tag = args?.AddToCollectionCommand
                 };
+                symb.SetAttachedTag(items);
                 symb.Click += AddToSymbolFonts_Click;
                 parent.Items.Add(symb);
             }
@@ -462,18 +486,17 @@ public static class FlyoutHelper
                         _collections.Items.Select(item => new MenuFlyoutItem
                         {
                             Tag = item,
-                            DataContext = items,
                             Text = item.Name,
                             Style = style,
                             IsEnabled = multiMode || !item.Fonts.Contains(font.Name)
-                        }.SetAnimation()))
+                        }.SetAttachedTag(items).SetAnimation()))
                 {
                     if (m.IsEnabled)
                     {
                         m.Click += async (s, a) =>
                         {
                             if (s is FrameworkElement f
-                                && f.DataContext is IReadOnlyList<CMFontFamily> fnts
+                                && Properties.GetTag(f) is IReadOnlyList<CMFontFamily> fnts
                                 && f.Tag is UserFontCollection clct)
                             {
                                 AddToCollectionResult result = await _collections.AddToCollectionAsync(fnts, clct);

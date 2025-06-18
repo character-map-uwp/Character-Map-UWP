@@ -235,6 +235,7 @@
     <Compile Include="Controls\UnhandledExceptionDialog.xaml.cs">
       <DependentUpon>UnhandledExceptionDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\UXRadioButtons.cs" />
     <Compile Include="Controls\UXSlider.cs" />
     <Compile Include="Converters\Converters.cs" />
     <Compile Include="Core\AlphaKeyGroup.cs" />
@@ -244,6 +245,7 @@
     <Compile Include="Core\ExportManager.Font.cs" />
     <Compile Include="Core\FontImporter.cs" />
     <Compile Include="Core\ThemeIconGlyph.cs" />
+    <Compile Include="Helpers\ZoomHelper.cs" />
     <Compile Include="Models\ExportOptions.cs" />
     <Compile Include="Models\FileNameWriter.cs" />
     <Compile Include="Core\Index.cs" />
@@ -466,7 +468,9 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <None Include="CharacterMap_TemporaryKey.pfx" />
-    <PRIResource Include="Strings\en-US\Resources.resw" />
+    <PRIResource Include="Strings\en-US\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
     <PRIResource Include="Strings\en-GB\Resources.resw" />
     <PRIResource Include="Strings\de-DE\Resources.resw" />
     <PRIResource Include="Strings\fr-FR\Resources.resw" />

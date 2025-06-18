@@ -44,16 +44,10 @@
     <CornerRadius x:Key="ButtonCornerRadius">100</CornerRadius>
     <CornerRadius x:Key="ControlCornerRadius">6</CornerRadius>
 
-
-
-
     <FontFamily x:Key="ContentControlThemeFontFamily">Segoe UI Variable Text, XamlAutoFontFamily</FontFamily>
     <FontFamily x:Key="SymbolThemeFontFamily">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
 
-    <BrushTransition x:Key="QuickBrushTransition" Duration="0:0:0.06" />
-
     <StaticResource x:Key="InfoBarBackgroundBrush" ResourceKey="SystemControlBackgroundAccentBrush" />
-
 
     <Style x:Key="ThemeFontIconStyle" TargetType="FontIcon">
         <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
@@ -90,24 +84,7 @@
 
     <!--  MISC CONTROLS  -->
 
-    <DataTemplate x:Key="RadioSelectorTemplate">
-        <controls:SelectorVisualElement
-            Fill="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-            OffsetTransition="{StaticResource DefaultSelectorTransition}"
-            SizeTransition="{StaticResource DefaultSelectorTransition}"
-            Stroke="{ThemeResource CardStrokeColorDefaultSolidBrush}"
-            StrokeThickness="1"
-            VisualCornerRadius="4 4"
-            VisualInset="0 0 3 3" />
-    </DataTemplate>
 
-    <DataTemplate x:Name="PointerSelectorVisualTemplate">
-        <controls:SelectorVisualElement
-            Fill="{ThemeResource ListViewItemBackgroundPointerOver}"
-            OffsetTransition="{StaticResource QuickCompositionTransition}"
-            SizeTransition="{StaticResource QuickCompositionTransition}"
-            VisualCornerRadius="4 4" />
-    </DataTemplate>
 
     <Style TargetType="controls:ExtendedListView">
         <Setter Property="SelectorTemplate" Value="{StaticResource PointerSelectorVisualTemplate}" />
@@ -520,6 +497,7 @@
             <Setter.Value>
                 <Style TargetType="ContentPresenter">
                     <Setter Property="BorderThickness" Value="0 0 0 1" />
+                    <Setter Property="core:Properties.BackgroundTransition" Value="{StaticResource QuickBrushTransition}" />
                     <Setter Property="Background" Value="{ThemeResource LayerFillColorDefaultBrush}" />
                     <Setter Property="Padding" Value="16 8 16 8" />
                     <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
@@ -1293,26 +1271,16 @@
 
 
     <!--  RADIOBUTTON  -->
-    <Style x:Key="DefaultThemeRadioButtonStyle" BasedOn="{StaticResource DefaultRadioButtonStyle}" TargetType="controls:UXRadioButton">
-        <Setter Property="Padding" Value="8,6,3,0" />
-        <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.95" />
-        <Setter Property="h:FluentAnimation.PointerOver" Value="ContentPresenter" />
-        <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
-        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="3" />
-        <Setter Property="h:FluentAnimation.Pressed" Value="ContentPresenter" />
-        <Setter Property="h:FluentAnimation.UsePointerOver" Value="True" />
-    </Style>
 
-    <Style BasedOn="{StaticResource DefaultRadioButtonsThemeStyle}" TargetType="muxc:RadioButtons">
+
+    <Style x:Key="ControlSurfaceBorderStyle" TargetType="Border">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="core:Properties.BackgroundTransition" Value="{StaticResource QuickBrushTransition}" />
         <Setter Property="Background" Value="{ThemeResource DefaultHostBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
         <Setter Property="BorderThickness" Value="1" />
-    </Style>
-
-
-
-    <Style x:Key="RadioButtonsButtonStyle" BasedOn="{StaticResource RadioButtonsButtonStyle}" TargetType="RadioButton">
-        <Setter Property="core:Properties.Color" Value="{ThemeResource TextFillColorPrimary}" />
+        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+        <Setter Property="Transitions" Value="{StaticResource RepositionTransitions}" />
     </Style>
 
 
@@ -1701,7 +1669,7 @@
                             <VisualStateGroup x:Name="ActiveStates">
                                 <VisualState x:Name="IsActive">
                                     <VisualState.Setters>
-                                        <Setter Target="FluentContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}" />
+                                        <Setter Target="FluentContentPresenter.Foreground" Value="White" />
                                         <Setter Target="Root.Background" Value="{ThemeResource SystemControlForegroundAccentBrush}" />
                                     </VisualState.Setters>
                                 </VisualState>
@@ -1758,7 +1726,7 @@
                                 VerticalAlignment="Center"
                                 h:CompositionFactory.OpacityDuration="0:0:0.1"
                                 AutomationProperties.AccessibilityView="Raw"
-                                Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                Foreground="{Binding ElementName=FluentContentPresenter, Path=Foreground}"
                                 IsHitTestVisible="False"
                                 Visibility="Collapsed">
                                 <av:AnimatedChevronDownSmallVisualSource />
@@ -1766,7 +1734,7 @@
                                     <muxc:FontIconSource
                                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                         FontSize="12"
-                                        Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
+                                        Foreground="{Binding ElementName=FluentContentPresenter, Path=Foreground}"
                                         Glyph="&#xE70D;" />
                                 </muxc:AnimatedIcon.FallbackIconSource>
                             </muxc:AnimatedIcon>
@@ -1989,8 +1957,8 @@
                                 <VisualState x:Name="Checked">
                                     <VisualState.Setters>
                                         <Setter Target="IconPresenter.Foreground" Value="{ThemeResource ButtonForeground}" />
-                                        <Setter Target="SelectionIndicator.Visibility" Value="Visible" />
-                                        <Setter Target="RootGrid.Background" Value="#0FFFFFFF" />
+                                        <!--<Setter Target="SelectionIndicator.Visibility" Value="Visible" />-->
+                                        <!--<Setter Target="RootGrid.Background" Value="#0FFFFFFF" />-->
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Unchecked">
@@ -2802,9 +2770,77 @@
 
     <Style x:Key="DefaultThemeSliderStyle" BasedOn="{StaticResource DefaultSliderStyle}" TargetType="Slider">
         <Setter Property="h:FluentAnimation.PointerOver" Value="HorizontalThumb" />
+        <Setter Property="core:Properties.UseZoomHelper" Value="True" />
     </Style>
 
 
+
+
+
+    <!--  RADIO BUTTONS  -->
+
+
+    <Style x:Key="DefaultThemeRadioButtonStyle" BasedOn="{StaticResource DefaultRadioButtonStyle}" TargetType="controls:UXRadioButton">
+        <Setter Property="Padding" Value="8,6,3,0" />
+        <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.95" />
+        <Setter Property="h:FluentAnimation.PointerOver" Value="ContentPresenter" />
+        <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="3" />
+        <Setter Property="h:FluentAnimation.Pressed" Value="ContentPresenter" />
+        <Setter Property="h:FluentAnimation.UsePointerOver" Value="True" />
+    </Style>
+
+    <Style x:Key="DefaultRadioButtonsThemeStyle" BasedOn="{StaticResource DefaultRadioButtonsThemeStyle}" TargetType="muxc:RadioButtons">
+        <Setter Property="Background" Value="{ThemeResource DefaultHostBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+    </Style>
+
+    <Style x:Key="RadioButtonsButtonStyle" BasedOn="{StaticResource RadioButtonsButtonStyle}" TargetType="RadioButton">
+        <Setter Property="core:Properties.Color" Value="{ThemeResource TextFillColorPrimary}" />
+    </Style>
+
+    <Style BasedOn="{StaticResource DefaultRadioButtonsThemeStyle}" TargetType="muxc:RadioButtons" />
+
+    <Style BasedOn="{StaticResource DefaultRadioButtonsThemeStyle}" TargetType="controls:UXRadioButtons" />
+
+    <Style x:Key="RadioSelectorElementStyle" TargetType="controls:SelectorVisualElement">
+        <Setter Property="BarCornerRadius" Value="2,2" />
+        <Setter Property="BarFill" Value="{ThemeResource AccentFillColorTertiaryBrush}" />
+        <Setter Property="BarPadding" Value="2" />
+        <Setter Property="BarSize" Value="12,3" />
+        <Setter Property="Fill" Value="{ThemeResource SolidBackgroundFillColorTertiaryBrush}" />
+        <Setter Property="OffsetTransition" Value="{StaticResource DefaultSelectorTransition}" />
+        <Setter Property="SizeTransition" Value="{StaticResource DefaultSelectorTransition}" />
+        <Setter Property="Stroke" Value="{ThemeResource SurfaceStrokeColorDefaultBrush}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="VisualCornerRadius" Value="4 4" />
+        <Setter Property="VisualInset" Value="-1 -1 0 0" />
+    </Style>
+
+    <Style x:Key="VerticalRadioSelectorElementStyle" BasedOn="{StaticResource RadioSelectorElementStyle}" TargetType="controls:SelectorVisualElement">
+        <Setter Property="BarSize" Value="3, 12" />
+        <Setter Property="Orientation" Value="Vertical" />
+        <Setter Property="Fill" Value="{ThemeResource AppBarButtonBackgroundPointerOver}" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="VisualInset" Value="-2" />
+    </Style>
+
+    <DataTemplate x:Key="RadioSelectorTemplate">
+        <controls:SelectorVisualElement Style="{StaticResource RadioSelectorElementStyle}" />
+    </DataTemplate>
+
+    <DataTemplate x:Key="VerticalRadioSelectorTemplate">
+        <controls:SelectorVisualElement Style="{StaticResource VerticalRadioSelectorElementStyle}" />
+    </DataTemplate>
+
+    <DataTemplate x:Name="PointerSelectorVisualTemplate">
+        <controls:SelectorVisualElement
+            Fill="{ThemeResource ListViewItemBackgroundPointerOver}"
+            OffsetTransition="{StaticResource QuickCompositionTransition}"
+            SizeTransition="{StaticResource QuickCompositionTransition}"
+            VisualCornerRadius="4 4" />
+    </DataTemplate>
 
 
 </ResourceDictionary>

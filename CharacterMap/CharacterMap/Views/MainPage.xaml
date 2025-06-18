@@ -794,6 +794,9 @@
                                         SelectionChanged="LstFontFamily_SelectionChanged"
                                         SelectionMode="Single"
                                         ShowsScrollingPlaceholders="False">
+                                        <core:Properties.ZoomHelper>
+                                            <helpers:ZoomHelper ZoomInRequested="{x:Bind helpers:ResourceHelper.AppSettings.IncreaseFontListSize}" ZoomOutRequested="{x:Bind helpers:ResourceHelper.AppSettings.DecreaseFontListSize}" />
+                                        </core:Properties.ZoomHelper>
                                         <ListViewBase.GroupStyle>
                                             <GroupStyle
                                                 HeaderContainerStyle="{ThemeResource FontListHeaderItem}"

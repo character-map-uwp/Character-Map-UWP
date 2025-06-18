@@ -3,6 +3,7 @@ using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 
@@ -30,6 +31,12 @@ public enum SelectionVisualType
     Focus        // Should be rendered on top of Window.Current.Content
 }
 
+public enum SelectorInteractionState
+{
+    None,
+    PointerOver
+}
+
 [DependencyProperty<Point>("VisualCornerRadius", default)]
 [DependencyProperty<Point>("VisualOffset", default)]
 [DependencyProperty<HorizontalAlignment>("VisualHorizontalAlignment", "HorizontalAlignment.Stretch", nameof(Update))]
@@ -40,19 +47,39 @@ public enum SelectionVisualType
 [DependencyProperty<CompositionTransition>("OffsetTransition")]
 [DependencyProperty<SolidColorBrush>("Fill")]
 [DependencyProperty<SolidColorBrush>("Stroke")]
+[DependencyProperty<SolidColorBrush>("BarFill")]
 [DependencyProperty<SelectionVisualType>("Mode")]
 [DependencyProperty<double>("StrokeThickness")]
 [DependencyProperty<FrameworkElement>("Target")] // Set to a ListView or RadioButtons to automatically attach
 [DependencyProperty<FrameworkElement>("DisplayTarget")]
+[DependencyProperty<Point>("BarSize")]
+[DependencyProperty<double>("BarPadding")]
+[DependencyProperty<Point>("BarCornerRadius", "new Point(2,2)")]
+[DependencyProperty<Orientation>("Orientation", "Orientation.Horizontal")]
 [AttachedProperty<SelectorVisualElement>("Element")]
 [AttachedProperty<DataTemplate>("ElementTemplate")]
 public partial class SelectorVisualElement : FrameworkElement
 {
-    private ShapeVisual _shapes;
+    private ShapeVisual _containerShapes;
+    private ShapeVisual _barShapes;
     private ContainerVisual _container;
     private CompositionRoundedRectangleGeometry _rect;
+    private CompositionRoundedRectangleGeometry _bar;
     private CompositionColorBrush _fillBrush;
     private CompositionColorBrush _strokeBrush;
+    private CompositionColorBrush _barFillBrush;
+    private CompositionPropertySet _props;
+    private CompositionSpriteShape _barSprite;
+
+    private ExpressionAnimation _exp;
+
+    string barXY_horizontal => "Vector2(" +
+            "((Container.Size.X - Bar.Size.X) / 2) + 2," + // TODO: Why + 2? Is is StrokeThickness?
+            "Container.Size.Y - Bar.Size.Y - props.Padding)";
+
+    string barXY_vertical => "Vector2(" +
+            "props.Padding, " +
+            "((Container.Size.Y - Bar.Size.Y) / 2) + 2)";
 
 
     private List<(DependencyProperty, long)> _tokens { get; } = [];
@@ -60,9 +87,9 @@ public partial class SelectorVisualElement : FrameworkElement
     public SelectorVisualElement()
     {
         this.IsHitTestVisible = false;
-
         this.Loaded += SelectorVisual_Loaded;
         this.Unloaded += SelectorVisual_Unloaded;
+        _props = this.GetElementVisual().Compositor.CreatePropertySet();
     }
 
     void Update()
@@ -73,12 +100,6 @@ public partial class SelectorVisualElement : FrameworkElement
         CreateVisual();
         _rect.CornerRadius = VisualCornerRadius.ToVector2();
     }
-
-    //partial void OnVisualCornerRadiusChanged(Point o, Point n)
-    //{
-    //    if (_rect is not null)
-    //        _rect.CornerRadius = n.ToVector2();
-    //}
 
     Color GetColor(SolidColorBrush b)
     {
@@ -99,38 +120,109 @@ public partial class SelectorVisualElement : FrameworkElement
         if (_strokeBrush is not null)
             _strokeBrush.Color = GetColor(n);
     }
-    
+
+    partial void OnBarFillChanged(SolidColorBrush o, SolidColorBrush n)
+    {
+        if (_barFillBrush is not null)
+            _barFillBrush.Color = GetColor(n);
+    }
 
     partial void OnStrokeThicknessChanged(double o, double n)
     {
-        if (_shapes is not null && _shapes.Shapes.FirstOrDefault() is CompositionSpriteShape s)
+        if (_containerShapes is not null && _containerShapes.Shapes.FirstOrDefault() is CompositionSpriteShape s)
             s.StrokeThickness = (float)n;
+    }
+
+    partial void OnBarSizeChanged(Point o, Point n)
+    {
+        if (_bar is not null)
+        {
+            _bar.Size = n.ToVector2();
+            _barShapes.Size = _bar.Size;
+            _props?.InsertVector2("BarSize", _bar.Size);
+        }
+    }
+
+    partial void OnBarPaddingChanged(double o, double n)
+    {
+        _props?.InsertScalar("Padding", (float)BarPadding);
+    }
+
+    partial void OnBarCornerRadiusChanged(Point o, Point n)
+    {
+        if (_bar is not null)
+            _bar.CornerRadius = n.ToVector2();
+    }
+
+    partial void OnVisualCornerRadiusChanged(Point o, Point n)
+    {
+        if (_rect is not null)
+            _rect.CornerRadius = VisualCornerRadius.ToVector2();
     }
 
     void CreateVisual()
     {
-        if (_shapes is not null)
+        if (_containerShapes is not null)
             return;
 
         var c = this.GetElementVisual().Compositor;
 
         _fillBrush = c.CreateColorBrush(GetColor(Fill));
         _strokeBrush = c.CreateColorBrush(GetColor(Stroke));
+        _barFillBrush = c.CreateColorBrush(GetColor(BarFill));
 
         _rect = c.CreateRoundedRectangleGeometry();
         _rect.CornerRadius = VisualCornerRadius.ToVector2();
 
+        // Create background shape
         var s = c.CreateSpriteShape(_rect);
 
         s.StrokeBrush = _strokeBrush;
         s.StrokeThickness = (float)StrokeThickness;
         s.FillBrush = _fillBrush;
 
-        _shapes = c.CreateShapeVisual();
-        _shapes.Shapes.Add(s);
+        _containerShapes = c.CreateShapeVisual();
+        _containerShapes.Shapes.Add(s);
 
         _container = c.CreateContainerVisual();
-        _container.Children.InsertAtTop(_shapes);
+        _container.Children.InsertAtTop(_containerShapes);
+
+        // Create bar shape
+        _bar = c.CreateRoundedRectangleGeometry();
+        _bar.CornerRadius = BarCornerRadius.ToVector2();
+        _bar.Size = BarSize.ToVector2();
+        var bs = c.CreateSpriteShape(_bar);
+        bs.FillBrush = _barFillBrush;
+        bs.CenterPoint = _bar.Size / 2;
+        _barSprite = bs;
+
+        _props.Insert("Padding", (float)BarPadding);
+
+        // Setup bar shape
+        _barShapes = c.CreateShapeVisual();
+
+        CompositionFactory.StartCentering(_barShapes);
+        _barShapes.Shapes.Add(bs);
+        _container.Children.InsertAtTop(_barShapes);
+
+        // Bar scale
+        _barShapes.SetImplicitAnimation("Scale",
+            bs.CreateVector3KeyFrameAnimation("Scale")
+                .AddKeyFrame(1, "this.FinalValue")
+                .SetDuration(0.3));
+
+        var str = this.Orientation is Orientation.Horizontal
+            ? barXY_horizontal
+            : barXY_vertical;
+
+        // Position bar
+        _exp = bs.CreateExpressionAnimation("Offset.XY")
+            .SetExpression(str)
+            .SetParameter("Container", _rect)
+            .SetParameter("Bar", _bar)
+            .SetParameter("props", _props);
+
+        bs.StartAnimation(_exp);
 
         if (DisplayTarget is null)
             this.SetChildVisual(_container);
@@ -189,32 +281,46 @@ public partial class SelectorVisualElement : FrameworkElement
 
         // 3: Animation position
         SetOffset(animate);
-        _shapes.Offset = position;
+        _containerShapes.Offset = position;
+        _barShapes.Offset = position;
 
         // 4: Animation size
-        SetSizeAnimation(_shapes, animate);
+        SetSizeAnimation(_containerShapes, animate);
+        SetSizeAnimation(_barShapes, animate);
         SetSizeAnimation(_container, animate);
         SetSizeAnimation(_rect, animate);
+        SetSizeAnimation(_bar, animate);
 
-        _shapes.Size = size2;
+        _containerShapes.Size = size2;
+        _barShapes.Size = size2;
         _container.Size = size2;
-        _rect.Size = size;
+
+        if (size.LengthSquared() > VisualCornerRadius.ToVector2().LengthSquared())
+        {
+            _rect.Size = size - VisualCornerRadius.ToVector2();
+            _rect.Offset = VisualCornerRadius.ToVector2() / 2f;
+        }
     }
 
     void SetOffset(bool animate)
     {
         if (animate && OffsetTransition is { IsValid: true })
         {
-            if (_shapes.HasImplicitAnimation("Offset"))
+            if (_containerShapes.HasImplicitAnimation("Offset"))
                 return;
 
-            _shapes.SetImplicitAnimation("Offset",
-                _shapes.CreateVector3KeyFrameAnimation("Offset")
-                    .AddKeyFrame(1, "this.FinalValue", OffsetTransition.GetEase(_shapes.Compositor))
-                    .SetDuration(OffsetTransition.Duration.TimeSpan.TotalSeconds));
+            var ani = _containerShapes.CreateVector3KeyFrameAnimation("Offset")
+                    .AddKeyFrame(1, "this.FinalValue", OffsetTransition.GetEase(_containerShapes.Compositor))
+                    .SetDuration(OffsetTransition.Duration.TimeSpan.TotalSeconds);
+
+            _containerShapes.SetImplicitAnimation("Offset", ani);
+            _barShapes.SetImplicitAnimation("Offset", ani);
         }
         else
-            _shapes.SetImplicitAnimation("Offset", null);
+        { 
+            _containerShapes.SetImplicitAnimation("Offset", null);
+            _barShapes.SetImplicitAnimation("Offset", null);
+        }
     }
 
     void SetSizeAnimation(CompositionObject o, bool animate)
@@ -234,31 +340,13 @@ public partial class SelectorVisualElement : FrameworkElement
     }
 
 
-    partial void OnModeChanged(SelectionVisualType o, SelectionVisualType n)
-    {
-        OnTargetChanged(Target, Target);
-    }
-
-    partial void OnDisplayTargetChanged(FrameworkElement o, FrameworkElement n)
-    {
-        if (o is FrameworkElement old)
-        {
-            old.SetChildVisual(null);
-        }
-        
-        if (n is FrameworkElement newValue)
-        {
-            this.SetChildVisual(null);
-            newValue.SetChildVisual(_container);
-        }
-        else
-        {
-            this.SetChildVisual(null);
-        }
 
 
-    }
-
+    //------------------------------------------------------
+    //
+    // XAML Lifecycle
+    //
+    //------------------------------------------------------
 
     #region Lifecycle
 
@@ -272,14 +360,36 @@ public partial class SelectorVisualElement : FrameworkElement
     {
         Unregister();
 
-        _shapes?.Dispose();
-        _shapes = null;
+        static void Dispose<T>(ref T d) where T : class, IDisposable
+        {
+            d?.Dispose();
+            d = null;
+        }
 
-        _rect?.Dispose();
-        _rect = null;
+        this.SetChildVisual(null);
 
-        _fillBrush?.Dispose();
-        _fillBrush = null;
+        Dispose(ref _container);
+        Dispose(ref _containerShapes);
+        Dispose(ref _barShapes);
+        Dispose(ref _rect);
+        Dispose(ref _bar);
+        Dispose(ref _fillBrush);
+        Dispose(ref _strokeBrush);
+        Dispose(ref _barFillBrush);
+        Dispose(ref _barSprite);
+
+
+        //private ShapeVisual _containerShapes;
+        //private ShapeVisual _barShapes;
+        //private ContainerVisual _container;
+        //private CompositionRoundedRectangleGeometry _rect;
+        //private CompositionRoundedRectangleGeometry _bar;
+        //private CompositionColorBrush _fillBrush;
+        //private CompositionColorBrush _strokeBrush;
+        //private CompositionColorBrush _barFillBrush;
+        //private CompositionPropertySet _props;
+        //private CompositionSpriteShape _barSprite;
+
     }
 
     void Register()
@@ -313,6 +423,37 @@ public partial class SelectorVisualElement : FrameworkElement
 
 
 
+
+
+    //------------------------------------------------------
+    //
+    // Attached Properties
+    //
+    //------------------------------------------------------
+
+    partial void OnDisplayTargetChanged(FrameworkElement o, FrameworkElement n)
+    {
+        if (o is FrameworkElement old)
+        {
+            old.SetChildVisual(null);
+        }
+
+        if (n is FrameworkElement newValue)
+        {
+            this.SetChildVisual(null);
+            newValue.SetChildVisual(_container);
+        }
+        else
+        {
+            this.SetChildVisual(null);
+        }
+    }
+
+    partial void OnModeChanged(SelectionVisualType o, SelectionVisualType n)
+    {
+        OnTargetChanged(Target, Target);
+    }
+
     partial void OnTargetChanged(FrameworkElement o, FrameworkElement n)
     {
         if (o is ListViewBase oldList)
@@ -330,6 +471,9 @@ public partial class SelectorVisualElement : FrameworkElement
 
     static partial void OnElementChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
+        if (e.OldValue is SelectorVisualElement oldValue)
+            oldValue.Target = null;
+
         if (e.NewValue is SelectorVisualElement newValue)
             newValue.Target = (FrameworkElement)d;
     }
@@ -345,8 +489,113 @@ public partial class SelectorVisualElement : FrameworkElement
                 SetElement(f, (SelectorVisualElement)t.LoadContent());
         }
     }
+
+
+
+
+    //------------------------------------------------------
+    //
+    // Drag Handling
+    //
+    //------------------------------------------------------
+
+    internal void SetState(SelectorInteractionState state)
+    {
+        if (_barSprite is null)
+            return;
+
+        //_barSprite.CenterPoint = new Vector2(0.5f);
+        //_barSprite.Offset = BarSize.ToVector2()/2f;
+
+        if (state is SelectorInteractionState.PointerOver)
+        {
+            if (this.Orientation == Orientation.Horizontal)
+                _bar.Size = new((float)BarSize.X * 2f, (float)BarSize.Y);
+            else
+                _bar.Size = new((float)BarSize.X, (float)BarSize.Y * 1.5f);
+
+        }
+        else
+            _bar.Size = BarSize.ToVector2();
+    }
+
+
+
+
+    //------------------------------------------------------
+    //
+    // Drag Handling
+    //
+    //------------------------------------------------------
+
+    public void StartMove()
+    {
+        SetOffset(false);
+    }
+
+    public void Move(Vector2 offset)
+    {
+        if (this.Orientation == Orientation.Horizontal)
+            MoveX(offset.X);
+        else
+            MoveY(offset.Y);
+    }
+
+    void MoveX(float offset)
+    {
+        var target = _containerShapes.Offset + new Vector3(offset, 0, 0);
+        if (target.X < 0)
+            target = target with { X = 0 };
+
+        if (VisualTreeHelper.GetParent(this) is FrameworkElement parent)
+        {
+            var max = parent.ActualWidth - _rect.Size.X;
+            if (target.X > max)
+                target = target with { X = (float)max };
+        }
+
+        _containerShapes.Offset = target;
+    }
+
+    void MoveY(float offset)
+    {
+        var target = _containerShapes.Offset + new Vector3(0, offset, 0);
+        if (target.Y < 0)
+            target = target with { Y = 0 };
+
+        if (VisualTreeHelper.GetParent(this) is FrameworkElement parent)
+        {
+            var max = parent.ActualHeight - _rect.Size.Y;
+            if (target.Y > max)
+                target = target with { Y = (float)max };
+        }
+
+        _containerShapes.Offset = target;
+    }
+
+    public void EndMove()
+    {
+        SetOffset(true);
+    }
+
+    public Rect GetBounds()
+    {
+        return new Rect(
+            _containerShapes.Offset.X, 
+            _containerShapes.Offset.Y, 
+            _containerShapes.Size.X, 
+            _containerShapes.Size.Y);
+    }
 }
 
+
+
+
+//------------------------------------------------------
+//
+// RadioButtons helpers
+//
+//------------------------------------------------------
 
 partial class SelectorVisualElement // RADIOBUTTONS
 {
@@ -372,6 +621,9 @@ partial class SelectorVisualElement // RADIOBUTTONS
                 RadioMoveTo(nrb, nrb.SelectedIndex);
             }
 
+            if (nrb.GetFirstDescendantOfType<FrameworkElement>("BorderRoot") is { } b)
+                this.DisplayTarget = b;
+
             nrb.SelectionChanged -= Radios_Selection;
             nrb.SelectionChanged += Radios_Selection;
         }
@@ -388,28 +640,12 @@ partial class SelectorVisualElement // RADIOBUTTONS
             {
                 rb.SizeChanged -= Radios_SizeChanged;
                 rb.SizeChanged += Radios_SizeChanged;
+
+                if (rb.GetFirstDescendantOfType<FrameworkElement>("BorderRoot") is { } b)
+                    this.DisplayTarget = b;
+
                 RadioMoveTo(rb, rb.SelectedIndex);
             }
-        }
-
-        void RadioMoveTo(RadioButtons b, int index)
-        {
-            if (VisualTreeHelper.GetParent(b) is null)
-                return;
-
-            if (index < 0)
-            {
-                // If anyone else uses this look at fixing this,
-                // but Radios fires removed selection event before the added one,
-                // not both at the same time. This will break our movement
-                // animation if we handle it with this "basic" code.
-                //this.Hide();
-                return;
-            }
-
-            var items = b.GetFirstLevelDescendantsOfType<RadioButton>().ToList();
-            var target = b.GetFirstLevelDescendantsOfType<RadioButton>().Skip(b.SelectedIndex).FirstOrDefault();
-            this.MoveTo(target, b);
         }
 
         void Radios_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -418,7 +654,36 @@ partial class SelectorVisualElement // RADIOBUTTONS
                 RadioMoveTo(rb, rb.SelectedIndex);
         }
     }
+
+    public void RadioMoveTo(RadioButtons b, int index)
+    {
+        if (VisualTreeHelper.GetParent(b) is null)
+            return;
+
+        if (index < 0)
+        {
+            // If anyone else uses this look at fixing this,
+            // but Radios fires removed selection event before the added one,
+            // not both at the same time. This will break our movement
+            // animation if we handle it with this "basic" code.
+            //this.Hide();
+            return;
+        }
+
+        var items = b.GetFirstLevelDescendantsOfType<RadioButton>().ToList();
+        var target = b.GetFirstLevelDescendantsOfType<RadioButton>().Skip(b.SelectedIndex).FirstOrDefault();
+        this.MoveTo(target, b);
+    }
 }
+
+
+
+
+//------------------------------------------------------
+//
+// ListView helpers
+//
+//------------------------------------------------------
 
 partial class SelectorVisualElement // EXTENDEDLISTVIEW
 {

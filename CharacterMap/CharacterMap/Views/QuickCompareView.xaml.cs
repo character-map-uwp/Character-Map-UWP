@@ -202,6 +202,11 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
         UpdateFontSize(v);
     }
 
+    private void ZoomHelper_ZoomRequested(object sender, double e)
+    {
+        FontSizeSlider.Value += e;
+    }
+
     void SetText(object t, string text)
     {
         if (t is TextBlock tb)
@@ -290,7 +295,7 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
         else if (sender is Button bu && bu.Content is CMFontFamily font)
         {
             // 1. Clear the context menu
-            while (MainContextFlyout.Items.Count > 1)
+            while (MainContextFlyout.Items.Count > 2)
                 MainContextFlyout.Items.Remove(MainContextFlyout.Items[^1]);
 
             // 2. Rebuild with the correct collection information
@@ -324,6 +329,41 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
         }
     }
 
+
+    private void AddFamilyToQC_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem item)
+        {
+            if (item.DataContext is CharacterRenderingOptions o
+                && FontFinder.Fonts.FirstOrDefault(f => f.Variants.Contains(o.Variant)) is CMFontFamily font)
+            {
+                _ = QuickCompareView.AddAsync(o, true);
+            }
+            else if (item.DataContext is CMFontFamily f)
+            {
+                _ = QuickCompareView.AddAsync(
+                        CharacterRenderingOptions.CreateDefault(f), true);
+            }
+        }
+    }
+
+    private void AddToQC_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem item)
+        {
+            if (item.DataContext is CharacterRenderingOptions o
+                && FontFinder.Fonts.FirstOrDefault(f => f.Variants.Contains(o.Variant)) is CMFontFamily font)
+            {
+                _ = QuickCompareView.AddAsync(o);
+            }
+            else if (item.DataContext is CMFontFace face)
+            {
+                _ = QuickCompareView.AddAsync(
+                        CharacterRenderingOptions.CreateDefault(face, ViewModel.SelectedFont));
+            }
+        }
+    }
+
     private void Remove_Clicked(object sender, RoutedEventArgs e)
     {
         if (sender is MenuFlyoutItem item && item.DataContext is CharacterRenderingOptions o)
@@ -335,14 +375,15 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
         ViewModel.SelectedFont = null;
     }
 
-    private void GridView_Click(object sender, RoutedEventArgs e)
+    private void RadioButtons_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        GoToState(GridLayoutState.Name);
-    }
-
-    private void ListView_Click(object sender, RoutedEventArgs e)
-    {
-        GoToState(StackLayoutState.Name);
+        if (sender is RadioButtons b)
+        {
+            if (b.SelectedIndex == 0)
+                GoToState(GridLayoutState.Name);
+            else if (b.SelectedIndex == 1)
+                GoToState(StackLayoutState.Name);
+        }
     }
 
     private void ViewStates_CurrentStateChanging(object sender, VisualStateChangedEventArgs e)
@@ -494,7 +535,7 @@ public partial class QuickCompareView
         return view;
     }
 
-    public static async Task AddAsync(CharacterRenderingOptions options)
+    public static async Task AddAsync(CharacterRenderingOptions options, bool wholeFamily = false)
     {
         // 1. Ensure QuickCompare Window exists
         var window = await CreateWindowAsync(new(true));
@@ -502,7 +543,10 @@ public partial class QuickCompareView
         // 2. Add selected font to QuickCompare
         await QuickCompareViewModel.QuickCompareWindow.CoreView.Dispatcher.ExecuteAsync(() =>
         {
-            WeakReferenceMessenger.Default.Send(options, nameof(QuickCompareViewModel));
+            WeakReferenceMessenger.Default.Send(options, 
+                wholeFamily 
+                    ? QuickCompareViewModel.MultiToken
+                    : nameof(QuickCompareViewModel));
         });
 
         // 3. Try switch to view.

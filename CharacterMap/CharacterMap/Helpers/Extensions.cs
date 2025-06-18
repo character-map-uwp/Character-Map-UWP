@@ -1,11 +1,15 @@
 ﻿using Microsoft.UI.Xaml.Controls;
 using SQLite;
+using System.Collections;
+using System.Diagnostics.Contracts;
 using System.IO.Compression;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Markup;
 
 namespace CharacterMap.Helpers;
 
@@ -167,5 +171,44 @@ public static class Extensions
             return source.Remove(idx);
 
         return source;
+    }
+
+    public static int ItemsCount(this RadioButtons b)
+    {
+        if (b.ItemsSource is IList l)
+            return l.Count;
+
+        return b.Items.Count;
+    }
+
+    /// <summary>
+    /// Calculates the intersection region of two rectangles
+    /// </summary>
+    /// <param name="rect1">The first rectangle</param>
+    /// <param name="rect2">The second rectangle</param>
+    /// <returns>A rectangle representing the intersection region, or an empty rectangle if there is no intersection</returns>
+    public static Rect GetIntersection(this Rect rect1, Rect rect2)
+    {
+        double left = Math.Max(rect1.X, rect2.X);
+        double top = Math.Max(rect1.Y, rect2.Y);
+        double right = Math.Min(rect1.X + rect1.Width, rect2.X + rect2.Width);
+        double bottom = Math.Min(rect1.Y + rect1.Height, rect2.Y + rect2.Height);
+
+        if (right >= left && bottom >= top)
+            return new Rect(left, top, right - left, bottom - top);
+
+        return Rect.Empty;
+    }
+
+    public static T Bind<T>(this T element, DependencyProperty property, object source, string path)
+        where T : DependencyObject
+    {
+        BindingOperations.SetBinding(element, property, new Binding
+        {
+            Source = source,
+            Path = new(path)
+        });
+
+        return element;
     }
 }

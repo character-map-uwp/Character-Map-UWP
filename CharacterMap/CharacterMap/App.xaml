@@ -29,7 +29,6 @@
             <x:Double x:Key="TitleRowHeight">45</x:Double>
             <GridLength x:Key="TitleRowGridHeight">45</GridLength>
 
-
             <ResourceDictionary.MergedDictionaries>
 
                 <themes:DefaultTheme />
@@ -42,7 +41,7 @@
                     <converters:VisibilityConverter x:Key="VisConverter" />
                     <converters:IsNullConverter x:Key="NullConverter" />
 
-                    <FontFamily x:Key="BLANK">"ms-appx:///Assets/AdobeBlank.otf"</FontFamily>
+                    <FontFamily x:Key="BLANK">ms-appx:///Assets/AdobeBlank.otf</FontFamily>
 
                     <Style TargetType="FontIcon">
                         <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
@@ -55,6 +54,7 @@
                     <BrushTransition x:Key="RootBackgroundTransition" Duration="0:0:0.25" />
                     <BrushTransition x:Key="QuickBackgroundTransition" Duration="0:0:0.1" />
                     <BrushTransition x:Key="BackgroundTransition" Duration="0:0:0.15" />
+                    <BrushTransition x:Key="QuickBrushTransition" Duration="0:0:0.06" />
 
                     <controls:CompositionTransition
                         x:Key="DefaultSelectorTransition"
@@ -124,6 +124,7 @@
                         <Setter Property="MinHeight" Value="40" />
                         <Setter Property="MinWidth" Value="160" />
                     </Style>
+
 
                 </ResourceDictionary>
 

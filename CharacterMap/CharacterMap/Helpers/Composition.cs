@@ -822,55 +822,55 @@ public static class Composition
 
     #region PropertySet Builders
 
-    public static CompositionPropertySet SetValue(this CompositionPropertySet set, string name, float value)
+    public static CompositionPropertySet Insert(this CompositionPropertySet set, string name, float value)
     {
         set.InsertScalar(name, value);
         return set;
     }
 
-    public static CompositionPropertySet SetValue(this CompositionPropertySet set, string name, bool value)
+    public static CompositionPropertySet Insert(this CompositionPropertySet set, string name, bool value)
     {
         set.InsertBoolean(name, value);
         return set;
     }
 
-    public static CompositionPropertySet SetValue(this CompositionPropertySet set, string name, Vector2 value)
+    public static CompositionPropertySet Insert(this CompositionPropertySet set, string name, Vector2 value)
     {
         set.InsertVector2(name, value);
         return set;
     }
 
-    public static CompositionPropertySet SetValue(this CompositionPropertySet set, string name, Vector3 value)
+    public static CompositionPropertySet Insert(this CompositionPropertySet set, string name, Vector3 value)
     {
         set.InsertVector3(name, value);
         return set;
     }
 
-    public static CompositionPropertySet SetValue(this CompositionPropertySet set, string name, Vector4 value)
+    public static CompositionPropertySet Insert(this CompositionPropertySet set, string name, Vector4 value)
     {
         set.InsertVector4(name, value);
         return set;
     }
 
-    public static CompositionPropertySet SetValue(this CompositionPropertySet set, string name, Color value)
+    public static CompositionPropertySet Insert(this CompositionPropertySet set, string name, Color value)
     {
         set.InsertColor(name, value);
         return set;
     }
 
-    public static CompositionPropertySet SetValue(this CompositionPropertySet set, string name, Matrix3x2 value)
+    public static CompositionPropertySet Insert(this CompositionPropertySet set, string name, Matrix3x2 value)
     {
         set.InsertMatrix3x2(name, value);
         return set;
     }
 
-    public static CompositionPropertySet SetValue(this CompositionPropertySet set, string name, Matrix4x4 value)
+    public static CompositionPropertySet Insert(this CompositionPropertySet set, string name, Matrix4x4 value)
     {
         set.InsertMatrix4x4(name, value);
         return set;
     }
 
-    public static CompositionPropertySet SetValue(this CompositionPropertySet set, string name, Quaternion value)
+    public static CompositionPropertySet Insert(this CompositionPropertySet set, string name, Quaternion value)
     {
         set.InsertQuaternion(name, value);
         return set;
@@ -962,6 +962,9 @@ public static class Composition
     {
         if (composition.ImplicitAnimations == null)
         {
+            if (animation == null)
+                return composition;
+
             composition.ImplicitAnimations = composition.Compositor.CreateImplicitAnimationCollection();
         }
 
