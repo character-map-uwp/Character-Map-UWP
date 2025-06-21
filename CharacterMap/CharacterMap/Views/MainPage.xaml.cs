@@ -101,7 +101,10 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         if (ViewModel.IsSecondaryView is false)
         {
             _uiSettings.ColorValuesChanged += OnColorValuesChanged;
-            _uiSettings.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
+            if (Windows.Foundation.Metadata.ApiInformation.IsEventPresent(_uiSettings.GetType().Name, "AnimationsEnabledChanged"))
+            {
+                _uiSettings.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
+            }
         };
 
         FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
@@ -216,7 +219,10 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             // For Secondary Views, cleanup EVERYTHING to allow the view to get
             // dropped from memory
             _uiSettings.ColorValuesChanged -= OnColorValuesChanged;
-            _uiSettings.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
+            if (Windows.Foundation.Metadata.ApiInformation.IsEventPresent(_uiSettings.GetType().Name, "AnimationsEnabledChanged"))
+            {
+                _uiSettings.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
+            }
             Messenger.UnregisterAll(this);
             this.Bindings.StopTracking();
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
