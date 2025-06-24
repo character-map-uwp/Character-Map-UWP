@@ -1,8 +1,10 @@
-﻿using Windows.UI;
+﻿using Windows.Foundation.Collections;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Shapes;
@@ -344,7 +346,7 @@ public static class Composition
         return animation;
     }
 
-    private static T SetSafeTarget<T>(this T animation, string target) where T : CompositionAnimation
+    public static T SetSafeTarget<T>(this T animation, string target) where T : CompositionAnimation
     {
         if (!String.IsNullOrEmpty(target))
             animation.Target = target;
@@ -764,7 +766,9 @@ public static class Composition
 
     public static ExpressionAnimation SetExpression(this ExpressionAnimation animation, string expression)
     {
-        animation.Expression = expression;
+        if (!string.IsNullOrWhiteSpace(expression))
+            animation.Expression = expression;
+
         return animation;
     }
 
@@ -799,6 +803,12 @@ public static class Composition
         return animation;
     }
 
+    public static T SetParameter<T>(this T animation, string key, bool parameter) where T : CompositionAnimation
+    {
+        animation.SetBooleanParameter(key, parameter);
+        return animation;
+    }
+
     public static T SetParameter<T>(this T animation, string key, Vector2 parameter) where T : CompositionAnimation
     {
         animation.SetVector2Parameter(key, parameter);
@@ -814,6 +824,30 @@ public static class Composition
     public static T SetParameter<T>(this T animation, string key, Vector4 parameter) where T : CompositionAnimation
     {
         animation.SetVector4Parameter(key, parameter);
+        return animation;
+    }
+
+    public static T SetParameter<T>(this T animation, string key, Matrix3x2 parameter) where T : CompositionAnimation
+    {
+        animation.SetMatrix3x2Parameter(key, parameter);
+        return animation;
+    }
+
+    public static T SetParameter<T>(this T animation, string key, Matrix4x4 parameter) where T : CompositionAnimation
+    {
+        animation.SetMatrix4x4Parameter(key, parameter);
+        return animation;
+    }
+
+    public static T SetParameter<T>(this T animation, string key, Quaternion parameter) where T : CompositionAnimation
+    {
+        animation.SetQuaternionParameter(key, parameter);
+        return animation;
+    }
+
+    public static T SetParameter<T>(this T animation, string key, IAnimationObject parameter) where T : CompositionAnimation
+    {
+        animation.SetExpressionReferenceParameter(key, parameter);
         return animation;
     }
 
@@ -886,7 +920,7 @@ public static class Composition
         if (string.IsNullOrWhiteSpace(animation.Target))
             throw new ArgumentNullException("Animation has no target");
 
-        compositionObject.StartAnimation(animation.Target, animation);
+      compositionObject.StartAnimation(animation.Target, animation);
     }
 
     public static void StartAnimation(this CompositionObject compositionObject, CompositionAnimationGroup animation)
@@ -985,4 +1019,772 @@ public static class Composition
     #endregion
 
 
+
+
+
+    public static XAMLAnimationCollection GetAnimations(DependencyObject obj)
+    {
+        if (obj == null)
+            throw new ArgumentNullException(nameof(obj));
+
+        // Ensure there is always a collection when accessed via code
+        XAMLAnimationCollection collection = (XAMLAnimationCollection)obj.GetValue(AnimationsProperty);
+        if (collection == null)
+        {
+            collection = new ();
+            obj.SetValue(AnimationsProperty, collection);
+        }
+
+        return collection;
+    }
+
+    public static void SetAnimations(DependencyObject obj, XAMLAnimationCollection value)
+    {
+        if (obj == null)
+            throw new ArgumentNullException(nameof(obj));
+        obj.SetValue(AnimationsProperty, value);
+
+        if (value is not null)
+        {
+            value.Attach(obj);
+        }
+    }
+
+    public static readonly DependencyProperty AnimationsProperty =
+        DependencyProperty.RegisterAttached(
+            "Animations",
+            typeof(XAMLAnimationCollection),
+            typeof(Composition),
+            new PropertyMetadata(null, (s, e) =>
+            {
+                if (e.NewValue == e.OldValue || s is not FrameworkElement obj)
+                    return;
+
+                if (e.OldValue is XAMLAnimationCollection old)
+                {
+                    obj.Loaded -= Obj_Loaded;
+                    obj.Unloaded -= Obj_Unloaded;
+                    old.Detach(obj);
+                }
+
+                if (e.NewValue is XAMLAnimationCollection collection)
+                {
+                    obj.Loaded -= Obj_Loaded;
+                    obj.Unloaded -= Obj_Unloaded;
+
+                    obj.Loaded += Obj_Loaded;
+                    obj.Unloaded += Obj_Unloaded;
+
+                    collection.Attach(obj);
+                }
+            }));
+
+    private static void Obj_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement f)
+        {
+            if (GetAnimations(f) is { } a)
+                a.Attach(f);
+        }
+    }
+
+    private static void Obj_Unloaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement f && GetAnimations(f) is { } a)
+            a.Detach(f);
+    }
+
+}
+
+public interface IXamlCompositionAnimationBase
+{
+    void Start(UIElement target);
+
+    void Stop(UIElement target);
+}
+
+public enum UIElementReferenceType
+{
+    /// <summary>
+    /// Gets the composition handoff visual for the UIElement and uses it as the reference.
+    /// </summary>
+    ElementVisual,
+    /// <summary>
+    /// Adds the UIElements as an IAnimationObject reference.
+    /// </summary>
+    AnimationObject,
+    /// <summary>
+    /// Adds the UIElements as reference to it's own handoff visual's PropertySet
+    /// </summary>
+    PropertySet
+}
+
+public enum ParameterBindingMode
+{
+    /// <summary>
+    /// Default composition behaviour - the parameter is set at the start of the animation.
+    /// </summary>
+    AtStart,
+    /// <summary>
+    /// Updates the value by re-applying the animation on change
+    /// </summary>
+    Live
+}
+
+public interface IHandleableEvent
+{
+    bool Handled { get; set; }
+}
+public class ParameterUpdatedEventArgs : EventArgs, IHandleableEvent
+{
+    public ParameterUpdatedEventArgs(AnimationParameter parameter)
+    {
+        Parameter = parameter;
+    }
+    public AnimationParameter Parameter { get; }
+
+    public bool Handled { get; set; }
+}
+
+[DependencyProperty<string>("Key")]
+[DependencyProperty<object>("Value", default, nameof(Update))]
+[DependencyProperty<UIElementReferenceType>("UIElementReferenceType", UIElementReferenceType.ElementVisual, nameof(Update))]
+[DependencyProperty<ParameterBindingMode>("BindingMode", ParameterBindingMode.AtStart)]
+public partial class AnimationParameter : DependencyObject, IEquatable<AnimationParameter>
+{
+    private WeakReference<CompositionAnimation> _animation;
+
+    /// <summary>
+    /// Fires only when BindingMode is set to Live.
+    /// </summary>
+    public event EventHandler<ParameterUpdatedEventArgs> Updated;
+
+    public void AttachTo(CompositionAnimation ani)
+    {
+        _animation = new (ani);
+        Update();
+    }
+
+    public void Detach()
+    {
+        // Called when removed from - clear out the value we set
+        if (_animation?.TryGetTarget(out CompositionAnimation animation) is true)
+        {
+            if (!string.IsNullOrWhiteSpace(Key))
+                animation.ClearParameter(Key);
+        }
+        
+        _animation = null;
+    }
+
+
+    partial void OnKeyChanged(string o, string n)
+    {
+        if (_animation?.TryGetTarget(out CompositionAnimation animation) is true)
+        {
+            if (!string.IsNullOrWhiteSpace(o))
+                animation.ClearParameter(o);
+
+            if (!string.IsNullOrWhiteSpace(n))
+                Update();
+        }
+    }
+
+    void Update()
+    {
+        if (_animation is null
+            || ReadLocalValue(KeyProperty) == DependencyProperty.UnsetValue
+            || ReadLocalValue(ValueProperty) == DependencyProperty.UnsetValue)
+            return;
+
+        if (_animation?.TryGetTarget(out CompositionAnimation animation) is true)
+        {
+            if (Value is float f)
+                animation.SetScalarParameter(Key, f);
+            else if (Value is double d)
+                animation.SetScalarParameter(Key, (float)d);
+            else if (Value is int i)
+                animation.SetScalarParameter(Key, (float)i);
+            else if (Value is Point p)
+                animation.SetVector2Parameter(Key, p.ToVector2());
+            else if (Value is Vector2 v2)
+                animation.SetVector2Parameter(Key, v2);
+            else if (Value is Vector3 v3)
+                animation.SetVector3Parameter(Key, v3);
+            else if (Value is Vector4 v4)
+                animation.SetVector4Parameter(Key, v4);
+            else if (Value is Matrix3x2 m3)
+                animation.SetMatrix3x2Parameter(Key, m3);
+            else if (Value is Matrix4x4 m4)
+                animation.SetMatrix4x4Parameter(Key, m4);
+            else if (Value is Quaternion q)
+                animation.SetQuaternionParameter(Key, q);
+            else if (Value is bool b)
+                animation.SetBooleanParameter(Key, b);
+            else if (Value is Color c)
+                animation.SetColorParameter(Key, c);
+            else if (Value is CompositionObject compObj)
+                animation.SetReferenceParameter(Key, compObj);
+            else if (Value is IAnimationObject ani && UIElementReferenceType == UIElementReferenceType.AnimationObject)
+                animation.SetExpressionReferenceParameter(Key, ani);
+            else if (Value is UIElement element && UIElementReferenceType == UIElementReferenceType.ElementVisual)
+                animation.SetReferenceParameter(Key, ElementCompositionPreview.GetElementVisual(element));
+            else if (Value is UIElement uep && UIElementReferenceType == UIElementReferenceType.PropertySet)
+                animation.SetReferenceParameter(Key, ElementCompositionPreview.GetElementVisual(uep).Properties);
+            else if (Value is string s && double.TryParse(s, out double ds))
+                animation.SetScalarParameter(Key, (float)ds);
+            //else
+                
+            //    throw new NotSupportedException($"Unsupported type for AnimationReferenceParameter: {Value.GetType()}");
+        
+            // If the binding mode is live, we need to update the parameter when it changes
+            if (BindingMode == ParameterBindingMode.Live)
+            {
+                Updated?.Invoke(this, new(this));
+            }
+        }
+    }
+
+
+
+    #region Comparison
+    public override bool Equals(object obj)
+    {
+        return Equals(obj as AnimationParameter);
+    }
+
+    public bool Equals(AnimationParameter other)
+    {
+        return other is not null &&
+               Key == other.Key &&
+               EqualityComparer<object>.Default.Equals(Value, other.Value) &&
+               UIElementReferenceType == other.UIElementReferenceType;
+    }
+
+    public override int GetHashCode()
+    {
+        int hashCode = -70591176;
+        hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Key);
+        hashCode = hashCode * -1521134295 + EqualityComparer<object>.Default.GetHashCode(Value);
+        hashCode = hashCode * -1521134295 + UIElementReferenceType.GetHashCode();
+        return hashCode;
+    }
+
+    public static bool operator ==(AnimationParameter left, AnimationParameter right)
+    {
+        return EqualityComparer<AnimationParameter>.Default.Equals(left, right);
+    }
+
+    public static bool operator !=(AnimationParameter left, AnimationParameter right)
+    {
+        return !(left == right);
+    }
+
+    #endregion
+}
+
+public class AnimationUpdatedEventArgs : EventArgs, IHandleableEvent
+{
+    public AnimationUpdatedEventArgs(XamlCompositionAnimationBase animation)
+    {
+        Animation = animation;
+    }
+    public XamlCompositionAnimationBase Animation { get; }
+
+    public bool Handled { get; set; }
+}
+
+[ContentProperty(Name = nameof(Parameters))]
+[DependencyProperty<string>("Target", default, nameof(UpdateTarget))]
+public partial class XamlCompositionAnimationBase : DependencyObject, IXamlCompositionAnimationBase
+{
+    public AnimationParameterCollection Parameters
+    {
+        get {
+            if (GetValue(ParametersProperty) is null)
+                SetValue(ParametersProperty, new AnimationParameterCollection());
+            return (AnimationParameterCollection)GetValue(ParametersProperty); }
+        private set { SetValue(ParametersProperty, value); }
+    }
+
+    public static readonly DependencyProperty ParametersProperty =
+        DependencyProperty.Register(nameof(Parameters), typeof(AnimationParameterCollection), typeof(XamlCompositionAnimationBase), new PropertyMetadata(null, (d,e) =>
+        {
+            if (d is XamlCompositionAnimationBase x)
+            {
+                if (e.OldValue is AnimationParameterCollection old)
+                    x.ClearCollection(old);
+
+                if (e.NewValue is AnimationParameterCollection c)
+                    x.SetCollection(c);
+            }
+        }));
+
+
+    public event EventHandler<ParameterUpdatedEventArgs> ParameterBindingUpdated;
+
+    public event EventHandler<AnimationUpdatedEventArgs> AnimationUpdated;
+
+    protected Compositor Compositor => Window.Current.Compositor;
+
+    protected CompositionAnimation Animation;
+
+    protected void FireAnimationUpdated()
+    {
+        AnimationUpdated?.Invoke(this, new (this));
+    }
+
+    protected void SetAnimation(CompositionAnimation animation)
+    {
+        Animation = animation;
+
+        // Detaches parameters from any previous animation and attaches them to the new one
+        Parameters.SetTarget(animation);
+
+        // Set properties
+        UpdateTarget();
+
+        FireAnimationUpdated();
+    }
+
+
+
+    private void SetCollection(AnimationParameterCollection c)
+    {
+        c.BindingUpdated -= ParameterBinding_Updated;
+        c.BindingUpdated += ParameterBinding_Updated;
+        c.SetTarget(this.Animation);
+    }
+
+    private void ClearCollection(AnimationParameterCollection old)
+    {
+        old.BindingUpdated -= ParameterBinding_Updated;
+        old.SetTarget(null);
+    }
+
+    private void ParameterBinding_Updated(object sender, ParameterUpdatedEventArgs e)
+    {
+        if (e.Handled is false)
+            this.ParameterBindingUpdated?.Invoke(this, e);
+    }
+
+
+
+
+    /* Animation Properties */
+    void UpdateTarget() => Animation?.SetSafeTarget(Target);
+    
+
+
+
+    /* Animation Control */
+
+    public virtual void Start(UIElement target)
+    {
+        if (target is not null)
+        {
+            if (this.Target == CompositionFactory.TRANSLATION)
+                target.EnableCompositionTranslation();
+
+
+            // Cannot play if parameters are not set
+            if (Parameters.OfType<AnimationParameter>().Any(p => p.Value is null))
+                return;
+
+            // Cannot play blank target
+            if (string.IsNullOrWhiteSpace(Animation.Target))
+                return;
+
+            target?.GetElementVisual()?.StartAnimation(Animation);
+        }
+    }
+
+    public virtual void Stop(UIElement target)
+    {
+        target?.GetElementVisual()?.StopAnimation(Animation);
+    }
+}
+
+[DependencyProperty<string>("Expression")]
+public partial class XAMLExpressionAnimation : XamlCompositionAnimationBase
+{
+    public XAMLExpressionAnimation()
+    {
+        SetAnimation(
+            Compositor.CreateExpressionAnimation().SetExpression(Fix(Expression)));
+    }
+
+    string Fix(string s)
+    {
+        return s?.Replace("'", "\"");
+    }
+
+    partial void OnExpressionChanged(string o, string n)
+    {
+        if (Animation is ExpressionAnimation e)
+        {
+            e.SetExpression(Fix(n));
+            base.FireAnimationUpdated();
+        }
+    }
+}
+
+public sealed partial class XAMLAnimationCollection : DependencyObjectCollection
+{
+    // After a VectorChanged event we need to compare the current state of the collection
+    // with the old collection so that we can call Detach on all removed items.
+    private List<IXamlCompositionAnimationBase> _oldCollection { get; } = new ();
+
+    private List<WeakReference<DependencyObject>> _associated { get; } = new();
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="XAMLAnimationCollection"/> class.
+    /// </summary>
+    public XAMLAnimationCollection()
+    {
+        this.VectorChanged += this.OnVectorChanged;
+    }
+
+    void Trim()
+    {
+        // Remove any dead WeakReferences from the associated list
+        for (int i = _associated.Count - 1; i >= 0; i--)
+            if (!_associated[i].TryGetTarget(out DependencyObject target) || target is null)
+                _associated.RemoveAt(i);
+    }
+
+    /// <summary>
+    /// Attaches the collection of animations to the specified <see cref="DependencyObject"/>.
+    /// </summary>
+    /// <param name="associatedObject">The <see cref="DependencyObject"/> to which to attach.</param>
+    /// </exception>
+    public void Attach(DependencyObject associatedObject)
+    {
+        Trim();
+
+        // Check if we're loaded first, otherwise x:Bind will not have run yet
+        if (VisualTreeHelper.GetParent(associatedObject) is null)
+            return;
+
+        // Do not attach if the object is already associated
+        if (_associated.Any(x => x.TryGetTarget(out DependencyObject target) && target == associatedObject))
+            return;
+
+        // Store a WeakReference to the associated object
+        _associated.Add(new WeakReference<DependencyObject>(associatedObject));
+
+        foreach (DependencyObject item in this)
+        {
+            IXamlCompositionAnimationBase animation = (IXamlCompositionAnimationBase)item;
+            animation.Start(associatedObject as UIElement);
+        }
+    }
+
+    /// <summary>
+    /// Detaches the collection of animations 
+    /// </summary>
+    public void Detach(DependencyObject associatedObject)
+    {
+        // Remove the WeakReference
+        if (_associated.FirstOrDefault(f => f.TryGetTarget(out DependencyObject target) && target == associatedObject) 
+            is { } weakReference)
+            _associated.Remove(weakReference);
+
+        // Stop all animations associated with the object
+        foreach (DependencyObject item in this)
+        {
+            IXamlCompositionAnimationBase animation = (IXamlCompositionAnimationBase)item;
+            animation.Stop(associatedObject as UIElement);
+        }
+
+        // Trim the associated list to remove any dead references
+        Trim();
+    }
+
+    private void OnVectorChanged(IObservableVector<DependencyObject> sender, IVectorChangedEventArgs eventArgs)
+    {
+        Trim();
+
+        var associated = _associated
+               .Select(x => x.TryGetTarget(out DependencyObject target) ? target : null)
+               .Where(x => x != null)
+               .ToList();
+
+        if (eventArgs.CollectionChange == CollectionChange.Reset)
+        {
+            // Stop all existing animations
+            foreach (var item in associated)
+            {
+                foreach (IXamlCompositionAnimationBase behavior in this._oldCollection)
+                    behavior.Stop(item as UIElement);
+            }
+
+            this._oldCollection.Clear();
+
+            foreach (var item in associated)
+            {
+                foreach (IXamlCompositionAnimationBase behavior in this)
+                    behavior.Start(item as UIElement);
+            }
+
+            foreach (IXamlCompositionAnimationBase newItem in this.OfType<IXamlCompositionAnimationBase>())
+            {
+                this._oldCollection.Add(newItem);
+            }
+
+            return;
+        }
+
+        int eventIndex = (int)eventArgs.Index;
+        DependencyObject changedItem = this[eventIndex];
+
+        switch (eventArgs.CollectionChange)
+        {
+            case CollectionChange.ItemInserted:
+
+                this._oldCollection.Insert(eventIndex, changedItem as IXamlCompositionAnimationBase);
+
+                if (changedItem is XamlCompositionAnimationBase x)
+                {
+                    x.AnimationUpdated -= Child_AnimationUpdated;
+                    x.AnimationUpdated += Child_AnimationUpdated;
+
+                    x.ParameterBindingUpdated -= Child_ParameterBindingUpdated;
+                    x.ParameterBindingUpdated += Child_ParameterBindingUpdated;
+                }
+
+                foreach (var a in associated)
+                    this.VerifiedAttach(changedItem, a);
+
+                break;
+
+            case CollectionChange.ItemChanged:
+                IXamlCompositionAnimationBase oldItem = this._oldCollection[eventIndex];
+
+                foreach (var a in associated)
+                    oldItem.Stop(a as UIElement);
+
+                Detach(oldItem);
+
+                this._oldCollection[eventIndex] = changedItem as IXamlCompositionAnimationBase;
+
+                foreach (var a in associated)
+                    this.VerifiedAttach(changedItem, a);
+
+                break;
+
+            case CollectionChange.ItemRemoved:
+                oldItem = this._oldCollection[eventIndex];
+
+                foreach (var a in associated)
+                    oldItem.Stop(a as UIElement);
+
+                this._oldCollection.RemoveAt(eventIndex);
+                Detach(oldItem);
+                break;
+
+            default:
+                Debug.Assert(false, "Unsupported collection operation attempted.");
+                break;
+        }
+    }
+
+
+    private IXamlCompositionAnimationBase VerifiedAttach(DependencyObject item, DependencyObject associated)
+    {
+        IXamlCompositionAnimationBase animation = item as IXamlCompositionAnimationBase;
+        if (animation == null)
+        {
+            throw new InvalidOperationException("NonAnimationAddedToAnimationCollection");
+        }
+
+        //if (this._oldCollection.Contains(animation))
+        //{
+        //    throw new InvalidOperationException("DuplicateAnimationInCollection");
+        //}
+
+        if (associated != null)
+        {
+            animation.Start(associated as UIElement);
+        }
+
+        return animation;
+    }
+
+    void Detach(IXamlCompositionAnimationBase i)
+    {
+        if (i is XamlCompositionAnimationBase x)
+        {
+            x.AnimationUpdated -= Child_AnimationUpdated;
+            x.ParameterBindingUpdated -= Child_ParameterBindingUpdated;
+        }
+    }
+
+
+
+
+    /* Respond to changes from child animations */
+
+    void Child_ParameterBindingUpdated(object sender, ParameterUpdatedEventArgs e)
+    {
+        Handle(sender, e);
+    }
+
+    void Child_AnimationUpdated(object sender, AnimationUpdatedEventArgs e)
+    {
+        Handle(sender, e);
+    }
+
+    void Handle(object sender, IHandleableEvent e)
+    {
+        if (sender is XamlCompositionAnimationBase animation
+            && e.Handled is false)
+        {
+            e.Handled = true;
+
+            var associated = _associated
+             .Select(x => x.TryGetTarget(out DependencyObject target) ? target : null)
+             .Where(x => x != null)
+             .OfType<UIElement>()
+             .ToList();
+
+            foreach (var item in associated)
+            {
+                if (VisualTreeHelper.GetParent(item) is null)
+                    continue; // Skip if the item is not in the visual tree
+
+                animation.Start(item);
+            }
+        }
+    }
+}
+
+
+
+public sealed partial class AnimationParameterCollection : DependencyObjectCollection
+{
+    /// <summary>
+    /// Fires when a child parameter value is updated and has a live bindingmode
+    /// </summary>
+    public event EventHandler<ParameterUpdatedEventArgs> BindingUpdated;
+
+    // After a VectorChanged event we need to compare the current state of the collection
+    // with the old collection so that we can call Detach on all removed items.
+    private List<AnimationParameter> _oldCollection { get; } = new();
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AnimationReferenceCollection"/> class.
+    /// </summary>
+    public AnimationParameterCollection()
+    {
+        this.VectorChanged += this.InternalVectorChanged;
+    }
+
+    public CompositionAnimation Target { get; private set; }
+
+    public void SetTarget(CompositionAnimation target)
+    {
+        if (this.Target == target)
+            return;
+
+        // Detach old parameters
+        if (this.Target is not null)
+            foreach (AnimationParameter item in this._oldCollection)
+                item.Detach();
+
+        this.Target = target;
+
+        // Attach new parameters
+        foreach (AnimationParameter item in this)
+            item.AttachTo(this.Target);
+
+        this._oldCollection.Clear();
+        this._oldCollection.AddRange(this.Cast<AnimationParameter>());
+    }
+
+
+    private void InternalVectorChanged(IObservableVector<DependencyObject> sender, IVectorChangedEventArgs eventArgs)
+    {
+        if (eventArgs.CollectionChange == CollectionChange.Reset)
+        {
+            // Stop all existing animations
+
+            foreach (AnimationParameter a in this._oldCollection)
+                a.Detach();
+
+            this._oldCollection.Clear();
+
+            foreach (AnimationParameter a in this)
+            {
+                a.AttachTo(Target);
+                this._oldCollection.Add(a);
+            }
+
+            return;
+        }
+
+        int eventIndex = (int)eventArgs.Index;
+        AnimationParameter changedItem = this[eventIndex] as AnimationParameter;
+
+        switch (eventArgs.CollectionChange)
+        {
+            case CollectionChange.ItemInserted:
+
+                this._oldCollection.Insert(eventIndex, changedItem);
+                this.VerifiedAttach(changedItem);
+                changedItem.AttachTo(Target);
+
+                break;
+
+            case CollectionChange.ItemChanged:
+                AnimationParameter oldItem = this._oldCollection[eventIndex];
+
+                oldItem.Detach();
+                this._oldCollection[eventIndex] = changedItem;
+                this.VerifiedAttach(changedItem);
+
+                break;
+
+            case CollectionChange.ItemRemoved:
+                oldItem = this._oldCollection[eventIndex];
+                oldItem.Detach();
+
+                this._oldCollection.RemoveAt(eventIndex);
+                break;
+
+            default:
+                Debug.Assert(false, "Unsupported collection operation attempted.");
+                break;
+        }
+    }
+
+    private AnimationParameter VerifiedAttach(DependencyObject item)
+    {
+        AnimationParameter animation = item as AnimationParameter;
+        if (animation == null)
+        {
+            throw new InvalidOperationException("NonAnimationParameterAddedToAnimationParameterCollection");
+        }
+
+        animation.Updated -= Item_Updated;
+        animation.Updated += Item_Updated;
+
+        //if (this._oldCollection.Contains(animation))
+        //{
+        //    throw new InvalidOperationException("DuplicateAnimationParameterInCollection");
+        //}
+
+        return animation;
+    }
+
+    void Detach(AnimationParameter item)
+    {
+        item.Detach();
+        item.Updated -= Item_Updated;
+    }
+
+    void Item_Updated(object sender, ParameterUpdatedEventArgs e)
+    {
+        this.BindingUpdated?.Invoke(this, e);
+    }
 }

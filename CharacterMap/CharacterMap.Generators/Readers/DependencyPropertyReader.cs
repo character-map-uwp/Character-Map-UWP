@@ -54,7 +54,8 @@ internal record class DPData
                 or "TextWrapping" or "Stretch" or "Thickness"
                 or "TextAlignment" or "TimeSpan" or "BlendEffectMode"
                 or "Point" or "TextLineBounds" or "MaterialCornerMode"
-                or "ThemeIcon" or "SelectionVisualType" or "ZoomTriggerMode";
+                or "ThemeIcon" or "SelectionVisualType" or "ZoomTriggerMode"
+                or "UIElementReferenceType" or "ParameterBindingMode";
     }
 }
 
