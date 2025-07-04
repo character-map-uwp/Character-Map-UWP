@@ -290,11 +290,22 @@ public class FontFinder
             string q;
             if (IsQuery(query, Localization.Get("CharacterFilter"), "char:", out q))
             {
-                foreach (var ch in q)
+                System.Globalization.StringInfo inf = new(q);
+                for (int i = 0; i < inf.LengthInTextElements; i++)
                 {
-                    if (ch == ' ')
+                    var ch = inf.SubstringByTextElements(i);
+                    if (ch == " ")
                         continue;
-                    fontList = BasicFontFilter.ForChar(new(ch)).Query(fontList, fontCollections);
+
+                    Character c = ch.Length switch
+                    {
+                        1 => new((uint)ch[0]),
+                        2 => new((uint)char.ConvertToUtf32(ch[0], ch[1])),
+                        _ => null
+                    };
+                 
+                    if (c is not null)
+                        fontList = BasicFontFilter.ForChar(c).Query(fontList, fontCollections);
                 }
                 filterTitle = $"{filter.FilterTitle} \"{q}\"";
             }
