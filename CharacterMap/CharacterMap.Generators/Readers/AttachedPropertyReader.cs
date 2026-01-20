@@ -7,7 +7,8 @@ using System.Text;
 
 namespace CharacterMap.Generators.Readers;
 
-public class AttachedPropertyReader : SyntaxReader
+[Generator]
+public class AttachedPropertyReader : IIncrementalGenerator
 {
     string TEMPLATE =
         "    public static {2} Get{0}(DependencyObject obj) => ({2})obj.GetValue({0}Property);\r\n\r\n" +
@@ -16,13 +17,19 @@ public class AttachedPropertyReader : SyntaxReader
         "        DependencyProperty.RegisterAttached(\"{0}\", typeof({2}), typeof({1}), new PropertyMetadata({3}, (d,e) => On{0}Changed(d,e)));\r\n\r\n" +
         "    static partial void On{0}Changed(DependencyObject d, DependencyPropertyChangedEventArgs e);\r\n";
 
-    List<DPData> data = [];
-
-    public override void Read(IEnumerable<SyntaxNode> nodes)
+    public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        foreach (var n in nodes.OfType<ClassDeclarationSyntax>()
-                               .Where(c => c.HasGenericAttribute("AttachedProperty")))
+        var classDeclarations = context.SyntaxProvider
+            .CreateSyntaxProvider(
+                predicate: static (s, _) => s is ClassDeclarationSyntax cds && cds.AttributeLists.Any(),
+                transform: static (ctx, _) => ctx.Node as ClassDeclarationSyntax)
+            .Where(static c => c is not null);
+
+        var dpData = classDeclarations.Select((n, _) =>
         {
+            if (!n.HasGenericAttribute("AttachedProperty"))
+                return null;
+
             DPData src = new()
             {
                 ParentClass = n.Identifier.ValueText,
@@ -30,6 +37,7 @@ public class AttachedPropertyReader : SyntaxReader
                 Usings = (n.Parent?.Parent as CompilationUnitSyntax)?.Usings.Select(u => $"using {u.Name.ToString()};")?.ToList() ?? new()
             };
 
+            List<DPData> dataList = new();
             foreach (var a in n.AttributeLists
                                .SelectMany(s => s.Attributes)
                                .Where(a => a.Name.ToString().StartsWith("AttachedProperty")))
@@ -38,45 +46,45 @@ public class AttachedPropertyReader : SyntaxReader
                 if (a.Name is GenericNameSyntax gen)
                     type = gen.TypeArgumentList.Arguments[0].ToString();
 
-                var d = a.GetArgument("Name") is { } na && na.NameEquals is { } ne // Attribute property path,
+                var d = a.GetArgument("Name") is { } na && na.NameEquals is { } ne
                     ? src with
                     {
                         Name = a.GetArgument("Name")?.GetValue(),
                         Default = a.GetArgument("Default")?.GetValue() ?? "default",
                         Type = type ?? a.GetArgument("Type")?.GetValue()?.Replace("typeof(", string.Empty).Replace(")", string.Empty) ?? "object"
                     }
-                    : src with // Constructor path - preferred
+                    : src with
                     {
                         Name = a.ArgumentList?.Arguments[0].GetValue() ?? type,
                         Type = type ?? "object",
                         Default = a.ArgumentList?.Arguments.Skip(1)?.FirstOrDefault()?.GetValue() ?? "default"
                     };
 
-                data.Add(d);
+                dataList.Add(d);
             }
-        }
-    }
+            return dataList;
+        })
+        .Where(list => list is not null)
+        .SelectMany((list, _) => list!);
 
-    public override void Write(GeneratorExecutionContext context)
-    {
-        if (data.Count == 0)
-            return;
-
-        foreach (var group in data.GroupBy(d => $"{d.ParentNamespace}.{d.ParentClass}.g.ap.cs"))
+        context.RegisterSourceOutput(dpData.Collect(), (spc, data) =>
         {
-            string file = group.Key;
-            string ns = group.First().ParentNamespace;
-            string target = group.First().ParentClass;
-            List<string> usings = group.First().Usings;
+            var groups = data.GroupBy(d => $"{d.ParentNamespace}.{d.ParentClass}.g.ap.cs");
+            foreach (var group in groups)
+            {
+                string file = group.Key;
+                string ns = group.First().ParentNamespace;
+                string target = group.First().ParentClass;
+                List<string> usings = group.First().Usings;
 
-            StringBuilder sb = new();
+                StringBuilder sb = new();
 
-            foreach (DPData dp in group)
-                sb.AppendLine(
-                    string.Format(TEMPLATE, dp.Name, dp.ParentClass, dp.Type, dp.GetDefault(), dp.GetCastType("e.OldValue"), dp.GetCastType("e.NewValue")));
+                foreach (DPData dp in group)
+                    sb.AppendLine(
+                        string.Format(TEMPLATE, dp.Name, dp.ParentClass, dp.Type, dp.GetDefault(), dp.GetCastType("e.OldValue"), dp.GetCastType("e.NewValue")));
 
-            var s = sb.ToString();
-            context.AddSource(file, SourceText.From(
+                var s = sb.ToString();
+                spc.AddSource(file, SourceText.From(
 $@"{string.Join("\r\n", usings)}
 
 namespace {ns};
@@ -85,7 +93,7 @@ partial class {target}
 {{
 {sb}
 }}", Encoding.UTF8));
-
-        }
+            }
+        });
     }
 }
