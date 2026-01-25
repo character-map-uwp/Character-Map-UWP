@@ -7,45 +7,53 @@ using System.Text;
 
 namespace CharacterMap.Generators.Readers;
 
-public class UnicodeFilterReader : SyntaxReader
+[Generator]
+public class UnicodeFilterReader : IIncrementalGenerator
 {
-    private bool gen = false;
-    StringBuilder sbu = new();
-    StringBuilder sbf = new();
-
-    public override void Read(IEnumerable<SyntaxNode> nodes)
+    public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        sbu.AppendLine("" +
-            "/// <summary>\r\n    /// Unicode Ranges sorted by Range\r\n    /// </summary>\r\n" +
-            "    public static IReadOnlyList<NamedUnicodeRange> All { get; } = [");
+        var classDeclarations = context.SyntaxProvider
+            .CreateSyntaxProvider(
+                predicate: (node, _) => node is ClassDeclarationSyntax cds && cds.Identifier.ValueText == "UnicodeRanges",
+                transform: (ctx, _) => ctx.Node as ClassDeclarationSyntax
+            )
+            .Where(cds => cds is not null)
+            .Collect();
 
-        sbf.AppendLine("public static IReadOnlyList<BasicFontFilter> AllFilters { get; } = [");
-
-        foreach (var u in nodes.OfNamedClass("UnicodeRanges"))
+        context.RegisterSourceOutput(classDeclarations, (spc, nodes) =>
         {
-            var filters = u.DescendantNodesAndSelf()
-                .OfType<FieldDeclarationSyntax>()
-                .Where(f => f.HasAttribute("MakeBasicFilter"))
-                .ToList();
+            bool gen = false;
+            StringBuilder sbu = new();
+            StringBuilder sbf = new();
 
-            foreach (var filter in filters)
+            sbu.AppendLine("" +
+                "/// <summary>\r\n    /// Unicode Ranges sorted by Range\r\n    /// </summary>\r\n" +
+                "    public static IReadOnlyList<NamedUnicodeRange> All { get; } = [");
+
+            sbf.AppendLine("public static IReadOnlyList<BasicFontFilter> AllFilters { get; } = [");
+
+            foreach (var u in nodes)
             {
-                gen = true;
-                sbf.AppendLine(2, $"BasicFontFilter.ForNamedRange({filter.Declaration.Variables[0].Identifier.ValueText}),");
-                sbu.AppendLine(2, $"{filter.Declaration.Variables[0].Identifier.ValueText},");
+                var filters = u.DescendantNodes()
+                    .OfType<FieldDeclarationSyntax>()
+                    .Where(f => f.AttributeLists.Any(al => al.Attributes.Any(a => a.Name.ToString() == "MakeBasicFilter")))
+                    .ToList();
+
+                foreach (var filter in filters)
+                {
+                    gen = true;
+                    sbf.AppendLine(2, $"BasicFontFilter.ForNamedRange({filter.Declaration.Variables[0].Identifier.ValueText}),");
+                    sbu.AppendLine(2, $"{filter.Declaration.Variables[0].Identifier.ValueText},");
+                }
             }
-        }
-    }
 
-    public override void Write(GeneratorExecutionContext context)
-    {
-        if (gen is false)
-            return;
+            if (!gen)
+                return;
 
-        sbf.AppendLine(1, "];");
-        sbu.AppendLine(1, "];");
+            sbf.AppendLine(1, "];");
+            sbu.AppendLine(1, "];");
 
-        SourceText sourceText = SourceText.From(
+            SourceText sourceText = SourceText.From(
 $@"namespace CharacterMap.Models;
 
 partial class UnicodeRanges
@@ -55,6 +63,7 @@ partial class UnicodeRanges
     {sbu}
 }}", Encoding.UTF8);
 
-        context.AddSource($"UnicodeRanges.g.cs", sourceText);
+            spc.AddSource("UnicodeRanges.g.cs", sourceText);
+        });
     }
 }
