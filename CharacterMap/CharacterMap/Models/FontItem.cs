@@ -14,7 +14,7 @@ public partial class FontItem : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Tooltip))]
-    private InstalledFont _font;
+    private CMFontFamily _font;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsTypeRamp))]
@@ -27,8 +27,8 @@ public partial class FontItem : ObservableObject
 
     public bool IsTypeRamp => DisplayMode == FontDisplayMode.TypeRamp;
 
-    private FontVariant _selected;
-    public FontVariant Selected
+    private CMFontFace _selected;
+    public CMFontFace Selected
     {
         get => _selected;
         set
@@ -41,7 +41,7 @@ public partial class FontItem : ObservableObject
         }
     }
 
-    public FontItem(InstalledFont font)
+    public FontItem(CMFontFamily font)
     {
         _font = font;
         _selected = font.DefaultVariant;
@@ -57,7 +57,7 @@ public partial class FontItem : ObservableObject
             throw new InvalidOperationException("Constructor only for use by designer");
     }
 
-    public void SetFont(InstalledFont font)
+    public void SetFont(CMFontFamily font)
     {
         if (font != Font && font is not null)
         {

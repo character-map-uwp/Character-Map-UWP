@@ -19,10 +19,7 @@
                 Foreground="{ThemeResource MenuFlyoutSeparatorThemeBrush}"
                 Text="{core:Localizer Key=SortedByRangeLabel/Text}" />
             <controls:UXButton x:Uid="ChangeSortToggle" core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle">
-                <TextBlock
-                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                    IsTextScaleFactorEnabled="False"
-                    Text="&#xE8CB;" />
+                <FontIcon core:Properties.ThemeIcon="SortOrderToggle" />
             </controls:UXButton>
         </controls:AutoGrid>
     </controls:FilterFlyout.UnicodeRangeSortHeader>

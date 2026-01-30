@@ -20,18 +20,19 @@ public partial class SettingsViewModel : ViewModelBase
     ];
 
     public IReadOnlyList<String> Themes { get; } =
-        [
-            "Windows 10",
-            "Windows 11",
-            "Classic Windows",
-            "Zune Desktop"
-        ];
+    [
+        "Windows 10",
+        "Windows 11",
+        "Classic Windows",
+        "Zune Desktop",
+        //"Material"
+    ];
 
     public GlyphFileNameViewModel GlyphNameModel { get; } = new() { SaveTemplate = true };
 
     [ObservableProperty] string _rampInput;
     [ObservableProperty] FontFamily _previewFontSource;
-    [ObservableProperty] List<InstalledFont> _previewFonts;
+    [ObservableProperty] List<CMFontFamily> _previewFonts;
     [ObservableProperty] bool _isCollectionExportEnabled = true;
     [ObservableProperty] bool _isSystemExportEnabled = true;
     [ObservableProperty] ObservableCollection<String> _rampOptions = null;
@@ -62,7 +63,7 @@ public partial class SettingsViewModel : ViewModelBase
         _originalDesign = Settings.ApplicationDesignTheme;
     }
 
-    public void UpdatePreviews(InstalledFont font, CharacterRenderingOptions options)
+    public void UpdatePreviews(CMFontFamily font, CharacterRenderingOptions options)
     {
         font ??= FontFinder.DefaultFont;
         GlyphNameModel.SetOptions(font, options);
@@ -128,18 +129,28 @@ public partial class SettingsViewModel : ViewModelBase
         // is to expose features people may not be aware exist inside the
         // application rather than bug-fixes or visual changes.
         return [
-             new("Latest Update (June 2024)", // June 2024
+             new("Latest Update (June 2025)", // June 2025
+                "- Added ability to use Ctrl + ScrollWheel to change font size in Font List Pane, Character Map and Quick Compare\n" +
+                "- Whole Font Families can now be added to Quick Compare\n" +
+                "- Font Families and individual Font Faces can be added to Quick Compare from the Compare Fonts view\n" +
+                "- Hidden variable font axis are now visible and editable in Type Ramp View\n" +
+                "- Added option in Settings->Layout->Font List Display to increase font size of the main font list\n" +
+                "- Added Font Embedding Rights and Supported Script information to Font Face Properties flyout"),
+             new("2024.8.0.0 (November 2024)", // November 2024
+                "- Simulated font faces are now grouped separately from real fonts faces\n" +
+                "- Added option in Settings->Advanced to hide showing simulated font faces"),
+             new("2024.7.0.0 (June 2024)", // June 2024
                 "- Added preview ToolTips to the font list and tabs\n" +
                 "- Added ability to create automatically updating Smart Collections in Settings->Collections\n" +
                 "- Added support for managing fonts in Symbol font collection in Settings->Collections\n" +
                 "- Added additional search filters to \"Find a font family\" search box - \"filepath:\", \"foundry\", \"designer:\"\n" +
                 "- The Unicode character search box now supports searching Unihan descriptions\n" +
                 "- Added a link for Helps and Tips at our Wiki in Settings->About"),
-            new("2024.2.0.0 (April 2024)", // April 2024
+             new("2024.2.0.0 (April 2024)", // April 2024
                 "- Support searching font families in Settings->Collections\n" +
                 "- Added option to restore last selected font filter / collection on app launch in Settings->Advanced\n" +
                 "- Added option to define how exported glyph files are named by default in Settings->Export"),
-            new("2024.1.1.0 (December 2023)", // Dec 2023
+             new("2024.1.1.0 (December 2023)", // Dec 2023
                 "- Support search for fonts that contain specific characters in \"Find a font family\" search box, by typing in \"char:\" followed by your query\n" +
                 "    • e.g. to find all fonts that contain the two arrow characters '←' & '↗', type in \"char: ←↗\"\n" +
                 "- Added option to search for other fonts with the selected character in context menu of main window's Character Map"),

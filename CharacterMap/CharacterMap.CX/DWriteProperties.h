@@ -3,10 +3,8 @@
 #include "ColorTextAnalyzer.h"
 #include "GlyphImageFormat.h"
 #include "DWriteFontSource.h"
+#include "DWriteFontSimulations.h"
 
-using namespace Microsoft::Graphics::Canvas;
-using namespace Microsoft::Graphics::Canvas::Text;
-using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
 using namespace Windows::UI::Text;
@@ -21,6 +19,10 @@ namespace CharacterMapCX
 		{
 			return ref new DWriteProperties(DWriteFontSource::PerMachine, nullptr, "Segoe UI", "Regular", false);
 		}
+
+		property DWriteFontSimulations Simulations { DWriteFontSimulations get() { return m_simulations; } }
+
+		property bool IsSimulated { bool get() { return m_isSimulated; } }
 
 		property bool IsMonospacedFont { bool get() { return m_font->IsMonospacedFont(); } }
 
@@ -114,6 +116,9 @@ namespace CharacterMapCX
 			m_remoteSource = remoteSource;
 			m_familyName = familyName;
 			m_faceName = faceName;
+
+			m_simulations = static_cast<DWriteFontSimulations>(font->GetSimulations());
+			m_isSimulated = m_simulations != DWriteFontSimulations::None;
 		}
 
 		DWriteProperties(DWriteFontSource source, String^ remoteSource, String^ familyName, String^ faceName, bool isColor, bool hasVariations)
@@ -126,6 +131,8 @@ namespace CharacterMapCX
 			m_hasVariations = hasVariations;
 		}
 
+		bool m_isSimulated = false;
+		DWriteFontSource m_source = DWriteFontSource::Unknown;
 
 	private:
 		inline DWriteProperties() { }
@@ -160,6 +167,7 @@ namespace CharacterMapCX
 		FontWeight m_weight;
 		FontStyle m_style = FontStyle::Normal;
 		FontStretch m_stretch = FontStretch::Normal;
+		DWriteFontSimulations m_simulations = DWriteFontSimulations::None;
 
 		bool m_loadedVariations = false;
 		bool m_loadedRemote = false;
@@ -171,6 +179,5 @@ namespace CharacterMapCX
 		String^ m_remoteSource = nullptr;
 		String^ m_familyName = nullptr;
 		String^ m_faceName = nullptr;
-		DWriteFontSource m_source = DWriteFontSource::Unknown;
 	};
 }

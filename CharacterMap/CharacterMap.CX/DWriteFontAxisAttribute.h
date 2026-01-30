@@ -1,14 +1,13 @@
 #pragma once
-
-// Underlying type is unsigned int for Flags. Must be explicitly specified
 using namespace Platform::Metadata;
 
 namespace CharacterMapCX
 {
+	[Flags]
 	/// <summary>
 	/// WinRT projection of DWRITE_FONT_AXIS_ATTRIBUTE
 	/// </summary>
-	public enum class DWriteFontAxisAttribute : int
+	public enum class DWriteFontAxisAttribute : unsigned int
 	{
 		/// <summary>
 		/// No attributes.

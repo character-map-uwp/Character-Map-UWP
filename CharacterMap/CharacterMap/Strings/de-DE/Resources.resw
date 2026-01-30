@@ -182,14 +182,8 @@
   <data name="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Sammlung löschen</value>
   </data>
-  <data name="DigCreateCollection.SecondaryButtonText" xml:space="preserve">
-    <value>Abbrechen</value>
-  </data>
-  <data name="DigDeleteCollection.PrimaryButtonText" xml:space="preserve">
+  <data name="Delete" xml:space="preserve">
     <value>Löschen</value>
-  </data>
-  <data name="DigDeleteCollection.SecondaryButtonText" xml:space="preserve">
-    <value>Abbrechen</value>
   </data>
   <data name="DigDeleteCollection.Title" xml:space="preserve">
     <value>Bist du sicher, dass du diese Sammlung löschen möchtest?</value>
@@ -500,7 +494,7 @@ Das Anschalten hat einen vernachlässigbaren Einfluss auf die Leistung.</value>
   <data name="BtnApply.Content" xml:space="preserve">
     <value>Anwenden</value>
   </data>
-  <data name="BtnCancel.Content" xml:space="preserve">
+  <data name="Cancel" xml:space="preserve">
     <value>Abbrechen</value>
   </data>
   <data name="BtnContinue.Content" xml:space="preserve">
@@ -1004,7 +998,7 @@ Benötigt einen Neustart, um wirksam zu werden.</value>
     <value>Wechseln</value>
     <comment>Labels must be as short as possible</comment>
   </data>
-  <data name="AddTooButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="AddToButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Zur Auswahl hinzufügen</value>
   </data>
   <data name="ClearSelectionLabel" xml:space="preserve">
@@ -1027,9 +1021,6 @@ Benötigt einen Neustart, um wirksam zu werden.</value>
   </data>
   <data name="DigOpenFolder.PrimaryButtonText" xml:space="preserve">
     <value>Schriftarten öffnen</value>
-  </data>
-  <data name="DigOpenFolder.SecondaryButtonText" xml:space="preserve">
-    <value>Abbrechen</value>
   </data>
   <data name="DigOpenFolder.Title" xml:space="preserve">
     <value>Schriftarten-Ordner öffnen</value>
@@ -1230,6 +1221,9 @@ Tippen und halten zum umsortieren.</value>
   </data>
   <data name="NotificationCopiedSVG" xml:space="preserve">
     <value>Als SVG kopiert</value>
+  </data>
+  <data name="BtnTextClose.Content" xml:space="preserve">
+    <value>Schließen</value>
   </data>
   <data name="FileNameWriterStringFormat" xml:space="preserve">
     <value>{0}, z. B. {1}</value>

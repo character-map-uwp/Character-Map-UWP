@@ -9,10 +9,10 @@
     CornerRadius="{StaticResource PopupCornerRadius}"
     SecondaryButtonClick="{x:Bind Hide}"
     SecondaryButtonStyle="{StaticResource DefaultThemeButtonStyle}"
+    SecondaryButtonText="{core:Localizer Key=BtnTextClose/Content}"
     Style="{StaticResource DefaultThemeContentDialogStyle}"
     mc:Ignorable="d"
-    d:SecondaryButtonText="Close"
-    d:Title="Install Font">
+    d:Title="{core:Localizer Key=InstallDialog/Title}">
 
     <Grid>
         <StackPanel
@@ -20,21 +20,13 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Spacing="24">
-            <TextBlock x:Uid="InstallFontInstructions" HorizontalAlignment="Left">
-                <d:TextBlock.Inlines>
-                    <Run Text="To install this font:" />
-                    <LineBreak />
-                    <LineBreak />
-                    <Run Text="1. Press &quot;Start&quot; below" />
-                    <LineBreak />
-                    <Run Text="2. Select &quot;Windows Font Viewer&quot; and choose &quot;Just once&quot; or &quot;open&quot;" />
-                    <LineBreak />
-                    <Run Text="3. Press &quot;Install&quot; in the top of the font viewer Window" />
-                </d:TextBlock.Inlines>
-            </TextBlock>
+            <TextBlock
+                x:Uid="InstallFontInstructions"
+                HorizontalAlignment="Left"
+                d:Text="{core:Localizer Key=InstallFontInstructions/Text}" />
 
             <Button
-                Width="200"
+                MinWidth="200"
                 Click="StartClick"
                 Content="{core:Localizer Key=StartLabel/Text}"
                 Style="{StaticResource DefaultThemeButtonStyle}" />

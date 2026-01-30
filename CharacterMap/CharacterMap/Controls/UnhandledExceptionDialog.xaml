@@ -3,27 +3,32 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Uid="DlgException"
-    CornerRadius="4"
+    CornerRadius="{StaticResource PopupCornerRadius}"
     IsSecondaryButtonEnabled="False"
     PrimaryButtonStyle="{StaticResource DefaultThemeButtonStyle}"
     Style="{StaticResource DefaultThemeContentDialogStyle}"
-    PrimaryButtonText="OK"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    d:PrimaryButtonText="{core:Localizer Key=DlgException/PrimaryButtonText}"
+    d:Title="{core:Localizer Key=DlgException/Title}">
 
     <Grid RowSpacing="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <StackPanel>
-            <TextBlock x:Uid="DlgExceptionMessage" TextWrapping="Wrap" />
+        <StackPanel Spacing="4">
+            <TextBlock
+                x:Uid="DlgExceptionMessage"
+                TextWrapping="Wrap"
+                d:Text="{core:Localizer Key=DlgExceptionMessage/Text}" />
             <HyperlinkButton Click="HyperlinkButton_Click">
                 <TextBlock TextWrapping="Wrap">
-                    <Run FontFamily="{ThemeResource SymbolThemeFontFamily}"></Run>
-                    <Run x:Uid="DlgExceptionCopyMessage" />
+                    <Run FontFamily="{ThemeResource SymbolThemeFontFamily}" Text="&#xE8A7;" />
+                    <Run x:Uid="DlgExceptionCopyMessage" d:Text="{core:Localizer Key=DlgExceptionCopyMessage/Text}" />
                 </TextBlock>
             </HyperlinkButton>
         </StackPanel>
@@ -37,7 +42,17 @@
             <TextBlock
                 x:Name="ExceptionBlock"
                 Margin="8 8 8 24"
-                IsTextSelectionEnabled="True" />
+                IsTextSelectionEnabled="True">
+                <d:TextBlock.Inlines>
+                    <Run Text="StackTrace: '   at System.Environment.GetStackTrace(Exception e)" />
+                    <LineBreak />
+                    <Run Text="  at System.Environment.GetStackTrace(Exception e)" />
+                    <LineBreak />
+                    <Run Text="  at System.Environment.get_StackTrace()" />
+                    <LineBreak />
+                    <Run Text="  at Sample.Main()'" />
+                </d:TextBlock.Inlines>
+            </TextBlock>
         </ScrollViewer>
         <!--</controls:Expander>-->
     </Grid>

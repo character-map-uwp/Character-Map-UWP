@@ -131,6 +131,23 @@
                 x:Uid="OpenInNewWindow"
                 Click="OpenWindow_Click"
                 Icon="NewWindow"
+                Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                d:Text="{core:Localizer Key=OpenInNewWindow/Text}" />
+            <MenuFlyoutItem
+                x:Uid="AddMultiToQuickCompare"
+                core:Properties.ThemeIcon="Add"
+                Click="AddFamilyToQC_Click"
+                Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
+        </MenuFlyout>
+
+        <MenuFlyout
+            x:Name="FaceContextFlyout"
+            AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
+            MenuFlyoutPresenterStyle="{StaticResource FontListFlyoutStyle}">
+            <MenuFlyoutItem
+                x:Uid="AddToQuickCompare"
+                core:Properties.ThemeIcon="AddTo"
+                Click="AddToQC_Click"
                 Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
         </MenuFlyout>
 
@@ -144,12 +161,13 @@
                 Click="Remove_Clicked"
                 Icon="Clear"
                 Style="{StaticResource ThemeMenuFlyoutItemStyle}"
-                d:Text="Remove" />
+                d:Text="{core:Localizer Key=RemoveLabel/Text}" />
             <MenuFlyoutItem
                 x:Uid="OpenInNewWindow"
                 Click="OpenWindow_Click"
                 Icon="NewWindow"
-                Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
+                Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                d:Text="{core:Localizer Key=OpenInNewWindow/Text}" />
         </MenuFlyout>
 
         <muxc:UniformGridLayout
@@ -171,7 +189,7 @@
 
         <Style BasedOn="{StaticResource CompareCardStyle}" TargetType="controls:ContentGroup" />
 
-        <DataTemplate x:Key="GridTemplate" x:DataType="core:InstalledFont">
+        <DataTemplate x:Key="GridTemplate" x:DataType="core:CMFontFamily">
 
             <!--  Canvas is required for maximum performance when updating properties  -->
             <controls:ContentGroup Width="400" Height="250">
@@ -217,7 +235,7 @@
             </controls:ContentGroup>
         </DataTemplate>
 
-        <DataTemplate x:Key="StackTemplate" x:DataType="core:InstalledFont">
+        <DataTemplate x:Key="StackTemplate" x:DataType="core:CMFontFamily">
             <controls:ContentGroup VerticalAlignment="Stretch">
                 <controls:ContentGroup.Text>
                     <TextBlock>
@@ -359,11 +377,11 @@
                                 </VisualStateGroup>
                                 <VisualStateGroup x:Name="CheckStates">
                                     <VisualState x:Name="Checked">
-                                        <Storyboard>
+                                        <!--<Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonForeground}" />
                                             </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
+                                        </Storyboard>-->
                                     </VisualState>
                                     <VisualState x:Name="Unchecked" />
                                     <VisualState x:Name="Indeterminate" />
@@ -389,19 +407,20 @@
 
     </UserControl.Resources>
 
-    <Grid x:Name="LayoutRoot">
+    <Grid x:Name="LayoutRoot" VisualStateManager.CustomVisualStateManager="{StaticResource VSM}">
 
         <controls:ModalPagePresenter
             x:Name="Presenter"
             Title="{x:Bind ViewModel.Title}"
             CloseButtonVisibility="Collapsed"
-            IsWindowRoot="True">
+            IsWindowRoot="True"
+            d:Title="{core:Localizer Key=CompareFontsTitle/Text}">
             <controls:ModalPagePresenter.TitleBarContent>
                 <Grid>
                     <controls:XamlTitleBar VerticalAlignment="Top" IsDragTarget="False">
                         <Button
                             x:Name="BackButton"
-                            Width="45"
+                            Width="40"
                             VerticalAlignment="Stretch"
                             Background="Transparent"
                             BorderThickness="0"
@@ -413,10 +432,9 @@
                             d:Visibility="Visible">
                             <FontIcon
                                 x:Name="BackIcon"
-                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                core:Properties.ThemeIcon="Back"
                                 FontSize="12"
-                                Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                                Glyph="&#xE72B;" />
+                                Foreground="{ThemeResource AppBarItemForegroundThemeBrush}" />
                         </Button>
                     </controls:XamlTitleBar>
 
@@ -462,17 +480,16 @@
                                 HorizontalContentAlignment="Center"
                                 VerticalContentAlignment="Center"
                                 Style="{StaticResource ThemeTextBlockButtonStyle}"
-                                ToolTipService.Placement="Bottom">
+                                ToolTipService.Placement="Bottom"
+                                d:ToolTipService.ToolTip="{core:Localizer Key=FontListFilter/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
 
-                                <TextBlock>
-                                    <Run Text="{x:Bind ViewModel.FilterTitle, Mode=OneWay}" d:Text="All Fonts" />
-                                    <Run />
-                                    <Run
-                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="{x:Bind ViewModel.FilterTitle, Mode=OneWay}" d:Text="{core:Localizer Key=OptionAllFonts/Text}" />
+                                    <FontIcon
                                         FontSize="10"
-                                        IsTextScaleFactorEnabled="False"
-                                        Text="&#xE70D;" />
-                                </TextBlock>
+                                        Glyph="{core:ThemeIconGlyph Icon=ChevronDown}"
+                                        Style="{StaticResource ThemeFontIconStyle}" />
+                                </StackPanel>
 
                                 <Button.Flyout>
                                     <controls:FilterFlyout
@@ -522,33 +539,40 @@
                         <Grid x:Name="SecondRow">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="12" />
                                 <ColumnDefinition Width="20" />
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="30" />
                             </Grid.ColumnDefinitions>
 
-                            <muxc:RadioButtons
+                            <controls:UXRadioButtons
                                 x:Name="RadioButtons"
+                                ColumnSpacing="0"
                                 Margin="-8 -2 0 0"
-                                MaxColumns="2">
+                                MaxColumns="2"
+                                SelectedIndex="0"
+                                SelectionChanged="RadioButtons_SelectionChanged">
                                 <RadioButton
                                     x:Uid="LayoutGridToggle"
                                     core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
-                                    Click="GridView_Click"
                                     IsChecked="True">
-                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xF0E2;" />
+                                    <FontIcon core:Properties.ThemeIcon="GridView" />
                                 </RadioButton>
-                                <RadioButton
-                                    x:Uid="LayoutListToggle"
-                                    core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
-                                    Click="ListView_Click">
-                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE8FD;" />
+                                <RadioButton x:Uid="LayoutListToggle" core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle">
+                                    <FontIcon core:Properties.ThemeIcon="ListView" />
                                 </RadioButton>
-                            </muxc:RadioButtons>
+                            </controls:UXRadioButtons>
+
+                            <Border
+                                x:Name="SliderBorder"
+                                Grid.Column="2"
+                                Grid.ColumnSpan="3"
+                                HorizontalAlignment="Stretch"
+                                Style="{StaticResource ControlSurfaceBorderStyle}" />
 
                             <TextBlock
                                 Grid.Column="2"
+                                Margin="8 0 0 0"
                                 VerticalAlignment="Center"
                                 IsTextScaleFactorEnabled="False"
                                 Text="A">
@@ -560,13 +584,14 @@
                             <Slider
                                 x:Name="FontSizeSlider"
                                 Grid.Column="3"
-                                Margin="0 0 4 0"
+                                Margin="8,2,4,0"
                                 CornerRadius="0"
                                 Maximum="64"
                                 Minimum="10"
                                 Style="{StaticResource DefaultThemeSliderStyle}"
                                 ValueChanged="FontSizeSlider_ValueChanged"
                                 Value="40" />
+
 
                             <TextBlock
                                 Grid.Column="4"
@@ -585,7 +610,16 @@
                         </Grid>
                     </StackPanel>
 
-                    <Grid x:Name="FontsRoot" Grid.Row="1">
+                    <Grid
+                        x:Name="FontsRoot"
+                        Grid.Row="1"
+                        Background="Transparent">
+                        <core:Properties.ZoomHelper>
+                            <helpers:ZoomHelper
+                                Mode="Delta"
+                                ScaleFactor="0.033"
+                                ZoomRequested="ZoomHelper_ZoomRequested" />
+                        </core:Properties.ZoomHelper>
                         <Border
                             x:Name="ListingViewRoot"
                             Margin="0 0 -24 0"
@@ -694,58 +728,60 @@
                                     Layout="{StaticResource GridLayout}"
                                     VerticalCacheLength="0.5">
                                     <muxc:ItemsRepeater.ItemTemplate>
-                                        <DataTemplate x:DataType="core:FontVariant">
-                                            <Button
-                                                Margin="0"
-                                                IsHitTestVisible="False"
-                                                Style="{StaticResource QuickCompareContainerStyle}">
-                                                <controls:ContentGroup Style="{StaticResource CompareCardStyle}">
-                                                    <controls:ContentGroup.Text>
-                                                        <TextBlock
-                                                            FontSize="{StaticResource ControlContentThemeFontSize}"
-                                                            Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                                            Text="{x:Bind PreferredName}" />
-                                                    </controls:ContentGroup.Text>
-                                                    <controls:ContentGroup.SecondaryContent>
-                                                        <Grid>
+                                        <DataTemplate x:DataType="core:CMFontFace">
+                                            <Border
+                                                core:Properties.SetContextFlyoutContext="True"
+                                                core:Properties.TargetContextFlyout="{StaticResource FaceContextFlyout}"
+                                                Background="Transparent"
+                                                DataContext="{x:Bind}">
+                                                <Button
+                                                    Margin="0"
+                                                    IsHitTestVisible="False"
+                                                    Style="{StaticResource QuickCompareContainerStyle}">
+                                                    <controls:ContentGroup Style="{StaticResource CompareCardStyle}">
+                                                        <controls:ContentGroup.Text>
                                                             <TextBlock
-                                                                x:Name="XAMLRender"
-                                                                sdk17_x:Load="{x:Bind core:Converters.False(SupportsCOLRv1Rendering), FallbackValue=False}"
-                                                                FontFamily="{x:Bind DisplaySource}"
-                                                                FontStretch="{x:Bind DirectWriteProperties.Stretch}"
-                                                                FontStyle="{x:Bind DirectWriteProperties.Style}"
-                                                                FontWeight="{x:Bind DirectWriteProperties.Weight}"
-                                                                IsColorFontEnabled="True"
-                                                                TextTrimming="CharacterEllipsis"
-                                                                TextWrapping="Wrap" />
-                                                            <sdk17_cx:DirectText
-                                                                x:Name="DWriteRender"
-                                                                x:Load="{x:Bind SupportsCOLRv1Rendering, FallbackValue=False}"
-                                                                FallbackFont="{x:Bind core:FontFinder.Fallback}"
-                                                                FontFace="{x:Bind Face}"
-                                                                FontFamily="{Binding Source}"
-                                                                FontStretch="{x:Bind DirectWriteProperties.Stretch}"
-                                                                FontStyle="{x:Bind DirectWriteProperties.Style}"
-                                                                FontWeight="{x:Bind DirectWriteProperties.Weight}"
-                                                                IsColorFontEnabled="True"
-                                                                IsTextWrappingEnabled="True"
-                                                                Typography="{x:Bind core:TypographyFeatureInfo.None}" />
-                                                        </Grid>
-                                                    </controls:ContentGroup.SecondaryContent>
-                                                </controls:ContentGroup>
-                                            </Button>
+                                                                FontSize="{StaticResource ControlContentThemeFontSize}"
+                                                                Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                                Text="{x:Bind PreferredName}" />
+                                                        </controls:ContentGroup.Text>
+                                                        <controls:ContentGroup.SecondaryContent>
+                                                            <Grid>
+                                                                <TextBlock
+                                                                    x:Name="XAMLRender"
+                                                                    sdk17_x:Load="{x:Bind core:Converters.False(SupportsCOLRv1Rendering), FallbackValue=False}"
+                                                                    FontFamily="{x:Bind DisplaySource}"
+                                                                    FontStretch="{x:Bind DirectWriteProperties.Stretch}"
+                                                                    FontStyle="{x:Bind DirectWriteProperties.Style}"
+                                                                    FontWeight="{x:Bind DirectWriteProperties.Weight}"
+                                                                    IsColorFontEnabled="True"
+                                                                    TextTrimming="CharacterEllipsis"
+                                                                    TextWrapping="Wrap" />
+                                                                <sdk17_cx:DirectText
+                                                                    x:Name="DWriteRender"
+                                                                    x:Load="{x:Bind SupportsCOLRv1Rendering, FallbackValue=False}"
+                                                                    FallbackFont="{x:Bind core:FontFinder.Fallback}"
+                                                                    FontFace="{x:Bind Face}"
+                                                                    FontFamily="{Binding Source}"
+                                                                    FontStretch="{x:Bind DirectWriteProperties.Stretch}"
+                                                                    FontStyle="{x:Bind DirectWriteProperties.Style}"
+                                                                    FontWeight="{x:Bind DirectWriteProperties.Weight}"
+                                                                    IsColorFontEnabled="True"
+                                                                    IsTextWrappingEnabled="True"
+                                                                    Typography="{x:Bind core:TypographyFeatureInfo.None}" />
+                                                            </Grid>
+                                                        </controls:ContentGroup.SecondaryContent>
+                                                    </controls:ContentGroup>
+                                                </Button>
+                                            </Border>
                                         </DataTemplate>
                                     </muxc:ItemsRepeater.ItemTemplate>
                                 </muxc:ItemsRepeater>
                             </ScrollViewer>
-
-
-
                         </Grid>
                     </Grid>
                 </Grid>
             </Grid>
-
         </controls:ModalPagePresenter>
 
         <!--  Notification Presenter  -->
@@ -930,9 +966,22 @@
                 <VisualState x:Name="DefaultThemeState" />
                 <VisualState x:Name="FUIThemeState">
                     <VisualState.Setters>
+                        <Setter Target="SliderBorder.Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                        <Setter Target="RadioButtons.Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
                         <Setter Target="RadioButtons.Margin" Value="-2 -2 0 0" />
-                        <Setter Target="Presenter.Background" Value="Transparent" />
+                        <Setter Target="Presenter.Background" Value="{ThemeResource DefaultWindowBackgroundBrush}" />
                         <Setter Target="Presenter.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
+                        <Setter Target="RadioButtons.(controls:SelectorVisualElement.ElementTemplate)">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <controls:SelectorVisualElement
+                                        BarPadding="2"
+                                        BarSize="12 3"
+                                        Style="{StaticResource RadioSelectorElementStyle}"
+                                        VisualInset="-1 -1 0 -1" />
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ClassicThemeState">

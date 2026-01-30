@@ -6,6 +6,9 @@ namespace Windows.UI.Xaml.Media;
 [Foundation.Metadata.WebHostHidden]
 public static class VisualTreeHelperExtensions
 {
+    public static Vector2 ActualSize(this FrameworkElement e)
+        => new Vector2((float)e.ActualWidth, (float)e.ActualHeight);
+
     /// <summary>
     /// Gets the first descendant that is of the given type.
     /// </summary>
@@ -15,8 +18,28 @@ public static class VisualTreeHelperExtensions
     /// <typeparam name="T">Type of descendant to look for.</typeparam>
     /// <param name="start">The start object.</param>
     /// <returns></returns>
-    public static T GetFirstDescendantOfType<T>(this DependencyObject start, bool applyTemplate = false) where T : DependencyObject
-        => start.GetDescendantsOfType<T>(applyTemplate).FirstOrDefault();
+    public static T GetFirstDescendantOfType<T>(this DependencyObject start, Func<T, bool> predicate = null, bool applyTemplate = false) where T : DependencyObject
+    {
+        if (predicate is null)
+            return start.GetDescendantsOfType<T>(applyTemplate).FirstOrDefault();
+        else
+            return start.GetDescendantsOfType<T>(applyTemplate).FirstOrDefault(predicate);
+    }
+
+    /// <summary>
+    /// Gets the first descendant that is of the given type with the given name
+    /// </summary>
+    /// <remarks>
+    /// Returns null if not found.
+    /// </remarks>
+    /// <typeparam name="T">Type of descendant to look for.</typeparam>
+    /// <param name="start">The start object.</param>
+    /// <returns></returns>
+    public static T GetFirstDescendantOfType<T>(this DependencyObject start, string name, bool applyTemplate = false) where T : FrameworkElement
+    {
+        return GetFirstDescendantOfType<T>(start, f => f.Name == name, applyTemplate);
+    }
+
 
     /// <summary>
     /// Gets the descendants of the given type.
@@ -294,7 +317,7 @@ public static class VisualTreeHelperExtensions
             relativeTo = Window.Current.Content as FrameworkElement;
         }
 
-        if (relativeTo == null)
+        if (relativeTo == null || dob is null)
         {
             return null;
         }
@@ -304,12 +327,12 @@ public static class VisualTreeHelperExtensions
             return new Rect(0, 0, relativeTo.ActualWidth, relativeTo.ActualHeight);
         }
 
-        var ancestors = dob.GetAncestors().ToArray();
+        //var ancestors = dob.GetAncestors().ToArray();
 
-        if (!ancestors.Contains(relativeTo))
-        {
-            return null;
-        }
+        //if (!ancestors.Contains(relativeTo))
+        //{
+        //    return null;
+        //}
 
         var pos =
             dob

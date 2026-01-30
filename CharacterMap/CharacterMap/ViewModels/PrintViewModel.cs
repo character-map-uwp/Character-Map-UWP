@@ -8,7 +8,7 @@ public class PrintViewModel : ViewModelBase
 {
     protected override bool TrackAnimation => true;
 
-    public FontVariant Font { get; set; }
+    public CMFontFace Font { get; set; }
 
     public TypographyFeatureInfo Typography { get; set; }
 

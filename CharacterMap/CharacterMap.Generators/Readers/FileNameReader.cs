@@ -12,32 +12,36 @@ namespace CharacterMap.Generators.Readers;
 /// Populates the "All" field in FileNameWriter by creating a list of all
 /// static properties of type FileNameWriter in the FileNameWriter class.
 /// </summary>
-public class FileNameReader : SyntaxReader
+[Generator]
+public class FileNameReader : IIncrementalGenerator
 {
-    List<string> writers = [];
-
-    public override void Read(IEnumerable<SyntaxNode> nodes)
+    public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        foreach (var u in nodes.OfNamedClass("FileNameWriter"))
+        var classDeclarations = context.SyntaxProvider
+            .CreateSyntaxProvider(
+                predicate: (node, _) => node is ClassDeclarationSyntax cds && cds.Identifier.ValueText == "FileNameWriter",
+                transform: (ctx, _) =>
+                {
+                    var classNode = (ClassDeclarationSyntax)ctx.Node;
+                    var writers = classNode.DescendantNodes()
+                        .OfType<PropertyDeclarationSyntax>()
+                        .Where(p => p.Type is IdentifierNameSyntax id && id.Identifier.ValueText == "FileNameWriter")
+                        .Select(p => p.Identifier.ValueText)
+                        .ToList();
+                    return writers;
+                })
+            .Where(writers => writers != null && writers.Count > 0)
+            .Collect();
+
+        context.RegisterSourceOutput(classDeclarations, (spc, writersList) =>
         {
-            var writer = u.DescendantNodesAndSelf()
-                .OfType<PropertyDeclarationSyntax>()
-                .Where(p => p.IsNamedType("FileNameWriter"))
-                .ToList();
+            var writers = writersList.SelectMany(x => x).ToList();
+            if (writers.Count == 0)
+                return;
 
-            foreach (var w in writer)
-                writers.Add(w.Identifier.ValueText);
-        }
-    }
-
-    public override void Write(GeneratorExecutionContext context)
-    {
-        if (writers.Count == 0)
-            return;
-
-        string b = $"public static IReadOnlyList<FileNameWriter> All {{ get; }} = " +
-            $"[\r\n        {string.Join(",\r\n        ", writers)}\r\n    ];";
-        SourceText src = SourceText.From(
+            string b = $"public static IReadOnlyList<FileNameWriter> All {{ get; }} = " +
+                $"[\r\n        {string.Join(",\r\n        ", writers)}\r\n    ];";
+            SourceText src = SourceText.From(
 $@"namespace CharacterMap.Models;
 
 partial class FileNameWriter
@@ -45,7 +49,7 @@ partial class FileNameWriter
     {b}
 }}", Encoding.UTF8);
 
-        context.AddSource("FileNameWriter.g.cs", src);
-
+            spc.AddSource("FileNameWriter.g.cs", src);
+        });
     }
 }

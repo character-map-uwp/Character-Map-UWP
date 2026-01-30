@@ -128,7 +128,7 @@ namespace CharacterMapCX
 			Vector<DWriteFontAxis^>^ variable = ref new Vector<DWriteFontAxis^>();
 			for each (auto a in m_axis)
 			{
-				if (a->Attribute == DWriteFontAxisAttribute::Variable)
+				if (a->Attribute != DWriteFontAxisAttribute::None)
 					variable->Append(a);
 			}
 			m_variableAxis = variable->GetView();

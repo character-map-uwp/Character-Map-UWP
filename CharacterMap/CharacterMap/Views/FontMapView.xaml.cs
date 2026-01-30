@@ -13,6 +13,18 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Views;
 
+public class VariantTemplateSelector : DataTemplateSelector
+{
+    public DataTemplate HeaderTemplate { get; set; }
+    public DataTemplate VariantTemplate { get; set; }
+
+    protected override DataTemplate SelectTemplateCore(object item)
+        => item is CMFontFace ? VariantTemplate : HeaderTemplate;
+
+    protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+        => item is CMFontFace ? VariantTemplate : HeaderTemplate;
+}
+
 [DependencyProperty("TitleLeftContent")]
 [DependencyProperty("TitleRightContent")]
 [DependencyProperty<FontMapViewModel>("ViewModel")]
@@ -283,10 +295,10 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 case VirtualKey.P:
                     FlyoutHelper.PrintRequested();
                     break;
-                case VirtualKey.S when ViewModel.SelectedVariant is FontVariant v:
+                case VirtualKey.S when ViewModel.SelectedVariant is CMFontFace v:
                     ExportManager.RequestExportFontFile(v);
                     break;
-                case VirtualKey.E when ViewModel.SelectedVariant is FontVariant:
+                case VirtualKey.E when ViewModel.SelectedVariant is CMFontFace:
                     Messenger.Send(new ExportRequestedMessage());
                     break;
                 case VirtualKey.Add:
@@ -309,7 +321,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 case VirtualKey.K:
                     _ = QuickCompareView.CreateWindowAsync(new(false));
                     break;
-                case VirtualKey.Q when ViewModel.SelectedVariant is FontVariant va:
+                case VirtualKey.Q when ViewModel.SelectedVariant is CMFontFace va:
                     _ = QuickCompareView.AddAsync(ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy() });
                     break;
                 case VirtualKey.I:
@@ -497,7 +509,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         UpdateCopyPane();
     }
 
-    private string UpdateStatusBarLabel(FontVariant variant, bool keepCasing)
+    private string UpdateStatusBarLabel(CMFontFace variant, bool keepCasing)
     {
         if (variant == null)
             return string.Empty;
@@ -707,12 +719,19 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void MenuFlyout_Opening(object sender, object e)
     {
+        if (ViewModel.RenderingOptions is null)
+        {
+            // Startup has gone wrong, ViewModel has no selected character
+            ViewModel.SetDefaultChar();
+            MoreMenu.Hide();
+        }
+
         if (ViewModel.SelectedFont is FontItem item)
         {
             FlyoutHelper.CreateMenu(
                 MoreMenu,
                 item.Font,
-                ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy() },
+                ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy(), Family = ViewModel.SelectedFont.Font },
                 this.Tag as FrameworkElement,
                 new()
                 {
@@ -727,7 +746,9 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void DevFlyout_Opening(object sender, object e)
     {
-        if (sender is MenuFlyout menu && menu.Items.Count < 2)
+        if (sender is MenuFlyout menu 
+            && menu.Items?.Count < 2
+            && ViewModel.Providers is not null)
         {
             Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
             foreach (var provider in ViewModel.Providers)
@@ -1056,11 +1077,10 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             {
                 // We apply the size changes by clearing the ItemsSource and resetting it,
                 // allowing the GridView to re-layout all of it's items with their new size.
-
                 CharGrid.ItemsSource = null;
                 CharGrid.ItemSize = ViewModel.Settings.GridSize;
                 await Task.Yield();
-                CharGrid.ItemsSource = ViewModel.Chars;
+                CharGrid.SetBinding(GridView.ItemsSourceProperty, new Binding() { Source = CharacterSource });
                 ViewModel.SetDefaultChar();
                 _ = SetCharacterSelectionAsync();
             }
@@ -1168,7 +1188,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
 public partial class FontMapView
 {
-    public static async Task CreateNewViewForFontAsync(InstalledFont font, StorageFile sourceFile = null, CharacterRenderingOptions options = null)
+    public static async Task CreateNewViewForFontAsync(CMFontFamily font, StorageFile sourceFile = null, CharacterRenderingOptions options = null)
     {
         void CreateView()
         {

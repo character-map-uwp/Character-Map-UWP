@@ -6,6 +6,7 @@
 #include <dwrite_3.h>
 #include "ColorTextAnalyzer.h"
 #include "DWriteProperties.h"
+#include "OS2TableReader.h"
 #include <vector>
 
 using namespace Microsoft::Graphics::Canvas;
@@ -37,10 +38,7 @@ namespace CharacterMapCX
 
 		property CanvasFontFileFormatType FileFormatType
 		{
-			CanvasFontFileFormatType get() {
-				return static_cast<CanvasFontFileFormatType>(
-					GetFontFace()->GetType());
-			}
+			CanvasFontFileFormatType get() { return static_cast<CanvasFontFileFormatType>(GetFontFace()->GetType()); }
 		}
 
 		property DWriteProperties^ Properties
@@ -50,7 +48,10 @@ namespace CharacterMapCX
 
 		bool HasCharacter(UINT32 character)
 		{
-			return m_font->HasCharacter(character);
+			if (m_face != nullptr)
+				return m_face->HasCharacter(character);
+			else
+				return m_font->HasCharacter(character);
 		}
 
 		IMapView<String^, String^>^ GetInformationalStrings(CanvasFontInformation fontInformation)
@@ -58,8 +59,13 @@ namespace CharacterMapCX
 			auto map = ref new Map<String^, String^>();
 			ComPtr<IDWriteLocalizedStrings> localizedStrings;
 			BOOL exists;
-			ThrowIfFailed(m_font->GetInformationalStrings(
-				static_cast<DWRITE_INFORMATIONAL_STRING_ID>(fontInformation), &localizedStrings, &exists));
+
+			if (m_face != nullptr)
+				ThrowIfFailed(m_face->GetInformationalStrings(
+					static_cast<DWRITE_INFORMATIONAL_STRING_ID>(fontInformation), &localizedStrings, &exists));
+			else
+				ThrowIfFailed(m_font->GetInformationalStrings(
+					static_cast<DWRITE_INFORMATIONAL_STRING_ID>(fontInformation), &localizedStrings, &exists));
 
 			if (exists)
 			{
@@ -96,9 +102,15 @@ namespace CharacterMapCX
 		{
 			uint32 rangeCount;
 			uint32 actualRangeCount;
-			m_font->GetUnicodeRanges(0, nullptr, &rangeCount);
+			if (m_face != nullptr)
+				m_face->GetUnicodeRanges(0, nullptr, &rangeCount);
+			else
+				m_font->GetUnicodeRanges(0, nullptr, &rangeCount);
 			DWRITE_UNICODE_RANGE* ranges = new DWRITE_UNICODE_RANGE[rangeCount];
-			m_font->GetUnicodeRanges(rangeCount, ranges, &actualRangeCount);
+			if (m_face != nullptr)
+				m_face->GetUnicodeRanges(rangeCount, ranges, &actualRangeCount);
+			else
+				m_font->GetUnicodeRanges(rangeCount, ranges, &actualRangeCount);
 			auto mine = reinterpret_cast<CanvasUnicodeRange*>(ranges);
 			return Platform::ArrayReference<CanvasUnicodeRange>(mine, actualRangeCount);
 		}
@@ -124,7 +136,40 @@ namespace CharacterMapCX
 			return static_cast<INT32>(out[0]);
 		}
 
+		FontEmbeddingType GetEmbeddingType()
+		{
+			if (!m_loadedEmbed)
+			{
+				const void* tableData;
+				UINT32 tableSize;
+				BOOL exists;
+				void* context;
+				auto face = GetFontFace();
+				ThrowIfFailed(face->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('O', 'S', '/', '2'), &tableData, &tableSize, &context, &exists));
+
+				if (exists)
+				{
+					auto reader = ref new OS2TableReader(tableData, tableSize);
+					m_embeddingType = reader->EmbeddingType;
+					delete reader;
+				}
+				else
+					m_embeddingType = FontEmbeddingType::Installable;
+
+				face->ReleaseFontTable(&tableData);
+				m_loadedEmbed = true;
+			}
+
+			return m_embeddingType;
+		}
+
+
 	internal:
+		DWriteFontFace(ComPtr <IDWriteFontFace3> face)
+		{
+			m_face = face;
+		}
+
 		DWriteFontFace(ComPtr<IDWriteFont3> font, DWriteProperties^ properties)
 		{
 			m_font = font;
@@ -133,6 +178,7 @@ namespace CharacterMapCX
 
 		ComPtr<IDWriteFontCollection3> GetFontCollection()
 		{
+			/* NOTE: Does not support IDWriteFontFace3 constructor */
 			ComPtr<IDWriteFontFamily> family;
 			m_font->GetFontFamily(&family);
 
@@ -155,7 +201,12 @@ namespace CharacterMapCX
 			if (m_fontResource == nullptr)
 			{
 				ComPtr<IDWriteFontFaceReference> ref;
-				ThrowIfFailed(m_font->GetFontFaceReference(&ref));
+
+				if (m_face != nullptr)
+					ThrowIfFailed(m_face->GetFontFaceReference(&ref));
+				else
+					ThrowIfFailed(m_font->GetFontFaceReference(&ref));
+
 				m_fontResource = ref;
 			}
 
@@ -164,6 +215,9 @@ namespace CharacterMapCX
 
 		ComPtr<IDWriteFontFace3> GetFontFace()
 		{
+			if (m_face != nullptr)
+				return m_face;
+
 			ComPtr<IDWriteFontFaceReference> faceRef = GetReference();;
 			ComPtr<IDWriteFontFace3> face;
 			faceRef->CreateFontFace(&face);
@@ -174,7 +228,11 @@ namespace CharacterMapCX
 		{
 			if (m_hasMetrics == false)
 			{
-				m_font->GetMetrics(&m_metrics);
+				if (m_face != nullptr)
+					m_face->GetMetrics(&m_metrics);
+				else
+					m_font->GetMetrics(&m_metrics);
+
 				m_hasMetrics = true;
 			}
 
@@ -186,15 +244,20 @@ namespace CharacterMapCX
 			m_dwProperties = props;
 		}
 
+		ComPtr<IDWriteFontFace3> m_face = nullptr;
 		ComPtr<IDWriteFont3> m_font = nullptr;
+
+		DWriteProperties^ m_dwProperties = nullptr;
 
 	private:
 		inline DWriteFontFace() { }
 
+		bool m_loadedEmbed = false;
 		bool m_hasMetrics = false;
+
+		FontEmbeddingType m_embeddingType = FontEmbeddingType::Installable;
 		DWRITE_FONT_METRICS1 m_metrics{};
 		CanvasFontFace^ m_fontFace = nullptr;
-		DWriteProperties^ m_dwProperties = nullptr;
 		ComPtr<IDWriteFontFaceReference> m_fontResource = nullptr;
 	};
 }

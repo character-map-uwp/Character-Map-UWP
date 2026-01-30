@@ -5,9 +5,9 @@ using Windows.UI.Xaml.Data;
 namespace CharacterMap.Controls;
 
 [DependencyProperty<string>("Shortcut")]
-[DependencyProperty<string>("Glyph")]
 [DependencyProperty<string>("Title")]
 [DependencyProperty<string>("Description")]
+[DependencyProperty<ThemeIcon>("Icon")]
 public partial class ButtonLabel : DependencyObject { }
 
 class ButtonGroupBorderConverter : IValueConverter

@@ -5,16 +5,16 @@ public partial class SearchTarget
     public Type TargetType;
     public string SearchTable;
 
-    private Func<FontVariant, bool> _isTarget;
+    private Func<CMFontFace, bool> _isTarget;
 
-    public SearchTarget(Type t, string table, Func<FontVariant, bool> isTarget)
+    public SearchTarget(Type t, string table, Func<CMFontFace, bool> isTarget)
     {
         TargetType = t;
         SearchTable = table;
         _isTarget = isTarget;
     }
 
-    public bool IsTarget(FontVariant variant) => _isTarget(variant);
+    public bool IsTarget(CMFontFace variant) => _isTarget(variant);
 }
 
 

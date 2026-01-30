@@ -233,17 +233,9 @@
           <source>Delete Collection</source>
           <target state="translated">ลบรายการสะสม</target>
         </trans-unit>
-        <trans-unit id="DigCreateCollection.SecondaryButtonText" translate="yes" xml:space="preserve">
-          <source>Cancel</source>
-          <target state="translated">ยกเลิก</target>
-        </trans-unit>
-        <trans-unit id="DigDeleteCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
+        <trans-unit id="Delete" translate="yes" xml:space="preserve">
           <source>Delete</source>
           <target state="translated">ลบ</target>
-        </trans-unit>
-        <trans-unit id="DigDeleteCollection.SecondaryButtonText" translate="yes" xml:space="preserve">
-          <source>Cancel</source>
-          <target state="translated">ยกเลิก</target>
         </trans-unit>
         <trans-unit id="DigDeleteCollection.Title" translate="yes" xml:space="preserve">
           <source>Are you sure you want to delete this collection?</source>
@@ -662,9 +654,9 @@ Turning this on has negligible performance impact.</source>
           <source>Apply</source>
           <target state="translated">เลือกกลุ่มอักษร</target>
         </trans-unit>
-        <trans-unit id="BtnCancel.Content" translate="yes" xml:space="preserve">
+        <trans-unit id="Cancel" translate="yes" xml:space="preserve">
           <source>Cancel</source>
-          <target state="translated">ยกเลิกพิมพ์</target>
+          <target state="translated">ยกเลิก</target>
         </trans-unit>
         <trans-unit id="BtnContinue.Content" translate="yes" xml:space="preserve">
           <source>Continue</source>
@@ -1340,7 +1332,7 @@ Requires a restart to take effect.</source>
           <target state="translated">สลับ</target>
           <note from="MultilingualBuild" annotates="source" priority="2">Labels must be as short as possible</note>
         </trans-unit>
-        <trans-unit id="AddTooButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+        <trans-unit id="AddToButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Add to Collection</source>
           <target state="translated">เพิ่มเข้ารายการสะสม</target>
         </trans-unit>
@@ -1371,10 +1363,6 @@ Requires a restart to take effect.</source>
         <trans-unit id="DigOpenFolder.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>Open Fonts</source>
           <target state="translated">เปิดฟ้อนต์</target>
-        </trans-unit>
-        <trans-unit id="DigOpenFolder.SecondaryButtonText" translate="yes" xml:space="preserve">
-          <source>Cancel</source>
-          <target state="translated">ยกเลืก</target>
         </trans-unit>
         <trans-unit id="DigOpenFolder.Title" translate="yes" xml:space="preserve">
           <source>Open Font Folder</source>
@@ -1691,7 +1679,7 @@ Tap and hold to arrange.</target>
         </trans-unit>
         <trans-unit id="BtnTextClose.Content" translate="yes" xml:space="preserve">
           <source>Close</source>
-          <target state="new">Close</target>
+          <target state="translated">ปิด</target>
         </trans-unit>
         <trans-unit id="EditSuggestionsLabel.Text" translate="yes" xml:space="preserve">
           <source>Edit Custom Suggestions</source>
@@ -1796,10 +1784,6 @@ Tap and hold to arrange.</target>
         <trans-unit id="HiddenGlyphsMessage.Text" translate="yes" xml:space="preserve">
           <source>Deprecated icon glyphs are hidden by default based on your settings. You can show them using the filter button above.</source>
           <target state="new">Deprecated icon glyphs are hidden by default based on your settings. You can show them using the filter button above.</target>
-        </trans-unit>
-        <trans-unit id="InstallDialog.SecondaryButtonText" translate="yes" xml:space="preserve">
-          <source>Close</source>
-          <target state="new">Close</target>
         </trans-unit>
         <trans-unit id="InstallDialog.Title" translate="yes" xml:space="preserve">
           <source>Install Font</source>

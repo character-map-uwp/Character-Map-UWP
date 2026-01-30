@@ -34,7 +34,7 @@ public class UserCollectionsService
         _provider = new SQLiteCollectionProvider();
     }
 
-    public bool IsSymbolFont(InstalledFont font)
+    public bool IsSymbolFont(CMFontFamily font)
     {
         return font != null && (font.IsSymbolFont || SymbolCollection.Fonts.Contains(font.Name));
     }
@@ -167,12 +167,12 @@ public class UserCollectionsService
         return _provider.SaveCollectionAsync(collection);
     }
 
-    public Task<AddToCollectionResult> AddToCollectionAsync(InstalledFont font, UserFontCollection collection)
+    public Task<AddToCollectionResult> AddToCollectionAsync(CMFontFamily font, UserFontCollection collection)
     {
         return AddToCollectionAsync([font], collection);
     }
 
-    public async Task<AddToCollectionResult> AddToCollectionAsync(IReadOnlyList<InstalledFont> fonts, UserFontCollection collection, Action onChanged = null)
+    public async Task<AddToCollectionResult> AddToCollectionAsync(IReadOnlyList<CMFontFamily> fonts, UserFontCollection collection, Action onChanged = null)
     {
         bool changed = false;
 
@@ -192,12 +192,12 @@ public class UserCollectionsService
         return new AddToCollectionResult(false, null, null);
     }
 
-    public Task RemoveFromCollectionAsync(InstalledFont font, UserFontCollection collection)
+    public Task RemoveFromCollectionAsync(CMFontFamily font, UserFontCollection collection)
     {
         return RemoveFromCollectionAsync([font], collection);
     }
 
-    public Task RemoveFromCollectionAsync(IReadOnlyList<InstalledFont> fonts, UserFontCollection collection)
+    public Task RemoveFromCollectionAsync(IReadOnlyList<CMFontFamily> fonts, UserFontCollection collection)
     {
         bool removed = false;
         foreach (var font in fonts)
@@ -210,7 +210,7 @@ public class UserCollectionsService
         return Task.CompletedTask;
     }
 
-    public async Task RemoveFromAllCollectionsAsync(InstalledFont font)
+    public async Task RemoveFromAllCollectionsAsync(CMFontFamily font)
     {
         if (SymbolCollection.Fonts.Contains(font.Name))
             await RemoveFromCollectionAsync(font, SymbolCollection).ConfigureAwait(false);

@@ -14,8 +14,8 @@ public class ExportViewModel : ViewModelBase
 
     public GlyphFileNameViewModel GlyphNameModel { get; } = new();
 
-    public InstalledFont Font { get; }
-    public FontVariant Variant { get; set; }
+    public CMFontFamily Font { get; }
+    public CMFontFace Variant { get; set; }
 
     public CharacterRenderingOptions Options { get; set; }
 

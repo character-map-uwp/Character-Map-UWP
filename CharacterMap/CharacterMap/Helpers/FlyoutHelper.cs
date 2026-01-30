@@ -53,7 +53,7 @@ public static class FlyoutHelper
 {
     private static UserCollectionsService _collections { get; } = Ioc.Default.GetService<UserCollectionsService>();
 
-    public static void RequestDelete(InstalledFont font)
+    public static void RequestDelete(CMFontFamily font)
     {
         MainViewModel main = Ioc.Default.GetService<MainViewModel>();
         var d = new ContentDialog
@@ -61,8 +61,8 @@ public static class FlyoutHelper
             Title = Localization.Get("DlgDeleteFont/Title"),
             IsPrimaryButtonEnabled = true,
             IsSecondaryButtonEnabled = true,
-            PrimaryButtonText = Localization.Get("DigDeleteCollection/PrimaryButtonText"),
-            SecondaryButtonText = Localization.Get("DigDeleteCollection/SecondaryButtonText"),
+            PrimaryButtonText = Localization.Get("Delete"),
+            SecondaryButtonText = Localization.Get("Cancel"),
         };
 
         d.PrimaryButtonClick += (ds, de) =>
@@ -91,13 +91,11 @@ public static class FlyoutHelper
     /// <param name="headerContent"></param>
     public static void CreateMenu(
         MenuFlyout menu,
-        InstalledFont font,
+        CMFontFamily font,
         CharacterRenderingOptions options,
         FrameworkElement headerContent,
         FlyoutArgs args)
     {
-        MainViewModel main = Ioc.Default.GetService<MainViewModel>();
-
         bool standalone = args.Standalone;
         bool showAdvanced = args.ShowAdvanced;
         bool isExternalFile = args.IsExternalFile;
@@ -109,21 +107,21 @@ public static class FlyoutHelper
 
         static void OpenInNewWindow(object s, RoutedEventArgs args)
         {
-            if (s is FrameworkElement f && f.Tag is InstalledFont fnt)
+            if (s is FrameworkElement f && f.Tag is CMFontFamily fnt)
                 _ = FontMapView.CreateNewViewForFontAsync(fnt, null, f.DataContext as CharacterRenderingOptions);
         }
 
         static void OpenInNewTab(object s, RoutedEventArgs args)
         {
-            if (s is FrameworkElement f && f.Tag is InstalledFont fnt)
-                Ioc.Default.GetService<MainViewModel>().OpenTab(fnt);
+            if (s is FrameworkElement f && f.Tag is CMFontFamily fnt)
+                WeakReferenceMessenger.Default.Send(new OpenTabMessage(fnt));
         }
 
         static void SaveFont_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuFlyoutItem item && item.DataContext is CharacterRenderingOptions opts)
+            if (sender is MenuFlyoutItem item && Properties.GetTag(item) is CharacterRenderingOptions opts)
             {
-                ExportManager.RequestExportFontFile(opts.Variant);
+                ExportManager.RequestExportFont(opts, true);
             }
         }
 
@@ -135,8 +133,8 @@ public static class FlyoutHelper
         static void Export_Click(object sender, RoutedEventArgs e)
         {
             if (sender is FrameworkElement f &&
-                f.Tag is InstalledFont fnt
-                && f.DataContext is CharacterRenderingOptions o)
+                f.Tag is CMFontFamily fnt
+                && Properties.GetTag(f) is CharacterRenderingOptions o)
             {
                 WeakReferenceMessenger.Default.Send(new ExportRequestedMessage());
             }
@@ -144,7 +142,7 @@ public static class FlyoutHelper
 
         static void DeleteClick(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuFlyoutItem item && item.Tag is InstalledFont fnt)
+            if (sender is MenuFlyoutItem item && item.Tag is CMFontFamily fnt)
             {
                 RequestDelete(fnt);
             }
@@ -153,16 +151,25 @@ public static class FlyoutHelper
         static void AddToQuickCompare(object sender, RoutedEventArgs e)
         {
             if (sender is FrameworkElement f
-                && f.DataContext is CharacterRenderingOptions o)
+                && Properties.GetTag(f) is CharacterRenderingOptions o)
             {
                 _ = QuickCompareView.AddAsync(o);
+            }
+        }
+
+        static void AddToQuickCompareMulti(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement f
+                && Properties.GetTag(f) is CharacterRenderingOptions o)
+            {
+                _ = QuickCompareView.AddAsync(o, true);
             }
         }
 
         void OpenCalligraphy(object sender, RoutedEventArgs e)
         {
             if (sender is FrameworkElement f
-                && f.DataContext is CharacterRenderingOptions o)
+                && Properties.GetTag(f) is CharacterRenderingOptions o)
             {
                 _ = CalligraphyView.CreateWindowAsync(o, args?.PreviewText);
             }
@@ -175,22 +182,23 @@ public static class FlyoutHelper
 
         void OpenFaceCompare(object sender, RoutedEventArgs e)
         {
-            if (sender is FrameworkElement f && f.Tag is InstalledFont fnt)
+            if (sender is FrameworkElement f && f.Tag is CMFontFamily fnt)
             {
                 _ = QuickCompareView.CreateWindowAsync(new(false, new(fnt.Variants.ToList()) { IsFamilyCompare = true }));
             }
         }
 
-        MenuFlyoutItem Create(string key, string icon, RoutedEventHandler handler, VirtualKey accel = VirtualKey.None, bool add = true)
+        MenuFlyoutItem Create(string key, ThemeIcon icon, RoutedEventHandler handler, VirtualKey accel = VirtualKey.None, bool add = true)
         {
             MenuFlyoutItem item = new()
             {
                 Text = key.StartsWith("~") ? key.Remove(0, 1) : Localization.Get(key),
-                Icon = new FontIcon { Glyph = icon },
+                Icon = Icon(icon),
                 Tag = font,
-                DataContext = options,
                 Style = style
             };
+
+            Properties.SetTag(item, options);
 
             item.Click += handler;
 
@@ -209,7 +217,10 @@ public static class FlyoutHelper
         {
             menu.Items.Clear();
             MenuFlyoutSubItem coll;
+
+            bool qc = args.IsFolderView is false && isExternalFile is false;
             {
+
                 // HORRIBLE Hacks, because MenuFlyoutSubItem never updates it's UI tree after the first
                 // render meaning we can't dynamically update items. Instead we need to make an entirely
                 // menu every time it opens.
@@ -230,10 +241,10 @@ public static class FlyoutHelper
                     // 1.1. Only show "Open in New Tab" if this is Font List context menu
                     //      and supported by theme
                     if (showAdvanced is false && ResourceHelper.SupportsTabs)
-                        Create("OpenInNewTab/Text", "\uECCD", OpenInNewTab);
+                        Create("OpenInNewTab/Text", ThemeIcon.NewTab, OpenInNewTab);
 
                     // 1.2. Create "Open in New Window"
-                    MenuFlyoutItem newWindow = Create("OpenInNewWindow/Text", "\uE17C", OpenInNewWindow);
+                    MenuFlyoutItem newWindow = Create("OpenInNewWindow/Text", ThemeIcon.NewWindow, OpenInNewWindow);
                     if (showAdvanced)
                         newWindow.AddKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control);
                 }
@@ -241,12 +252,16 @@ public static class FlyoutHelper
                 // 2. Add Save Font File & Export Font Glyphs options
                 if (options != null && options.Variant != null && DirectWrite.IsFontLocal(options.Variant.Face))
                 {
-                    Create("ExportFontFileLabel/Text", "\uE792", SaveFont_Click, VirtualKey.S);
+                    Create("ExportFontFileLabel/Text", ThemeIcon.Save, SaveFont_Click, VirtualKey.S);
                     if (showAdvanced && !args.IsTabContext)
-                        Create("ExportCharactersLabel/Text", "\uE105", Export_Click, VirtualKey.E);
+                        Create("ExportCharactersLabel/Text", ThemeIcon.Save, Export_Click, VirtualKey.E);
                 }
 
-                // 3. Add "Add to Collection" button
+                // 3. Add "Add to quick compare" button if we're viewing a variant
+                if (qc)
+                    Create("AddToQuickCompare/Text", ThemeIcon.AddTo, AddToQuickCompare, VirtualKey.Q);
+
+                // 4. Add "Add to Collection" button
                 if (isExternalFile is false && args.IsFolderView is false)
                 {
                     coll = AddCollectionItems(menu, font, null, args: args);
@@ -254,7 +269,7 @@ public static class FlyoutHelper
                 }
             }
 
-            // 4. Add "Remove from Collection" item
+            // 5. Add "Remove from Collection" item
             // Only show the "Remove from Collection" menu item if:
             //  -- we are not in a stand-alone window
             //  AND
@@ -264,48 +279,56 @@ public static class FlyoutHelper
             //     the user has manually tagged as a symbol font
             if (!standalone && !args.IsFolderView)
             {
+                MainViewModel main = Ioc.Default.GetService<MainViewModel>();
                 TryAddRemoveFromCollection(menu, font, main.SelectedCollection, main.FontListFilter);
             }
 
-            // 5. Add "Print" Button
+            // 6. Add "Print" Button
             if (showAdvanced && args.IsTabContext is false)
             {
                 if (Windows.Graphics.Printing.PrintManager.IsSupported())
                 {
-                    MenuFlyoutItem print = Create("BtnPrint/Content", "\uE749", Print_Click, VirtualKey.P, false);
+                    MenuFlyoutItem print = Create("BtnPrint/Content", ThemeIcon.Print, Print_Click, VirtualKey.P, false);
                     menu.Items.Insert(standalone ? 2 : 3, print);
                 }
             }
 
-            // 6. Add "Delete Font" button
+            // 7. Add "Delete Font" button
             if (!standalone
                 && !args.IsFolderView
                 && !args.IsTabContext
                 && font.HasImportedFiles)
             {
                 menu.AddSeparator();
-                MenuFlyoutItem del = Create("RemoveFontFlyout/Text", "\uE107", DeleteClick);
+                MenuFlyoutItem del = Create("RemoveFontFlyout/Text", ThemeIcon.Delete, DeleteClick);
                 if (showAdvanced)
                     del.AddKeyboardAccelerator(VirtualKey.Delete, VirtualKeyModifiers.Control);
             }
 
-            // 7. Handle compare options
-            bool qc = args.IsFolderView is false && showAdvanced && isExternalFile is false;
-            if (qc || font.HasVariants)
+            // 8. Handle compare options
+            if (font.HasVariants)
                 menu.AddSeparator();
 
-            // 7.1. Add "Compare Fonts button"
             if (font.HasVariants)
-                Create($"~{string.Format(Localization.Get("CompareFacesCountLabel/Text"), font.Variants.Count)}", "\uE1D3", OpenFaceCompare);
+            {
+                // 8.1. Add "Compare Fonts button"
+                // NOTE: count is not used on updated translation, left because old translations may still use it
+                Create($"~{string.Format(Localization.Get("CompareFacesCountLabel/Text"), font.Variants.Count)}", ThemeIcon.CompareFonts, OpenFaceCompare);
+                
+                // 8.2. Add "Add all to quick compare" button
+                Create("AddMultiToQuickCompare/Text", ThemeIcon.Add, AddToQuickCompareMulti);
+            }
 
-            // 7.2. Add "Add to quick compare" button if we're viewing a variant
-            if (qc)
-                Create("AddToQuickCompare/Text", "\uE109", AddToQuickCompare, VirtualKey.Q);
-
-            // 8. Add Calligraphy button
+            // 9. Add Calligraphy button
             menu.AddSeparator();
-            Create("CalligraphyLabel/Text", "\uEDFB", OpenCalligraphy, VirtualKey.I);
+            Create("CalligraphyLabel/Text", ThemeIcon.Calligraphy, OpenCalligraphy, VirtualKey.I);
         }
+    }
+
+    public static T SetAttachedTag<T>(this T item, object o) where T : MenuFlyoutItemBase
+    {
+        Properties.SetTag(item, o);
+        return item;
     }
 
     public static T SetAnimation<T>(this T item) where T : MenuFlyoutItemBase
@@ -323,7 +346,7 @@ public static class FlyoutHelper
         return item;
     }
 
-    public static void TryAddRemoveFromCollection(MenuFlyout menu, InstalledFont font, IFontCollection col, BasicFontFilter filter)
+    public static void TryAddRemoveFromCollection(MenuFlyout menu, CMFontFamily font, IFontCollection col, BasicFontFilter filter)
     {
         if (col is not UserFontCollection collection)
             return;
@@ -337,7 +360,7 @@ public static class FlyoutHelper
             MenuFlyoutItem removeItem = new()
             {
                 Text = Localization.Get("RemoveFromCollectionItem/Text"),
-                Icon = new FontIcon { Glyph = "\uE108" },
+                Icon = Icon(ThemeIcon.Remove),
                 Tag = collection == null && filter == BasicFontFilter.SymbolFonts ? _collections.SymbolCollection : collection,
                 DataContext = font,
                 Style = style
@@ -348,7 +371,7 @@ public static class FlyoutHelper
             async void RemoveFrom_Click(object sender, RoutedEventArgs e)
             {
                 if (sender is FrameworkElement f
-                    && f.DataContext is InstalledFont fnt
+                    && f.DataContext is CMFontFamily fnt
                     && f.Tag is UserFontCollection collection)
                 {
                     await _collections.RemoveFromCollectionAsync(fnt, collection);
@@ -361,6 +384,13 @@ public static class FlyoutHelper
         }
     }
 
+    static FontIcon Icon(ThemeIcon icon)
+    {
+        FontIcon f = new();
+        Properties.SetThemeIcon(f, icon);
+        return f;
+    }
+
     /// <summary>
     /// Adds the "Add To Collection" item to a menu with all user collections
     /// and the ability to create a new collection.
@@ -368,13 +398,13 @@ public static class FlyoutHelper
     /// <param name="menu"></param>
     /// <param name="font"></param>
     /// <returns></returns>
-    public static MenuFlyoutSubItem AddCollectionItems(MenuFlyout menu, InstalledFont font, IReadOnlyList<InstalledFont> fonts, string key = null, FlyoutArgs args = null)
+    public static MenuFlyoutSubItem AddCollectionItems(MenuFlyout menu, CMFontFamily font, IReadOnlyList<CMFontFamily> fonts, string key = null, FlyoutArgs args = null)
     {
         #region Event Handlers
 
         static async void AddToSymbolFonts_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is FrameworkElement f && f.DataContext is IReadOnlyList<InstalledFont> fnts)
+            if (sender is FrameworkElement f && Properties.GetTag(f) is IReadOnlyList<CMFontFamily> fnts)
             {
                 var result = await _collections.AddToCollectionAsync(
                     fnts,
@@ -392,14 +422,14 @@ public static class FlyoutHelper
         static void CreateCollection_Click(object sender, RoutedEventArgs e)
         {
             _ = new CreateCollectionDialog()
-                   .SetDataContext(((FrameworkElement)sender).DataContext)
+                   .SetDataContext(Properties.GetTag((FrameworkElement)sender))
                    .ShowAsync();
         }
 
         #endregion
 
         bool multiMode = font is null && fonts is not null;
-        IReadOnlyList<InstalledFont> items = fonts ?? [font];
+        IReadOnlyList<CMFontFamily> items = fonts ?? [font];
         Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
         Style substyle = ResourceHelper.Get<Style>("ThemeMenuFlyoutSubItemStyle");
 
@@ -407,7 +437,7 @@ public static class FlyoutHelper
         MenuFlyoutSubItem parent = new()
         {
             Text = Localization.Get(key ?? "AddToCollectionFlyout/Text"),
-            Icon = new FontIcon { Glyph = "\uE71D" },
+            Icon = Icon(ThemeIcon.Collections),
             Style = substyle
         };
 
@@ -415,12 +445,12 @@ public static class FlyoutHelper
         MenuFlyoutItem newCollection = new()
         {
             Text = Localization.Get("NewCollectionItem/Text"),
-            Icon = new FontIcon { Glyph = "\uE109" },
-            DataContext = items,
+            Icon = Icon(ThemeIcon.Add),
             Style = style
         };
 
         newCollection.Click += CreateCollection_Click;
+        newCollection.SetAttachedTag(items);
 
         if (parent.Items != null)
         {
@@ -435,10 +465,10 @@ public static class FlyoutHelper
                 {
                     Text = Localization.Get("OptionSymbolFonts/Text"),
                     IsEnabled = multiMode || !_collections.SymbolCollection.Fonts.Contains(font.Name),
-                    DataContext = items,
                     Style = style,
                     Tag = args?.AddToCollectionCommand
                 };
+                symb.SetAttachedTag(items);
                 symb.Click += AddToSymbolFonts_Click;
                 parent.Items.Add(symb);
             }
@@ -456,18 +486,17 @@ public static class FlyoutHelper
                         _collections.Items.Select(item => new MenuFlyoutItem
                         {
                             Tag = item,
-                            DataContext = items,
                             Text = item.Name,
                             Style = style,
                             IsEnabled = multiMode || !item.Fonts.Contains(font.Name)
-                        }.SetAnimation()))
+                        }.SetAttachedTag(items).SetAnimation()))
                 {
                     if (m.IsEnabled)
                     {
                         m.Click += async (s, a) =>
                         {
                             if (s is FrameworkElement f
-                                && f.DataContext is IReadOnlyList<InstalledFont> fnts
+                                && Properties.GetTag(f) is IReadOnlyList<CMFontFamily> fnts
                                 && f.Tag is UserFontCollection clct)
                             {
                                 AddToCollectionResult result = await _collections.AddToCollectionAsync(fnts, clct);

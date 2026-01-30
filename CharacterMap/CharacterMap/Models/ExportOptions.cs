@@ -6,7 +6,7 @@ public record ExportOptions
 {
     public const string DefaultTemplate = "{family} {face} - {desc}.{ext}";
 
-    public InstalledFont Font { get; init; }
+    public CMFontFamily Font { get; init; }
     public CharacterRenderingOptions Options { get; init; }
 
     public string FileNameTemplate { get; init; }

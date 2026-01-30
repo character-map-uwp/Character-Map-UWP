@@ -11,11 +11,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:DirectText">
-                    <win2d:CanvasControl
-                        x:Name="TextCanvas"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        UseSharedDevice="True" />
+                    <Border x:Name="Root">
+                        <!--  CanvasControl is injected at Runtime to prevent memory leaks  -->
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

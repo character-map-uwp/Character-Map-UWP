@@ -45,7 +45,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="FontListItemTemplateSimple" x:DataType="core:InstalledFont">
+    <DataTemplate x:Key="FontListItemTemplateSimple" x:DataType="core:CMFontFamily">
         <Grid Padding="0 4" Background="Transparent">
             <TextBlock
                 Padding="5"
@@ -60,7 +60,7 @@
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="FontListToolTipTemplate" x:DataType="core:InstalledFont">
+    <DataTemplate x:Key="FontListToolTipTemplate" x:DataType="core:CMFontFamily">
         <StackPanel Spacing="8">
             <TextBlock
                 FontSize="12.666"
@@ -68,7 +68,7 @@
                 Text="{x:Bind Name}"
                 TextWrapping="Wrap" />
             <TextBlock
-                core:Properties.PreviewStringTrigger="{x:Bind Name}"
+                core:Properties.PreviewStringTrigger="{x:Bind DefaultVariant}"
                 FontFamily="{x:Bind DefaultVariant.Source}"
                 FontSize="32"
                 FontStretch="{x:Bind DefaultVariant.DirectWriteProperties.Stretch}"
@@ -96,12 +96,11 @@
         </StackPanel>
     </DataTemplate>
 
-
-    <DataTemplate x:Key="FontListItemTemplate" x:DataType="core:InstalledFont">
+    <DataTemplate x:Key="FontListItemTemplate" x:DataType="core:CMFontFamily">
         <Grid
             Name="TemplateContent"
             ColumnSpacing="12"
-            Padding="12 4"
+            Padding="12 4 12 6"
             Background="Transparent">
             <!--
                 ToolTipService.ToolTip="{x:Bind Name}"
@@ -114,8 +113,9 @@
                 Padding="5"
                 VerticalAlignment="Center"
                 FontFamily="{x:Bind core:Converters.GetPreviewFontSource(DefaultVariant)}"
-                FontSize="{ThemeResource FontListFontSize}"
+                FontSize="{Binding ElementName=LstFontFamily, Path=FontSize, TargetNullValue={ThemeResource FontListFontSize}, FallbackValue={ThemeResource FontListFontSize}}"
                 Text="{x:Bind Name}"
+                TextLineBounds="Tight"
                 TextTrimming="CharacterEllipsis"
                 TextWrapping="NoWrap" />
             <TextBlock

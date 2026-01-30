@@ -47,17 +47,19 @@ internal record class DPData
     // Terrible way of doing this
     private bool IsPrimitive(string type)
     {
-        return type is "bool" or "int" or "double" or "float"
+        return type is "bool" or "int" or "double" or "float" or "Duration" or "Color"
                 or "Visibility" or "CornerRadius" or "CharacterCasing"
                 or "FlowDirection" or "ContentPlacement" or "GridLength"
                 or "Orientation" or "GlyphAnnotation" or "FlyoutPlacementMode"
                 or "TextWrapping" or "Stretch" or "Thickness"
-                or "TextAlignment" or "TimeSpan" or "BlendEffectMode" 
-                or "Point" or "TextLineBounds";
+                or "TextAlignment" or "TimeSpan" or "BlendEffectMode"
+                or "Point" or "TextLineBounds" or "MaterialCornerMode"
+                or "ThemeIcon" or "SelectionVisualType" or "ZoomTriggerMode";
     }
 }
 
-public class DependencyPropertyReader : SyntaxReader
+[Generator]
+public class DependencyPropertyReader : IIncrementalGenerator
 {
     string TEMPLATE =
         "    public {2} {0}\r\n" +
@@ -68,7 +70,7 @@ public class DependencyPropertyReader : SyntaxReader
         "    public static readonly DependencyProperty {0}Property =\r\n" +
         "        DependencyProperty.Register(nameof({0}), typeof({2}), typeof({1}), new PropertyMetadata({3}, (d, e) =>\r\n" +
         "        {{\r\n" +
-        "            if (d is {1} o && e.NewValue is {2} i)\r\n" +
+        "            if (d is {1} o)\r\n" +
         //"            {{\r\n" +
         "                o.On{0}Changed({4}, {5});\r\n" +
         // "            }}\r\n" +
@@ -88,81 +90,89 @@ public class DependencyPropertyReader : SyntaxReader
         "                o.{6};\r\n" +
         "        }}));\r\n\r\n";
 
-    List<DPData> data = [];
-
-    public override void Read(IEnumerable<SyntaxNode> nodes)
+    public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        foreach (var n in nodes.OfType<ClassDeclarationSyntax>()
-                               .Where(c => c.HasGenericAttribute("DependencyProperty")))
+        var classNodes = context.SyntaxProvider
+            .CreateSyntaxProvider(
+                predicate: static (s, _) => s is ClassDeclarationSyntax cds && cds.AttributeLists.Count > 0,
+                transform: static (ctx, _) => ctx.Node as ClassDeclarationSyntax)
+            .Where(static c => c is not null);
+
+        var compilationAndClasses = context.CompilationProvider.Combine(classNodes.Collect());
+
+        context.RegisterSourceOutput(compilationAndClasses, (spc, source) =>
         {
-            DPData src = new()
+            var (compilation, classList) = source;
+            var data = new List<DPData>();
+
+            foreach (var n in classList.OfType<ClassDeclarationSyntax>()
+                                       .Where(c => c.HasGenericAttribute("DependencyProperty")))
             {
-                ParentClass = n.Identifier.ValueText,
-                ParentNamespace = n.GetNamespace(),
-                // Does not support static usings or using alias'
-                Usings = (n.Parent?.Parent as CompilationUnitSyntax)?.Usings.Select(u => $"using {u.Name.ToString()};")?.ToList() ?? new()
-            };
-
-            foreach (var a in n.AttributeLists
-                               .SelectMany(s => s.Attributes)
-                               .Where(a => a.Name.ToString().StartsWith("DependencyProperty")))
-            {
-                string type = null;
-                if (a.Name is GenericNameSyntax gen)
-                    type = gen.TypeArgumentList.Arguments[0].ToString();
-
-                var d = a.GetArgument("Name") is { } na && na.NameEquals is { } ne // Attribute property path,
-                    ? src with
-                    {
-                        Name = a.GetArgument("Name")?.GetValue(),
-                        Default = a.GetArgument("Default")?.GetValue() ?? "default",
-                        Type = type ?? a.GetArgument("Type")?.GetValue()?.Replace("typeof(", string.Empty).Replace(")", string.Empty) ?? "object"
-                    }
-                    : src with // Constructor path - preferred
-                    {
-                        Name = a.ArgumentList.Arguments[0].GetValue(),
-                        Type = type ?? "object",
-                        Default = a.ArgumentList.Arguments.Skip(1)?.FirstOrDefault()?.GetValue() ?? "default",
-                        Callback = FormatCallback(a.ArgumentList.Arguments.Skip(2)?.FirstOrDefault()?.GetValue() ?? null)
-                    };
-
-                static string FormatCallback(string input)
+                DPData src = new()
                 {
-                    if (input != null && input.StartsWith("nameof("))
-                        input = input.Remove(0, "nameof(".Length)[0..^1];
-                    return input;
+                    ParentClass = n.Identifier.ValueText,
+                    ParentNamespace = n.GetNamespace(),
+                    // Does not support static usings or using alias'
+                    Usings = (n.Parent?.Parent as CompilationUnitSyntax)?.Usings.Select(u => $"using {u.Name.ToString()};")?.ToList() ?? new()
+                };
+
+                foreach (var a in n.AttributeLists
+                                   .SelectMany(s => s.Attributes)
+                                   .Where(a => a.Name.ToString().StartsWith("DependencyProperty")))
+                {
+                    string type = null;
+                    if (a.Name is GenericNameSyntax gen)
+                        type = gen.TypeArgumentList.Arguments[0].ToString();
+
+                    var d = a.GetArgument("Name") is { } na && na.NameEquals is { } ne // Attribute property path,
+                        ? src with
+                        {
+                            Name = a.GetArgument("Name")?.GetValue(),
+                            Default = a.GetArgument("Default")?.GetValue() ?? "default",
+                            Type = type ?? a.GetArgument("Type")?.GetValue()?.Replace("typeof(", string.Empty).Replace(")", string.Empty) ?? "object"
+                        }
+                        : src with // Constructor path - preferred
+                        {
+                            Name = a.ArgumentList.Arguments[0].GetValue(),
+                            Type = type ?? "object",
+                            Default = a.ArgumentList.Arguments.Skip(1)?.FirstOrDefault()?.GetValue() ?? "default",
+                            Callback = FormatCallback(a.ArgumentList.Arguments.Skip(2)?.FirstOrDefault()?.GetValue() ?? null)
+                        };
+
+                    static string FormatCallback(string input)
+                    {
+                        if (input != null && input.StartsWith("nameof("))
+                            input = input.Remove(0, "nameof(".Length)[0..^1];
+                        return input;
+                    }
+
+                    data.Add(d);
                 }
-
-                data.Add(d);
             }
-        }
-    }
 
-    public override void Write(GeneratorExecutionContext context)
-    {
-        if (data.Count == 0)
-            return;
+            if (data.Count == 0)
+                return;
 
-        foreach (var group in data.GroupBy(d => $"{d.ParentNamespace}.{d.ParentClass}.g.dp.cs"))
-        {
-            string file = group.Key;
-            string ns = group.First().ParentNamespace;
-            string target = group.First().ParentClass;
-            List<string> usings = group.First().Usings;
+            foreach (var group in data.GroupBy(d => $"{d.ParentNamespace}.{d.ParentClass}.g.dp.cs"))
+            {
+                string file = group.Key;
+                string ns = group.First().ParentNamespace;
+                string target = group.First().ParentClass;
+                List<string> usings = group.First().Usings;
 
-            if (usings.Contains("using Windows.UI.Xaml;") is false)
-                usings.Add("using Windows.UI.Xaml;");
+                if (usings.Contains("using Windows.UI.Xaml;") is false)
+                    usings.Add("using Windows.UI.Xaml;");
 
-            StringBuilder sb = new();
+                StringBuilder sb = new();
 
-            foreach (DPData dp in group)
-                sb.AppendLine(
-                    string.Format(
-                        string.IsNullOrWhiteSpace(dp.Callback) ? TEMPLATE : TEMPLATE2,
-                        dp.Name, dp.ParentClass, dp.Type, dp.GetDefault(), dp.GetCastType("e.OldValue"), dp.GetCastType("e.NewValue"), dp.GetCallback()));
+                foreach (DPData dp in group)
+                    sb.AppendLine(
+                        string.Format(
+                            string.IsNullOrWhiteSpace(dp.Callback) ? TEMPLATE : TEMPLATE2,
+                            dp.Name, dp.ParentClass, dp.Type, dp.GetDefault(), dp.GetCastType("e.OldValue"), dp.GetCastType("e.NewValue"), dp.GetCallback()));
 
-            var s = sb.ToString();
-            context.AddSource(file, SourceText.From(
+                var s = sb.ToString();
+                spc.AddSource(file, SourceText.From(
 $@"{string.Join("\r\n", usings)}
 
 namespace {ns};
@@ -171,6 +181,7 @@ partial class {target}
 {{
 {sb}
 }}", Encoding.UTF8));
-        }
+            }
+        });
     }
 }

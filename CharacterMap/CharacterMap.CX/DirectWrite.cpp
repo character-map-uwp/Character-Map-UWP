@@ -19,6 +19,44 @@ using namespace Windows::Storage;
 using namespace Windows::Storage::Streams;
 using namespace concurrency;
 
+CanvasFontSet^ DirectWrite::CreateFontSet(String^ path)
+{
+	/* 
+		Sometimes creating a CanvasFontSet directly in Win2D
+		throws error:
+		"The font URI specified is not a valid application URI that 
+		can be opened by StorageFile.GetFileFromApplicationUriAsync"
+		So, we create an IDWriteFontSet directly and cast it to CanvasFontSet;
+	*/
+
+	auto customFontManager = CustomFontManager::GetInstance();
+
+	auto fontCollection = customFontManager->GetFontCollection(path);
+
+	if (!fontCollection)
+		ThrowHR(E_INVALIDARG);
+
+	ComPtr<IDWriteFontSet> dwFontSet;
+	ThrowIfFailed(fontCollection->GetFontSet(&dwFontSet));
+
+	CanvasFontSet^ fontSet = GetOrCreate<CanvasFontSet>(dwFontSet.Get());
+	return fontSet;
+}
+
+ComPtr<IDWriteFontSet> DirectWrite::CreateIDWriteFontSet(String^ path)
+{
+	auto customFontManager = CustomFontManager::GetInstance();
+	auto fontCollection = customFontManager->GetFontCollection(path);
+
+	if (!fontCollection)
+		ThrowHR(E_INVALIDARG);
+
+	ComPtr<IDWriteFontSet> dwFontSet;
+	ThrowIfFailed(fontCollection->GetFontSet(&dwFontSet));
+
+	return dwFontSet;
+}
+
 String^ DirectWrite::GetTagName(UINT32 tag)
 {
 	return GetTagName(GetFeatureTag(tag));
@@ -191,7 +229,7 @@ IVectorView<DWriteFontAxis^>^ DirectWrite::GetAxis(ComPtr<IDWriteFontFaceReferen
 
 		String^ name = "";
 
-		if (attribute == DWRITE_FONT_AXIS_ATTRIBUTES_VARIABLE)
+		if (attribute != DWRITE_FONT_AXIS_ATTRIBUTES_NONE)
 		{
 			ComPtr<IDWriteLocalizedStrings> strings;
 			resource->GetAxisNames(i, &strings);
@@ -270,7 +308,7 @@ IVectorView<DWriteKnownFontAxisValues^>^ DirectWrite::GetNamedAxisValues(ComPtr<
 
 DWriteFontSet^ DirectWrite::GetFonts(Uri^ uri, ComPtr<IDWriteFactory7> fac)
 {
-	CanvasFontSet^ set = ref new CanvasFontSet(uri);
+	CanvasFontSet^ set = CreateFontSet(uri->Path);
 	ComPtr<IDWriteFontSet3> fontSet = GetWrappedResource<IDWriteFontSet3>(set);
 
 	ComPtr<IDWriteFontCollection1> f1;
@@ -383,56 +421,45 @@ Platform::String^ DirectWrite::GetFileName(DWriteFontFace^ fontFace)
 	return name;
 }
 
-bool DirectWrite::HasValidFonts(Uri^ uri)
+bool DirectWrite::HasValidFonts(StorageFile^ file)
 {
 	/*
 	   To avoid garbage collection issues with CanvasFontSet in C# preventing us from
 	   immediately deleting the StorageFile, we shall do this here in C++
 	   */
-	CanvasFontSet^ fontset = ref new CanvasFontSet(uri);
+
+	auto path = file->Path->Data();
+	auto dwFontSet = CreateIDWriteFontSet(file->Path);
 	bool valid = false;
-	if (fontset->Fonts->Size > 0)
+
+	if (dwFontSet->GetFontCount() > 0)
 	{
 		/*
 			We need to validate the font has a family name.
-			Although other platforms and font renders can read and
-			understand fonts without a FamilyName set in the 'name'
-			table (for example, WOFF fonts), XAML font rendering engine does not support
-			these types of fonts. Our basic WOFF conversion may give us fonts that are
-			perfectly fine except for this missing field.
+			Although other platforms and font renderers can read and understand fonts 
+			without a FamilyName set in the 'name' table (for example, WOFF fonts), 
+			XAML font rendering engine does not support these types of fonts. 
+			Our basic WOFF conversion may give us fonts that are perfectly fine 
+			except for this missing field.
+
+			WOFF2 fonts may also give the same problem.
+
 		*/
 
-		wchar_t localeName[LOCALE_NAME_MAX_LENGTH];
-		int ls = GetUserDefaultLocaleName(localeName, LOCALE_NAME_MAX_LENGTH);
-		auto l = ref new String(localeName);
+		ComPtr<IDWriteStringList> names;
+		dwFontSet->GetPropertyValues(
+			DWRITE_FONT_PROPERTY_ID_WIN32_FAMILY_NAME,
+			&names);
 
-		auto font = fontset->Fonts->GetAt(0);
-		auto results = font->GetInformationalStrings(CanvasFontInformation::Win32FamilyNames);
-
-		valid = results->HasKey(l) || results->HasKey("en-us");
-
-		/*
-			In the future we can technically support *any* locale even if en-us is not included.
-			We have to update DirectWrite::GetLocaleString(...)
-		*/
-		/*if (!valid)
-		{
-			for (auto p : results)
-			{
-				auto cod = p->Key;
-				auto val = p->Value;
-			}
-
-			auto itr = results->First();
-			if (itr->HasCurrent)
-			{
-				auto cur = itr->Current;
-				auto val = cur->Value;
-				valid = true;
-			}
-		}*/
+		// We just need to *prove* there is a readable name - we don't need to 
+		// read it.
+		UINT32 nameLength;
+		names->GetStringLength(0, &nameLength);
+		valid = nameLength > 0;
 	}
-	delete fontset;
+
+	dwFontSet = nullptr;
+
 	return valid;
 }
 

@@ -12,13 +12,14 @@
     xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
+    x:Name="SettingsRoot"
     DataContext="{x:Bind}"
     Loaded="View_Loaded"
     TabFocusNavigation="Cycle"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
     d:DesignHeight="1880"
-    d:DesignWidth="1920">
+    d:DesignWidth="1200">
 
     <UserControl.Resources>
 
@@ -34,6 +35,7 @@
             <Setter Property="Margin" Value="0 12 0 4" />
         </Style>
 
+        <Style BasedOn="{StaticResource RadioButtonsButtonStyle}" TargetType="RadioButton" />
     </UserControl.Resources>
 
     <Grid x:Name="Root">
@@ -57,6 +59,11 @@
             </VisualStateGroup>
             <VisualStateGroup x:Name="ThemeStatesGroup">
                 <VisualState x:Name="DefaultThemeState" />
+                <VisualState x:Name="FUIThemeState">
+                    <VisualState.Setters>
+                        <Setter Target="MenuColumn.(controls:SelectorVisualElement.ElementTemplate)" Value="{StaticResource VerticalRadioSelectorTemplate}" />
+                    </VisualState.Setters>
+                </VisualState>
                 <VisualState x:Name="ClassicThemeState">
                     <VisualState.Setters>
                         <Setter Target="Presenter.TitleBackgroundBrush" Value="Transparent" />
@@ -64,8 +71,14 @@
                 </VisualState>
                 <VisualState x:Name="ZuneThemeState">
                     <VisualState.Setters>
-                        <Setter Target="MenuColumn.Spacing" Value="8" />
-                        <Setter Target="MenuColumn.Padding" Value="20 0 0 0" />
+                        <Setter Target="MenuColumn.Margin" Value="20 20 0 0" />
+                        <Setter Target="MenuColumn.LayoutTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <muxc:StackLayout Orientation="Vertical" Spacing="8" />
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -82,7 +95,7 @@
 
         <controls:ModalPagePresenter
             x:Name="Presenter"
-            Title="{core:Localizer Key='SettingsHeader/Text'}"
+            Title="{core:Localizer Key=SettingsHeader/Text}"
             CloseClicked="{x:Bind Hide}"
             TitleBarHeight="{x:Bind TitleBarHeight, Mode=OneWay}">
             <Grid>
@@ -91,18 +104,27 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel
+                <controls:UXRadioButtons
                     x:Name="MenuColumn"
                     Width="256"
                     Margin="0 24 0 0"
-                    ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
-                    Style="{StaticResource SettingsMenuStyle}">
+                    VerticalAlignment="Top"
+                    controls:SelectorVisualElement.ElementTemplate="{x:Null}"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    MaxColumns="1">
+                    <controls:UXRadioButtons.LayoutTemplate>
+                        <DataTemplate>
+                            <muxc:StackLayout Orientation="Vertical" Spacing="0" />
+                        </DataTemplate>
+                    </controls:UXRadioButtons.LayoutTemplate>
 
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsUIHeader/Text')}"
                         IsChecked="False"
-                        Tag="UserInterfacePanel">
+                        Tag="UserInterfacePanel"
+                        d:Content="{core:Localizer Key=SettingsUIHeader/Text}">
                         <controls:MenuButton.Icon>
                             <PathIcon
                                 HorizontalAlignment="Center"
@@ -112,93 +134,77 @@
                     </controls:MenuButton>
 
                     <controls:MenuButton
+                        HorizontalAlignment="Stretch"
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsAdvancedUILabel/Text')}"
-                        Tag="UserInterfaceAdvancedPanel">
-                        <controls:MenuButton.Icon>
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE771;" />
-                        </controls:MenuButton.Icon>
-                    </controls:MenuButton>
+                        Tag="UserInterfaceAdvancedPanel"
+                        ThemeIcon="LookAndFeel"
+                        d:Content="{core:Localizer Key=SettingsAdvancedUILabel/Text}" />
 
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsCollectionsHeader')}"
-                        Tag="CollectionPanel">
-                        <controls:MenuButton.Icon>
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE71D;" />
-                        </controls:MenuButton.Icon>
-                    </controls:MenuButton>
+                        Tag="CollectionPanel"
+                        ThemeIcon="Collections"
+                        d:Content="{core:Localizer Key=SettingsCollectionsHeader}" />
 
                     <controls:MenuButton
-                        controls:MenuButton.Icon="Font"
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsFontManagementLabel/Text')}"
-                        Tag="FontPanel" />
+                        Tag="FontPanel"
+                        ThemeIcon="FontManagement"
+                        d:Content="{core:Localizer Key=SettingsFontManagementLabel/Text}" />
 
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsSuggestionsHeader/Text')}"
-                        Tag="RampPanel">
-                        <controls:MenuButton.Icon>
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xEA37;" />
-                        </controls:MenuButton.Icon>
-                    </controls:MenuButton>
+                        Tag="RampPanel"
+                        ThemeIcon="TypeRampView"
+                        d:Content="{core:Localizer Key=SettingsSuggestionsHeader/Text}" />
 
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsExportHeader/Text')}"
-                        Tag="ExportPanel">
-                        <controls:MenuButton.Icon>
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8A7;" />
-                        </controls:MenuButton.Icon>
-                    </controls:MenuButton>
+                        Tag="ExportPanel"
+                        ThemeIcon="Export"
+                        d:Content="{core:Localizer Key=SettingsExportHeader/Text}" />
 
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsCharacterSearchHeader/Text')}"
-                        Tag="SearchPanel">
-                        <controls:MenuButton.Icon>
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE721;" />
-                        </controls:MenuButton.Icon>
-                    </controls:MenuButton>
+                        Tag="SearchPanel"
+                        ThemeIcon="Search"
+                        d:Content="{core:Localizer Key=SettingsCharacterSearchHeader/Text}" />
 
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsAdvancedOptionsLabel/Text')}"
-                        Tag="AdvancedPanel">
-                        <controls:MenuButton.Icon>
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xEA86;" />
-                        </controls:MenuButton.Icon>
-                    </controls:MenuButton>
+                        Tag="AdvancedPanel"
+                        ThemeIcon="Advanced"
+                        d:Content="{core:Localizer Key=SettingsAdvancedOptionsLabel/Text}" />
 
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsChangelogLabel/Text')}"
-                        Tag="ChangePanel">
-                        <controls:MenuButton.Icon>
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEC7A;" />
-                        </controls:MenuButton.Icon>
-                    </controls:MenuButton>
+                        Tag="ChangePanel"
+                        ThemeIcon="Changelog"
+                        d:Content="{core:Localizer Key=SettingsChangelogLabel/Text}" />
 
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsLicensesLabel/Text')}"
-                        Tag="LicensesPanel">
-                        <controls:MenuButton.Icon>
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF571;" />
-                        </controls:MenuButton.Icon>
-                    </controls:MenuButton>
+                        Tag="LicensesPanel"
+                        ThemeIcon="Licenses"
+                        d:Content="{core:Localizer Key=SettingsLicensesLabel/Text}" />
 
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsAboutLabel/Text')}"
-                        Tag="AboutPanel">
-                        <controls:MenuButton.Icon>
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
-                        </controls:MenuButton.Icon>
-                    </controls:MenuButton>
+                        Tag="AboutPanel"
+                        ThemeIcon="About"
+                        d:Content="{core:Localizer Key=SettingsAboutLabel/Text}" />
 
-                </StackPanel>
+                </controls:UXRadioButtons>
 
                 <Border
                     x:Name="ContentBorder"
@@ -216,20 +222,23 @@
                                 <ColumnDefinition x:Name="SpacerColumn" Width="0.35*" />
                             </Grid.ColumnDefinitions>
 
+
+                            <!--  USER INTERFACE  -->
                             <StackPanel
                                 x:Name="UserInterfacePanel"
                                 x:Load="False"
-                                Visibility="Collapsed">
+                                Visibility="Collapsed"
+                                d:Visibility="Collapsed">
 
                                 <TextBlock
                                     x:Uid="SettingsUIHeader"
                                     Style="{StaticResource SectionHeaderTextBlockStyle}"
-                                    d:Text="#UserInterface" />
+                                    d:Text="{core:Localizer Key=SettingsUIHeader/Text}" />
 
                                 <controls:SettingsPresenter
                                     x:Uid="SettingsCharGrouping"
-                                    d:Description="If enabled, characters are grouped by Unicode range in the character map, otherwise all characters are shown in a single ungrouped list."
-                                    d:Title="Character Grouping">
+                                    d:Description="{core:Localizer Key=SettingsCharGrouping/Description}"
+                                    d:Title="{core:Localizer Key=SettingsCharGrouping/Title}">
                                     <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.GroupCharacters, Mode=TwoWay}" />
                                 </controls:SettingsPresenter>
 
@@ -246,10 +255,11 @@
                                             StepFrequency="8"
                                             TickFrequency="8"
                                             TickPlacement="Outside"
-                                            Value="{x:Bind GetGridSize(GridSize), Mode=TwoWay, BindBack=UpdateGridSize}" />
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}">
-                                            <Run Text="{x:Bind GridSize, Mode=OneWay}" />
-                                            <Run x:Uid="PixelUnits" d:Text="px" />
+                                            Value="{x:Bind GetGridSize(GridSize), Mode=TwoWay, BindBack=UpdateGridSize}"
+                                            d:Value="80" />
+                                        <TextBlock FontFamily="{StaticResource ContentControlThemeFontFamily}" Style="{StaticResource BodyTextBlockStyle}">
+                                            <Run Text="{x:Bind GridSize, Mode=OneWay}" d:Text="80" />
+                                            <Run x:Uid="PixelUnits" d:Text="{core:Localizer Key=PixelUnits/Text}" />
                                         </TextBlock>
                                     </StackPanel>
                                 </controls:SettingsPresenter>
@@ -259,23 +269,24 @@
                                     ContentPlacement="Bottom"
                                     Description="{core:Localizer Key=SettingsCharLabelDesc/Text}">
                                     <StackPanel>
-                                        <controls:UXComboBox
-                                            MinWidth="160"
+
+                                        <controls:UXRadioButtons
                                             ItemsSource="{x:Bind ViewModel.Annotations}"
+                                            MaxColumns="3"
                                             SelectedItem="{Binding Settings.GlyphAnnotation, Mode=TwoWay}">
-                                            <ComboBox.ItemTemplate>
+                                            <controls:UXRadioButtons.ItemTemplate>
                                                 <DataTemplate x:DataType="models:GlyphAnnotation">
                                                     <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:GlyphAnnotation))}" />
                                                 </DataTemplate>
-                                            </ComboBox.ItemTemplate>
-                                        </controls:UXComboBox>
+                                            </controls:UXRadioButtons.ItemTemplate>
+                                        </controls:UXRadioButtons>
 
                                         <Border
                                             Margin="0 12 0 0"
                                             HorizontalAlignment="Left"
-                                            BorderBrush="{ThemeResource PivotNavButtonBackgroundThemeBrush}"
+                                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                                             BorderThickness="1"
-                                            CornerRadius="4">
+                                            CornerRadius="{StaticResource ControlCornerRadius}">
                                             <StackPanel
                                                 Padding="4 4 0 0"
                                                 h:CompositionFactory.CornerRadius="4"
@@ -351,7 +362,10 @@
 
                                         </Border>
 
-                                        <TextBlock x:Uid="SettingsCharPreviewHint" Style="{StaticResource HintStyle}" />
+                                        <TextBlock
+                                            x:Uid="SettingsCharPreviewHint"
+                                            Style="{StaticResource HintStyle}"
+                                            d:Text="{core:Localizer Key=SettingsCharPreviewHint/Text}" />
                                     </StackPanel>
                                 </controls:SettingsPresenter>
 
@@ -360,17 +374,30 @@
                                     ContentPlacement="Bottom"
                                     Description="{core:Localizer Key=SettingsFontListDescription/Text}">
                                     <StackPanel>
+                                        <Grid>
+                                            <controls:UXRadioButtons
+                                                x:Name="FontTypeRadios"
+                                                MaxColumns="2"
+                                                SelectionChanged="FontTypeRadios_SelectionChanged">
+                                                <RadioButton x:Uid="RbUseActualFont" />
+                                                <RadioButton x:Uid="RbUseSystemFont" />
+                                            </controls:UXRadioButtons>
+                                        </Grid>
 
-                                        <controls:UXRadioButton
-                                            x:Name="UseActualFont"
-                                            x:Uid="RbUseActualFont"
-                                            Checked="UseActualFont_Checked"
-                                            GroupName="FontList" />
-                                        <controls:UXRadioButton
-                                            x:Name="UseSystemFont"
-                                            x:Uid="RbUseSystemFont"
-                                            Checked="UseSystemFont_Checked"
-                                            GroupName="FontList" />
+                                        <ContentPresenter
+                                            Margin="0 12 0 8"
+                                            Content="Change the font size"
+                                            Style="{StaticResource DescriptionContentStyle}"
+                                            d:Content="{core:Localizer Key=SettingsFontImportDescription/Text}" />
+
+                                        <controls:UXRadioButtons
+                                            x:Name="FontListFontSizeRadios"
+                                            MaxColumns="3"
+                                            SelectedIndex="{Binding Settings.FontListFontSizeIndex, Mode=TwoWay}">
+                                            <RadioButton Content="{core:Localizer Key=FontListSizeNormal}" />
+                                            <RadioButton Content="{core:Localizer Key=FontListSizeLarge}" />
+                                            <RadioButton Content="{core:Localizer Key=FontListSizeLarger}" />
+                                        </controls:UXRadioButtons>
 
                                         <ListView
                                             x:Name="LstFontFamily"
@@ -378,9 +405,11 @@
                                             Margin="0 12 0 0"
                                             HorizontalAlignment="Left"
                                             Background="{ThemeResource DefaultHostBrush}"
-                                            BorderBrush="{ThemeResource PivotNavButtonBackgroundThemeBrush}"
+                                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                                             BorderThickness="1"
                                             CornerRadius="4"
+                                            FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                            FontSize="{Binding ElementName=SettingsRoot, Path=FontListFontSize}"
                                             IsHitTestVisible="False"
                                             IsItemClickEnabled="False"
                                             IsSwipeEnabled="False"
@@ -402,7 +431,6 @@
 
                                         <TextBlock x:Uid="SettingsFontListPreviewHint" Style="{StaticResource HintStyle}" />
                                     </StackPanel>
-
                                 </controls:SettingsPresenter>
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsEnablePaneHeader/Text}" Description="{core:Localizer Key=SettingsEnablePaneDescription/Text}">
@@ -422,29 +450,34 @@
                                             x:Uid="SettingsNeedRestart"
                                             Margin="4 4 0 4"
                                             Style="{StaticResource HintStyle}"
-                                            Visibility="{x:Bind core:Converters.CompareLanguageToSetting(Settings.AppLanguage), Mode=OneWay}" />
+                                            Visibility="{x:Bind core:Converters.CompareLanguageToSetting(Settings.AppLanguage), Mode=OneWay}"
+                                            d:Text="{core:Localizer Key=SettingsNeedRestart/Text}" />
                                     </StackPanel>
                                 </controls:SettingsPresenter>
 
                                 <controls:UXButton
                                     x:Uid="RestartButton"
-                                    Width="200"
+                                    MinWidth="200"
                                     Margin="0 24 0 0"
                                     HorizontalAlignment="Left"
-                                    Click="{x:Bind ViewModel.Restart}" />
+                                    Click="{x:Bind ViewModel.Restart}"
+                                    d:Content="{core:Localizer Key=RestartButton/Content}" />
 
                             </StackPanel>
 
+
+                            <!--  UI ADVANCED  -->
                             <StackPanel
                                 x:Name="UserInterfaceAdvancedPanel"
                                 x:Load="False"
                                 ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
-                                Visibility="Collapsed">
+                                Visibility="Collapsed"
+                                d:Visibility="Collapsed">
 
                                 <TextBlock
                                     Style="{StaticResource SectionHeaderTextBlockStyle}"
                                     Text="{x:Bind h:Localization.Get('SettingsAdvancedUILabel/Text')}"
-                                    d:Text="Look &amp; Feel" />
+                                    d:Text="{core:Localizer Key=SettingsAdvancedUILabel/Text}" />
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsSimpleAnimationHeader/Text}" Description="{core:Localizer Key=SettingsSimpleAnimationDescription/Text}">
                                     <ToggleSwitch
@@ -456,7 +489,9 @@
                                             x:Name="FluentAnimationsToggle"
                                             x:Load="{x:Bind BasicAnimationToggle.IsOn, Mode=OneWay}"
                                             x:Uid="SettingsPointerOverAnimation"
-                                            Style="{StaticResource SubItemSettingsPresenterStyle}">
+                                            Style="{StaticResource SubItemSettingsPresenterStyle}"
+                                            d:Description="{core:Localizer Key=SettingsPointerOverAnimation/Description}"
+                                            d:Title="{core:Localizer Key=SettingsPointerOverAnimation/Title}">
                                             <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.UseFluentPointerOverAnimations1, Mode=TwoWay}" />
                                         </controls:SettingsPresenter>
                                         <controls:SettingsPresenter
@@ -492,22 +527,26 @@
                                             x:Name="ThemeLight"
                                             x:Uid="RbThemeLight"
                                             Checked="{x:Bind ViewModel.SetLightTheme}"
-                                            GroupName="ThemeSelector" />
+                                            GroupName="ThemeSelector"
+                                            d:Content="{core:Localizer Key=RbThemeLight/Content}" />
                                         <controls:UXRadioButton
                                             x:Name="ThemeDark"
                                             x:Uid="RbThemeDark"
                                             Checked="{x:Bind ViewModel.SetDarkTheme}"
-                                            GroupName="ThemeSelector" />
+                                            GroupName="ThemeSelector"
+                                            d:Content="{core:Localizer Key=RbThemeDark/Content}" />
                                         <controls:UXRadioButton
                                             x:Name="ThemeSystem"
                                             x:Uid="RbThemeSystem"
                                             Checked="{x:Bind ViewModel.SetWindowsTheme}"
-                                            GroupName="ThemeSelector" />
+                                            GroupName="ThemeSelector"
+                                            d:Content="{core:Localizer Key=RbThemeSystem/Content}" />
 
                                         <controls:UXHyperlinkButton
                                             x:Uid="SettingsWindowsThemeSettings"
                                             NavigateUri="ms-settings:personalization-colors"
-                                            Style="{StaticResource TextBlockButtonStyle}" />
+                                            Style="{StaticResource TextBlockButtonStyle}"
+                                            d:Content="{core:Localizer Key=SettingsWindowsThemeSettings/Content}" />
                                     </StackPanel>
                                 </controls:SettingsPresenter>
 
@@ -523,10 +562,11 @@
                                             x:Name="ThemeRestartButton"
                                             x:Load="{x:Bind ViewModel.ThemeHasChanged, Mode=OneWay}"
                                             x:Uid="RestartButton"
-                                            Width="200"
+                                            MinWidth="200"
                                             Margin="20 14 0 18"
                                             HorizontalAlignment="Left"
-                                            Click="{x:Bind ViewModel.Restart}" />
+                                            Click="{x:Bind ViewModel.Restart}"
+                                            d:Content="{core:Localizer Key=RestartButton/Content}" />
                                     </controls:SettingsPresenter.Items>
                                 </controls:SettingsPresenter>
 
@@ -534,12 +574,18 @@
 
                             </StackPanel>
 
+
+                            <!--  EXPORT  -->
                             <StackPanel
                                 x:Name="ExportPanel"
                                 x:Load="False"
-                                Visibility="Collapsed">
+                                Visibility="Collapsed"
+                                d:Visibility="Collapsed">
 
-                                <TextBlock x:Uid="SettingsExportHeader" Style="{StaticResource SectionHeaderTextBlockStyle}" />
+                                <TextBlock
+                                    x:Uid="SettingsExportHeader"
+                                    Style="{StaticResource SectionHeaderTextBlockStyle}"
+                                    d:Text="{core:Localizer Key=SettingsExportHeader/Text}" />
 
                                 <controls:SettingsPresenter
                                     Title="{core:Localizer Key=SettingsPNGExportHeader/Text}"
@@ -555,11 +601,12 @@
                                             StepFrequency="32"
                                             TickFrequency="64"
                                             TickPlacement="Outside"
-                                            Value="{x:Bind Settings.PngSize, Mode=TwoWay}" />
+                                            Value="{x:Bind Settings.PngSize, Mode=TwoWay}"
+                                            d:Value="1024" />
                                         <TextBlock Margin="0,0,0,0" Style="{StaticResource BodyTextBlockStyle}">
-                                            <Run Text="{Binding Value, ElementName=SldResolution}" />
-                                            <Run Text="x" />
-                                            <Run Text="{Binding Value, ElementName=SldResolution}" />
+                                            <Run Text="{Binding Value, ElementName=SldResolution}" d:Text="1024" />
+                                            <Run Text="×" />
+                                            <Run Text="{Binding Value, ElementName=SldResolution}" d:Text="1024" />
                                         </TextBlock>
                                     </StackPanel>
                                 </controls:SettingsPresenter>
@@ -571,12 +618,13 @@
                                     <StackPanel>
                                         <muxc:RadioButtons
                                             x:Name="FontNamingSelection"
+                                            controls:SelectorVisualElement.ElementTemplate="{x:Null}"
                                             Background="{x:Null}"
                                             BorderThickness="0"
                                             SelectionChanged="FontNamingSelection_SelectionChanged">
                                             <controls:UXRadioButton>
                                                 <TextBlock>
-                                                    <Run x:Uid="SettingsFontExportSystemLabel" />
+                                                    <Run x:Uid="SettingsFontExportSystemLabel" d:Text="{core:Localizer Key=SettingsFontExportSystemLabel/Text}" />
                                                     <Run
                                                         FontSize="12.666"
                                                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
@@ -585,7 +633,7 @@
                                             </controls:UXRadioButton>
                                             <controls:UXRadioButton x:Name="OptimisedRadio">
                                                 <TextBlock>
-                                                    <Run x:Uid="SettingsFontExportOptimizedLabel" />
+                                                    <Run x:Uid="SettingsFontExportOptimizedLabel" d:Text="{core:Localizer Key=SettingsFontExportOptimizedLabel/Text}" />
                                                     <Run
                                                         FontSize="12.666"
                                                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
@@ -612,18 +660,28 @@
 
                                 </controls:SettingsPresenter>
 
-                                <controls:SettingsPresenter x:Uid="SettingsGlyphNaming" ContentPlacement="Bottom">
+                                <controls:SettingsPresenter
+                                    x:Uid="SettingsGlyphNaming"
+                                    ContentPlacement="Bottom"
+                                    d:Description="{core:Localizer Key=SettingsGlyphNaming/Description}"
+                                    d:Title="{core:Localizer Key=SettingsGlyphNaming/Title}">
                                     <controls:GlyphNamingControl ViewModel="{x:Bind ViewModel.GlyphNameModel}" />
                                 </controls:SettingsPresenter>
 
                             </StackPanel>
 
+
+                            <!--  SEARCH  -->
                             <StackPanel
                                 x:Name="SearchPanel"
                                 x:Load="False"
-                                Visibility="Collapsed">
+                                Visibility="Collapsed"
+                                d:Visibility="Collapsed">
 
-                                <TextBlock x:Uid="SettingsCharacterSearchHeader" Style="{StaticResource SectionHeaderTextBlockStyle}" />
+                                <TextBlock
+                                    x:Uid="SettingsCharacterSearchHeader"
+                                    Style="{StaticResource SectionHeaderTextBlockStyle}"
+                                    d:Text="{core:Localizer Key=SettingsCharacterSearchHeader/Text}" />
 
                                 <controls:SettingsPresenter
                                     Title="{core:Localizer Key=InstantSearchToggleHeader/Text}"
@@ -652,7 +710,9 @@
                                                 Minimum="250"
                                                 SmallChange="10"
                                                 SpinButtonPlacementMode="Inline"
-                                                Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}" />
+                                                Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}"
+                                                d:Header="{core:Localizer Key=SearchDelaySelector/Header}"
+                                                d:Value="500" />
                                         </controls:SettingsPresenter>
                                     </controls:SettingsPresenter.Items>
                                 </controls:SettingsPresenter>
@@ -666,52 +726,77 @@
                                         HorizontalAlignment="Left"
                                         AcceptsExpression="False"
                                         FontSize="14"
-                                        Header="#Search Results"
                                         HeaderTemplate="{StaticResource BlankTemplate}"
                                         LargeChange="10"
                                         Maximum="250"
                                         Minimum="5"
                                         SmallChange="5"
                                         SpinButtonPlacementMode="Inline"
-                                        Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}" />
+                                        Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}"
+                                        d:Header="{core:Localizer Key=SearchResultsSlider/Header}"
+                                        d:Value="101" />
                                 </controls:SettingsPresenter>
 
                             </StackPanel>
 
+
+                            <!--  COLLECTION MANAGEMENT  -->
                             <Grid
                                 x:Name="CollectionPanel"
                                 x:Load="False"
                                 HorizontalAlignment="Stretch"
-                                Visibility="Collapsed">
+                                Visibility="Collapsed"
+                                d:Visibility="Collapsed">
                                 <views:CollectionManagementView Margin="0 0 0 -80" HorizontalAlignment="Stretch" />
                             </Grid>
 
+
+                            <!--  ADVANCED  -->
                             <StackPanel
                                 x:Name="AdvancedPanel"
                                 x:Load="False"
-                                Visibility="Collapsed">
-                                <TextBlock x:Uid="SettingsAdvancedOptionsLabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
+                                Visibility="Collapsed"
+                                d:Visibility="Collapsed">
+                                <TextBlock
+                                    x:Uid="SettingsAdvancedOptionsLabel"
+                                    Style="{StaticResource SectionHeaderTextBlockStyle}"
+                                    d:Text="{core:Localizer Key=SettingsAdvancedOptionsLabel/Text}" />
 
                                 <controls:SettingsPresenter
                                     x:Uid="SettingsDeprecatedIconsPresenter"
-                                    d:Description="If enabled, hides deprecated icons in Segoe MDL2 and Segoe Fluent Icon fonts by default. Icons can still be shown using the filter flyout."
-                                    d:Title="Hide deprecated icons">
+                                    d:Description="{core:Localizer Key=SettingsDeprecatedIconsPresenter/Description}"
+                                    d:Title="{core:Localizer Key=SettingsDeprecatedIconsPresenter/Title}">
                                     <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.HideDeprecatedMDL2, Mode=TwoWay}" />
                                 </controls:SettingsPresenter>
 
                                 <controls:SettingsPresenter
                                     x:Uid="SettingsRememberFilter"
-                                    d:Description="If enabled, the app will remember the last selected collection or filter and restore it when the app is restarted. Otherwise, All Fonts is selected by default on every launch."
-                                    d:Title="Remember selected font list filter between sessions">
+                                    d:Description="{core:Localizer Key=SettingsRememberFilter/Description}"
+                                    d:Title="{core:Localizer Key=SettingsRememberFilter/Title}">
                                     <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.RestoreLastCollectionOnLaunch, Mode=TwoWay}" />
+                                </controls:SettingsPresenter>
+
+                                <controls:SettingsPresenter
+                                    x:Uid="SettingsSimulatedFontFaces"
+                                    d:Description="If enabled, simulated font faces automatically generated by Windows - tpyically bold and oblqiue font faces for fonts that do not have their own - will not be shown in the font face selector."
+                                    d:Title="Hide simulated font faces">
+                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.HideSimulatedFontFaces, Mode=TwoWay}" />
                                 </controls:SettingsPresenter>
 
                             </StackPanel>
 
-                            <StackPanel x:Name="ChangePanel">
-                                <TextBlock x:Uid="SettingsChangelogLabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
-                                <controls:UXHyperlinkButton x:Uid="BtnGithubCommits" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP/commits/master" />
+                            <!--  CHANGELOG  -->
+                            <StackPanel x:Name="ChangePanel" d:Visibility="Collapsed">
+                                <TextBlock
+                                    x:Uid="SettingsChangelogLabel"
+                                    Style="{StaticResource SectionHeaderTextBlockStyle}"
+                                    d:Text="{core:Localizer Key=SettingsChangelogLabel/Text}" />
+
+                                <controls:UXHyperlinkButton
+                                    x:Uid="BtnGithubCommits"
+                                    NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP/commits/master"
+                                    d:Content="{core:Localizer Key=BtnGithubCommits/Content}" />
 
                                 <ItemsControl ItemsSource="{x:Bind ViewModel.Changelog}">
                                     <ItemsControl.ItemTemplate>
@@ -726,38 +811,48 @@
 
                             </StackPanel>
 
+
+                            <!--  FONT MANAGEMENT  -->
                             <StackPanel
                                 x:Name="FontPanel"
                                 x:Load="False"
                                 Visibility="Collapsed"
-                                d:Visibility="Visible">
+                                d:Visibility="Collapsed">
 
                                 <TextBlock
                                     x:Uid="SettingsFontManagementLabel"
                                     OpticalMarginAlignment="None"
-                                    Style="{StaticResource SectionHeaderTextBlockStyle}" />
+                                    Style="{StaticResource SectionHeaderTextBlockStyle}"
+                                    d:Text="{core:Localizer Key=SettingsFontManagementLabel/Text}" />
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsSystemFontHeader/Text}" ContentPlacement="Bottom">
                                     <controls:SettingsPresenter.Description>
                                         <TextBlock Text="{x:Bind core:Converters.GetFormat2('InstallCountLabel', ViewModel.SystemFamilyCount, ViewModel.SystemFaceCount), Mode=OneWay}" TextWrapping="Wrap" />
                                     </controls:SettingsPresenter.Description>
                                     <StackPanel Orientation="Horizontal" Spacing="12">
-                                        <controls:UXHyperlinkButton x:Uid="SettingsManageSystemFonts" NavigateUri="ms-settings:fonts" />
-                                        <controls:UXHyperlinkButton MinWidth="133" IsEnabled="{x:Bind ViewModel.IsSystemExportEnabled, Mode=OneWay}">
+                                        <controls:UXHyperlinkButton
+                                            x:Uid="SettingsManageSystemFonts"
+                                            NavigateUri="ms-settings:fonts"
+                                            d:Content="{core:Localizer Key=SettingsManageSystemFonts/Content}" />
+                                        <controls:UXHyperlinkButton MinWidth="136" IsEnabled="{x:Bind ViewModel.IsSystemExportEnabled, Mode=OneWay}">
                                             <Grid>
                                                 <StackPanel
                                                     HorizontalAlignment="Center"
                                                     Orientation="Horizontal"
                                                     Spacing="12"
-                                                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSystemExportEnabled), Mode=OneWay}">
+                                                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSystemExportEnabled), Mode=OneWay}"
+                                                    d:Visibility="Collapsed">
                                                     <muxc:ProgressRing
-                                                        Width="18"
-                                                        Height="18"
+                                                        Width="16"
+                                                        Height="16"
                                                         HorizontalAlignment="Center" />
                                                     <TextBlock Text="{x:Bind ViewModel.SystemExportProgress, Mode=OneWay}" />
                                                 </StackPanel>
 
-                                                <TextBlock x:Uid="SettingsExportInstalledLabel" Visibility="{x:Bind ViewModel.IsSystemExportEnabled, Mode=OneWay}" />
+                                                <TextBlock
+                                                    x:Uid="SettingsExportInstalledLabel"
+                                                    Visibility="{x:Bind ViewModel.IsSystemExportEnabled, Mode=OneWay}"
+                                                    d:Text="{core:Localizer Key=SettingsExportInstalledLabel/Text}" />
                                             </Grid>
                                             <core:Properties.Flyout>
                                                 <MenuFlyout
@@ -767,11 +862,13 @@
                                                     <MenuFlyoutItem
                                                         x:Uid="CollectionExportFolder"
                                                         Click="{x:Bind ViewModel.ExportSystemToFolder}"
-                                                        Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
+                                                        Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                                                        d:Text="{core:Localizer Key=CollectionExportFolder/Text}" />
                                                     <MenuFlyoutItem
                                                         x:Uid="CollectionExportZip"
                                                         Click="{x:Bind ViewModel.ExportSystemAsZip}"
-                                                        Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
+                                                        Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                                                        d:Text="{core:Localizer Key=CollectionExportZip/Text}" />
                                                 </MenuFlyout>
                                             </core:Properties.Flyout>
                                         </controls:UXHyperlinkButton>
@@ -781,25 +878,32 @@
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsImportedFontsLabel/Text}" ContentPlacement="Bottom">
                                     <controls:SettingsPresenter.Description>
                                         <StackPanel Spacing="12">
-                                            <TextBlock x:Uid="SettingsFontImportDescription" TextWrapping="Wrap" />
-                                            <TextBlock Text="{x:Bind core:Converters.GetFormat2('ImportCountLabel', ViewModel.ImportedFamilyCount, ViewModel.ImportedFaceCount), Mode=OneWay}" TextWrapping="Wrap" />
+                                            <TextBlock
+                                                x:Uid="SettingsFontImportDescription"
+                                                TextWrapping="Wrap"
+                                                d:Text="{core:Localizer Key=SettingsFontImportDescription/Text}" />
+                                            <TextBlock
+                                                Text="{x:Bind core:Converters.GetFormat2('ImportCountLabel', ViewModel.ImportedFamilyCount, ViewModel.ImportedFaceCount), Mode=OneWay}"
+                                                TextWrapping="Wrap"
+                                                d:Text="{core:Localizer Key=ImportCountLabel}" />
                                         </StackPanel>
                                     </controls:SettingsPresenter.Description>
 
                                     <StackPanel Spacing="6">
                                         <controls:UXHyperlinkButton
                                             x:Name="ExportImportedButton"
-                                            MinWidth="133"
+                                            MinWidth="136"
                                             IsEnabled="{x:Bind ViewModel.IsCollectionExportEnabled, Mode=OneWay}">
                                             <Grid>
                                                 <StackPanel
                                                     HorizontalAlignment="Center"
                                                     Orientation="Horizontal"
                                                     Spacing="12"
-                                                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsCollectionExportEnabled), Mode=OneWay}">
+                                                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsCollectionExportEnabled), Mode=OneWay}"
+                                                    d:Visibility="Collapsed">
                                                     <muxc:ProgressRing
-                                                        Width="18"
-                                                        Height="18"
+                                                        Width="16"
+                                                        Height="16"
                                                         HorizontalAlignment="Center" />
                                                     <TextBlock Text="{x:Bind ViewModel.ImportedExportProgress, Mode=OneWay}" />
                                                 </StackPanel>
@@ -814,11 +918,13 @@
                                                     <MenuFlyoutItem
                                                         x:Uid="CollectionExportFolder"
                                                         Click="{x:Bind ViewModel.ExportToFolder}"
-                                                        Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
+                                                        Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                                                        d:Text="{core:Localizer Key=CollectionExportFolder/Text}" />
                                                     <MenuFlyoutItem
                                                         x:Uid="CollectionExportZip"
                                                         Click="{x:Bind ViewModel.ExportAsZip}"
-                                                        Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
+                                                        Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                                                        d:Text="{core:Localizer Key=CollectionExportZip/Text}" />
                                                 </MenuFlyout>
                                             </core:Properties.Flyout>
                                         </controls:UXHyperlinkButton>
@@ -828,7 +934,7 @@
                                             Margin="0 16 0 0"
                                             Style="{StaticResource HeaderStyle}"
                                             TextWrapping="Wrap"
-                                            d:Text="Import" />
+                                            d:Text="{core:Localizer Key=ImportLabel/Text}" />
 
                                         <Grid
                                             x:Name="ImportFontsRegion"
@@ -848,21 +954,22 @@
 
                                                 <FontIcon
                                                     VerticalAlignment="Top"
-                                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                    FontSize="30"
-                                                    Glyph="&#xE7C9;" />
+                                                    core:Properties.ThemeIcon="DragDropHint"
+                                                    FontSize="30" />
 
                                                 <StackPanel Grid.Column="1">
                                                     <TextBlock
                                                         x:Uid="ImportDragDropLabel"
                                                         FontWeight="SemiBold"
                                                         Opacity="0.8"
-                                                        TextWrapping="Wrap" />
+                                                        TextWrapping="Wrap"
+                                                        d:Text="{core:Localizer Key=ImportDragDropLabel/Text}" />
                                                     <TextBlock
                                                         x:Uid="ImportDragDropDescriptionLabel"
                                                         FontSize="12"
                                                         Opacity="0.6"
-                                                        TextWrapping="Wrap" />
+                                                        TextWrapping="Wrap"
+                                                        d:Text="{core:Localizer Key=ImportDragDropLabel/Text}" />
                                                 </StackPanel>
 
                                             </Grid>
@@ -876,21 +983,33 @@
 
                             </StackPanel>
 
+
+                            <!--  SUGGESTIONS  -->
                             <StackPanel
                                 x:Name="RampPanel"
                                 x:Load="False"
                                 Spacing="6"
-                                Visibility="Collapsed">
+                                Visibility="Collapsed"
+                                d:Visibility="Collapsed">
                                 <TextBlock
                                     x:Uid="SettingsSuggestionsHeader"
                                     Margin="0 16 0 0"
-                                    Style="{StaticResource SectionHeaderTextBlockStyle}" />
+                                    Style="{StaticResource SectionHeaderTextBlockStyle}"
+                                    d:Text="{core:Localizer Key=SettingsSuggestionsHeader/Text}" />
 
-                                <controls:SettingsPresenter x:Uid="SettingsFontListToolTip" ContentPlacement="Bottom">
-                                    <TextBox Text="{Binding Settings.FamilyPreviewString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <controls:SettingsPresenter
+                                    x:Uid="SettingsFontListToolTip"
+                                    ContentPlacement="Bottom"
+                                    d:Description="{core:Localizer Key=SettingsFontListToolTip/Description}"
+                                    d:Title="{core:Localizer Key=SettingsFontListToolTip/Title}">
+                                    <TextBox Text="{Binding Settings.FamilyPreviewString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" d:PlaceholderText="{core:Localizer Key=CultureSpecificPangram/Text}" />
                                 </controls:SettingsPresenter>
 
-                                <controls:SettingsPresenter x:Uid="SettingsCustomSuggestions" ContentPlacement="Bottom">
+                                <controls:SettingsPresenter
+                                    x:Uid="SettingsCustomSuggestions"
+                                    ContentPlacement="Bottom"
+                                    d:Description="{core:Localizer Key=SettingsCustomSuggestions/Description}"
+                                    d:Title="{core:Localizer Key=SettingsCustomSuggestions/Title}">
 
                                     <Grid RowSpacing="12" Padding="4">
                                         <Grid.RowDefinitions>
@@ -908,14 +1027,15 @@
                                                 x:Uid="SettingsSuggestionTextBox"
                                                 VerticalAlignment="Center"
                                                 AcceptsReturn="False"
-                                                Text="{Binding ViewModel.RampInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                Text="{Binding ViewModel.RampInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                d:PlaceholderText="{core:Localizer Key=SettingsSuggestionTextBox/PlaceholderText}" />
                                             <controls:UXButton
                                                 Grid.Column="1"
                                                 core:Properties.ToolTip="{core:Localizer Key='AddButton/Label'}"
                                                 h:FluentAnimation.PointerOverOffset="-2"
                                                 Click="{x:Bind ViewModel.AddRamp}"
                                                 Style="{StaticResource MapInfoButtonStyle}">
-                                                <SymbolIcon Name="DropDownGlyph" Symbol="Add" />
+                                                <FontIcon Glyph="{core:ThemeIconGlyph Icon=Add}" Style="{StaticResource ThemeFontIconStyle}" />
                                             </controls:UXButton>
                                         </Grid>
 
@@ -945,7 +1065,7 @@
                                                             h:FluentAnimation.PointerOverOffset="-2"
                                                             Click="DeleteRampClick"
                                                             Style="{StaticResource MapInfoButtonStyle}">
-                                                            <SymbolIcon Name="DropDownGlyph" Symbol="Delete" />
+                                                            <SymbolIcon Symbol="Delete" />
                                                         </controls:UXButton>
                                                     </Grid>
                                                 </DataTemplate>
@@ -959,14 +1079,23 @@
 
                             </StackPanel>
 
+
+                            <!--  LICENSES  -->
                             <StackPanel
                                 x:Name="LicensesPanel"
                                 x:Load="False"
-                                Visibility="Collapsed">
+                                Visibility="Collapsed"
+                                d:Visibility="Collapsed">
 
-                                <TextBlock x:Uid="SettingsLicensesLabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
+                                <TextBlock
+                                    x:Uid="SettingsLicensesLabel"
+                                    Style="{StaticResource SectionHeaderTextBlockStyle}"
+                                    d:Text="{core:Localizer Key=SettingsLicensesLabel/Text}" />
 
-                                <TextBlock x:Uid="SettingsLicensesDescriptionLabel" Style="{StaticResource DescriptionStyle}" />
+                                <TextBlock
+                                    x:Uid="SettingsLicensesDescriptionLabel"
+                                    Style="{StaticResource DescriptionStyle}"
+                                    d:Text="{core:Localizer Key=SettingsLicensesDescriptionLabel/Text}" />
 
                                 <controls:SettingsPresenter Title="WinUI">
                                     <controls:UXHyperlinkButton Content="MIT License" NavigateUri="https://github.com/microsoft/microsoft-ui-xaml/blob/master/LICENSE" />
@@ -1001,12 +1130,18 @@
                                 </controls:SettingsPresenter>
                             </StackPanel>
 
+
+                            <!--  ADVANCED  -->
                             <StackPanel
                                 x:Name="AboutPanel"
                                 x:Load="False"
-                                Visibility="Collapsed">
+                                Visibility="Collapsed"
+                                d:Visibility="Collapsed">
 
-                                <TextBlock x:Uid="SettingsAboutLabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
+                                <TextBlock
+                                    x:Uid="SettingsAboutLabel"
+                                    Style="{StaticResource SectionHeaderTextBlockStyle}"
+                                    d:Text="{core:Localizer Key=SettingsAboutLabel/Text}" />
 
                                 <controls:SettingsPresenter Title="{x:Bind core:Utils.GetAppDescription()}" ContentPlacement="Bottom">
                                     <StackPanel Spacing="12">
@@ -1017,14 +1152,20 @@
 
                                         <TextBlock
                                             x:Uid="Settings_AboutDescription"
-                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Style="{StaticResource BaseTextStyle}"
                                             TextWrapping="Wrap"
-                                            d:Text="#Settings_AboutDescription" />
+                                            d:Text="{core:Localizer Key=Settings_AboutDescription/Text}" />
 
                                         <StackPanel>
                                             <controls:UXHyperlinkButton Content="GitHub" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP" />
-                                            <controls:UXHyperlinkButton x:Uid="BtnContributors" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP/graphs/contributors" />
-                                            <controls:UXHyperlinkButton x:Uid="BtnHelpAndTips" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP/wiki" />
+                                            <controls:UXHyperlinkButton
+                                                x:Uid="BtnContributors"
+                                                NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP/graphs/contributors"
+                                                d:Content="{core:Localizer Key=BtnContributors/Content}" />
+                                            <controls:UXHyperlinkButton
+                                                x:Uid="BtnHelpAndTips"
+                                                NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP/wiki"
+                                                d:Content="{core:Localizer Key=BtnHelpAndTips/Content}" />
                                         </StackPanel>
 
                                         <controls:UXButton
@@ -1032,13 +1173,15 @@
                                             x:Uid="BtnRateAndReview"
                                             Width="200"
                                             HorizontalAlignment="Left"
-                                            Click="{x:Bind ViewModel.LaunchReview}" />
+                                            Click="{x:Bind ViewModel.LaunchReview}"
+                                            d:Content="{core:Localizer Key=BtnRateAndReview/Content}" />
                                         <controls:UXButton
                                             x:Name="BtnRestart"
                                             x:Uid="RestartButton"
                                             Width="200"
                                             HorizontalAlignment="Left"
-                                            Click="{x:Bind ViewModel.Restart}" />
+                                            Click="{x:Bind ViewModel.Restart}"
+                                            d:Content="{core:Localizer Key=RestartButton/Content}" />
 
                                     </StackPanel>
                                 </controls:SettingsPresenter>

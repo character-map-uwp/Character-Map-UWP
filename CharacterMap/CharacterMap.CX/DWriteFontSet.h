@@ -28,6 +28,9 @@ namespace CharacterMapCX
 
 		property int VariableFontCount { int get() { return m_varCount; } }
 
+		/* Non-simulated font face count */
+		property int FaceCount { int get() { return m_faceCount; } }
+
 		DWriteFontSet^ Inflate()
 		{
 			for each (auto family in m_families)
@@ -49,8 +52,11 @@ namespace CharacterMapCX
 				for each (auto font in family->m_fonts)
 				{
 					fonts->Append(font);
-					if (font->Properties->Source == DWriteFontSource::AppxPackage)
+					if (font->m_dwProperties->m_source == DWriteFontSource::AppxPackage)
 						m_appxCount++;
+
+					if (!font->m_dwProperties->m_isSimulated)
+						m_faceCount++;
 				}
 			}
 
@@ -86,5 +92,6 @@ namespace CharacterMapCX
 		int m_appxCount = 0;
 		int m_cloudCount = 0;
 		int m_varCount = 1;
+		int m_faceCount = 1;
 	};
 }

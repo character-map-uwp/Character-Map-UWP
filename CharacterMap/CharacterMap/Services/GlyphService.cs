@@ -43,10 +43,10 @@ public class FontAwesomeGlyph : GlyphDescription { }
 public interface IGlyphDataProvider
 {
     void Initialise();
-    string GetCharacterDescription(int unicodeIndex, FontVariant variant);
+    string GetCharacterDescription(int unicodeIndex, CMFontFace variant);
     List<UnihanReading> GetUnihanReadings(int unicodeIndex);
     string GetAdobeGlyphListMapping(string postscriptName);
-    Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, FontVariant variant);
+    Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, CMFontFace variant);
 }
 
 public static class GlyphService
@@ -79,7 +79,7 @@ public static class GlyphService
         return Task.CompletedTask;
     }
 
-    internal static string GetCharacterDescription(uint unicodeIndex, FontVariant variant)
+    internal static string GetCharacterDescription(uint unicodeIndex, CMFontFace variant)
     {
         if (variant == null || _provider == null)
             return null;
@@ -112,7 +112,7 @@ public static class GlyphService
         return null;
     }
 
-    internal static Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, FontVariant variant)
+    internal static Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, CMFontFace variant)
     {
         if (variant == null)
             return Task.FromResult(EMPTY_SEARCH);

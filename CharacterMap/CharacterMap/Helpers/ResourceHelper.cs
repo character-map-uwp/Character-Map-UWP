@@ -14,6 +14,13 @@ public enum DesignStyle : int
     ZuneDesktop = 3,
 }
 
+public enum FontListFontSize
+{
+    Normal,
+    Large,
+    Larger
+}
+
 public class ThemeChangedMessage { }
 
 public static class ResourceHelper
@@ -99,6 +106,27 @@ public static class ResourceHelper
         };
     }
 
+    public static double GetFontListFontSize()
+    {
+        return GetFontListFontSize((FontListFontSize)AppSettings.FontListFontSizeIndex);
+    }
+
+    public static double GetFontListFontSize(FontListFontSize size)
+    {
+        return size switch
+        {
+            FontListFontSize.Large => ResourceHelper.Get<double>("FontListFontSizeLarge"),
+            FontListFontSize.Larger => ResourceHelper.Get<double>("FontListFontSizeLarger"),
+            _ => ResourceHelper.Get<double>("FontListFontSize"),
+        };
+    }
+
+    public static Style GetThemeFontIconStyle()
+    {
+        // todo: could cache
+        return Get<Style>("ThemeFontIconStyle");
+    }
+
     public static Task SetTransparencyAsync(bool enable)
     {
         // Disable transparency on relevant brushes
@@ -136,6 +164,8 @@ public static class ResourceHelper
 
     public static bool IsZuneTheme() => AppSettings.ApplicationDesignTheme == 3;
 
+    public static bool IsMaterialTheme => AppSettings.ApplicationDesignTheme == 4;
+
     public static void GoToThemeState(this Control control)
     {
         string state = AppSettings.ApplicationDesignTheme switch
@@ -144,6 +174,7 @@ public static class ResourceHelper
             1 => "FUIThemeState",
             2 => "ClassicThemeState",
             3 => "ZuneThemeState",
+            4 => "MaterialThemeState",
             _ => "DefaultThemeState"
         };
 
@@ -182,7 +213,7 @@ public static class ResourceHelper
 
     internal static string GetAppName()
     {
-        return "Character Map UWP";
+        return Localization.Get("AppName");
     }
 
     public static void RegisterForThemeChanges<T>(T element) where T : FrameworkElement

@@ -5,7 +5,7 @@ namespace CharacterMap.Models;
 
 public partial class BasicFontFilter
 {
-    public Func<IEnumerable<InstalledFont>, UserCollectionsService, IEnumerable<InstalledFont>> Query { get; }
+    public Func<IEnumerable<CMFontFamily>, UserCollectionsService, IEnumerable<CMFontFamily>> Query { get; }
     public string DisplayTitle { get; }
     public string FilterTitle { get; }
 
@@ -67,7 +67,7 @@ public partial class BasicFontFilter
         return new BasicFontFilter((f, c) => f.Where(v => v.Variants.Any(v => ranges.Any(r => Unicode.SupportsScript(v, r)))), displayTitle);
     }
 
-    public BasicFontFilter(Func<IEnumerable<InstalledFont>, UserCollectionsService, IEnumerable<InstalledFont>> query, string displayTitle, bool requiresAsync = false)
+    public BasicFontFilter(Func<IEnumerable<CMFontFamily>, UserCollectionsService, IEnumerable<CMFontFamily>> query, string displayTitle, bool requiresAsync = false)
     {
         Query = query;
         DisplayTitle = displayTitle;
@@ -75,7 +75,7 @@ public partial class BasicFontFilter
         RequiresAsync = requiresAsync;
     }
 
-    public BasicFontFilter(Func<IEnumerable<InstalledFont>, UserCollectionsService, IEnumerable<InstalledFont>> query, string displayTitle, string filterTitle)
+    public BasicFontFilter(Func<IEnumerable<CMFontFamily>, UserCollectionsService, IEnumerable<CMFontFamily>> query, string displayTitle, string filterTitle)
     {
         Query = query;
         DisplayTitle = displayTitle;
@@ -87,6 +87,15 @@ public partial class BasicFontFilter
 {
     public static BasicFontFilter All { get; }
         = new((f, c) => f, Localization.Get("OptionAllFonts/Text"));
+
+#if DEBUG
+    //public static BasicFontFilter fsTypeDebug { get; }
+    //   = new((f, c) => f.Where(v=> v.Variants.Any(a =>
+    //   {
+    //       var t = a.Face.GetEmbeddingType();
+    //       return a.Face.fsType > 8;
+    //   })), "fsType");
+#endif
 
     public static BasicFontFilter SymbolFonts { get; }
         = new((f, c) => f.Where(v => v.IsSymbolFont || c.SymbolCollection.Fonts.Contains(v.Name)), Localization.Get("OptionSymbolFonts/Text"));

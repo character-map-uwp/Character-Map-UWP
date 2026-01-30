@@ -11,10 +11,10 @@ public partial class GlyphFileNameViewModel : ObservableObject
 
     public bool SaveTemplate { get; set; }
 
-    private InstalledFont _lastFont = null;
+    private CMFontFamily _lastFont = null;
     private CharacterRenderingOptions _lastOptions = null;
 
-    public void SetOptions(InstalledFont font, CharacterRenderingOptions options)
+    public void SetOptions(CMFontFamily font, CharacterRenderingOptions options)
     {
         _lastFont = font;
         _lastOptions = options;

@@ -4,12 +4,25 @@ using Windows.UI.Xaml.Controls;
 namespace CharacterMap.Controls;
 
 [DependencyProperty<IconElement>("Icon")]
+[DependencyProperty<ThemeIcon>("ThemeIcon")]
 public partial class MenuButton : UXRadioButtonBase
 {
     public MenuButton()
     {
         Properties.SetStyleKey(this, "DefaultMenuButtonStyle");
         UpdateTheme();
+    }
+
+    partial void OnThemeIconChanged(ThemeIcon o, ThemeIcon n)
+    {
+        if (n is not Core.ThemeIcon.None)
+        {
+            this.Icon = new FontIcon
+            {
+                Style = ResourceHelper.Get<Style>("ThemeFontIconStyle"),
+                Glyph = Core.ThemeIconGlyph.Get(n)
+            };
+        }
     }
 }
 

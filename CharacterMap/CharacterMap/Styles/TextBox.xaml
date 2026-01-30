@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:core="using:CharacterMap.Core"
     xmlns:helpers="using:CharacterMap.Helpers">
 
     <Style x:Key="CopyTextBox" TargetType="TextBox">
@@ -274,14 +275,14 @@
                                 x:Name="PlaceholderIcon"
                                 Margin="4 0 0 0"
                                 HorizontalAlignment="Center"
-                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                core:Properties.ThemeIcon="Search"
                                 FontSize="12"
-                                Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                Glyph="&#xE721;" />
+                                Foreground="{ThemeResource TextControlPlaceholderForeground}" />
 
                             <ContentControl
                                 x:Name="PlaceholderTextContent"
                                 Content="{TemplateBinding PlaceholderText}"
+                                FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                                 FontSize="12"
                                 FontStyle="Italic"
                                 Foreground="{ThemeResource TextControlPlaceholderForeground}"

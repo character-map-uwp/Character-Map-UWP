@@ -14,7 +14,7 @@ public interface IFontCollection
 
     string Icon { get; }
 
-    IReadOnlyList<InstalledFont> GetFontFamilies();
+    IReadOnlyList<CMFontFamily> GetFontFamilies();
 }
 
 public class SQLiteFontCollection
@@ -65,7 +65,7 @@ public class UserFontCollection : IFontCollection
 
     public string Icon => null;
 
-    public IReadOnlyList<InstalledFont> GetFontFamilies() =>
+    public IReadOnlyList<CMFontFamily> GetFontFamilies() =>
         FontFinder.Fonts.Where(f => Fonts.Contains(f.Name)).ToList();
 }
 
@@ -79,9 +79,9 @@ public class SmartFontCollection : IFontCollection
     public List<string> Filters { get; set; }
     public HashSet<string> FontNames { get; set; }
 
-    public IReadOnlyList<InstalledFont> Fonts { get; private set; } = [];
+    public IReadOnlyList<CMFontFamily> Fonts { get; private set; } = [];
 
-    public IReadOnlyList<InstalledFont> UpdateFonts()
+    public IReadOnlyList<CMFontFamily> UpdateFonts()
     { 
         var fonts = FontFinder.Fonts.AsEnumerable();
 
@@ -93,7 +93,7 @@ public class SmartFontCollection : IFontCollection
         return Fonts;
     }
 
-    public IReadOnlyList<InstalledFont> GetFontFamilies() => UpdateFonts();
+    public IReadOnlyList<CMFontFamily> GetFontFamilies() => UpdateFonts();
 
     public string GetFlatArgs() => string.Join("\r\n", Filters);
 

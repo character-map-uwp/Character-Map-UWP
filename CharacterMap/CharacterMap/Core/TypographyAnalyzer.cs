@@ -4,7 +4,7 @@ namespace CharacterMap.Core;
 
 public static class TypographyAnalyzer
 {
-    public static List<TypographyFeatureInfo> GetSupportedTypographyFeatures(FontVariant variant)
+    public static List<TypographyFeatureInfo> GetSupportedTypographyFeatures(CMFontFace variant)
     {
         var features = DirectWrite.GetSupportedTypography(variant.Face).Values.ToList();
         var list = features.Select(f => new TypographyFeatureInfo((CanvasTypographyFeatureName)f)).OrderBy(f => f.DisplayName).ToList();
@@ -14,26 +14,27 @@ public static class TypographyAnalyzer
     /// <summary>
     /// Returns a list of Typographic Variants for a character supported by the font.
     /// </summary>
-    public static List<TypographyFeatureInfo> GetCharacterVariants(FontVariant font, Models.Character character)
+    public static List<TypographyFeatureInfo> GetCharacterVariants(CMFontFace font, Models.Character character)
     {
-        CanvasTextAnalyzer textAnalyzer = new(character.Char, CanvasTextDirection.TopToBottomThenLeftToRight);
-        KeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript> analyzed = textAnalyzer.GetScript().First();
+        List<TypographyFeatureInfo> supported = [TypographyFeatureInfo.None];
 
-        List<TypographyFeatureInfo> supported = new()
+        if (font.HasXamlTypographyFeatures)
         {
-            TypographyFeatureInfo.None
-        };
-
-        foreach (var feature in font.XamlTypographyFeatures)
-        {
-            if (feature == TypographyFeatureInfo.None)
-                continue;
+            CanvasTextAnalyzer textAnalyzer = new(character.Char, CanvasTextDirection.TopToBottomThenLeftToRight);
+            KeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript> analyzed = textAnalyzer.GetScript().First();
 
             var glyphs = textAnalyzer.GetGlyphs(analyzed.Key, font.FontFace, 24, false, false, analyzed.Value);
-            bool[] results = font.FontFace.GetTypographicFeatureGlyphSupport(analyzed.Value, feature.Feature, glyphs);
 
-            if (results.Any(r => r))
-                supported.Add(feature);
+            foreach (var feature in font.XamlTypographyFeatures)
+            {
+                if (feature == TypographyFeatureInfo.None)
+                    continue;
+
+                bool[] results = font.FontFace.GetTypographicFeatureGlyphSupport(analyzed.Value, feature.Feature, glyphs);
+
+                if (results.Any(r => r))
+                    supported.Add(feature);
+            }
         }
 
         return supported;
@@ -45,7 +46,7 @@ public static class TypographyAnalyzer
     /// </summary>
     /// <param name="variant"></param>
     /// <returns></returns>
-    public static FontAnalysis Analyze(FontVariant variant, bool loadGlyphNames = true)
+    public static FontAnalysis Analyze(CMFontFace variant, bool loadGlyphNames = true)
     {
         FontAnalysis analysis = new(variant.Face);
         if (loadGlyphNames && analysis.HasGlyphNames)
@@ -53,13 +54,13 @@ public static class TypographyAnalyzer
         return analysis;
     }
 
-    public static void PrepareSearchMap(FontVariant variant, FontAnalysis a)
+    public static void PrepareSearchMap(CMFontFace variant, FontAnalysis a)
     {
         if (variant.SearchMap is null && a.HasGlyphNames)
             PrepareSearchMap(variant, a.GlyphNameMappings);
     }
 
-    private static void PrepareSearchMap(FontVariant variant, IReadOnlyDictionary<int, string> names)
+    private static void PrepareSearchMap(CMFontFace variant, IReadOnlyDictionary<int, string> names)
     {
         if (variant.SearchMap == null)
         {

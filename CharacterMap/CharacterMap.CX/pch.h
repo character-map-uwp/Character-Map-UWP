@@ -3,8 +3,8 @@
 #include <collection.h>
 #include <ppltasks.h>
 #include <DWHelpers.h>
-#include <Microsoft.Graphics.Canvas.native.h>
 #include <d2d1_2.h>
+#include <Microsoft.Graphics.Canvas.native.h>
 #include <d2d1_3.h>
 #include <dwrite_3.h>
 #include <string>
@@ -22,3 +22,4 @@
 #include "FontAnalysis.h"
 
 #include "CustomFontManager.h"
+

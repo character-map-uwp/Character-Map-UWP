@@ -38,6 +38,7 @@ public sealed partial class FilterFlyout : MenuFlyout
 
         // 1. Top level filters
         Add(BasicFontFilter.All);
+        //Add(BasicFontFilter.fsTypeDebug);
         Add(BasicFontFilter.SerifFonts);
         Add(BasicFontFilter.SansSerifFonts);
         Add(BasicFontFilter.SymbolFonts);

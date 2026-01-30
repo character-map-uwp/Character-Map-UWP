@@ -64,7 +64,8 @@
                             Control.IsTemplateFocusTarget="True"
                             CornerRadius="{TemplateBinding CornerRadius}"
                             FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
-                            RenderTransformOrigin="0.5,0.5">
+                            RenderTransformOrigin="0.5,0.5"
+                            VisualStateManager.CustomVisualStateManager="{StaticResource VSM}">
 
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates" h:FluentAnimation.Pressed="{Binding ElementName=ContentPresenter}">
@@ -255,8 +256,7 @@
             x:Name="Presenter"
             Title="{core:Localizer Key=CalligraphyLabel/Text}"
             CloseButtonVisibility="Collapsed"
-            IsWindowRoot="True"
-            d:Title="Calligraphy">
+            IsWindowRoot="True">
             <controls:ModalPagePresenter.TitleBarContent>
                 <controls:XamlTitleBar VerticalAlignment="Top" IsDragTarget="False" />
             </controls:ModalPagePresenter.TitleBarContent>
@@ -297,7 +297,7 @@
                             x:Name="InputHeader"
                             x:Uid="GuideHeaderLabel"
                             FontWeight="{ThemeResource SliderHeaderThemeFontWeight}"
-                            d:Text="Guide Text" />
+                            d:Text="{core:Localizer Key=GuideHeaderLabel/Text}" />
                         <TextBox
                             x:Name="InputBox"
                             x:Uid="GuidePreviewInput"
@@ -306,7 +306,7 @@
                             BorderThickness="1 1 0 1"
                             CornerRadius="4 0 0 4"
                             Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            d:Text="Preview" />
+                            d:Text="Hello" />
                     </StackPanel>
 
 
@@ -318,12 +318,13 @@
                             x:Name="SliderHeader"
                             x:Uid="GuideSizeLabel"
                             FontWeight="{ThemeResource SliderHeaderThemeFontWeight}"
-                            d:Text="Guide Size" />
+                            d:Text="{core:Localizer Key=GuideSizeLabel/Text}" />
                         <Slider
                             x:Name="FontSizeSlider"
                             Height="32"
                             Maximum="400"
                             Minimum="60"
+                            Style="{StaticResource DefaultThemeSliderStyle}"
                             Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}"
                             d:Margin="0 4 0 0"
                             d:Value="220" />
@@ -385,7 +386,8 @@
                                 Content="&#xE7A7;"
                                 IsEnabled="{x:Bind ViewModel.InkManager.CanUndo, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}"
-                                d:IsEnabled="False">
+                                d:IsEnabled="False"
+                                d:ToolTipService.ToolTip="{core:Localizer Key=UndoButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
                                 <Button.KeyboardAccelerators>
                                     <KeyboardAccelerator Key="Z" Modifiers="Control" />
                                 </Button.KeyboardAccelerators>
@@ -398,7 +400,8 @@
                                 Content="&#xE7A6;"
                                 IsEnabled="{x:Bind ViewModel.InkManager.CanRedo, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}"
-                                d:IsEnabled="False">
+                                d:IsEnabled="False"
+                                d:ToolTipService.ToolTip="{core:Localizer Key=RedoButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
                                 <Button.KeyboardAccelerators>
                                     <KeyboardAccelerator Key="Y" Modifiers="Control" />
                                 </Button.KeyboardAccelerators>
@@ -471,14 +474,15 @@
                                 Content="&#xE74D;"
                                 IsEnabled="{x:Bind ViewModel.InkManager.HasStrokes, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}"
-                                d:IsEnabled="False">
+                                d:IsEnabled="False"
+                                d:ToolTipService.ToolTip="{core:Localizer Key=ClearAllButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
                                 <Button.Flyout>
                                     <MenuFlyout Placement="Bottom">
                                         <MenuFlyoutItem
                                             x:Uid="ClearAllItem"
                                             Click="{x:Bind Reset}"
                                             Style="{StaticResource ThemeMenuFlyoutItemStyle}"
-                                            d:Text="Clear All" />
+                                            d:Text="{core:Localizer Key=ClearAllItem/Text}" />
                                     </MenuFlyout>
                                 </Button.Flyout>
                             </Button>
@@ -498,7 +502,7 @@
                                 core:Properties.PointerOverAnimation="Content"
                                 core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
                                 IsChecked="{x:Bind ViewModel.IsOverlayVisible, Mode=TwoWay}"
-                                d:ToolTipService.ToolTip="Show Guide">
+                                d:ToolTipService.ToolTip="{core:Localizer Key=GuideToggle/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
                                 <TextBlock
                                     AutomationProperties.AccessibilityView="Raw"
                                     FontFamily="{StaticResource SymbolThemeFontFamily}"
@@ -515,7 +519,8 @@
                                 core:Properties.ClickAnimationOffset="0.87"
                                 core:Properties.PointerOverAnimation="Content"
                                 core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
-                                Click="Button_Click">
+                                Click="Button_Click"
+                                d:ToolTipService.ToolTip="{core:Localizer Key=SideBySideToggle/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
                                 <TextBlock
                                     AutomationProperties.AccessibilityView="Raw"
                                     FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -533,9 +538,9 @@
                             <Button
                                 x:Name="SaveButton"
                                 x:Uid="SaveButton"
-                                Content="&#xE74E;"
                                 IsEnabled="{x:Bind ViewModel.InkManager.HasStrokes, Mode=OneWay, FallbackValue=False}"
-                                Style="{StaticResource SmolButton}">
+                                Style="{StaticResource SmolButton}"
+                                d:ToolTipService.ToolTip="{core:Localizer Key=SaveButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
                                 <Button.KeyboardAccelerators>
                                     <KeyboardAccelerator Key="S" Modifiers="Control" />
                                 </Button.KeyboardAccelerators>
@@ -545,25 +550,27 @@
                                             x:Uid="ExportPNGLabel"
                                             Click="SaveAsPNG"
                                             Style="{StaticResource ThemeMenuFlyoutItemStyle}"
-                                            d:Text="As PNG" />
+                                            d:Text="{core:Localizer Key=ExportPNGLabel/Text}" />
                                         <MenuFlyoutItem
                                             x:Uid="ExportSVGLabel"
                                             Click="SaveAsSVG"
                                             Style="{StaticResource ThemeMenuFlyoutItemStyle}"
-                                            d:Text="As SVG" />
+                                            d:Text="{core:Localizer Key=ExportSVGLabel/Text}" />
                                     </MenuFlyout>
                                 </Button.Flyout>
+                                <FontIcon core:Properties.ThemeIcon="Save" />
                             </Button>
                             <Button
                                 x:Name="AddButton"
                                 x:Uid="AddHistoryButton"
                                 HorizontalAlignment="Right"
                                 Click="AddHistoryButton_Click"
-                                Content="&#xE710;"
                                 IsEnabled="{x:Bind ViewModel.InkManager.HasStrokes, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}"
                                 d:IsEnabled="False"
-                                d:ToolTipService.ToolTip="Add to History" />
+                                d:ToolTipService.ToolTip="{core:Localizer Key=AddHistoryButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
+                                <FontIcon core:Properties.ThemeIcon="Add" />
+                            </Button>
                         </StackPanel>
 
                     </Grid>
@@ -624,6 +631,7 @@
                             Spacing="8">
                             <TextBlock
                                 VerticalAlignment="Center"
+                                AutomationProperties.AccessibilityView="Raw"
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 IsTextScaleFactorEnabled="False"
                                 Text="&#xE81C;" />
@@ -631,7 +639,7 @@
                                 x:Uid="HistoryLabel"
                                 VerticalAlignment="Center"
                                 TextLineBounds="Tight"
-                                d:Text="History" />
+                                d:Text="{core:Localizer Key=HistoryLabel/Text}" />
                         </StackPanel>
                     </Grid>
 

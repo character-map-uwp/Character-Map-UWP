@@ -134,8 +134,8 @@ public partial class FontMapViewModel : ViewModelBase
             SelectedVariant = null;
     }
 
-    private FontVariant _selectedVariant;
-    public FontVariant SelectedVariant
+    private CMFontFace _selectedVariant;
+    public CMFontFace SelectedVariant
     {
         get => _selectedVariant;
         set
@@ -304,7 +304,7 @@ public partial class FontMapViewModel : ViewModelBase
         SetDefaultChar(last);
     }
 
-    private void LoadVariant(FontVariant variant)
+    private void LoadVariant(CMFontFace variant)
     {
         try
         {
@@ -358,7 +358,7 @@ public partial class FontMapViewModel : ViewModelBase
             });
         }
     }
-    private IReadOnlyList<Suggestion> GetRampOptions(FontVariant variant)
+    private IReadOnlyList<Suggestion> GetRampOptions(CMFontFace variant)
     {
         if (variant == null)
             return new List<Suggestion>();
@@ -380,7 +380,9 @@ public partial class FontMapViewModel : ViewModelBase
 
     internal void UpdateVariations()
     {
-        VariationAxis = SelectedVariantAnalysis?.Axis?.Where(a => a.Attribute == DWriteFontAxisAttribute.Variable).ToList() ?? new List<DWriteFontAxis>();
+        VariationAxis = 
+            SelectedVariantAnalysis?.Axis?.Where(a => (a.Attribute & DWriteFontAxisAttribute.Variable) != 0).ToList() 
+            ?? new List<DWriteFontAxis>();
         UpdateRampOptions();
     }
 
@@ -637,7 +639,7 @@ public partial class FontMapViewModel : ViewModelBase
         try
         {
             if (args.Files.FirstOrDefault() is StorageFile file
-                && await FontFinder.LoadFromFileAsync(file) is { } font)
+                && await FontImporter.LoadFromFileAsync(file) is { } font)
             {
                 SourceFile = file;
                 IsLoading = false;
@@ -669,7 +671,7 @@ public partial class FontMapViewModel : ViewModelBase
         try
         {
             List<StorageFile> items = new() { SourceFile };
-            if (await FontFinder.ImportFontsAsync(items) is { } result
+            if (await FontImporter.ImportFontsAsync(items) is { } result
                 && (result.Imported.Count > 0 || result.Existing.Count > 0))
             {
                 await WindowService.ActivateMainWindowAsync();

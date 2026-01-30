@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Windows.Foundation.Collections;
 using Windows.System;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Text;
@@ -20,6 +21,14 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 
 namespace CharacterMap.Core;
+
+public enum MaterialCornerStyle
+{
+    None,
+    Default,
+    Circular,
+    FlatLeft
+}
 
 /// <summary>
 /// XAML Attached Properties
@@ -39,9 +48,10 @@ namespace CharacterMap.Core;
 [AttachedProperty<string>("IconString")]
 [AttachedProperty<IconElement>("Icon")]
 [AttachedProperty<DevOption>]
-[AttachedProperty<FlyoutBase>("TargetContextFlyout")]  
-[AttachedProperty<TransitionCollection>("ItemContainerTransitions")]  
-[AttachedProperty<TransitionCollection>("ChildrenTransitions")]  
+[AttachedProperty<FlyoutBase>("TargetContextFlyout")]
+[AttachedProperty<bool>("SetContextFlyoutContext")]
+[AttachedProperty<TransitionCollection>("ItemContainerTransitions")]
+[AttachedProperty<TransitionCollection>("ChildrenTransitions")]
 [AttachedProperty<bool>("UseAttachedStates")] // Allows an element to run Storyboards from it's own resources on VisualState events
 [AttachedProperty<bool>("SetContainerBackgroundTransition")] // Helper property for ItemContainerBackgroundTransition
 [AttachedProperty<BrushTransition>("ItemContainerBackgroundTransition")] // When attached to a ListView, automatically sets ItemContainer BackgroundTransitions
@@ -58,6 +68,7 @@ namespace CharacterMap.Core;
 [AttachedProperty<bool>("IsCompact")] // Sets a TabViewItem to compact state
 [AttachedProperty<bool>("IsTabOpenAnimationEnabled")] // Sets a tab open animation on a TabView
 [AttachedProperty<bool>("DisableTranslation")] // Fixes flyout animation error
+[AttachedProperty<bool>("DisableShadow")] // Turns off popup shadow
 [AttachedProperty<bool>("RequireOpenTab")] // Sets a require open tab on a TabView
 [AttachedProperty<double>("RenderScale", 1d)] // Sets CompositeTransform ScaleX/Y
 [AttachedProperty<double>("Rotation", 0d)] // Sets RotationAngleInDegrees on elements handout visual
@@ -78,7 +89,14 @@ namespace CharacterMap.Core;
 [AttachedProperty<CoreCursorType>("Cursor", CoreCursorType.Arrow)]
 [AttachedProperty<FrameworkElement>("Receiver")] // Adds a receiver to ThemeShadow.Receivers
 [AttachedProperty<double>("Depth")] // Sets UIElement.Translation.Z
-[AttachedProperty<string>("PreviewStringTrigger")] // Sets a contextually aware preview string to Font List ToolTip
+[AttachedProperty<object>("PreviewStringTrigger")] // Sets a contextually aware preview string to Font List ToolTip
+[AttachedProperty<bool>("IsContainerEnabled", true)] // Is the parent ItemContainer enabled?
+[AttachedProperty<MaterialCornerStyle>("MaterialCornerStyle", MaterialCornerStyle.None)]
+[AttachedProperty<ThemeIcon>]
+[AttachedProperty<Color>]
+[AttachedProperty<ZoomHelper>]
+[AttachedProperty<bool>("UseZoomHelper")]
+[AttachedProperty<BrushTransition>("BackgroundTransition")]
 public partial class Properties : DependencyObject
 {
     #region FILTER 
@@ -165,6 +183,8 @@ public partial class Properties : DependencyObject
     {
         if (s is DirectText d)
         {
+            d.BlockUpdates = true;
+
             if (e.NewValue is CharacterRenderingOptions o)
             {
                 d.Axis = o.Axis;
@@ -189,6 +209,8 @@ public partial class Properties : DependencyObject
                 d.ClearValue(DirectText.IsColorFontEnabledProperty);
                 d.ClearValue(DirectText.TypographyProperty);
             }
+
+            d.Update();
         }
         else if (s is TextBlock t)
         {
@@ -222,7 +244,7 @@ public partial class Properties : DependencyObject
         if (d is InkToolbar t && e.NewValue is InkToolbarToolButton b)
             t.ActiveTool = b;
     }
-    
+
     #endregion
 
     #region TabViewItem IsCompact
@@ -382,6 +404,9 @@ public partial class Properties : DependencyObject
         {
             if (GetTargetContextFlyout(sender) is FlyoutBase f)
             {
+                if (GetSetContextFlyoutContext(sender) && f is MenuFlyout menu)
+                    menu.SetItemsDataContext(((FrameworkElement)sender).DataContext);
+                
                 args.TryGetPosition(sender, out Windows.Foundation.Point p);
                 f.ShowAt(sender, new() { Position = p });
             }
@@ -748,7 +773,7 @@ public partial class Properties : DependencyObject
             }
         }
 
-       
+
     }
 
     static partial void OnPointerOverAnimationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -938,6 +963,26 @@ public partial class Properties : DependencyObject
                 //await Task.Delay(32);
                 if (src is Popup pp && pp.Child?.GetFirstDescendantOfType<Border>() is Border b)
                     b.Translation = new();
+            };
+        }
+    }
+
+    #endregion
+
+    #region DisableShadow
+
+    static partial void OnDisableShadowChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is Popup popup && e.NewValue is bool s && s)
+        {
+            popup.Opened += async (src, arg) =>
+            {
+                if (src is Popup p)
+                {
+                    p.Shadow = null;
+                    await Task.Yield();
+                    p.Shadow = null;
+                }
             };
         }
     }
@@ -1233,7 +1278,7 @@ public partial class Properties : DependencyObject
             var temp = ToolTipService.GetToolTip(d);
             if (temp is null) // Bad little hack to allow x:UID setters (or equivalent) to run
                 await Task.Yield();
-            
+
             if (ToolTipService.GetToolTip(d) is { } tt)
             {
                 if (tt is ToolTip t)
@@ -1382,7 +1427,7 @@ public partial class Properties : DependencyObject
             static void B_Click(object sender, RoutedEventArgs e)
             {
                 var link = GetHyperlink((DependencyObject)sender);
-                if (!string.IsNullOrWhiteSpace(link) 
+                if (!string.IsNullOrWhiteSpace(link)
                     && Uri.TryCreate(link, UriKind.RelativeOrAbsolute, out Uri uri))
                     _ = Launcher.LaunchUriAsync(uri);
             }
@@ -1393,9 +1438,9 @@ public partial class Properties : DependencyObject
 
     #region Cursor
 
-    private static readonly object _cursorLock = new ();
-    private static readonly CoreCursor _defaultCursor = new (CoreCursorType.Arrow, 1);
-    private static readonly Dictionary<CoreCursorType, CoreCursor> _cursors = new () { { CoreCursorType.Arrow, _defaultCursor } };
+    private static readonly object _cursorLock = new();
+    private static readonly CoreCursor _defaultCursor = new(CoreCursorType.Arrow, 1);
+    private static readonly Dictionary<CoreCursorType, CoreCursor> _cursors = new() { { CoreCursorType.Arrow, _defaultCursor } };
 
     static partial void OnCursorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -1476,16 +1521,242 @@ public partial class Properties : DependencyObject
             //var v = GetTag(l);
 
             // If we have an active "char" search we want to show this characters in the ToolTip instead
-            if (t.GetFirstAncestorOfType<PreviewTip>() is { } pt 
+            if (t.GetFirstAncestorOfType<PreviewTip>() is { } pt
                 && GetTag(pt) is MainViewModel vm
                 && vm.FontSearch is { Length: > 4 } query
                 && FontFinder.IsQuery(query, Localization.Get("CharacterFilter"), "char:", out string q))
                 text = q;
 
+            // Try use fonts default preview string if we're not providing one.
+            // Useful for Segoe UI emoji / other symbol fonts with specific
+            // preview strings that would show nothing by default
+            else if (e.NewValue is CMFontFace variant)
+                text = variant.TryGetSampleText() ?? text;
+
             // Set TextBlock text
             t.Text = text;
         }
     }
+
+    #endregion
+
+    #region IsContainerEnabled
+
+    static partial void OnIsContainerEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement f && e.NewValue is bool b)
+        {
+            if (f.IsLoaded)
+            {
+                if (f.GetFirstAncestorOfType<UXComboBoxItem>() is { } item)
+                    item.IsEnabled = b;
+            }
+            else
+            {
+                f.Loaded -= OnLoaded;
+                f.Loaded += OnLoaded;
+            }
+
+
+            static void OnLoaded(object sender, RoutedEventArgs e)
+            {
+                FrameworkElement s = (FrameworkElement)sender;
+                s.Loaded -= OnLoaded;
+
+                if (s.GetFirstAncestorOfType<UXComboBoxItem>() is { } item)
+                    item.IsEnabled = GetIsContainerEnabled(s);
+            }
+        }
+    }
+
+    #endregion
+
+    #region MaterialCornerStyle
+
+    static partial void OnMaterialCornerStyleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement f && e.NewValue is not null && (MaterialCornerStyle)e.NewValue is MaterialCornerStyle mode)
+        {
+            f.SizeChanged -= OnSizeChanged;
+
+            if (mode is not MaterialCornerStyle.None)
+            {
+                f.SizeChanged += OnSizeChanged;
+                UpdateMaterialCornerRadius(f, mode);
+            }
+        }
+
+        static void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (sender is FrameworkElement f && GetMaterialCornerStyle(f) is MaterialCornerStyle mode)
+                UpdateMaterialCornerRadius(f, mode);
+        }
+    }
+
+    static void UpdateMaterialCornerRadius(FrameworkElement f, MaterialCornerStyle mode)
+    {
+        if (f.ActualHeight <= 0)
+            return;
+
+        double max = mode == MaterialCornerStyle.Default ? 16 : 10000;
+        double height = Math.Min(max, f.ActualHeight / 2d);
+
+        CornerRadius radius = mode == MaterialCornerStyle.FlatLeft
+            ? new CornerRadius(0, height, height, 0)
+            : new(height);
+
+        if (f is Control c)
+            c.CornerRadius = radius;
+        else if (f is ContentPresenter p)
+            p.CornerRadius = radius;
+        else if (f is Grid g)
+            g.CornerRadius = radius;
+        else if (f is Border b)
+            b.CornerRadius = radius;
+        else if (f is StackPanel s)
+            s.CornerRadius = radius;
+        else if (f is RelativePanel r)
+            r.CornerRadius = radius;
+    }
+
+    #endregion
+
+    #region ThemeIcon
+
+    static partial void OnThemeIconChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (e.NewValue is ThemeIcon i)
+        {
+            if (d is FontIcon f)
+                Make(i, f);
+            else if (d is AppBarToggleButton atb)
+                atb.Icon = Make(i);
+            else if (d is AppBarButton abb)
+                abb.Icon = Make(i);
+            else if (d is MenuButton mb)
+                mb.Icon = Make(i);
+            else if (d is MenuFlyoutItem mfi)
+                mfi.Icon = Make(i);
+            else if (d is MenuFlyoutSubItem mfsi)
+                mfsi.Icon = Make(i);
+        }
+
+        static FontIcon Make(ThemeIcon ti, FontIcon source = null)
+        {
+            FontIcon f = source ?? new();
+
+            if (ThemeIconGlyph.GetWithFallback(ti) is { } result)
+            {
+                if (result.isFallback is false)
+                    f.Style ??= ResourceHelper.GetThemeFontIconStyle();
+                else
+                    f.FontFamily = ResourceHelper.Get<FontFamily>("FallbackSymbolThemeFontFamily");
+
+                f.Glyph = result.glyph;
+            }
+
+            return f;
+        }
+    }
+
+    #endregion
+
+    #region ZoomHelper
+
+    static partial void OnZoomHelperChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement element)
+        {
+            if (e.OldValue is ZoomHelper oldHelper)
+                oldHelper.Detach(element);
+
+            if (e.NewValue is ZoomHelper newHelper)
+                newHelper.Attach(element);
+        }
+    }
+
+    #endregion
+
+    #region UseZoomHelper
+
+    static partial void OnUseZoomHelperChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement element && e.NewValue is bool b)
+        {
+            if (b)
+            {
+                ZoomHelper helper = new() { TriggerWhenFocused = true };
+                SetZoomHelper(element, helper);
+
+                if (element is RadioButtons)
+                {
+                    helper.ZoomInRequested += ZoomIn;
+                    helper.ZoomOutRequested += ZoomOut;
+                }
+
+                if (element is Slider)
+                {
+                    helper.Mode = ZoomTriggerMode.Delta;
+                    helper.ZoomRequested += Zoom;
+                }
+            }
+            else
+            {
+                if (GetZoomHelper(element) is ZoomHelper old)
+                {
+                    old.ZoomInRequested -= ZoomIn;
+                    old.ZoomOutRequested -= ZoomOut;
+                    old.ZoomRequested -= Zoom;
+                }
+
+                SetZoomHelper(element, null);
+            }
+
+            static void ZoomIn(object sender, EventArgs e)
+            {
+                if (sender is not ZoomHelper z)
+                    return;
+
+                if (z.Target is RadioButtons r
+                    && r.SelectedIndex < r.ItemsCount() - 1)
+                    r.SelectedIndex++;
+
+            }
+            static void ZoomOut(object sender, EventArgs e)
+            {
+                if (sender is not ZoomHelper z)
+                    return;
+
+                if (z.Target is RadioButtons r
+                    && r.SelectedIndex > 0)
+                    r.SelectedIndex--;
+            }
+
+            static void Zoom(object sender, double e)
+            {
+                if (sender is not ZoomHelper z)
+                    return;
+
+                if (z.Target is Slider s)
+                    s.Value += e > 0 ? s.LargeChange : -s.LargeChange;
+            }
+        }
+    }
+
+    #endregion
+
+    #region BackgroundTransition
+
+    static partial void OnBackgroundTransitionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is Border b)
+            b.BackgroundTransition = e.NewValue as BrushTransition;
+        else if (d is ContentPresenter cp)
+            cp.BackgroundTransition = e.NewValue as BrushTransition;
+        else if (d is Panel p)
+            p.BackgroundTransition = e.NewValue as BrushTransition;
+    }
+
 
     #endregion
 }

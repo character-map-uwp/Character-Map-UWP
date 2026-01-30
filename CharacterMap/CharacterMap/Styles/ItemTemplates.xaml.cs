@@ -96,7 +96,7 @@ public sealed partial class ItemTemplates : ResourceDictionary
 
     private void FontContextFlyout_Opening(object sender, object e)
     {
-        if (sender is MenuFlyout menu && menu.Target.DataContext is InstalledFont font)
+        if (sender is MenuFlyout menu && menu.Target.DataContext is CMFontFamily font)
         {
             FlyoutHelper.CreateMenu(
                 menu,
@@ -144,7 +144,7 @@ public sealed partial class ItemTemplates : ResourceDictionary
         var pointer = e.GetCurrentPoint(sender as FrameworkElement);
         if (pointer.Properties.IsMiddleButtonPressed
             && sender is FrameworkElement f
-            && f.DataContext is InstalledFont font)
+            && f.DataContext is CMFontFamily font)
         {
             _ = FontMapView.CreateNewViewForFontAsync(font);
         }

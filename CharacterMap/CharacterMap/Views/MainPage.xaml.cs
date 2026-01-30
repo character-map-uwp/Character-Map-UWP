@@ -19,6 +19,7 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Views;
 
+[DependencyProperty<double>("FontListFontSize", 12d)]
 public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IPopoverPresenter
 {
     public static CoreDispatcher MainDispatcher { get; private set; }
@@ -152,8 +153,8 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             case nameof(ViewModel.TabIndex):
                 if (ViewModel.TabIndex > -1)
                 {
-                    if (ViewModel.Fonts[ViewModel.TabIndex].Font is InstalledFont font
-                        && LstFontFamily.SelectedItem as InstalledFont != font)
+                    if (ViewModel.Fonts[ViewModel.TabIndex].Font is CMFontFamily font
+                        && LstFontFamily.SelectedItem as CMFontFamily != font)
                     {
                         _disableMapChange = true;
                         SetSelectedItem(font);
@@ -187,6 +188,10 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         {
             case nameof(AppSettings.UseFontForPreview):
                 OnFontPreviewUpdated();
+                break;
+
+            case nameof(AppSettings.FontListFontSizeIndex):
+                RunOnUI(() => FontListFontSize = ResourceHelper.GetFontListFontSize());
                 break;
         }
     }
@@ -271,6 +276,8 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         else
         {
             GoToState(nameof(FontsLoadedState), false);
+            FontListFontSize = ResourceHelper.GetFontListFontSize();
+            
             if (ResourceHelper.AllowAnimation)
             {
                 CompositionFactory.PlayStartUpAnimation(
@@ -334,11 +341,11 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         FlyoutHelper.PrintRequested();
     }
 
-    void SetSelectedItem(InstalledFont font)
+    void SetSelectedItem(CMFontFamily font)
     {
         LstFontFamily.SelectedItem = font;
         // Required for tabs with fonts not in FontList
-        if (LstFontFamily.SelectedItem as InstalledFont != font)
+        if (LstFontFamily.SelectedItem as CMFontFamily != font)
             LstFontFamily.SelectedItem = null;
     }
 
@@ -452,11 +459,11 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
                 switch (e.Key)
                 {
                     case VirtualKey.N:
-                        if (ViewModel.SelectedFont is InstalledFont fnt)
+                        if (ViewModel.SelectedFont is CMFontFamily fnt)
                             _ = FontMapView.CreateNewViewForFontAsync(fnt);
                         break;
                     case VirtualKey.Delete:
-                        if (ViewModel.SelectedFont is InstalledFont font && font.HasImportedFiles)
+                        if (ViewModel.SelectedFont is CMFontFamily font && font.HasImportedFiles)
                             FlyoutHelper.RequestDelete(font);
                         break;
                     case VirtualKey.L:
@@ -489,8 +496,8 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
         /* Helper Methods */
 
-        List<InstalledFont> GetActiveFonts() => ViewModel.Fonts.Where(f => !f.IsCompact).Select(f => f.Font).Distinct().ToList();
-        List<FontVariant> GetActiveVariants() => ViewModel.Fonts.Where(f => !f.IsCompact).Select(f => f.Selected).Distinct().ToList();
+        List<CMFontFamily> GetActiveFonts() => ViewModel.Fonts.Where(f => !f.IsCompact).Select(f => f.Font).Distinct().ToList();
+        List<CMFontFace> GetActiveVariants() => ViewModel.Fonts.Where(f => !f.IsCompact).Select(f => f.Selected).Distinct().ToList();
 
         void Menu_Opening(object sender, object e)
         {
@@ -525,7 +532,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         }
     }
 
-    void ShowCompare(List<FontVariant> variants)
+    void ShowCompare(List<CMFontFace> variants)
     {
         _ = QuickCompareView.CreateWindowAsync(new(false, new(variants)));
     }
@@ -533,7 +540,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
     void LstFontFamily_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (ViewModel.IsLoadingFonts is false &&
-            e.AddedItems.FirstOrDefault() is InstalledFont font)
+            e.AddedItems.FirstOrDefault() is CMFontFamily font)
         {
             ViewModel.SelectedFont = font;
         }
@@ -555,7 +562,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         }
     }
 
-    string UpdateFontCountLabel(List<InstalledFont> fontList, bool keepCasing)
+    string UpdateFontCountLabel(List<CMFontFamily> fontList, bool keepCasing)
     {
         if (fontList != null)
         {
@@ -606,6 +613,17 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         }
     }
 
+    void OnFontSizeUpdated()
+    {
+        if (ViewModel.InitialLoad.IsCompleted)
+        {
+            RunOnUI(() =>
+            {
+                FontListFontSize = ResourceHelper.GetFontListFontSize();
+            });
+        }
+    }
+
     void FontCompareButton_Click(object sender, RoutedEventArgs e)
     {
         DismissMenu();
@@ -633,7 +651,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         var pointer = e.GetCurrentPoint(sender as FrameworkElement);
         if (pointer.Properties.IsMiddleButtonPressed
             && sender is ListViewItem f
-            && f.Content is InstalledFont font)
+            && f.Content is CMFontFamily font)
         {
             if (ViewModel.Settings.DisableTabs
                 || ResourceHelper.SupportsTabs is false
@@ -652,7 +670,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
     void ItemContainer_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
     {
         /* RIGHT CLICK MENU FOR FONT LIST */
-        if (sender is ListViewItem f && f.Content is InstalledFont font)
+        if (sender is ListViewItem f && f.Content is CMFontFamily font)
         {
             args.Handled = true;
             FlyoutBase.SetAttachedFlyout(f, FontListFlyout);
@@ -742,8 +760,8 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             Title = Localization.Get("DigDeleteCollection/Title"),
             IsPrimaryButtonEnabled = true,
             IsSecondaryButtonEnabled = true,
-            PrimaryButtonText = Localization.Get("DigDeleteCollection/PrimaryButtonText"),
-            SecondaryButtonText = Localization.Get("DigDeleteCollection/SecondaryButtonText"),
+            PrimaryButtonText = Localization.Get("Delete"),
+            SecondaryButtonText = Localization.Get("Cancel"),
         };
 
         d.PrimaryButtonClick += DigDeleteCollection_PrimaryButtonClick;
@@ -779,7 +797,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             try
             {
                 var items = await e.DataView.GetStorageItemsAsync();
-                if (await FontFinder.ImportFontsAsync(items) is FontImportResult result)
+                if (await FontImporter.ImportFontsAsync(items) is FontImportResult result)
                 {
                     if (result.Imported.Count > 0)
                     {
@@ -803,7 +821,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         DismissMenu();
 
         var picker = new FileOpenPicker();
-        foreach (var format in FontFinder.ImportFormats)
+        foreach (var format in FontImporter.ImportFormats)
             picker.FileTypeFilter.Add(format);
 
         picker.CommitButtonText = Localization.Get("OpenFontPickerConfirm");
@@ -816,7 +834,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
                 if (file.FileType == ".zip")
                 {
-                    if (await FontFinder.LoadZipToTempFolderAsync(file) is FolderContents folder && folder.Fonts.Count > 0)
+                    if (await FontImporter.LoadZipToTempFolderAsync(file) is FolderContents folder && folder.Fonts.Count > 0)
                     {
                         await MainPage.CreateWindowAsync(new(
                             Ioc.Default.GetService<IDialogService>(),
@@ -824,7 +842,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
                             folder));
                     }
                 }
-                else if (await FontFinder.LoadFromFileAsync(file) is InstalledFont font)
+                else if (await FontImporter.LoadFromFileAsync(file) is CMFontFamily font)
                 {
                     await FontMapView.CreateNewViewForFontAsync(font, file);
                 }

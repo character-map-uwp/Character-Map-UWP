@@ -68,6 +68,8 @@ public partial class UXComboBox : ComboBox//, IThemeableControl
 
     protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
     {
+        ((Control)element).ClearValue(Control.IsEnabledProperty);
+
         base.PrepareContainerForItemOverride(element, item);
 
         if (!string.IsNullOrEmpty(ToolTipMemberPath))

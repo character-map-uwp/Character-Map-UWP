@@ -4,12 +4,14 @@
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
     xmlns:helpers="using:CharacterMap.Helpers"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls">
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Default">
             <SolidColorBrush x:Key="DefaultHostBrush" Color="Transparent" />
             <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="#191919" />
+            <SolidColorBrush x:Key="DefaultWindowBackgroundBrush" Color="#191919" />
             <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#0C0C0C" />
             <SolidColorBrush x:Key="ControlForegroundBrush" Color="White" />
             <SolidColorBrush x:Key="CardBorderBrush" Color="#535353" />
@@ -20,10 +22,14 @@
             <SolidColorBrush x:Key="ControlPressedBackgroundBrush" Color="#CCE4F7" />
             <SolidColorBrush x:Key="ControlHighlightBackgroundBrush" Color="#0078D7" />
             <SolidColorBrush x:Key="ControlHighlightContrastForegroundBrush" Color="White" />
+            <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="Black" />
+            <Color x:Key="TextOnAccentFillColorPrimary">Black</Color>
+            <Color x:Key="TextFillColorPrimary">Black</Color>
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="DefaultHostBrush" Color="Transparent" />
             <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="#F0F0F0" />
+            <SolidColorBrush x:Key="DefaultWindowBackgroundBrush" Color="#F0F0F0" />
             <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#FDFDFD" />
             <SolidColorBrush x:Key="ControlForegroundBrush" Color="Black" />
             <SolidColorBrush x:Key="CardBorderBrush" Color="#DCDCDC" />
@@ -34,6 +40,9 @@
             <SolidColorBrush x:Key="ControlPressedBackgroundBrush" Color="#CCE4F7" />
             <SolidColorBrush x:Key="ControlHighlightBackgroundBrush" Color="#0078D7" />
             <SolidColorBrush x:Key="ControlHighlightContrastForegroundBrush" Color="White" />
+            <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="Black" />
+            <Color x:Key="TextOnAccentFillColorPrimary">Black</Color>
+            <Color x:Key="TextFillColorPrimary">Black</Color>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
@@ -42,6 +51,8 @@
     <x:Boolean x:Key="SupportsShadows">False</x:Boolean>
     <x:Boolean x:Key="SupportsTabs">False</x:Boolean>
     <CharacterCasing x:Key="TitleCasing">Normal</CharacterCasing>
+
+    <StaticResource x:Key="SelectorHightlightBrush" ResourceKey="ControlPointerOverBackgroundBrush" />
 
     <!--  Override system generated accent colors  -->
     <Color x:Key="SystemAccentColorLight1">#FF1D85D7</Color>
@@ -61,6 +72,8 @@
     <x:Double x:Key="ContentControlThemeFontSize">12</x:Double>
     <x:Double x:Key="ControlContentThemeFontSize">12</x:Double>
     <x:Double x:Key="FontListFontSize">12</x:Double>
+    <x:Double x:Key="FontListFontSizeLarge">16</x:Double>
+    <x:Double x:Key="FontListFontSizeLarger">20</x:Double>
     <x:Double x:Key="FontListFlyoutFontSize">12</x:Double>
     <Thickness x:Key="ControlBorderThickness">1</Thickness>
     <x:Double x:Key="FontListFlyoutHeight">0</x:Double>
@@ -68,6 +81,32 @@
     <BrushTransition x:Key="ThemeBackgroundTransition" Duration="0:0:0.1" />
     <StaticResource x:Key="AltHostBrush" ResourceKey="DefaultPageBackgroundBrush" />
     <SolidColorBrush x:Key="InfoBarBackgroundBrush" Color="Transparent" />
+    <SolidColorBrush x:Key="RadioButtonsButtonForeground" Color="Black" />
+    <Color x:Key="RadioButtonsButtonSelectedForeground">Black</Color>
+
+    <DataTemplate x:Key="RadioSelectorTemplate">
+        <controls:SelectorVisualElement
+            Fill="{ThemeResource ControlPointerOverBackgroundBrush}"
+            OffsetTransition="{StaticResource DefaultSelectorTransition}"
+            SizeTransition="{StaticResource DefaultSelectorTransition}"
+            Stroke="{ThemeResource ControlActiveBorderBrush}"
+            StrokeThickness="2"
+            VisualCornerRadius="0 0"
+            VisualInset="0 0 2 2" />
+    </DataTemplate>
+
+    <Style x:Key="RadioButtonsButtonStyle" BasedOn="{StaticResource RadioButtonsButtonStyle}" TargetType="RadioButton">
+        <Setter Property="core:Properties.Color" Value="Black" />
+        <Setter Property="FontSize" Value="12" />
+    </Style>
+
+    <Style BasedOn="{StaticResource DefaultRadioButtonsThemeStyle}" TargetType="muxc:RadioButtons">
+        <Setter Property="CornerRadius" Value="0" />
+    </Style>
+
+    <Style BasedOn="{StaticResource DefaultRadioButtonsThemeStyle}" TargetType="controls:UXRadioButtons">
+        <Setter Property="CornerRadius" Value="0" />
+    </Style>
 
 
 
@@ -145,6 +184,8 @@
 
 
     <!--  MISC TEMPLATES  -->
+
+    <Style x:Key="ControlSurfaceBorderStyle" TargetType="Border" />
 
     <DataTemplate x:Key="DefaultControlHeaderTemplate">
         <ContentPresenter

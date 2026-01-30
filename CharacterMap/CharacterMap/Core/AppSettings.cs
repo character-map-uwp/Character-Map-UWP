@@ -100,6 +100,13 @@ public class AppSettings : INotifyPropertyChanged
         set => BroadcastSet(value);
     }
 
+
+    public int FontListFontSizeIndex
+    {
+        get => Get(0);
+        set => BroadcastSet(value);
+    }
+
     public int MaxSearchResult
     {
         get => Get(101, "MSR");
@@ -149,6 +156,12 @@ public class AppSettings : INotifyPropertyChanged
     public bool HideDeprecatedMDL2
     {
         get => Get(true);
+        set => Set(value);
+    }
+
+    public bool HideSimulatedFontFaces
+    {
+        get => Get(false);
         set => Set(value);
     }
 
@@ -281,7 +294,7 @@ public class AppSettings : INotifyPropertyChanged
             {
                 // The chosen language is no longer supported by the app.
                 // Remove the saved setting value.
-                LocalSettings.Values.Remove(nameof(AppLanguage));
+                LocalSettings.Values.Remove("AppLang2");
             }
         }
 
@@ -466,6 +479,18 @@ public class AppSettings : INotifyPropertyChanged
 
             SettingsVersion = 1;
         }
+    }
+
+    public void IncreaseFontListSize()
+    {
+        if (FontListFontSizeIndex < (int)FontListFontSize.Larger)
+            FontListFontSizeIndex++;
+    }
+
+    public void DecreaseFontListSize()
+    {
+        if (FontListFontSizeIndex > 0)
+            FontListFontSizeIndex--;
     }
 
     #endregion

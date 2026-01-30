@@ -2,10 +2,12 @@
 using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Views;
 
 [DependencyProperty<int>("GridSize")]
+[DependencyProperty<double>("FontListFontSize", 12d)]
 public sealed partial class SettingsView : ViewBase
 {
     public AppSettings Settings { get; }
@@ -25,6 +27,12 @@ public sealed partial class SettingsView : ViewBase
 
     private int _requested = 0;
 
+    private List<String> _listSizeNames { get; } = [
+        Localization.Get("FontListSizeNormal"),
+        Localization.Get("FontListSizeLarge"),
+        Localization.Get("FontListSizeLarger")
+    ];
+
     public SettingsView()
     {
         this.InitializeComponent();
@@ -38,6 +46,7 @@ public sealed partial class SettingsView : ViewBase
         Register<FontListCreatedMessage>(m => UpdateExport());
 
         GridSize = Settings.GridSize;
+        FontListFontSize = ResourceHelper.GetFontListFontSize();
 
         _themeSupportsShadows = ResourceHelper.SupportsShadows();
         _themeSupportsDark = ResourceHelper.Get<Boolean>("SupportsDarkTheme");
@@ -45,7 +54,7 @@ public sealed partial class SettingsView : ViewBase
         _navHelper.BackRequested += (s, e) => Hide();
     }
 
-    public void Show(CharacterRenderingOptions options, InstalledFont font, int idx = 0)
+    public void Show(CharacterRenderingOptions options, CMFontFamily font, int idx = 0)
     {
         if (IsOpen)
         {
@@ -85,9 +94,8 @@ public sealed partial class SettingsView : ViewBase
         void SetIndex(int i)
         {
             if (IsLoaded)
-                MenuColumn.Children.OfType<MenuButton>().ElementAt(i).IsChecked = true;
+                MenuColumn.Items.OfType<MenuButton>().ElementAt(i).IsChecked = true;
         }
-
     }
 
     public void Hide()
@@ -117,6 +125,9 @@ public sealed partial class SettingsView : ViewBase
                 case nameof(Settings.ApplicationDesignTheme):
                     //UpdateStyle();
                     break;
+                case nameof(Settings.FontListFontSizeIndex):
+                    RunOnUI(() => FontListFontSize = ResourceHelper.GetFontListFontSize());
+                    break;
             }
         });
     }
@@ -129,7 +140,7 @@ public sealed partial class SettingsView : ViewBase
     private void View_Loaded(object sender, RoutedEventArgs e)
     {
         UpdateStyle();
-        ((RadioButton)MenuColumn.Children.ElementAt(_requested)).IsChecked = true;
+        ((RadioButton)MenuColumn.Items.ElementAt(_requested)).IsChecked = true;
     }
 
 
@@ -154,15 +165,9 @@ public sealed partial class SettingsView : ViewBase
         Settings.ExportNamingScheme = (ExportNamingScheme)((RadioButtons)sender).SelectedIndex;
     }
 
-    private void UseSystemFont_Checked(object sender, RoutedEventArgs e)
+    private void FontTypeRadios_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        Settings.UseFontForPreview = false;
-        ViewModel.ResetFontPreview();
-    }
-
-    private void UseActualFont_Checked(object sender, RoutedEventArgs e)
-    {
-        Settings.UseFontForPreview = true;
+        Settings.UseFontForPreview = FontTypeRadios.SelectedIndex >= 1 ? false : true;
         ViewModel.ResetFontPreview();
     }
 
@@ -239,10 +244,7 @@ public sealed partial class SettingsView : ViewBase
             //    and can't be set earlier due to x:Load
             if (panel == UserInterfacePanel)
             {
-                if (Settings.UseFontForPreview)
-                    UseActualFont.IsChecked = true;
-                else
-                    UseSystemFont.IsChecked = true;
+                FontTypeRadios.SelectedIndex = Settings.UseFontForPreview ? 0 : 1;
             }
             else if (panel == UserInterfaceAdvancedPanel)
             {
@@ -353,6 +355,8 @@ public sealed partial class SettingsView : ViewBase
         List<UIElement> elements = new() { this, MenuColumn, ContentBorder };
         if (ResourceHelper.IsZuneTheme())
             CompositionFactory.PlayEntrance(elements, 0, 0, 40);
+        else if (ResourceHelper.IsMaterialTheme)
+            CompositionFactory.PlayScaleEntrance(this, 0.8f, 1, 0.3f);
         else
             CompositionFactory.PlayEntrance(elements, 0, 200);
 

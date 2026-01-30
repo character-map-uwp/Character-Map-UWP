@@ -37,8 +37,8 @@ global using DP = Windows.UI.Xaml.DependencyProperty;
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "BritishEnglish", Scope = "member", Target = "~P:CharacterMap.Core.FontVariant.SupportsColourRendering")]
-[assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "Correct", Scope = "member", Target = "~P:CharacterMap.Core.FontVariant.Panose")]
+[assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "BritishEnglish", Scope = "member", Target = "~P:CharacterMap.Core.CMFontFace.SupportsColourRendering")]
+[assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "Correct", Scope = "member", Target = "~P:CharacterMap.Core.CMFontFace.Panose")]
 [assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "<Pending>", Scope = "member", Target = "~P:CharacterMap.ViewModels.SettingsViewModel.Changelog")]
 [assembly: SuppressMessage("CommunityToolkit.Mvvm.SourceGenerators.ObservablePropertyGenerator", "MVVMTK0034:Direct field reference to [ObservableProperty] backing field", Justification = "<Pending>")]
 [assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "Correct", Scope = "type", Target = "~T:CharacterMap.Models.UnihanFieldType")]

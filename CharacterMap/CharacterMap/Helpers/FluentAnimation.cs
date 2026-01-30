@@ -90,7 +90,7 @@ public class FluentAnimationHelper
         if (e.NewState is VisualState v
             && e.OldState is VisualState old
             //&& old.Name is "Normal" or "Disabled" or "Selected" or "Checked"
-            && v.Name.Contains("PointerOver")
+            && v.Name?.Contains("PointerOver") is true
             && ResourceHelper.UsePointerOverAnimations
             && FluentAnimation.GetUsePointerOver(e.Control)
             && GetPointerTarget(e.Control) is FrameworkElement target)
@@ -113,14 +113,14 @@ public class FluentAnimationHelper
             PlayPointerOverExit(visual);
         }
 
-        var tr = GetPressedTarget(e.Control);
+        //var tr = GetPressedTarget(e.Control);
         //Debug.WriteLine($"has pressed: {tr != null}");
 
         // 2. Handle "PressedDown"
         if (e.NewState is VisualState vp
-            && vp.Name.StartsWith("Pressed")
+            && vp.Name?.StartsWith("Pressed") is true
             && e.OldState is VisualState ov
-            && ov.Name.StartsWith("Pressed") is false
+            && ov.Name?.StartsWith("Pressed") is false
             && GetPressedTarget(e.Control) is FrameworkElement pressedTarget)
         {
             Visual vs = pressedTarget.GetElementVisual();
@@ -128,8 +128,8 @@ public class FluentAnimationHelper
             vs.StartAnimation(CreatePointerDown(vs, scale));
         }
         // 3. Handle "PressedReleased"
-        else if (e.OldState is VisualState oldP && oldP.Name.StartsWith("Pressed") is true
-                && e.NewState is VisualState ns && ns.Name.StartsWith("Pressed") is false
+        else if (e.OldState is VisualState oldP && oldP.Name?.StartsWith("Pressed") is true
+                && e.NewState is VisualState ns && ns.Name?.StartsWith("Pressed") is false
                 && GetPressedTarget(e.Control) is FrameworkElement f)
         {
             Visual vs = f.GetElementVisual();

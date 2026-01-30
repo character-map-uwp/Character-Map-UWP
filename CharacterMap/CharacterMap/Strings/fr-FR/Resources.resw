@@ -117,14 +117,8 @@
   <data name="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Supprimer la collection</value>
   </data>
-  <data name="DigCreateCollection.SecondaryButtonText" xml:space="preserve">
-    <value>Annuler</value>
-  </data>
-  <data name="DigDeleteCollection.PrimaryButtonText" xml:space="preserve">
+  <data name="Delete" xml:space="preserve">
     <value>Supprimer</value>
-  </data>
-  <data name="DigDeleteCollection.SecondaryButtonText" xml:space="preserve">
-    <value>Annuler</value>
   </data>
   <data name="DigRenameCollection.PrimaryButtonText" xml:space="preserve">
     <value>Renommer</value>
@@ -306,7 +300,7 @@
   <data name="BtnApply.Content" xml:space="preserve">
     <value>Appliquer</value>
   </data>
-  <data name="BtnCancel.Content" xml:space="preserve">
+  <data name="Cancel" xml:space="preserve">
     <value>Annuler</value>
   </data>
   <data name="BtnContinue.Content" xml:space="preserve">
@@ -540,7 +534,7 @@
     <value>Basculer</value>
     <comment>Labels must be as short as possible</comment>
   </data>
-  <data name="AddTooButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="AddToButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Ajouter à la collection</value>
   </data>
   <data name="ClearSelectionLabel" xml:space="preserve">
@@ -563,9 +557,6 @@
   </data>
   <data name="DigOpenFolder.PrimaryButtonText" xml:space="preserve">
     <value>Ouvrir polices</value>
-  </data>
-  <data name="DigOpenFolder.SecondaryButtonText" xml:space="preserve">
-    <value>Annuler</value>
   </data>
   <data name="DigOpenFolder.Title" xml:space="preserve">
     <value>Ouvrir le dossier des polices</value>
@@ -750,9 +741,6 @@
   </data>
   <data name="SettingsExportInstalledLabel.Text" xml:space="preserve">
     <value>Exporter les polices installées</value>
-  </data>
-  <data name="InstallDialog.SecondaryButtonText" xml:space="preserve">
-    <value>Fermer</value>
   </data>
   <data name="InstallDialog.Title" xml:space="preserve">
     <value>Installer police</value>

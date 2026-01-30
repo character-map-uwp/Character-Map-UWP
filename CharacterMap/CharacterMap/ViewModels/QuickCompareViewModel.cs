@@ -25,6 +25,8 @@ public class QuickCompareArgs
 
 public partial class QuickCompareViewModel : ViewModelBase
 {
+    public const string MultiToken = $"{nameof(QuickCompareViewModel)}Multi";
+
     public static WindowInformation QuickCompareWindow { get; set; }
 
     protected override bool TrackAnimation => true;
@@ -38,9 +40,9 @@ public partial class QuickCompareViewModel : ViewModelBase
 
     public string FilterTitle { get => Get<string>(); set => Set(value); }
 
-    public InstalledFont SelectedFont { get => Get<InstalledFont>(); set => Set(value); }
+    public CMFontFamily SelectedFont { get => Get<CMFontFamily>(); set => Set(value); }
 
-    public ObservableCollection<InstalledFont> FontList { get => Get<ObservableCollection<InstalledFont>>(); set => Set(value); }
+    public ObservableCollection<CMFontFamily> FontList { get => Get<ObservableCollection<CMFontFamily>>(); set => Set(value); }
 
     private BasicFontFilter _fontListFilter = BasicFontFilter.All;
     public BasicFontFilter FontListFilter
@@ -79,6 +81,8 @@ public partial class QuickCompareViewModel : ViewModelBase
 
     public bool IsQuickCompare { get; }
 
+    public bool IsQuickCompareView { get; }
+
     public bool IsFolderMode { get; }
 
     FolderContents _folder = null;
@@ -90,6 +94,7 @@ public partial class QuickCompareViewModel : ViewModelBase
         //      two different things. We can have many windows with IsQuickCompare
         //      behaviour, but only one can act as the main QuickCompare singleton.
 
+        IsQuickCompareView = args.IsQuickCompare;
         IsQuickCompare = args.IsQuickCompare || (args.Folder?.UseQuickCompare is bool b && b);
 
         if (DesignMode.DesignModeEnabled)
@@ -101,14 +106,25 @@ public partial class QuickCompareViewModel : ViewModelBase
             {
                 // This is the universal quick-compare window
                 QuickFonts = new();
+
                 Register<CharacterRenderingOptions>(m =>
                 {
                     // Only add the font variant if it's not already in the list.
-                    // Once we start accepting custom typography this comparison
-                    // will have to change.
                     if (!QuickFonts.Any(q => m.IsCompareMatch(q)))
                         QuickFonts.Add(m);
                 }, nameof(QuickCompareViewModel));
+
+                Register<CharacterRenderingOptions>(m =>
+                {
+                    // Only add the font variant if it's not already in the list.
+                    foreach (var f in m.Family.Variants)
+                    {
+                        var ops = m with { Variant = f };
+                        if (!QuickFonts.Any(q => ops.IsCompareMatch(q)))
+                            QuickFonts.Add(ops);
+                    }
+                    
+                }, MultiToken);
             }
             else
             {
@@ -148,7 +164,7 @@ public partial class QuickCompareViewModel : ViewModelBase
 
     public void Deactivated()
     {
-        if (IsQuickCompare)
+        if (IsQuickCompareView)
             QuickCompareWindow = null;
 
         Messenger.UnregisterAll(this);
@@ -180,7 +196,7 @@ public partial class QuickCompareViewModel : ViewModelBase
     {
         try
         {
-            IEnumerable<InstalledFont> fontList = _folder?.Fonts ?? FontFinder.Fonts;
+            IEnumerable<CMFontFamily> fontList = _folder?.Fonts ?? FontFinder.Fonts;
 
             if (collection != null)
             {

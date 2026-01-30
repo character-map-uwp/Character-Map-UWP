@@ -79,18 +79,18 @@ public static class Composition
         batch.End();
     }
 
-    private static Dictionary<Compositor, Dictionary<string, CompositionObject>> _objCache { get; } = new();
+    private static Dictionary<Compositor, Dictionary<string, object>> _objCache { get; } = new();
 
-    public static T GetCached<T>(this Compositor c, string key, Func<T> create) where T : CompositionObject
+    public static T GetCached<T>(this Compositor c, string key, Func<T> create)
     {
-#if DEBUG
-        return create();
-#endif
+//#if DEBUG
+//        return create();
+//#endif
 
-        if (_objCache.TryGetValue(c, out Dictionary<string, CompositionObject> dic) is false)
+        if (_objCache.TryGetValue(c, out Dictionary<string, object> dic) is false)
             _objCache[c] = dic = new();
 
-        if (dic.TryGetValue(key, out CompositionObject value) is false)
+        if (dic.TryGetValue(key, out object value) is false)
             dic[key] = value = create();
 
         return (T)value;
@@ -516,6 +516,12 @@ public static class Composition
         return animation;
     }
 
+    public static T AddKeyFrame<T>(this T animation, float normalizedProgressKey, string expression, CubicBezierPoints spline) where T : KeyFrameAnimation
+    {
+        animation.InsertExpressionKeyFrame(normalizedProgressKey, expression, animation.Compositor.CreateCubicBezierEasingFunction(spline));
+        return animation;
+    }
+
     public static T AddKeyFrame<T>(this T animation, float normalizedProgressKey, string expression, CompositionEasingFunction ease = null) where T : KeyFrameAnimation
     {
         animation.InsertExpressionKeyFrame(normalizedProgressKey, expression, ease);
@@ -743,7 +749,7 @@ public static class Composition
 
     public static CubicBezierEasingFunction CreateCubicBezierEasingFunction(this Compositor compositor, Windows.UI.Xaml.Media.Animation.KeySpline spline)
     {
-        return compositor.CreateCubicBezierEasingFunction(spline);
+        return compositor.CreateCubicBezierEasingFunction(spline.ControlPoint1.ToVector2(), spline.ControlPoint2.ToVector2());
     }
 
     public static CubicBezierEasingFunction CreateCubicBezierEasingFunction(this Compositor compositor, CubicBezierPoints points)
@@ -816,55 +822,55 @@ public static class Composition
 
     #region PropertySet Builders
 
-    public static CompositionPropertySet SetValue(this CompositionPropertySet set, string name, float value)
+    public static CompositionPropertySet Insert(this CompositionPropertySet set, string name, float value)
     {
         set.InsertScalar(name, value);
         return set;
     }
 
-    public static CompositionPropertySet SetValue(this CompositionPropertySet set, string name, bool value)
+    public static CompositionPropertySet Insert(this CompositionPropertySet set, string name, bool value)
     {
         set.InsertBoolean(name, value);
         return set;
     }
 
-    public static CompositionPropertySet SetValue(this CompositionPropertySet set, string name, Vector2 value)
+    public static CompositionPropertySet Insert(this CompositionPropertySet set, string name, Vector2 value)
     {
         set.InsertVector2(name, value);
         return set;
     }
 
-    public static CompositionPropertySet SetValue(this CompositionPropertySet set, string name, Vector3 value)
+    public static CompositionPropertySet Insert(this CompositionPropertySet set, string name, Vector3 value)
     {
         set.InsertVector3(name, value);
         return set;
     }
 
-    public static CompositionPropertySet SetValue(this CompositionPropertySet set, string name, Vector4 value)
+    public static CompositionPropertySet Insert(this CompositionPropertySet set, string name, Vector4 value)
     {
         set.InsertVector4(name, value);
         return set;
     }
 
-    public static CompositionPropertySet SetValue(this CompositionPropertySet set, string name, Color value)
+    public static CompositionPropertySet Insert(this CompositionPropertySet set, string name, Color value)
     {
         set.InsertColor(name, value);
         return set;
     }
 
-    public static CompositionPropertySet SetValue(this CompositionPropertySet set, string name, Matrix3x2 value)
+    public static CompositionPropertySet Insert(this CompositionPropertySet set, string name, Matrix3x2 value)
     {
         set.InsertMatrix3x2(name, value);
         return set;
     }
 
-    public static CompositionPropertySet SetValue(this CompositionPropertySet set, string name, Matrix4x4 value)
+    public static CompositionPropertySet Insert(this CompositionPropertySet set, string name, Matrix4x4 value)
     {
         set.InsertMatrix4x4(name, value);
         return set;
     }
 
-    public static CompositionPropertySet SetValue(this CompositionPropertySet set, string name, Quaternion value)
+    public static CompositionPropertySet Insert(this CompositionPropertySet set, string name, Quaternion value)
     {
         set.InsertQuaternion(name, value);
         return set;
@@ -943,11 +949,22 @@ public static class Composition
         return group;
     }
 
+
+    public static bool HasImplicitAnimation<T>(this T c, string path) where T: CompositionObject
+    {
+        return c.ImplicitAnimations != null 
+            && c.ImplicitAnimations.TryGetValue(path, out ICompositionAnimationBase v)
+            && v != null;
+    }
+
     public static T SetImplicitAnimation<T>(this T composition, string path, ICompositionAnimationBase animation)
         where T : CompositionObject
     {
         if (composition.ImplicitAnimations == null)
         {
+            if (animation == null)
+                return composition;
+
             composition.ImplicitAnimations = composition.Compositor.CreateImplicitAnimationCollection();
         }
 
