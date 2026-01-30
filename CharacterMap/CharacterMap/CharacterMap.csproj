@@ -379,9 +379,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\AdobeBlank.otf" />
-    <None Include="..\.editorconfig">
-      <Link>.editorconfig</Link>
-    </None>
     <Content Include="Assets\BadgeLogo.scale-100.png" />
     <Content Include="Assets\BadgeLogo.scale-125.png" />
     <Content Include="Assets\BadgeLogo.scale-150.png" />
