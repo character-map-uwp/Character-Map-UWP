@@ -568,12 +568,16 @@
                                     <VisualState.Setters>
                                         <Setter Target="IconPresenter.Foreground" Value="{ThemeResource ButtonForegroundPointerOverBrush}" />
                                         <Setter Target="Border.(Grid.ColumnSpan)" Value="2" />
+                                        <Setter Target="Border.Background" Value="{ThemeResource ButtonPointerOverBackgroundBrush}" />
+                                        <Setter Target="Border.BorderBrush" Value="{ThemeResource ComboBoxBorderBrush}" />
                                     </VisualState.Setters>
                                 </VisualState>
 
                                 <VisualState x:Name="Pressed">
                                     <VisualState.Setters>
                                         <Setter Target="Border.(Grid.ColumnSpan)" Value="2" />
+                                        <Setter Target="Border.Background" Value="{ThemeResource ButtonBackgroundBrush}" />
+                                        <Setter Target="Border.BorderBrush" Value="{ThemeResource ComboBoxBorderBrush}" />
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Disabled" />
@@ -584,12 +588,12 @@
                                 <ColumnDefinition MinWidth="10" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            
+
                             <Border
                                 x:Name="Border"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}" />
-                            
+
                             <ContentPresenter x:Name="IconPresenter" Content="{TemplateBinding IconContent}" />
 
                             <ContentPresenter
