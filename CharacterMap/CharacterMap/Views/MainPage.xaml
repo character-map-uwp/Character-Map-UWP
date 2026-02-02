@@ -45,7 +45,7 @@
             </Flyout.FlyoutPresenterStyle>
 
             <ScrollViewer>
-                <Grid>
+                <Grid x:Name="MenuBG">
                     <TextBlock
                         x:Name="MenuShimmy"
                         FontSize="14"
@@ -60,6 +60,7 @@
                                 <Setter Property="VerticalAlignment" Value="Stretch" />
                                 <Setter Property="CornerRadius" Value="0" />
                                 <Setter Property="FontSize" Value="14" />
+                                <Setter Property="Background" Value="{ThemeResource AppMenuItemBackgroundBrush}" />
                                 <Setter Property="Foreground" Value="{ThemeResource AppBarItemPointerOverForegroundThemeBrush}" />
                                 <Setter Property="ContentTemplate" Value="{StaticResource LabelButtonContentTemplate}" />
                                 <Setter Property="helpers:FluentAnimation.Pressed" Value="ContentRoot" />
@@ -1427,6 +1428,7 @@
                 </VisualState>
                 <VisualState x:Name="MaterialThemeState">
                     <VisualState.Setters>
+                        <Setter Target="MenuBG.Background" Value="{ThemeResource MaterialPaneBGBrush}" />
                         <Setter Target="TabBorder.CornerRadius" Value="16 0 0 0" />
                         <Setter Target="FontsTabContainer.Margin" Value="12 0 0 0" />
                         <Setter Target="PageRoot.Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />

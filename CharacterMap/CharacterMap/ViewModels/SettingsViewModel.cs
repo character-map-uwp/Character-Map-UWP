@@ -25,7 +25,7 @@ public partial class SettingsViewModel : ViewModelBase
         "Windows 11",
         "Classic Windows",
         "Zune Desktop",
-        //"Material"
+        "Material"
     ];
 
     public GlyphFileNameViewModel GlyphNameModel { get; } = new() { SaveTemplate = true };

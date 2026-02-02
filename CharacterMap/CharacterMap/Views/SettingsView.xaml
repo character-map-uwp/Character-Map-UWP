@@ -81,6 +81,11 @@
                         </Setter>
                     </VisualState.Setters>
                 </VisualState>
+                <VisualState x:Name="MaterialThemeState">
+                    <VisualState.Setters>
+                        <Setter Target="MenuColumn.(controls:SelectorVisualElement.ElementTemplate)" Value="{StaticResource VerticalRadioSelectorTemplate}" />
+                    </VisualState.Setters>
+                </VisualState>
             </VisualStateGroup>
             <VisualStateGroup x:Name="ScrollStates">
                 <VisualState x:Name="ContentScrollEnabledState" />

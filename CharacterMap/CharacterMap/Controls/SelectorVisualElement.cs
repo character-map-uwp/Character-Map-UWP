@@ -54,7 +54,9 @@ public enum SelectorInteractionState
 [DependencyProperty<FrameworkElement>("DisplayTarget")]
 [DependencyProperty<Point>("BarSize")]
 [DependencyProperty<double>("BarPadding")]
+[DependencyProperty<double>("VisualSizeAdjustment")]
 [DependencyProperty<Point>("BarCornerRadius", "new Point(2,2)")]
+[DependencyProperty<bool>("RightCornerRadiusOnly",default, nameof(Update))]
 [DependencyProperty<Orientation>("Orientation", "Orientation.Horizontal")]
 [AttachedProperty<SelectorVisualElement>("Element")]
 [AttachedProperty<DataTemplate>("ElementTemplate")]
@@ -272,12 +274,16 @@ public partial class SelectorVisualElement : FrameworkElement
         // 2: Get the target element's size
         Vector2 size = target.ActualSize();
         size -= new Point(VisualInset.Left + VisualInset.Right, VisualInset.Top + VisualInset.Bottom).ToVector2();
+        size += new Vector2(-(float)VisualSizeAdjustment, 0);
+
         var size2 = size += new Vector2((float)StrokeThickness);
 
         if (size.X < 0 || size.Y < 0)
             size = new();
 
         animate &= ResourceHelper.AllowAnimation;
+
+        position += new Vector3((float)VisualSizeAdjustment, 0, 0);
 
         // 3: Animation position
         SetOffset(animate);

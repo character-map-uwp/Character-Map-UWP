@@ -1584,6 +1584,12 @@ public partial class Properties : DependencyObject
                 f.SizeChanged += OnSizeChanged;
                 UpdateMaterialCornerRadius(f, mode);
             }
+            else if (
+                e.OldValue is MaterialCornerStyle o
+                && o != MaterialCornerStyle.None)
+            {
+                UpdateMaterialCornerRadius(f, mode);
+            }
         }
 
         static void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -1604,6 +1610,9 @@ public partial class Properties : DependencyObject
         CornerRadius radius = mode == MaterialCornerStyle.FlatLeft
             ? new CornerRadius(0, height, height, 0)
             : new(height);
+
+        if (mode == MaterialCornerStyle.None)
+            radius = new();
 
         if (f is Control c)
             c.CornerRadius = radius;
