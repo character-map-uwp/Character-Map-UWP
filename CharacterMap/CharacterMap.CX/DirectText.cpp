@@ -154,12 +154,14 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         /* Set Variable Font Axis */
         if (Axis != nullptr && Axis->Size > 0)
         {
-            DWRITE_FONT_AXIS_VALUE* values = new DWRITE_FONT_AXIS_VALUE[Axis->Size];
-            for (int i = 0; i < Axis->Size; i++)
+            std::vector<DWRITE_FONT_AXIS_VALUE> values;
+            values.reserve(Axis->Size);
+            for (unsigned int i = 0; i < Axis->Size; ++i)
             {
-                values[i] = Axis->GetAt(i)->GetDWriteValue();
+                values.push_back(Axis->GetAt(i)->GetDWriteValue());
             }
-            idFormat->SetFontAxisValues(values, Axis->Size);
+
+            ThrowIfFailed(idFormat->SetFontAxisValues(values.data(), static_cast<UINT32>(values.size())));
         }
 
         /* Set trimming. */
@@ -222,6 +224,23 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         {
 		    textLayout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 			textLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+        }
+
+        ComPtr<IDWriteTextLayout4> idl;
+        ThrowIfFailed(textLayout.As(&idl));
+        if (Axis != nullptr && Axis->Size > 0)
+        {
+            std::vector<DWRITE_FONT_AXIS_VALUE> values;
+            values.reserve(Axis->Size);
+            for (unsigned int i = 0; i < Axis->Size; ++i)
+            {
+                values.push_back(Axis->GetAt(i)->GetDWriteValue());
+            }
+
+            ThrowIfFailed(idl->SetFontAxisValues(
+                values.data(), 
+                static_cast<UINT32>(values.size()),
+                DWRITE_TEXT_RANGE{ 0 , textLength }));
         }
 
         // Calculate LayoutBounds
