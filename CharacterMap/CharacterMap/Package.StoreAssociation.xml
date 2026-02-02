@@ -400,5 +400,5 @@
     <MainPackageIdentityName>58027.6157856FB1D01</MainPackageIdentityName>
     <MainPackageIdentityName>58027.896369447195</MainPackageIdentityName>
   </AccountPackageIdentityNames>
-  <PackageInfoList LandingUrl="https://developer.microsoft.com/dashboard/Application?appId=9WZDNCRDXF41" />
+  <PackageInfoList LandingUrl="https://devcenterapi.dce.mp.microsoft.com/dashboard/Application?appId=9WZDNCRDXF41" />
 </StoreAssociation>
