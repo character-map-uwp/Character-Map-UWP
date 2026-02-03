@@ -504,7 +504,6 @@
                                 x:Uid="TypeRampInputBox"
                                 Grid.Column="1"
                                 Background="Transparent"
-                                BorderThickness="0 0 0 1"
                                 DetectedFlowDirectionChanged="InputText_DetectedFlowDirectionChanged"
                                 IsCharacterPickerEnabled="False"
                                 ItemsSource="{x:Bind ViewModel.TextOptions, Mode=OneWay}"

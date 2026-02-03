@@ -24,6 +24,8 @@
     <FontFamily x:Key="FallbackSymbolThemeFontFamily">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
     <FontFamily x:Key="ContentControlBoldThemeFontFamily">XamlAutoFontFamily</FontFamily>
 
+    <!--  Doesn't need to exist here but avoids XAML bug  -->
+    <SolidColorBrush x:Key="AppMenuItemBackgroundBrush" Color="White" />
 
     <AcrylicBrush
         x:Key="DefaultHostBrush"

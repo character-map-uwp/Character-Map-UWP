@@ -229,6 +229,7 @@
                     </Grid.RowDefinitions>
                     <TextBox
                         x:Uid="FontFamilyFilterInput"
+                        Style="{StaticResource DefaultThemeTextBoxStyle}"
                         Text="{Binding ViewModel.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         d:PlaceholderText="{core:Localizer Key=FontFamilyFilterInput/PlaceholderText}" />
 
