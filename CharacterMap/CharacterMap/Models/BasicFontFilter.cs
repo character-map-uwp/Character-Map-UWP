@@ -155,6 +155,35 @@ public partial class BasicFontFilter
 
 
 
+    /* EMBEDDING RIGHTS */
+
+    public static BasicFontFilter EmbeddingInstallable { get; }
+        = new(
+                (f, c) => f.Where(v => v.Variants.Any(v => v.Face.GetEmbeddingType() == FontEmbeddingType.Installable)),
+                "Installable");
+
+    public static BasicFontFilter EmbeddingEditable { get; }
+        = new(
+                (f, c) => f.Where(v => v.Variants.Any(v => v.Face.GetEmbeddingType() == FontEmbeddingType.Editable)),
+                "Editable");
+
+    public static BasicFontFilter EmbeddingBitmapOnly { get; }
+        = new(
+                (f, c) => f.Where(v => v.Variants.Any(v => v.Face.GetEmbeddingType() == FontEmbeddingType.BitmapOnly)),
+                "Bitmap Only");
+
+    public static BasicFontFilter EmbeddingRestricted { get; }
+        = new(
+                (f, c) => f.Where(v => v.Variants.Any(v => v.Face.GetEmbeddingType() == FontEmbeddingType.Restricted)),
+                "Restricted");
+
+    public static BasicFontFilter EmbeddingPrintPreview { get; }
+        = new(
+                (f, c) => f.Where(v => v.Variants.Any(v => v.Face.GetEmbeddingType() == FontEmbeddingType.PreviewPrint)),
+                "Preview & Print");
+
+
+
     /* SCRIPTS */
 
     public static BasicFontFilter ScriptArabic { get; }

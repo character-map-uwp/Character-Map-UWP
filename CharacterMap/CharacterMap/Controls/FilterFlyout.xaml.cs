@@ -119,6 +119,13 @@ public sealed partial class FilterFlyout : MenuFlyout
             .Add(BasicFontFilter.EmojiDingbats, style)
             .Add(BasicFontFilter.EmojiSymbols, style);
 
+        AddChild(_ops, "CanvasFontInformationEmbeddingRights")
+            .Add(BasicFontFilter.EmbeddingInstallable, style)
+            .Add(BasicFontFilter.EmbeddingEditable, style)
+            .Add(BasicFontFilter.EmbeddingRestricted, style)
+            .Add(BasicFontFilter.EmbeddingPrintPreview, style)
+            .Add(BasicFontFilter.EmbeddingBitmapOnly, style);
+
         _fontSep = AddSep(_ops);
         _remoteOption = Create(BasicFontFilter.RemoteFonts);
         _appxOption = Create(BasicFontFilter.AppXFonts);
