@@ -13,7 +13,6 @@
         <ResourceDictionary x:Key="HighContrast" />
     </ResourceDictionary.ThemeDictionaries>
 
-    <SolidColorBrush x:Key="AppMenuItemBackgroundBrush" Color="White" />
     <SolidColorBrush x:Key="RadioButtonsSelectedForeground" Color="White" />
 
     <Style TargetType="controls:XamlTitleBar">

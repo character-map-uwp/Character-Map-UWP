@@ -45,7 +45,7 @@
             </Flyout.FlyoutPresenterStyle>
 
             <ScrollViewer>
-                <Grid x:Name="MenuBG">
+                <Grid x:Name="MenuBG" Background="{ThemeResource AppMenuBackgroundBrush}">
                     <TextBlock
                         x:Name="MenuShimmy"
                         FontSize="14"
@@ -1381,6 +1381,7 @@
                 <VisualState x:Name="ClassicThemeState">
                     <VisualState.Setters>
                         <Setter Target="MainMenuIcon.Visibility" Value="Visible" />
+                        <Setter Target="MainMenuButton.Height" Value="32" />
                         <Setter Target="SettingsButtonIcon.Visibility" Value="Visible" />
                         <Setter Target="TitleButtonsPresenter.(Grid.Row)" Value="0" />
                         <Setter Target="TitleBar.(Grid.Row)" Value="0" />
@@ -1428,7 +1429,6 @@
                 </VisualState>
                 <VisualState x:Name="MaterialThemeState">
                     <VisualState.Setters>
-                        <Setter Target="MenuBG.Background" Value="{ThemeResource MaterialPaneBGBrush}" />
                         <Setter Target="TabBorder.CornerRadius" Value="16 0 0 0" />
                         <Setter Target="FontsTabContainer.Margin" Value="12 0 0 0" />
                         <Setter Target="PageRoot.Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />

@@ -135,6 +135,7 @@
     <SolidColorBrush x:Key="ButtonForegroundPointerOverBrush" Color="#A3A3A3" />
     <SolidColorBrush x:Key="FlyoutPresenterBackground" Color="White" />
     <SolidColorBrush x:Key="FlyoutBorderThemeBrush" Color="#AFAAAC" />
+    <SolidColorBrush x:Key="AppMenuBackgroundBrush" Color="Transparent" />
 
     <!--<StaticResource x:Key="CardStrokeColorDefaultBrush" ResourceKey="ComboBoxBorderBrush" />-->
 
@@ -183,6 +184,7 @@
 
     <StaticResource x:Key="RepeatButtonBackgroundPointerOver" ResourceKey="ButtonPointerOverBackgroundBrush" />
     <StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="ComboBoxBorderBrush" />
+    <StaticResource x:Key="AppMenuItemBackgroundBrush" ResourceKey="ButtonBackgroundBrush" />
 
 
     <Style TargetType="controls:ButtonGroup">
@@ -1232,9 +1234,9 @@
             </Grid.ColumnDefinitions>
 
             <FontIcon
+                core:Properties.ThemeIcon="{Binding Icon}"
                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                FontSize="30"
-                Glyph="{Binding Glyph}" />
+                FontSize="30" />
 
             <StackPanel
                 Grid.Column="1"
@@ -1262,9 +1264,9 @@
         <StackPanel Spacing="8">
             <FontIcon
                 HorizontalAlignment="Center"
+                core:Properties.ThemeIcon="{Binding Icon}"
                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                FontSize="24"
-                Glyph="{Binding Glyph}" />
+                FontSize="24" />
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                 <TextBlock FontWeight="Light" TextAlignment="Center">
                     <Run FontSize="14" Text="{Binding Title, Converter={StaticResource FontSelectorTitleConverter}}" />
@@ -3067,7 +3069,7 @@
 
     <!--  TEXTBOX  -->
 
-    <Style TargetType="TextBox">
+    <Style x:Key="DefaultTextBoxStyle" TargetType="TextBox">
         <Setter Property="CornerRadius" Value="2" />
         <Setter Property="Foreground" Value="{ThemeResource TextControlForeground}" />
         <Setter Property="Background" Value="{ThemeResource TextControlBackground}" />
@@ -3344,6 +3346,9 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style BasedOn="{StaticResource DefaultTextBoxStyle}" TargetType="TextBox" />
+    <Style x:Key="DefaultThemeTextBoxStyle" BasedOn="{StaticResource DefaultTextBoxStyle}" TargetType="TextBox" />
 
     <Style x:Key="AutoSuggestBoxTextBoxStyle" TargetType="TextBox">
         <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}" />

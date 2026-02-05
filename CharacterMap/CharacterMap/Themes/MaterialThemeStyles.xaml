@@ -76,6 +76,7 @@
 
                     <StaticResource x:Key="ComboBoxDropDownBackground" ResourceKey="TopCardBrush" />
                     <SolidColorBrush x:Key="ComboBoxBackground" Color="#e0e0e0" />
+                    <StaticResource x:Key="AppMenuBackgroundBrush" ResourceKey="MaterialPaneBGBrush" />
 
                     <!--  Override system generated accent colors  -->
                     <Color x:Key="SystemAccentColorDark1">#FFAEC7F6</Color>
@@ -158,6 +159,7 @@
 
                     <StaticResource x:Key="ComboBoxDropDownBackground" ResourceKey="TopCardBrush" />
                     <SolidColorBrush x:Key="ComboBoxBackground" Color="#e0e0e0" />
+                    <StaticResource x:Key="AppMenuBackgroundBrush" ResourceKey="MaterialPaneBGBrush" />
 
                     <!--  Override system generated accent colors  -->
                     <Color x:Key="SystemAccentColorDark1">#FF416CD2</Color>
@@ -173,6 +175,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
+
 
 
     <!--<SolidColorBrush x:Key="ComboBoxBorderBrush" Color="Transparent" />-->

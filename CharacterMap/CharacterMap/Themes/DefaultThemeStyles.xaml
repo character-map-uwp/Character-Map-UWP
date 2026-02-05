@@ -9,10 +9,12 @@
         <ResourceDictionary x:Key="Default">
             <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="Black" />
             <SolidColorBrush x:Key="DefaultWindowBackgroundBrush" Color="Black" />
+            <StaticResource x:Key="AppMenuItemBackgroundBrush" ResourceKey="ButtonRevealBackground" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="White" />
             <SolidColorBrush x:Key="DefaultWindowBackgroundBrush" Color="White" />
+            <StaticResource x:Key="AppMenuItemBackgroundBrush" ResourceKey="ButtonRevealBackground" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

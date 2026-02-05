@@ -114,10 +114,10 @@ public partial class SelectorVisualElement : FrameworkElement
 
         if (UseMaterialCornerRadius is false)
             _rect.CornerRadius = VisualCornerRadius.ToVector2();
-
-        _rect.StartAnimation(
-            _rect.CreateExpressionAnimation(nameof(_rect.CornerRadius))
-            .SetExpression("Vector2(this.Target.Size.Y/2f, this.Target.Size.Y/2f)"));
+        else
+            _rect.StartAnimation(
+                _rect.CreateExpressionAnimation(nameof(_rect.CornerRadius))
+                .SetExpression("Vector2(this.Target.Size.Y/2f, this.Target.Size.Y/2f)"));
     }
 
     void Update()
@@ -185,7 +185,7 @@ public partial class SelectorVisualElement : FrameworkElement
     partial void OnVisualCornerRadiusChanged(Point o, Point n)
     {
         if (_rect is not null)
-            _rect.CornerRadius = VisualCornerRadius.ToVector2();
+            SetCornerAnimation();
     }
 
     void CreateVisual()

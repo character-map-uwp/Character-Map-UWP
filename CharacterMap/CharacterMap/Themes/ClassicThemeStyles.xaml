@@ -25,6 +25,7 @@
             <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="Black" />
             <Color x:Key="TextOnAccentFillColorPrimary">Black</Color>
             <Color x:Key="TextFillColorPrimary">Black</Color>
+            <StaticResource x:Key="AppMenuItemBackgroundBrush" ResourceKey="ControlBackgroundBrush" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <SolidColorBrush x:Key="DefaultHostBrush" Color="Transparent" />
@@ -43,6 +44,7 @@
             <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="Black" />
             <Color x:Key="TextOnAccentFillColorPrimary">Black</Color>
             <Color x:Key="TextFillColorPrimary">Black</Color>
+            <StaticResource x:Key="AppMenuItemBackgroundBrush" ResourceKey="ControlBackgroundBrush" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
