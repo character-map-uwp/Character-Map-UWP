@@ -1842,4 +1842,22 @@ Requires a restart to take effect.</value>
   <data name="EmbeddingTypeBitmapOnly" xml:space="preserve">
     <value>Bitmap embedding only: only bitmaps contained in the font may be embedded. No outline data may be embedded. If there are no bitmaps available in the font, then the font is considered unembeddable and the embedding services will fail.</value>
   </data>
+  <data name="FilterEmbeddingInstallable.Text" xml:space="preserve">
+    <value>Installable</value>
+  </data>
+  <data name="FilterEmbeddingEditable.Text" xml:space="preserve">
+    <value>Editable</value>
+  </data>
+  <data name="FilterEmbeddingPreviewPrint.Text" xml:space="preserve">
+    <value>Preview &amp; Print</value>
+  </data>
+  <data name="FilterEmbeddingRestricted.Text" xml:space="preserve">
+    <value>Restricted</value>
+  </data>
+  <data name="FilterEmbeddingBitmap.Text" xml:space="preserve">
+    <value>Bitmap Only</value>
+  </data>
+  <data name="All.Text" xml:space="preserve">
+    <value>All</value>
+  </data>
 </root>

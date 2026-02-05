@@ -159,7 +159,7 @@ public partial class BasicFontFilter
     public static BasicFontFilter AllColor { get; }
        = new(
                (f, c) => f.Where(v => v.DefaultVariant.DirectWriteProperties.IsColorFont),
-               "All");
+               Localization.Get("All/Text"));
 
     public static BasicFontFilter COLRV0 { get; }
        = new(
@@ -179,7 +179,7 @@ public partial class BasicFontFilter
     public static BasicFontFilter Bitmap { get; }
        = new(
                (f, c) => f.Where(v => v.Variants.Any(v => v.ContainsBitmapGlyphs)),
-               "Bitmap");
+               Localization.Get("GlyphTypeBitmap"));
 
 
 
@@ -188,27 +188,27 @@ public partial class BasicFontFilter
     public static BasicFontFilter EmbeddingInstallable { get; }
         = new(
                 (f, c) => f.Where(v => v.Variants.Any(v => v.Face.GetEmbeddingType() == FontEmbeddingType.Installable)),
-                "Installable");
+                Localization.Get("FilterEmbeddingInstallable/Text"));
 
     public static BasicFontFilter EmbeddingEditable { get; }
         = new(
                 (f, c) => f.Where(v => v.Variants.Any(v => v.Face.GetEmbeddingType() == FontEmbeddingType.Editable)),
-                "Editable");
+                Localization.Get("FilterEmbeddingEditable/Text"));
 
     public static BasicFontFilter EmbeddingBitmapOnly { get; }
         = new(
                 (f, c) => f.Where(v => v.Variants.Any(v => v.Face.GetEmbeddingType() == FontEmbeddingType.BitmapOnly)),
-                "Bitmap Only");
+                Localization.Get("FilterEmbeddingBitmap/Text"));
 
     public static BasicFontFilter EmbeddingRestricted { get; }
         = new(
                 (f, c) => f.Where(v => v.Variants.Any(v => v.Face.GetEmbeddingType() == FontEmbeddingType.Restricted)),
-                "Restricted");
+                Localization.Get("FilterEmbeddingRestricted/Text"));
 
     public static BasicFontFilter EmbeddingPrintPreview { get; }
         = new(
                 (f, c) => f.Where(v => v.Variants.Any(v => v.Face.GetEmbeddingType() == FontEmbeddingType.PreviewPrint)),
-                "Preview & Print");
+                Localization.Get("FilterEmbeddingPreviewPrint/Text"));
 
 
 

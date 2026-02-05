@@ -1,5 +1,110 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
   </resheader>
@@ -172,6 +277,9 @@
   </data>
   <data name="OpenFontPickerConfirm" xml:space="preserve">
     <value>เปิด</value>
+  </data>
+  <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
+    <value>ชื่อรายการสะสม</value>
   </data>
   <data name="DigCreateCollection.PrimaryButtonText" xml:space="preserve">
     <value>สร้าง</value>
@@ -500,6 +608,9 @@
   <data name="BtnContinue.Content" xml:space="preserve">
     <value>ส่งพิมพ์</value>
   </data>
+  <data name="BtnPrint.Content" xml:space="preserve">
+    <value>พิมพ์</value>
+  </data>
   <data name="CbCharacterLabel.Header" xml:space="preserve">
     <value>แสดงชื่ออักษร</value>
   </data>
@@ -518,8 +629,17 @@
   <data name="ChkBxHideWhitespace.Content" xml:space="preserve">
     <value>ซ่อนอักขระว่าง</value>
   </data>
+  <data name="ChkBxShowBorders.Content" xml:space="preserve">
+    <value>แสดงขอบตาราง</value>
+  </data>
   <data name="GlyphAnnotation_None" xml:space="preserve">
     <value>ไม่แสดง</value>
+  </data>
+  <data name="GlyphAnnotation_UnicodeHex" xml:space="preserve">
+    <value>รหัสอักษร</value>
+  </data>
+  <data name="GlyphAnnotation_UnicodeIndex" xml:space="preserve">
+    <value>ที่อยู่อักษร</value>
   </data>
   <data name="PrintCharacterFilterContent.Text" xml:space="preserve">
     <value>เลือกกลุ่มอักษรที่จะพิมพ์</value>
@@ -574,14 +694,12 @@
   <data name="PrintViewVerticalMarginHeader.Text" xml:space="preserve">
     <value>ขนาดขอบแนวตั้ง</value>
   </data>
-  <data name="UnicodeFiltersTitle.Text" xml:space="preserve">
-    <value>กรองกลุ่มอักษรที่พิมพ์</value>
+  <data name="SettingsCharLabel.Text" xml:space="preserve">
+    <value>ชื่ออักษร</value>
   </data>
-  <data name="GlyphAnnotation_UnicodeHex" xml:space="preserve">
-    <value>รหัสอักษร</value>
-  </data>
-  <data name="GlyphAnnotation_UnicodeIndex" xml:space="preserve">
-    <value>ที่อยู่อักษร</value>
+  <data name="SettingsCharLabelDesc.Text" xml:space="preserve">
+    <value>เลือกการแสดงผลข้อมูลใต้อักษร
+อาจมีผลเสียขณะเลือนดูารางอักษรเล็กน้อย</value>
   </data>
   <data name="SettingsManageSystemFonts.Content" xml:space="preserve">
     <value>จัดการฟอนต์ที่ติดตั้งในเครื่อง</value>
@@ -592,18 +710,8 @@
   <data name="SettingsWindowsThemeSettings.Content" xml:space="preserve">
     <value>ตั้งค่าสีของระบบ</value>
   </data>
-  <data name="SettingsCharLabel.Text" xml:space="preserve">
-    <value>ชื่ออักษร</value>
-  </data>
-  <data name="SettingsCharLabelDesc.Text" xml:space="preserve">
-    <value>เลือกการแสดงผลข้อมูลใต้อักษร
-อาจมีผลเสียขณะเลือนดูารางอักษรเล็กน้อย</value>
-  </data>
-  <data name="BtnPrint.Content" xml:space="preserve">
-    <value>พิมพ์</value>
-  </data>
-  <data name="ChkBxShowBorders.Content" xml:space="preserve">
-    <value>แสดงขอบตาราง</value>
+  <data name="UnicodeFiltersTitle.Text" xml:space="preserve">
+    <value>กรองกลุ่มอักษรที่พิมพ์</value>
   </data>
   <data name="PrintLayout_Grid" xml:space="preserve">
     <value>ตาราง</value>
@@ -664,9 +772,6 @@
   <data name="NotificationFontAddedBody.Text" xml:space="preserve">
     <value>ถูกเพิ่มเข้าไปยัง</value>
   </data>
-  <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
-    <value>ชื่อรายการสะสม</value>
-  </data>
   <data name="ExportFontFile.Text" xml:space="preserve">
     <value>ไฟล์ฟอนต์</value>
   </data>
@@ -691,12 +796,12 @@
   <data name="SystemFontsExpiredMessage.Text" xml:space="preserve">
     <value>มีฟอนต์ถูกเพิ่มหรือลบออก คลิกที่นี่เพิ่อโหลดอัพเดตรายการฟ้อนต์ใหม่</value>
   </data>
+  <data name="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ซ่อน/แสดง เครื่องมือนักพัฒนา</value>
+  </data>
   <data name="TxtPathIcon.Text" xml:space="preserve">
     <value>Path Icon</value>
     <comment>Xaml PathIcon. Does not need translation.</comment>
-  </data>
-  <data name="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>ซ่อน/แสดง เครื่องมือนักพัฒนา</value>
   </data>
   <data name="OptionAllEmoji.Text" xml:space="preserve">
     <value>ทุกกลุ่ม</value>
@@ -749,23 +854,17 @@
   <data name="ExportedToFolderMessage" xml:space="preserve">
     <value>ส่งออกไปยัง {0}</value>
   </data>
-  <data name="SettingsAboutLabel.Text" xml:space="preserve">
-    <value>เกี่ยวกับ</value>
-  </data>
-  <data name="SettingsAdvancedUILabel.Text" xml:space="preserve">
-    <value>การแสดงผลขั้นสูง</value>
-  </data>
-  <data name="SettingsFontManagementLabel.Text" xml:space="preserve">
-    <value>จัดการฟอนต์</value>
-  </data>
-  <data name="SettingsLicensesLabel.Text" xml:space="preserve">
-    <value>สิทธิ์การใช้งาน</value>
-  </data>
   <data name="ImportDragDropDescriptionLabel.Text" xml:space="preserve">
     <value>ลากไฟล์จากตัวจัดการไฟล์หรือ Desktop แล้ววางไว้ตรงนี้เพื่อนำเข้าฟอนต์.</value>
   </data>
   <data name="ImportDragDropLabel.Text" xml:space="preserve">
     <value>ลากและวางเพื่อนำเข้า</value>
+  </data>
+  <data name="SettingsAboutLabel.Text" xml:space="preserve">
+    <value>เกี่ยวกับ</value>
+  </data>
+  <data name="SettingsAdvancedUILabel.Text" xml:space="preserve">
+    <value>การแสดงผลขั้นสูง</value>
   </data>
   <data name="SettingsExportImportedLabel.Text" xml:space="preserve">
     <value>ส่งออกฟอนต์ที่นำเข้าทั้งหมด</value>
@@ -780,6 +879,9 @@
     <value>คุณสามารถนำเข้าฟอนต์เข้าแอพพลิเคชั่นเพื่อดูได้ โดยไม่ต้องติดตั้งเข้าระบบ
 
 ฟอนต์ที่นำเข้าจะถูกเก็บไว้ในแอปต่างหาก เพราะฉะนั้นหากไฟล์ต้นฉบับถูกลบไปแล้ว ฟอนต์นั้นจะยังแสดงอยู่ในแอพพลิเคชั่นได้</value>
+  </data>
+  <data name="SettingsFontManagementLabel.Text" xml:space="preserve">
+    <value>จัดการฟอนต์</value>
   </data>
   <data name="SettingsFontNameExportDescription.Text" xml:space="preserve">
     <value>เลือกวิธีตั้งชื่อฟอนต์ที่จะส่งออก
@@ -796,14 +898,17 @@
   <data name="SettingsLicensesDescriptionLabel.Text" xml:space="preserve">
     <value>แอพพลิเคชั่นนี้ได้ใช้ไลบรารี่โอเพนซอร์สเหล่านี้</value>
   </data>
+  <data name="SettingsLicensesLabel.Text" xml:space="preserve">
+    <value>สิทธิ์การใช้งาน</value>
+  </data>
+  <data name="BtnReset.Content" xml:space="preserve">
+    <value>รีเซท</value>
+  </data>
   <data name="OptionVariableFonts.Text" xml:space="preserve">
     <value>ฟอนต์ตัวแปร</value>
   </data>
   <data name="VariableFeaturesMessage.Text" xml:space="preserve">
     <value>ฟอนต์นี้สามารถปรับแต่งตามค่าตัวแปรได้. หากต้องการดูให้สลับไปยังมุมมองแสดงตัวอย่างโดยคลิกที่ปุ่มสลับมุมมองด้านบน.</value>
-  </data>
-  <data name="BtnReset.Content" xml:space="preserve">
-    <value>รีเซท</value>
   </data>
   <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
     <value>ซ่อนหรือแสดงตัวอย่างอักษรที่เลือกด้านขวา. หากปิดไป ฟังก์ชั่นต่างๆ ยังสามารถเข้าถึงได้ด้วยเมนูคลิกขวาที่ตัวอักษรในรายการผังอักษร.</value>
@@ -841,17 +946,17 @@
   <data name="NotificationCopied" xml:space="preserve">
     <value>คัดลอกเรียบร้อยแล้ว</value>
   </data>
-  <data name="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>ซ่อน/แสดง ผังคัดลอกอักขระ (Ctrl+B)</value>
-  </data>
   <data name="AddButton.Label" xml:space="preserve">
     <value>เพิ่ม</value>
+  </data>
+  <data name="AddSelectionItem.Text" xml:space="preserve">
+    <value>เพิ่มเข้าผังคัดลอกอักขระ</value>
   </data>
   <data name="CopySequencePlaceholder.Text" xml:space="preserve">
     <value>ดับเบิ้ลคลิกที่ตัวอักษรเพื่อเพิ่่มเข้าผังคัดลอกอักขระ</value>
   </data>
-  <data name="AddSelectionItem.Text" xml:space="preserve">
-    <value>เพิ่มเข้าผังคัดลอกอักขระ</value>
+  <data name="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ซ่อน/แสดง ผังคัดลอกอักขระ (Ctrl+B)</value>
   </data>
   <data name="CompactOverlayButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>ตรึงให้แสดงเหนือโปรแกรมอื่น</value>
@@ -961,13 +1066,6 @@
   <data name="ExportSkipBlank.Content" xml:space="preserve">
     <value>ไม่ส่งออกอักษรที่ว่างเปล่า</value>
   </data>
-  <data name="SettingsDesignStyle.Description" xml:space="preserve">
-    <value>เปลี่ยนรูปแบบการแสดงผลแอป.
-จะมีผลเมื่อออกเข้าใหม่</value>
-  </data>
-  <data name="SettingsDesignStyle.Title" xml:space="preserve">
-    <value>รูปแบบการแสดงผลโปรแกรม</value>
-  </data>
   <data name="CharacterFilterButton.Label" xml:space="preserve">
     <value>ตัวกรอง</value>
     <comment>Labels must be as short as possible</comment>
@@ -995,6 +1093,13 @@
   <data name="RenameCollectionButton.Label" xml:space="preserve">
     <value>เปลี่ยนชื่อ</value>
     <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="SettingsDesignStyle.Description" xml:space="preserve">
+    <value>เปลี่ยนรูปแบบการแสดงผลแอป.
+จะมีผลเมื่อออกเข้าใหม่</value>
+  </data>
+  <data name="SettingsDesignStyle.Title" xml:space="preserve">
+    <value>รูปแบบการแสดงผลโปรแกรม</value>
   </data>
   <data name="ViewToggleButton.Label" xml:space="preserve">
     <value>สลับ</value>
