@@ -2463,6 +2463,7 @@
                 <VisualState x:Name="CharacterMapState">
                     <VisualState.Setters>
                         <!--<Setter Target="SwitchToTypeRampButton.Visibility" Value="Visible" />-->
+                        <Setter Target="ViewToggleButton.(core:Properties.ToolTip)" Value="{core:Localizer Key='LblSwitchToTypeRamp/Text'}" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="TypeRampState">
