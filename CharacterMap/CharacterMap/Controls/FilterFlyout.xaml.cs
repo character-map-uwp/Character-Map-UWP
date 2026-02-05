@@ -106,12 +106,18 @@ public sealed partial class FilterFlyout : MenuFlyout
         // 3. "More" option
         _ops = AddSub("OptionMoreFilters/Text")
             .Add(BasicFontFilter.VariableFonts, style)
-            .Add(BasicFontFilter.ColorFonts, style)
             .Add(BasicFontFilter.PanoseDecorativeFonts, style)
             .Add(BasicFontFilter.PanoseScriptFonts, style)
             .Add(BasicFontFilter.MonospacedFonts, style);
 
         _variableOption = _ops.Items[0];
+
+        AddChild(_ops, "OptionColorFonts/Text")
+            .Add(BasicFontFilter.AllColor, style)
+            .Add(BasicFontFilter.COLRV0, style)
+            .Add(BasicFontFilter.COLRV1, style, predicate: () => Utils.Supports23H2)
+            .Add(BasicFontFilter.SVG, style)
+            .Add(BasicFontFilter.Bitmap, style);
 
         AddChild(_ops, "OptionEmoji/Text")
             .Add(BasicFontFilter.EmojiAll, style)

@@ -96,8 +96,11 @@ public static class Extensions
         return menu;
     }
 
-    public static MenuFlyoutSubItem Add(this MenuFlyoutSubItem item, BasicFontFilter filter, Style style = null)
+    public static MenuFlyoutSubItem Add(this MenuFlyoutSubItem item, BasicFontFilter filter, Style style = null, Func<bool> predicate = null)
     {
+        if (predicate?.Invoke() is false)
+            return item;
+
         MenuFlyoutItem i = new() { Style = style };
         Core.Properties.SetFilter(i, filter);
         item.Items.Add(i);

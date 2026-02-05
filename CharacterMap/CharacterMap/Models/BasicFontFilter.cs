@@ -154,9 +154,37 @@ public partial class BasicFontFilter
 
 
 
+    /* COLOR */
+
+    public static BasicFontFilter AllColor { get; }
+       = new(
+               (f, c) => f.Where(v => v.DefaultVariant.DirectWriteProperties.IsColorFont),
+               "All");
+
+    public static BasicFontFilter COLRV0 { get; }
+       = new(
+               (f, c) => f.Where(v => v.Variants.Any(v => v.ContainsCOLRV0Glyphs)),
+               "COLRv0");
+
+    public static BasicFontFilter COLRV1 { get; }
+        = new(
+                (f, c) => f.Where(v => v.Variants.Any(v => v.SupportsCOLRv1Rendering)),
+                "COLRv1");
+
+    public static BasicFontFilter SVG { get; }
+       = new(
+               (f, c) => f.Where(v => v.Variants.Any(v => v.ContainsSVGGlyphs)),
+               "SVG");
+
+    public static BasicFontFilter Bitmap { get; }
+       = new(
+               (f, c) => f.Where(v => v.Variants.Any(v => v.ContainsBitmapGlyphs)),
+               "Bitmap");
+
+
+
 
     /* EMBEDDING RIGHTS */
-
     public static BasicFontFilter EmbeddingInstallable { get; }
         = new(
                 (f, c) => f.Where(v => v.Variants.Any(v => v.Face.GetEmbeddingType() == FontEmbeddingType.Installable)),
