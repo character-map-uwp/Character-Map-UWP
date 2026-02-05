@@ -567,6 +567,7 @@
                         <TextBlock
                             x:Uid="AddToCollectionHint"
                             Grid.Column="1"
+                            VerticalAlignment="Center"
                             FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                             TextTrimming="CharacterEllipsis"
                             d:Text="{core:Localizer Key=AddToCollectionHint/Text}" />

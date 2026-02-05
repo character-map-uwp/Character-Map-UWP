@@ -42,6 +42,8 @@
 
                 <ResourceDictionary>
                     <Color x:Key="SolidBackgroundFillColorBase">#202020</Color>
+                    <Color x:Key="MaterialSelectedColor">#c0cce3</Color>
+
                     <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="#1b1b1b" />
                     <SolidColorBrush x:Key="DefaultHostBrush" Color="#1b1b1b" />
                     <StaticResource x:Key="AltHostBrush" ResourceKey="SystemAccentColor" />
@@ -54,14 +56,16 @@
                     <StaticResource x:Key="TabViewItemHeaderBackgroundSelected" ResourceKey="TopCardBrush" />
 
                     <SolidColorBrush x:Key="SearchBoxBackgroundBrush">#343537</SolidColorBrush>
-                    <SolidColorBrush x:Key="MaterialSelectedBrush" Color="#c0cce3" />
+                    <SolidColorBrush x:Key="MaterialSelectedBrush" Color="{ThemeResource MaterialSelectedColor}" />
                     <SolidColorBrush x:Key="MaterialPaneBGBrush" Color="#292a2c" />
                     <SolidColorBrush x:Key="AppMenuItemBackgroundBrush" Color="#1C1C1C" />
                     <SolidColorBrush x:Key="MaterialSelectorFillBrush" Color="#434a5c" />
 
                     <SolidColorBrush x:Key="ButtonPointerOverBrush" Color="#232424" />
                     <SolidColorBrush x:Key="ButtonPressedBrush" Color="#232424" />
+
                     <SolidColorBrush x:Key="TextForegroundBrush" Color="#e3e3e3" />
+                    <StaticResource x:Key="ApplicationForegroundThemeBrush" ResourceKey="TextForegroundBrush" />
                     <StaticResource x:Key="SystemControlForegroundBaseHighBrush" ResourceKey="TextForegroundBrush" />
                     <StaticResource x:Key="TextFillColorPrimaryBrush" ResourceKey="TextForegroundBrush" />
 
@@ -120,6 +124,9 @@
                     <Color x:Key="ButtonPointerBackground">#e4e7eb</Color>
                     <Color x:Key="ButtonPressedBackground">#d4d6da</Color>
                     <Color x:Key="SolidBackgroundFillColorBase">#f1f4f8</Color>
+                    <Color x:Key="MaterialSelectedColor">#274ea2</Color>
+
+
                     <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="{StaticResource SolidBackgroundFillColorBase}" />
                     <SolidColorBrush x:Key="DefaultHostBrush" Color="{ThemeResource SolidBackgroundFillColorBase}" />
                     <StaticResource x:Key="AltHostBrush" ResourceKey="CardBackgroundFillColorDefaultBrush" />
@@ -130,15 +137,17 @@
                     <SolidColorBrush x:Key="FlyoutItemPointerOverBrush" Color="#ededed" />
                     <SolidColorBrush x:Key="TopCardBrush" Color="#FFFFFF" />
 
+
                     <SolidColorBrush x:Key="MaterialPaneBGBrush" Color="#e9eef5" />
-                    <SolidColorBrush x:Key="MaterialSelectedBrush" Color="#274ea2" />
+                    <SolidColorBrush x:Key="MaterialSelectedBrush" Color="{ThemeResource MaterialSelectedColor}" />
                     <SolidColorBrush x:Key="MaterialSelectorFillBrush" Color="#c9e6fc" />
                     <SolidColorBrush x:Key="MaterialCardBackgroundBrush" Color="#FFFFFF" />
                     <SolidColorBrush x:Key="AppMenuItemBackgroundBrush" Color="#FFFFFF" />
                     <SolidColorBrush x:Key="FlyoutBackgroundThemeBrush" Color="#FFFFFF" />
-                    <SolidColorBrush x:Key="IconForegroundBrush" Color="#c4c7c5" />
+                    <SolidColorBrush x:Key="IconForegroundBrush" Color="#454746" />
 
                     <SolidColorBrush x:Key="TextForegroundBrush" Color="#1f1f1f" />
+                    <StaticResource x:Key="ApplicationForegroundThemeBrush" ResourceKey="TextForegroundBrush" />
                     <StaticResource x:Key="SystemControlForegroundBaseHighBrush" ResourceKey="TextForegroundBrush" />
                     <StaticResource x:Key="TextFillColorPrimaryBrush" ResourceKey="TextForegroundBrush" />
 
@@ -172,6 +181,7 @@
     <x:Boolean x:Key="SupportsFluentAnimation">False</x:Boolean>
     <x:Boolean x:Key="SupportsShadows">False</x:Boolean>
     <x:Boolean x:Key="SupportsTabs">True</x:Boolean>
+    <x:Boolean x:Key="SupportsDarkTheme">False</x:Boolean>
     <x:Double x:Key="MinTitleBarHeight">45</x:Double>
     <x:Double x:Key="ToolTipContentThemeFontSize">13.666</x:Double>
 
@@ -198,7 +208,7 @@
 
     <Style x:Key="ThemeFontIconStyle" TargetType="FontIcon">
         <Setter Property="core:Properties.RenderScale" Value="1.25" />
-        <Setter Property="Foreground" Value="{ThemeResource TextForegroundBrush}" />
+        <!--<Setter Property="Foreground" Value="{ThemeResource TextForegroundBrush}" />-->
         <Setter Property="FontFamily" Value="{StaticResource MaterialThemeFontFamily}" />
     </Style>
 
@@ -208,6 +218,10 @@
 
 
     <!--  TEXT STYLES  -->
+
+    <!--<Style TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{ThemeResource TextForegroundBrush}" />
+    </Style>-->
 
     <Style x:Key="FontFilterTitleStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="14.666" />
@@ -813,46 +827,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="muxc:RadioButtons">
-        <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
-        <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="muxc:RadioButtons">
-                    <Grid
-                        x:Name="ControlRoot"
-                        Background="{TemplateBinding Background}"
-                        BackgroundTransition="{StaticResource QuickBackgroundTransition}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="Disabled">
-                                    <VisualState.Setters>
-                                        <Setter Target="ControlRoot.Opacity" Value="0.4" />
-                                    </VisualState.Setters>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                        <muxc:ItemsRepeater x:Name="InnerRepeater">
-                            <muxc:ItemsRepeater.Layout>
-                                <primitives:ColumnMajorUniformToLargestGridLayout
-                                    ColumnSpacing="{TemplateBinding Tag}"
-                                    RowSpacing="{ThemeResource RadioButtonsRowSpacing}"
-                                    MaxColumns="{Binding MaxColumns, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                            </muxc:ItemsRepeater.Layout>
-                        </muxc:ItemsRepeater>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
 
 
 
@@ -966,9 +940,9 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Background" Value="{ThemeResource MaterialCardBackgroundBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Margin" Value="0 4" />
-        <Setter Property="BottomCornerRadius" Value="0 0 4 4" />
+        <Setter Property="BottomCornerRadius" Value="0 0 16 16" />
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
@@ -1024,7 +998,7 @@
                                 <VisualState x:Name="NoItemsState" />
                                 <VisualState x:Name="HasItemsState">
                                     <VisualState.Setters>
-                                        <Setter Target="TopCardRoot.CornerRadius" Value="4 4 0 0" />
+                                        <Setter Target="TopCardRoot.CornerRadius" Value="16 16 0 0" />
                                         <Setter Target="ItemsRoot.Visibility" Value="Visible" />
                                     </VisualState.Setters>
                                 </VisualState>
@@ -1118,7 +1092,6 @@
     <Style x:Key="SubItemSettingsPresenterStyle" BasedOn="{StaticResource DefaultSettingsPresenterStyle}" TargetType="controls:SettingsPresenter">
         <Setter Property="Padding" Value="0 0 0 0" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="CornerRadius" Value="0" />
         <Setter Property="Margin" Value="0" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="core:Properties.MaterialCornerStyle" Value="None" />
@@ -1299,8 +1272,8 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Margin" Value="0 0 0 2" />
-        <Setter Property="core:Properties.MaterialCornerStyle" Value="Default" />
+        <Setter Property="Margin" Value="0 0 0 0" />
+        <Setter Property="core:Properties.MaterialCornerStyle" Value="None" />
         <Setter Property="Padding" Value="2 1" />
         <Setter Property="Template">
             <Setter.Value>
@@ -1353,7 +1326,8 @@
                                 </VisualState>
                                 <VisualState x:Name="PressedSelected">
                                     <VisualState.Setters>
-                                        <Setter Target="Presenter.Background" Value="{ThemeResource ListViewItemBackgroundSelectedPressed}" />
+                                        <Setter Target="Presenter.Background" Value="{ThemeResource ItemSelectedPointerOverBrush}" />
+                                        <Setter Target="Presenter.Foreground" Value="{ThemeResource TabViewItemHeaderForegroundPressed}" />
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
@@ -2296,8 +2270,8 @@
     </Style>
 
 
-    
-    
+
+
     <!--  BUTTONS  -->
 
     <Style x:Key="TabViewButtonStyle" BasedOn="{StaticResource TabViewButtonStyle}" TargetType="Button">
@@ -2770,7 +2744,10 @@
                                     Height="16"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center">
-                                    <ContentPresenter x:Name="IconPresenter" Content="{TemplateBinding Icon}" />
+                                    <ContentPresenter
+                                        x:Name="IconPresenter"
+                                        Content="{TemplateBinding Icon}"
+                                        Foreground="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Foreground}" />
                                 </Viewbox>
 
                                 <ContentPresenter
@@ -2823,11 +2800,12 @@
         <Setter Property="ContextFlyout" Value="{StaticResource TextControlCommandBarContextFlyout}" />
         <Setter Property="SelectionFlyout" Value="{StaticResource TextControlCommandBarSelectionFlyout}" />
         <Setter Property="core:Properties.MaterialCornerStyle" Value="Default" />
+        <Setter Property="core:Properties.ThemeIcon" Value="None" />
         <Setter Property="Background" Value="{ThemeResource SearchBoxBackgroundBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
-                    <Grid>
+                    <StackPanel>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
@@ -2906,78 +2884,89 @@
 
                         </VisualStateManager.VisualStateGroups>
 
-                        <Border
-                            x:Name="BorderElement"
-                            Grid.Row="0"
-                            Grid.RowSpan="2"
-                            Grid.Column="0"
-                            Grid.ColumnSpan="2"
-                            MinWidth="{TemplateBinding MinWidth}"
-                            MinHeight="{TemplateBinding MinHeight}"
-                            Background="{TemplateBinding Background}"
-                            BackgroundTransition="{StaticResource BackgroundTransition}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Control.IsTemplateFocusTarget="True"
-                            CornerRadius="{TemplateBinding CornerRadius}" />
-                        <ScrollViewer
-                            x:Name="ContentElement"
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            Margin="{TemplateBinding BorderThickness}"
-                            Padding="{TemplateBinding Padding}"
-                            HorizontalAlignment="Stretch"
-                            AutomationProperties.AccessibilityView="Raw"
-                            Foreground="{TemplateBinding Foreground}"
-                            HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                            HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
-                            IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
-                            IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
-                            IsTabStop="False"
-                            IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
-                            VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                            VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
-                            ZoomMode="Disabled" />
+                        <ContentPresenter
+                            x:Name="HeaderContentPresenter"
+                            x:DeferLoadStrategy="Lazy"
+                            Margin="0 4 0 4"
+                            VerticalAlignment="Top"
+                            Content="{TemplateBinding Header}"
+                            FontSize="11"
+                            FontWeight="Bold"
+                            TextWrapping="Wrap" />
 
-                        <!--<TextBlock
-                            x:Name="PlaceholderTextContentPresenter"
-                            Grid.Row="1"
-                            Grid.Column="0"
-                            Grid.ColumnSpan="2"
-                            Margin="{TemplateBinding BorderThickness}"
-                            Padding="{TemplateBinding Padding}"
-                            Foreground="{Binding PlaceholderForeground, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={ThemeResource TextControlPlaceholderForeground}}"
-                            IsHitTestVisible="False"
-                            Text="{TemplateBinding PlaceholderText}" />-->
+                        <Grid>
+                            <Border
+                                x:Name="BorderElement"
+                                Grid.Row="0"
+                                Grid.RowSpan="2"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                MinWidth="{TemplateBinding MinWidth}"
+                                MinHeight="{TemplateBinding MinHeight}"
+                                Background="{TemplateBinding Background}"
+                                BackgroundTransition="{StaticResource BackgroundTransition}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Control.IsTemplateFocusTarget="True"
+                                CornerRadius="{TemplateBinding CornerRadius}" />
+                            <ScrollViewer
+                                x:Name="ContentElement"
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Margin="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}"
+                                HorizontalAlignment="Stretch"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Foreground="{TemplateBinding Foreground}"
+                                HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
+                                IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                                IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
+                                IsTabStop="False"
+                                IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
+                                VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
+                                ZoomMode="Disabled" />
 
-                        <StackPanel
-                            x:Name="PlaceholderTextContentPresenter"
-                            Grid.Row="1"
-                            Grid.ColumnSpan="1"
-                            Margin="{TemplateBinding BorderThickness}"
-                            Padding="{TemplateBinding Padding}"
-                            Orientation="Horizontal"
-                            Spacing="8">
-                            <FontIcon
-                                x:Name="PlaceholderIcon"
-                                core:Properties.ThemeIcon="Search"
-                                FontSize="14"
-                                Foreground="{Binding ElementName=PlaceholderTextContent, Path=Foreground}" />
-                            <ContentControl
-                                x:Name="PlaceholderTextContent"
-                                Margin="0 -0.5 0 0"
-                                Content="{TemplateBinding PlaceholderText}"
-                                Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                IsHitTestVisible="False"
-                                IsTabStop="False" />
-                        </StackPanel>
-                    </Grid>
+                            <!--<TextBlock
+        x:Name="PlaceholderTextContentPresenter"
+        Grid.Row="1"
+        Grid.Column="0"
+        Grid.ColumnSpan="2"
+        Margin="{TemplateBinding BorderThickness}"
+        Padding="{TemplateBinding Padding}"
+        Foreground="{Binding PlaceholderForeground, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={ThemeResource TextControlPlaceholderForeground}}"
+        IsHitTestVisible="False"
+        Text="{TemplateBinding PlaceholderText}" />-->
+
+                            <StackPanel
+                                x:Name="PlaceholderTextContentPresenter"
+                                Grid.Row="1"
+                                Grid.ColumnSpan="1"
+                                Margin="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}"
+                                Orientation="Horizontal"
+                                Spacing="8">
+                                <FontIcon
+                                    x:Name="PlaceholderIcon"
+                                    core:Properties.ThemeIcon="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(core:Properties.ThemeIcon)}"
+                                    FontSize="14"
+                                    Foreground="{Binding ElementName=PlaceholderTextContent, Path=Foreground}" />
+                                <ContentControl
+                                    x:Name="PlaceholderTextContent"
+                                    Margin="0 -0.5 0 0"
+                                    Content="{TemplateBinding PlaceholderText}"
+                                    Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                    IsHitTestVisible="False"
+                                    IsTabStop="False" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-
-    <Style x:Key="DefaultThemeAutoSuggestBoxTextBoxStyle" BasedOn="{StaticResource MaterialTextBoxStyle}" TargetType="TextBox" />
 
     <Style x:Key="DefaultThemeTextBoxStyle" BasedOn="{StaticResource MaterialTextBoxStyle}" TargetType="TextBox" />
 
@@ -2986,6 +2975,10 @@
 
 
     <!--  AUTOSUGGESTBOX  -->
+
+    <Style x:Key="DefaultThemeAutoSuggestBoxTextBoxStyle" BasedOn="{StaticResource MaterialTextBoxStyle}" TargetType="TextBox">
+        <Setter Property="core:Properties.ThemeIcon" Value="Search" />
+    </Style>
 
     <Style x:Key="DefaultThemeAutoSuggestBoxStyle" TargetType="AutoSuggestBox">
         <Setter Property="Foreground" Value="{ThemeResource TextForegroundBrush}" />
@@ -3059,6 +3052,7 @@
                             x:Name="TextBox"
                             Width="{TemplateBinding Width}"
                             Margin="0"
+                            core:Properties.ThemeIcon="Search"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Canvas.ZIndex="0"
                             CornerRadius="{TemplateBinding CornerRadius}"
@@ -3563,18 +3557,101 @@
 
     <!--  RADIO SELECTOR  -->
 
+    <Style x:Key="DefaultRadioButtonsThemeStyle" TargetType="muxc:RadioButtons">
+        <Setter Property="Background" Value="{ThemeResource SolidBackgroundFillColorBaseBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorSecondaryBrush}" />
+        <Setter Property="core:Properties.MaterialCornerStyle" Value="Circular" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="controls:SelectorVisualElement.ElementTemplate" Value="{StaticResource RadioSelectorTemplate}" />
+        <Setter Property="core:Properties.UseZoomHelper" Value="True" />
+        <Setter Property="controls:UXRadioButtons.ColumnSpacing" Value="8" />
+        <Setter Property="controls:UXRadioButtons.RowSpacing" Value="8" />
+        <Setter Property="controls:UXRadioButtons.LayoutTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <primitives:ColumnMajorUniformToLargestGridLayout
+                        ColumnSpacing="{Binding Path=(controls:UXRadioButtons.ColumnSpacing), RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                        RowSpacing="{Binding Path=(controls:UXRadioButtons.ColumnSpacing), RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                        MaxColumns="{Binding MaxColumns, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="muxc:RadioButtons">
+                    <Grid x:Name="ControlRoot">
+                        <Grid.Resources />
+
+                        <Border
+                            x:Name="BorderRoot"
+                            Background="{TemplateBinding Background}"
+                            BackgroundTransition="{StaticResource QuickBrushTransition}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}" />
+
+
+                        <muxc:ItemsRepeater
+                            x:Name="InnerRepeater"
+                            Margin="{TemplateBinding Padding}"
+                            controls:UXRadioButtons.LayoutTemplate="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(controls:UXRadioButtons.LayoutTemplate)}" />
+
+                        <ContentPresenter
+                            x:Name="SelectorPresenter"
+                            x:Load="False"
+                            Canvas.ZIndex="-1"
+                            Content="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(controls:SelectorVisualElement.Element)}" />
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="ControlRoot.Opacity" Value="0.4" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="SelectorStateGroup">
+                                <VisualState x:Name="NoSelectorState" />
+                                <VisualState x:Name="SelectorState">
+                                    <VisualState.StateTriggers>
+                                        <StateTrigger IsActive="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(controls:SelectorVisualElement.Element), Converter={StaticResource NullConverter}, ConverterParameter='Inverse'}" />
+                                    </VisualState.StateTriggers>
+                                    <VisualState.Setters>
+                                        <Setter Target="SelectorPresenter.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource DefaultRadioButtonsThemeStyle}" TargetType="muxc:RadioButtons" />
+
+    <Style BasedOn="{StaticResource DefaultRadioButtonsThemeStyle}" TargetType="controls:UXRadioButtons" />
+
+    <Style x:Key="RadioButtonsButtonStyle" BasedOn="{StaticResource RadioButtonsBaseButtonStyle}" TargetType="RadioButton">
+        <Setter Property="core:Properties.Color" Value="{ThemeResource MaterialSelectedColor}" />
+        <Setter Property="core:Properties.MaterialCornerStyle" Value="Circular" />
+    </Style>
+
     <Style x:Key="RadioSelectorElementStyle" TargetType="controls:SelectorVisualElement">
         <Setter Property="BarCornerRadius" Value="2,2" />
-        <Setter Property="BarFill" Value="{ThemeResource AccentFillColorTertiaryBrush}" />
+        <Setter Property="BarFill" Value="Transparent" />
         <Setter Property="BarPadding" Value="2" />
         <Setter Property="BarSize" Value="12,3" />
-        <Setter Property="Fill" Value="{ThemeResource SolidBackgroundFillColorTertiaryBrush}" />
+        <Setter Property="Fill" Value="{ThemeResource MaterialSelectorFillBrush}" />
         <Setter Property="OffsetTransition" Value="{StaticResource DefaultSelectorTransition}" />
         <Setter Property="SizeTransition" Value="{StaticResource DefaultSelectorTransition}" />
         <Setter Property="Stroke" Value="{ThemeResource SurfaceStrokeColorDefaultBrush}" />
-        <Setter Property="StrokeThickness" Value="1" />
-        <Setter Property="VisualCornerRadius" Value="4 4" />
-        <Setter Property="VisualInset" Value="-1 -1 0 0" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="UseMaterialCornerRadius" Value="True" />
+        <Setter Property="VisualInset" Value="1" />
     </Style>
 
     <Style x:Key="VerticalRadioSelectorElementStyle" BasedOn="{StaticResource RadioSelectorElementStyle}" TargetType="controls:SelectorVisualElement">

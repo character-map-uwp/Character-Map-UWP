@@ -29,6 +29,7 @@ public enum MaterialCornerStyle
     Default,
     Circular,
     FlatLeft,
+    FlatRight,
 }
 
 /// <summary>
@@ -1616,6 +1617,7 @@ public partial class Properties : DependencyObject
             MaterialCornerStyle.None => new(),
             MaterialCornerStyle.Small => new (4),
             MaterialCornerStyle.FlatLeft => new (0, height, height, 0),
+            MaterialCornerStyle.FlatRight => new (height,0, 0, height),
             _ => new CornerRadius(height)
         };
             

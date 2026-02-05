@@ -58,6 +58,7 @@ public enum SelectorInteractionState
 [DependencyProperty<Point>("BarCornerRadius", "new Point(2,2)")]
 [DependencyProperty<bool>("RightCornerRadiusOnly",default, nameof(Update))]
 [DependencyProperty<Orientation>("Orientation", "Orientation.Horizontal")]
+[DependencyProperty<bool>("UseMaterialCornerRadius")]
 [AttachedProperty<SelectorVisualElement>("Element")]
 [AttachedProperty<DataTemplate>("ElementTemplate")]
 public partial class SelectorVisualElement : FrameworkElement
@@ -94,13 +95,38 @@ public partial class SelectorVisualElement : FrameworkElement
         _props = this.GetElementVisual().Compositor.CreatePropertySet();
     }
 
+    partial void OnUseMaterialCornerRadiusChanged(bool o, bool n)
+    {
+        if (n is false)
+        {
+            _rect?.StopAnimation(nameof(_rect.CornerRadius));
+        }
+
+        SetCornerAnimation();
+
+        Update();
+    }
+
+    private void SetCornerAnimation()
+    {
+        if (_rect is null)
+            return;
+
+        if (UseMaterialCornerRadius is false)
+            _rect.CornerRadius = VisualCornerRadius.ToVector2();
+
+        _rect.StartAnimation(
+            _rect.CreateExpressionAnimation(nameof(_rect.CornerRadius))
+            .SetExpression("Vector2(this.Target.Size.Y/2f, this.Target.Size.Y/2f)"));
+    }
+
     void Update()
     {
         if (VisualTreeHelper.GetParent(this) is not FrameworkElement)
             return;
 
         CreateVisual();
-        _rect.CornerRadius = VisualCornerRadius.ToVector2();
+        SetCornerAnimation();
     }
 
     Color GetColor(SolidColorBrush b)
@@ -225,6 +251,8 @@ public partial class SelectorVisualElement : FrameworkElement
             .SetParameter("props", _props);
 
         bs.StartAnimation(_exp);
+
+        SetCornerAnimation();
 
         if (DisplayTarget is null)
             this.SetChildVisual(_container);
