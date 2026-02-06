@@ -1,5 +1,110 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
   </resheader>
@@ -172,6 +277,9 @@
   </data>
   <data name="OpenFontPickerConfirm" xml:space="preserve">
     <value>打开</value>
+  </data>
+  <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
+    <value>收藏集名称</value>
   </data>
   <data name="DigCreateCollection.PrimaryButtonText" xml:space="preserve">
     <value>创建</value>
@@ -500,6 +608,9 @@
   <data name="BtnContinue.Content" xml:space="preserve">
     <value>继续</value>
   </data>
+  <data name="BtnPrint.Content" xml:space="preserve">
+    <value>打印</value>
+  </data>
   <data name="CbCharacterLabel.Header" xml:space="preserve">
     <value>字符标签</value>
   </data>
@@ -518,8 +629,17 @@
   <data name="ChkBxHideWhitespace.Content" xml:space="preserve">
     <value>隐藏空白和控制字符</value>
   </data>
+  <data name="ChkBxShowBorders.Content" xml:space="preserve">
+    <value>显示框线</value>
+  </data>
   <data name="GlyphAnnotation_None" xml:space="preserve">
     <value>无</value>
+  </data>
+  <data name="GlyphAnnotation_UnicodeHex" xml:space="preserve">
+    <value>16 进制 Unicode 序号</value>
+  </data>
+  <data name="GlyphAnnotation_UnicodeIndex" xml:space="preserve">
+    <value>10 进制 Unicode 序号</value>
   </data>
   <data name="PrintCharacterFilterContent.Text" xml:space="preserve">
     <value>选择要显示的字符群组</value>
@@ -573,14 +693,11 @@
   <data name="PrintViewVerticalMarginHeader.Text" xml:space="preserve">
     <value>垂直距离</value>
   </data>
-  <data name="UnicodeFiltersTitle.Text" xml:space="preserve">
-    <value>UNICODE 类别筛选器</value>
+  <data name="SettingsCharLabel.Text" xml:space="preserve">
+    <value>字符标签</value>
   </data>
-  <data name="GlyphAnnotation_UnicodeHex" xml:space="preserve">
-    <value>16 进制 Unicode 序号</value>
-  </data>
-  <data name="GlyphAnnotation_UnicodeIndex" xml:space="preserve">
-    <value>10 进制 Unicode 序号</value>
+  <data name="SettingsCharLabelDesc.Text" xml:space="preserve">
+    <value>在各个字符下显示标签。对滚动时的性能可能稍有影响。</value>
   </data>
   <data name="SettingsManageSystemFonts.Content" xml:space="preserve">
     <value>管理已安装字体</value>
@@ -591,17 +708,8 @@
   <data name="SettingsWindowsThemeSettings.Content" xml:space="preserve">
     <value>Windows 主题设置</value>
   </data>
-  <data name="SettingsCharLabel.Text" xml:space="preserve">
-    <value>字符标签</value>
-  </data>
-  <data name="SettingsCharLabelDesc.Text" xml:space="preserve">
-    <value>在各个字符下显示标签。对滚动时的性能可能稍有影响。</value>
-  </data>
-  <data name="BtnPrint.Content" xml:space="preserve">
-    <value>打印</value>
-  </data>
-  <data name="ChkBxShowBorders.Content" xml:space="preserve">
-    <value>显示框线</value>
+  <data name="UnicodeFiltersTitle.Text" xml:space="preserve">
+    <value>UNICODE 类别筛选器</value>
   </data>
   <data name="PrintLayout_Grid" xml:space="preserve">
     <value>网格</value>
@@ -662,9 +770,6 @@
   <data name="NotificationFontAddedBody.Text" xml:space="preserve">
     <value>已添加到</value>
   </data>
-  <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
-    <value>收藏集名称</value>
-  </data>
   <data name="ExportFontFile.Text" xml:space="preserve">
     <value>字体文件</value>
   </data>
@@ -689,12 +794,12 @@
   <data name="SystemFontsExpiredMessage.Text" xml:space="preserve">
     <value>字体列表过期。点击重启应用。</value>
   </data>
+  <data name="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>开发者工具切换开关</value>
+  </data>
   <data name="TxtPathIcon.Text" xml:space="preserve">
     <value>PathIcon 图标</value>
     <comment>Xaml PathIcon. Does not need translation.</comment>
-  </data>
-  <data name="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>开发者工具切换开关</value>
   </data>
   <data name="OptionAllEmoji.Text" xml:space="preserve">
     <value>全部类别</value>
@@ -747,23 +852,17 @@
   <data name="ExportedToFolderMessage" xml:space="preserve">
     <value>已导出到 {0}</value>
   </data>
-  <data name="SettingsAboutLabel.Text" xml:space="preserve">
-    <value>关于</value>
-  </data>
-  <data name="SettingsAdvancedUILabel.Text" xml:space="preserve">
-    <value>外观</value>
-  </data>
-  <data name="SettingsFontManagementLabel.Text" xml:space="preserve">
-    <value>字体管理</value>
-  </data>
-  <data name="SettingsLicensesLabel.Text" xml:space="preserve">
-    <value>许可协议</value>
-  </data>
   <data name="ImportDragDropDescriptionLabel.Text" xml:space="preserve">
     <value>将文件从文件资源管理器中拖放到此处导入</value>
   </data>
   <data name="ImportDragDropLabel.Text" xml:space="preserve">
     <value>拖放以导入</value>
+  </data>
+  <data name="SettingsAboutLabel.Text" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="SettingsAdvancedUILabel.Text" xml:space="preserve">
+    <value>外观</value>
   </data>
   <data name="SettingsExportImportedLabel.Text" xml:space="preserve">
     <value>导出所有已导入的字体</value>
@@ -778,6 +877,9 @@
     <value>您可将字体导入本应用查看，而不用安装到 Windows 中。
 
 导入的字体文件会被复制到应用的私有存储中，因此即便将计算机上的原文件删除，应用仍能显示该字体。</value>
+  </data>
+  <data name="SettingsFontManagementLabel.Text" xml:space="preserve">
+    <value>字体管理</value>
   </data>
   <data name="SettingsFontNameExportDescription.Text" xml:space="preserve">
     <value>选择字体导出时的文件名。
@@ -794,14 +896,17 @@
   <data name="SettingsLicensesDescriptionLabel.Text" xml:space="preserve">
     <value>该应用使用了以下的开源库</value>
   </data>
+  <data name="SettingsLicensesLabel.Text" xml:space="preserve">
+    <value>许可协议</value>
+  </data>
+  <data name="BtnReset.Content" xml:space="preserve">
+    <value>重置</value>
+  </data>
   <data name="OptionVariableFonts.Text" xml:space="preserve">
     <value>可变字体</value>
   </data>
   <data name="VariableFeaturesMessage.Text" xml:space="preserve">
     <value>此字体具有可变特性。请使用上面的切换按钮切换到字阶视图浏览。</value>
-  </data>
-  <data name="BtnReset.Content" xml:space="preserve">
-    <value>重置</value>
   </data>
   <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
     <value>显示或隐藏屏幕右侧的预览面板。若关闭，许多功能仍可通过在字符网格内右击或长按字符访问。</value>
@@ -839,17 +944,17 @@
   <data name="NotificationCopied" xml:space="preserve">
     <value>已复制</value>
   </data>
-  <data name="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>开关复制面板 (Ctrl+B)</value>
-  </data>
   <data name="AddButton.Label" xml:space="preserve">
     <value>添加</value>
+  </data>
+  <data name="AddSelectionItem.Text" xml:space="preserve">
+    <value>添加到选择</value>
   </data>
   <data name="CopySequencePlaceholder.Text" xml:space="preserve">
     <value>双击某个字符或点击 "添加" 按钮</value>
   </data>
-  <data name="AddSelectionItem.Text" xml:space="preserve">
-    <value>添加到选择</value>
+  <data name="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>开关复制面板 (Ctrl+B)</value>
   </data>
   <data name="CompactOverlayButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>保持前置</value>
@@ -959,13 +1064,6 @@
   <data name="ExportSkipBlank.Content" xml:space="preserve">
     <value>不导出无可见内容的字形</value>
   </data>
-  <data name="SettingsDesignStyle.Description" xml:space="preserve">
-    <value>更改此应用的设计风格。
-需要重启应用才能生效。</value>
-  </data>
-  <data name="SettingsDesignStyle.Title" xml:space="preserve">
-    <value>设计风格</value>
-  </data>
   <data name="CharacterFilterButton.Label" xml:space="preserve">
     <value>筛选</value>
     <comment>Labels must be as short as possible</comment>
@@ -993,6 +1091,13 @@
   <data name="RenameCollectionButton.Label" xml:space="preserve">
     <value>重命名</value>
     <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="SettingsDesignStyle.Description" xml:space="preserve">
+    <value>更改此应用的设计风格。
+需要重启应用才能生效。</value>
+  </data>
+  <data name="SettingsDesignStyle.Title" xml:space="preserve">
+    <value>设计风格</value>
   </data>
   <data name="ViewToggleButton.Label" xml:space="preserve">
     <value>切换</value>
@@ -1490,11 +1595,11 @@
   <data name="HiddenSearchResultsLabel.Text" xml:space="preserve">
     <value>隐藏</value>
   </data>
-  <data name="SuggestOptionChineseSimplified.Text" xml:space="preserve">
-    <value>中文 (简体)</value>
-  </data>
   <data name="NotificationSearchSelectedCharHidden" xml:space="preserve">
     <value>所选的字符当前已被所选的筛选器隐藏</value>
+  </data>
+  <data name="SuggestOptionChineseSimplified.Text" xml:space="preserve">
+    <value>中文 (简体)</value>
   </data>
   <data name="CanvasFontInformationDesignScriptLanguageTag" xml:space="preserve">
     <value>设计的目标语言</value>

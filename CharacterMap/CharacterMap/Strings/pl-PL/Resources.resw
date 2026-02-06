@@ -1,5 +1,110 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
   </resheader>
@@ -172,6 +277,9 @@
   </data>
   <data name="OpenFontPickerConfirm" xml:space="preserve">
     <value>Otwierać</value>
+  </data>
+  <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
+    <value>Nazwa kolekcji</value>
   </data>
   <data name="DigCreateCollection.PrimaryButtonText" xml:space="preserve">
     <value>Tworzyć</value>
@@ -500,6 +608,9 @@ Włączenie tej opcji ma znikomy wpływ na wydajność.</value>
   <data name="BtnContinue.Content" xml:space="preserve">
     <value>Kontynuować</value>
   </data>
+  <data name="BtnPrint.Content" xml:space="preserve">
+    <value>Drukować</value>
+  </data>
   <data name="CbCharacterLabel.Header" xml:space="preserve">
     <value>Etykieta znaku</value>
   </data>
@@ -518,8 +629,17 @@ Włączenie tej opcji ma znikomy wpływ na wydajność.</value>
   <data name="ChkBxHideWhitespace.Content" xml:space="preserve">
     <value>Ukrywanie białych znaków i znaków sterujących</value>
   </data>
+  <data name="ChkBxShowBorders.Content" xml:space="preserve">
+    <value>Pokaż obramowania</value>
+  </data>
   <data name="GlyphAnnotation_None" xml:space="preserve">
     <value>Żaden</value>
+  </data>
+  <data name="GlyphAnnotation_UnicodeHex" xml:space="preserve">
+    <value>Szesnastkowy kod Unicode</value>
+  </data>
+  <data name="GlyphAnnotation_UnicodeIndex" xml:space="preserve">
+    <value>Indeks Unicode</value>
   </data>
   <data name="PrintCharacterFilterContent.Text" xml:space="preserve">
     <value>Wybierz grupy znaków do wyświetlenia</value>
@@ -573,14 +693,11 @@ Zakres stron można zmienić w sekcji Ustawienia strony.</value>
   <data name="PrintViewVerticalMarginHeader.Text" xml:space="preserve">
     <value>Margines pionowy</value>
   </data>
-  <data name="UnicodeFiltersTitle.Text" xml:space="preserve">
-    <value>FILTRY KATEGORII UNICODE</value>
+  <data name="SettingsCharLabel.Text" xml:space="preserve">
+    <value>Etykieta znaku</value>
   </data>
-  <data name="GlyphAnnotation_UnicodeHex" xml:space="preserve">
-    <value>Szesnastkowy kod Unicode</value>
-  </data>
-  <data name="GlyphAnnotation_UnicodeIndex" xml:space="preserve">
-    <value>Indeks Unicode</value>
+  <data name="SettingsCharLabelDesc.Text" xml:space="preserve">
+    <value>Wybierz etykietę, która ma być wyświetlana pod każdym znakiem. Może mieć niewielki wpływ na wydajność przewijania.</value>
   </data>
   <data name="SettingsManageSystemFonts.Content" xml:space="preserve">
     <value>Zarządzanie zainstalowanymi czcionkami</value>
@@ -591,17 +708,8 @@ Zakres stron można zmienić w sekcji Ustawienia strony.</value>
   <data name="SettingsWindowsThemeSettings.Content" xml:space="preserve">
     <value>Ustawienia kompozycji systemu Windows</value>
   </data>
-  <data name="SettingsCharLabel.Text" xml:space="preserve">
-    <value>Etykieta znaku</value>
-  </data>
-  <data name="SettingsCharLabelDesc.Text" xml:space="preserve">
-    <value>Wybierz etykietę, która ma być wyświetlana pod każdym znakiem. Może mieć niewielki wpływ na wydajność przewijania.</value>
-  </data>
-  <data name="BtnPrint.Content" xml:space="preserve">
-    <value>Drukować</value>
-  </data>
-  <data name="ChkBxShowBorders.Content" xml:space="preserve">
-    <value>Pokaż obramowania</value>
+  <data name="UnicodeFiltersTitle.Text" xml:space="preserve">
+    <value>FILTRY KATEGORII UNICODE</value>
   </data>
   <data name="PrintLayout_Grid" xml:space="preserve">
     <value>Siatka</value>
@@ -662,9 +770,6 @@ Rozważ opublikowanie szczegółów dotyczących tego błędu w usłudze GitHub,
   <data name="NotificationFontAddedBody.Text" xml:space="preserve">
     <value>został dodany do</value>
   </data>
-  <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
-    <value>Nazwa kolekcji</value>
-  </data>
   <data name="ExportFontFile.Text" xml:space="preserve">
     <value>Plik czcionki</value>
   </data>
@@ -689,12 +794,12 @@ Rozważ opublikowanie szczegółów dotyczących tego błędu w usłudze GitHub,
   <data name="SystemFontsExpiredMessage.Text" xml:space="preserve">
     <value>Lista czcionek jest nieaktualna. Kliknij, aby ponownie uruchomić aplikację.</value>
   </data>
+  <data name="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Przełącz narzędzia deweloperskie</value>
+  </data>
   <data name="TxtPathIcon.Text" xml:space="preserve">
     <value>Ikona ścieżki</value>
     <comment>Xaml PathIcon. Does not need translation.</comment>
-  </data>
-  <data name="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Przełącz narzędzia deweloperskie</value>
   </data>
   <data name="OptionAllEmoji.Text" xml:space="preserve">
     <value>Wszystkie kategorie</value>
@@ -747,23 +852,17 @@ Rozważ opublikowanie szczegółów dotyczących tego błędu w usłudze GitHub,
   <data name="ExportedToFolderMessage" xml:space="preserve">
     <value>Eksportowane do {0}</value>
   </data>
-  <data name="SettingsAboutLabel.Text" xml:space="preserve">
-    <value>Około</value>
-  </data>
-  <data name="SettingsAdvancedUILabel.Text" xml:space="preserve">
-    <value>Wygląd i działanie</value>
-  </data>
-  <data name="SettingsFontManagementLabel.Text" xml:space="preserve">
-    <value>Zarządzanie czcionkami</value>
-  </data>
-  <data name="SettingsLicensesLabel.Text" xml:space="preserve">
-    <value>Licencje</value>
-  </data>
   <data name="ImportDragDropDescriptionLabel.Text" xml:space="preserve">
     <value>Przeciągnij pliki z Eksploratora plików lub pulpitu i upuść je tutaj, aby je zaimportować.</value>
   </data>
   <data name="ImportDragDropLabel.Text" xml:space="preserve">
     <value>Przeciągnij i upuść, aby zaimportować</value>
+  </data>
+  <data name="SettingsAboutLabel.Text" xml:space="preserve">
+    <value>Około</value>
+  </data>
+  <data name="SettingsAdvancedUILabel.Text" xml:space="preserve">
+    <value>Wygląd i działanie</value>
   </data>
   <data name="SettingsExportImportedLabel.Text" xml:space="preserve">
     <value>Eksportuj wszystkie zaimportowane czcionki</value>
@@ -778,6 +877,9 @@ Rozważ opublikowanie szczegółów dotyczących tego błędu w usłudze GitHub,
     <value>Możesz importować czcionki do aplikacji, aby je wyświetlać bez instalowania ich w systemie Windows. 
 
 Zaimportowane pliki czcionek są kopiowane do prywatnego magazynu aplikacji, więc będą nadal widoczne, jeśli usuniesz oryginalny plik z komputera.</value>
+  </data>
+  <data name="SettingsFontManagementLabel.Text" xml:space="preserve">
+    <value>Zarządzanie czcionkami</value>
   </data>
   <data name="SettingsFontNameExportDescription.Text" xml:space="preserve">
     <value>Wybierz sposób nazywania plików czcionek podczas ich eksportowania.
@@ -794,14 +896,17 @@ Zoptymalizowany utworzy inteligentną nazwę na podstawie rodziny czcionek i naz
   <data name="SettingsLicensesDescriptionLabel.Text" xml:space="preserve">
     <value>Ta aplikacja korzysta z następujących bibliotek open source</value>
   </data>
+  <data name="SettingsLicensesLabel.Text" xml:space="preserve">
+    <value>Licencje</value>
+  </data>
+  <data name="BtnReset.Content" xml:space="preserve">
+    <value>Resetować</value>
+  </data>
   <data name="OptionVariableFonts.Text" xml:space="preserve">
     <value>Czcionki zmienne</value>
   </data>
   <data name="VariableFeaturesMessage.Text" xml:space="preserve">
     <value>Ta czcionka ma zmienne cechy. Aby je eksplorować, przełącz się do widoku rampy typu za pomocą przycisku przełącznika powyżej.</value>
-  </data>
-  <data name="BtnReset.Content" xml:space="preserve">
-    <value>Resetować</value>
   </data>
   <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
     <value>Pokazuje lub ukrywa okienko podglądu po prawej stronie ekranu. Jeśli ta opcja jest wyłączona, dostęp do wielu funkcji można uzyskać, klikając prawym przyciskiem myszy lub dotykając, przytrzymując znak wewnątrz siatki znaków.</value>
@@ -839,17 +944,17 @@ Zoptymalizowany utworzy inteligentną nazwę na podstawie rodziny czcionek i naz
   <data name="NotificationCopied" xml:space="preserve">
     <value>Kopiowane</value>
   </data>
-  <data name="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Przełącz okienko kopiowania (Ctrl+B)</value>
-  </data>
   <data name="AddButton.Label" xml:space="preserve">
     <value>Dodawać</value>
+  </data>
+  <data name="AddSelectionItem.Text" xml:space="preserve">
+    <value>Dodaj do zaznaczenia</value>
   </data>
   <data name="CopySequencePlaceholder.Text" xml:space="preserve">
     <value>kliknij dwukrotnie znak lub użyj przycisku Dodaj</value>
   </data>
-  <data name="AddSelectionItem.Text" xml:space="preserve">
-    <value>Dodaj do zaznaczenia</value>
+  <data name="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Przełącz okienko kopiowania (Ctrl+B)</value>
   </data>
   <data name="CompactOverlayButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Bądź na bieżąco</value>
@@ -959,13 +1064,6 @@ Domyślny wariant skopiowany.</value>
   <data name="ExportSkipBlank.Content" xml:space="preserve">
     <value>Pomiń eksportowanie glifów bez widocznej zawartości</value>
   </data>
-  <data name="SettingsDesignStyle.Description" xml:space="preserve">
-    <value>Zmień styl projektowania aplikacji.
-Wymaga ponownego uruchomienia, aby zaczął obowiązywać.</value>
-  </data>
-  <data name="SettingsDesignStyle.Title" xml:space="preserve">
-    <value>Styl projektowania</value>
-  </data>
   <data name="CharacterFilterButton.Label" xml:space="preserve">
     <value>Filtr</value>
     <comment>Labels must be as short as possible</comment>
@@ -993,6 +1091,13 @@ Wymaga ponownego uruchomienia, aby zaczął obowiązywać.</value>
   <data name="RenameCollectionButton.Label" xml:space="preserve">
     <value>Przemianować</value>
     <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="SettingsDesignStyle.Description" xml:space="preserve">
+    <value>Zmień styl projektowania aplikacji.
+Wymaga ponownego uruchomienia, aby zaczął obowiązywać.</value>
+  </data>
+  <data name="SettingsDesignStyle.Title" xml:space="preserve">
+    <value>Styl projektowania</value>
   </data>
   <data name="ViewToggleButton.Label" xml:space="preserve">
     <value>Przełącznik</value>

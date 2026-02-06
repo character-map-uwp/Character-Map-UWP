@@ -54,8 +54,11 @@ public enum SelectorInteractionState
 [DependencyProperty<FrameworkElement>("DisplayTarget")]
 [DependencyProperty<Point>("BarSize")]
 [DependencyProperty<double>("BarPadding")]
+[DependencyProperty<double>("VisualSizeAdjustment")]
 [DependencyProperty<Point>("BarCornerRadius", "new Point(2,2)")]
+[DependencyProperty<bool>("RightCornerRadiusOnly",default, nameof(Update))]
 [DependencyProperty<Orientation>("Orientation", "Orientation.Horizontal")]
+[DependencyProperty<bool>("UseMaterialCornerRadius")]
 [AttachedProperty<SelectorVisualElement>("Element")]
 [AttachedProperty<DataTemplate>("ElementTemplate")]
 public partial class SelectorVisualElement : FrameworkElement
@@ -92,13 +95,38 @@ public partial class SelectorVisualElement : FrameworkElement
         _props = this.GetElementVisual().Compositor.CreatePropertySet();
     }
 
+    partial void OnUseMaterialCornerRadiusChanged(bool o, bool n)
+    {
+        if (n is false)
+        {
+            _rect?.StopAnimation(nameof(_rect.CornerRadius));
+        }
+
+        SetCornerAnimation();
+
+        Update();
+    }
+
+    private void SetCornerAnimation()
+    {
+        if (_rect is null)
+            return;
+
+        if (UseMaterialCornerRadius is false)
+            _rect.CornerRadius = VisualCornerRadius.ToVector2();
+        else
+            _rect.StartAnimation(
+                _rect.CreateExpressionAnimation(nameof(_rect.CornerRadius))
+                .SetExpression("Vector2(this.Target.Size.Y/2f, this.Target.Size.Y/2f)"));
+    }
+
     void Update()
     {
         if (VisualTreeHelper.GetParent(this) is not FrameworkElement)
             return;
 
         CreateVisual();
-        _rect.CornerRadius = VisualCornerRadius.ToVector2();
+        SetCornerAnimation();
     }
 
     Color GetColor(SolidColorBrush b)
@@ -157,7 +185,7 @@ public partial class SelectorVisualElement : FrameworkElement
     partial void OnVisualCornerRadiusChanged(Point o, Point n)
     {
         if (_rect is not null)
-            _rect.CornerRadius = VisualCornerRadius.ToVector2();
+            SetCornerAnimation();
     }
 
     void CreateVisual()
@@ -224,6 +252,8 @@ public partial class SelectorVisualElement : FrameworkElement
 
         bs.StartAnimation(_exp);
 
+        SetCornerAnimation();
+
         if (DisplayTarget is null)
             this.SetChildVisual(_container);
         else
@@ -272,12 +302,16 @@ public partial class SelectorVisualElement : FrameworkElement
         // 2: Get the target element's size
         Vector2 size = target.ActualSize();
         size -= new Point(VisualInset.Left + VisualInset.Right, VisualInset.Top + VisualInset.Bottom).ToVector2();
+        size += new Vector2(-(float)VisualSizeAdjustment, 0);
+
         var size2 = size += new Vector2((float)StrokeThickness);
 
         if (size.X < 0 || size.Y < 0)
             size = new();
 
         animate &= ResourceHelper.AllowAnimation;
+
+        position += new Vector3((float)VisualSizeAdjustment, 0, 0);
 
         // 3: Animation position
         SetOffset(animate);

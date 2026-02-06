@@ -16,18 +16,22 @@
                     <SolidColorBrush x:Key="SystemControlSplitterPressed" Color="{ThemeResource SystemBaseHighColor}" />
                     <Color x:Key="LayerOnMicaBaseAltFillColorDefault">#733A3A3A</Color>
                     <SolidColorBrush x:Key="LayerOnMicaBaseAltFillColorDefaultBrush" Color="{StaticResource LayerOnMicaBaseAltFillColorDefault}" />
+                    <SolidColorBrush x:Key="RadioButtonsSelectedForeground" Color="White" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Light">
                     <SolidColorBrush x:Key="SystemControlSplitterPointerOver" Color="{ThemeResource SystemColorHighlightColor}" />
                     <SolidColorBrush x:Key="SystemControlSplitterPressed" Color="{ThemeResource SystemColorHighlightColor}" />
                     <Color x:Key="LayerOnMicaBaseAltFillColorDefault">#B3FFFFFF</Color>
                     <SolidColorBrush x:Key="LayerOnMicaBaseAltFillColorDefaultBrush" Color="{StaticResource LayerOnMicaBaseAltFillColorDefault}" />
+                    <SolidColorBrush x:Key="RadioButtonsSelectedForeground" Color="White" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
 
             <core:VSM x:Key="VSM" />
             <x:Double x:Key="TitleRowHeight">45</x:Double>
             <GridLength x:Key="TitleRowGridHeight">45</GridLength>
+            <FontFamily x:Key="FallbackSymbolThemeFontFamily">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+            <SolidColorBrush x:Key="RadioButtonsSelectedForeground" Color="White" />
 
             <ResourceDictionary.MergedDictionaries>
 

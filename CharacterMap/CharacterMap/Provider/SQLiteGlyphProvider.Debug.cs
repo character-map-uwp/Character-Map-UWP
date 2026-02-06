@@ -3,7 +3,10 @@
 
 #if DEBUG && GENERATE_DATABASE
 using Humanizer;
+using SQLite;
 using System.Globalization;
+using Windows.Data.Xml.Dom;
+using Windows.UI.Xaml.Controls;
 #endif
 
 namespace CharacterMap.Provider;

@@ -169,6 +169,12 @@ public partial class CMFontFace : IDisposable
     /// Used temporarily to allow insider builds to access COLRv1. Do not use elsewhere. Very expensive.
     /// </summary>
     public bool SupportsCOLRv1Rendering => Utils.Supports23H2 && DirectWriteProperties.IsColorFont && GetAnalysisInternal().SupportsCOLRv1;
+    
+    public bool ContainsCOLRV0Glyphs => DirectWriteProperties.IsColorFont && GetAnalysisInternal().COLRVersion == 0;
+   
+    public bool ContainsSVGGlyphs => DirectWriteProperties.IsColorFont && GetAnalysisInternal().HasSVGGlyphs;
+    
+    public bool ContainsBitmapGlyphs => DirectWriteProperties.IsColorFont && GetAnalysisInternal().HasBitmapGlyphs;
 
     /// <summary>
     /// Hack used for QuickCompare - we show ALL colour fonts using manual DirectWrite rendering (using DirectText control) rather than 

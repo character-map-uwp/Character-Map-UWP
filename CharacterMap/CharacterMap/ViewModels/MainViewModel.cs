@@ -57,8 +57,11 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty] BasicFontFilter _fontListFilter = BasicFontFilter.All;
     [ObservableProperty] List<CMFontFamily> _fontList;
 
-    public FontItem CurrentFont => Fonts.Count > 0 && TabIndex < Fonts.Count && TabIndex > -1
-        ? Fonts[TabIndex] : null;
+    public FontItem CurrentFont => 
+        Fonts?.Count > 0 
+        && TabIndex < Fonts.Count 
+        && TabIndex > -1
+        ? Fonts.ElementAtOrDefault<FontItem>(TabIndex) : null;
 
     private IFontCollection _selectedCollection;
     public IFontCollection SelectedCollection

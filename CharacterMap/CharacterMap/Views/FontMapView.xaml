@@ -567,6 +567,7 @@
                         <TextBlock
                             x:Uid="AddToCollectionHint"
                             Grid.Column="1"
+                            VerticalAlignment="Center"
                             FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                             TextTrimming="CharacterEllipsis"
                             d:Text="{core:Localizer Key=AddToCollectionHint/Text}" />
@@ -2463,6 +2464,7 @@
                 <VisualState x:Name="CharacterMapState">
                     <VisualState.Setters>
                         <!--<Setter Target="SwitchToTypeRampButton.Visibility" Value="Visible" />-->
+                        <Setter Target="ViewToggleButton.(core:Properties.ToolTip)" Value="{core:Localizer Key='LblSwitchToTypeRamp/Text'}" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="TypeRampState">
@@ -2673,7 +2675,7 @@
                         <Setter Target="CharGrid.ItemContainerStyle" Value="{core:OptionalResource Key='MaterialGridViewItemStyle'}" />
                         <Setter Target="ViewToggleButton.(core:Properties.UseAttachedStates)" Value="True" />
                         <Setter Target="ViewRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="False" />
-                        <Setter Target="BackgroundBorder.Visibility" Value="Collapsed" />
+                        <!--<Setter Target="BackgroundBorder.Visibility" Value="Collapsed" />-->
                         <Setter Target="CopyTopBorder.Visibility" Value="Collapsed" />
                         <Setter Target="WeightSelector.MinHeight" Value="44" />
                     </VisualState.Setters>
@@ -2690,9 +2692,9 @@
             </VisualStateGroup>
             <VisualStateGroup x:Name="TitleStates">
                 <VisualState x:Name="HideTitleState">
-                    <VisualState.StateTriggers>
+                    <!--<VisualState.StateTriggers>
                         <StateTrigger IsActive="{x:Bind HideTitle, Mode=OneWay}" />
-                    </VisualState.StateTriggers>
+                    </VisualState.StateTriggers>-->
                     <VisualState.Setters>
                         <Setter Target="TitleRow.Height" Value="0" />
                         <Setter Target="TitleRowSpacer.Visibility" Value="Collapsed" />

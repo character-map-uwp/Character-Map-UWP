@@ -128,9 +128,9 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.14</Version>
     </PackageReference>
-    <!-- Do Not Update Microsoft.UI.Xaml -->
+    <!-- Do Not Update Microsoft.UI.Xaml from 2.7.3 -->
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.8.7</Version>
+      <Version>2.7.3</Version>
     </PackageReference>
     <!-- Nuget package references -->
     <PackageReference Include="SQLitePCLRaw.provider.winsqlite3.uwp10">
@@ -379,9 +379,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\AdobeBlank.otf" />
-    <None Include="..\.editorconfig">
-      <Link>.editorconfig</Link>
-    </None>
     <Content Include="Assets\BadgeLogo.scale-100.png" />
     <Content Include="Assets\BadgeLogo.scale-125.png" />
     <Content Include="Assets\BadgeLogo.scale-150.png" />
@@ -434,6 +431,8 @@
     <Content Include="Assets\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\FileAssociationTile.png" />
+    <Content Include="Assets\RobotoFlex.ttf" />
+    <Content Include="Assets\Material.otf" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\ZBG.png" />
     <Content Include="Assets\ZuneAssets\HoverOverlay.png" />

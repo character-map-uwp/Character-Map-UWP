@@ -25,9 +25,11 @@ namespace CharacterMap.Core;
 public enum MaterialCornerStyle
 {
     None,
+    Small,
     Default,
     Circular,
-    FlatLeft
+    FlatLeft,
+    FlatRight,
 }
 
 /// <summary>
@@ -1579,9 +1581,18 @@ public partial class Properties : DependencyObject
         {
             f.SizeChanged -= OnSizeChanged;
 
-            if (mode is not MaterialCornerStyle.None)
+           if (mode is not MaterialCornerStyle.None)
             {
-                f.SizeChanged += OnSizeChanged;
+                // .Small is fixed size and doesn't care about element size
+                if (mode is not MaterialCornerStyle.Small)
+                    f.SizeChanged += OnSizeChanged;
+
+                UpdateMaterialCornerRadius(f, mode);
+            }
+            else if (
+                e.OldValue is MaterialCornerStyle o
+                && o != MaterialCornerStyle.None)
+            {
                 UpdateMaterialCornerRadius(f, mode);
             }
         }
@@ -1601,10 +1612,15 @@ public partial class Properties : DependencyObject
         double max = mode == MaterialCornerStyle.Default ? 16 : 10000;
         double height = Math.Min(max, f.ActualHeight / 2d);
 
-        CornerRadius radius = mode == MaterialCornerStyle.FlatLeft
-            ? new CornerRadius(0, height, height, 0)
-            : new(height);
-
+        CornerRadius radius = mode switch
+        {
+            MaterialCornerStyle.None => new(),
+            MaterialCornerStyle.Small => new (4),
+            MaterialCornerStyle.FlatLeft => new (0, height, height, 0),
+            MaterialCornerStyle.FlatRight => new (height,0, 0, height),
+            _ => new CornerRadius(height)
+        };
+            
         if (f is Control c)
             c.CornerRadius = radius;
         else if (f is ContentPresenter p)

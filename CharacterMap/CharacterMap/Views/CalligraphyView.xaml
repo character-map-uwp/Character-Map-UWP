@@ -305,6 +305,7 @@
                             VerticalAlignment="Bottom"
                             BorderThickness="1 1 0 1"
                             CornerRadius="4 0 0 4"
+                            Style="{StaticResource DefaultThemeTextBoxStyle}"
                             Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             d:Text="Hello" />
                     </StackPanel>
@@ -321,7 +322,7 @@
                             d:Text="{core:Localizer Key=GuideSizeLabel/Text}" />
                         <Slider
                             x:Name="FontSizeSlider"
-                            Height="32"
+                            Height="{Binding ElementName=InputBox, Path=Height}"
                             Maximum="400"
                             Minimum="60"
                             Style="{StaticResource DefaultThemeSliderStyle}"
@@ -738,7 +739,16 @@
                         <Setter Target="ButtonsPanel.Margin" Value="0 4 0 0" />
                     </VisualState.Setters>
                 </VisualState>
-
+                <VisualState x:Name="MaterialThemeState">
+                    <VisualState.Setters>
+                        <Setter Target="PickerButton.Height" Value="32.5" />
+                        <!--<Setter Target="PickerButton.Width" Value="34" />-->
+                        <Setter Target="PickerButton.Margin" Value="-8 0 0 2" />
+                        <Setter Target="InputBox.Height" Value="34" />
+                        <Setter Target="InputBox.(core:Properties.MaterialCornerStyle)" Value="FlatRight" />
+                        <Setter Target="PickerButton.(core:Properties.MaterialCornerStyle)" Value="FlatLeft" />
+                    </VisualState.Setters>
+                </VisualState>
             </VisualStateGroup>
 
             <VisualStateGroup x:Name="PreviewStates">

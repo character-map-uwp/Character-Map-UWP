@@ -25,7 +25,7 @@ public partial class SettingsViewModel : ViewModelBase
         "Windows 11",
         "Classic Windows",
         "Zune Desktop",
-        //"Material"
+        "Material (WIP)"
     ];
 
     public GlyphFileNameViewModel GlyphNameModel { get; } = new() { SaveTemplate = true };
@@ -129,7 +129,11 @@ public partial class SettingsViewModel : ViewModelBase
         // is to expose features people may not be aware exist inside the
         // application rather than bug-fixes or visual changes.
         return [
-             new("Latest Update (June 2025)", // June 2025
+            new("Latest Update (February 2026)", // February 2026
+                "- Added additional filters for Font Embedding types & Color Font types\n" +
+                "- Added Material Theme (WIP)\n" +
+                "- Updated to Unicode 17 dataset"),
+             new("2025.3.0.0 (June 2025)", // June 2025
                 "- Added ability to use Ctrl + ScrollWheel to change font size in Font List Pane, Character Map and Quick Compare\n" +
                 "- Whole Font Families can now be added to Quick Compare\n" +
                 "- Font Families and individual Font Faces can be added to Quick Compare from the Compare Fonts view\n" +

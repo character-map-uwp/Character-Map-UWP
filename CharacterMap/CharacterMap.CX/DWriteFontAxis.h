@@ -80,7 +80,7 @@ namespace CharacterMapCX
 
 			Value = value.value;
 			m_originalValue = value.value;
-			m_label = name == nullptr ? GetOpenTypeFeatureTag(tag) : name;
+			m_label = name == nullptr ? GetOpenTypeFeatureTag(tag) : name + L" (" + GetOpenTypeFeatureTag(tag) + L")";
 			m_tag_raw = tag;
 
 			m_isHidden = (m_attribute & DWriteFontAxisAttribute::Hidden) == DWriteFontAxisAttribute::Hidden;

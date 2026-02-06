@@ -21,9 +21,7 @@
     <CornerRadius x:Key="ButtonCornerRadius">0</CornerRadius>
 
     <FontFamily x:Key="SymbolThemeFontFamily">Segoe MDL2 Assets</FontFamily>
-    <FontFamily x:Key="FallbackSymbolThemeFontFamily">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
     <FontFamily x:Key="ContentControlBoldThemeFontFamily">XamlAutoFontFamily</FontFamily>
-
 
     <AcrylicBrush
         x:Key="DefaultHostBrush"
@@ -34,10 +32,13 @@
         TintOpacity="0.8" />
 
     <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="{ThemeResource SystemChromeMediumColor}" />
+    <SolidColorBrush x:Key="AppMenuBackgroundBrush" Color="Transparent" />
 
     <Style x:Key="ThemeFontIconStyle" TargetType="FontIcon">
         <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
     </Style>
+
+    <Style x:Key="DefaultThemeTextBoxStyle" BasedOn="{StaticResource DefaultTextBoxStyle}" TargetType="TextBox" />
 
     <Style BasedOn="{StaticResource ThemeFontIconStyle}" TargetType="FontIcon" />
 
@@ -761,7 +762,7 @@
     <!--<SolidColorBrush x:Key="RadioButtonsButtonForeground" Color="White" />
     <StaticResource x:Key="RadioButtonsButtonSelectedForeground" ResourceKey="TextOnAccentFillColorPrimary" />-->
 
-    <Style x:Name="RadioButtonsButtonStyle" TargetType="RadioButton">
+    <Style x:Key="RadioButtonsBaseButtonStyle" TargetType="RadioButton">
         <Setter Property="MinHeight" Value="36" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="core:Properties.Color" Value="White" />
@@ -811,6 +812,8 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style x:Key="RadioButtonsButtonStyle" BasedOn="{StaticResource RadioButtonsBaseButtonStyle}" TargetType="RadioButton" />
 
     <Style x:Key="DefaultRadioButtonsThemeStyle" TargetType="muxc:RadioButtons">
         <Setter Property="Background" Value="{ThemeResource SolidBackgroundFillColorBaseBrush}" />

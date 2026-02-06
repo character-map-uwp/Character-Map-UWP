@@ -45,7 +45,7 @@
             </Flyout.FlyoutPresenterStyle>
 
             <ScrollViewer>
-                <Grid>
+                <Grid x:Name="MenuBG" Background="{ThemeResource AppMenuBackgroundBrush}">
                     <TextBlock
                         x:Name="MenuShimmy"
                         FontSize="14"
@@ -60,6 +60,7 @@
                                 <Setter Property="VerticalAlignment" Value="Stretch" />
                                 <Setter Property="CornerRadius" Value="0" />
                                 <Setter Property="FontSize" Value="14" />
+                                <Setter Property="Background" Value="{ThemeResource AppMenuItemBackgroundBrush}" />
                                 <Setter Property="Foreground" Value="{ThemeResource AppBarItemPointerOverForegroundThemeBrush}" />
                                 <Setter Property="ContentTemplate" Value="{StaticResource LabelButtonContentTemplate}" />
                                 <Setter Property="helpers:FluentAnimation.Pressed" Value="ContentRoot" />
@@ -1380,6 +1381,7 @@
                 <VisualState x:Name="ClassicThemeState">
                     <VisualState.Setters>
                         <Setter Target="MainMenuIcon.Visibility" Value="Visible" />
+                        <Setter Target="MainMenuButton.Height" Value="32" />
                         <Setter Target="SettingsButtonIcon.Visibility" Value="Visible" />
                         <Setter Target="TitleButtonsPresenter.(Grid.Row)" Value="0" />
                         <Setter Target="TitleBar.(Grid.Row)" Value="0" />
@@ -1408,6 +1410,7 @@
                 <VisualState x:Name="ZuneThemeState">
                     <VisualState.Setters>
                         <Setter Target="MainMenuIcon.Visibility" Value="Visible" />
+                        <Setter Target="MainMenuButton.Height" Value="32" />
                         <Setter Target="SettingsButtonIcon.Visibility" Value="Visible" />
                         <Setter Target="BtnSettings.Visibility" Value="Collapsed" />
                         <Setter Target="ZuneSettingsButton.IsHitTestVisible" Value="True" />

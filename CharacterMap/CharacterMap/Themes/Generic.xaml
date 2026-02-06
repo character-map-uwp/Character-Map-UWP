@@ -13,6 +13,8 @@
         <ResourceDictionary x:Key="HighContrast" />
     </ResourceDictionary.ThemeDictionaries>
 
+    <SolidColorBrush x:Key="RadioButtonsSelectedForeground" Color="White" />
+
     <Style TargetType="controls:XamlTitleBar">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{ThemeResource AppBarItemForegroundThemeBrush}" />

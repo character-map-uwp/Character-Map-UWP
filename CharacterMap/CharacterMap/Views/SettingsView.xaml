@@ -81,6 +81,11 @@
                         </Setter>
                     </VisualState.Setters>
                 </VisualState>
+                <VisualState x:Name="MaterialThemeState">
+                    <VisualState.Setters>
+                        <Setter Target="MenuColumn.(controls:SelectorVisualElement.ElementTemplate)" Value="{StaticResource VerticalRadioSelectorTemplate}" />
+                    </VisualState.Setters>
+                </VisualState>
             </VisualStateGroup>
             <VisualStateGroup x:Name="ScrollStates">
                 <VisualState x:Name="ContentScrollEnabledState" />
@@ -104,107 +109,110 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <controls:UXRadioButtons
-                    x:Name="MenuColumn"
-                    Width="256"
-                    Margin="0 24 0 0"
-                    VerticalAlignment="Top"
-                    controls:SelectorVisualElement.ElementTemplate="{x:Null}"
-                    Background="Transparent"
-                    BorderThickness="0"
-                    MaxColumns="1">
-                    <controls:UXRadioButtons.LayoutTemplate>
-                        <DataTemplate>
-                            <muxc:StackLayout Orientation="Vertical" Spacing="0" />
-                        </DataTemplate>
-                    </controls:UXRadioButtons.LayoutTemplate>
+                <ScrollViewer>
+                    <controls:UXRadioButtons
+                        x:Name="MenuColumn"
+                        Width="256"
+                        Margin="0 24 0 24"
+                        VerticalAlignment="Top"
+                        controls:SelectorVisualElement.ElementTemplate="{x:Null}"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        MaxColumns="1">
+                        <controls:UXRadioButtons.LayoutTemplate>
+                            <DataTemplate>
+                                <muxc:StackLayout Orientation="Vertical" Spacing="0" />
+                            </DataTemplate>
+                        </controls:UXRadioButtons.LayoutTemplate>
 
-                    <controls:MenuButton
-                        Checked="MenuItem_Checked"
-                        Content="{x:Bind h:Localization.Get('SettingsUIHeader/Text')}"
-                        IsChecked="False"
-                        Tag="UserInterfacePanel"
-                        d:Content="{core:Localizer Key=SettingsUIHeader/Text}">
-                        <controls:MenuButton.Icon>
-                            <PathIcon
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Data="F1 M 13.125 0.019531 L 6.25 3.457031 L 6.25 6.445313 L 7.5 7.070313 L 7.5 4.853516 L 12.5 7.353516 L 12.5 10.498047 L 13.75 9.873047 L 13.75 7.353516 L 18.75 4.853516 L 18.75 10.498047 L 20 11.123047 L 20 3.457031 Z M 13.125 6.269531 L 8.271484 3.847656 L 10.332031 2.8125 L 14.853516 5.400391 Z M 16.201172 4.736328 L 11.669922 2.148438 L 13.125 1.416016 L 17.978516 3.847656 Z M 11.25 11.123047 L 11.25 10.341797 L 5.625 7.529297 L 0 10.341797 L 0 16.943359 L 5.625 19.765625 L 10 17.578125 L 10 16.171875 L 6.25 18.056641 L 6.25 13.613281 L 10 11.738281 L 10 11.748047 Z M 5 18.056641 L 1.25 16.171875 L 1.25 11.738281 L 5 13.613281 Z M 5.625 12.529297 L 2.021484 10.732422 L 5.625 8.925781 L 9.228516 10.732422 Z M 11.25 12.519531 L 11.25 17.666016 L 15.625 19.853516 L 20 17.666016 L 20 12.519531 L 15.625 10.332031 Z M 15 18.144531 L 12.5 16.894531 L 12.5 13.916016 L 15 15.166016 Z M 18.75 16.894531 L 16.25 18.144531 L 16.25 15.166016 L 18.75 13.916016 Z M 15.625 14.082031 L 13.271484 12.900391 L 15.625 11.728516 L 17.978516 12.900391 Z " />
-                        </controls:MenuButton.Icon>
-                    </controls:MenuButton>
+                        <controls:MenuButton
+                            Checked="MenuItem_Checked"
+                            Content="{x:Bind h:Localization.Get('SettingsUIHeader/Text')}"
+                            IsChecked="False"
+                            Tag="UserInterfacePanel"
+                            d:Content="{core:Localizer Key=SettingsUIHeader/Text}">
+                            <controls:MenuButton.Icon>
+                                <PathIcon
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Data="F1 M 13.125 0.019531 L 6.25 3.457031 L 6.25 6.445313 L 7.5 7.070313 L 7.5 4.853516 L 12.5 7.353516 L 12.5 10.498047 L 13.75 9.873047 L 13.75 7.353516 L 18.75 4.853516 L 18.75 10.498047 L 20 11.123047 L 20 3.457031 Z M 13.125 6.269531 L 8.271484 3.847656 L 10.332031 2.8125 L 14.853516 5.400391 Z M 16.201172 4.736328 L 11.669922 2.148438 L 13.125 1.416016 L 17.978516 3.847656 Z M 11.25 11.123047 L 11.25 10.341797 L 5.625 7.529297 L 0 10.341797 L 0 16.943359 L 5.625 19.765625 L 10 17.578125 L 10 16.171875 L 6.25 18.056641 L 6.25 13.613281 L 10 11.738281 L 10 11.748047 Z M 5 18.056641 L 1.25 16.171875 L 1.25 11.738281 L 5 13.613281 Z M 5.625 12.529297 L 2.021484 10.732422 L 5.625 8.925781 L 9.228516 10.732422 Z M 11.25 12.519531 L 11.25 17.666016 L 15.625 19.853516 L 20 17.666016 L 20 12.519531 L 15.625 10.332031 Z M 15 18.144531 L 12.5 16.894531 L 12.5 13.916016 L 15 15.166016 Z M 18.75 16.894531 L 16.25 18.144531 L 16.25 15.166016 L 18.75 13.916016 Z M 15.625 14.082031 L 13.271484 12.900391 L 15.625 11.728516 L 17.978516 12.900391 Z " />
+                            </controls:MenuButton.Icon>
+                        </controls:MenuButton>
 
-                    <controls:MenuButton
-                        HorizontalAlignment="Stretch"
-                        Checked="MenuItem_Checked"
-                        Content="{x:Bind h:Localization.Get('SettingsAdvancedUILabel/Text')}"
-                        Tag="UserInterfaceAdvancedPanel"
-                        ThemeIcon="LookAndFeel"
-                        d:Content="{core:Localizer Key=SettingsAdvancedUILabel/Text}" />
+                        <controls:MenuButton
+                            HorizontalAlignment="Stretch"
+                            Checked="MenuItem_Checked"
+                            Content="{x:Bind h:Localization.Get('SettingsAdvancedUILabel/Text')}"
+                            Tag="UserInterfaceAdvancedPanel"
+                            ThemeIcon="LookAndFeel"
+                            d:Content="{core:Localizer Key=SettingsAdvancedUILabel/Text}" />
 
-                    <controls:MenuButton
-                        Checked="MenuItem_Checked"
-                        Content="{x:Bind h:Localization.Get('SettingsCollectionsHeader')}"
-                        Tag="CollectionPanel"
-                        ThemeIcon="Collections"
-                        d:Content="{core:Localizer Key=SettingsCollectionsHeader}" />
+                        <controls:MenuButton
+                            Checked="MenuItem_Checked"
+                            Content="{x:Bind h:Localization.Get('SettingsCollectionsHeader')}"
+                            Tag="CollectionPanel"
+                            ThemeIcon="Collections"
+                            d:Content="{core:Localizer Key=SettingsCollectionsHeader}" />
 
-                    <controls:MenuButton
-                        Checked="MenuItem_Checked"
-                        Content="{x:Bind h:Localization.Get('SettingsFontManagementLabel/Text')}"
-                        Tag="FontPanel"
-                        ThemeIcon="FontManagement"
-                        d:Content="{core:Localizer Key=SettingsFontManagementLabel/Text}" />
+                        <controls:MenuButton
+                            Checked="MenuItem_Checked"
+                            Content="{x:Bind h:Localization.Get('SettingsFontManagementLabel/Text')}"
+                            Tag="FontPanel"
+                            ThemeIcon="FontManagement"
+                            d:Content="{core:Localizer Key=SettingsFontManagementLabel/Text}" />
 
-                    <controls:MenuButton
-                        Checked="MenuItem_Checked"
-                        Content="{x:Bind h:Localization.Get('SettingsSuggestionsHeader/Text')}"
-                        Tag="RampPanel"
-                        ThemeIcon="TypeRampView"
-                        d:Content="{core:Localizer Key=SettingsSuggestionsHeader/Text}" />
+                        <controls:MenuButton
+                            Checked="MenuItem_Checked"
+                            Content="{x:Bind h:Localization.Get('SettingsSuggestionsHeader/Text')}"
+                            Tag="RampPanel"
+                            ThemeIcon="TypeRampView"
+                            d:Content="{core:Localizer Key=SettingsSuggestionsHeader/Text}" />
 
-                    <controls:MenuButton
-                        Checked="MenuItem_Checked"
-                        Content="{x:Bind h:Localization.Get('SettingsExportHeader/Text')}"
-                        Tag="ExportPanel"
-                        ThemeIcon="Export"
-                        d:Content="{core:Localizer Key=SettingsExportHeader/Text}" />
+                        <controls:MenuButton
+                            Checked="MenuItem_Checked"
+                            Content="{x:Bind h:Localization.Get('SettingsExportHeader/Text')}"
+                            Tag="ExportPanel"
+                            ThemeIcon="Export"
+                            d:Content="{core:Localizer Key=SettingsExportHeader/Text}" />
 
-                    <controls:MenuButton
-                        Checked="MenuItem_Checked"
-                        Content="{x:Bind h:Localization.Get('SettingsCharacterSearchHeader/Text')}"
-                        Tag="SearchPanel"
-                        ThemeIcon="Search"
-                        d:Content="{core:Localizer Key=SettingsCharacterSearchHeader/Text}" />
+                        <controls:MenuButton
+                            Checked="MenuItem_Checked"
+                            Content="{x:Bind h:Localization.Get('SettingsCharacterSearchHeader/Text')}"
+                            Tag="SearchPanel"
+                            ThemeIcon="Search"
+                            d:Content="{core:Localizer Key=SettingsCharacterSearchHeader/Text}" />
 
-                    <controls:MenuButton
-                        Checked="MenuItem_Checked"
-                        Content="{x:Bind h:Localization.Get('SettingsAdvancedOptionsLabel/Text')}"
-                        Tag="AdvancedPanel"
-                        ThemeIcon="Advanced"
-                        d:Content="{core:Localizer Key=SettingsAdvancedOptionsLabel/Text}" />
+                        <controls:MenuButton
+                            Checked="MenuItem_Checked"
+                            Content="{x:Bind h:Localization.Get('SettingsAdvancedOptionsLabel/Text')}"
+                            Tag="AdvancedPanel"
+                            ThemeIcon="Advanced"
+                            d:Content="{core:Localizer Key=SettingsAdvancedOptionsLabel/Text}" />
 
-                    <controls:MenuButton
-                        Checked="MenuItem_Checked"
-                        Content="{x:Bind h:Localization.Get('SettingsChangelogLabel/Text')}"
-                        Tag="ChangePanel"
-                        ThemeIcon="Changelog"
-                        d:Content="{core:Localizer Key=SettingsChangelogLabel/Text}" />
+                        <controls:MenuButton
+                            Checked="MenuItem_Checked"
+                            Content="{x:Bind h:Localization.Get('SettingsChangelogLabel/Text')}"
+                            Tag="ChangePanel"
+                            ThemeIcon="Changelog"
+                            d:Content="{core:Localizer Key=SettingsChangelogLabel/Text}" />
 
-                    <controls:MenuButton
-                        Checked="MenuItem_Checked"
-                        Content="{x:Bind h:Localization.Get('SettingsLicensesLabel/Text')}"
-                        Tag="LicensesPanel"
-                        ThemeIcon="Licenses"
-                        d:Content="{core:Localizer Key=SettingsLicensesLabel/Text}" />
+                        <controls:MenuButton
+                            Checked="MenuItem_Checked"
+                            Content="{x:Bind h:Localization.Get('SettingsLicensesLabel/Text')}"
+                            Tag="LicensesPanel"
+                            ThemeIcon="Licenses"
+                            d:Content="{core:Localizer Key=SettingsLicensesLabel/Text}" />
 
-                    <controls:MenuButton
-                        Checked="MenuItem_Checked"
-                        Content="{x:Bind h:Localization.Get('SettingsAboutLabel/Text')}"
-                        Tag="AboutPanel"
-                        ThemeIcon="About"
-                        d:Content="{core:Localizer Key=SettingsAboutLabel/Text}" />
+                        <controls:MenuButton
+                            Checked="MenuItem_Checked"
+                            Content="{x:Bind h:Localization.Get('SettingsAboutLabel/Text')}"
+                            Tag="AboutPanel"
+                            ThemeIcon="About"
+                            d:Content="{core:Localizer Key=SettingsAboutLabel/Text}" />
 
-                </controls:UXRadioButtons>
+                    </controls:UXRadioButtons>
+
+                </ScrollViewer>
 
                 <Border
                     x:Name="ContentBorder"
@@ -1002,7 +1010,10 @@
                                     ContentPlacement="Bottom"
                                     d:Description="{core:Localizer Key=SettingsFontListToolTip/Description}"
                                     d:Title="{core:Localizer Key=SettingsFontListToolTip/Title}">
-                                    <TextBox Text="{Binding Settings.FamilyPreviewString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" d:PlaceholderText="{core:Localizer Key=CultureSpecificPangram/Text}" />
+                                    <TextBox
+                                        Style="{StaticResource DefaultThemeTextBoxStyle}"
+                                        Text="{Binding Settings.FamilyPreviewString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        d:PlaceholderText="{core:Localizer Key=CultureSpecificPangram/Text}" />
                                 </controls:SettingsPresenter>
 
                                 <controls:SettingsPresenter
@@ -1027,6 +1038,7 @@
                                                 x:Uid="SettingsSuggestionTextBox"
                                                 VerticalAlignment="Center"
                                                 AcceptsReturn="False"
+                                                Style="{StaticResource DefaultThemeTextBoxStyle}"
                                                 Text="{Binding ViewModel.RampInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                 d:PlaceholderText="{core:Localizer Key=SettingsSuggestionTextBox/PlaceholderText}" />
                                             <controls:UXButton

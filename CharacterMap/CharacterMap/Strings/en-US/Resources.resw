@@ -1842,4 +1842,34 @@ Requires a restart to take effect.</value>
   <data name="EmbeddingTypeBitmapOnly" xml:space="preserve">
     <value>Bitmap embedding only: only bitmaps contained in the font may be embedded. No outline data may be embedded. If there are no bitmaps available in the font, then the font is considered unembeddable and the embedding services will fail.</value>
   </data>
+  <data name="FilterEmbeddingInstallable.Text" xml:space="preserve">
+    <value>Installable</value>
+  </data>
+  <data name="FilterEmbeddingEditable.Text" xml:space="preserve">
+    <value>Editable</value>
+  </data>
+  <data name="FilterEmbeddingPreviewPrint.Text" xml:space="preserve">
+    <value>Preview &amp; Print</value>
+  </data>
+  <data name="FilterEmbeddingRestricted.Text" xml:space="preserve">
+    <value>Restricted</value>
+  </data>
+  <data name="FilterEmbeddingBitmap.Text" xml:space="preserve">
+    <value>Bitmap Only</value>
+  </data>
+  <data name="All.Text" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="UnihanTypeDescriptionZhuang" xml:space="preserve">
+    <value>The most customary Zhuang reading for this ideograph. Readings of words not part of the Standard Zhuang lexicon are suffixed by an asterisk.</value>
+  </data>
+  <data name="UnicodeTypeNameZhuang" xml:space="preserve">
+    <value>Zhuang</value>
+  </data>
+  <data name="UnihanTypeDescriptionFanqie" xml:space="preserve">
+    <value>A method commonly found in ancient Chinese dictionaries and rhyming books to specify the reading of an ideograph. The method uses two ideographs to specify a reading: the first one shares the same initial part, and the second one shares the same final part. For example, 德 (tək) and 紅 (ɣuŋ) are used to indicate the Middle Chinese reading of 東 (tuŋ), and therefore the Fanqie property value of U+6771 東 is the ideograph pair 德紅. The method uses a third and final ideograph, which can be either 反 or 切 (the two ideographs that correspond to Fanqie), and is therefore not included as part of the Fanqie property value.</value>
+  </data>
+  <data name="UnihanTypeNameFanqie" xml:space="preserve">
+    <value>Fanqie</value>
+  </data>
 </root>

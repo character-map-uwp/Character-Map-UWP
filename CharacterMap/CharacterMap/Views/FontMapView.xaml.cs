@@ -356,7 +356,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             {
                 Source = CharacterSource
             });
-            VisualStateManager.GoToState(this, GroupListState.Name, false);
+            VisualStateManager.GoToState(this, nameof(GroupListState), false);
         }
         else
         {
