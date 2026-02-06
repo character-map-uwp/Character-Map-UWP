@@ -131,7 +131,8 @@ public partial class SettingsViewModel : ViewModelBase
         return [
             new("Latest Update (February 2026)", // February 2026
                 "- Added additional filters for Font Embedding types & Color Font types\n" +
-                "- Added Material Theme (WIP)"),
+                "- Added Material Theme (WIP)\n" +
+                "- Updated to Unicode 17 dataset"),
              new("2025.3.0.0 (June 2025)", // June 2025
                 "- Added ability to use Ctrl + ScrollWheel to change font size in Font List Pane, Character Map and Quick Compare\n" +
                 "- Whole Font Families can now be added to Quick Compare\n" +

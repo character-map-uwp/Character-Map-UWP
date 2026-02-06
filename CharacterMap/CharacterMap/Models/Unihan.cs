@@ -27,6 +27,8 @@ public enum UnihanFieldType : int
     TGHZ2013 = 12,
     XHC1983 = 13,
     SMSZD2003Readings = 14,
+    Fanqie = 15,
+    Zhuang = 16
 }
 
 public class UnihanData

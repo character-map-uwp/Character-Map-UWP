@@ -128,9 +128,9 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.14</Version>
     </PackageReference>
-    <!-- Do Not Update Microsoft.UI.Xaml -->
+    <!-- Do Not Update Microsoft.UI.Xaml from 2.7.3 -->
     <PackageReference Include="Microsoft.UI.Xaml">
-      <Version>2.8.7</Version>
+      <Version>2.7.3</Version>
     </PackageReference>
     <!-- Nuget package references -->
     <PackageReference Include="SQLitePCLRaw.provider.winsqlite3.uwp10">
