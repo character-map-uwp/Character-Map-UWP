@@ -281,6 +281,7 @@
 
                             <ContentControl
                                 x:Name="PlaceholderTextContent"
+                                VerticalAlignment="Center"
                                 Content="{TemplateBinding PlaceholderText}"
                                 FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                                 FontSize="12"

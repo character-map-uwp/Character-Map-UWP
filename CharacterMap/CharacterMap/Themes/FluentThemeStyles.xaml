@@ -18,7 +18,7 @@
             <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="Transparent" />
             <StaticResource x:Key="TopCardBrush" ResourceKey="LayerOnMicaBaseAltFillColorDefaultBrush" />
             <StaticResource x:Key="DefaultWindowBackgroundBrush" ResourceKey="LayerOnMicaBaseAltFillColorDefaultBrush" />
-            <StaticResource x:Key="AppMenuItemBackgroundBrush" ResourceKey="ButtonBackgroundThemeBrush" />
+            <StaticResource x:Key="AppMenuItemBackgroundBrush" ResourceKey="ButtonBackground" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <Color x:Key="SolidBackgroundFillColorBase">#F3F3F3</Color>
@@ -28,7 +28,7 @@
             <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="Transparent" />
             <StaticResource x:Key="TopCardBrush" ResourceKey="LayerOnMicaBaseAltFillColorDefaultBrush" />
             <StaticResource x:Key="DefaultWindowBackgroundBrush" ResourceKey="LayerOnMicaBaseAltFillColorDefaultBrush" />
-            <StaticResource x:Key="AppMenuItemBackgroundBrush" ResourceKey="ButtonBackgroundThemeBrush" />
+            <StaticResource x:Key="AppMenuItemBackgroundBrush" ResourceKey="ButtonBackground" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
@@ -2255,6 +2255,7 @@
                                 Glyph="&#xE721;" />
                             <ContentControl
                                 x:Name="PlaceholderTextContent"
+                                VerticalAlignment="Center"
                                 Content="{TemplateBinding PlaceholderText}"
                                 FontStyle="Italic"
                                 Foreground="{ThemeResource TextControlPlaceholderForeground}"

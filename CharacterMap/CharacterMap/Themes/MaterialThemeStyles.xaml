@@ -2931,17 +2931,6 @@
                                 VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
                                 ZoomMode="Disabled" />
 
-                            <!--<TextBlock
-        x:Name="PlaceholderTextContentPresenter"
-        Grid.Row="1"
-        Grid.Column="0"
-        Grid.ColumnSpan="2"
-        Margin="{TemplateBinding BorderThickness}"
-        Padding="{TemplateBinding Padding}"
-        Foreground="{Binding PlaceholderForeground, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={ThemeResource TextControlPlaceholderForeground}}"
-        IsHitTestVisible="False"
-        Text="{TemplateBinding PlaceholderText}" />-->
-
                             <StackPanel
                                 x:Name="PlaceholderTextContentPresenter"
                                 Grid.Row="1"
@@ -2957,7 +2946,8 @@
                                     Foreground="{Binding ElementName=PlaceholderTextContent, Path=Foreground}" />
                                 <ContentControl
                                     x:Name="PlaceholderTextContent"
-                                    Margin="0 -0.5 0 0"
+                                    Margin="0 -2 0 0"
+                                    VerticalAlignment="Center"
                                     Content="{TemplateBinding PlaceholderText}"
                                     Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                     IsHitTestVisible="False"
