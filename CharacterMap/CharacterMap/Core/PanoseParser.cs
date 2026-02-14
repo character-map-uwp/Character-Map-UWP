@@ -1,14 +1,9 @@
-﻿using System.Text.RegularExpressions;
+﻿using CharacterMap.Helpers;
 
 namespace CharacterMap.Core;
 
 public class Panose
 {
-    static Regex _r = new Regex(@"
-                (?<=[A-Z])(?=[A-Z][a-z]) |
-                 (?<=[^A-Z])(?=[A-Z]) |
-                 (?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace);
-
     private readonly DWriteProperties _props;
 
     public bool IsSansSerifStyle { get; }
@@ -42,39 +37,13 @@ public class Panose
     Dictionary<string, string> SetValues(byte[] bytes)
     {
         Dictionary<string, string> values = new();
-        StringBuilder sb = new();
 
         void Add<T>(string name, int idx) where T : Enum
         {
             var eType = typeof(T);
-            values.Add(_r.Replace(name.Remove(0, 6), " "),
-                Humanise(Enum.GetName(eType, (T)(object)(int)bytes[idx])));
-        }
-        string Humanise(string value)
-        {
-            if (value == null)
-                return value;
-
-            sb.Clear();
-
-            bool caps = true;
-            foreach (var c in value)
-            {
-                if (c == '_')
-                {
-                    sb.Append(" ");
-                    caps = true;
-                    continue;
-                }
-
-                if (caps)
-                    sb.Append(char.ToUpper(c));
-                else
-                    sb.Append(char.ToLower(c));
-                caps = false;
-            }
-
-            return sb.ToString();
+            var enumValue = Enum.GetName(eType, (T)(object)(int)bytes[idx]);
+            var valueKey = $"{eType.Name}_{enumValue}";
+            values.Add(Localization.Get(name), Localization.Get(valueKey));
         }
 
         if (Family == PanoseFamily.Text_Display)
