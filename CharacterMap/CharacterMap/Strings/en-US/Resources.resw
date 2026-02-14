@@ -2763,4 +2763,22 @@ Requires a restart to take effect.</value>
   <data name="PanoseSymbolAspectRatio_VERY_NARROW" xml:space="preserve">
     <value>Very narrow</value>
   </data>
+  <data name="PanoseAspectRatioAndContrast" xml:space="preserve">
+    <value>Aspect ratio &amp; contrast</value>
+  </data>
+  <data name="PanoseAspectRatio94" xml:space="preserve">
+    <value>Aspect ratio of character 94</value>
+  </data>
+  <data name="PanoseAspectRatio119" xml:space="preserve">
+    <value>Aspect ratio of character 119</value>
+  </data>
+  <data name="PanoseAspectRatio157" xml:space="preserve">
+    <value>Aspect ratio of character 157</value>
+  </data>
+  <data name="PanoseAspectRatio163" xml:space="preserve">
+    <value>Aspect ratio of character 163</value>
+  </data>
+  <data name="PanoseAspectRatio211" xml:space="preserve">
+    <value>Aspect ratio of character 211</value>
+  </data>
 </root>
