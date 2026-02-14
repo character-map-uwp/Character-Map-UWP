@@ -2247,6 +2247,34 @@ Otherwise, "All Fonts" is selected by default on every launch.</target>
           <source>Calligraphy pen</source>
           <target state="translated">Füllfederhalter</target>
         </trans-unit>
+        <trans-unit id="FileTrueTypeFontDisplayName" translate="yes" xml:space="preserve">
+          <source>TrueType Font</source>
+          <target state="translated">TrueType-Schriftartendatei</target>
+        </trans-unit>
+        <trans-unit id="FileTrueTypeCollectionDisplayName" translate="yes" xml:space="preserve">
+          <source>TrueType Font Collection</source>
+          <target state="translated">TrueType-Schriftsammlung</target>
+        </trans-unit>
+        <trans-unit id="FileOpenTypeFontDisplayName" translate="yes" xml:space="preserve">
+          <source>OpenType Font</source>
+          <target state="translated">OpenType-Schriftartendatei</target>
+        </trans-unit>
+        <trans-unit id="FileOpenTypeCollectionDisplayName" translate="yes" xml:space="preserve">
+          <source>OpenType Font Collection</source>
+          <target state="translated">OpenType-Schriftsammlung</target>
+        </trans-unit>
+        <trans-unit id="FileWebFontDisplayName" translate="yes" xml:space="preserve">
+          <source>Web Open Font Format File</source>
+          <target state="translated">WOFF-Schriftartendatei</target>
+        </trans-unit>
+        <trans-unit id="FileWebFontTwoDisplayName" translate="yes" xml:space="preserve">
+          <source>Web Open Font Format 2.0 File</source>
+          <target state="translated">WOFF2-Schriftartendatei</target>
+        </trans-unit>
+        <trans-unit id="FileZipFileDisplayName" translate="yes" xml:space="preserve">
+          <source>Compressed (zipped) Folder</source>
+          <target state="translated">Komprimierter Ordner (ZIP)</target>
+        </trans-unit>
       </group>
     </body>
   </file>

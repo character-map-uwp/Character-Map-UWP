@@ -1,18 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5" IgnorableNamespaces="uap mp">
   <Identity Name="58027.265370AB8DB33" Publisher="CN=DB299AFD-CD90-4B49-8407-33F11AF0C784" Version="2026.2.0.0" />
   <mp:PhoneIdentity PhoneProductId="c3a59f67-c12f-4cd8-9d1e-2419f77ee8ae" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+
   <Properties>
     <DisplayName>Character Map UWP</DisplayName>
     <PublisherDisplayName>Edi Wang</PublisherDisplayName>
     <Logo>Assets\NewStoreLogo.png</Logo>
   </Properties>
+
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
   </Dependencies>
+
   <Resources>
     <Resource Language="x-generate" />
   </Resources>
+
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="CharacterMap.App">
       <uap:VisualElements DisplayName="ms-resource:AppName" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="CharacterMap" BackgroundColor="transparent">
@@ -26,22 +31,77 @@
         <uap:SplashScreen Image="Assets\SplashScreen.png" uap5:Optional="true" />
       </uap:VisualElements>
       <Extensions>
-        <uap:Extension Category="windows.fileTypeAssociation">
-          <uap:FileTypeAssociation Name="fontfile">
+        <!--<uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="truetype">
             <uap:SupportedFileTypes>
-              <!--<uap:FileType ContentType="application/x-font-ttf">.ttf</uap:FileType>
-              <uap:FileType>.otf</uap:FileType>
-              <uap:FileType>.ttc</uap:FileType>
-              <uap:FileType>.otc</uap:FileType>-->
-              <uap:FileType>.woff</uap:FileType>
-              <uap:FileType>.woff2</uap:FileType>
+              <uap:FileType ContentType="application/x-font-ttf">.ttf</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>ms-resource:AppName</uap:DisplayName>
+            <uap:DisplayName>ms-resource:FileTrueTypeFontDisplayName</uap:DisplayName>
             <uap:InfoTip>ms-resource:FileExplorerFileToolTip</uap:InfoTip>
             <uap:EditFlags OpenIsSafe="true"/>
-            <uap:Logo>Assets/FileAssociationTile.png</uap:Logo>
+            <uap:Logo>Assets\Logos\Font.png</uap:Logo>
+          </uap:FileTypeAssociation>
+        </uap:Extension>-->
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="truetypecollection">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.ttc</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:FileTrueTypeCollectionDisplayName</uap:DisplayName>
+            <uap:EditFlags OpenIsSafe="true"/>
+            <uap:Logo>Assets\Logos\FontCollection.png</uap:Logo>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="opentype">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="application/font-sfnt">.otf</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:FileOpenTypeFontDisplayName</uap:DisplayName>
+            <uap:EditFlags OpenIsSafe="true"/>
+            <uap:Logo>Assets\Logos\Font.png</uap:Logo>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="opentypecollection">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.otc</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:FileOpenTypeCollectionDisplayName</uap:DisplayName>
+            <uap:EditFlags OpenIsSafe="true"/>
+            <uap:Logo>Assets\Logos\FontCollection.png</uap:Logo>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="webfont">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="font/woff">.woff</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:FileWebFontDisplayName</uap:DisplayName>
+            <uap:EditFlags OpenIsSafe="true"/>
+            <uap:Logo>Assets\Logos\WebFont.png</uap:Logo>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="webfonttwo">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="font/woff2">.woff2</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:FileWebFontTwoDisplayName</uap:DisplayName>
+            <uap:EditFlags OpenIsSafe="true"/>
+            <uap:Logo>Assets\Logos\WebFont.png</uap:Logo>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+        <!--<uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="compressed">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="application/zip-compressed">.zip</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>ms-resource:FileZipFileDisplayName</uap:DisplayName>
+            <uap:EditFlags OpenIsSafe="true"/>
+            <uap:Logo>Assets\Logos\CompressedFolder.png</uap:Logo>
+          </uap:FileTypeAssociation>
+        </uap:Extension>-->
       </Extensions>
     </Application>
   </Applications>
