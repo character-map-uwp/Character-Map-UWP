@@ -1872,4 +1872,895 @@ Requires a restart to take effect.</value>
   <data name="UnihanTypeNameFanqie" xml:space="preserve">
     <value>Fanqie</value>
   </data>
+  <data name="PanoseFamily" xml:space="preserve">
+    <value>Family</value>
+  </data>
+  <data name="PanoseFamily_Any" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseFamily_No_Fit" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseFamily_Text_Display" xml:space="preserve">
+    <value>Text and display</value>
+  </data>
+  <data name="PanoseFamily_Script" xml:space="preserve">
+    <value>Script</value>
+  </data>
+  <data name="PanoseFamily_Decorative" xml:space="preserve">
+    <value>Decorative</value>
+  </data>
+  <data name="PanoseFamily_Symbol" xml:space="preserve">
+    <value>Symbol</value>
+  </data>
+  <data name="PanoseFamily_Pictorial" xml:space="preserve">
+    <value>Pictorial</value>
+  </data>
+  <data name="PanoseSerifStyle" xml:space="preserve">
+    <value>Serif Style</value>
+  </data>
+  <data name="PanoseSerifStyle_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseSerifStyle_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseSerifStyle_COVE" xml:space="preserve">
+    <value>Cove</value>
+  </data>
+  <data name="PanoseSerifStyle_OBTUSE_COVE" xml:space="preserve">
+    <value>Obtuse cove</value>
+  </data>
+  <data name="PanoseSerifStyle_SQUARE_COVE" xml:space="preserve">
+    <value>Square cove</value>
+  </data>
+  <data name="PanoseSerifStyle_OBTUSE_SQUARE_COVE" xml:space="preserve">
+    <value>Obtuse square cove</value>
+  </data>
+  <data name="PanoseSerifStyle_SQUARE" xml:space="preserve">
+    <value>Square</value>
+  </data>
+  <data name="PanoseSerifStyle_THIN" xml:space="preserve">
+    <value>Thin</value>
+  </data>
+  <data name="PanoseSerifStyle_OVAL" xml:space="preserve">
+    <value>Oval</value>
+  </data>
+  <data name="PanoseSerifStyle_EXAGGERATED" xml:space="preserve">
+    <value>Exaggerated</value>
+  </data>
+  <data name="PanoseSerifStyle_TRIANGLE" xml:space="preserve">
+    <value>Triangle</value>
+  </data>
+  <data name="PanoseSerifStyle_NORMAL_SANS" xml:space="preserve">
+    <value>Normal sans serif</value>
+  </data>
+  <data name="PanoseSerifStyle_OBTUSE_SANS" xml:space="preserve">
+    <value>Obtuse sans serif</value>
+  </data>
+  <data name="PanoseSerifStyle_PERPENDICULAR_SANS" xml:space="preserve">
+    <value>Perpendicular sans serif</value>
+  </data>
+  <data name="PanoseSerifStyle_FLARED" xml:space="preserve">
+    <value>Flared</value>
+  </data>
+  <data name="PanoseSerifStyle_ROUNDED" xml:space="preserve">
+    <value>Rounded</value>
+  </data>
+  <data name="PanoseWeight" xml:space="preserve">
+    <value>Weight</value>
+  </data>
+  <data name="PanoseWeight_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseWeight_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseWeight_VERY_LIGHT" xml:space="preserve">
+    <value>Very light</value>
+  </data>
+  <data name="PanoseWeight_LIGHT" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="PanoseWeight_THIN" xml:space="preserve">
+    <value>Thin</value>
+  </data>
+  <data name="PanoseWeight_BOOK" xml:space="preserve">
+    <value>Book</value>
+  </data>
+  <data name="PanoseWeight_MEDIUM" xml:space="preserve">
+    <value>Medium</value>
+  </data>
+  <data name="PanoseWeight_DEMI" xml:space="preserve">
+    <value>Demi</value>
+  </data>
+  <data name="PanoseWeight_BOLD" xml:space="preserve">
+    <value>Bold</value>
+  </data>
+  <data name="PanoseWeight_HEAVY" xml:space="preserve">
+    <value>Heavy</value>
+  </data>
+  <data name="PanoseWeight_BLACK" xml:space="preserve">
+    <value>Black</value>
+  </data>
+  <data name="PanoseWeight_EXTRA_BLACK" xml:space="preserve">
+    <value>Extra black</value>
+  </data>
+  <data name="PanoseProportion" xml:space="preserve">
+    <value>Proportion</value>
+  </data>
+  <data name="PanoseProportion_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseProportion_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseProportion_OLD_STYLE" xml:space="preserve">
+    <value>Old style</value>
+  </data>
+  <data name="PanoseProportion_MODERN" xml:space="preserve">
+    <value>Modern</value>
+  </data>
+  <data name="PanoseProportion_EVEN_WIDTH" xml:space="preserve">
+    <value>Even width</value>
+  </data>
+  <data name="PanoseProportion_EXPANDED" xml:space="preserve">
+    <value>Expanded</value>
+  </data>
+  <data name="PanoseProportion_CONDENSED" xml:space="preserve">
+    <value>Condensed</value>
+  </data>
+  <data name="PanoseProportion_VERY_EXPANDED" xml:space="preserve">
+    <value>Very expanded</value>
+  </data>
+  <data name="PanoseProportion_VERY_CONDENSED" xml:space="preserve">
+    <value>Very condensed</value>
+  </data>
+  <data name="PanoseProportion_MONOSPACED" xml:space="preserve">
+    <value>Monospaced</value>
+  </data>
+  <data name="PanoseContrast" xml:space="preserve">
+    <value>Contrast</value>
+  </data>
+  <data name="PanoseContrast_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseContrast_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseContrast_NONE" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="PanoseContrast_VERY_LOW" xml:space="preserve">
+    <value>Very low</value>
+  </data>
+  <data name="PanoseContrast_LOW" xml:space="preserve">
+    <value>Low</value>
+  </data>
+  <data name="PanoseContrast_MEDIUM_LOW" xml:space="preserve">
+    <value>Medium low</value>
+  </data>
+  <data name="PanoseContrast_MEDIUM" xml:space="preserve">
+    <value>Medium</value>
+  </data>
+  <data name="PanoseContrast_MEDIUM_HIGH" xml:space="preserve">
+    <value>Medium high</value>
+  </data>
+  <data name="PanoseContrast_HIGH" xml:space="preserve">
+    <value>High</value>
+  </data>
+  <data name="PanoseContrast_VERY_HIGH" xml:space="preserve">
+    <value>Very high</value>
+  </data>
+  <data name="PanoseContrast_HORIZONTAL_LOW" xml:space="preserve">
+    <value>Horizontal low</value>
+  </data>
+  <data name="PanoseContrast_HORIZONTAL_MEDIUM" xml:space="preserve">
+    <value>Horizontal medium</value>
+  </data>
+  <data name="PanoseContrast_HORIZONTAL_HIGH" xml:space="preserve">
+    <value>Horizontal high</value>
+  </data>
+  <data name="PanoseContrast_BROKEN" xml:space="preserve">
+    <value>Broken</value>
+  </data>
+  <data name="PanoseStrokeVariation" xml:space="preserve">
+    <value>Stroke Variation</value>
+  </data>
+  <data name="PanoseStrokeVariation_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseStrokeVariation_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseStrokeVariation_NO_VARIATION" xml:space="preserve">
+    <value>No variation</value>
+  </data>
+  <data name="PanoseStrokeVariation_GRADUAL_DIAGONAL" xml:space="preserve">
+    <value>Gradual/Diagonal</value>
+  </data>
+  <data name="PanoseStrokeVariation_GRADUAL_TRANSITIONAL" xml:space="preserve">
+    <value>Gradual/Transitional</value>
+  </data>
+  <data name="PanoseStrokeVariation_GRADUAL_VERTICAL" xml:space="preserve">
+    <value>Gradual/Vertical</value>
+  </data>
+  <data name="PanoseStrokeVariation_GRADUAL_HORIZONTAL" xml:space="preserve">
+    <value>Gradual/Horizontal</value>
+  </data>
+  <data name="PanoseStrokeVariation_RAPID_VERTICAL" xml:space="preserve">
+    <value>Rapid/Vertical</value>
+  </data>
+  <data name="PanoseStrokeVariation_RAPID_HORIZONTAL" xml:space="preserve">
+    <value>Rapid/Horizontal</value>
+  </data>
+  <data name="PanoseStrokeVariation_INSTANT_VERTICAL" xml:space="preserve">
+    <value>Instant/Vertical</value>
+  </data>
+  <data name="PanoseStrokeVariation_INSTANT_HORIZONTAL" xml:space="preserve">
+    <value>Instant/Horizontal</value>
+  </data>
+  <data name="PanoseArmStyle" xml:space="preserve">
+    <value>Arm Style</value>
+  </data>
+  <data name="PanoseArmStyle_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseArmStyle_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseArmStyle_STRAIGHT_ARMS_HORIZONTAL" xml:space="preserve">
+    <value>Straight arms/Horizontal</value>
+  </data>
+  <data name="PanoseArmStyle_STRAIGHT_ARMS_WEDGE" xml:space="preserve">
+    <value>Straight arms/Wedge</value>
+  </data>
+  <data name="PanoseArmStyle_STRAIGHT_ARMS_VERTICAL" xml:space="preserve">
+    <value>Straight arms/Vertical</value>
+  </data>
+  <data name="PanoseArmStyle_STRAIGHT_ARMS_SINGLE_SERIF" xml:space="preserve">
+    <value>Straight arms/Single-serif</value>
+  </data>
+  <data name="PanoseArmStyle_STRAIGHT_ARMS_DOUBLE_SERIF" xml:space="preserve">
+    <value>Straight arms/Double-serif</value>
+  </data>
+  <data name="PanoseArmStyle_NONSTRAIGHT_ARMS_HORIZONTAL" xml:space="preserve">
+    <value>Non-straight arms/Horizontal</value>
+  </data>
+  <data name="PanoseArmStyle_NONSTRAIGHT_ARMS_WEDGE" xml:space="preserve">
+    <value>Non-straight arms/Wedge</value>
+  </data>
+  <data name="PanoseArmStyle_NONSTRAIGHT_ARMS_VERTICAL" xml:space="preserve">
+    <value>Non-straight arms/Vertical</value>
+  </data>
+  <data name="PanoseArmStyle_NONSTRAIGHT_ARMS_SINGLE_SERIF" xml:space="preserve">
+    <value>Non-straight arms/Single-serif</value>
+  </data>
+  <data name="PanoseArmStyle_NONSTRAIGHT_ARMS_DOUBLE_SERIF" xml:space="preserve">
+    <value>Non-straight arms/Double-serif</value>
+  </data>
+  <data name="PanoseLetterform" xml:space="preserve">
+    <value>Letterform</value>
+  </data>
+  <data name="PanoseLetterform_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseLetterform_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseLetterform_NORMAL_CONTACT" xml:space="preserve">
+    <value>Normal/Contact</value>
+  </data>
+  <data name="PanoseLetterform_NORMAL_WEIGHTED" xml:space="preserve">
+    <value>Normal/Weighted</value>
+  </data>
+  <data name="PanoseLetterform_NORMAL_BOXED" xml:space="preserve">
+    <value>Normal/Boxed</value>
+  </data>
+  <data name="PanoseLetterform_NORMAL_FLATTENED" xml:space="preserve">
+    <value>Normal/Flattened</value>
+  </data>
+  <data name="PanoseLetterform_NORMAL_ROUNDED" xml:space="preserve">
+    <value>Normal/Rounded</value>
+  </data>
+  <data name="PanoseLetterform_NORMAL_OFF_CENTER" xml:space="preserve">
+    <value>Normal/Off-center</value>
+  </data>
+  <data name="PanoseLetterform_NORMAL_SQUARE" xml:space="preserve">
+    <value>Normal/Square</value>
+  </data>
+  <data name="PanoseLetterform_OBLIQUE_CONTACT" xml:space="preserve">
+    <value>Oblique/Contact</value>
+  </data>
+  <data name="PanoseLetterform_OBLIQUE_WEIGHTED" xml:space="preserve">
+    <value>Oblique/Weighted</value>
+  </data>
+  <data name="PanoseLetterform_OBLIQUE_BOXED" xml:space="preserve">
+    <value>Oblique/Boxed</value>
+  </data>
+  <data name="PanoseLetterform_OBLIQUE_FLATTENED" xml:space="preserve">
+    <value>Oblique/Flattened</value>
+  </data>
+  <data name="PanoseLetterform_OBLIQUE_ROUNDED" xml:space="preserve">
+    <value>Oblique/Rounded</value>
+  </data>
+  <data name="PanoseLetterform_OBLIQUE_OFF_CENTER" xml:space="preserve">
+    <value>Oblique/Off-center</value>
+  </data>
+  <data name="PanoseLetterform_OBLIQUE_SQUARE" xml:space="preserve">
+    <value>Oblique/Square</value>
+  </data>
+  <data name="PanoseMidline" xml:space="preserve">
+    <value>Midline</value>
+  </data>
+  <data name="PanoseMidline_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseMidline_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseMidline_STANDARD_TRIMMED" xml:space="preserve">
+    <value>Standard/Trimmed</value>
+  </data>
+  <data name="PanoseMidline_STANDARD_POINTED" xml:space="preserve">
+    <value>Standard/Pointed</value>
+  </data>
+  <data name="PanoseMidline_STANDARD_SERIFED" xml:space="preserve">
+    <value>Standard/Serifed</value>
+  </data>
+  <data name="PanoseMidline_HIGH_TRIMMED" xml:space="preserve">
+    <value>High/Trimmed</value>
+  </data>
+  <data name="PanoseMidline_HIGH_POINTED" xml:space="preserve">
+    <value>High/Pointed</value>
+  </data>
+  <data name="PanoseMidline_HIGH_SERIFED" xml:space="preserve">
+    <value>High/Serifed</value>
+  </data>
+  <data name="PanoseMidline_CONSTANT_TRIMMED" xml:space="preserve">
+    <value>Constant/Trimmed</value>
+  </data>
+  <data name="PanoseMidline_CONSTANT_POINTED" xml:space="preserve">
+    <value>Constant/Pointed</value>
+  </data>
+  <data name="PanoseMidline_CONSTANT_SERIFED" xml:space="preserve">
+    <value>Constant/Serifed</value>
+  </data>
+  <data name="PanoseMidline_LOW_TRIMMED" xml:space="preserve">
+    <value>Low/Trimmed</value>
+  </data>
+  <data name="PanoseMidline_LOW_POINTED" xml:space="preserve">
+    <value>Low/Pointed</value>
+  </data>
+  <data name="PanoseMidline_LOW_SERIFED" xml:space="preserve">
+    <value>Low/Serifed</value>
+  </data>
+  <data name="PanoseXHeight" xml:space="preserve">
+    <value>X-height</value>
+  </data>
+  <data name="PanoseXHeight_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseXHeight_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseXHeight_CONSTANT_SMALL" xml:space="preserve">
+    <value>Constant/Small</value>
+  </data>
+  <data name="PanoseXHeight_CONSTANT_STANDARD" xml:space="preserve">
+    <value>Constant/Standard</value>
+  </data>
+  <data name="PanoseXHeight_CONSTANT_LARGE" xml:space="preserve">
+    <value>Constant/Large</value>
+  </data>
+  <data name="PanoseXHeight_DUCKING_SMALL" xml:space="preserve">
+    <value>Ducking/Small</value>
+  </data>
+  <data name="PanoseXHeight_DUCKING_STANDARD" xml:space="preserve">
+    <value>Ducking/Standard</value>
+  </data>
+  <data name="PanoseXHeight_DUCKING_LARGE" xml:space="preserve">
+    <value>Ducking/Large</value>
+  </data>
+  <data name="PanoseToolKind" xml:space="preserve">
+    <value>Tool Kind</value>
+  </data>
+  <data name="PanoseToolKind_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseToolKind_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseToolKind_FLAT_NIB" xml:space="preserve">
+    <value>Flat Nib</value>
+  </data>
+  <data name="PanoseToolKind_PRESSURE_POINT" xml:space="preserve">
+    <value>Pressure point</value>
+  </data>
+  <data name="PanoseToolKind_ENGRAVED" xml:space="preserve">
+    <value>Engraved</value>
+  </data>
+  <data name="PanoseToolKind_BALL" xml:space="preserve">
+    <value>Ball</value>
+  </data>
+  <data name="PanoseToolKind_BRUSH" xml:space="preserve">
+    <value>Brush</value>
+  </data>
+  <data name="PanoseToolKind_ROUGH" xml:space="preserve">
+    <value>Rough</value>
+  </data>
+  <data name="PanoseToolKind_FELT_PEN_BRUSH_TIP" xml:space="preserve">
+    <value>Felt-pen/Brush-tip</value>
+  </data>
+  <data name="PanoseToolKind_WILD_BRUSH" xml:space="preserve">
+    <value>Wild-brush</value>
+  </data>
+  <data name="PanoseSpacing" xml:space="preserve">
+    <value>Spacing</value>
+  </data>
+  <data name="PanoseSpacing_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseSpacing_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseSpacing_PROPORTIONAL_SPACED" xml:space="preserve">
+    <value>Proportional</value>
+  </data>
+  <data name="PanoseSpacing_MONOSPACED" xml:space="preserve">
+    <value>Monospaced</value>
+  </data>
+  <data name="PanoseAspectRatio" xml:space="preserve">
+    <value>Aspect Ratio</value>
+  </data>
+  <data name="PanoseAspectRatio_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseAspectRatio_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseAspectRatio_VERY_CONDENSED" xml:space="preserve">
+    <value>Very condensed</value>
+  </data>
+  <data name="PanoseAspectRatio_CONDENSED" xml:space="preserve">
+    <value>Condensed</value>
+  </data>
+  <data name="PanoseAspectRatio_NORMAL" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="PanoseAspectRatio_EXPANDED" xml:space="preserve">
+    <value>Expanded</value>
+  </data>
+  <data name="PanoseAspectRatio_VERY_EXPANDED" xml:space="preserve">
+    <value>Very expanded</value>
+  </data>
+  <data name="PanoseScriptTopology" xml:space="preserve">
+    <value>Topology (Script)</value>
+  </data>
+  <data name="PanoseScriptTopology_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseScriptTopology_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseScriptTopology_ROMAN_DISCONNECTED" xml:space="preserve">
+    <value>Roman/Disconnected</value>
+  </data>
+  <data name="PanoseScriptTopology_ROMAN_TRAILING" xml:space="preserve">
+    <value>Roman/Trailing</value>
+  </data>
+  <data name="PanoseScriptTopology_ROMAN_CONNECTED" xml:space="preserve">
+    <value>Roman/Connected</value>
+  </data>
+  <data name="PanoseScriptTopology_CURSIVE_DISCONNECTED" xml:space="preserve">
+    <value>Cursive/Disconnected</value>
+  </data>
+  <data name="PanoseScriptTopology_CURSIVE_TRAILING" xml:space="preserve">
+    <value>Cursive/Trailing</value>
+  </data>
+  <data name="PanoseScriptTopology_CURSIVE_CONNECTED" xml:space="preserve">
+    <value>Cursive/Connected</value>
+  </data>
+  <data name="PanoseScriptTopology_BLACKLETTER_DISCONNECTED" xml:space="preserve">
+    <value>Blackletter/Disconnected</value>
+  </data>
+  <data name="PanoseScriptTopology_BLACKLETTER_TRAILING" xml:space="preserve">
+    <value>Blackletter/Trailing</value>
+  </data>
+  <data name="PanoseScriptTopology_BLACKLETTER_CONNECTED" xml:space="preserve">
+    <value>Blackletter/Connected</value>
+  </data>
+  <data name="PanoseScriptForm" xml:space="preserve">
+    <value>Form (Script)</value>
+  </data>
+  <data name="PanoseScriptForm_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseScriptForm_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseScriptForm_UPRIGHT_NO_WRAPPING" xml:space="preserve">
+    <value>Upright/No wrapping</value>
+  </data>
+  <data name="PanoseScriptForm_UPRIGHT_SOME_WRAPPING" xml:space="preserve">
+    <value>Upright/Some wrapping</value>
+  </data>
+  <data name="PanoseScriptForm_UPRIGHT_MORE_WRAPPING" xml:space="preserve">
+    <value>Upright/More wrapping</value>
+  </data>
+  <data name="PanoseScriptForm_UPRIGHT_EXTREME_WRAPPING" xml:space="preserve">
+    <value>Upright/Extreme wrapping</value>
+  </data>
+  <data name="PanoseScriptForm_OBLIQUE_NO_WRAPPING" xml:space="preserve">
+    <value>Oblique/No wrapping</value>
+  </data>
+  <data name="PanoseScriptForm_OBLIQUE_SOME_WRAPPING" xml:space="preserve">
+    <value>Oblique/Some wrapping</value>
+  </data>
+  <data name="PanoseScriptForm_OBLIQUE_MORE_WRAPPING" xml:space="preserve">
+    <value>Oblique/More wrapping</value>
+  </data>
+  <data name="PanoseScriptForm_OBLIQUE_EXTREME_WRAPPING" xml:space="preserve">
+    <value>Oblique/Extreme wrapping</value>
+  </data>
+  <data name="PanoseScriptForm_EXAGGERATED_NO_WRAPPING" xml:space="preserve">
+    <value>Exaggerated/No wrapping</value>
+  </data>
+  <data name="PanoseScriptForm_EXAGGERATED_SOME_WRAPPING" xml:space="preserve">
+    <value>Exaggerated/Some wrapping</value>
+  </data>
+  <data name="PanoseScriptForm_EXAGGERATED_MORE_WRAPPING" xml:space="preserve">
+    <value>Exaggerated/More wrapping</value>
+  </data>
+  <data name="PanoseScriptForm_EXAGGERATED_EXTREME_WRAPPING" xml:space="preserve">
+    <value>Exaggerated/Extreme wrapping</value>
+  </data>
+  <data name="PanoseFinials" xml:space="preserve">
+    <value>Finials</value>
+  </data>
+  <data name="PanoseFinials_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseFinials_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseFinials_NONE_NO_LOOPS" xml:space="preserve">
+    <value>None/No loops</value>
+  </data>
+  <data name="PanoseFinials_NONE_CLOSED_LOOPS" xml:space="preserve">
+    <value>None/Closed loops</value>
+  </data>
+  <data name="PanoseFinials_NONE_OPEN_LOOPS" xml:space="preserve">
+    <value>None/Open loops</value>
+  </data>
+  <data name="PanoseFinials_SHARP_NO_LOOPS" xml:space="preserve">
+    <value>Sharp/No loops</value>
+  </data>
+  <data name="PanoseFinials_SHARP_CLOSED_LOOPS" xml:space="preserve">
+    <value>Sharp/Closed loops</value>
+  </data>
+  <data name="PanoseFinials_SHARP_OPEN_LOOPS" xml:space="preserve">
+    <value>Sharp/Open loops</value>
+  </data>
+  <data name="PanoseFinials_TAPERED_NO_LOOPS" xml:space="preserve">
+    <value>Tapered/No loops</value>
+  </data>
+  <data name="PanoseFinials_TAPERED_CLOSED_LOOPS" xml:space="preserve">
+    <value>Tapered/Closed loops</value>
+  </data>
+  <data name="PanoseFinials_TAPERED_OPEN_LOOPS" xml:space="preserve">
+    <value>Tapered/Open loops</value>
+  </data>
+  <data name="PanoseFinials_ROUND_NO_LOOPS" xml:space="preserve">
+    <value>Round/No loops</value>
+  </data>
+  <data name="PanoseFinials_ROUND_CLOSED_LOOPS" xml:space="preserve">
+    <value>Round/Closed loops</value>
+  </data>
+  <data name="PanoseFinials_ROUND_OPEN_LOOPS" xml:space="preserve">
+    <value>Round/Open loops</value>
+  </data>
+  <data name="PanoseXAscent" xml:space="preserve">
+    <value>X-ascent</value>
+  </data>
+  <data name="PanoseXAscent_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseXAscent_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseXAscent_VERY_LOW" xml:space="preserve">
+    <value>Very low</value>
+  </data>
+  <data name="PanoseXAscent_LOW" xml:space="preserve">
+    <value>Low</value>
+  </data>
+  <data name="PanoseXAscent_MEDIUM" xml:space="preserve">
+    <value>Medium</value>
+  </data>
+  <data name="PanoseXAscent_HIGH" xml:space="preserve">
+    <value>High</value>
+  </data>
+  <data name="PanoseXAscent_VERY_HIGH" xml:space="preserve">
+    <value>Very high</value>
+  </data>
+  <data name="PanoseDecorativeClass" xml:space="preserve">
+    <value>Class (Decorative)</value>
+  </data>
+  <data name="PanoseDecorativeClass_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseDecorativeClass_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseDecorativeClass_DERIVATIVE" xml:space="preserve">
+    <value>Derivative</value>
+  </data>
+  <data name="PanoseDecorativeClass_NONSTANDARD_TOPOLOGY" xml:space="preserve">
+    <value>Non-standard topology</value>
+  </data>
+  <data name="PanoseDecorativeClass_NONSTANDARD_ELEMENTS" xml:space="preserve">
+    <value>Nonstandard elements</value>
+  </data>
+  <data name="PanoseDecorativeClass_NONSTANDARD_ASPECT" xml:space="preserve">
+    <value>Non-standard aspect</value>
+  </data>
+  <data name="PanoseDecorativeClass_INITIALS" xml:space="preserve">
+    <value>Initials</value>
+  </data>
+  <data name="PanoseDecorativeClass_CARTOON" xml:space="preserve">
+    <value>Cartoon</value>
+  </data>
+  <data name="PanoseDecorativeClass_PICTURE_STEMS" xml:space="preserve">
+    <value>Picture stems</value>
+  </data>
+  <data name="PanoseDecorativeClass_ORNAMENTED" xml:space="preserve">
+    <value>Ornamented</value>
+  </data>
+  <data name="PanoseDecorativeClass_TEXT_AND_BACKGROUND" xml:space="preserve">
+    <value>Text and background</value>
+  </data>
+  <data name="PanoseDecorativeClass_COLLAGE" xml:space="preserve">
+    <value>Collage</value>
+  </data>
+  <data name="PanoseDecorativeClass_MONTAGE" xml:space="preserve">
+    <value>Montage</value>
+  </data>
+  <data name="PanoseAspect" xml:space="preserve">
+    <value>Aspect</value>
+  </data>
+  <data name="PanoseAspect_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseAspect_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseAspect_SUPER_CONDENSED" xml:space="preserve">
+    <value>Super condensed</value>
+  </data>
+  <data name="PanoseAspect_VERY_CONDENSED" xml:space="preserve">
+    <value>Very condensed</value>
+  </data>
+  <data name="PanoseAspect_CONDENSED" xml:space="preserve">
+    <value>Condensed</value>
+  </data>
+  <data name="PanoseAspect_NORMAL" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="PanoseAspect_EXTENDED" xml:space="preserve">
+    <value>Extended</value>
+  </data>
+  <data name="PanoseAspect_VERY_EXTENDED" xml:space="preserve">
+    <value>Very extended</value>
+  </data>
+  <data name="PanoseAspect_SUPER_EXTENDED" xml:space="preserve">
+    <value>Super extended</value>
+  </data>
+  <data name="PanoseAspect_MONOSPACED" xml:space="preserve">
+    <value>Monospaced</value>
+  </data>
+  <data name="PanoseFill" xml:space="preserve">
+    <value>Fill</value>
+  </data>
+  <data name="PanoseFill_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseFill_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseFill_STANDARD_SOLID_FILL" xml:space="preserve">
+    <value>Standard solid fill</value>
+  </data>
+  <data name="PanoseFill_NO_FILL" xml:space="preserve">
+    <value>No fill</value>
+  </data>
+  <data name="PanoseFill_PATTERNED_FILL" xml:space="preserve">
+    <value>Patterned fill</value>
+  </data>
+  <data name="PanoseFill_COMPLEX_FILL" xml:space="preserve">
+    <value>Complex fill</value>
+  </data>
+  <data name="PanoseFill_SHAPED_FILL" xml:space="preserve">
+    <value>Shaped fill</value>
+  </data>
+  <data name="PanoseFill_DRAWN_DISTRESSED" xml:space="preserve">
+    <value>Drawn/Distressed</value>
+  </data>
+  <data name="PanoseLining" xml:space="preserve">
+    <value>Lining</value>
+  </data>
+  <data name="PanoseLining_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseLining_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseLining_NONE" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="PanoseLining_INLINE" xml:space="preserve">
+    <value>Inline</value>
+  </data>
+  <data name="PanoseLining_OUTLINE" xml:space="preserve">
+    <value>Outline</value>
+  </data>
+  <data name="PanoseLining_ENGRAVED" xml:space="preserve">
+    <value>Engraved</value>
+  </data>
+  <data name="PanoseLining_SHADOW" xml:space="preserve">
+    <value>Shadow</value>
+  </data>
+  <data name="PanoseLining_RELIEF" xml:space="preserve">
+    <value>Relief</value>
+  </data>
+  <data name="PanoseLining_BACKDROP" xml:space="preserve">
+    <value>Backdrop</value>
+  </data>
+  <data name="PanoseDecorativeTopology" xml:space="preserve">
+    <value>Topology (Decorative)</value>
+  </data>
+  <data name="PanoseDecorativeTopology_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseDecorativeTopology_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseDecorativeTopology_STANDARD" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="PanoseDecorativeTopology_SQUARE" xml:space="preserve">
+    <value>Square</value>
+  </data>
+  <data name="PanoseDecorativeTopology_MULTIPLE_SEGMENT" xml:space="preserve">
+    <value>Multiple segment</value>
+  </data>
+  <data name="PanoseDecorativeTopology_ART_DECO" xml:space="preserve">
+    <value>Art Deco</value>
+  </data>
+  <data name="PanoseDecorativeTopology_UNEVEN_WEIGHTING" xml:space="preserve">
+    <value>Uneven weighting</value>
+  </data>
+  <data name="PanoseDecorativeTopology_DIVERSE_ARMS" xml:space="preserve">
+    <value>Diverse arms</value>
+  </data>
+  <data name="PanoseDecorativeTopology_DIVERSE_FORMS" xml:space="preserve">
+    <value>Diverse forms</value>
+  </data>
+  <data name="PanoseDecorativeTopology_LOMBARDIC_FORMS" xml:space="preserve">
+    <value>Lombardic forms</value>
+  </data>
+  <data name="PanoseDecorativeTopology_UPPER_CASE_IN_LOWER_CASE" xml:space="preserve">
+    <value>Upper case in lower case</value>
+  </data>
+  <data name="PanoseDecorativeTopology_IMPLIED_TOPOLOGY" xml:space="preserve">
+    <value>Implied topology</value>
+  </data>
+  <data name="PanoseDecorativeTopology_HORSESHOE_E_AND_A" xml:space="preserve">
+    <value>Horseshoe E and A</value>
+  </data>
+  <data name="PanoseDecorativeTopology_CURSIVE" xml:space="preserve">
+    <value>Cursive</value>
+  </data>
+  <data name="PanoseDecorativeTopology_BLACKLETTER" xml:space="preserve">
+    <value>Blackletter</value>
+  </data>
+  <data name="PanoseDecorativeTopology_SWASH_VARIANCE" xml:space="preserve">
+    <value>Swash variance</value>
+  </data>
+  <data name="PanoseCharacterRanges" xml:space="preserve">
+    <value>Range of characters</value>
+  </data>
+  <data name="PanoseCharacterRanges_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseCharacterRanges_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseCharacterRanges_EXTENDED_COLLECTION" xml:space="preserve">
+    <value>Extended collection</value>
+  </data>
+  <data name="PanoseCharacterRanges_LITERALS" xml:space="preserve">
+    <value>Literals</value>
+  </data>
+  <data name="PanoseCharacterRanges_NO_LOWER_CASE" xml:space="preserve">
+    <value>No lower case</value>
+  </data>
+  <data name="PanoseCharacterRanges_SMALL_CAPS" xml:space="preserve">
+    <value>Small caps</value>
+  </data>
+  <data name="PanoseSymbolKind" xml:space="preserve">
+    <value>Kind (Symbol)</value>
+  </data>
+  <data name="PanoseSymbolKind_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseSymbolKind_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseSymbolKind_MONTAGES" xml:space="preserve">
+    <value>Montages</value>
+  </data>
+  <data name="PanoseSymbolKind_PICTURES" xml:space="preserve">
+    <value>Pictures</value>
+  </data>
+  <data name="PanoseSymbolKind_SHAPES" xml:space="preserve">
+    <value>Shapes</value>
+  </data>
+  <data name="PanoseSymbolKind_SCIENTIFIC" xml:space="preserve">
+    <value>Scientific</value>
+  </data>
+  <data name="PanoseSymbolKind_MUSIC" xml:space="preserve">
+    <value>Music</value>
+  </data>
+  <data name="PanoseSymbolKind_EXPERT" xml:space="preserve">
+    <value>Expert</value>
+  </data>
+  <data name="PanoseSymbolKind_PATTERNS" xml:space="preserve">
+    <value>Patterns</value>
+  </data>
+  <data name="PanoseSymbolKind_BOARDERS" xml:space="preserve">
+    <value>Boarders</value>
+  </data>
+  <data name="PanoseSymbolKind_ICONS" xml:space="preserve">
+    <value>Icons</value>
+  </data>
+  <data name="PanoseSymbolKind_LOGOS" xml:space="preserve">
+    <value>Logos</value>
+  </data>
+  <data name="PanoseSymbolKind_INDUSTRY_SPECIFIC" xml:space="preserve">
+    <value>Industry specific</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio" xml:space="preserve">
+    <value>Aspect Ratio (Symbol)</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio_ANY" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio_NO_FIT" xml:space="preserve">
+    <value>No fit</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio_NO_WIDTH" xml:space="preserve">
+    <value>No width</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio_EXCEPTIONALLY_WIDE" xml:space="preserve">
+    <value>Exceptionally wide</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio_SUPER_WIDE" xml:space="preserve">
+    <value>Super wide</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio_VERY_WIDE" xml:space="preserve">
+    <value>Very wide</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio_WIDE" xml:space="preserve">
+    <value>Wide</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio_NORMAL" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio_NARROW" xml:space="preserve">
+    <value>Narrow</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio_VERY_NARROW" xml:space="preserve">
+    <value>Very narrow</value>
+  </data>
 </root>

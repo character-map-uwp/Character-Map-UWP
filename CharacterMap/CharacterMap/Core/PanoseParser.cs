@@ -100,7 +100,7 @@ public class Panose
             Add<PanoseContrast>(nameof(PanoseContrast), 5);
             Add<PanoseScriptTopology>(nameof(PanoseScriptTopology), 6);
             Add<PanoseScriptForm>(nameof(PanoseScriptForm), 7);
-            Add<PanoseFinals>(nameof(PanoseFinals), 8);
+            Add<PanoseFinials>(nameof(PanoseFinials), 8);
             Add<PanoseXAscent>(nameof(PanoseXAscent), 9);
         }
         else if (Family == PanoseFamily.Decorative)
