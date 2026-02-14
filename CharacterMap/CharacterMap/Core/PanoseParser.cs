@@ -37,13 +37,14 @@ public class Panose
     Dictionary<string, string> SetValues(byte[] bytes)
     {
         Dictionary<string, string> values = new();
+        bool isZuneTheme = ResourceHelper.IsZuneTheme();
 
         void Add<T>(string name, int idx) where T : Enum
         {
-            var eType = typeof(T);
-            var enumValue = Enum.GetName(eType, (T)(object)(int)bytes[idx]);
-            var valueKey = $"{eType.Name}_{enumValue}";
-            values.Add(Localization.Get(name), Localization.Get(valueKey));
+            var enumValue = (T)(object)(int)bytes[idx];
+            var localizedName = Localization.Get(name);
+
+            values.Add(isZuneTheme ? localizedName.ToUpper() : localizedName, Converters.GetLocalizedEnumName(enumValue));
         }
 
         if (Family == PanoseFamily.Text_Display)
