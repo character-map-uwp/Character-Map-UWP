@@ -1,14 +1,9 @@
-﻿using System.Text.RegularExpressions;
+﻿using CharacterMap.Helpers;
 
 namespace CharacterMap.Core;
 
 public class Panose
 {
-    static Regex _r = new Regex(@"
-                (?<=[A-Z])(?=[A-Z][a-z]) |
-                 (?<=[^A-Z])(?=[A-Z]) |
-                 (?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace);
-
     private readonly DWriteProperties _props;
 
     public bool IsSansSerifStyle { get; }
@@ -42,39 +37,14 @@ public class Panose
     Dictionary<string, string> SetValues(byte[] bytes)
     {
         Dictionary<string, string> values = new();
-        StringBuilder sb = new();
+        bool isZuneTheme = ResourceHelper.IsZuneTheme();
 
         void Add<T>(string name, int idx) where T : Enum
         {
-            var eType = typeof(T);
-            values.Add(_r.Replace(name.Remove(0, 6), " "),
-                Humanise(Enum.GetName(eType, (T)(object)(int)bytes[idx])));
-        }
-        string Humanise(string value)
-        {
-            if (value == null)
-                return value;
+            var enumValue = (T)(object)(int)bytes[idx];
+            var localizedName = Localization.Get(name);
 
-            sb.Clear();
-
-            bool caps = true;
-            foreach (var c in value)
-            {
-                if (c == '_')
-                {
-                    sb.Append(" ");
-                    caps = true;
-                    continue;
-                }
-
-                if (caps)
-                    sb.Append(char.ToUpper(c));
-                else
-                    sb.Append(char.ToLower(c));
-                caps = false;
-            }
-
-            return sb.ToString();
+            values.Add(isZuneTheme ? localizedName.ToUpper() : localizedName, Converters.GetLocalizedEnumName(enumValue));
         }
 
         if (Family == PanoseFamily.Text_Display)
@@ -100,7 +70,7 @@ public class Panose
             Add<PanoseContrast>(nameof(PanoseContrast), 5);
             Add<PanoseScriptTopology>(nameof(PanoseScriptTopology), 6);
             Add<PanoseScriptForm>(nameof(PanoseScriptForm), 7);
-            Add<PanoseFinals>(nameof(PanoseFinals), 8);
+            Add<PanoseFinials>(nameof(PanoseFinials), 8);
             Add<PanoseXAscent>(nameof(PanoseXAscent), 9);
         }
         else if (Family == PanoseFamily.Decorative)

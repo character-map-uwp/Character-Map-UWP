@@ -310,7 +310,7 @@ public enum PanoseScriptForm
 /// How character ends and miniscule ascenders are treated.
 /// Present for families: 3-script
 /// </summary>
-public enum PanoseFinals
+public enum PanoseFinials
 {
     ANY = 0,
     NO_FIT = 1,
