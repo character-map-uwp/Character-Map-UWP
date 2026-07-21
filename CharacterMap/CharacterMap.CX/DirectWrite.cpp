@@ -303,11 +303,9 @@ IVectorView<DWriteKnownFontAxisValues^>^ DirectWrite::GetNamedAxisValues(ComPtr<
 				uint32 lgt;
 				strings->GetStringLength(0, &lgt);
 				lgt += 1;
-				wchar_t* buffer = new wchar_t[lgt];
-
-				strings->GetString(0, buffer, lgt);
-				name = ref new String(buffer);
-				delete[] buffer;
+				std::vector<wchar_t> buffer(lgt);
+				strings->GetString(0, buffer.data(), lgt);
+				name = ref new String(buffer.data());
 
 				instances->Append(ref new DWriteNamedFontAxisValue(range, GetFeatureTag(range.axisTag), name));
 			}

@@ -28,7 +28,7 @@ namespace CharacterMapCX
 
 		std::vector<GlyphImageFormat> GlyphFormats;
 
-		std::vector<uint16*> GlyphIndicies;
+		std::vector<std::vector<uint16>> GlyphIndicies;
 
 		std::vector<DWRITE_COLOR_F> RunColors;
 

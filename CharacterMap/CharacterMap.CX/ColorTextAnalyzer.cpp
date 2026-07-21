@@ -75,12 +75,6 @@ HRESULT ColorTextAnalyzer::DrawGlyphRun(
 			DWRITE_COLOR_GLYPH_RUN1 const* colorRun;
 			ThrowIfFailed(glyphRunEnumerator->GetCurrentRun(&colorRun));
 
-			auto arr = new uint16[colorRun->glyphRun.glyphCount];
-			
-
-			/*CanvasGlyph* g = new CanvasGlyph();
-			g->Index = colorRun->glyphRun.glyphIndices[0];*/
-
 			GlyphImageFormat format = static_cast<GlyphImageFormat>(colorRun->glyphImageFormat);
 			GlyphFormats.push_back(format);
 
@@ -88,13 +82,8 @@ HRESULT ColorTextAnalyzer::DrawGlyphRun(
 			{
 				RunColors.push_back(colorRun->runColor);
 
-				auto arr = new uint16[colorRun->glyphRun.glyphCount];
-				for (unsigned int a = 0; a < colorRun->glyphRun.glyphCount; a = a + 1)
-				{
-					arr[a] = colorRun->glyphRun.glyphIndices[a];
-				}
-
-				GlyphIndicies.push_back(arr);
+				std::vector<uint16> glyphIndices(colorRun->glyphRun.glyphIndices, colorRun->glyphRun.glyphIndices + colorRun->glyphRun.glyphCount);
+				GlyphIndicies.push_back(std::move(glyphIndices));
 
 				if ((format & GlyphImageFormat::Colr) == GlyphImageFormat::Colr)
 				{

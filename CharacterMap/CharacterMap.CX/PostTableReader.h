@@ -67,16 +67,16 @@ namespace CharacterMapCX
 				NumGlyphs = GetUInt16();
 				GlyphNameIndex = GetUInt16Vector(NumGlyphs);
 
-				auto s = new vector<String^>();
+				vector<String^> s;
 				while (!IsAtEnd())
 				{
 					auto length = GetUInt8();
 					auto str = GetCleanNativeString(length);
 
 					if (IsValid(str, length))
-						s->push_back(str);
+						s.push_back(str);
 					else
-						s->push_back(nullptr);
+						s.push_back(nullptr);
 				}
 
 				auto nmap = ref new Platform::Collections::Map<int, String^>();
@@ -90,9 +90,9 @@ namespace CharacterMapCX
 					else
 					{
 						auto target = idx - 258;
-						if (target < s->size())
+						if (target < s.size())
 						{
-							auto str = s->at(target);
+							auto str = s[target];
 							if (str != nullptr)
 							{
 								nmap->Insert(i, str);

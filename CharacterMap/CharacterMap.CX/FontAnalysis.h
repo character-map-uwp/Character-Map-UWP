@@ -159,13 +159,11 @@ namespace CharacterMapCX
 						UINT filePathLength = 0;
 						if (localLoader->GetFilePathLengthFromKey(refKey, size, &filePathLength) == S_OK)
 						{
-							wchar_t* buffer = new (std::nothrow) wchar_t[filePathLength + 1];
-							if (localLoader->GetFilePathFromKey(refKey, size, buffer, filePathLength + 1) == S_OK)
+							std::vector<wchar_t> buffer(filePathLength + 1);
+							if (localLoader->GetFilePathFromKey(refKey, size, buffer.data(), filePathLength + 1) == S_OK)
 							{
-								m_filePath = ref new Platform::String(buffer);
+								m_filePath = ref new Platform::String(buffer.data());
 							}
-
-							delete[] buffer;
 						}
 					}
 				}

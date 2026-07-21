@@ -44,6 +44,14 @@ NativeInterop::NativeInterop(CanvasDevice^ device)
 	_Current = this;
 }
 
+NativeInterop::~NativeInterop()
+{
+	delete m_fontManager;
+	m_fontManager = nullptr;
+	if (_Current == this)
+		_Current = nullptr;
+}
+
 IAsyncAction^ NativeInterop::ListenForFontSetExpirationAsync()
 {
 	return create_async([this]

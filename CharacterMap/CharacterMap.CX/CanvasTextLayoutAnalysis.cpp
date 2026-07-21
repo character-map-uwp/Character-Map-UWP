@@ -29,13 +29,13 @@ CharacterMapCX::CanvasTextLayoutAnalysis::CanvasTextLayoutAnalysis(ComPtr<ColorT
 
 		auto gd = ref new Array<IVectorView<uint16>^>(analyzer->GlyphIndicies.size());
 
-		for(unsigned int a = 0; a < analyzer->GlyphIndicies.size(); a = a + 1)
+		for (unsigned int a = 0; a < analyzer->GlyphIndicies.size(); a = a + 1)
 		{
-			auto i = analyzer->GlyphIndicies[a];
-			auto ind = ref new Vector<uint16>(sizeof(i));
-			for (unsigned int b = 0; b < sizeof(i); b = b + 1)
+			const auto& runGlyphs = analyzer->GlyphIndicies[a];
+			auto ind = ref new Vector<uint16>();
+			for (unsigned int b = 0; b < runGlyphs.size(); b = b + 1)
 			{
-				ind->Append(i[b]);
+				ind->Append(runGlyphs[b]);
 			}
 
 			gd[a] = ind->GetView();

@@ -33,6 +33,7 @@ namespace CharacterMapCX
     public ref class NativeInterop sealed
     {
     public:
+		virtual ~NativeInterop();
 		event SystemFontSetInvalidated^ FontSetInvalidated;
 
         NativeInterop(CanvasDevice^ device);

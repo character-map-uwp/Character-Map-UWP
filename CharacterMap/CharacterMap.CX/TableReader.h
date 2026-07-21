@@ -21,7 +21,7 @@ namespace CharacterMapCX
 
 		virtual ~TableReader()
 		{
-			delete reader;
+			reader = nullptr; // Let COM ref counting release
 		}
 
 	internal:
@@ -34,7 +34,7 @@ namespace CharacterMapCX
 
 			writer->WriteBytes(Platform::ArrayReference<BYTE>(b, size));
 			m_buffer = writer->DetachBuffer();
-			delete writer;
+			// writer is a ref‑counted object; no manual delete needed
 
 			reader = DataReader::FromBuffer(m_buffer);
 		};
@@ -76,32 +76,32 @@ namespace CharacterMapCX
 			return reader->ReadInt16();
 		}
 
-		string* GetString(int length)
+		string GetString(int length)
 		{
-			wchar_t* buffer = new wchar_t(length);
+			std::string s;
+			s.reserve(length);
 
 			for (int i = 0; i < length; i++)
 			{
-				buffer[i] = GetUInt8();
+				s.push_back((char)GetUInt8());
 			}
 
-			wstring ws(buffer);
-			return new std::string(ws.begin(), ws.end());
+			return s;
 		}
 
-		StringReference GetCleanNativeString(int length)
+		Platform::String^ GetCleanNativeString(int length)
 		{
-			wchar_t* buffer = new (std::nothrow) wchar_t[length + 1];
+			std::vector<wchar_t> buffer(length + 1);
 
 			for (int i = 0; i < length; i++)
 			{
 				auto val = GetUInt8();
-				buffer[i] = val == '_' || val == '-' ? ' ' : val;
+				buffer[i] = (val == '_' || val == '-') ? L' ' : (wchar_t)val;
 			}
 
 			buffer[length] = L'\0';
 
-			return buffer;
+			return ref new Platform::String(buffer.data(), length);
 		}
 
 		Platform::String^ GetNativeString(UINT length)
@@ -151,7 +151,7 @@ namespace CharacterMapCX
 		{
 			if (i < (int)position)
 			{
-				delete reader;
+				reader = nullptr; // Release ref‑counted DataReader
 				reader = DataReader::FromBuffer(m_buffer);
 				position = 0;
 			}

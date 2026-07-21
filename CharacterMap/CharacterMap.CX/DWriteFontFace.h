@@ -139,22 +139,20 @@ namespace CharacterMapCX
 					UINT32 length;
 					localizedStrings->GetStringLength(i, &length);
 					length++;
-					wchar_t* name = new wchar_t[length + 1];
-					localizedStrings->GetString(i, name, length);
+					std::vector<wchar_t> nameBuf(length + 1);
+					localizedStrings->GetString(i, nameBuf.data(), length);
 
-					wchar_t* locale;
+					std::vector<wchar_t> localeBuf;
 					localizedStrings->GetLocaleNameLength(i, &length);
-					if (length == 0)
-						locale = name;
-					else
-					{
+					if (length == 0) {
+						localeBuf = nameBuf;
+					} else {
 						length++;
-						locale = new wchar_t[length + 1];
-						localizedStrings->GetLocaleName(i, locale, length);
+						localeBuf.resize(length + 1);
+						localizedStrings->GetLocaleName(i, localeBuf.data(), length);
 					}
 
-					ThrowIfFailed(map->Insert(
-						ref new String(locale), ref new String(name)));
+					ThrowIfFailed(map->Insert(ref new String(localeBuf.data()), ref new String(nameBuf.data())));
 				}
 			}
 

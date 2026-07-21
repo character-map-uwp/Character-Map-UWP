@@ -111,18 +111,17 @@ namespace CharacterMapCX
             void** ppvObject
         )
         {
-            if (__uuidof(IDWriteGeometrySink) == riid)
+            if (__uuidof(ID2D1GeometrySink) == riid ||
+                __uuidof(ID2D1SimplifiedGeometrySink) == riid ||
+                __uuidof(IDWriteGeometrySink) == riid ||
+                __uuidof(IUnknown) == riid)
             {
-                *ppvObject = this;
-            }
-            else if (__uuidof(IUnknown) == riid)
-            {
-                *ppvObject = this;
+                *ppvObject = static_cast<ID2D1GeometrySink*>(this);
             }
             else
             {
                 *ppvObject = nullptr;
-                return E_FAIL;
+                return E_NOINTERFACE;
             }
 
             this->AddRef();
@@ -148,7 +147,7 @@ namespace CharacterMapCX
 
         string b = "";
         bool m_hasData = false;
-        unsigned long m_refCount = 1;
+        unsigned long m_refCount = 0;
 
         float m_offsetX = 0;
         float m_offsetY = 0;
