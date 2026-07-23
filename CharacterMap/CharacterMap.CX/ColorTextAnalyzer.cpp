@@ -42,6 +42,7 @@ HRESULT ColorTextAnalyzer::DrawGlyphRun(
 		DWRITE_GLYPH_IMAGE_FORMATS_TRUETYPE |
 		DWRITE_GLYPH_IMAGE_FORMATS_CFF |
 		DWRITE_GLYPH_IMAGE_FORMATS_COLR |
+		DWRITE_GLYPH_IMAGE_FORMATS_COLR_PAINT_TREE |
 		DWRITE_GLYPH_IMAGE_FORMATS_SVG |
 		DWRITE_GLYPH_IMAGE_FORMATS_PNG |
 		DWRITE_GLYPH_IMAGE_FORMATS_JPEG |
@@ -60,20 +61,21 @@ HRESULT ColorTextAnalyzer::DrawGlyphRun(
 		&glyphRunEnumerator
 	);
 
-	HasColorGlyphs = hr != DWRITE_E_NOCOLOR;
+	HasColorGlyphs = SUCCEEDED(hr) && hr != DWRITE_E_NOCOLOR && glyphRunEnumerator != nullptr;
 
 	if (HasColorGlyphs)
 	{
-
 		for (;;)
 		{
-			BOOL haveRun;
-			ThrowIfFailed(glyphRunEnumerator->MoveNext(&haveRun));
-			if (!haveRun)
+			BOOL haveRun = FALSE;
+			HRESULT hrNext = glyphRunEnumerator->MoveNext(&haveRun);
+			if (FAILED(hrNext) || !haveRun)
 				break;
 
-			DWRITE_COLOR_GLYPH_RUN1 const* colorRun;
-			ThrowIfFailed(glyphRunEnumerator->GetCurrentRun(&colorRun));
+			DWRITE_COLOR_GLYPH_RUN1 const* colorRun = nullptr;
+			HRESULT hrRun = glyphRunEnumerator->GetCurrentRun(&colorRun);
+			if (FAILED(hrRun) || !colorRun)
+				continue;
 
 			GlyphImageFormat format = static_cast<GlyphImageFormat>(colorRun->glyphImageFormat);
 			GlyphFormats.push_back(format);
@@ -82,12 +84,63 @@ HRESULT ColorTextAnalyzer::DrawGlyphRun(
 			{
 				RunColors.push_back(colorRun->runColor);
 
-				std::vector<uint16> glyphIndices(colorRun->glyphRun.glyphIndices, colorRun->glyphRun.glyphIndices + colorRun->glyphRun.glyphCount);
-				GlyphIndicies.push_back(std::move(glyphIndices));
+				if (colorRun->glyphRun.glyphIndices != nullptr && colorRun->glyphRun.glyphCount > 0)
+				{
+					std::vector<uint16> glyphIndices(colorRun->glyphRun.glyphIndices, colorRun->glyphRun.glyphIndices + colorRun->glyphRun.glyphCount);
+					GlyphIndicies.push_back(std::move(glyphIndices));
+				}
+				else
+				{
+					std::vector<uint16> emptyIndices;
+					GlyphIndicies.push_back(emptyIndices);
+				}
 
 				if ((format & GlyphImageFormat::Colr) == GlyphImageFormat::Colr)
 				{
 					GlyphLayerCount++;
+				}
+			}
+		}
+	}
+	else if (glyphRun != nullptr && glyphRun->fontFace != nullptr)
+	{
+		ComPtr<IDWriteFontFace7> face7;
+		if (SUCCEEDED(glyphRun->fontFace->QueryInterface(IID_PPV_ARGS(&face7))) && face7 != nullptr)
+		{
+			ComPtr<IDWritePaintReader> paintReader;
+			HRESULT hrPaint = face7->CreatePaintReader(
+				DWRITE_GLYPH_IMAGE_FORMATS_COLR_PAINT_TREE,
+				DWRITE_PAINT_FEATURE_LEVEL_COLR_V1,
+				&paintReader);
+			if (SUCCEEDED(hrPaint) && paintReader != nullptr)
+			{
+				bool isColrV1 = false;
+				std::vector<uint16> indices;
+				for (UINT32 i = 0; i < glyphRun->glyphCount; ++i)
+				{
+					UINT16 glyphIdx = glyphRun->glyphIndices[i];
+					DWRITE_PAINT_ELEMENT rootElement = {};
+					D2D_RECT_F clipBox = {};
+					DWRITE_PAINT_ATTRIBUTES attrs = {};
+					HRESULT hrGlyph = paintReader->SetCurrentGlyph(glyphIdx, &rootElement, &clipBox, &attrs);
+					if (SUCCEEDED(hrGlyph) && rootElement.paintType != DWRITE_PAINT_TYPE_NONE)
+					{
+						isColrV1 = true;
+						indices.push_back(glyphIdx);
+					}
+				}
+
+				if (isColrV1)
+				{
+					HasColorGlyphs = true;
+					GlyphFormats.push_back(GlyphImageFormat::ColrPaintTree);
+					if (IsCharacterAnalysisMode)
+					{
+						GlyphIndicies.push_back(std::move(indices));
+						DWRITE_COLOR_F defaultColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+						RunColors.push_back(defaultColor);
+						GlyphLayerCount++;
+					}
 				}
 			}
 		}

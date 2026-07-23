@@ -96,35 +96,109 @@ public static partial class ExportManager
         // If COLR format (e.g. Segoe UI Emoji), we have special export path.
         // This path does not require UI thread.
         if (e.PreferredStyle == ExportStyle.ColorGlyph
-            && options.Analysis.HasColorGlyphs
             && !options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Svg))
         {
             NativeInterop interop = Utils.GetInterop();
-            List<string> paths = new();
             Rect bounds = Rect.Empty;
 
-            // Try to find the bounding box of all glyph layers combined
-            foreach (var thing in options.Analysis.Indicies)
-            {
-                var path = interop.GetPathDatas(options.Variant.Face, thing.ToArray()).First();
-                paths.Add(path.Path);
+            List<string> pathElements = new();
+            List<string> defsElements = new();
 
-                if (!path.Bounds.IsEmpty)
+            List<ushort[]> indiciesList = new();
+            if (options.Analysis.Indicies != null && options.Analysis.Indicies.Length > 0)
+            {
+                foreach (var thing in options.Analysis.Indicies)
                 {
-                    var left = Math.Min(bounds.Left, path.Bounds.Left);
-                    var top = Math.Min(bounds.Top, path.Bounds.Top);
-                    var right = Math.Max(bounds.Right, path.Bounds.Right);
-                    var bottom = Math.Max(bounds.Bottom, path.Bounds.Bottom);
-                    bounds = new Rect(
-                        left,
-                        top,
-                        right - left,
-                        bottom - top);
+                    ushort[] arr = thing.ToArray();
+                    if (arr.Length > 0)
+                        indiciesList.Add(arr);
                 }
             }
 
-            using CanvasSvgDocument document = Utils.GenerateSvgDocument(device, bounds, paths, options.Analysis.Colors, invertBounds: false);
-            return document.GetXml();
+            if (indiciesList.Count == 0)
+            {
+                int targetGlyphIndex = -1;
+                if (selectedChar is GlyphCharacter gc)
+                    targetGlyphIndex = gc.GlyphIndex;
+                else if (selectedChar != null)
+                {
+                    int[] indices = options.Variant.FontFace.GetGlyphIndices(new[] { selectedChar.UnicodeIndex });
+                    if (indices != null && indices.Length > 0 && indices[0] != 0)
+                        targetGlyphIndex = indices[0];
+                }
+
+                if (targetGlyphIndex >= 0)
+                    indiciesList.Add(new ushort[] { (ushort)targetGlyphIndex });
+            }
+
+            foreach (var thing in indiciesList)
+            {
+                var colorDatas = interop.GetColorPathDatas(options.Variant.Face, thing);
+                foreach (var colorData in colorDatas)
+                {
+                    if (colorData == null || string.IsNullOrWhiteSpace(colorData.Path))
+                        continue;
+
+                    if (!colorData.Bounds.IsEmpty)
+                    {
+                        if (bounds.IsEmpty)
+                        {
+                            bounds = colorData.Bounds;
+                        }
+                        else
+                        {
+                            var left = Math.Min(bounds.Left, colorData.Bounds.Left);
+                            var top = Math.Min(bounds.Top, colorData.Bounds.Top);
+                            var right = Math.Max(bounds.Right, colorData.Bounds.Right);
+                            var bottom = Math.Max(bounds.Bottom, colorData.Bounds.Bottom);
+                            bounds = new Rect(left, top, right - left, bottom - top);
+                        }
+                    }
+
+                    string fillAttr = "";
+                    if (!string.IsNullOrEmpty(colorData.PaintReference))
+                    {
+                        if (colorData.IsClip)
+                            fillAttr = $" clip-path=\"{colorData.PaintReference}\"";
+                        else
+                            fillAttr = $" fill=\"{colorData.PaintReference}\"";
+                    }
+                    else
+                    {
+                        var hex = $"#{colorData.Color.R:X2}{colorData.Color.G:X2}{colorData.Color.B:X2}";
+                        fillAttr = $" fill=\"{hex}\"";
+                        if (colorData.Color.A != 255)
+                        {
+                            double opacity = colorData.Color.A / 255.0;
+                            fillAttr += $" fill-opacity=\"{opacity:F2}\"";
+                        }
+                    }
+
+                    if (colorData.FillRuleEvenOdd)
+                    {
+                        fillAttr += " fill-rule=\"evenodd\"";
+                    }
+
+                    if (!string.IsNullOrEmpty(colorData.PaintDefinition))
+                    {
+                        if (!defsElements.Contains(colorData.PaintDefinition))
+                            defsElements.Add(colorData.PaintDefinition);
+                    }
+
+                    pathElements.Add($"<path d=\"{colorData.Path}\"{fillAttr} />");
+                }
+            }
+
+            if (pathElements.Count > 0)
+            {
+                var sb = new System.Text.StringBuilder();
+                sb.Append($"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"{bounds.X} {bounds.Y} {bounds.Width} {bounds.Height}\">");
+                if (defsElements.Count > 0)
+                    sb.Append("<defs>").Append(string.Join("", defsElements)).Append("</defs>");
+                sb.Append(string.Join("", pathElements));
+                sb.Append("</svg>");
+                return sb.ToString();
+            }
         }
 
         var data = GetGeometry(selectedChar, options);
@@ -367,7 +441,8 @@ public static partial class ExportManager
                 }
             }
             // Path 3: glyph uses COLR colour layers
-            else if (e.Options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Colr)
+            else if ((e.Options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Colr)
+                      || e.Options.Analysis.GlyphFormats.Contains(GlyphImageFormat.ColrPaintTree))
                      && e.PreferredStyle == ExportStyle.ColorGlyph)
             {
                 // Render via a glyph run — measure bounds using a CanvasCommandList first

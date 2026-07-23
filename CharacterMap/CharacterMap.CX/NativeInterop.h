@@ -12,6 +12,7 @@
 #include "DWriteFontAxis.h"
 #include "DWriteFontAxisAttribute.h"
 #include "PathData.h"
+#include "ColorPathData.h"
 #include "GlyphImageFormat.h"
 #include "DWriteFallbackFont.h"
 
@@ -42,6 +43,8 @@ namespace CharacterMapCX
 		CanvasTextLayoutAnalysis^ AnalyzeGlyphLayout(DWriteFontFace^ fontFace, UINT16 glyphIndex);
 
 		IVectorView<PathData^>^ GetPathDatas(DWriteFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies);
+		IVectorView<ColorPathData^>^ GetColorPathDatas(DWriteFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies, uint32 paletteIndex);
+		IVectorView<ColorPathData^>^ GetColorPathDatas(DWriteFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies);
 
 		Platform::String^ GetPathData(DWriteFontFace^ fontFace, UINT16 glyphIndicie);
 

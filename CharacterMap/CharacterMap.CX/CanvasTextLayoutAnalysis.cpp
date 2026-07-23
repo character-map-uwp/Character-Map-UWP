@@ -54,7 +54,8 @@ CharacterMapCX::CanvasTextLayoutAnalysis::CanvasTextLayoutAnalysis(ComPtr<ColorT
 			m_containsBitmapGlyphs = true;
 		}
 		else if ((t & GlyphImageFormat::Colr) == GlyphImageFormat::Colr
-			|| (t & GlyphImageFormat::Svg) == GlyphImageFormat::Svg)
+			|| (t & GlyphImageFormat::Svg) == GlyphImageFormat::Svg
+			|| (t & GlyphImageFormat::ColrPaintTree) == GlyphImageFormat::ColrPaintTree)
 		{
 			m_containsVectorColorGlyphs = true;
 		}
@@ -62,6 +63,9 @@ CharacterMapCX::CanvasTextLayoutAnalysis::CanvasTextLayoutAnalysis(ComPtr<ColorT
 		if (m_containsBitmapGlyphs && m_containsVectorColorGlyphs)
 			break;
 	}
+
+	if (m_containsVectorColorGlyphs)
+		m_hasColorGlyphs = true;
 
 	auto vec = ref new Vector<GlyphImageFormat>(std::move(analyzer->GlyphFormats));
 	m_glyphFormats = vec->GetView();

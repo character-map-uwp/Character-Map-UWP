@@ -737,6 +737,7 @@ public static class FlyoutHelper
                             if (!formats.Contains("SVG")) formats.Add("SVG");
                             break;
                         case GlyphImageFormat.Colr:
+                        case GlyphImageFormat.ColrPaintTree:
                             FontAnalysis colrFa = variant.GetAnalysis();
                             string colrVer = colrFa != null && colrFa.COLRVersion >= 1 ? "COLRv1" : "COLRv0";
                             if (!formats.Contains(colrVer)) formats.Add(colrVer);

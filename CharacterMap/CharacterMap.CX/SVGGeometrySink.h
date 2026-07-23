@@ -24,6 +24,7 @@ namespace CharacterMapCX
 	class SVGGeometrySink : public ID2D1GeometrySink
 	{
 	public:
+		D2D1_FILL_MODE m_fillMode = D2D1_FILL_MODE_ALTERNATE;
 
         virtual void SetOffset(float x, float y)
         {
@@ -46,7 +47,12 @@ namespace CharacterMapCX
 
         virtual void STDMETHODCALLTYPE SetFillMode(D2D1_FILL_MODE fillMode)
         {
-            b = b + "F" + to_string(fillMode) + " ";
+            m_fillMode = fillMode;
+        }
+
+        D2D1_FILL_MODE GetFillMode() const
+        {
+            return m_fillMode;
         }
 
         virtual void STDMETHODCALLTYPE BeginFigure(D2D1_POINT_2F startPoint, D2D1_FIGURE_BEGIN figureBegin)
