@@ -132,12 +132,6 @@
   <data name="BtnSelect.Content" xml:space="preserve">
     <value>Seleccionar</value>
   </data>
-  <data name="ColoredGlyphLabel.Text" xml:space="preserve">
-    <value>Colored Glyph</value>
-  </data>
-  <data name="ColorGlyphToggle.OffContent" xml:space="preserve">
-    <value>Monochrome Glyphs</value>
-  </data>
   <data name="ColorGlyphToggle.OnContent" xml:space="preserve">
     <value>Glifo coloreado</value>
   </data>
