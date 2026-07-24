@@ -903,4 +903,6 @@
         <controls:SelectorVisualElement Style="{StaticResource VerticalRadioSelectorElementStyle}" />
     </DataTemplate>
 
+    <Style x:Key="PreviewTipHighContrastStyle" TargetType="controls:PreviewTip" />
+
 </ResourceDictionary>
