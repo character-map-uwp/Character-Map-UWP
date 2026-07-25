@@ -6252,6 +6252,8 @@
         <controls:SelectorVisualElement />
     </DataTemplate>
 
+    <Style x:Key="PreviewTipHighContrastStyle" TargetType="controls:PreviewTip" />
+
 
 
 </ResourceDictionary>
