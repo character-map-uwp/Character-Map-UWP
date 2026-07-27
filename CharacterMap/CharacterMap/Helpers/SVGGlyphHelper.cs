@@ -11,10 +11,16 @@ using System.Security;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Storage;
+using Windows.Storage.Streams;
+
 namespace CharacterMap.Helpers;
 
 internal class SVGGlyphHelper
 {
+
+
+
+
     //------------------------------------------------------
     //
     //  SVG -> TTF Glyph Creation
@@ -121,7 +127,7 @@ internal class SVGGlyphHelper
             float advanceWidth = viewBoxWidth; // Keep in original coordinate space!
 
             Character svgChar = new(nextPUA);
-            FontGlyph glyph = new(null, svgChar, Scale: glyphScale, CustomGeometry: fontGeometry, CustomImagePath: tempFile.GetAppPath(), CustomAdvanceWidth: advanceWidth);
+            FontGlyph glyph = new(null, svgChar, metrics: new(Scale: glyphScale, CustomAdvanceWidth: advanceWidth), CustomGeometry: fontGeometry, CustomImagePath: tempFile.GetAppPath());
             return glyph;
         }
         catch (Exception ex)
@@ -344,7 +350,6 @@ internal class SVGGlyphHelper
 
 
 
-
     //------------------------------------------------------
     //
     //  SVG Glyph Extraction
@@ -357,7 +362,7 @@ internal class SVGGlyphHelper
     {
         string svgStr = ReadSVGBuffer(svgBuffer);
 
-        // 3. Delegate to FilterSVGToGlyph
+        // Delegate to FilterSVGToGlyph
         try
         {
             return FilterSVGToGlyph(glyphIndex, svgStr);
@@ -526,6 +531,10 @@ internal class SVGGlyphHelper
 
 
     #endregion
+
+
+
+
 }
 
 public class CanvasSvgPathBuilder

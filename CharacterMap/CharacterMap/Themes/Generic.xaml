@@ -215,6 +215,14 @@
                                     </VisualTransition>
                                 </VisualStateGroup.Transitions>
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="StateGroups">
+                                <VisualState x:Name="NormalState" />
+                                <VisualState x:Name="ErrorState">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background" Value="{StaticResource SystemControlErrorTextForegroundBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
                         <Grid

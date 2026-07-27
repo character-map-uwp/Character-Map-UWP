@@ -56,7 +56,10 @@ public partial class FaceSelectionModel : ObservableObject
 
     public IEnumerable<FontGlyph> GetGlyphs()
     {
-        var normalGlyphs = IsPhysical ? SelectedCharacters.Select(c => new FontGlyph(Face, c)) : Enumerable.Empty<FontGlyph>();
+        var normalGlyphs = IsPhysical
+            ? SelectedCharacters.Select(c => new FontGlyph(Face, c) { GlyphName = GetGlyphName(c) })
+            : Enumerable.Empty<FontGlyph>();
+
         return normalGlyphs.Concat(CustomGlyphs);
     }
 
@@ -90,6 +93,14 @@ public partial class FaceSelectionModel : ObservableObject
         SelectedCharacters.CollectionChanged += Selection_CollectionChanged;
         _messenger.Send(new CollectionChangedMessage(this, null));
     }
+
+
+
+    private string GetGlyphName(Character c)
+    {
+        // If the font has post/name table, try to load the name from there.
+        return Face.GetDefinedCharacterName(c);
+    }
 }
 
 
@@ -98,6 +109,9 @@ public partial class SubsetterViewModel : ViewModelBase
     public const string EDIT_STATE = "EditingState";
     public const string PREVIEW_STATE = "PreviewingState";
     public const string EXPORT_STATE = "ExportState";
+
+    const string DEFAULT_FONT_NAME = "Segoe Icons Subset";
+    const string DEFAULT_VERSION = "Version 1.00";
 
     public StrongReferenceMessenger StrongMessenger { get; } = new();
 
@@ -111,8 +125,8 @@ public partial class SubsetterViewModel : ViewModelBase
     [ObservableProperty] FamilySelectionModel _selectedFamily;
     [ObservableProperty] FaceSelectionModel _selectedFace;
     [ObservableProperty] FontFamily _selectedXAMLFontFamily;
-    [ObservableProperty] string _familyName = "Segoe Icons Subset";
-    [ObservableProperty] string _version = "Version 1.00";
+    [ObservableProperty] string _familyName = DEFAULT_FONT_NAME;
+    [ObservableProperty] string _version = DEFAULT_VERSION;
     [ObservableProperty] bool _hasClashing = false;
 
     [ObservableProperty] ObservableCollection<FontGlyph> _previewList;
@@ -226,7 +240,7 @@ public partial class SubsetterViewModel : ViewModelBase
     void SelectAll() => SelectedFace?.SelectAll();
 
     [RelayCommand]
-    async Task OpenAsync()
+    async Task OpenFontAsync()
     {
         if (await StorageHelper.PickOpenFileAsync(
                    FontImporter.ImportFormats.Where(f => !f.Equals(".zip", StringComparison.InvariantCultureIgnoreCase)),
@@ -238,10 +252,24 @@ public partial class SubsetterViewModel : ViewModelBase
 
                 Families.Add(family);
                 SelectedFamily = family;
+
+                // If we have no glyphs selected, assume we're actually intending on 
+                // augmenting this font file and set font information based on this.
+                if ((SelectedFaces?.Where(f => f.IsPhysical).Count() ?? 0) == 0)
+                {
+                    if (!string.IsNullOrWhiteSpace(font.Name)
+                        && FamilyName == DEFAULT_FONT_NAME)
+                        FamilyName = font.Name;
+
+                    string ver = font.DefaultVariant?.TryGetInfo(Microsoft.Graphics.Canvas.Text.CanvasFontInformation.VersionStrings)?.Value;
+                    if (!string.IsNullOrWhiteSpace(ver)
+                        && Version == DEFAULT_VERSION)
+                        Version = ver;
+                }
             }
             else
             {
-                // TODO: Show error
+                Notify(new ActionFailedMessage("Couldn't open font"));
             }
         }
     }
@@ -287,33 +315,33 @@ public partial class SubsetterViewModel : ViewModelBase
                 is not StorageFile target)
                 return;
 
-            var chars = SelectedFaces.Where(f => f.IsPhysical).SelectMany(sf => sf.GetGlyphs()).ToList();
+            List<FontGlyph> chars = PreviewList is { Count: > 0 }
+                ? [.. PreviewList]
+                : SelectedFaces.SelectMany(sf => sf.GetGlyphs()).ToList();
 
             // Handle custom SVGs
             uint exportPua = 0xF0000;
-            var usedCodepoints = new HashSet<uint>(chars.Select(c => c.Character.UnicodeIndex));
+            HashSet<uint> usedCodepoints = new(chars.Select(c => c.Character.UnicodeIndex));
 
-            foreach (var custom in SvgGlyphContainerFace.CustomGlyphs)
+            foreach (FontGlyph custom in SvgGlyphContainerFace.CustomGlyphs)
             {
+                if (chars.Contains(custom))
+                    continue;
+
                 while (usedCodepoints.Contains(exportPua))
                     exportPua++;
 
-                var charToExport = new Character(exportPua);
-                chars.Add(custom with { Character = charToExport });
+                custom.Character = new Character(exportPua);
+                chars.Add(custom);
                 exportPua++;
             }
 
-            // Note: version string currently isn't supported by the subsetter table-rewritter
+            // 3. Note: version string currently isn't supported by the subsetter table-rewritter
             var file = await FontSubsetter.CreateSubsetAsync(new(fontName, chars, target, version));
             if (file is not null && await FontImporter.LoadFromFileAsync(file) is CMFontFamily font)
-            {
                 Notify(new SubsetResultMessage(font, file));
-            }
             else
-            {
                 Notify(new SubsetResultMessage(null, file));
-            }
-
         }
         finally
         {
@@ -334,8 +362,8 @@ public partial class SubsetterViewModel : ViewModelBase
             ViewState = "ExportPreviewingState"; // Shows Progress Ring 
 
             if (await StorageHelper.PickOpenFileAsync([".svg"], "Select SVG Glyph")
-                is not StorageFile file)
-                    return;
+                    is not StorageFile file)
+                return;
 
             if (await SVGGlyphHelper.TryLoadFontGlyphAsync(file, _nextCustomPua) is FontGlyph glyph)
             {
@@ -347,7 +375,7 @@ public partial class SubsetterViewModel : ViewModelBase
             }
             else
             {
-                // TODO: Show error via App Message
+                Notify(new ActionFailedMessage("Failed to load svg"));
             }
         }
         finally

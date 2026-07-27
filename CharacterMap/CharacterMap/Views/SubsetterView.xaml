@@ -287,7 +287,7 @@
                                 <Button
                                     x:Name="OpenButton"
                                     Grid.Column="1"
-                                    Command="{x:Bind ViewModel.OpenCommand}"
+                                    Command="{x:Bind ViewModel.OpenFontCommand}"
                                     Style="{StaticResource SmolButton}"
                                     ToolTipService.ToolTip="{core:Localizer Key=FontFileMenuItem/Text}">
                                     <Button.KeyboardAccelerators>
@@ -632,14 +632,21 @@
                                                 <SvgImageSource UriSource="{Binding CustomImagePath}" />
                                             </Image.Source>
                                         </Image>
-                                        <TextBlock
-                                            Margin="0 0 0 4"
+                                        <TextBox
+                                            Height="24"
+                                            MinHeight="16"
+                                            Margin="0 0 0 0"
+                                            Padding="0 4 0 0"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Bottom"
+                                            Background="Transparent"
+                                            BorderThickness="0"
                                             FontSize="10"
                                             Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                            HorizontalTextAlignment="Center"
                                             IsTextScaleFactorEnabled="False"
-                                            Text="{x:Bind Character.UnicodeIndex}" />
+                                            Text="{x:Bind GlyphName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            TextAlignment="Center" />
                                         <Border
                                             x:Name="Warning"
                                             Width="20"

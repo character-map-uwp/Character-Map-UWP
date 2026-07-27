@@ -17,12 +17,38 @@ public record SubsetOptions(
     string DesiredVersion = "Version 1.00",
     bool generatePreviewString = true);
 
-public record FontGlyph(CMFontFace FontFace, Character Character, float Scale = 1f, float OffsetX = 0f, float OffsetY = 0f, CanvasGeometry CustomGeometry = null, string CustomImagePath = null, float CustomAdvanceWidth = 0f)
+public record FontGlyphMetrics(
+    float Scale = 1f,
+    float OffsetX = 0f,
+    float OffsetY = 0f,
+    float CustomAdvanceWidth = 0f);
+
+
+
+[ObservableObject]
+public partial class FontGlyph(
+    CMFontFace fontFace, 
+    Character character, 
+    FontGlyphMetrics metrics = default,
+    CanvasGeometry CustomGeometry = null, 
+    string CustomImagePath = null)
 {
+
+    public CMFontFace FontFace { get; } = fontFace;
+    public Character Character { get; set; } = character;
+    public FontGlyphMetrics Metrics { get; set; } = metrics ?? new ();
+    public CanvasGeometry CustomGeometry { get; } = CustomGeometry;
+    public string CustomImagePath { get; } = CustomImagePath;
+
+
     public bool IsVirtual => !IsPhysical;
     public bool IsPhysical => FontFace is not null;
 
-    public string Description => IsPhysical ? FontFace.FullName : Localization.Get("ExportSVGGlyphLabel/Text");
+    public string Description => IsPhysical 
+        ? FontFace.FullName 
+        : Localization.Get("ExportSVGGlyphLabel/Text");
+
+    [ObservableProperty] string _glyphName;
 }
 
 /// <summary>
@@ -56,6 +82,18 @@ public record FontGlyph(CMFontFace FontFace, Character Character, float Scale = 
 /// </summary>
 public class FontSubsetter
 {
+    public const string SUBSETTER_TAG = "CMSV";
+    public const string SUBSETTER_SIGNATURE = "CMUWP.Subsetter.v1";
+
+    public static bool IsCreatedBySubsetter(CMFontFace font)
+    {
+        if (font?.Face is null)
+            return false;
+
+        byte[] data = font.Face.GetFontTable(SUBSETTER_TAG);
+        return data is not null && Encoding.ASCII.GetString(data).StartsWith(SUBSETTER_SIGNATURE);
+    }
+
     // ---------------------------
     // Big-endian helpers
     // ---------------------------
@@ -247,9 +285,9 @@ public class FontSubsetter
                                 uint unicode = fc.Character.UnicodeIndex;
                                 srcGid = (uint)srcFont.Face.GetGlyphIndice(unicode);
                             }
-                            scaleVal = fc.Scale;
-                            offsetX = fc.OffsetX;
-                            offsetY = fc.OffsetY;
+                            scaleVal = fc.Metrics.Scale;
+                            offsetX = fc.Metrics.OffsetX;
+                            offsetY = fc.Metrics.OffsetY;
                         }
 
                         ushort aw = unitsPerEm;
@@ -266,7 +304,7 @@ public class FontSubsetter
                         {
                             var bounds = fc.CustomGeometry.ComputeBounds();
                             lsb = (short)Math.Round(bounds.X);
-                            aw = (ushort)Math.Round(fc.CustomAdvanceWidth > 0 ? fc.CustomAdvanceWidth : bounds.Width);
+                            aw = (ushort)Math.Round(fc.Metrics.CustomAdvanceWidth > 0 ? fc.Metrics.CustomAdvanceWidth : bounds.Width);
                         }
 
                         // 1. Scale metrics based on differences in EM-size (design units)
@@ -575,7 +613,7 @@ public class FontSubsetter
                 os2Data[85] = (byte)(c2 & 0xFF);
             }
 
-            byte[] postData = templateFont.Face.GetFontTable("post");
+            byte[] postData = BuildPostTable(characters, outputNumGlyphs);
 
             // Rebuild head, hhea, maxp tables
             byte[] maxpData = new byte[32];
@@ -610,6 +648,7 @@ public class FontSubsetter
             if (newNameTable != null) outputTables["name"] = newNameTable;
             if (os2Data != null) outputTables["OS/2"] = os2Data;
             if (postData != null) outputTables["post"] = postData;
+            outputTables[SUBSETTER_TAG] = Encoding.ASCII.GetBytes(SUBSETTER_SIGNATURE);
 
             ushort numTables = (ushort)outputTables.Count;
             int maxPower2 = 1;
@@ -709,6 +748,61 @@ public class FontSubsetter
             sum += value;
         }
         return sum;
+    }
+
+    // ---------------------------
+    // post table build (format 2.0)
+    // ---------------------------
+    private static byte[] BuildPostTable(IList<FontGlyph> characters, ushort outputNumGlyphs)
+    {
+        using MemoryStream ms = new();
+        using BinaryWriter bw = new(ms, Encoding.UTF8, leaveOpen: true);
+
+        // Format 2.0 (0x00020000)
+        WriteUInt32BE(bw, 0x00020000);
+        WriteUInt32BE(bw, 0); // italicAngle
+        WriteInt16BE(bw, 0);  // underlinePosition
+        WriteInt16BE(bw, 0);  // underlineThickness
+        WriteUInt32BE(bw, 0); // isFixedPitch
+        WriteUInt32BE(bw, 0); // minMemType42
+        WriteUInt32BE(bw, 0); // maxMemType42
+        WriteUInt32BE(bw, 0); // minMemType1
+        WriteUInt32BE(bw, 0); // maxMemType1
+
+        WriteUInt16BE(bw, outputNumGlyphs);
+
+        // GID 0 is .notdef
+        WriteUInt16BE(bw, 0);
+
+        // Pass 1: Write index array for all glyphs
+        ushort currentStringIndex = 258;
+        for (int i = 0; i < characters.Count; i++)
+        {
+            if (string.IsNullOrWhiteSpace(characters[i].GlyphName))
+            {
+                WriteUInt16BE(bw, 0);
+                continue;
+            }
+
+            WriteUInt16BE(bw, currentStringIndex++);
+        }
+
+        // Pass 2: Write Pascal strings directly to BinaryWriter
+        for (int i = 0; i < characters.Count; i++)
+        {
+            string name = characters[i].GlyphName;
+            if (string.IsNullOrWhiteSpace(name))
+                continue;
+
+            if (name.Length > 255)
+                name = name.Substring(0, 255);
+
+            byte[] bytes = Encoding.ASCII.GetBytes(name);
+            bw.Write((byte)bytes.Length);
+            bw.Write(bytes);
+        }
+
+        return ms.ToArray();
     }
 
     // ---------------------------

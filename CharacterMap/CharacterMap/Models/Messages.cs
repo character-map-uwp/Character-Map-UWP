@@ -53,6 +53,11 @@ public class CollectionRequestedMessage
     }
 }
 
+public class ActionFailedMessage(string message)
+{
+    public string Message { get; } = message;
+}
+
 public class PrintRequestedMessage { }
 
 public class ExportRequestedMessage { }
