@@ -261,6 +261,17 @@ public class FontFinder
         variant.FamilyName.Equals("Segoe MDL2 Assets") || variant.FamilyName.Equals("Segoe Fluent Icons"));
 
 
+
+
+
+    //------------------------------------------------------
+    //
+    //  Search
+    //
+    //------------------------------------------------------
+
+    /* Refactor somewhere else? */
+
     public static FontQueryResults QueryFontList(
         string query, 
         IEnumerable<CMFontFamily> fontList, 
@@ -311,6 +322,12 @@ public class FontFinder
                 fontList = BasicFontFilter.ForFontInfo(q, Microsoft.Graphics.Canvas.Text.CanvasFontInformation.Designer).Query(fontList, fontCollections);
                 filterTitle = $"{filter.FilterTitle} \"{q}\"";
             }
+            else if (IsQuery(query, Localization.Get("OutlineFilter"), "outline:", out q)
+                && GetOutlineFilter(q) is BasicFontFilter outlineFilter)
+            {
+                fontList = outlineFilter.Query(fontList, fontCollections);
+                filterTitle = $"{filter.FilterTitle} \"{q}\"";
+            }
             else
             {
                 fontList = fontList.Where(f => f.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
@@ -322,6 +339,23 @@ public class FontFinder
         }
         
         return new(fontList, null, false);
+    }
+
+    static BasicFontFilter GetOutlineFilter(string q)
+    {
+        bool e(string s) =>  q.Equals(s, StringComparison.InvariantCultureIgnoreCase);
+
+        if (e("cff"))
+            return BasicFontFilter.CFFOutlines;
+        else if (e("ttf"))
+            return BasicFontFilter.TTFOutlines;
+        else if (e("svg"))
+            return BasicFontFilter.SVGOutlines;
+        else if (e("sbix") || e("cblc") || e("png") || e("jpeg") || e("jpg"))
+            return BasicFontFilter.ColorBitmapOutlines;
+        else if (e("ebdt") || e("eblc") || e("raster"))
+            return BasicFontFilter.LegacyBitmapOutlines;
+        return null;
     }
 
     public static bool IsQuery(string q, string i, string i2, out string o)

@@ -26,8 +26,6 @@ namespace CharacterMapCX
 
 		property bool IsMonospacedFont { bool get() { return m_font->IsMonospacedFont(); } }
 
-		property bool IsColorFont { bool get() { return m_isColorFont; } }
-
 		property bool IsSymbolFont	{ bool get() { return m_isSymbolFont; } }
 
 		property String^ FamilyName { String^ get() { return m_familyName; } }
@@ -39,6 +37,13 @@ namespace CharacterMapCX
 		property FontStyle Style { FontStyle get() { return m_style; } }
 
 		property FontStretch Stretch { FontStretch get() { return m_stretch; } }
+
+		property bool IsColorFont		{ bool get() { EnsureFontFacePropertiesLoaded(); return m_isColorFont; } }
+		property bool HasCFFOutlines	{ bool get() { EnsureFontFacePropertiesLoaded(); return m_hasCFF; } }
+		property bool HasTTFOutlines	{ bool get() { EnsureFontFacePropertiesLoaded(); return m_hasTTF; } }
+		property bool HasSVGOutlines	{ bool get() { EnsureFontFacePropertiesLoaded(); return m_hasSVG; } }
+		property bool HasColorBitmapOutlines	{ bool get() { EnsureFontFacePropertiesLoaded(); return m_hasColorBitmap; } }
+		property bool HasMonoBitmapOutlines		{ bool get() { EnsureFontFacePropertiesLoaded(); return m_hasMonoBitmap; } }
 
 
 		/// <summary>
@@ -108,25 +113,7 @@ namespace CharacterMapCX
 			m_stretch = static_cast<Windows::UI::Text::FontStretch>(font->GetStretch());
 
 			m_isSymbolFont = font->IsSymbolFont();
-			BOOL isColor = font->IsColorFont();
-			if (!isColor)
-			{
-				ComPtr<IDWriteFontFace> fontFace;
-				if (SUCCEEDED(font->CreateFontFace(&fontFace)))
-				{
-					const void* tableData = nullptr;
-					UINT32 tableSize = 0;
-					void* tableContext = nullptr;
-					BOOL exists = FALSE;
-					if ((SUCCEEDED(fontFace->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('S', 'V', 'G', ' '), &tableData, &tableSize, &tableContext, &exists)) && exists) ||
-					    (SUCCEEDED(fontFace->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('C', 'O', 'L', 'R'), &tableData, &tableSize, &tableContext, &exists)) && exists))
-					{
-						isColor = TRUE;
-						fontFace->ReleaseFontTable(tableContext);
-					}
-				}
-			}
-			m_isColorFont = isColor != FALSE;
+			m_isColorFont = font->IsColorFont();
 
 			m_font = font;
 
@@ -182,6 +169,66 @@ namespace CharacterMapCX
 			m_loadedRemote = true;
 		}
 
+		void EnsureFontFacePropertiesLoaded()
+		{
+			if (m_loadedOutlines) return;
+			m_loadedOutlines = true;
+			if (m_font == nullptr) return;
+			ComPtr<IDWriteFontFace> fontFace;
+
+			if (SUCCEEDED(m_font->CreateFontFace(&fontFace)))
+			{
+				const void* data = nullptr;
+				UINT32 size = 0;
+				void* ctx = nullptr;
+				BOOL exists = FALSE;
+
+				// Check CFF
+				if ((SUCCEEDED(fontFace->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('C', 'F', 'F', ' '), &data, &size, &ctx, &exists)) && exists) ||
+					(SUCCEEDED(fontFace->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('C', 'F', 'F', '2'), &data, &size, &ctx, &exists)) && exists))
+				{
+					m_hasCFF = true;
+					fontFace->ReleaseFontTable(ctx);
+				}
+				// Check TTF
+				if (SUCCEEDED(fontFace->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('g', 'l', 'y', 'f'), &data, &size, &ctx, &exists)) && exists)
+				{
+					m_hasTTF = true;
+					fontFace->ReleaseFontTable(ctx);
+				}
+				// Check SVG
+				if (SUCCEEDED(fontFace->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('S', 'V', 'G', ' '), &data, &size, &ctx, &exists)) && exists)
+				{
+					m_hasSVG = true;
+					fontFace->ReleaseFontTable(ctx);
+				}
+				// Check Color Bitmaps (sbix, CBLC)
+				if ((SUCCEEDED(fontFace->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('s', 'b', 'i', 'x'), &data, &size, &ctx, &exists)) && exists) ||
+					(SUCCEEDED(fontFace->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('C', 'B', 'L', 'C'), &data, &size, &ctx, &exists)) && exists))
+				{
+					m_hasColorBitmap = true;
+					fontFace->ReleaseFontTable(ctx);
+				}
+				// Check Legacy Monochrome Bitmaps (EBLC)
+				if (SUCCEEDED(fontFace->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('E', 'B', 'L', 'C'), &data, &size, &ctx, &exists)) && exists)
+				{
+					m_hasMonoBitmap = true;
+					fontFace->ReleaseFontTable(ctx);
+				}
+
+				// Perform a more extensive double-check on IsColor
+				if (m_isColorFont == false)
+				{
+					if ((SUCCEEDED(fontFace->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('S', 'V', 'G', ' '), &data, &size, &ctx, &exists)) && exists) ||
+						(SUCCEEDED(fontFace->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('C', 'O', 'L', 'R'), &data, &size, &ctx, &exists)) && exists))
+					{
+						m_isColorFont = true;
+						fontFace->ReleaseFontTable(ctx);
+					}
+				}
+			}
+		}
+
 		FontWeight m_weight;
 		FontStyle m_style = FontStyle::Normal;
 		FontStretch m_stretch = FontStretch::Normal;
@@ -197,5 +244,13 @@ namespace CharacterMapCX
 		String^ m_remoteSource = nullptr;
 		String^ m_familyName = nullptr;
 		String^ m_faceName = nullptr;
+
+		bool m_loadedOutlines = false;
+		bool m_hasCFF    = false;
+		bool m_hasTTF    = false;
+		bool m_hasSVG    = false;
+		bool m_hasColorBitmap = false;
+		bool m_hasMonoBitmap = false;
+    
 	};
 }

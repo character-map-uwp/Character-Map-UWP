@@ -19,8 +19,9 @@ public partial class CreateCollectionDialogTemplateSettings : ViewModelBase
     [ObservableProperty] string _filterFilePath;
     [ObservableProperty] string _filterFoundry;
     [ObservableProperty] string _filterDesigner;
+    [ObservableProperty] string _filterOutlines;
     [ObservableProperty] string _resultsLabel;
-    
+
     [ObservableProperty] IReadOnlyList<CMFontFamily> _resultsPreview = [];
 
     public double MinWidth => IsSmartCollection ? 450 : 0;
@@ -43,6 +44,7 @@ public partial class CreateCollectionDialogTemplateSettings : ViewModelBase
             Populate("filepath:",   Localization.Get("FilePathFilter"),     s => FilterFilePath = s);
             Populate("foundry:",    Localization.Get("FoundryFilter"),      s => FilterFoundry = s);
             Populate("designer:",   Localization.Get("DesignerFilter"),     s => FilterDesigner = s);
+            Populate("outline:",    Localization.Get("OutlineFilter"),     s => FilterDesigner = s);
 
             void Populate(string id, string loc, Action<string> set)
             {
@@ -66,6 +68,7 @@ public partial class CreateCollectionDialogTemplateSettings : ViewModelBase
         Add("foundry:", _filterFoundry);
         Add("designer:", _filterDesigner);
         Add("char:", _filterCharacters);
+        Add("outline:", _filterOutlines);
         return filters;
 
         void Add(string id, string field)

@@ -112,6 +112,13 @@ public sealed partial class FilterFlyout : MenuFlyout
 
         _variableOption = _ops.Items[0];
 
+        AddChild(_ops, "OptionOutlineTypes/Text")
+            .Add(BasicFontFilter.TTFOutlines, style)
+            .Add(BasicFontFilter.CFFOutlines, style)
+            .Add(BasicFontFilter.SVGOutlines, style)
+            .Add(BasicFontFilter.ColorBitmapOutlines, style)
+            .Add(BasicFontFilter.LegacyBitmapOutlines, style);
+
         AddChild(_ops, "OptionColorFonts/Text")
             .Add(BasicFontFilter.AllColor, style)
             .Add(BasicFontFilter.COLRV0, style)
