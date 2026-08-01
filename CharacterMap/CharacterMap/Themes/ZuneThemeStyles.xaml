@@ -282,7 +282,7 @@
 
     <Style x:Key="ControlSurfaceBorderStyle" TargetType="Border" />
 
-    <Style TargetType="controls:PreviewTip">
+    <Style x:Key="DefaultPreviewTipStyle" TargetType="controls:PreviewTip">
         <Setter Property="Foreground" Value="{StaticResource ControlForegroundBrush}" />
         <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}" />
         <Setter Property="BackgroundSizing" Value="InnerBorderEdge" />
@@ -292,6 +292,8 @@
         <Setter Property="FontSize" Value="12" />
         <Setter Property="CornerRadius" Value="0" />
     </Style>
+
+    <Style BasedOn="{StaticResource DefaultPreviewTipStyle}" TargetType="controls:PreviewTip" />
 
     <Style TargetType="ToolTip">
         <Setter Property="Foreground" Value="{StaticResource ControlForegroundBrush}" />
@@ -6141,8 +6143,8 @@
     </Style>
 
 
-    <Style x:Name="RadioButtonsButtonStyle" TargetType="RadioButton">
-        <Setter Property="MinHeight" Value="24" />
+    <Style x:Key="RadioButtonsButtonStyle" TargetType="RadioButton">
+        <Setter Property="MinHeight" Value="28" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="Foreground" Value="{ThemeResource TextForegroundBrush}" />
         <Setter Property="Template">
@@ -6175,12 +6177,34 @@
         </Setter>
     </Style>
 
+    <Style x:Key="RadioSelectorElementStyle" TargetType="controls:SelectorVisualElement">
+        <Setter Property="BarCornerRadius" Value="0 0" />
+        <Setter Property="BarFill" Value="Transparent" />
+        <Setter Property="BarPadding" Value="0" />
+        <Setter Property="BarSize" Value="1 1" />
+        <Setter Property="Fill" Value="{ThemeResource ButtonBackgroundBrush}" />
+        <Setter Property="OffsetTransition" Value="{StaticResource DefaultSelectorTransition}" />
+        <Setter Property="SizeTransition" Value="{StaticResource DefaultSelectorTransition}" />
+        <Setter Property="Stroke" Value="{ThemeResource ComboBoxBorderBrush}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="VisualCornerRadius" Value="4 4" />
+        <Setter Property="VisualInset" Value="-1 -1 0 0" />
+    </Style>
+
+    <DataTemplate x:Key="RadioSelectorTemplate">
+        <controls:SelectorVisualElement Style="{StaticResource RadioSelectorElementStyle}" />
+    </DataTemplate>
+
     <Style x:Key="DefaultRadioButtonsThemeStyle" TargetType="muxc:RadioButtons">
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="core:Properties.UseZoomHelper" Value="True" />
+        <Setter Property="controls:SelectorVisualElement.ElementTemplate" Value="{StaticResource RadioSelectorTemplate}" />
         <Setter Property="controls:UXRadioButtons.ColumnSpacing" Value="8" />
         <Setter Property="controls:UXRadioButtons.RowSpacing" Value="8" />
+        <Setter Property="BorderBrush" Value="{ThemeResource SurfaceStrokeColorDefaultBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="4" />
         <Setter Property="controls:UXRadioButtons.LayoutTemplate">
             <Setter.Value>
                 <DataTemplate>
@@ -6210,11 +6234,10 @@
                             Margin="{TemplateBinding Padding}"
                             controls:UXRadioButtons.LayoutTemplate="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(controls:UXRadioButtons.LayoutTemplate)}" />
 
-                        <!--<ContentPresenter
+                        <ContentPresenter
                             x:Name="SelectorPresenter"
-                            x:Load="False"
                             Canvas.ZIndex="-1"
-                            Content="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(controls:SelectorVisualElement.Element)}" />-->
+                            Content="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(controls:SelectorVisualElement.Element)}" />
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
@@ -6225,17 +6248,7 @@
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
-                            <!--<VisualStateGroup x:Name="SelectorStateGroup">
-                                <VisualState x:Name="NoSelectorState" />
-                                <VisualState x:Name="SelectorState">
-                                    <VisualState.StateTriggers>
-                                        <StateTrigger IsActive="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(controls:SelectorVisualElement.Element), Converter={StaticResource NullConverter}, ConverterParameter='Inverse'}" />
-                                    </VisualState.StateTriggers>
-                                    <VisualState.Setters>
-                                        <Setter Target="SelectorPresenter.Visibility" Value="Visible" />
-                                    </VisualState.Setters>
-                                </VisualState>
-                            </VisualStateGroup>-->
+
                         </VisualStateManager.VisualStateGroups>
                     </Grid>
                 </ControlTemplate>
@@ -6252,7 +6265,7 @@
         <controls:SelectorVisualElement />
     </DataTemplate>
 
-    <Style x:Key="PreviewTipHighContrastStyle" TargetType="controls:PreviewTip" />
+    <Style x:Key="PreviewTipHighContrastStyle" BasedOn="{StaticResource DefaultPreviewTipStyle}" TargetType="controls:PreviewTip" />
 
 
 

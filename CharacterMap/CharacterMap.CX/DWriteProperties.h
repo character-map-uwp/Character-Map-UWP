@@ -219,7 +219,8 @@ namespace CharacterMapCX
 				// Perform a more extensive double-check on IsColor
 				if (m_isColorFont == false)
 				{
-					if ((SUCCEEDED(fontFace->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('S', 'V', 'G', ' '), &data, &size, &ctx, &exists)) && exists) ||
+						// NB: Having an SVG table does NOT mean the font supports color glyphs.
+					if (/*(SUCCEEDED(fontFace->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('S', 'V', 'G', ' '), &data, &size, &ctx, &exists)) && exists) ||*/
 						(SUCCEEDED(fontFace->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('C', 'O', 'L', 'R'), &data, &size, &ctx, &exists)) && exists))
 					{
 						m_isColorFont = true;

@@ -214,16 +214,51 @@ namespace CharacterMapCX
 			return (int64)((lsb << 32) | aw);
 		}
 
+		IVectorView<Platform::String^>^ GetTableTags()
+		{
+			auto tags = ref new Vector<Platform::String^>();
+			auto face = GetFontFace();
+			const void* tableData = nullptr;
+			UINT32 tableSize = 0;
+			void* context = nullptr;
+			BOOL exists = false;
+
+			// Passing tag = 0 retrieves the OpenType Table Directory header
+			if (SUCCEEDED(face->TryGetFontTable(0, &tableData, &tableSize, &context, &exists)) && exists)
+			{
+				const uint8_t* bytes = static_cast<const uint8_t*>(tableData);
+				if (tableSize >= 12)
+				{
+					// numTables is a 16-bit Big-Endian uint at offset 4
+					uint16_t numTables = (bytes[4] << 8) | bytes[5];
+					for (uint16_t i = 0; i < numTables; ++i)
+					{
+						size_t offset = 12 + (i * 16);
+						if (offset + 4 <= tableSize)
+						{
+							wchar_t tagChars[5] = {
+								static_cast<wchar_t>(bytes[offset]),
+								static_cast<wchar_t>(bytes[offset + 1]),
+								static_cast<wchar_t>(bytes[offset + 2]),
+								static_cast<wchar_t>(bytes[offset + 3]),
+								L'\0'
+							};
+							tags->Append(ref new Platform::String(tagChars));
+						}
+					}
+				}
+				face->ReleaseFontTable(context);
+			}
+			return tags->GetView();
+		}
+
 		Array<uint8>^ GetFontTable(String^ tagStr)
 		{
 			if (tagStr == nullptr || tagStr->Length() != 4)
 				throw ref new InvalidArgumentException("Tag must be 4 characters.");
 
-			char tagChars[4];
-			for (int i = 0; i < 4; i++)
-				tagChars[i] = (char)tagStr->Data()[i];
-
-			UINT32 tag = DWRITE_MAKE_OPENTYPE_TAG(tagChars[0], tagChars[1], tagChars[2], tagChars[3]);
+			UINT32 tag = DWRITE_MAKE_OPENTYPE_TAG(
+				(char)tagStr->Data()[0], (char)tagStr->Data()[1], (char)tagStr->Data()[2], (char)tagStr->Data()[3]);
 
 			const void* tableData;
 			UINT32 tableSize;
@@ -233,15 +268,11 @@ namespace CharacterMapCX
 			ThrowIfFailed(face->TryGetFontTable(tag, &tableData, &tableSize, &context, &exists));
 
 			if (!exists)
-			{
 				return nullptr;
-			}
 
 			auto arr = ref new Array<uint8>(tableSize);
 			if (tableSize > 0)
-			{
 				memcpy(arr->Data, tableData, tableSize);
-			}
 
 			face->ReleaseFontTable(context);
 			return arr;
@@ -252,11 +283,9 @@ namespace CharacterMapCX
 			if (tagStr == nullptr || tagStr->Length() != 4)
 				throw ref new InvalidArgumentException("Tag must be 4 characters.");
 
-			char tagChars[4];
-			for (int i = 0; i < 4; i++)
-				tagChars[i] = (char)tagStr->Data()[i];
+			UINT32 tag = DWRITE_MAKE_OPENTYPE_TAG(
+				(char)tagStr->Data()[0], (char)tagStr->Data()[1], (char)tagStr->Data()[2], (char)tagStr->Data()[3]);
 
-			UINT32 tag = DWRITE_MAKE_OPENTYPE_TAG(tagChars[0], tagChars[1], tagChars[2], tagChars[3]);
 			return ref new DWriteFontTableSession(GetFontFace(), tag);
 		}
 

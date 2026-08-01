@@ -852,8 +852,8 @@
                             BackgroundTransition="{StaticResource QuickBrushTransition}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
+                            Canvas.ZIndex="-1"
                             CornerRadius="{TemplateBinding CornerRadius}" />
-
 
                         <muxc:ItemsRepeater
                             x:Name="InnerRepeater"
@@ -862,7 +862,6 @@
 
                         <ContentPresenter
                             x:Name="SelectorPresenter"
-                            x:Load="False"
                             Canvas.ZIndex="-1"
                             Content="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(controls:SelectorVisualElement.Element)}" />
 

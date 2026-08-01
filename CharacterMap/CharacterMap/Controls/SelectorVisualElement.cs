@@ -45,7 +45,7 @@ public enum SelectorInteractionState
 [DependencyProperty<CompositionTransition>("SizeTransition")]
 [DependencyProperty<CompositionTransition>("CornerTransition")]
 [DependencyProperty<CompositionTransition>("OffsetTransition")]
-[DependencyProperty<SolidColorBrush>("Fill")]
+[DependencyProperty<Brush>("Fill")]
 [DependencyProperty<SolidColorBrush>("Stroke")]
 [DependencyProperty<SolidColorBrush>("BarFill")]
 [DependencyProperty<SelectionVisualType>("Mode")]
@@ -68,7 +68,7 @@ public partial class SelectorVisualElement : FrameworkElement
     private ContainerVisual _container;
     private CompositionRoundedRectangleGeometry _rect;
     private CompositionRoundedRectangleGeometry _bar;
-    private CompositionColorBrush _fillBrush;
+    private CompositionBrush _fillBrush;
     private CompositionColorBrush _strokeBrush;
     private CompositionColorBrush _barFillBrush;
     private CompositionPropertySet _props;
@@ -135,11 +135,16 @@ public partial class SelectorVisualElement : FrameworkElement
         return b.Color with { A = (byte)((double)b.Color.A * b.Opacity) };
     }
 
-    partial void OnFillChanged(SolidColorBrush o, SolidColorBrush n)
+    partial void OnFillChanged(Brush o, Brush n)
     {
         // Note: This implementation does not support updating the brush properties.
-        if (_fillBrush != null)
-            _fillBrush.Color = GetColor(n);
+        if (_fillBrush is not null)
+        {
+            if (_fillBrush is CompositionColorBrush ccb && n is SolidColorBrush scb)
+                ccb.Color = GetColor(scb);
+            else if (_fillBrush is CompositionGradientBrush cgb && n is LinearGradientBrush lgb)
+                lgb.AsCompositionBrush(cgb);
+        }
     }
 
     partial void OnStrokeChanged(SolidColorBrush o, SolidColorBrush n)
@@ -195,7 +200,11 @@ public partial class SelectorVisualElement : FrameworkElement
 
         var c = this.GetElementVisual().Compositor;
 
-        _fillBrush = c.CreateColorBrush(GetColor(Fill));
+        if (Fill is SolidColorBrush scb)
+            _fillBrush = c.CreateColorBrush(GetColor(scb));
+        else if (Fill is LinearGradientBrush lgb)
+            _fillBrush = lgb.AsCompositionBrush(c);
+
         _strokeBrush = c.CreateColorBrush(GetColor(Stroke));
         _barFillBrush = c.CreateColorBrush(GetColor(BarFill));
 

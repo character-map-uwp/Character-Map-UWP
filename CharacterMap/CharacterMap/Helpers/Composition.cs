@@ -907,16 +907,40 @@ public static class Composition
 
     #region Brushes
 
-    public static CompositionGradientBrush AsCompositionBrush(this LinearGradientBrush brush, Compositor compositor)
+    public static CompositionGradientBrush AsCompositionBrush(this LinearGradientBrush brush, CompositionGradientBrush compBrush = null)
     {
-        var compBrush = compositor.CreateLinearGradientBrush();
+        return AsCompositionBrush(brush, compBrush?.Compositor, compBrush);
+    }
 
-        foreach (var stop in brush.GradientStops)
+    public static CompositionGradientBrush AsCompositionBrush(this LinearGradientBrush brush, Compositor compositor, CompositionGradientBrush compBrush = null)
+    {
+        compBrush ??= compositor.CreateLinearGradientBrush();
+
+        // 1. Copy Linear Gradient direction vector
+        if (compBrush is CompositionLinearGradientBrush linearCompBrush)
         {
-            compBrush.ColorStops.Add(compositor.CreateColorGradientStop((float)stop.Offset, stop.Color));
+            linearCompBrush.StartPoint = brush.StartPoint.ToVector2();
+            linearCompBrush.EndPoint = brush.EndPoint.ToVector2();
         }
 
-        // todo : try and copy transforms?
+        // 2. Map Spread Method
+        compBrush.ExtendMode = brush.SpreadMethod switch
+        {
+            GradientSpreadMethod.Reflect    => CompositionGradientExtendMode.Mirror,
+            GradientSpreadMethod.Repeat     => CompositionGradientExtendMode.Wrap,
+            _ => CompositionGradientExtendMode.Clamp
+        };
+
+        // 3. Clear existing stops when updating an existing brush to avoid duplicates
+        compBrush.ColorStops.Clear();
+        foreach (GradientStop stop in brush.GradientStops)
+            compBrush.ColorStops.Add(compBrush.Compositor.CreateColorGradientStop((float)stop.Offset, stop.Color));
+
+        // 4. Copy RelativeTransform if present
+        if (brush.RelativeTransform is Transform transform)
+            compBrush.TransformMatrix = transform.ToMatrix3x2();
+        else
+            compBrush.TransformMatrix = Matrix3x2.Identity;
 
         return compBrush;
     }
