@@ -44,7 +44,7 @@ public partial class CreateCollectionDialogTemplateSettings : ViewModelBase
             Populate("filepath:",   Localization.Get("FilePathFilter"),     s => FilterFilePath = s);
             Populate("foundry:",    Localization.Get("FoundryFilter"),      s => FilterFoundry = s);
             Populate("designer:",   Localization.Get("DesignerFilter"),     s => FilterDesigner = s);
-            Populate("outline:",    Localization.Get("OutlineFilter"),     s => FilterDesigner = s);
+            Populate("outline:",    Localization.Get("OutlineFilter"),      s => FilterOutlines = s);
 
             void Populate(string id, string loc, Action<string> set)
             {
