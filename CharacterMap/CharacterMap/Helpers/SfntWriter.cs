@@ -19,41 +19,43 @@ public class OS2Metadata
     public uint CodePageRange2 { get; set; }
 }
 
-
-
-
-/* CMSV Table Spec
- * +-------------------------------------------------------------+
- * | Header (16 bytes)                                           |
- * | - majorVersion, minorVersion                                |
- * | - appVersion (Major, Minor, Build, Revision)                |
- * | - appVersionStringOffset & Length                           |
- * | - fontFaceCount                                             |
- * +-------------------------------------------------------------+
- * | Font Face Records Array [fontFaceCount * 8 bytes]           |
- * | - Record 0: nameOffset, nameLength, versionOffset, etc.     |
- * | - Record 1: ...                                             |
- * +-------------------------------------------------------------+
- * | String Data Block (Variable Length)                         |
- * | - App Version string bytes                                  |
- * | - Font Face Name & Version string bytes                     |
- * +-------------------------------------------------------------+
- */
-
-
 public record CMSVFontInfo(string Name, string Version);
 
 public class CMSVTable
 {
+    /*                        CMSV Table Spec
+    * +-------------------------------------------------------------+
+    * | Header (26 bytes for v1.1, 18 bytes for v1.0)               |
+    * | - majorVersion, minorVersion                                |
+    * | - appVersion (Major, Minor, Build, Revision)                |
+    * | - appVersionStringOffset & Length                           |
+    * | - classNameOffset & Length (v1.1+)                          |
+    * | - namespaceOffset & Length (v1.1+)                          |
+    * | - fontFaceCount                                             |
+    * +-------------------------------------------------------------+
+    * | Font Face Records Array [fontFaceCount * 8 bytes]           |
+    * | - Record 0: nameOffset, nameLength, versionOffset, etc.     |
+    * | - Record 1: ...                                             |
+    * +-------------------------------------------------------------+
+    * | String Data Block (Variable Length)                         |
+    * | - App Version string bytes                                  |
+    * | - Class Name string bytes (v1.1+)                           |
+    * | - Namespace string bytes (v1.1+)                            |
+    * | - Font Face Name & Version string bytes                     |
+    * +-------------------------------------------------------------+
+    */
+
     public const string TAG = "CMSV";
     public const ushort MAJOR_VERSION = 1;
-    public const ushort MINOR_VERSION = 0;
+    public const ushort MINOR_VERSION = 1;
 
     public ushort AppMajor { get; set; } = 5;
     public ushort AppMinor { get; set; } = 0;
     public ushort AppBuild { get; set; } = 0;
     public ushort AppRevision { get; set; } = 0;
     public string AppVersionString { get; set; }
+    public string ClassName { get; set; }
+    public string Namespace { get; set; }
     public List<CMSVFontInfo> FontFaces { get; set; } = [];
 
     public bool IsExisting => !string.IsNullOrEmpty(AppVersionString);
@@ -77,17 +79,22 @@ public class CMSVTable
         return this;
     }
 
-    public byte[] Encode()
+    public byte[] Encode(bool updateVersion = true)
     {
+        if (updateVersion)
+            UpdateVersion();
+
         using MemoryStream ms = new();
         using BinaryWriter bw = new(ms);
 
         byte[] appVerBytes = Encoding.UTF8.GetBytes(AppVersionString ?? string.Empty);
+        byte[] classNameBytes = Encoding.UTF8.GetBytes(ClassName ?? string.Empty);
+        byte[] namespaceBytes = Encoding.UTF8.GetBytes(Namespace ?? string.Empty);
         ushort count = (ushort)FontFaces.Count;
 
-        // Calculate string block start offset
-        // Header size (18 bytes) + FontFaceRecords (count * 8 bytes)
-        ushort currentOffset = (ushort)(18 + (count * 8));
+        // Calculate string block start offset:
+        // Header size (26 bytes) + FontFaceRecords (count * 8 bytes)
+        ushort currentOffset = (ushort)(26 + (count * 8));
 
         // Write Header
         WriteUInt16BE(bw, MAJOR_VERSION);
@@ -102,6 +109,17 @@ public class CMSVTable
         WriteUInt16BE(bw, (ushort)appVerBytes.Length);
         currentOffset += (ushort)appVerBytes.Length;
 
+        // Class name string offset & length (v1.1)
+        WriteUInt16BE(bw, currentOffset);
+        WriteUInt16BE(bw, (ushort)classNameBytes.Length);
+        currentOffset += (ushort)classNameBytes.Length;
+
+        // Namespace string offset & length (v1.1)
+        WriteUInt16BE(bw, currentOffset);
+        WriteUInt16BE(bw, (ushort)namespaceBytes.Length);
+        currentOffset += (ushort)namespaceBytes.Length;
+
+        // Font face count
         WriteUInt16BE(bw, count);
 
         // Prepare string buffers
@@ -128,6 +146,8 @@ public class CMSVTable
 
         // Write String Data Block
         bw.Write(appVerBytes);
+        bw.Write(classNameBytes);
+        bw.Write(namespaceBytes);
         for (int i = 0; i < count; i++)
         {
             bw.Write(nameBytesList[i]);
@@ -166,10 +186,47 @@ public class CMSVTable
 
             ushort appVerOffset = ReadUInt16BE(br);
             ushort appVerLength = ReadUInt16BE(br);
-            ushort fontCount = ReadUInt16BE(br);
 
-            if (appVerOffset + appVerLength <= data.Length)
+            ushort classNameOffset = 0;
+            ushort classNameLength = 0;
+            ushort namespaceOffset = 0;
+            ushort namespaceLength = 0;
+            ushort fontCount = 0;
+
+            if (minor >= 1)
+            {
+                if (data.Length >= 26)
+                {
+                    classNameOffset = ReadUInt16BE(br);
+                    classNameLength = ReadUInt16BE(br);
+                    namespaceOffset = ReadUInt16BE(br);
+                    namespaceLength = ReadUInt16BE(br);
+                    fontCount = ReadUInt16BE(br);
+                }
+                else if (data.Length >= 22)
+                {
+                    classNameOffset = ReadUInt16BE(br);
+                    classNameLength = ReadUInt16BE(br);
+                    fontCount = ReadUInt16BE(br);
+                }
+                else
+                {
+                    fontCount = ReadUInt16BE(br);
+                }
+            }
+            else
+            {
+                fontCount = ReadUInt16BE(br);
+            }
+
+            if (appVerOffset + appVerLength <= data.Length && appVerLength > 0)
                 table.AppVersionString = Encoding.UTF8.GetString(data, appVerOffset, appVerLength);
+
+            if (classNameOffset > 0 && classNameOffset + classNameLength <= data.Length && classNameLength > 0)
+                table.ClassName = Encoding.UTF8.GetString(data, classNameOffset, classNameLength);
+
+            if (namespaceOffset > 0 && namespaceOffset + namespaceLength <= data.Length && namespaceLength > 0)
+                table.Namespace = Encoding.UTF8.GetString(data, namespaceOffset, namespaceLength);
 
             for (int i = 0; i < fontCount; i++)
             {
@@ -206,6 +263,7 @@ public class CMSVTable
         bw.Write((byte)(v & 0xFF));
     }
 }
+
 
 
 
@@ -341,6 +399,118 @@ public static class SfntWriter
             WriteUInt32BE(bw, lengths[tag]);
         }
     }
+
+    public static byte[] EncodeSimpleGlyph(List<List<Vector2>> contours, List<bool> onCurveFlags)
+    {
+        if (contours.Count == 0)
+            return Array.Empty<byte>();
+
+        using MemoryStream ms = new();
+        using BinaryWriter bw = new(ms);
+
+        short numContours = (short)contours.Count;
+        WriteInt16BE(bw, numContours);
+
+        short xMin = short.MaxValue;
+        short yMin = short.MaxValue;
+        short xMax = short.MinValue;
+        short yMax = short.MinValue;
+
+        List<short> allX = [];
+        List<short> allY = [];
+        List<ushort> endPtsOfContours = [];
+
+        ushort pointIndex = 0;
+        for (int c = 0; c < contours.Count; c++)
+        {
+            List<Vector2> contour = contours[c];
+            for (int p = 0; p < contour.Count; p++)
+            {
+                Vector2 pt = contour[p];
+                short x = (short)Math.Round(pt.X);
+                short y = (short)Math.Round(-pt.Y); // Flip Y
+
+                xMin = Math.Min(xMin, x);
+                yMin = Math.Min(yMin, y);
+                xMax = Math.Max(xMax, x);
+                yMax = Math.Max(yMax, y);
+
+                allX.Add(x);
+                allY.Add(y);
+            }
+            pointIndex += (ushort)contour.Count;
+            endPtsOfContours.Add((ushort)(pointIndex - 1));
+        }
+
+        WriteInt16BE(bw, xMin);
+        WriteInt16BE(bw, yMin);
+        WriteInt16BE(bw, xMax);
+        WriteInt16BE(bw, yMax);
+
+        // endPtsOfContours[]
+        for (int i = 0; i < numContours; i++)
+            WriteUInt16BE(bw, endPtsOfContours[i]);
+
+        // instructionLength
+        WriteUInt16BE(bw, 0);
+
+        // Prepare streams for coordinates and flags
+        byte[] flags = new byte[allX.Count];
+        using MemoryStream xMs = new();
+        using BinaryWriter xBw = new(xMs);
+        using MemoryStream yMs = new();
+        using BinaryWriter yBw = new(yMs);
+
+        short prevX = 0;
+        short prevY = 0;
+
+        for (int i = 0; i < allX.Count; i++)
+        {
+            byte flag = (byte)(onCurveFlags[i] ? 0x01 : 0x00);
+            short dx = (short)(allX[i] - prevX);
+            short dy = (short)(allY[i] - prevY);
+
+            // Compress X Coordinate
+            if (dx == 0)
+                flag |= 0x10;
+            else if (dx >= -255 && dx <= 255)
+            {
+                flag |= 0x02;
+                if (dx > 0)
+                    flag |= 0x10;
+                xBw.Write((byte)Math.Abs(dx));
+            }
+            else
+                WriteInt16BE(xBw, dx);
+
+            // Compress Y Coordinate
+            if (dy == 0)
+                flag |= 0x20;
+            else if (dy >= -255 && dy <= 255)
+            {
+                flag |= 0x04;
+                if (dy > 0)
+                    flag |= 0x20;
+                yBw.Write((byte)Math.Abs(dy));
+            }
+            else
+                WriteInt16BE(yBw, dy);
+
+            flags[i] = flag;
+            prevX = allX[i];
+            prevY = allY[i];
+        }
+
+        // Write flags
+        bw.Write(flags);
+
+        // Write coordinate byte streams
+        bw.Write(xMs.ToArray());
+        bw.Write(yMs.ToArray());
+
+        return ms.ToArray();
+    }
+
 
     #endregion
 

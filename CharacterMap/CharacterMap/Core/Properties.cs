@@ -116,7 +116,7 @@ public enum MaterialCornerStyle
 [AttachedProperty<Double>] // generic property store
 [AttachedProperty<Boolean>] // generic property store
 [AttachedProperty<double>("FontSize")] // generic property store
-
+[AttachedProperty<bool>("CloseOnInvoke")]
 public partial class Properties : DependencyObject
 {
     #region BindingCache
@@ -596,7 +596,13 @@ public partial class Properties : DependencyObject
             static void ButtonFlyoutClick(object sender, RoutedEventArgs e)
             {
                 if (sender is ButtonBase b && GetFlyout(b) is FlyoutBase fly)
+                {
+                    // Provide a refernce a content can access the flyout from
+                    if (fly is Flyout flyout)
+                        Properties.SetTag(flyout.Content, flyout);
+
                     fly.ShowAt(b);
+                }
             }
         }
         else if (d is ListViewBase lvb)
@@ -2005,6 +2011,32 @@ public partial class Properties : DependencyObject
                 g.FontUri = u;
             else
                 g.ClearValue(Properties.FontUriProperty);
+        }
+    }
+
+    #endregion
+
+    #region CloseOnInvoke
+
+    static partial void OnCloseOnInvokeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement f)
+        {
+            if (f is Button b)
+            {
+                b.Click -= B_Click;
+                if (e.NewValue is bool val && val)
+                    b.Click += B_Click;
+            }
+        }
+
+        static void B_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement f 
+                && f.GetFirstAncestorOfType<FlyoutPresenter>() 
+                    is FlyoutPresenter { Content: FrameworkElement content}
+                && Properties.GetTag(content) is Flyout flyout)
+                flyout.Hide();
         }
     }
 

@@ -2882,4 +2882,7 @@ For Font Families that do not provide Bold or Oblique Faces, Windows will provid
   <data name="SupportedValuesHint" xml:space="preserve">
     <value>Supported Values: {0}</value>
   </data>
+  <data name="ClassNameInput.Header" xml:space="preserve">
+    <value>Class Name</value>
+  </data>
 </root>

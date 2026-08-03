@@ -103,9 +103,11 @@ internal static class StorageHelper
     {
         FileSavePicker savePicker = new()
         {
-            SuggestedStartLocation = suggestedLocation,
             SuggestedFileName = fileName
         };
+
+        if (suggestedLocation != PickerLocationId.Unspecified)
+            savePicker.SuggestedStartLocation = suggestedLocation;
 
         savePicker.FileTypeChoices.Add(key, values);
 

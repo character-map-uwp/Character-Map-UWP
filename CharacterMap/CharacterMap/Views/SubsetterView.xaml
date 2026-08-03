@@ -705,6 +705,46 @@
                             HorizontalAlignment="Right"
                             Orientation="Horizontal"
                             Spacing="8">
+
+                            <Button
+                                MinWidth="128"
+                                Margin="0 0 48 0"
+                                Content="C#"
+                                Style="{StaticResource DefaultThemeButtonStyle}">
+                                <core:Properties.Flyout>
+                                    <Flyout x:Name="CopyFlyout" Opening="{x:Bind ViewModel.UpdateCode}">
+                                        <Grid
+                                            Padding="8"
+                                            core:Properties.GridDefinitions="rAuto r* rAuto rs8"
+                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                            RequestedTheme="Light">
+                                            <TextBox x:Uid="ClassNameInput" Text="{x:Bind ViewModel.GeneratedClassName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBlock
+                                                Grid.Row="1"
+                                                IsTextSelectionEnabled="True"
+                                                Text="{x:Bind ViewModel.GeneratedCode, Mode=OneWay}"
+                                                TextWrapping="Wrap" />
+                                            <Grid Grid.Row="2" core:Properties.GridDefinitions="c* c* cs8">
+                                                <Button
+                                                    HorizontalAlignment="Stretch"
+                                                    core:Properties.CloseOnInvoke="True"
+                                                    Click="{x:Bind ViewModel.CopyCode}"
+                                                    Content="{core:Localizer Key='BtnCopyGlyph/Label'}"
+                                                    Style="{StaticResource DefaultThemeButtonStyle}" />
+                                                <Button
+                                                    Grid.Column="1"
+                                                    HorizontalAlignment="Stretch"
+                                                    core:Properties.CloseOnInvoke="True"
+                                                    Command="{x:Bind ViewModel.SaveCodeCommand}"
+                                                    Content="{core:Localizer Key='BtnSaveGlyph/Label'}"
+                                                    Style="{StaticResource DefaultThemeButtonStyle}" />
+                                            </Grid>
+
+                                        </Grid>
+                                    </Flyout>
+                                </core:Properties.Flyout>
+                            </Button>
+
                             <Button
                                 MinWidth="128"
                                 h:FluentAnimation.PointerOver="ContentPresenter.Content"

@@ -15,6 +15,7 @@ namespace CharacterMap.Helpers;
 public record SubsetOptions(
     string DesiredName,
     IList<FontGlyph> Characters,
+    string className,
     StorageFile OutputFile = null,
     string DesiredVersion = "Version 1.00",
     bool generatePreviewString = true);
@@ -84,17 +85,9 @@ public partial class FontGlyph(
 /// </summary>
 public class FontSubsetter
 {
-
     // ---------------------------
     // Big-endian helpers
     // ---------------------------
-
-    static ushort ReadUInt16BE(BinaryReader br) => SfntWriter.ReadUInt16BE(br);
-    static short ReadInt16BE(BinaryReader br) => SfntWriter.ReadInt16BE(br);
-    static uint ReadUInt32BE(BinaryReader br) => SfntWriter.ReadUInt32BE(br);
-    static void WriteUInt16BE(BinaryWriter bw, ushort v) => SfntWriter.WriteUInt16BE(bw, v);
-    static void WriteUInt32BE(BinaryWriter bw, uint v) => SfntWriter.WriteUInt32BE(bw, v);
-    static void WriteInt16BE(BinaryWriter bw, short v) => SfntWriter.WriteInt16BE(bw, v);
 
     private class FontTableCache : IDisposable
     {
@@ -262,8 +255,8 @@ public class FontSubsetter
                         aw = (ushort)Math.Round(aw * finalScale);
                         lsb = (short)Math.Round(lsb * finalScale + offsetX);
 
-                        WriteUInt16BE(hmtxBw, aw);
-                        WriteInt16BE(hmtxBw, lsb);
+                        SfntWriter.WriteUInt16BE(hmtxBw, aw);
+                        SfntWriter.WriteInt16BE(hmtxBw, lsb);
 
                         // Extract outline
                         byte[] ttfBytes;
@@ -303,6 +296,7 @@ public class FontSubsetter
             }
 
             CMSVTable cmTable = CMSVTable.TryDecode(templateFont) ?? new();
+            cmTable.ClassName = opts.className;
 
             // 6.2. Merge OS/2 embedding rights and ranges
             OS2Metadata os2Meta = SfntWriter.CalculateMergedOS2(uniqueFonts, fontFsTypes, templateFont);
@@ -345,10 +339,9 @@ public class FontSubsetter
             if (postData != null) outputTables["post"] = postData;
             outputTables[CMSVTable.TAG] = cmTable.Encode();
 
-
             // 7. Write the final font file to disk
             StorageFile file = opts.OutputFile
-                ?? await StorageHelper.CreateTempFileAsync($"SS\\{opts.DesiredName}.ttf").AsTask().ConfigureAwait(false);
+                ?? await StorageHelper.CreateTempFileAsync($"SS\\{Utils.GetSafeFileName(opts.DesiredName)}.ttf").AsTask().ConfigureAwait(false);
 
             using (Stream outStream = await file.OpenStreamForWriteAsync().ConfigureAwait(false))
             {
@@ -363,8 +356,6 @@ public class FontSubsetter
                 cache.Dispose();
         }
     }
-
-
 
 
 
@@ -513,7 +504,7 @@ public class FontSubsetter
             pointCount = (ushort)totalPoints;
             contourCount = (ushort)receiver.Contours.Count;
 
-            return EncodeSimpleGlyph(receiver.Contours, receiver.PointOnCurve);
+            return SfntWriter.EncodeSimpleGlyph(receiver.Contours, receiver.PointOnCurve);
         }
         catch (Exception ex)
         {
@@ -576,7 +567,7 @@ public class FontSubsetter
             pointCount = (ushort)totalPoints;
             contourCount = (ushort)receiver.Contours.Count;
 
-            return EncodeSimpleGlyph(receiver.Contours, receiver.PointOnCurve);
+            return SfntWriter.EncodeSimpleGlyph(receiver.Contours, receiver.PointOnCurve);
         }
         catch (Exception ex)
         {
@@ -588,116 +579,6 @@ public class FontSubsetter
         }
     }
 
-    public static byte[] EncodeSimpleGlyph(List<List<Vector2>> contours, List<bool> onCurveFlags)
-    {
-        if (contours.Count == 0)
-            return Array.Empty<byte>();
-
-        using MemoryStream ms = new();
-        using BinaryWriter bw = new(ms);
-
-        short numContours = (short)contours.Count;
-        WriteInt16BE(bw, numContours);
-
-        short xMin = short.MaxValue;
-        short yMin = short.MaxValue;
-        short xMax = short.MinValue;
-        short yMax = short.MinValue;
-
-        List<short> allX = [];
-        List<short> allY = [];
-        List<ushort> endPtsOfContours = [];
-
-        ushort pointIndex = 0;
-        for (int c = 0; c < contours.Count; c++)
-        {
-            List<Vector2> contour = contours[c];
-            for (int p = 0; p < contour.Count; p++)
-            {
-                Vector2 pt = contour[p];
-                short x = (short)Math.Round(pt.X);
-                short y = (short)Math.Round(-pt.Y); // Flip Y
-
-                xMin = Math.Min(xMin, x);
-                yMin = Math.Min(yMin, y);
-                xMax = Math.Max(xMax, x);
-                yMax = Math.Max(yMax, y);
-
-                allX.Add(x);
-                allY.Add(y);
-            }
-            pointIndex += (ushort)contour.Count;
-            endPtsOfContours.Add((ushort)(pointIndex - 1));
-        }
-
-        WriteInt16BE(bw, xMin);
-        WriteInt16BE(bw, yMin);
-        WriteInt16BE(bw, xMax);
-        WriteInt16BE(bw, yMax);
-
-        // endPtsOfContours[]
-        for (int i = 0; i < numContours; i++)
-            WriteUInt16BE(bw, endPtsOfContours[i]);
-
-        // instructionLength
-        WriteUInt16BE(bw, 0);
-
-        // Prepare streams for coordinates and flags
-        byte[] flags = new byte[allX.Count];
-        using MemoryStream xMs = new();
-        using BinaryWriter xBw = new(xMs);
-        using MemoryStream yMs = new();
-        using BinaryWriter yBw = new(yMs);
-
-        short prevX = 0;
-        short prevY = 0;
-
-        for (int i = 0; i < allX.Count; i++)
-        {
-            byte flag = (byte)(onCurveFlags[i] ? 0x01 : 0x00);
-            short dx = (short)(allX[i] - prevX);
-            short dy = (short)(allY[i] - prevY);
-
-            // Compress X Coordinate
-            if (dx == 0)
-                flag |= 0x10;
-            else if (dx >= -255 && dx <= 255)
-            {
-                flag |= 0x02;
-                if (dx > 0)
-                    flag |= 0x10;
-                xBw.Write((byte)Math.Abs(dx));
-            }
-            else
-                WriteInt16BE(xBw, dx);
-
-            // Compress Y Coordinate
-            if (dy == 0)
-                flag |= 0x20;
-            else if (dy >= -255 && dy <= 255)
-            {
-                flag |= 0x04;
-                if (dy > 0)
-                    flag |= 0x20;
-                yBw.Write((byte)Math.Abs(dy));
-            }
-            else
-                WriteInt16BE(yBw, dy);
-
-            flags[i] = flag;
-            prevX = allX[i];
-            prevY = allY[i];
-        }
-
-        // Write flags
-        bw.Write(flags);
-
-        // Write coordinate byte streams
-        bw.Write(xMs.ToArray());
-        bw.Write(yMs.ToArray());
-
-        return ms.ToArray();
-    }
 
  
 

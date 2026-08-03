@@ -223,6 +223,7 @@
     <Compile Include="Core\MultiValueDictionary.cs" />
     <Compile Include="Core\SvgPathParser.cs" />
     <Compile Include="Core\ThemeIconGlyph.cs" />
+    <Compile Include="Helpers\FontClassGenerator.cs" />
     <Compile Include="Helpers\SfntWriter.cs" />
     <Compile Include="Helpers\StorageHelper.cs" />
     <Compile Include="Helpers\Subsetter.cs" />

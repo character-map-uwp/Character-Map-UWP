@@ -1,3 +1,4 @@
+using System.IO;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Svg;
 using Microsoft.Graphics.Canvas.Text;
@@ -62,6 +63,26 @@ public static class Utils
     public static NativeInterop GetInterop() => Ioc.Default.GetService<NativeInterop>();
 
     public static StringBuilderPool BuilderPool { get; } = new();
+
+    public static string GetSafeFileName(string fileName)
+    {
+        if (string.IsNullOrWhiteSpace(fileName))
+            return string.Empty;
+
+        char[] invalidChars = Path.GetInvalidFileNameChars();
+        StringBuilder sb = new(fileName.Length);
+        foreach (char c in fileName)
+        {
+            if (Array.IndexOf(invalidChars, c) < 0)
+                sb.Append(c);
+        }
+
+        string cleanName = sb.ToString().Trim('.', ' ');
+        if (string.IsNullOrWhiteSpace(cleanName))
+            return "file";
+
+        return cleanName;
+    }
 
     public static void RunOnDispatcher(this DependencyObject d, Action a)
     {

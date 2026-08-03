@@ -128,8 +128,14 @@ public partial class SubsetterViewModel : ViewModelBase
     [ObservableProperty] string _familyName = DEFAULT_FONT_NAME;
     [ObservableProperty] string _version = DEFAULT_VERSION;
     [ObservableProperty] bool _hasClashing = false;
+    [ObservableProperty] string _generatedCode = null;
+    [ObservableProperty] string _generatedClassName = null;
 
     [ObservableProperty] ObservableCollection<FontGlyph> _previewList;
+
+    List<FontGlyph> _exportChars = null;
+    FontClassGenerator _generator = null;
+    string _className = null;
 
     public FaceSelectionModel SvgGlyphContainerFace { get; }
 
@@ -226,6 +232,10 @@ public partial class SubsetterViewModel : ViewModelBase
             .OrderBy(fg => fg.Character.UnicodeIndex)];
 
         PreviewList = list;
+        _exportChars = GetExportChars();
+        _generator = new();
+        UpdateCodeInternal();
+
         ViewState = PREVIEW_STATE;
     }
 
@@ -315,29 +325,10 @@ public partial class SubsetterViewModel : ViewModelBase
                 is not StorageFile target)
                 return;
 
-            List<FontGlyph> chars = PreviewList is { Count: > 0 }
-                ? [.. PreviewList]
-                : SelectedFaces.SelectMany(sf => sf.GetGlyphs()).ToList();
-
-            // Handle custom SVGs
-            uint exportPua = 0xF0000;
-            HashSet<uint> usedCodepoints = new(chars.Select(c => c.Character.UnicodeIndex));
-
-            foreach (FontGlyph custom in SvgGlyphContainerFace.CustomGlyphs)
-            {
-                if (chars.Contains(custom))
-                    continue;
-
-                while (usedCodepoints.Contains(exportPua))
-                    exportPua++;
-
-                custom.Character = new Character(exportPua);
-                chars.Add(custom);
-                exportPua++;
-            }
+            List<FontGlyph> chars = _exportChars;
 
             // 3. Note: version string currently isn't supported by the subsetter table-rewritter
-            var file = await FontSubsetter.CreateSubsetAsync(new(fontName, chars, target, version));
+            var file = await FontSubsetter.CreateSubsetAsync(new(fontName, chars, _className, target, version));
             if (file is not null && await FontImporter.LoadFromFileAsync(file) is CMFontFamily font)
                 Notify(new SubsetResultMessage(font, file));
             else
@@ -349,11 +340,37 @@ public partial class SubsetterViewModel : ViewModelBase
         }
     }
 
+    private List<FontGlyph> GetExportChars()
+    {
+        List<FontGlyph> chars = PreviewList is { Count: > 0 }
+                        ? [.. PreviewList]
+                        : SelectedFaces.SelectMany(sf => sf.GetGlyphs()).ToList();
+
+        // Handle custom SVGs
+        uint exportPua = 0xF0000;
+        HashSet<uint> usedCodepoints = new(chars.Select(c => c.Character.UnicodeIndex));
+
+        foreach (FontGlyph custom in SvgGlyphContainerFace.CustomGlyphs)
+        {
+            if (chars.Contains(custom))
+                continue;
+
+            while (usedCodepoints.Contains(exportPua))
+                exportPua++;
+
+            custom.Character = new Character(exportPua);
+            chars.Add(custom);
+            exportPua++;
+        }
+
+        return chars;
+    }
+
     // Start at Private use supplmentary A to avoid Segoe glyphs
     uint _nextCustomPua = 0xF0000;
 
     [RelayCommand]
-    public async Task AddSVGAsync()
+    async Task AddSVGAsync()
     {
         var state = ViewState;
 
@@ -382,6 +399,38 @@ public partial class SubsetterViewModel : ViewModelBase
         {
             ViewState = state;
         }
-        
+    }
+
+    Debouncer _codeDebouncer { get; } = new();
+
+    partial void OnGeneratedClassNameChanged(string value)
+        => _codeDebouncer.Debounce(300, UpdateCodeInternal);
+
+    public void UpdateCode() => _codeDebouncer.Debounce(33, UpdateCodeInternal);
+
+    private void UpdateCodeInternal()
+    {
+        var chars = _exportChars;
+        var generated = _generator.Generate(
+            FamilyName, 
+            GeneratedClassName, 
+            chars, 
+            FontCodeOutputType.CharLiteral);
+
+        _className = generated.ClassName;
+        GeneratedCode = generated.Content;
+    }
+
+    public void CopyCode() => Utils.CopyToClipBoard(GeneratedCode);
+
+    [RelayCommand]
+    async Task SaveCodeAsync()
+    {
+        if (await StorageHelper.PickSaveFileAsync(
+                $"{_className}", "CSharp", [".cs"], PickerLocationId.Unspecified)
+            is not StorageFile file)
+            return;
+
+        await FileIO.WriteTextAsync(file, GeneratedCode);
     }
 }
