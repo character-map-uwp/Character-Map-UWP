@@ -50,7 +50,7 @@ public partial class CMFontFace : IDisposable
 
     public string FamilyName { get; }
 
-    public string FullName => field ??= $"{FamilyName} {PreferredName}";
+    public string FullName => field ??= $"{FamilyName} {PreferredName}".Trim();
 
     public CanvasUnicodeRange[] UnicodeRanges => field ??= Face.GetUnicodeRanges();
 
@@ -78,6 +78,11 @@ public partial class CMFontFace : IDisposable
         (IsImported ? $"/Assets/Fonts/{FileName}#{FamilyName}" : Source);
 
     public DWriteFontFace Face { get; }
+
+    public string Key => field ??= $"{FullName}|{Version}";
+
+    public string Version => field ??= TryGetInfo(CanvasFontInformation.VersionStrings)?.Value ?? string.Empty;
+
 
     public CMFontFace(DWriteFontFace face, StorageFile file)
     {
@@ -359,8 +364,6 @@ public partial class CMFontFace : IDisposable
         {
             Utils.BuilderPool.Return(sb);
         }
-
-
     }
 
 
