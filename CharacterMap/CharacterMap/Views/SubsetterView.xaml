@@ -209,7 +209,7 @@
                             core:Properties.CompositeTransform="True"
                             Background="Transparent"
                             BorderThickness="0"
-                            Command="{x:Bind ViewModel.GoBackCommand}"
+                            Click="{x:Bind ViewModel.GoBack}"
                             CornerRadius="0"
                             Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
                             Style="{StaticResource AccentButtonStyle}"
@@ -373,7 +373,7 @@
 
                                 <Button
                                     x:Name="SelectAllButton"
-                                    Command="{x:Bind ViewModel.SelectAllCommand}"
+                                    Click="{x:Bind ViewModel.SelectAll}"
                                     Style="{StaticResource SmolButton}"
                                     ToolTipService.ToolTip="{core:Localizer Key=AppBtnSelectAll/Label}"
                                     d:IsEnabled="False"
@@ -383,7 +383,7 @@
 
                                 <Button
                                     x:Name="ClearSelectionButton"
-                                    Command="{x:Bind ViewModel.ClearSelectionCommand}"
+                                    Click="{x:Bind ViewModel.ClearSelection}"
                                     Style="{StaticResource SmolButton}"
                                     ToolTipService.ToolTip="{core:Localizer Key=ClearSelectionLabel}"
                                     d:IsEnabled="False"
@@ -525,7 +525,7 @@
                             <controls:UXButton
                                 Grid.Row="3"
                                 HorizontalAlignment="Stretch"
-                                Command="{x:Bind ViewModel.ShowPreviewCommand}"
+                                Click="{x:Bind ViewModel.ShowPreview}"
                                 Content="{core:Localizer Key=Preview}"
                                 IsEnabled="{x:Bind ViewModel.IsPreviewable, Mode=OneWay}" />
 
@@ -645,6 +645,7 @@
                                             Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
                                             HorizontalTextAlignment="Center"
                                             IsTextScaleFactorEnabled="False"
+                                            PreviewKeyDown="NameTextBox_PreviewKeyDown"
                                             Text="{x:Bind GlyphName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                             TextAlignment="Center" />
                                         <Border
@@ -710,6 +711,7 @@
                                 MinWidth="128"
                                 Margin="0 0 48 0"
                                 Content="C#"
+                                IsEnabled="{x:Bind ViewModel.PreviewList.HasNamedGlyphs, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource DefaultThemeButtonStyle}">
                                 <core:Properties.Flyout>
                                     <Flyout x:Name="CopyFlyout" Opening="{x:Bind ViewModel.UpdateCode}">
@@ -762,7 +764,7 @@
                             </Button>
                             <Button
                                 MinWidth="128"
-                                Command="{x:Bind ViewModel.GoBackCommand}"
+                                Click="{x:Bind ViewModel.GoBack}"
                                 Content="{core:Localizer Key=Cancel}"
                                 Style="{StaticResource DefaultThemeButtonStyle}" />
                         </StackPanel>

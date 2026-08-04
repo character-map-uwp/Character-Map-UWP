@@ -136,6 +136,7 @@
         </Setter>
     </Style>
 
+
     <Style TargetType="toolkit:InAppNotification">
         <Setter Property="Background" Value="{ThemeResource SliderTrackValueFill}" />
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
@@ -159,6 +160,7 @@
         <Setter Property="VerticalOffset" Value="40" />
         <Setter Property="Margin" Value="24 24" />
         <Setter Property="RequestedTheme" Value="Dark" />
+        <Setter Property="CornerRadius" Value="8" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="toolkit:InAppNotification">
@@ -234,7 +236,7 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="8"
+                            CornerRadius="{TemplateBinding CornerRadius}"
                             RenderTransformOrigin="{TemplateBinding RenderTransformOrigin}"
                             Visibility="{TemplateBinding Visibility}">
 
@@ -274,7 +276,7 @@
                                 <FontIcon
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Foreground="White"
+                                    Foreground="{TemplateBinding Foreground}"
                                     Glyph="&#xE711;" />
                             </controls:UXButton>
                         </Grid>

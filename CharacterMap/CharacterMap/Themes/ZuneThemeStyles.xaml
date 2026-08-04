@@ -85,7 +85,6 @@
 
 
 
-
     <!--  FONTS  -->
     <FontFamily x:Key="ThemeFontFamily">Zegoe UI, XamlAutoFontFamily</FontFamily>
     <FontFamily x:Key="ContentControlThemeFontFamily">Zegoe UI, XamlAutoFontFamily</FontFamily>
@@ -185,7 +184,6 @@
     <StaticResource x:Key="RepeatButtonBackgroundPointerOver" ResourceKey="ButtonPointerOverBackgroundBrush" />
     <StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="ComboBoxBorderBrush" />
     <StaticResource x:Key="AppMenuItemBackgroundBrush" ResourceKey="ButtonBackgroundBrush" />
-
 
     <Style TargetType="controls:ButtonGroup">
         <Setter Property="BorderBrush" Value="{ThemeResource ComboBoxBorderBrush}" />
@@ -6267,6 +6265,12 @@
 
     <Style x:Key="PreviewTipHighContrastStyle" BasedOn="{StaticResource DefaultPreviewTipStyle}" TargetType="controls:PreviewTip" />
 
+    <Style TargetType="toolkit:InAppNotification">
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Background" Value="{ThemeResource ComboBoxBackground}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource ComboBoxBorderBrush}" />
+        <Setter Property="CornerRadius" Value="0" />
+    </Style>
 
 
 </ResourceDictionary>

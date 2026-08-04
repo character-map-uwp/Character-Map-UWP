@@ -6,178 +6,376 @@ using System.Text.RegularExpressions;
 
 namespace CharacterMap.Helpers;
 
-public enum FontCodeOutputType
-{
-    /// <summary>
-    /// Outputs integer hex constants usable as raw Unicode indices (e.g. public const int GlobalNavButton = 0xE700;)
-    /// </summary>
-    IntHex,
-
-    /// <summary>
-    /// Outputs encoded C# string constants directly usable in TextBlock controls (e.g. public const string GlobalNavButton = "\uE700";)
-    /// </summary>
-    EncodedString,
-
-    /// <summary>
-    /// Outputs character literals for BMP unicode characters (e.g. public const char GlobalNavButton = '\uE700';)
-    /// </summary>
-    CharLiteral
-}
-
 public class FontClassGenerator
 {
-    const string NAMESPACE_ID = "🐒👽😂";
-    const string CLASSNAME_ID = "👌😘🔥";
+    CodeTemplateOption _previousTemplate = null;
+    string _cached = null;
 
-    const string DEFAULT_CLASS_NAME = "IconFont";
-
-    string baseString = null;
-
-    /// <summary>
-    /// Generates a source code class containing constants for the provided font glyphs.
-    /// Currently C# only. Can be expanded to support other formats.
-    /// </summary>
-    public (string Content, String ClassName) Generate(
-        string fontName, 
+    public (string Content, string OutputClassName) ProcessTemplate(
+        CodeTemplateOption template,
+        string fontName,
         string className,
-        IEnumerable<FontGlyph> glyphs, 
-        FontCodeOutputType outputType = FontCodeOutputType.IntHex,
-        string namespaceName = null)
+        string namespaceName,
+        IEnumerable<FontGlyph> glyphs,
+        bool forceRegenerate = false)
     {
-        if (glyphs == null) 
-            return (string.Empty, string.Empty);
+        if (template is null) return (string.Empty, string.Empty);
 
-        baseString ??= BuildBaseString(fontName, glyphs, outputType, namespaceName);
-
-        var name = !string.IsNullOrWhiteSpace(className)
-                        ? SanitizeClassName(className)
-                        : SanitizeClassName(fontName+"Icons");
-
-        var output = baseString.Replace(CLASSNAME_ID, name);
-        return (output, name);
-    }
-
-    private static string BuildBaseString(string fontName, IEnumerable<FontGlyph> glyphs, FontCodeOutputType outputType, string namespaceName)
-    {
-        StringBuilder sb = new();
+        if (_previousTemplate != template || forceRegenerate)
+            _cached = null;
         
-        bool hasNamespace = !string.IsNullOrWhiteSpace(namespaceName);
-        if (hasNamespace)
+        _previousTemplate = template;
+
+        List<FontGlyph> glyphList = [.. (glyphs ?? [])];
+        string cleanClassName = string.IsNullOrWhiteSpace(className) ? SanitizeIdentifier(fontName) : className;
+
+        // 1. Process Loop Blocks: {{#Glyphs}} ... {{/Glyphs}}
+        string result = _cached ??= Regex.Replace(template.Template, @"[ \t]*\{\{#Glyphs\}\}\r?\n?([\s\S]*?)[ \t]*\{\{/Glyphs\}\}\r?\n?", match =>
         {
-            sb.AppendLine($"namespace {NAMESPACE_ID};");
-            sb.AppendLine();
-        }
+            string loopBody = match.Groups[1].Value;
+            StringBuilder sb = new();
+            HashSet<string> usedMemberNames = new(StringComparer.Ordinal);
 
-        sb.AppendLine($"public static class {CLASSNAME_ID}");
-        sb.AppendLine($"{{");
+            for (int i = 0; i < glyphList.Count; i++)
+            {
+                FontGlyph g = glyphList[i];
+                if (g?.Character == null) continue;
 
-        HashSet<string> usedMemberNames = new(StringComparer.Ordinal);
-        foreach (FontGlyph glyph in glyphs)
+                uint unicode = g.Character.UnicodeIndex;
+                string rawName = string.IsNullOrWhiteSpace(g.GlyphName) ? null : g.GlyphName;
+                if (rawName == null)
+                    continue;
+
+                string cleanName = GetUniqueMemberName(rawName, usedMemberNames);
+
+                string expandedLine = EvaluateTags(loopBody, name => name switch
+                {
+                    "Name" => cleanName,
+                    "RawName" => rawName,
+                    "UnicodeIndex" => unicode.ToString(),
+                    "Index" => i.ToString(),
+                    "IsLast" => (i == glyphList.Count - 1).ToString().ToLowerInvariant(),
+                    _ => null
+                });
+
+                sb.Append(expandedLine);
+            }
+
+            return sb.ToString();
+        });
+
+        // 2. Process Global Tags
+        result = EvaluateTags(result, name => name switch
         {
-            if (glyph?.Character == null) continue;
+            "FontName" => fontName ?? string.Empty,
+            "ClassName" => cleanClassName,
+            "Namespace" => namespaceName ?? string.Empty,
+            "GlyphCount" => glyphList.Count.ToString(),
+            "GeneratedDate" => DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+            _ => null
+        });
 
-            uint unicode = glyph.Character.UnicodeIndex;
-            string memberName = GetValidMemberName(glyph, unicode, usedMemberNames);
+        // 3. Clean up empty namespace blocks if namespace is omitted
+        if (string.IsNullOrWhiteSpace(namespaceName))
+            result = Regex.Replace(result, @"[ \t]*\{\{#Namespace\}\}[\s\S]*?\{\{/Namespace\}\}\r?\n?", string.Empty);
+        else
+            result = Regex.Replace(result, @"[ \t]*\{\{/?Namespace\}\}\r?\n?", string.Empty);
 
-            if (string.IsNullOrWhiteSpace(memberName))
-                continue;
-
-            string valueDeclaration = outputType switch
-            {
-                FontCodeOutputType.EncodedString => FormatStringLiteral(unicode),
-                FontCodeOutputType.CharLiteral => FormatCharLiteral(unicode),
-                _ => $"0x{unicode:X4}"
-            };
-
-            string typeName = outputType switch
-            {
-                FontCodeOutputType.EncodedString => "string",
-                FontCodeOutputType.CharLiteral when unicode <= 0xFFFF => "char",
-                FontCodeOutputType.CharLiteral => "string",
-                _ => "int"
-            };
-
-            sb.AppendLine($"    public const {typeName} {memberName} = {valueDeclaration};");
-        }
-
-        sb.AppendLine("}");
-
-        return sb.ToString();
+        return (result, cleanClassName);
     }
 
-    private static string SanitizeClassName(string rawName)
+    private static string EvaluateTags(string input, Func<string, string> valueProvider)
     {
-        if (string.IsNullOrWhiteSpace(rawName)) return DEFAULT_CLASS_NAME;
+        return Regex.Replace(input, @"\{\{\s*([a-zA-Z0-9_]+)(?:\s*\|\s*([a-zA-Z0-9_]+))?\s*\}\}", match =>
+        {
+            string varName = match.Groups[1].Value;
+            string modifier = match.Groups[2].Success ? match.Groups[2].Value : null;
 
-        // Remove non-alphanumeric chars and build PascalCase name
-        string[] words = Regex.Split(rawName, @"[^a-zA-Z0-9]+");
+            string rawValue = valueProvider(varName);
+            if (rawValue == null) return match.Value; // Leave unhandled tags as-is
+
+            return ApplyModifier(rawValue, modifier);
+        });
+    }
+
+    private static string ApplyModifier(string val, string modifier)
+    {
+        if (string.IsNullOrEmpty(modifier)) return val;
+
+        bool isNumeric = uint.TryParse(val, out uint unicode);
+
+        return modifier.ToLowerInvariant() switch
+        {
+            // Number / Codepoint Modifiers
+            "hex" when isNumeric => $"{unicode:X4}",
+            "hex_0x" when isNumeric => $"0x{unicode:X4}",
+            "hex_0x_8" when isNumeric => $"0x{unicode:X8}",
+            "utf16_escape" when isNumeric => FormatUtf16Escape(unicode),
+            "utf32_escape" when isNumeric => $"\\U{unicode:X8}",
+            "char" when isNumeric => char.ConvertFromUtf32((int)unicode),
+
+            // Text Identifier Modifiers
+            "pascal_case" => ToPascalCase(val),
+            "camel_case" => ToCamelCase(val),
+            "snake_case" => ToSnakeCase(val),
+            "upper_snake_case" => ToSnakeCase(val).ToUpperInvariant(),
+            "upper_case" => val.ToUpperInvariant(),
+            "lower_case" => val.ToLowerInvariant(),
+
+            _ => val
+        };
+    }
+
+    private static string FormatUtf16Escape(uint unicode)
+    {
+        if (unicode <= 0xFFFF) return $"\\u{unicode:X4}";
+        string pair = char.ConvertFromUtf32((int)unicode);
+        return $"\\u{(ushort)pair[0]:X4}\\u{(ushort)pair[1]:X4}";
+    }
+
+    private static string ToPascalCase(string str)
+    {
+        string[] words = Regex.Split(str ?? "", @"[^a-zA-Z0-9]+");
         StringBuilder sb = new();
         foreach (string w in words)
-        {
             if (w.Length > 0)
-            {
-                sb.Append(char.ToUpperInvariant(w[0]));
-                if (w.Length > 1)
-                    sb.Append(w.Substring(1));
-            }
-        }
+                sb.Append(char.ToUpperInvariant(w[0])).Append(w.Substring(1));
 
         string result = sb.ToString();
-        if (string.IsNullOrEmpty(result)) return DEFAULT_CLASS_NAME;
-
-        //if (!result.EndsWith("Icons", StringComparison.OrdinalIgnoreCase))
-        //    result += "Icons";
-
-        if (char.IsDigit(result[0]))
-            result = "Icon" + result;
-
+        if (string.IsNullOrEmpty(result)) return "Icon";
+        if (char.IsDigit(result[0])) result = "_" + result;
         return result;
     }
 
-    private static string GetValidMemberName(FontGlyph glyph, uint unicode, HashSet<string> usedNames)
+    private static string ToCamelCase(string str)
     {
-        string rawName = glyph.GlyphName;
+        string pascal = ToPascalCase(str);
+        if (pascal.Length == 0) return pascal;
+        return char.ToLowerInvariant(pascal[0]) + pascal.Substring(1);
+    }
 
-        if (string.IsNullOrWhiteSpace(rawName) || rawName.Equals(".notdef", StringComparison.OrdinalIgnoreCase))
-        {
-            return null;
-        }
+    private static string ToSnakeCase(string str)
+    {
+        string clean = Regex.Replace(str ?? "", @"[^a-zA-Z0-9]+", "_").Trim('_');
+        return Regex.Replace(clean, @"(?<!^)(?=[A-Z])", "_").ToLowerInvariant();
+    }
 
-        // Clean identifier characters
-        string sanitized = Regex.Replace(rawName, @"[^a-zA-Z0-9_]", "");
+    private static string SanitizeIdentifier(string str) => ToPascalCase(str);
 
-        // Ensure does not start with digit
-        if (char.IsDigit(sanitized[0]))
-            sanitized = "_" + sanitized;
-
-        // Ensure unique within the class
-        string finalName = sanitized;
+    private static string GetUniqueMemberName(string rawName, HashSet<string> used)
+    {
+        string baseName = ToPascalCase(rawName);
+        string name = baseName;
         int count = 1;
-        while (!usedNames.Add(finalName))
+        while (!used.Add(name))
         {
             count++;
-            finalName = $"{sanitized}{count}";
+            name = $"{baseName}{count}";
         }
+        return name;
+    }
+}
 
-        return finalName;
+public record CodeTemplateOption(
+    string Language,
+    string Name,
+    string Template,
+    string FileExtension = ".cs")
+{
+    public string DisplayName => $"{Language} - {Name}";
+}
+
+public class CodeTemplates
+{
+    public static IReadOnlyList<CodeTemplateOption> Options => field ??= [
+        new("C#", "Encoded String", CSharpTemplate.EncodedString, ".cs"),
+        new("C#", "Char Literal", CSharpTemplate.CharLiteral, ".cs"),
+        new("C#", "Integer Hex", CSharpTemplate.UnicodeIndex, ".cs"),
+        new("TypeScript", "Enum", TypescriptTemplate.Enum, ".ts"),
+        new("TypeScript", "Const Object", TypescriptTemplate.ConstObject, ".ts"),
+        new("C++", "Header Struct", CppTemplate.Header, ".h"),
+        new("Python", "Enum", PythonTemplate.Enum, ".py"),
+        new("Rust", "Module", RustTemplate.Module, ".rs"),
+        new("Dart / Flutter", "IconData Class", DartTemplate.IconData, ".dart"),
+        new("Kotlin", "Object", KotlinTemplate.Object, ".kt"),
+        new("Kotlin", "Enum", KotlinTemplate.Enum, ".kt"),
+        new("XAML", "ResourceDictionary", XamlTemplate.ResourceDictionary, ".xaml"),
+    ];
+
+    public static class CSharpTemplate
+    {
+        public const string UnicodeIndex = """
+            // Auto-generated by Character Map UWP on {{GeneratedDate}}
+            // Font: {{FontName}} ({{GlyphCount}} glyphs)
+
+            {{#Namespace}}
+            namespace {{Namespace}};
+            {{/Namespace}}
+
+            public static class {{ClassName}}
+            {
+            {{#Glyphs}}
+                public const int {{Name | pascal_case}} = {{UnicodeIndex | hex_0x}};
+            {{/Glyphs}}
+            }
+            """;
+
+        public const string EncodedString = """
+            // Auto-generated by Character Map UWP on {{GeneratedDate}}
+            {{#Namespace}}
+            namespace {{Namespace}};
+            {{/Namespace}}
+
+            public static class {{ClassName}}
+            {
+            {{#Glyphs}}
+                public const string {{Name | pascal_case}} = "{{UnicodeIndex | utf16_escape}}";
+            {{/Glyphs}}
+            }
+            """;
+
+        public const string CharLiteral = """
+            // Auto-generated by Character Map UWP on {{GeneratedDate}}
+
+            {{#Namespace}}
+            namespace {{Namespace}};
+            {{/Namespace}}
+
+            public static class {{ClassName}}
+            {
+            {{#Glyphs}}
+                public const char {{Name | pascal_case}} = '{{UnicodeIndex | utf16_escape}}';
+            {{/Glyphs}}
+            }
+            """;
     }
 
-    private static string FormatStringLiteral(uint unicode)
+    public static class TypescriptTemplate
     {
-        if (unicode <= 0xFFFF)
-            return $"\"\\u{unicode:X4}\"";
+        public const string Enum = """
+            // Auto-generated by Character Map UWP on {{GeneratedDate}}
+            export enum {{ClassName}} {
+            {{#Glyphs}}
+              {{Name | pascal_case}} = "{{UnicodeIndex | utf16_escape}}",
+            {{/Glyphs}}
+            }
+            """;
 
-        string utf32 = char.ConvertFromUtf32((int)unicode);
-        return $"\"\\u{(ushort)utf32[0]:X4}\\u{(ushort)utf32[1]:X4}\"";
+        public const string ConstObject = """
+            // Auto-generated by Character Map UWP on {{GeneratedDate}}
+            export const {{ClassName}} = {
+            {{#Glyphs}}
+              {{Name | pascal_case}}: "{{UnicodeIndex | utf16_escape}}",
+            {{/Glyphs}}
+            } as const;
+            """;
     }
 
-    private static string FormatCharLiteral(uint unicode)
+    public static class CppTemplate
     {
-        if (unicode <= 0xFFFF)
-            return $"'\\u{unicode:X4}'";
+        public const string Header = """
+            #pragma once
+            // Auto-generated by Character Map UWP on {{GeneratedDate}}
 
-        // Surrogate pair fallback to string literal
-        string utf32 = char.ConvertFromUtf32((int)unicode);
-        return $"\"\\u{(ushort)utf32[0]:X4}\\u{(ushort)utf32[1]:X4}\"";
+            {{#Namespace}}
+            namespace {{Namespace}} {
+            {{/Namespace}}
+                struct {{ClassName}} {
+                {{#Glyphs}}
+                    static constexpr char32_t {{Name | snake_case}} = {{UnicodeIndex | hex_0x}};
+                {{/Glyphs}}
+                };
+            {{#Namespace}}
+            }
+            {{/Namespace}}
+            """;
+    }
+
+    public static class PythonTemplate
+    {
+        public const string Enum = """
+            # Auto-generated by Character Map UWP on {{GeneratedDate}}
+            from enum import Enum
+
+            class {{ClassName}}(str, Enum):
+            {{#Glyphs}}
+                {{Name | upper_snake_case}} = "{{UnicodeIndex | utf16_escape}}"
+            {{/Glyphs}}
+            """;
+    }
+
+    public static class RustTemplate
+    {
+        public const string Module = """
+            // Auto-generated by Character Map UWP on {{GeneratedDate}}
+            pub mod {{ClassName | snake_case}} {
+            {{#Glyphs}}
+                pub const {{Name | upper_snake_case}}: char = '{{UnicodeIndex | utf16_escape}}';
+            {{/Glyphs}}
+            }
+            """;
+    }
+
+    public static class DartTemplate
+    {
+        public const string IconData = """
+            // Auto-generated by Character Map UWP on {{GeneratedDate}}
+            import 'package:flutter/widgets.dart';
+
+            class {{ClassName}} {
+              {{ClassName}}._();
+
+              static const String _fontFamily = '{{FontName}}';
+
+            {{#Glyphs}}
+              static const IconData {{Name | camel_case}} = IconData({{UnicodeIndex | hex_0x}}, fontFamily: _fontFamily);
+            {{/Glyphs}}
+            }
+            """;
+    }
+
+    public static class KotlinTemplate
+    {
+        public const string Object = """
+            // Auto-generated by Character Map UWP on {{GeneratedDate}}
+
+            {{#Namespace}}
+            package {{Namespace}}
+            {{/Namespace}}
+
+            object {{ClassName}} {
+            {{#Glyphs}}
+                const val {{Name | upper_snake_case}}: Char = '{{UnicodeIndex | utf16_escape}}'
+            {{/Glyphs}}
+            }
+            """;
+
+        public const string Enum = """
+            // Auto-generated by Character Map UWP on {{GeneratedDate}}
+
+            {{#Namespace}}
+            package {{Namespace}}
+            {{/Namespace}}
+
+            enum class {{ClassName}}(val code: Char) {
+            {{#Glyphs}}
+                {{Name | upper_snake_case}}('{{UnicodeIndex | utf16_escape}}'),
+            {{/Glyphs}}
+            }
+            """;
+    }
+
+    public static class XamlTemplate
+    {
+        public const string ResourceDictionary = """
+            <!-- Auto-generated by Character Map UWP on {{GeneratedDate}} -->
+            <ResourceDictionary
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+            {{#Glyphs}}
+                <x:String x:Key="{{Name | pascal_case}}">&#x{{UnicodeIndex | hex}};</x:String>
+            {{/Glyphs}}
+            </ResourceDictionary>
+            """;
     }
 }

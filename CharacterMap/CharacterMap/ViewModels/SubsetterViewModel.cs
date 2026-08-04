@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Collections.Extensions;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using Windows.ApplicationModel.VoiceCommands;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.ViewModels;
@@ -119,6 +120,9 @@ public partial class SubsetterViewModel : ViewModelBase
 
     public ObservableCollection<FaceSelectionModel> SelectedFaces { get; } = new();
 
+    public FaceSelectionModel SvgGlyphContainerFace { get; }
+
+
     public bool IsPreviewable => SelectedFaces.Count > 0 && !string.IsNullOrWhiteSpace(FamilyName);
     public bool IsExportable => IsPreviewable && !HasClashing;
 
@@ -128,18 +132,7 @@ public partial class SubsetterViewModel : ViewModelBase
     [ObservableProperty] string _familyName = DEFAULT_FONT_NAME;
     [ObservableProperty] string _version = DEFAULT_VERSION;
     [ObservableProperty] bool _hasClashing = false;
-    [ObservableProperty] string _generatedCode = null;
-    [ObservableProperty] string _generatedClassName = null;
-
-    [ObservableProperty] ObservableCollection<FontGlyph> _previewList;
-
-    List<FontGlyph> _exportChars = null;
-    FontClassGenerator _generator = null;
-    string _className = null;
-
-    public FaceSelectionModel SvgGlyphContainerFace { get; }
-
-    HashSet<int> _selectedIndexes { get; } = new();
+    [ObservableProperty] GlyphCollection _previewList;
 
     /// <summary>
     /// Unicode indexes that appear more than once in <see cref="PreviewList"/>,
@@ -147,6 +140,19 @@ public partial class SubsetterViewModel : ViewModelBase
     /// and will clash in the output font.
     /// </summary>
     [ObservableProperty] HashSet<uint> _clashingIndexes = [];
+
+    HashSet<int> _selectedIndexes { get; } = new();
+
+
+    /* Code Export Properties */
+    [ObservableProperty] string _generatedCode = null;
+    [ObservableProperty] string _generatedClassName = null;
+    [ObservableProperty] CodeTemplateOption _codeTemplate = null;
+    FontClassGenerator _generator = null;
+    string _className = null;
+
+
+   
 
     public SubsetterViewModel(SubsetterArgs args)
     {
@@ -176,28 +182,11 @@ public partial class SubsetterViewModel : ViewModelBase
 
             OnPropertyChanged(nameof(IsPreviewable));
             OnPropertyChanged(nameof(IsExportable));
-            _debouncer.Debounce(100, UpdateClashing);
+            _clashDebouncer.Debounce(UpdateClashing);
         });
     }
 
-    Debouncer _debouncer = new();
-
-    private void UpdateClashing()
-    {
-        // Build a map of UnicodeIndex → how many different FaceSelectionModels selected it.
-        // Any index appearing in more than one face's selection is a clash.
-        MultiValueDictionary<uint, Character> dic = new();
-        foreach (FaceSelectionModel face in SelectedFaces)
-            foreach (Character c in face.SelectedCharacters)
-                dic.Add(c.UnicodeIndex, c);
-
-        ClashingIndexes = [..dic
-                .Where(kvp => kvp.Value.Count > 1)
-                .Select(kvp => kvp.Key)];
-
-        HasClashing = ClashingIndexes.Count > 0;
-        OnPropertyChanged(nameof(IsExportable));
-    }
+    
 
     bool _blockFace = false;
 
@@ -215,39 +204,43 @@ public partial class SubsetterViewModel : ViewModelBase
             SelectedXAMLFontFamily = SelectedFace == null ? null : new FontFamily(SelectedFace.Face.Source);
     }
 
-    [RelayCommand]
+
+
+
+    //------------------------------------------------------
+    //
+    // UI Commands
+    //
+    //------------------------------------------------------
+
     public void GoBack()
     {
         if (ViewState == PREVIEW_STATE)
             ViewState = EDIT_STATE;
     }
 
-    [RelayCommand]
-    void ShowPreview()
+    public void ShowPreview()
     {
         UpdateClashing();
 
-        ObservableCollection<FontGlyph> list = [..SelectedFaces
-            .SelectMany(sf => sf.GetGlyphs())
-            .OrderBy(fg => fg.Character.UnicodeIndex)];
+        PreviewList = GetExportChars();
 
-        PreviewList = list;
-        _exportChars = GetExportChars();
         _generator = new();
+        CodeTemplate ??= CodeTemplates.Options[0];
         UpdateCodeInternal();
 
         ViewState = PREVIEW_STATE;
     }
 
-    [RelayCommand]
-    void ClearSelection()
+    
+
+    public void ClearSelection()
     {
         SelectedFace?.CustomGlyphs.Clear();
         SelectedFace?.SelectedCharacters.Clear();
     }
 
-    [RelayCommand]
-    void SelectAll() => SelectedFace?.SelectAll();
+    public void SelectAll() => SelectedFace?.SelectAll();
 
     [RelayCommand]
     async Task OpenFontAsync()
@@ -325,10 +318,9 @@ public partial class SubsetterViewModel : ViewModelBase
                 is not StorageFile target)
                 return;
 
-            List<FontGlyph> chars = _exportChars;
 
             // 3. Note: version string currently isn't supported by the subsetter table-rewritter
-            var file = await FontSubsetter.CreateSubsetAsync(new(fontName, chars, _className, target, version));
+            var file = await FontSubsetter.CreateSubsetAsync(new(fontName, PreviewList, _className, target, version));
             if (file is not null && await FontImporter.LoadFromFileAsync(file) is CMFontFamily font)
                 Notify(new SubsetResultMessage(font, file));
             else
@@ -340,31 +332,7 @@ public partial class SubsetterViewModel : ViewModelBase
         }
     }
 
-    private List<FontGlyph> GetExportChars()
-    {
-        List<FontGlyph> chars = PreviewList is { Count: > 0 }
-                        ? [.. PreviewList]
-                        : SelectedFaces.SelectMany(sf => sf.GetGlyphs()).ToList();
-
-        // Handle custom SVGs
-        uint exportPua = 0xF0000;
-        HashSet<uint> usedCodepoints = new(chars.Select(c => c.Character.UnicodeIndex));
-
-        foreach (FontGlyph custom in SvgGlyphContainerFace.CustomGlyphs)
-        {
-            if (chars.Contains(custom))
-                continue;
-
-            while (usedCodepoints.Contains(exportPua))
-                exportPua++;
-
-            custom.Character = new Character(exportPua);
-            chars.Add(custom);
-            exportPua++;
-        }
-
-        return chars;
-    }
+    
 
     // Start at Private use supplmentary A to avoid Segoe glyphs
     uint _nextCustomPua = 0xF0000;
@@ -401,28 +369,6 @@ public partial class SubsetterViewModel : ViewModelBase
         }
     }
 
-    Debouncer _codeDebouncer { get; } = new();
-
-    partial void OnGeneratedClassNameChanged(string value)
-        => _codeDebouncer.Debounce(300, UpdateCodeInternal);
-
-    public void UpdateCode() => _codeDebouncer.Debounce(33, UpdateCodeInternal);
-
-    private void UpdateCodeInternal()
-    {
-        var chars = _exportChars;
-        var generated = _generator.Generate(
-            FamilyName, 
-            GeneratedClassName, 
-            chars, 
-            FontCodeOutputType.CharLiteral);
-
-        _className = generated.ClassName;
-        GeneratedCode = generated.Content;
-    }
-
-    public void CopyCode() => Utils.CopyToClipBoard(GeneratedCode);
-
     [RelayCommand]
     async Task SaveCodeAsync()
     {
@@ -432,5 +378,204 @@ public partial class SubsetterViewModel : ViewModelBase
             return;
 
         await FileIO.WriteTextAsync(file, GeneratedCode);
+    }
+
+
+
+    //------------------------------------------------------
+    //
+    // Code Generator Handling
+    //
+    //------------------------------------------------------
+
+    Debouncer _codeDebouncer { get; } = new();
+
+    partial void OnGeneratedClassNameChanged(string value) => EnqueueCodeUpdate();
+
+    void EnqueueCodeUpdate(bool force = false) => _codeDebouncer.Debounce(300, UpdateCodeInternal);
+    public void UpdateCode() => _codeDebouncer.Debounce(33, UpdateCodeInternal);
+
+    public void CopyCode() => Utils.CopyToClipBoard(GeneratedCode);
+
+
+    private void UpdateCodeInternal()
+    {
+        var generated = _generator.ProcessTemplate(
+            CodeTemplate,
+            FamilyName,
+            GeneratedClassName,
+            null,
+            PreviewList,
+            true);
+
+        _className = generated.OutputClassName;
+        GeneratedCode = generated.Content;
+    }
+
+
+
+
+    //------------------------------------------------------
+    //
+    // Misc Helpers
+    //
+    //------------------------------------------------------
+
+    Debouncer _clashDebouncer = new(100);
+
+    private void UpdateClashing()
+    {
+        // Build a map of UnicodeIndex → how many different FaceSelectionModels selected it.
+        // Any index appearing in more than one face's selection is a clash.
+        MultiValueDictionary<uint, Character> dic = new();
+        foreach (FaceSelectionModel face in SelectedFaces)
+            foreach (Character c in face.SelectedCharacters)
+                dic.Add(c.UnicodeIndex, c);
+
+        ClashingIndexes = [..dic
+                .Where(kvp => kvp.Value.Count > 1)
+                .Select(kvp => kvp.Key)];
+
+        HasClashing = ClashingIndexes.Count > 0;
+        OnPropertyChanged(nameof(IsExportable));
+    }
+
+    private GlyphCollection GetExportChars()
+    {
+        GlyphCollection chars = PreviewList is { Count: > 0 }
+                        ? [.. PreviewList]
+                        : [.. SelectedFaces.SelectMany(sf => sf.GetGlyphs())];
+
+        // Handle custom SVGs
+        uint exportPua = 0xF0000;
+        HashSet<uint> usedCodepoints = new(chars.Select(c => c.Character.UnicodeIndex));
+
+        foreach (FontGlyph custom in SvgGlyphContainerFace.CustomGlyphs)
+        {
+            if (chars.Contains(custom))
+                continue;
+
+            while (usedCodepoints.Contains(exportPua))
+                exportPua++;
+
+            custom.Character = new Character(exportPua);
+            chars.Add(custom);
+            exportPua++;
+        }
+
+        // Don't use lambdas here - they will get GC'd immediately
+        return chars;
+    }
+
+    public class ObservableCollectionEx<T> : ObservableCollection<T>
+    {
+        protected override void InsertItem(int index, T item)
+        {
+            base.InsertItem(index, item);
+            OnItemSet(index, item);
+        }
+
+        protected override void RemoveItem(int index)
+        {
+            bool removed = false;
+            T item = default;
+            if (index < Items.Count)
+            {
+                item = Items[index];
+                removed = true;
+            }
+            base.RemoveItem(index);
+
+            if (removed)
+                OnItemRemoved(index, item);
+        }
+
+        protected override void SetItem(int index, T item)
+        {
+            bool removed = false;
+            T old = default;
+            if (index < Items.Count)
+            {
+                old = Items[index];
+                removed = true;
+            }
+
+            base.SetItem(index, item);
+            if (removed)
+                OnItemRemoved(index, old);
+
+            OnItemSet(index, item);
+        }
+
+        protected override void ClearItems()
+        {
+            foreach (var item in Items)
+                OnItemRemoved(-1, item);
+
+            base.ClearItems();
+        }
+
+        protected virtual void OnItemSet(int index, T item) { }
+        protected virtual void OnItemRemoved(int index, T item) { }
+
+        protected bool Set<V>(ref V field, V value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<V>.Default.Equals(field, value))
+                return false;
+
+            field = value;
+            OnPropertyChanged(new(propertyName));
+            return true;
+        }
+    }
+
+    public partial class GlyphCollection : ObservableCollectionEx<FontGlyph>
+    {
+        Debouncer _debouncer = new Debouncer(16);
+                                                                                                                        
+        public bool HasNamedGlyphs
+        {
+            get => field;
+            set => Set(ref field, value);
+        }
+
+        protected override void OnItemSet(int index, FontGlyph item) => TrackItem(item);
+
+        protected override void OnItemRemoved(int index, FontGlyph item)
+        {
+            Untrack(item);
+            if (item.HasName)
+                _debouncer.Debounce(Recheck);
+        }
+
+        protected override void ClearItems()
+        {
+            base.ClearItems();
+            HasNamedGlyphs = false;
+        }
+
+        void TrackItem(FontGlyph item)
+        {
+            item.PropertyChanged -= Item_PropertyChanged;
+            item.PropertyChanged += Item_PropertyChanged;
+            HasNamedGlyphs = HasNamedGlyphs || item.HasName;
+        }
+
+        void Untrack(FontGlyph item)
+        {
+            item.PropertyChanged -= Item_PropertyChanged;
+        }
+
+        private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (sender is not FontGlyph g) return;
+
+            if (g.HasName)
+                HasNamedGlyphs = true;
+            else
+                _debouncer.Debounce(Recheck);
+        }
+
+        void Recheck() => HasNamedGlyphs = this.Items.Any(g => g.HasName);
     }
 }

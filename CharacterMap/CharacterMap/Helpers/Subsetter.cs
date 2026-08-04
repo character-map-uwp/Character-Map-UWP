@@ -51,6 +51,8 @@ public partial class FontGlyph(
         : Localization.Get("ExportSVGGlyphLabel/Text");
 
     [ObservableProperty] string _glyphName;
+
+    public bool HasName => !string.IsNullOrWhiteSpace(_glyphName);
 }
 
 /// <summary>
