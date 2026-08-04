@@ -8,8 +8,9 @@ using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using System.Security;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Xml.Linq;
+using Windows.Data.Xml.Dom;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
@@ -417,63 +418,65 @@ internal class SVGGlyphHelper
          * Oh joy.
          */
 
-        XDocument xmlDoc = XDocument.Parse(str);
+        XmlDocument xmlDoc = new();
+        xmlDoc.LoadXml(str);
         string targetId = $"glyph{targetGlyphIndex}";
-        XElement targetElement = xmlDoc.Descendants().FirstOrDefault(e =>
-            e.Attribute("id")?.Value == targetId || e.Attribute("id")?.Value == $"{targetId}.0");
+
+        XmlElement targetElement = xmlDoc.GetElementsByTagName("*")
+            .OfType<XmlElement>()
+            .FirstOrDefault(e => e.GetAttribute("id") is string s && (s == targetId || s == $"{targetId}.0"));
 
         if (targetElement != null)
         {
-            var otherGlyphGroups = xmlDoc.Root.Elements()
-                .Where(e => e.Name.LocalName == "g" && e != targetElement)
+            XmlElement root = xmlDoc.DocumentElement;
+            List<IXmlNode> otherGlyphGroups = root.ChildNodes
+                .Where(e => e.NodeName.Equals("g", StringComparison.OrdinalIgnoreCase) && e != targetElement)
                 .ToList();
 
-            foreach (var el in otherGlyphGroups)
-                el.Remove();
+            foreach (IXmlNode el in otherGlyphGroups)
+                root.RemoveChild(el);
 
-            HashSet<string> usedIds = new HashSet<string>();
+            HashSet<string> usedIds = [];
             void ScanXmlText(string xmlText)
             {
                 if (string.IsNullOrEmpty(xmlText)) return;
-                var matches = System.Text.RegularExpressions.Regex.Matches(xmlText, @"#([A-Za-z0-9_\-\.]+)");
-                foreach (System.Text.RegularExpressions.Match m in matches)
+                MatchCollection matches = Regex.Matches(xmlText, @"#([A-Za-z0-9_\-\.]+)");
+                foreach (Match m in matches)
                     usedIds.Add(m.Groups[1].Value);
             }
 
-            ScanXmlText(targetElement.ToString());
+            ScanXmlText(targetElement.GetXml());
 
-            XElement defs = xmlDoc.Descendants().FirstOrDefault(e => e.Name.LocalName == "defs");
+            IXmlNode defs = xmlDoc.GetElementsByTagName("defs").FirstOrDefault();
             if (defs != null)
             {
                 bool added = true;
                 while (added)
                 {
                     int countBefore = usedIds.Count;
-                    foreach (XElement defChild in defs.Elements())
+                    foreach (XmlElement defChild in defs.ChildNodes.OfType<XmlElement>())
                     {
-                        string id = defChild.Attribute("id")?.Value;
+                        string id = defChild.GetAttribute("id");
                         if (!string.IsNullOrEmpty(id) && usedIds.Contains(id))
-                        {
-                            ScanXmlText(defChild.ToString());
-                        }
+                            ScanXmlText(defChild.GetXml());
                     }
                     added = usedIds.Count > countBefore;
                 }
 
                 if (usedIds.Count > 0)
                 {
-                    var defsToRemove = defs.Elements().Where(e =>
-                    {
-                        string id = e.Attribute("id")?.Value;
-                        return !string.IsNullOrEmpty(id) && !usedIds.Contains(id);
-                    }).ToList();
+                    List<IXmlNode> defsToRemove = defs.ChildNodes
+                        .OfType<XmlElement>()
+                        .Where(e => e.GetAttribute("id") is string id && !string.IsNullOrEmpty(id) && !usedIds.Contains(id))
+                        .Cast<IXmlNode>()
+                        .ToList();
 
-                    foreach (var el in defsToRemove)
-                        el.Remove();
+                    foreach (IXmlNode el in defsToRemove)
+                        defs.RemoveChild(el);
                 }
             }
 
-            str = xmlDoc.ToString();
+            str = xmlDoc.GetXml();
         }
 
         return str;

@@ -8,7 +8,6 @@ using System.Linq;
 using System.Numerics;
 using System.Runtime.ConstrainedExecution;
 using System.Text;
-using System.Xml.Linq;
 
 namespace CharacterMap.Helpers;
 

@@ -165,7 +165,7 @@ public class CMSVTable
 
     public static CMSVTable TryDecode(byte[] data)
     {
-        if (data == null || data.Length < 18) return null;
+        if (data == null || data.Length < 26) return null;
 
         try
         {
@@ -186,46 +186,21 @@ public class CMSVTable
 
             ushort appVerOffset = ReadUInt16BE(br);
             ushort appVerLength = ReadUInt16BE(br);
+            ushort classNameOffset = ReadUInt16BE(br);
+            ushort classNameLength = ReadUInt16BE(br);
+            ushort namespaceOffset = ReadUInt16BE(br);
+            ushort namespaceLength = ReadUInt16BE(br);
+            ushort fontCount = ReadUInt16BE(br);
 
-            ushort classNameOffset = 0;
-            ushort classNameLength = 0;
-            ushort namespaceOffset = 0;
-            ushort namespaceLength = 0;
-            ushort fontCount = 0;
+            if (26 + (fontCount * 8) > data.Length) return null;
 
-            if (minor >= 1)
-            {
-                if (data.Length >= 26)
-                {
-                    classNameOffset = ReadUInt16BE(br);
-                    classNameLength = ReadUInt16BE(br);
-                    namespaceOffset = ReadUInt16BE(br);
-                    namespaceLength = ReadUInt16BE(br);
-                    fontCount = ReadUInt16BE(br);
-                }
-                else if (data.Length >= 22)
-                {
-                    classNameOffset = ReadUInt16BE(br);
-                    classNameLength = ReadUInt16BE(br);
-                    fontCount = ReadUInt16BE(br);
-                }
-                else
-                {
-                    fontCount = ReadUInt16BE(br);
-                }
-            }
-            else
-            {
-                fontCount = ReadUInt16BE(br);
-            }
-
-            if (appVerOffset + appVerLength <= data.Length && appVerLength > 0)
+            if (appVerOffset > 0 && appVerLength > 0 && appVerOffset + appVerLength <= data.Length)
                 table.AppVersionString = Encoding.UTF8.GetString(data, appVerOffset, appVerLength);
 
-            if (classNameOffset > 0 && classNameOffset + classNameLength <= data.Length && classNameLength > 0)
+            if (classNameOffset > 0 && classNameLength > 0 && classNameOffset + classNameLength <= data.Length)
                 table.ClassName = Encoding.UTF8.GetString(data, classNameOffset, classNameLength);
 
-            if (namespaceOffset > 0 && namespaceOffset + namespaceLength <= data.Length && namespaceLength > 0)
+            if (namespaceOffset > 0 && namespaceLength > 0 && namespaceOffset + namespaceLength <= data.Length)
                 table.Namespace = Encoding.UTF8.GetString(data, namespaceOffset, namespaceLength);
 
             for (int i = 0; i < fontCount; i++)
@@ -235,11 +210,11 @@ public class CMSVTable
                 ushort verOffset = ReadUInt16BE(br);
                 ushort verLength = ReadUInt16BE(br);
 
-                string name = (nameOffset + nameLength <= data.Length)
+                string name = (nameOffset > 0 && nameLength > 0 && nameOffset + nameLength <= data.Length)
                     ? Encoding.UTF8.GetString(data, nameOffset, nameLength)
                     : string.Empty;
 
-                string ver = (verOffset + verLength <= data.Length)
+                string ver = (verOffset > 0 && verLength > 0 && verOffset + verLength <= data.Length)
                     ? Encoding.UTF8.GetString(data, verOffset, verLength)
                     : string.Empty;
 
@@ -256,7 +231,13 @@ public class CMSVTable
         return null;
     }
 
-    static ushort ReadUInt16BE(BinaryReader br) => (ushort)((br.ReadByte() << 8) | br.ReadByte());
+    static ushort ReadUInt16BE(BinaryReader br)
+    {
+        byte b1 = br.ReadByte();
+        byte b2 = br.ReadByte();
+        return (ushort)((b1 << 8) | b2);
+    }
+
     static void WriteUInt16BE(BinaryWriter bw, ushort v)
     {
         bw.Write((byte)(v >> 8));
