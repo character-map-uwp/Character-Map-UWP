@@ -8,6 +8,7 @@
 #include "DWriteProperties.h"
 #include "OS2TableReader.h"
 #include <vector>
+#include <algorithm>
 
 using namespace Microsoft::Graphics::Canvas;
 using namespace Microsoft::Graphics::Canvas::Text;
@@ -161,19 +162,45 @@ namespace CharacterMapCX
 
 		Array<CanvasUnicodeRange>^ GetUnicodeRanges()
 		{
-			uint32 rangeCount;
-			uint32 actualRangeCount;
-			if (m_face != nullptr)
-				m_face->GetUnicodeRanges(0, nullptr, &rangeCount);
-			else
-				m_font->GetUnicodeRanges(0, nullptr, &rangeCount);
-			DWRITE_UNICODE_RANGE* ranges = new DWRITE_UNICODE_RANGE[rangeCount];
-			if (m_face != nullptr)
-				m_face->GetUnicodeRanges(rangeCount, ranges, &actualRangeCount);
-			else
-				m_font->GetUnicodeRanges(rangeCount, ranges, &actualRangeCount);
-			auto mine = reinterpret_cast<CanvasUnicodeRange*>(ranges);
-			return Platform::ArrayReference<CanvasUnicodeRange>(mine, actualRangeCount);
+			try
+			{
+				uint32 rangeCount = 0;
+				uint32 actualRangeCount = 0;
+				if (m_face != nullptr)
+					m_face->GetUnicodeRanges(0, nullptr, &rangeCount);
+				else if (m_font != nullptr)
+					m_font->GetUnicodeRanges(0, nullptr, &rangeCount);
+
+				if (rangeCount > 0)
+				{
+					std::vector<DWRITE_UNICODE_RANGE> ranges(rangeCount);
+					if (m_face != nullptr)
+						m_face->GetUnicodeRanges(rangeCount, ranges.data(), &actualRangeCount);
+					else if (m_font != nullptr)
+						m_font->GetUnicodeRanges(rangeCount, ranges.data(), &actualRangeCount);
+
+					if (actualRangeCount > 0)
+					{
+						auto result = ref new Platform::Array<CanvasUnicodeRange>(actualRangeCount);
+						for (uint32_t i = 0; i < actualRangeCount; ++i)
+						{
+							result[i].First = ranges[i].first;
+							result[i].Last = ranges[i].last;
+						}
+						return result;
+					}
+				}
+
+				auto fallback = GetFallbackUnicodeRanges();
+				if (fallback != nullptr && fallback->Length > 0)
+					return fallback;
+			}
+			catch (...)
+			{
+			}
+
+			static CanvasUnicodeRange s_emptyDummy{};
+			return Platform::ArrayReference<CanvasUnicodeRange>(&s_emptyDummy, 0);
 		}
 
 		Array<INT32>^ GetGlyphIndices(const Array<UINT32>^ indicies)
@@ -404,6 +431,84 @@ namespace CharacterMapCX
 
 	private:
 		inline DWriteFontFace() { }
+
+		Array<CanvasUnicodeRange>^ GetFallbackUnicodeRanges()
+		{
+			try
+			{
+				// Fallback: If DirectWrite GetUnicodeRanges returns 0 ranges (e.g. legacy/custom fonts lacking OS/2 range bits),
+				// scan code points using GetGlyphIndices to find mapped glyphs and construct ranges.
+				auto fontFace = GetFontFace();
+				if (fontFace != nullptr)
+				{
+					std::vector<CanvasUnicodeRange> fallbackRanges;
+					const UINT32 maxCodePoint = 0x10FFFF;
+					const UINT32 chunkSize = 0x10000;
+
+					std::vector<UINT32> codePoints(chunkSize);
+					std::vector<UINT16> glyphIndices(chunkSize);
+
+					UINT32 rangeStart = 0;
+					bool inRange = false;
+					UINT32 lastValidCodePoint = 0;
+
+					for (UINT32 base = 0; base <= maxCodePoint; base += chunkSize)
+					{
+						UINT32 count = (std::min)(chunkSize, maxCodePoint + 1 - base);
+						for (UINT32 i = 0; i < count; ++i)
+							codePoints[i] = base + i;
+
+						HRESULT hr = fontFace->GetGlyphIndices(codePoints.data(), count, glyphIndices.data());
+						if (FAILED(hr))
+							continue;
+
+						for (UINT32 i = 0; i < count; ++i)
+						{
+							if (glyphIndices[i] != 0)
+							{
+								UINT32 cp = base + i;
+								if (!inRange)
+								{
+									inRange = true;
+									rangeStart = cp;
+								}
+								lastValidCodePoint = cp;
+							}
+							else if (inRange)
+							{
+								inRange = false;
+								CanvasUnicodeRange r;
+								r.First = rangeStart;
+								r.Last = lastValidCodePoint;
+								fallbackRanges.push_back(r);
+							}
+						}
+					}
+
+					if (inRange)
+					{
+						CanvasUnicodeRange r;
+						r.First = rangeStart;
+						r.Last = lastValidCodePoint;
+						fallbackRanges.push_back(r);
+					}
+
+					if (!fallbackRanges.empty())
+					{
+						auto result = ref new Platform::Array<CanvasUnicodeRange>(static_cast<uint32>(fallbackRanges.size()));
+						for (size_t i = 0; i < fallbackRanges.size(); ++i)
+							result[static_cast<uint32>(i)] = fallbackRanges[i];
+						return result;
+					}
+				}
+			}
+			catch (...)
+			{
+			}
+
+			static CanvasUnicodeRange s_emptyDummy{};
+			return Platform::ArrayReference<CanvasUnicodeRange>(&s_emptyDummy, 0);
+		}
 
 		bool m_loadedEmbed = false;
 		bool m_hasMetrics = false;

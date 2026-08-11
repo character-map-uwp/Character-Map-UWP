@@ -52,7 +52,9 @@ public partial class CMFontFace : IDisposable
 
     public string FullName => field ??= $"{FamilyName} {PreferredName}".Trim();
 
-    public CanvasUnicodeRange[] UnicodeRanges => field ??= Face.GetUnicodeRanges();
+    // Face.GetUnicodeRanges CAN be null, as WinRT projects empty arrays as null.
+    // Who knows why. Ugh.
+    public CanvasUnicodeRange[] UnicodeRanges => field ??= Face.GetUnicodeRanges() ?? [];
 
     public Panose Panose => field ??= PanoseParser.Parse(Face.Properties);
 
