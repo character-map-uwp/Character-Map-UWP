@@ -83,7 +83,6 @@ public sealed partial class SubsetterView : ViewBase, IInAppNotificationPresente
 
 
 
-
     /* Warning Icon Helpers */
 
     private void Warning_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)

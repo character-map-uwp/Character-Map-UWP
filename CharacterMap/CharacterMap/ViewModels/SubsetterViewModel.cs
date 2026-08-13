@@ -3,6 +3,7 @@ using Microsoft.Collections.Extensions;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using Windows.ApplicationModel.VoiceCommands;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.ViewModels;
@@ -97,13 +98,31 @@ public partial class FaceSelectionModel : ObservableObject
         _messenger.Send(new CollectionChangedMessage(this, null));
     }
 
-
-
     private string GetGlyphName(Character c)
     {
         // If the font has post/name table, try to load the name from there.
         return Face.GetDefinedCharacterName(c);
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="count"></param>
+    /// <param name="sourceCount">use for x:Bind to re-call this method</param>
+    /// <returns></returns>
+    public List<Character> GetSelectedPreview(int count, int sourceCount)
+    {
+        return SelectedCharacters.Take(count).ToList();
+    }
+
+    public List<FontGlyph> GetCustomPreview(int count, int sourceCount)
+    {
+        int diff = SelectedCount - count;
+        CustomFooter = diff > 0 ? Localization.Get("PlusMore", diff) : string.Empty;
+        return CustomGlyphs.Take(count).ToList();
+    }
+
+    [ObservableProperty] string _customFooter;
 }
 
 #endregion
@@ -111,6 +130,7 @@ public partial class FaceSelectionModel : ObservableObject
 public partial class SubsetterViewModel : ViewModelBase
 {
     public const string EDIT_STATE = "EditingState";
+    public const string SVG_PREVIEW_STATE = "SVGImportPreviewState";
     public const string PREVIEW_STATE = "PreviewingState";
     public const string EXPORT_STATE = "ExportState";
 
@@ -136,6 +156,7 @@ public partial class SubsetterViewModel : ViewModelBase
     [ObservableProperty] string _version = DEFAULT_VERSION;
     [ObservableProperty] bool _hasClashing = false;
     [ObservableProperty] GlyphCollection _previewList;
+    [ObservableProperty] FontGlyph _svgPreview;
 
     /// <summary>
     /// Unicode indexes that appear more than once in <see cref="PreviewList"/>,
@@ -222,6 +243,8 @@ public partial class SubsetterViewModel : ViewModelBase
     {
         if (ViewState == PREVIEW_STATE)
             ViewState = EDIT_STATE;
+        else if (ViewState == SVG_PREVIEW_STATE)
+            ViewState = EDIT_STATE;
     }
 
     public void ShowPreview()
@@ -297,7 +320,7 @@ public partial class SubsetterViewModel : ViewModelBase
     [RelayCommand]
     void SetListItem(object e)
     {
-        if (e is FaceSelectionModel face && face.Face != null)
+        if (e is FaceSelectionModel { IsPhysical: true } face)
         {
             _blockFace = true;
             SelectedFamily = face.Family;
@@ -338,13 +361,14 @@ public partial class SubsetterViewModel : ViewModelBase
 
     
 
-    // Start at Private use supplmentary A to avoid Segoe glyphs
+    // Start at 'Private-Use Supplmentary A' to avoid Segoe glyphs
     uint _nextCustomPua = 0xF0000;
+    string prevState = EDIT_STATE;
 
     [RelayCommand]
     async Task AddSVGAsync()
     {
-        var state = ViewState;
+        prevState = ViewState;
 
         try
         {
@@ -352,25 +376,41 @@ public partial class SubsetterViewModel : ViewModelBase
 
             if (await StorageHelper.PickOpenFileAsync([".svg"], "Select SVG Glyph")
                     is not StorageFile file)
+            {
+                ViewState = prevState;
                 return;
+            }
 
             if (await SVGGlyphHelper.TryLoadFontGlyphAsync(file, _nextCustomPua) is FontGlyph glyph)
             {
-                _nextCustomPua = glyph.Character.UnicodeIndex + 1;
-                SvgGlyphContainerFace.CustomGlyphs.Add(glyph);
+                SvgPreview = glyph;
 
-                OnPropertyChanged(nameof(IsPreviewable));
-                OnPropertyChanged(nameof(IsExportable));
+                // needed for VisualTransition to fire
+                ViewState = prevState;
+                ViewState = SVG_PREVIEW_STATE;
+                return;
             }
             else
             {
                 Notify(new ActionFailedMessage("Failed to load svg"));
             }
         }
-        finally
+        catch
         {
-            ViewState = state;
         }
+
+        ViewState = prevState;
+    }
+
+    public void AcceptSVG()
+    {
+        _nextCustomPua = SvgPreview.Character.UnicodeIndex + 1;
+        SvgGlyphContainerFace.CustomGlyphs.Add(SvgPreview);
+
+        OnPropertyChanged(nameof(IsPreviewable));
+        OnPropertyChanged(nameof(IsExportable));
+
+        ViewState = prevState;
     }
 
     [RelayCommand]
@@ -383,6 +423,7 @@ public partial class SubsetterViewModel : ViewModelBase
 
         await FileIO.WriteTextAsync(file, GeneratedCode);
     }
+
 
 
 

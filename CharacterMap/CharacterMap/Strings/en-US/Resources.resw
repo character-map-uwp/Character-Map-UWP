@@ -2888,4 +2888,7 @@ For Font Families that do not provide Bold or Oblique Faces, Windows will provid
   <data name="CodeLabel" xml:space="preserve">
     <value>Code</value>
   </data>
+  <data name="PlusMore" xml:space="preserve">
+    <value>+ {0} more</value>
+  </data>
 </root>
