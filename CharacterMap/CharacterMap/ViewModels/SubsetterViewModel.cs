@@ -7,6 +7,8 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.ViewModels;
 
+#region Models
+
 public class SubsetterArgs
 {
     public bool MDL2FluentOnly { get; set; } = true;
@@ -104,6 +106,7 @@ public partial class FaceSelectionModel : ObservableObject
     }
 }
 
+#endregion
 
 public partial class SubsetterViewModel : ViewModelBase
 {
@@ -159,6 +162,8 @@ public partial class SubsetterViewModel : ViewModelBase
         ViewState = EDIT_STATE;
 
         SvgGlyphContainerFace = new FaceSelectionModel(null, null, StrongMessenger);
+
+        _codeTemplate = CodeTemplates.Options[0];
 
         Families = [..(args.MDL2FluentOnly
             ? FontFinder.Fonts.Where(f => f.Name.Contains("MDL2", StringComparison.InvariantCultureIgnoreCase) ||
@@ -226,7 +231,6 @@ public partial class SubsetterViewModel : ViewModelBase
         PreviewList = GetExportChars();
 
         _generator = new();
-        CodeTemplate ??= CodeTemplates.Options[0];
         UpdateCodeInternal();
 
         ViewState = PREVIEW_STATE;
@@ -373,7 +377,7 @@ public partial class SubsetterViewModel : ViewModelBase
     async Task SaveCodeAsync()
     {
         if (await StorageHelper.PickSaveFileAsync(
-                $"{_className}", "CSharp", [".cs"], PickerLocationId.Unspecified)
+                $"{_className}", CodeTemplate.Language, [CodeTemplate.FileExtension], PickerLocationId.Unspecified)
             is not StorageFile file)
             return;
 
@@ -393,10 +397,12 @@ public partial class SubsetterViewModel : ViewModelBase
     partial void OnGeneratedClassNameChanged(string value) => EnqueueCodeUpdate();
 
     void EnqueueCodeUpdate(bool force = false) => _codeDebouncer.Debounce(300, UpdateCodeInternal);
+
     public void UpdateCode() => _codeDebouncer.Debounce(33, UpdateCodeInternal);
 
     public void CopyCode() => Utils.CopyToClipBoard(GeneratedCode);
 
+    partial void OnCodeTemplateChanged(CodeTemplateOption value) => UpdateCode();
 
     private void UpdateCodeInternal()
     {

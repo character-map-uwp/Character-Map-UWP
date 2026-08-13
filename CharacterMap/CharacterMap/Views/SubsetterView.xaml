@@ -710,23 +710,34 @@
                             <Button
                                 MinWidth="128"
                                 Margin="0 0 48 0"
-                                Content="C#"
+                                Content="{core:Localizer Key=CodeLabel}"
                                 IsEnabled="{x:Bind ViewModel.PreviewList.HasNamedGlyphs, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource DefaultThemeButtonStyle}">
                                 <core:Properties.Flyout>
                                     <Flyout x:Name="CopyFlyout" Opening="{x:Bind ViewModel.UpdateCode}">
-                                        <Grid
+                                        <controls:AutoGrid
+                                            MaxWidth="400"
+                                            MaxHeight="600"
                                             Padding="8"
-                                            core:Properties.GridDefinitions="rAuto r* rAuto rs8"
                                             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                            Definitions="rAuto rAuto r* rAuto rs8"
                                             RequestedTheme="Light">
-                                            <TextBox x:Uid="ClassNameInput" Text="{x:Bind ViewModel.GeneratedClassName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                            <TextBlock
-                                                Grid.Row="1"
-                                                IsTextSelectionEnabled="True"
-                                                Text="{x:Bind ViewModel.GeneratedCode, Mode=OneWay}"
-                                                TextWrapping="Wrap" />
-                                            <Grid Grid.Row="2" core:Properties.GridDefinitions="c* c* cs8">
+
+                                            <TextBox
+                                                x:Uid="ClassNameInput"
+                                                PlaceholderText="{x:Bind ViewModel.FamilyName, Mode=OneWay}"
+                                                Text="{x:Bind ViewModel.GeneratedClassName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                            <ComboBox ItemsSource="{x:Bind h:CodeTemplates.Options}" SelectedItem="{x:Bind ViewModel.CodeTemplate, Mode=TwoWay}" />
+
+                                            <ScrollViewer>
+                                                <TextBlock
+                                                    IsTextSelectionEnabled="True"
+                                                    Text="{x:Bind ViewModel.GeneratedCode, Mode=OneWay}"
+                                                    TextWrapping="Wrap" />
+                                            </ScrollViewer>
+
+                                            <Grid core:Properties.GridDefinitions="c* c* cs8">
                                                 <Button
                                                     HorizontalAlignment="Stretch"
                                                     core:Properties.CloseOnInvoke="True"
@@ -742,7 +753,7 @@
                                                     Style="{StaticResource DefaultThemeButtonStyle}" />
                                             </Grid>
 
-                                        </Grid>
+                                        </controls:AutoGrid>
                                     </Flyout>
                                 </core:Properties.Flyout>
                             </Button>

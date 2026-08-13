@@ -2885,4 +2885,7 @@ For Font Families that do not provide Bold or Oblique Faces, Windows will provid
   <data name="ClassNameInput.Header" xml:space="preserve">
     <value>Class Name</value>
   </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Code</value>
+  </data>
 </root>

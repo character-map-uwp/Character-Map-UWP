@@ -265,6 +265,7 @@ public class CodeTemplates
 
             public enum {{ClassName}}Value
             {
+                Undefined = 0,
             {{#Glyphs}}
                 {{Name | pascal_case}} = {{UnicodeIndex | hex_0x}},
             {{/Glyphs}}

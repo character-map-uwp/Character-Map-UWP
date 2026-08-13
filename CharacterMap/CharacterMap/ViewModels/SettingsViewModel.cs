@@ -125,7 +125,12 @@ public partial class SettingsViewModel : ViewModelBase
         // is to expose features people may not be aware exist inside the
         // application rather than bug-fixes or visual changes.
         return [
-            new("Latest Update (July 2026)", // July 2026
+             new("Latest Update (August 2026)", // August 2026
+                """
+                - Added option to filter by outline type
+                - Added option to name characters in Segoe Icon Subsetter tool during the Preview phase and generating code for various languages based on these names.
+                """),
+            new("2026.4.1.0 (July 2026)", // July 2026
                 "- Added simple Glyph Map" +
                 "\n- Added BETA Segoe Icon Subsetter tool that can be enabled from Settings->Advanced. Once enabled, it can be accessed from the main app menu."),
             new("2026.2.0.0 (February 2026)", // February 2026
