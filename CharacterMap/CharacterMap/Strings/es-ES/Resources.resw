@@ -1,0 +1,2895 @@
+@@ -0,0 +1,2894 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddToCollectionHint.Text" xml:space="preserve">
+    <value>Añadir a la biblioteca</value>
+  </data>
+  <data name="AppName" xml:space="preserve">
+    <value>Character Map UWP</value>
+  </data>
+  <data name="BlackFill.Text" xml:space="preserve">
+    <value>Relleno negro</value>
+  </data>
+  <data name="BtnCopy.Text" xml:space="preserve">
+    <value>Copiar como texto</value>
+  </data>
+  <data name="BtnSelect.Content" xml:space="preserve">
+    <value>Seleccionar</value>
+  </data>
+  <data name="ColoredGlyphLabel.Text" xml:space="preserve">
+    <value>Glifo en color</value>
+  </data>
+  <data name="ColorGlyphToggle.OffContent" xml:space="preserve">
+    <value>Glifos monocromáticos</value>
+  </data>
+  <data name="ColorGlyphToggle.OnContent" xml:space="preserve">
+    <value>Glifo coloreado</value>
+  </data>
+  <data name="FontDisplayHeader.Text" xml:space="preserve">
+    <value>Opciones de visualización de tipografía</value>
+  </data>
+  <data name="FontOptionsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Características de la tipografía</value>
+  </data>
+  <data name="FontPropertiesButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Propiedades de la variante tipográfica</value>
+  </data>
+  <data name="FontPropFace.Text" xml:space="preserve">
+    <value>Nombre de la variante</value>
+  </data>
+  <data name="FontPropFamily.Text" xml:space="preserve">
+    <value>Nombre de la familia</value>
+  </data>
+  <data name="FontPropMonospaced.Text" xml:space="preserve">
+    <value>Es monoespaciada</value>
+  </data>
+  <data name="FontPropStretch.Text" xml:space="preserve">
+    <value>Ancho</value>
+  </data>
+  <data name="FontPropStyle.Text" xml:space="preserve">
+    <value>Estilo</value>
+  </data>
+  <data name="FontPropSymbol.Text" xml:space="preserve">
+    <value>Es tipografía de símbolos</value>
+  </data>
+  <data name="FontPropTitle.Text" xml:space="preserve">
+    <value>Propiedades de la variante tipográfica</value>
+  </data>
+  <data name="FontPropType.Text" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="FontPropWeight.Text" xml:space="preserve">
+    <value>Grosor</value>
+  </data>
+  <data name="InvalidFontMessage" xml:space="preserve">
+    <value>Lo sentimos, no pudimos encontrar datos de tipografía compatibles en este archivo.</value>
+  </data>
+  <data name="InvalidFontTitle" xml:space="preserve">
+    <value>Archivo no compatible</value>
+  </data>
+  <data name="OpenInNewWindow.Text" xml:space="preserve">
+    <value>Abrir en una ventana nueva</value>
+  </data>
+  <data name="RemoveFontFlyout.Text" xml:space="preserve">
+    <value>Eliminar tipografía</value>
+  </data>
+  <data name="RestartButton.Content" xml:space="preserve">
+    <value>Reiniciar aplicación</value>
+  </data>
+  <data name="RestartHeader.Text" xml:space="preserve">
+    <value>Requiere reiniciar la aplicación para surtir efecto.</value>
+  </data>
+  <data name="SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Buscar por nombre o hexadecimal Unicode</value>
+  </data>
+  <data name="Settings_About.Text" xml:space="preserve">
+    <value>Acerca de esta aplicación</value>
+  </data>
+  <data name="Settings_AboutDescription.Text" xml:space="preserve">
+    <value>Esta aplicación está diseñada para reemplazar el Mapa de caracteres Win32 de Windows. Ofrece una mejor adaptación a pantallas de alta densidad de puntos (DPI).</value>
+  </data>
+  <data name="TxtCopiedMessage.Text" xml:space="preserve">
+    <value>Copiado</value>
+  </data>
+  <data name="TxtFontIcon.Header" xml:space="preserve">
+    <value>Font Icon</value>
+    <comment>Xaml FontIcon. Does not need translation.</comment>
+  </data>
+  <data name="TxtSymbolIcon.Header" xml:space="preserve">
+    <value>Symbol Icon</value>
+    <comment>Xaml SymbolIcon. Does not need translation.</comment>
+  </data>
+  <data name="TxtTitle.Text" xml:space="preserve">
+    <value>Mapa de caracteres</value>
+  </data>
+  <data name="TxtUnicode.Header" xml:space="preserve">
+    <value>Unicode</value>
+  </data>
+  <data name="TxtXamlCode.Header" xml:space="preserve">
+    <value>Código de glifo</value>
+  </data>
+  <data name="TypographyVariantsHeader.Text" xml:space="preserve">
+    <value>Características OpenType</value>
+  </data>
+  <data name="WhiteFill.Text" xml:space="preserve">
+    <value>Relleno blanco</value>
+  </data>
+  <data name="ImportNotAFile" xml:space="preserve">
+    <value>No es un archivo</value>
+  </data>
+  <data name="ImportPendingDelete" xml:space="preserve">
+    <value>Tipografía existente pendiente de eliminación. Por favor, reinicia la aplicación.</value>
+  </data>
+  <data name="ImportUnavailableFile" xml:space="preserve">
+    <value>Archivo no disponible</value>
+  </data>
+  <data name="ImportUnsupportedFileType" xml:space="preserve">
+    <value>Tipo de archivo no compatible</value>
+  </data>
+  <data name="ImportUnsupportedFontType" xml:space="preserve">
+    <value>Tipo de tipografía no compatible</value>
+  </data>
+  <data name="FontsClearedOnNextLaunchNotice" xml:space="preserve">
+    <value>No se pudieron eliminar algunas tipografías por completo en este momento. Estas tipografías no se mostrarán en la aplicación y se eliminarán totalmente la próxima vez que se inicie.</value>
+  </data>
+  <data name="SaveImageError" xml:space="preserve">
+    <value>Lo sentimos, ocurrió un error al intentar guardar la imagen.</value>
+  </data>
+  <data name="LoadingFontListError" xml:space="preserve">
+    <value>Error al cargar la lista de tipografías</value>
+  </data>
+  <data name="NoticeLabel.Text" xml:space="preserve">
+    <value>Aviso</value>
+  </data>
+  <data name="ImportFileCopyFail" xml:space="preserve">
+    <value>Ocurrió un error. Por favor, inténtalo de nuevo más tarde.</value>
+  </data>
+  <data name="ImportFontHelpBlock.Text" xml:space="preserve">
+    <value>Arrastra tipografías a la aplicación para copiarlas en tu biblioteca.</value>
+  </data>
+  <data name="FontPropXaml.Text" xml:space="preserve">
+    <value>Origen FontFamily XAML</value>
+  </data>
+  <data name="FilePickerConfirm" xml:space="preserve">
+    <value>Importar</value>
+  </data>
+  <data name="ImportFontsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Importar tipografías</value>
+  </data>
+  <data name="OpenFontButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Abrir tipografía</value>
+  </data>
+  <data name="OpenFontPickerConfirm" xml:space="preserve">
+    <value>Abrir</value>
+  </data>
+  <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
+    <value>Nombre de la colección</value>
+  </data>
+  <data name="DigCreateCollection.PrimaryButtonText" xml:space="preserve">
+    <value>Crear</value>
+  </data>
+  <data name="DigCreateCollection.Title" xml:space="preserve">
+    <value>Crear colección</value>
+  </data>
+  <data name="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Eliminar colección</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="DigDeleteCollection.Title" xml:space="preserve">
+    <value>¿Estás seguro de que quieres eliminar esta colección?</value>
+  </data>
+  <data name="DigRenameCollection.PrimaryButtonText" xml:space="preserve">
+    <value>Cambiar nombre</value>
+  </data>
+  <data name="DigRenameCollection.Title" xml:space="preserve">
+    <value>Cambiar nombre a la colección</value>
+  </data>
+  <data name="OptionAllFonts.Text" xml:space="preserve">
+    <value>Todas las tipografías</value>
+  </data>
+  <data name="OptionImportedFonts.Text" xml:space="preserve">
+    <value>Tipografías importadas</value>
+  </data>
+  <data name="OptionSymbolFonts.Text" xml:space="preserve">
+    <value>Tipografías de símbolos</value>
+  </data>
+  <data name="RenameCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Cambiar nombre a la colección</value>
+  </data>
+  <data name="FontListDisplayHeader.Text" xml:space="preserve">
+    <value>Visualización de la lista de tipografías</value>
+  </data>
+  <data name="FontPropCount.Text" xml:space="preserve">
+    <value>Cantidad de glifos</value>
+  </data>
+  <data name="OptionMonospacedFonts.Text" xml:space="preserve">
+    <value>Tipografías monoespaciadas</value>
+  </data>
+  <data name="OptionSansSerifFonts.Text" xml:space="preserve">
+    <value>Tipografías Sans Serif</value>
+  </data>
+  <data name="OptionSerifFonts.Text" xml:space="preserve">
+    <value>Tipografías Serif</value>
+  </data>
+  <data name="NewCollectionItem.Text" xml:space="preserve">
+    <value>Nueva colección</value>
+  </data>
+  <data name="RemoveFromCollectionItem.Text" xml:space="preserve">
+    <value>Quitar de la colección</value>
+  </data>
+  <data name="AddToCollectionFlyout.Text" xml:space="preserve">
+    <value>Agregar a la colección</value>
+  </data>
+  <data name="InstantSearchToggle.OffContent" xml:space="preserve">
+    <value>Búsqueda instantánea desactivada</value>
+  </data>
+  <data name="InstantSearchToggle.OnContent" xml:space="preserve">
+    <value>Búsqueda instantánea activada</value>
+  </data>
+  <data name="SearchResultsSlider.Header" xml:space="preserve">
+    <value>Resultados máximos de búsqueda</value>
+  </data>
+  <data name="FontPropCharCount.Text" xml:space="preserve">
+    <value>Cantidad de caracteres</value>
+  </data>
+  <data name="FontPropFilePath.Text" xml:space="preserve">
+    <value>Ruta del archivo</value>
+  </data>
+  <data name="DWriteSourceAppxPackage" xml:space="preserve">
+    <value>Microsoft Store</value>
+  </data>
+  <data name="DWriteSourcePerMachine" xml:space="preserve">
+    <value>Todos los usuarios</value>
+  </data>
+  <data name="DWriteSourcePerUser" xml:space="preserve">
+    <value>Solo usuario actual</value>
+  </data>
+  <data name="DWriteSourceRemoteFontProvider" xml:space="preserve">
+    <value>Proveedor en la nube</value>
+  </data>
+  <data name="DWriteSourceUnknown" xml:space="preserve">
+    <value>Indefinido</value>
+  </data>
+  <data name="FontPropInstallType.Text" xml:space="preserve">
+    <value>Tipo de instalación</value>
+  </data>
+  <data name="OptionAppxFonts.Text" xml:space="preserve">
+    <value>Desde Microsoft Store</value>
+  </data>
+  <data name="OptionCloudFonts.Text" xml:space="preserve">
+    <value>Tipografías en la nube</value>
+  </data>
+  <data name="OptionColorFonts.Text" xml:space="preserve">
+    <value>Tipografías en color</value>
+  </data>
+  <data name="OptionDecorativeFonts.Text" xml:space="preserve">
+    <value>Tipografías decorativas</value>
+  </data>
+  <data name="OptionMoreFilters.Text" xml:space="preserve">
+    <value>Más</value>
+  </data>
+  <data name="OptionScriptFonts.Text" xml:space="preserve">
+    <value>Tipografías Script</value>
+  </data>
+  <data name="StatusBarFontCount" xml:space="preserve">
+    <value>{0} familias tipográficas</value>
+  </data>
+  <data name="FontPropFileSize.Text" xml:space="preserve">
+    <value>Tamaño del archivo</value>
+  </data>
+  <data name="InstallTypeImported" xml:space="preserve">
+    <value>No instalada (Importada)</value>
+  </data>
+  <data name="StatusBarCharacterCount" xml:space="preserve">
+    <value>{0} caracteres</value>
+  </data>
+  <data name="SearchDelaySelector.Header" xml:space="preserve">
+    <value>Demora antes de buscar (ms)</value>
+  </data>
+  <data name="InstantSearchToggleHeader.Text" xml:space="preserve">
+    <value>Búsqueda instantánea</value>
+  </data>
+  <data name="CharacterSavedMessage.Text" xml:space="preserve">
+    <value>Guardado en</value>
+  </data>
+  <data name="NotificationAddedToCollection" xml:space="preserve">
+    <value>Se agregó {0} a la colección "{1}"</value>
+  </data>
+  <data name="BtnOpenFile.Content" xml:space="preserve">
+    <value>Abrir archivo</value>
+  </data>
+  <data name="BtnOpenFolder.Content" xml:space="preserve">
+    <value>Mostrar en carpeta</value>
+  </data>
+  <data name="BtnHidePane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ocultar panel de tipografías (Ctrl+L)</value>
+  </data>
+  <data name="NotificationImportFailed" xml:space="preserve">
+    <value>Error al importar</value>
+  </data>
+  <data name="NotificationMultipleFontsAdded" xml:space="preserve">
+    <value>Se agregaron {0} archivos a tu colección</value>
+  </data>
+  <data name="NotificationSingleFontAdded" xml:space="preserve">
+    <value>Se agregó {0} a tu colección</value>
+  </data>
+  <data name="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Mostrar panel de tipografías (Ctrl+L)</value>
+  </data>
+  <data name="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Más</value>
+  </data>
+  <data name="FontListFilter.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Filtrar tipografías</value>
+  </data>
+  <data name="ToggleFullScreenModeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alternar pantalla completa</value>
+  </data>
+  <data name="DlgDeleteFont.Title" xml:space="preserve">
+    <value>¿Estás seguro de que quieres eliminar esta tipografía de tu biblioteca?</value>
+  </data>
+  <data name="NotificationCollectionDeleted" xml:space="preserve">
+    <value>Se eliminó la colección "{0}"</value>
+  </data>
+  <data name="DlgException.PrimaryButtonText" xml:space="preserve">
+    <value>Aceptar</value>
+  </data>
+  <data name="DlgException.Title" xml:space="preserve">
+    <value>Ocurrió un error</value>
+  </data>
+  <data name="DlgExceptionCopyMessage.Text" xml:space="preserve">
+    <value>Copiar error al Portapapeles y abrir GitHub</value>
+  </data>
+  <data name="DlgExceptionExpander.Header" xml:space="preserve">
+    <value>Ver detalles completos de la excepción</value>
+  </data>
+  <data name="DlgExceptionMessage.Text" xml:space="preserve">
+    <value>Para ayudarnos a depurar y solucionar esto, considera abrir una incidencia en nuestra página de GitHub publicando los detalles. ¡Intentaremos solucionarlo de inmediato!</value>
+  </data>
+  <data name="BtnClose.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Cerrar</value>
+  </data>
+  <data name="BtnCopyDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Copiar</value>
+  </data>
+  <data name="BtnRateAndReview.Content" xml:space="preserve">
+    <value>Calificar y opinar</value>
+  </data>
+  <data name="BtnXAMLGeometry.Content" xml:space="preserve">
+    <value>Haz clic para ver</value>
+  </data>
+  <data name="RbThemeDark.Content" xml:space="preserve">
+    <value>Oscuro</value>
+  </data>
+  <data name="RbThemeLight.Content" xml:space="preserve">
+    <value>Claro</value>
+  </data>
+  <data name="RbThemeSystem.Content" xml:space="preserve">
+    <value>Predeterminado de Windows</value>
+  </data>
+  <data name="RbUseActualFont.Content" xml:space="preserve">
+    <value>Usar la tipografía real</value>
+  </data>
+  <data name="RbUseSystemFont.Content" xml:space="preserve">
+    <value>Usar la tipografía del sistema</value>
+  </data>
+  <data name="SettingsCharacterSearchDescription.Text" xml:space="preserve">
+    <value>Activa o desactiva la búsqueda instantánea. Si se deshabilita, puedes iniciar una búsqueda presionando la tecla Enter o el icono de búsqueda.</value>
+  </data>
+  <data name="SettingsCharacterSearchHeader.Text" xml:space="preserve">
+    <value>Búsqueda de caracteres</value>
+  </data>
+  <data name="SettingsCharGridDescription.Text" xml:space="preserve">
+    <value>El tamaño de los caracteres individuales dentro de la cuadrícula de caracteres. Los tamaños más pequeños pueden afectar el rendimiento.</value>
+  </data>
+  <data name="SettingsCharGridHeader.Text" xml:space="preserve">
+    <value>Tamaño de la cuadrícula de caracteres</value>
+  </data>
+  <data name="SettingsCharPreviewHint.Text" xml:space="preserve">
+    <value>Vista previa de la cuadrícula de caracteres</value>
+  </data>
+  <data name="SettingsDevToolsDescription.Text" xml:space="preserve">
+    <value>Muestra las herramientas para desarrolladores de XAML, como Symbol Icon y Font Icon.</value>
+  </data>
+  <data name="SettingsDevToolsGroupHeader.Text" xml:space="preserve">
+    <value>Funciones para desarrolladores</value>
+  </data>
+  <data name="SettingsDevToolsHeader.Text" xml:space="preserve">
+    <value>Mostrar funciones para desarrolladores</value>
+  </data>
+  <data name="SettingsDevToolsLangDescription.Text" xml:space="preserve">
+    <value>Elige el lenguaje de programación para el contenido de las funciones de desarrollador.</value>
+  </data>
+  <data name="SettingsDevToolsLangHeader.Text" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="SettingsExpensiveAnimationDescription.Text" xml:space="preserve">
+    <value>Anima la cuadrícula de caracteres al redimensionar la ventana.
+Activar esto puede reducir considerablemente el rendimiento al redimensionar la ventana.</value>
+  </data>
+  <data name="SettingsExpensiveAnimationHeader.Text" xml:space="preserve">
+    <value>Activar animaciones al redimensionar la ventana</value>
+  </data>
+  <data name="SettingsExportHeader.Text" xml:space="preserve">
+    <value>Exportar</value>
+  </data>
+  <data name="SettingsFontListDescription.Text" xml:space="preserve">
+    <value>Elige la tipografía utilizada para mostrar los nombres de las tipografías en la lista.</value>
+  </data>
+  <data name="SettingsFontListPreviewHint.Text" xml:space="preserve">
+    <value>Vista previa de la lista de tipografías</value>
+  </data>
+  <data name="SettingsHeader.Text" xml:space="preserve">
+    <value>Configuración</value>
+  </data>
+  <data name="SettingsLanguageDescription.Text" xml:space="preserve">
+    <value>Sustituye el idioma de la aplicación.
+Requiere reiniciar para surtir efecto.</value>
+  </data>
+  <data name="SettingsLanguageHeader.Text" xml:space="preserve">
+    <value>Sustitución de idioma</value>
+  </data>
+  <data name="SettingsPNGExportDescription.Text" xml:space="preserve">
+    <value>El tamaño en píxeles de las imágenes PNG exportadas.</value>
+  </data>
+  <data name="SettingsPNGExportHeader.Text" xml:space="preserve">
+    <value>Tamaño de exportación PNG</value>
+  </data>
+  <data name="SettingsShadowsDescription.Text" xml:space="preserve">
+    <value>Activa sombras profundas sutiles en la interfaz. Solo es perceptible cuando se usa el tema claro.
+Activar esto puede tener un pequeño impacto en el rendimiento en dispositivos de menor potencia.
+Requiere reiniciar para surtir efecto.</value>
+  </data>
+  <data name="SettingsShadowsHeader.Text" xml:space="preserve">
+    <value>Activar sombras</value>
+  </data>
+  <data name="SettingsSimpleAnimationDescription.Text" xml:space="preserve">
+    <value>Controla la mayoría de las animaciones dentro de la aplicación. Desactivar esto deshabilitará la mayoría de las animaciones.
+Activar esto tiene un impacto insignificante en el rendimiento.</value>
+  </data>
+  <data name="SettingsSimpleAnimationHeader.Text" xml:space="preserve">
+    <value>Activar animaciones</value>
+  </data>
+  <data name="SettingsThemeHeader.Text" xml:space="preserve">
+    <value>Tema</value>
+  </data>
+  <data name="SettingsUIHeader.Text" xml:space="preserve">
+    <value>Diseño</value>
+  </data>
+  <data name="TxtPathGeometry.Text" xml:space="preserve">
+    <value>Path Geometry</value>
+    <comment>Xaml PathGeometry. Does not need translation.</comment>
+  </data>
+  <data name="UseSystemLanguage" xml:space="preserve">
+    <value>Usar la configuración de idioma del sistema</value>
+  </data>
+  <data name="SettingsNeedRestart.Text" xml:space="preserve">
+    <value>El cambio se aplicará después de reiniciar</value>
+  </data>
+  <data name="BtnContributors.Content" xml:space="preserve">
+    <value>Colaboradores</value>
+  </data>
+  <data name="TxtLoadingFonts.Text" xml:space="preserve">
+    <value>Cargando tipografías</value>
+  </data>
+  <data name="AppBtnClear.Label" xml:space="preserve">
+    <value>Borrar</value>
+  </data>
+  <data name="AppBtnReset.Label" xml:space="preserve">
+    <value>Restablecer</value>
+  </data>
+  <data name="AppBtnSelectAll.Label" xml:space="preserve">
+    <value>Seleccionar todo</value>
+  </data>
+  <data name="BtnApply.Content" xml:space="preserve">
+    <value>Aplicar</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="BtnContinue.Content" xml:space="preserve">
+    <value>Continuar</value>
+  </data>
+  <data name="BtnPrint.Content" xml:space="preserve">
+    <value>Imprimir</value>
+  </data>
+  <data name="CbCharacterLabel.Header" xml:space="preserve">
+    <value>Etiqueta del carácter</value>
+  </data>
+  <data name="CbiPageOrientationLandscape.Content" xml:space="preserve">
+    <value>Horizontal</value>
+  </data>
+  <data name="CbiPageOrientationPortrait.Content" xml:space="preserve">
+    <value>Vertical</value>
+  </data>
+  <data name="CbListStyle.Header" xml:space="preserve">
+    <value>Estilo de lista</value>
+  </data>
+  <data name="CbShowMargins.Content" xml:space="preserve">
+    <value>Mostrar márgenes</value>
+  </data>
+  <data name="ChkBxHideWhitespace.Content" xml:space="preserve">
+    <value>Ocultar espacios en blanco y caracteres de control</value>
+  </data>
+  <data name="ChkBxShowBorders.Content" xml:space="preserve">
+    <value>Mostrar bordes</value>
+  </data>
+  <data name="GlyphAnnotation_None" xml:space="preserve">
+    <value>Ninguno</value>
+  </data>
+  <data name="GlyphAnnotation_UnicodeHex" xml:space="preserve">
+    <value>Hexadecimal Unicode</value>
+  </data>
+  <data name="GlyphAnnotation_UnicodeIndex" xml:space="preserve">
+    <value>Índice Unicode</value>
+  </data>
+  <data name="PrintCharacterFilterContent.Text" xml:space="preserve">
+    <value>Elige los grupos de caracteres a mostrar</value>
+  </data>
+  <data name="PrintDataHeader.Text" xml:space="preserve">
+    <value>Datos</value>
+  </data>
+  <data name="PrintViewCharSize.Text" xml:space="preserve">
+    <value>Tamaño del carácter</value>
+  </data>
+  <data name="PrintViewHorizontalMarginHeader.Text" xml:space="preserve">
+    <value>Margen horizontal</value>
+  </data>
+  <data name="PrintViewLayoutHeader.Text" xml:space="preserve">
+    <value>Diseño</value>
+  </data>
+  <data name="PrintViewOfLabel.Text" xml:space="preserve">
+    <value>de</value>
+  </data>
+  <data name="PrintViewPageOrientation.Header" xml:space="preserve">
+    <value>Orientación de página</value>
+  </data>
+  <data name="PrintViewPageRange.Text" xml:space="preserve">
+    <value>Rango de páginas</value>
+  </data>
+  <data name="PrintViewPageRangeDesc.Text" xml:space="preserve">
+    <value>Se pueden imprimir hasta 50 páginas a la vez. Selecciona aquí el rango de páginas a imprimir.</value>
+  </data>
+  <data name="PrintViewPageRangeSelector.Header" xml:space="preserve">
+    <value>Páginas a imprimir:</value>
+  </data>
+  <data name="PrintViewPageSelector.Header" xml:space="preserve">
+    <value>Comenzar desde la página:</value>
+  </data>
+  <data name="PrintViewPageSetupHeader.Text" xml:space="preserve">
+    <value>Configuración de página</value>
+  </data>
+  <data name="PrintViewPreviewingLabel.Text" xml:space="preserve">
+    <value>Vista previa de la página</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Vista previa</value>
+  </data>
+  <data name="PrintViewPreviewOutOfBoundsLabel.Text" xml:space="preserve">
+    <value>Esta página está fuera del rango de páginas actual y no se imprimirá.
+Puedes cambiar el rango de páginas en la sección Configuración de página.</value>
+  </data>
+  <data name="PrintViewPrintingLabel" xml:space="preserve">
+    <value>Imprimiendo páginas {0} - {1}</value>
+  </data>
+  <data name="PrintViewTitle.Text" xml:space="preserve">
+    <value>Configuración de impresión</value>
+  </data>
+  <data name="PrintViewVerticalMarginHeader.Text" xml:space="preserve">
+    <value>Margen vertical</value>
+  </data>
+  <data name="SettingsCharLabel.Text" xml:space="preserve">
+    <value>Etiqueta del carácter</value>
+  </data>
+  <data name="SettingsCharLabelDesc.Text" xml:space="preserve">
+    <value>Elige la etiqueta que se mostrará debajo de cada carácter. Puede tener un leve impacto en el rendimiento del desplazamiento.</value>
+  </data>
+  <data name="SettingsManageSystemFonts.Content" xml:space="preserve">
+    <value>Administrar tipografías instaladas</value>
+  </data>
+  <data name="SettingsSystemFontHeader.Text" xml:space="preserve">
+    <value>Tipografías instaladas</value>
+  </data>
+  <data name="SettingsWindowsThemeSettings.Content" xml:space="preserve">
+    <value>Configuración de tema de Windows</value>
+  </data>
+  <data name="UnicodeFiltersTitle.Text" xml:space="preserve">
+    <value>FILTROS DE CATEGORÍA UNICODE</value>
+  </data>
+  <data name="PrintLayout_Grid" xml:space="preserve">
+    <value>Cuadrícula</value>
+  </data>
+  <data name="PrintLayout_List" xml:space="preserve">
+    <value>Lista</value>
+  </data>
+  <data name="PrintLayout_TwoColumn" xml:space="preserve">
+    <value>Dos columnas</value>
+  </data>
+  <data name="SettingsTransparencyDescription.Text" xml:space="preserve">
+    <value>Activa los efectos de transparencia en la interfaz. Si la transparencia está desactivada en la configuración de Windows, esto no tendrá efecto.
+Puede tener un leve impacto en el rendimiento en dispositivos más antiguos o menos potentes.</value>
+  </data>
+  <data name="SettingsTransparencyHeader.Text" xml:space="preserve">
+    <value>Activar transparencia</value>
+  </data>
+  <data name="StartupFailedButton.Content" xml:space="preserve">
+    <value>Mostrar detalles</value>
+  </data>
+  <data name="StartupFailedHeader.Text" xml:space="preserve">
+    <value>¡Oh, no!</value>
+  </data>
+  <data name="StartupFailedMessage.Text" xml:space="preserve">
+    <value>Ocurrió un error y no pudimos iniciar la aplicación en este momento.
+Por favor, considera publicar los detalles sobre este error en GitHub para que podamos ayudarte a solucionarlo.</value>
+  </data>
+  <data name="CharacterKeystrokeLabel" xml:space="preserve">
+    <value>Combinación de teclas: Alt + {0:0000}</value>
+  </data>
+  <data name="ExportSVGLabel.Text" xml:space="preserve">
+    <value>Guardar como imagen SVG</value>
+  </data>
+  <data name="ExportPNGLabel.Text" xml:space="preserve">
+    <value>Guardar como imagen PNG</value>
+  </data>
+  <data name="ExportSVGGlyphLabel.Text" xml:space="preserve">
+    <value>Glifo SVG</value>
+  </data>
+  <data name="BtnCopyGlyph.Label" xml:space="preserve">
+    <value>Copiar</value>
+  </data>
+  <data name="BtnCopyGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Copiar al Portapapeles</value>
+  </data>
+  <data name="BtnSaveGlyph.Label" xml:space="preserve">
+    <value>Guardar como</value>
+  </data>
+  <data name="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Guardar como</value>
+  </data>
+  <data name="BtnFit.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ajustar carácter</value>
+  </data>
+  <data name="NotificationFontRemovedBody.Text" xml:space="preserve">
+    <value>se quitó de</value>
+  </data>
+  <data name="NotificationFontAddedBody.Text" xml:space="preserve">
+    <value>se agregó a</value>
+  </data>
+  <data name="ExportFontFile.Text" xml:space="preserve">
+    <value>Archivo de tipografía</value>
+  </data>
+  <data name="ExportFontFileLabel.Text" xml:space="preserve">
+    <value>Guardar archivo de tipografía como</value>
+  </data>
+  <data name="FontExportedMessage" xml:space="preserve">
+    <value>{0} exportado</value>
+  </data>
+  <data name="CollectionExportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Exportar tipografías</value>
+  </data>
+  <data name="CollectionExportFolder.Text" xml:space="preserve">
+    <value>A una carpeta</value>
+  </data>
+  <data name="CollectionExportHeader.Text" xml:space="preserve">
+    <value>Exportar tipografías</value>
+  </data>
+  <data name="CollectionExportZip.Text" xml:space="preserve">
+    <value>Como archivo ZIP</value>
+  </data>
+  <data name="SystemFontsExpiredMessage.Text" xml:space="preserve">
+    <value>Las listas de tipografías están desactualizadas. Haz clic para reiniciar la aplicación.</value>
+  </data>
+  <data name="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alternar utilidades para desarrolladores</value>
+  </data>
+  <data name="TxtPathIcon.Text" xml:space="preserve">
+    <value>Path Icon</value>
+    <comment>Xaml PathIcon. Does not need translation.</comment>
+  </data>
+  <data name="OptionAllEmoji.Text" xml:space="preserve">
+    <value>Todas las categorías</value>
+  </data>
+  <data name="OptionAllEmojiTitle.Text" xml:space="preserve">
+    <value>Todos los emojis</value>
+  </data>
+  <data name="OptionEmojiDingbats.Text" xml:space="preserve">
+    <value>Símbolos tipográficos (Dingbats)</value>
+  </data>
+  <data name="OptionEmojiEmoticons.Text" xml:space="preserve">
+    <value>Emoticonos</value>
+  </data>
+  <data name="OptionEmojiSymbols.Text" xml:space="preserve">
+    <value>Símbolos y pictogramas</value>
+  </data>
+  <data name="OptionScriptArabic.Text" xml:space="preserve">
+    <value>Árabe</value>
+  </data>
+  <data name="OptionScriptBasicLatin.Text" xml:space="preserve">
+    <value>Latino</value>
+  </data>
+  <data name="OptionScriptCJKUnifiedIdeographs.Text" xml:space="preserve">
+    <value>CJK (Chino/Japonés/Coreano)</value>
+  </data>
+  <data name="OptionScriptCyrillic.Text" xml:space="preserve">
+    <value>Cirílico</value>
+  </data>
+  <data name="OptionScriptGreekAndCoptic.Text" xml:space="preserve">
+    <value>Griego y copto</value>
+  </data>
+  <data name="OptionScriptHebrew.Text" xml:space="preserve">
+    <value>Hebreo</value>
+  </data>
+  <data name="OptionScriptThai.Text" xml:space="preserve">
+    <value>Tailandés</value>
+  </data>
+  <data name="CultureSpecificPangram.Text" xml:space="preserve">
+    <value>El veloz murciélago hindú comía feliz cardo y frena. 1234567890</value>
+  </data>
+  <data name="LblSwitchToCharMap.Text" xml:space="preserve">
+    <value>Cambiar a la vista Mapa de caracteres (Ctrl+T)</value>
+  </data>
+  <data name="LblSwitchToTypeRamp.Text" xml:space="preserve">
+    <value>Cambiar a la vista Muestra de texto (Ctrl+T)</value>
+  </data>
+  <data name="TypeRampInputBox.PlaceholderText" xml:space="preserve">
+    <value>Escribe o elige un texto de la lista desplegable</value>
+  </data>
+  <data name="ExportedToFolderMessage" xml:space="preserve">
+    <value>Exportado a {0}</value>
+  </data>
+  <data name="ImportDragDropDescriptionLabel.Text" xml:space="preserve">
+    <value>Arrastra archivos desde el Explorador de archivos o tu escritorio y suéltalos aquí para importarlos.</value>
+  </data>
+  <data name="ImportDragDropLabel.Text" xml:space="preserve">
+    <value>Arrastrar y soltar para importar</value>
+  </data>
+  <data name="SettingsAboutLabel.Text" xml:space="preserve">
+    <value>Acerca de</value>
+  </data>
+  <data name="SettingsAdvancedUILabel.Text" xml:space="preserve">
+    <value>Apariencia y personalización</value>
+  </data>
+  <data name="SettingsExportImportedLabel.Text" xml:space="preserve">
+    <value>Exportar todas las tipografías importadas</value>
+  </data>
+  <data name="SettingsFontExportOptimizedLabel.Text" xml:space="preserve">
+    <value>Optimizado</value>
+  </data>
+  <data name="SettingsFontExportSystemLabel.Text" xml:space="preserve">
+    <value>Sistema</value>
+  </data>
+  <data name="SettingsFontImportDescription.Text" xml:space="preserve">
+    <value>Puedes importar tipografías en la aplicación para verlas sin necesidad de instalarlas en Windows.
+
+Los archivos de tipografía importados se copian en el almacenamiento privado de la aplicación, por lo que se seguirán mostrando aunque elimines el archivo original de tu equipo.</value>
+  </data>
+  <data name="SettingsFontManagementLabel.Text" xml:space="preserve">
+    <value>Gestión de tipografías</value>
+  </data>
+  <data name="SettingsFontNameExportDescription.Text" xml:space="preserve">
+    <value>Elige cómo renombrar los archivos de tipografía al exportarlos.
+
+"Sistema" devolverá el nombre del archivo de tipografía que utiliza Windows en mayúsculas.
+"Optimizado" creará un nombre inteligente basado en la familia de la tipografía y su nombre.</value>
+  </data>
+  <data name="SettingsFontNameExportLabel.Text" xml:space="preserve">
+    <value>Nombres al exportar archivos de tipografía</value>
+  </data>
+  <data name="SettingsImportedFontsLabel.Text" xml:space="preserve">
+    <value>Tipografías importadas</value>
+  </data>
+  <data name="SettingsLicensesDescriptionLabel.Text" xml:space="preserve">
+    <value>Esta aplicación utiliza las siguientes bibliotecas de código abierto</value>
+  </data>
+  <data name="SettingsLicensesLabel.Text" xml:space="preserve">
+    <value>Licencias</value>
+  </data>
+  <data name="BtnReset.Content" xml:space="preserve">
+    <value>Restablecer</value>
+  </data>
+  <data name="OptionVariableFonts.Text" xml:space="preserve">
+    <value>Tipografías variables</value>
+  </data>
+  <data name="VariableFeaturesMessage.Text" xml:space="preserve">
+    <value>Esta tipografía tiene características variables. Para explorarlas, cambia a la vista Muestra de texto usando el botón superior.</value>
+  </data>
+  <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
+    <value>Muestra u oculta el panel de vista previa a la derecha de la pantalla. Si se desactiva, se puede acceder a muchas funciones haciendo clic derecho o manteniendo presionado un carácter dentro de la cuadrícula.</value>
+  </data>
+  <data name="SettingsEnablePaneHeader.Text" xml:space="preserve">
+    <value>Mostrar panel de vista previa</value>
+  </data>
+  <data name="CopyFontIconCode.Text" xml:space="preserve">
+    <value>Copiar código FontIcon</value>
+  </data>
+  <data name="CopyGlyphCode.Text" xml:space="preserve">
+    <value>Copiar código de glifo</value>
+  </data>
+  <data name="CopyPathIconCode.Text" xml:space="preserve">
+    <value>Copiar código PathIcon</value>
+  </data>
+  <data name="SearchBoxShorter" xml:space="preserve">
+    <value>Buscar...</value>
+  </data>
+  <data name="CopyUnicodeValue.Text" xml:space="preserve">
+    <value>Copiar valor Unicode</value>
+  </data>
+  <data name="DecreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Disminuir tamaño del carácter (Ctrl+-)</value>
+  </data>
+  <data name="IncreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Aumentar tamaño del carácter (Ctrl++)</value>
+  </data>
+  <data name="SwitchViewButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Cambiar vista (Ctrl+T)</value>
+  </data>
+  <data name="TogglePaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alternar panel de vista previa (Ctrl+R)</value>
+  </data>
+  <data name="NotificationCopied" xml:space="preserve">
+    <value>Copiado</value>
+  </data>
+  <data name="AddButton.Label" xml:space="preserve">
+    <value>Agregar</value>
+  </data>
+  <data name="AddSelectionItem.Text" xml:space="preserve">
+    <value>Agregar a la selección</value>
+  </data>
+  <data name="CopySequencePlaceholder.Text" xml:space="preserve">
+    <value>Haz doble clic en un carácter o usa el botón Agregar</value>
+  </data>
+  <data name="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alternar panel de copia (Ctrl+B)</value>
+  </data>
+  <data name="CompactOverlayButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Mantener siempre visible</value>
+  </data>
+  <data name="TypographyVariationsSelectorRun.Text" xml:space="preserve">
+    <value>Variaciones tipográficas</value>
+  </data>
+  <data name="ToggleDevDefaultLabel" xml:space="preserve">
+    <value>Herramientas</value>
+  </data>
+  <data name="BtnFit.Label" xml:space="preserve">
+    <value>Ajustar</value>
+  </data>
+  <data name="TxtCopiedVariantMessage.Text" xml:space="preserve">
+    <value>Las variaciones de glifo no se pueden copiar.
+Se copió la variante predeterminada.</value>
+  </data>
+  <data name="CollectionFontHelpBlock.Text" xml:space="preserve">
+    <value>Aún no hay tipografías en esta colección.</value>
+  </data>
+  <data name="SearchFontHelpBlock.Text" xml:space="preserve">
+    <value>No se encontraron resultados para esta búsqueda. Intenta con otra palabra.</value>
+  </data>
+  <data name="FontListSearchBox.PlaceholderText" xml:space="preserve">
+    <value>Buscar una familia tipográfica</value>
+  </data>
+  <data name="BtnToggleDev.Label" xml:space="preserve">
+    <value>Herramientas</value>
+  </data>
+  <data name="DevPopupHeader.Text" xml:space="preserve">
+    <value>Mostrar herramientas para desarrolladores</value>
+  </data>
+  <data name="ContextMenuDevCopyCommand" xml:space="preserve">
+    <value>Copiar {0}</value>
+    <comment>Examples: "Copy Font Icon" or "Copy Glyph Code"</comment>
+  </data>
+  <data name="ProviderNone" xml:space="preserve">
+    <value>Ninguno</value>
+  </data>
+  <data name="SettingsChangelogLabel.Text" xml:space="preserve">
+    <value>Historial de cambios</value>
+  </data>
+  <data name="TxtFontImageSource.Text" xml:space="preserve">
+    <value>Font Image Source</value>
+    <comment>Xamarin FontImageSource. Does not need translation.</comment>
+  </data>
+  <data name="ImportFailedWoff" xml:space="preserve">
+    <value>La tipografía WOFF no se pudo convertir a una tipografía OTF válida.</value>
+  </data>
+  <data name="ImportWOFF2NotSupported" xml:space="preserve">
+    <value>Los archivos WOFF2 no son compatibles</value>
+  </data>
+  <data name="CharacterFilterButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Filtrar caracteres</value>
+  </data>
+  <data name="CompareFontsTitle.Text" xml:space="preserve">
+    <value>Comparar tipografías</value>
+  </data>
+  <data name="LayoutGridToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Vista de cuadrícula</value>
+  </data>
+  <data name="LayoutListToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Vista de lista</value>
+  </data>
+  <data name="QuickCompareTitle.Text" xml:space="preserve">
+    <value>Comparación rápida</value>
+  </data>
+  <data name="AddToQuickCompare.Text" xml:space="preserve">
+    <value>Agregar a comparación rápida</value>
+  </data>
+  <data name="AddMultiToQuickCompare.Text" xml:space="preserve">
+    <value>Agregar familia a comparación rápida</value>
+  </data>
+  <data name="CompareFontsButton.Text" xml:space="preserve">
+    <value>Comparar todas las tipografías</value>
+  </data>
+  <data name="BtnGithubCommits.Content" xml:space="preserve">
+    <value>Ver los últimos cambios en GitHub</value>
+  </data>
+  <data name="ExportGlyphsHeader.Text" xml:space="preserve">
+    <value>Exportar caracteres</value>
+  </data>
+  <data name="SelectedGlyphs.Text" xml:space="preserve">
+    <value>{0} glifos seleccionados</value>
+  </data>
+  <data name="ExportGlyphsSummary.Text" xml:space="preserve">
+    <value>Listo para exportar {0} caracteres como {1}</value>
+  </data>
+  <data name="ExportCharactersLabel.Text" xml:space="preserve">
+    <value>Exportar caracteres</value>
+  </data>
+  <data name="ExportGlyphsResultMessage.Text" xml:space="preserve">
+    <value>{0} caracteres exportados</value>
+  </data>
+  <data name="ExportGlyphsProgressMessage.Text" xml:space="preserve">
+    <value>Exportando carácter {0} de {1}</value>
+  </data>
+  <data name="ExportAllowColor.Content" xml:space="preserve">
+    <value>Permitir que la tipografía use sus propios colores si están definidos</value>
+  </data>
+  <data name="ExportColorHeader.Text" xml:space="preserve">
+    <value>Color predeterminado</value>
+  </data>
+  <data name="ExportGlyphFormatDescription.Text" xml:space="preserve">
+    <value>Los glifos almacenados en formatos binarios se exportarán en su formato nativo independientemente de esta opción.</value>
+  </data>
+  <data name="ExportGlyphSelectedCharacters.Text" xml:space="preserve">
+    <value>{0} de {1} caracteres seleccionados</value>
+  </data>
+  <data name="ExportFileOptionsHeader.Text" xml:space="preserve">
+    <value>Opciones de archivo</value>
+  </data>
+  <data name="ExportSkipBlank.Content" xml:space="preserve">
+    <value>Omitir la exportación de glifos sin contenido visible</value>
+  </data>
+  <data name="CharacterFilterButton.Label" xml:space="preserve">
+    <value>Filtrar</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="CollectionExportButton.Label" xml:space="preserve">
+    <value>Exportar</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="DeleteCollectionButton.Label" xml:space="preserve">
+    <value>Eliminar</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="FontOptionsButton.Label" xml:space="preserve">
+    <value>Opciones</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="FontPropertiesButton.Label" xml:space="preserve">
+    <value>Info</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="OpenFontButton.Label" xml:space="preserve">
+    <value>Abrir</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="RenameCollectionButton.Label" xml:space="preserve">
+    <value>Renombrar</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="SettingsDesignStyle.Description" xml:space="preserve">
+    <value>Cambia el estilo de diseño de la aplicación.
+Requiere reiniciar para aplicar los cambios.</value>
+  </data>
+  <data name="SettingsDesignStyle.Title" xml:space="preserve">
+    <value>Estilo de diseño</value>
+  </data>
+  <data name="ViewToggleButton.Label" xml:space="preserve">
+    <value>Cambiar</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="AddToButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Agregar a colección</value>
+  </data>
+  <data name="ClearSelectionLabel" xml:space="preserve">
+    <value>Borrar selección</value>
+  </data>
+  <data name="CreateNewButton.Content" xml:space="preserve">
+    <value>Crear nueva</value>
+  </data>
+  <data name="OrLabel.Text" xml:space="preserve">
+    <value>o</value>
+  </data>
+  <data name="RemoveFromButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Quitar de la colección</value>
+  </data>
+  <data name="SelectCollectionLabel" xml:space="preserve">
+    <value>Seleccionar colección</value>
+  </data>
+  <data name="SettingsCollectionsHeader" xml:space="preserve">
+    <value>Colecciones</value>
+  </data>
+  <data name="DigOpenFolder.PrimaryButtonText" xml:space="preserve">
+    <value>Abrir tipografías</value>
+  </data>
+  <data name="DigOpenFolder.Title" xml:space="preserve">
+    <value>Abrir carpeta de tipografías</value>
+  </data>
+  <data name="DigOpenFolderContent.CheckRecursiveContent" xml:space="preserve">
+    <value>Buscar tipografías en subcarpetas</value>
+  </data>
+  <data name="DigOpenFolderContent.CheckZipContent" xml:space="preserve">
+    <value>Buscar tipografías dentro de archivos .ZIP</value>
+  </data>
+  <data name="DigOpenFolderContent.FindDescription" xml:space="preserve">
+    <value>Activar estas opciones puede aumentar considerablemente el tiempo necesario para abrir la carpeta</value>
+  </data>
+  <data name="DigOpenFolderContent.FindHeader" xml:space="preserve">
+    <value>Opciones de búsqueda</value>
+  </data>
+  <data name="DigOpenFolderContent.FindingFontsLabel" xml:space="preserve">
+    <value>Buscando tipografías...</value>
+  </data>
+  <data name="DigOpenFolderContent.PrefixLabel" xml:space="preserve">
+    <value>Se encontraron</value>
+  </data>
+  <data name="DigOpenFolderContent.SelectHeader" xml:space="preserve">
+    <value>Carpeta seleccionada (haz clic para cambiar)</value>
+  </data>
+  <data name="DigOpenFolderContent.SuffixLabel" xml:space="preserve">
+    <value>archivos de tipografía</value>
+  </data>
+  <data name="FontFileMenuItem.Text" xml:space="preserve">
+    <value>Abrir archivo de tipografía</value>
+  </data>
+  <data name="FontFolderMenuItem.Text" xml:space="preserve">
+    <value>Abrir carpeta de tipografías</value>
+  </data>
+  <data name="AddHistoryButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Agregar al historial</value>
+  </data>
+  <data name="CalligraphyLabel.Text" xml:space="preserve">
+    <value>Caligrafía</value>
+  </data>
+  <data name="ClearAllButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Borrar todo</value>
+  </data>
+  <data name="ClearAllItem.Text" xml:space="preserve">
+    <value>Borrar todo</value>
+  </data>
+  <data name="GuideToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Mostrar guía</value>
+  </data>
+  <data name="HistoryLabel.Text" xml:space="preserve">
+    <value>Historial</value>
+  </data>
+  <data name="RedoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Rehacer (Ctrl+Y)</value>
+  </data>
+  <data name="RemoveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Quitar</value>
+  </data>
+  <data name="SaveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Guardar (Ctrl+S)</value>
+  </data>
+  <data name="SideBySideToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Lado a lado</value>
+  </data>
+  <data name="UndoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Deshacer (Ctrl+Z)</value>
+  </data>
+  <data name="GuideFontSlider.Header" xml:space="preserve">
+    <value>Tamaño de la guía</value>
+  </data>
+  <data name="CharacterPickerButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Abrir selector de caracteres</value>
+  </data>
+  <data name="GuideHeaderLabel.Text" xml:space="preserve">
+    <value>Texto de guía</value>
+  </data>
+  <data name="GuideSizeLabel.Text" xml:space="preserve">
+    <value>Tamaño de la guía</value>
+  </data>
+  <data name="MenuToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Mostrar u ocultar el panel de tipografías (Ctrl+L)</value>
+  </data>
+  <data name="OpenInNewTab.Text" xml:space="preserve">
+    <value>Abrir en una nueva pestaña</value>
+  </data>
+  <data name="OptionScriptKorean.Text" xml:space="preserve">
+    <value>Coreano</value>
+  </data>
+  <data name="AddActiveToCollectionItem.Text" xml:space="preserve">
+    <value>Agregar tipografía activa a la colección</value>
+  </data>
+  <data name="CompareActiveItem.Text" xml:space="preserve">
+    <value>Comparar variantes activas</value>
+  </data>
+  <data name="OptionEmoji.Text" xml:space="preserve">
+    <value>Emoji</value>
+  </data>
+  <data name="OptionSupportedScripts.Text" xml:space="preserve">
+    <value>Sistemas de escritura admitidos</value>
+  </data>
+  <data name="CompareFontFaceTitle.Text" xml:space="preserve">
+    <value>Comparar variantes de tipografía</value>
+  </data>
+  <data name="CompareFacesCountLabel.Text" xml:space="preserve">
+    <value>Comparar familia</value>
+    <comment>Label removed</comment>
+  </data>
+  <data name="CompareFamilyTitle.Text" xml:space="preserve">
+    <value>Comparar {0}</value>
+  </data>
+  <data name="MenuButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Abrir menú</value>
+  </data>
+  <data name="FontsSelectedCountLabel" xml:space="preserve">
+    <value>{0} tipografías, {1} seleccionadas</value>
+  </data>
+  <data name="CompareShortLabel" xml:space="preserve">
+    <value>Comparar</value>
+  </data>
+  <data name="AllFontsLabel.Text" xml:space="preserve">
+    <value>Todas las tipografías</value>
+  </data>
+  <data name="ImportLabel.Text" xml:space="preserve">
+    <value>Importar</value>
+  </data>
+  <data name="PreferredFormatGroup.Text" xml:space="preserve">
+    <value>Formato preferido</value>
+    <comment>Preferred export format</comment>
+  </data>
+  <data name="RemoveLabel.Text" xml:space="preserve">
+    <value>Quitar</value>
+  </data>
+  <data name="UndoLabel" xml:space="preserve">
+    <value>Deshacer</value>
+  </data>
+  <data name="CalligraphyDescription.Text" xml:space="preserve">
+    <value>Practica la escritura con el estilo de la tipografía actual</value>
+  </data>
+  <data name="CompareFontsDescription.Text" xml:space="preserve">
+    <value>Mira y compara todas tus tipografías lado a lado</value>
+  </data>
+  <data name="DoMoreLabel.Text" xml:space="preserve">
+    <value>Más opciones</value>
+  </data>
+  <data name="FullscreenLabel.Text" xml:space="preserve">
+    <value>Pantalla completa</value>
+  </data>
+  <data name="OpenFolderDescription.Text" xml:space="preserve">
+    <value>Abre todos los archivos de tipografía dentro de una carpeta</value>
+  </data>
+  <data name="OpenFontDescription.Text" xml:space="preserve">
+    <value>Abre archivos TTF, OTF, OTC, TTC, WOFF, WOFF2 o ZIP</value>
+  </data>
+  <data name="SettingsPointerOverAnimation.Description" xml:space="preserve">
+    <value>Activa sutiles animaciones de rebote cuando el puntero del mouse pasa sobre ciertos botones.</value>
+  </data>
+  <data name="SettingsPointerOverAnimation.Title" xml:space="preserve">
+    <value>Activar animaciones al pasar el puntero</value>
+  </data>
+  <data name="SettingsCustomSuggestions.Description" xml:space="preserve">
+    <value>Agrega y administra opciones personalizadas para la vista Muestra de texto y las sugerencias de texto en la ventana de comparación.
+Mantén presionado para reordenar.</value>
+  </data>
+  <data name="SettingsCustomSuggestions.Title" xml:space="preserve">
+    <value>Opciones personalizadas</value>
+  </data>
+  <data name="SettingsSuggestionsHeader.Text" xml:space="preserve">
+    <value>Sugerencias de vista previa</value>
+  </data>
+  <data name="SettingsSuggestionTextBox.PlaceholderText" xml:space="preserve">
+    <value>Escribe tu sugerencia aquí</value>
+  </data>
+  <data name="FontPropPanoseTitle.Text" xml:space="preserve">
+    <value>Valores PANOSE</value>
+  </data>
+  <data name="CharacterGroupingToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Agrupar caracteres por rango Unicode (Ctrl+G)</value>
+  </data>
+  <data name="PixelUnits.Text" xml:space="preserve">
+    <value>px</value>
+  </data>
+  <data name="SettingsCharGrouping.Description" xml:space="preserve">
+    <value>Si se activa, los caracteres se agrupan por rango Unicode en el mapa de caracteres; de lo contrario, se muestran todos en una lista continua.</value>
+  </data>
+  <data name="SettingsCharGrouping.Title" xml:space="preserve">
+    <value>Agrupar caracteres</value>
+  </data>
+  <data name="CopyAsImageItem.Text" xml:space="preserve">
+    <value>Copiar como imagen</value>
+  </data>
+  <data name="CopyAsPngItem.Text" xml:space="preserve">
+    <value>Copiar como PNG</value>
+  </data>
+  <data name="CopyAsSvgItem.Text" xml:space="preserve">
+    <value>Copiar como SVG</value>
+  </data>
+  <data name="NotificationCopiedPNG" xml:space="preserve">
+    <value>Copiado como PNG</value>
+  </data>
+  <data name="NotificationCopiedSVG" xml:space="preserve">
+    <value>Copiado como SVG</value>
+  </data>
+  <data name="ColrV1SupportMessage.Text" xml:space="preserve">
+    <value>Esta tipografía contiene glifos COLRv1. Para verlos con la renderización adecuada, cambia a la vista Muestra de texto usando el botón superior.</value>
+  </data>
+  <data name="FontPropCOLRVersion.Text" xml:space="preserve">
+    <value>Versión de COLR</value>
+  </data>
+  <data name="FontPropColourFormats.Text" xml:space="preserve">
+    <value>Formatos de glifos en color</value>
+  </data>
+  <data name="GlyphTypeBitmap" xml:space="preserve">
+    <value>Mapa de bits</value>
+  </data>
+  <data name="TypeRampFlowButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Cambiar dirección del flujo</value>
+  </data>
+  <data name="TxtUniCodepoint.Header" xml:space="preserve">
+    <value>Punto de código Unicode</value>
+  </data>
+  <data name="TxtUTF16.Header" xml:space="preserve">
+    <value>Valor UTF-16</value>
+  </data>
+  <data name="EditSuggestionsItem.Text" xml:space="preserve">
+    <value>Editar sugerencias</value>
+  </data>
+  <data name="OptionScriptHiraganaAndKatakana.Text" xml:space="preserve">
+    <value>Hiragana y Katakana</value>
+  </data>
+  <data name="OptionsScriptBengali.Text" xml:space="preserve">
+    <value>Bengalí</value>
+  </data>
+  <data name="OptionsScriptDevanagari.Text" xml:space="preserve">
+    <value>Devanagari</value>
+  </data>
+  <data name="BtnTextClose.Content" xml:space="preserve">
+    <value>Cerrar</value>
+  </data>
+  <data name="EditSuggestionsLabel.Text" xml:space="preserve">
+    <value>Editar sugerencias personalizadas</value>
+  </data>
+  <data name="ShowSuggestionsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Mostrar sugerencias</value>
+  </data>
+  <data name="SuggestOptionArabic.Text" xml:space="preserve">
+    <value>Árabe</value>
+  </data>
+  <data name="SuggestOptionBengali.Text" xml:space="preserve">
+    <value>Bengalí</value>
+  </data>
+  <data name="SuggestOptionBulgarian.Text" xml:space="preserve">
+    <value>Búlgaro</value>
+  </data>
+  <data name="SuggestOptionChineseTraditional.Text" xml:space="preserve">
+    <value>Chino (Tradicional)</value>
+  </data>
+  <data name="SuggestOptionCultureSpecific.Text" xml:space="preserve">
+    <value>Español</value>
+  </data>
+  <data name="SuggestOptionCustom.Text" xml:space="preserve">
+    <value>Personalizado</value>
+  </data>
+  <data name="SuggestOptionCyrillicAlpha.Text" xml:space="preserve">
+    <value>Alfabeto cirílico</value>
+  </data>
+  <data name="SuggestOptionEmoji.Text" xml:space="preserve">
+    <value>Emoji</value>
+  </data>
+  <data name="SuggestOptionEnglish.Text" xml:space="preserve">
+    <value>Inglés</value>
+  </data>
+  <data name="SuggestOptionGreek.Text" xml:space="preserve">
+    <value>Griego</value>
+  </data>
+  <data name="SuggestOptionHebrew.Text" xml:space="preserve">
+    <value>Hebreo</value>
+  </data>
+  <data name="SuggestOptionHindi.Text" xml:space="preserve">
+    <value>Hindi</value>
+  </data>
+  <data name="SuggestOptionJapanese.Text" xml:space="preserve">
+    <value>Japonés</value>
+  </data>
+  <data name="SuggestOptionKorean.Text" xml:space="preserve">
+    <value>Coreano</value>
+  </data>
+  <data name="SuggestOptionLatinAlpha.Text" xml:space="preserve">
+    <value>Alfabeto latino</value>
+  </data>
+  <data name="SuggestOptionLatinSymbols.Text" xml:space="preserve">
+    <value>Números y símbolos latinos</value>
+  </data>
+  <data name="SuggestOptionSample.Text" xml:space="preserve">
+    <value>Texto de muestra de la tipografía</value>
+  </data>
+  <data name="SuggestOptionThai.Text" xml:space="preserve">
+    <value>Tailandés</value>
+  </data>
+  <data name="SuggestOptionVietnamese.Text" xml:space="preserve">
+    <value>Vietnamita</value>
+  </data>
+  <data name="InstallCountLabel" xml:space="preserve">
+    <value>{0} familias tipográficas, {1} variantes instaladas en tu equipo</value>
+  </data>
+  <data name="OptionSystemFonts.Text" xml:space="preserve">
+    <value>Tipografías instaladas</value>
+  </data>
+  <data name="SettingsExportInstalledLabel.Text" xml:space="preserve">
+    <value>Exportar tipografías instaladas</value>
+  </data>
+  <data name="OptionDesignTag.Text" xml:space="preserve">
+    <value>Por lenguaje de diseño</value>
+  </data>
+  <data name="HiddenGlyphsMessage.Text" xml:space="preserve">
+    <value>Los glifos de íconos obsoletos están ocultos de forma predeterminada según tu configuración. Puedes mostrarlos usando el botón de filtro superior.</value>
+  </data>
+  <data name="InstallDialog.Title" xml:space="preserve">
+    <value>Instalar tipografía</value>
+  </data>
+  <data name="InstallFontInstructions.Text" xml:space="preserve">
+    <value>Lee todas las instrucciones antes de continuar con la instalación de tu tipografía:
+
+1. Presiona "Iniciar" a continuación
+2. Selecciona "Visualizador de fuentes de Windows" y elige "Solo una vez" u "Abrir"
+3. Presiona "Instalar" en la parte superior de la ventana del visualizador
+
+Tu tipografía web se convertirá al formato OTF para su instalación.</value>
+    <comment>Word in such a way that encourages the user to read all the steps before continuing</comment>
+  </data>
+  <data name="InstallLabel.Text" xml:space="preserve">
+    <value>Instalar</value>
+  </data>
+  <data name="OptionUnicodeRange/Text" xml:space="preserve">
+    <value>Por rango Unicode</value>
+  </data>
+  <data name="SettingsAdvancedOptionsLabel.Text" xml:space="preserve">
+    <value>Avanzado</value>
+  </data>
+  <data name="SettingsDeprecatedIconsPresenter.Description" xml:space="preserve">
+    <value>Si se activa, oculta por defecto los íconos obsoletos de las fuentes Segoe MDL2 y Segoe Fluent Icon. Aún se pueden mostrar mediante el menú desplegable de filtros.
+
+No se recomienda hacer referencia a íconos obsoletos por su punto de código Unicode, ya que todos ellos cuentan con un equivalente actualizado.</value>
+  </data>
+  <data name="SettingsDeprecatedIconsPresenter.Title" xml:space="preserve">
+    <value>Ocultar íconos obsoletos</value>
+  </data>
+  <data name="StartLabel.Text" xml:space="preserve">
+    <value>Iniciar</value>
+  </data>
+  <data name="TxtUniHexValue.Text" xml:space="preserve">
+    <value>Valor hexadecimal</value>
+  </data>
+  <data name="FileExplorerFileToolTip" xml:space="preserve">
+    <value>Vista previa del archivo</value>
+  </data>
+  <data name="ImportCountLabel" xml:space="preserve">
+    <value>{0} familias tipográficas, {1} variantes importadas</value>
+  </data>
+  <data name="SettingsFontExportVersionLabel.Text" xml:space="preserve">
+    <value>Incluir el número de versión en el nombre del archivo</value>
+  </data>
+  <data name="HideUnihanLabel.Text" xml:space="preserve">
+    <value>Ocultar datos Unihan</value>
+  </data>
+  <data name="ShowUnihanLabel.Text" xml:space="preserve">
+    <value>Mostrar datos Unihan</value>
+  </data>
+  <data name="UnihanDefinition.Text" xml:space="preserve">
+    <value>Definición</value>
+  </data>
+  <data name="UnihanPronunciations.Text" xml:space="preserve">
+    <value>Pronunciaciones</value>
+  </data>
+  <data name="UnihanTypeDescriptionCantonese" xml:space="preserve">
+    <value>La lectura habitual en jyutping (cantonés) para este ideograma.</value>
+  </data>
+  <data name="UnihanTypeDescriptionHangul" xml:space="preserve">
+    <value>La pronunciación moderna en coreano (Hangul) para este ideograma, con sus fuentes entre corchetes.</value>
+  </data>
+  <data name="UnihanTypeDescriptionHanyuPinlu" xml:space="preserve">
+    <value>Las pronunciaciones y frecuencias de este ideograma, basadas en parte en las que aparecen en 《現代漢語頻率詞典》 &lt;Xiandai Hanyu Pinlu Cidian&gt;.</value>
+  </data>
+  <data name="UnihanTypeDescriptionHanyuPinyin" xml:space="preserve">
+    <value>La lectura 漢語拼音 Hànyǔ Pīnyīn que aparece en la edición de 《漢語大字典》 Hànyǔ Dà Zìdiǎn (HDZ) especificada en la descripción de la propiedad kHanYu (q.v.).</value>
+  </data>
+  <data name="UnihanTypeDescriptionJapanese" xml:space="preserve">
+    <value>La lectura o lecturas en japonés para este ideograma expresadas en Kana.
+
+Las lecturas expresadas en Hiragana generalmente se consideran Kun-yomi (訓読み), mientras que las expresadas en Katakana se consideran On-yomi (音読み).</value>
+  </data>
+  <data name="UnihanTypeDescriptionJapaneseKun" xml:space="preserve">
+    <value>La pronunciación japonesa de este ideograma en la romanización Hepburn.</value>
+  </data>
+  <data name="UnihanTypeDescriptionJapaneseOn" xml:space="preserve">
+    <value>La pronunciación sino-japonesa de este ideograma.</value>
+  </data>
+  <data name="UnihanTypeDescriptionKorean" xml:space="preserve">
+    <value>La pronunciación coreana de este ideograma mediante el sistema de romanización Yale.</value>
+  </data>
+  <data name="UnihanTypeDescriptionMandarin" xml:space="preserve">
+    <value>La lectura pīnyīn más habitual para este ideograma.
+
+Cuando hay dos valores, el primero es el preferido para el chino simplificado (zh-Hans [CN]) y el segundo para el chino tradicional (zh-Hant [TW]).
+
+Cuando solo hay un valor, aplica para ambos.</value>
+  </data>
+  <data name="UnihanTypeDescriptionSMSZD2003Readings" xml:space="preserve">
+    <value>Representa las lecturas en mandarín y cantonés del ideograma en el Soengmou San Zidin (商務 新字典, Nuevo Diccionario de Caracteres de Commercial Press).
+
+Las lecturas en mandarín están en hànyǔ pīnyīn. Las lecturas en cantonés están en jyutping. Ten en cuenta que algunos ideogramas presentan lecturas que normalmente se considerarían no válidas, como las lecturas polisilábicas.
+
+Si un ideograma tiene varias entradas, significa que cuenta con múltiples definiciones y las lecturas se agrupan en función de ellas.</value>
+  </data>
+  <data name="UnihanTypeDescriptionTang" xml:space="preserve">
+    <value>La pronunciación de la dinastía Tang para este ideograma, derivada o coincidente con T’ang Poetic Vocabulary de Hugh M. Stimson (Far Eastern Publications, Universidad de Yale, 1976).</value>
+  </data>
+  <data name="UnihanTypeDescriptionTGHZ2013" xml:space="preserve">
+    <value>Una o más lecturas en Hànyǔ Pīnyīn según figuran en Tōngyòng Guīfàn Hànzì Zìdiǎn.</value>
+  </data>
+  <data name="UnihanTypeDescriptionVietnamese" xml:space="preserve">
+    <value>La pronunciación o pronunciaciones del ideograma en Quốc ngữ.</value>
+  </data>
+  <data name="UnihanTypeDescriptionXHC1983" xml:space="preserve">
+    <value>Una o más lecturas en Hànyǔ Pīnyīn según figuran en Xiàndài Hànyǔ Cídiǎn.</value>
+  </data>
+  <data name="UnihanTypeNameCantonese" xml:space="preserve">
+    <value>Cantonés</value>
+  </data>
+  <data name="UnihanTypeNameHangul" xml:space="preserve">
+    <value>Hangul</value>
+  </data>
+  <data name="UnihanTypeNameHanyuPinlu" xml:space="preserve">
+    <value>Hanyu Pinlu</value>
+  </data>
+  <data name="UnihanTypeNameHanyuPinyin" xml:space="preserve">
+    <value>Hànyǔ Pīnyīn</value>
+  </data>
+  <data name="UnihanTypeNameJapanese" xml:space="preserve">
+    <value>Japonés</value>
+  </data>
+  <data name="UnihanTypeNameJapaneseKun" xml:space="preserve">
+    <value>Japonés Kun</value>
+  </data>
+  <data name="UnihanTypeNameJapaneseOn" xml:space="preserve">
+    <value>Japonés On</value>
+  </data>
+  <data name="UnihanTypeNameKorean" xml:space="preserve">
+    <value>Coreano</value>
+  </data>
+  <data name="UnihanTypeNameMandarin" xml:space="preserve">
+    <value>Mandarín</value>
+  </data>
+  <data name="UnihanTypeNameSMSZD2003Readings" xml:space="preserve">
+    <value>SmSZ</value>
+  </data>
+  <data name="UnihanTypeNameTang" xml:space="preserve">
+    <value>Tang</value>
+  </data>
+  <data name="UnihanTypeNameTGHZ2013" xml:space="preserve">
+    <value>Hànyǔ Pīnyīn (TGHZ)</value>
+  </data>
+  <data name="UnihanTypeNameVietnamese" xml:space="preserve">
+    <value>Vietnamita</value>
+  </data>
+  <data name="UnihanTypeNameXHC1983" xml:space="preserve">
+    <value>Hànyǔ Pīnyīn (XHC)</value>
+  </data>
+  <data name="HiddenSearchResultsLabel.Text" xml:space="preserve">
+    <value>OCULTO</value>
+  </data>
+  <data name="NotificationSearchSelectedCharHidden" xml:space="preserve">
+    <value>El carácter seleccionado se encuentra oculto actualmente por los filtros aplicados</value>
+  </data>
+  <data name="SuggestOptionChineseSimplified.Text" xml:space="preserve">
+    <value>Chino (Simplificado)</value>
+  </data>
+  <data name="CanvasFontInformationDesignScriptLanguageTag" xml:space="preserve">
+    <value>Idiomas diseñados</value>
+  </data>
+  <data name="CollectionManagementHint.Text" xml:space="preserve">
+    <value>Crea colecciones para comparar, exportar o administrar varias tipografías a la vez. Para empezar, selecciona una colección existente arriba o crea una nueva.</value>
+  </data>
+  <data name="CollectionSelector.PlaceholderText" xml:space="preserve">
+    <value>Elegir existente</value>
+  </data>
+  <data name="FindCharButton.Text" xml:space="preserve">
+    <value>Buscar en otras tipografías</value>
+  </data>
+  <data name="FontFamilyFilterInput.PlaceholderText" xml:space="preserve">
+    <value>Filtrar por familia</value>
+  </data>
+  <data name="SettingsRememberFilter.Description" xml:space="preserve">
+    <value>Si se activa, la aplicación recordará la última colección o filtro seleccionado y lo restaurará al reiniciar.
+
+De lo contrario, se seleccionará "Todas las tipografías" por defecto en cada inicio.</value>
+  </data>
+  <data name="SettingsRememberFilter.Title" xml:space="preserve">
+    <value>Recordar el filtro de la lista de tipografías entre sesiones</value>
+  </data>
+  <data name="GlyphNameToggleHeader.Text" xml:space="preserve">
+    <value>Plantilla del nombre de archivo</value>
+  </data>
+  <data name="GlyphNameToggleLabel.Text" xml:space="preserve">
+    <value>Mostrar componentes de la plantilla</value>
+  </data>
+  <data name="FileNameWriterCharDescDesc" xml:space="preserve">
+    <value>Descripción Unicode del glifo o cadena Unicode si no tiene</value>
+  </data>
+  <data name="FileNameWriterExtensionDesc" xml:space="preserve">
+    <value>Extensión de archivo</value>
+  </data>
+  <data name="FileNameWriterFaceDesc" xml:space="preserve">
+    <value>Nombre de la variante tipográfica actual</value>
+  </data>
+  <data name="FileNameWriterFamilyDesc" xml:space="preserve">
+    <value>Nombre de la familia tipográfica</value>
+  </data>
+  <data name="FileNameWriterPixelSizeDesc" xml:space="preserve">
+    <value>Tamaño en píxeles</value>
+  </data>
+  <data name="FileNameWriterStringFormat" xml:space="preserve">
+    <value>{0}, p. ej. {1}</value>
+  </data>
+  <data name="FileNameWriterUnicodeCPDesc" xml:space="preserve">
+    <value>Índice Unicode / valor de punto de código</value>
+  </data>
+  <data name="FileNameWriterUnicodeHexDesc" xml:space="preserve">
+    <value>Valor hexadecimal Unicode</value>
+  </data>
+  <data name="FileNameWriterXamlGlyphDesc" xml:space="preserve">
+    <value>Código de glifo XAML</value>
+  </data>
+  <data name="SettingsGlyphNaming.Description" xml:space="preserve">
+    <value>Elige cómo se nombran los archivos de caracteres exportados.</value>
+  </data>
+  <data name="SettingsGlyphNaming.Title" xml:space="preserve">
+    <value>Nombre al exportar glifos</value>
+  </data>
+  <data name="ExampleFormat" xml:space="preserve">
+    <value>p. ej. {0}</value>
+  </data>
+  <data name="FileNameWriterFontVerDesc" xml:space="preserve">
+    <value>Número de versión de la tipografía, si corresponde</value>
+  </data>
+  <data name="CanvasFontInformationCopyrightNotice" xml:space="preserve">
+    <value>Aviso de derechos de autor</value>
+  </data>
+  <data name="CanvasFontInformationDescription" xml:space="preserve">
+    <value>Descripción</value>
+  </data>
+  <data name="CanvasFontInformationDesigner" xml:space="preserve">
+    <value>Diseñador</value>
+  </data>
+  <data name="CanvasFontInformationDesignerUrl" xml:space="preserve">
+    <value>URL del diseñador</value>
+  </data>
+  <data name="CanvasFontInformationFontVendorUrl" xml:space="preserve">
+    <value>URL del proveedor de la tipografía</value>
+  </data>
+  <data name="CanvasFontInformationFullName" xml:space="preserve">
+    <value>Nombre completo</value>
+  </data>
+  <data name="CanvasFontInformationLicenseDescription" xml:space="preserve">
+    <value>Licencia</value>
+  </data>
+  <data name="CanvasFontInformationLicenseInfoUrl" xml:space="preserve">
+    <value>URL de la licencia</value>
+  </data>
+  <data name="CanvasFontInformationManufacturer" xml:space="preserve">
+    <value>Fabricante</value>
+  </data>
+  <data name="CanvasFontInformationTrademark" xml:space="preserve">
+    <value>Marca registrada</value>
+  </data>
+  <data name="CanvasFontInformationVersionStrings" xml:space="preserve">
+    <value>Cadenas de versión</value>
+  </data>
+  <data name="RestoreLabel.Text" xml:space="preserve">
+    <value>Restaurar tamaño</value>
+    <comment>Opposite of Fullscreen</comment>
+  </data>
+  <data name="CreateSmartCollectionCheck.Content" xml:space="preserve">
+    <value>Crear como colección inteligente</value>
+  </data>
+  <data name="CreateSmartCollectionHint.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ver la documentación en línea sobre las colecciones inteligentes</value>
+  </data>
+  <data name="CharacterFilter" xml:space="preserve">
+    <value>caracter:</value>
+    <comment>Command used for character searches. Should be short.</comment>
+  </data>
+  <data name="DesignerFilter" xml:space="preserve">
+    <value>disenador:</value>
+    <comment>Command used for designer searches. Should be short.</comment>
+  </data>
+  <data name="FilePathFilter" xml:space="preserve">
+    <value>rutadearchivo:</value>
+    <comment>Command used for file path searches. Should be short.</comment>
+  </data>
+  <data name="FoundryFilter" xml:space="preserve">
+    <value>fundicion:</value>
+    <comment>Command used for foundry searches. Should be short.</comment>
+  </data>
+  <data name="SmartCollectionDesignerFilter.Text" xml:space="preserve">
+    <value>Filtro por diseñador</value>
+  </data>
+  <data name="SmartCollectionFilePathFilter.Text" xml:space="preserve">
+    <value>Filtro por ruta de archivo</value>
+  </data>
+  <data name="SmartCollectionFoundryFilter.Text" xml:space="preserve">
+    <value>Filtro por fundición</value>
+  </data>
+  <data name="SmartCollectionCharacterFilter.Text" xml:space="preserve">
+    <value>Filtro por carácter</value>
+  </data>
+  <data name="DigEditCollection.PrimaryButtonText" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="DigEditCollection.Title" xml:space="preserve">
+    <value>Editar colección</value>
+  </data>
+  <data name="EditCollectionButton.Label" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="EditCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Editar colección</value>
+  </data>
+  <data name="BtnHelpAndTips.Content" xml:space="preserve">
+    <value>Ayuda y consejos</value>
+  </data>
+  <data name="SmartCollectionEditHint.Text" xml:space="preserve">
+    <value>Para modificar colecciones inteligentes, usa el botón de edición superior.</value>
+  </data>
+  <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
+    <value>Seleccionar carpeta</value>
+  </data>
+  <data name="ChangeSortToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Cambiar orden</value>
+  </data>
+  <data name="SortedByRangeLabel.Text" xml:space="preserve">
+    <value>Ordenado por rango</value>
+  </data>
+  <data name="RefreshResultsLabel.Text" xml:space="preserve">
+    <value>Actualizar resultados</value>
+  </data>
+  <data name="ResultsCountLabel" xml:space="preserve">
+    <value>{0} resultados</value>
+  </data>
+  <data name="SortedByNameLabel.Text" xml:space="preserve">
+    <value>Ordenado por nombre</value>
+  </data>
+  <data name="SettingsFontListToolTip.Description" xml:space="preserve">
+    <value>Texto predeterminado que se usa en las descripciones emergentes que aparecen al pasar el puntero sobre la lista de tipografías o pestañas.</value>
+  </data>
+  <data name="SettingsFontListToolTip.Title" xml:space="preserve">
+    <value>Descripción emergente de vista previa en la lista</value>
+  </data>
+  <data name="CalligraphyPenInkToolbarButtonToolTip" xml:space="preserve">
+    <value>Pluma caligráfica</value>
+  </data>
+  <data name="SettingsSimulatedFontFaces.Title" xml:space="preserve">
+    <value>Ocultar variantes simuladas</value>
+  </data>
+  <data name="SettingsSimulatedFontFaces.Description" xml:space="preserve">
+    <value>Si se activa, las variantes simuladas generadas automáticamente por Windows no se mostrarán en el selector de variantes.
+
+Las variantes simuladas suelen ser estilos en negrita u oblicua para tipografías que no incluyen sus propias variantes definidas.
+
+Requiere reiniciar la aplicación para aplicar los cambios.</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value>Si se activa, las variantes simuladas generadas automáticamente por Windows no se mostrarán en el selector de variantes. Las variantes simuladas suelen ser estilos en negrita u oblicua para tipografías que no incluyen sus propias variantes definidas.</value>
+  </data>
+  <data name="FontPropSimulated.Text" xml:space="preserve">
+    <value>Es una variante simulada</value>
+  </data>
+  <data name="SimulatedHeader" xml:space="preserve">
+    <value>Simulada</value>
+    <comment>Simulated font faces descriptor</comment>
+  </data>
+  <data name="FontListSizeNormal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="FontListSizeLarge" xml:space="preserve">
+    <value>Grande</value>
+  </data>
+  <data name="FontListSizeLarger" xml:space="preserve">
+    <value>Más grande</value>
+  </data>
+  <data name="CanvasFontInformationSupportedScriptLanguageTag" xml:space="preserve">
+    <value>Idiomas admitidos</value>
+  </data>
+  <data name="CanvasFontInformationEmbeddingRights" xml:space="preserve">
+    <value>Derechos de incrustación</value>
+  </data>
+  <data name="EmbeddingTypeInstallable" xml:space="preserve">
+    <value>Incrustación instalable: la tipografía se puede incrustar e instalar de forma permanente para su uso en sistemas remotos o por otros usuarios. El usuario del sistema remoto adquiere los mismos derechos, obligaciones y licencias que el comprador original, y queda sujeto al mismo contrato de licencia de usuario final, derechos de autor, patente de diseño y/o marca registrada.</value>
+  </data>
+  <data name="EmbeddingTypeRestricted" xml:space="preserve">
+    <value>Incrustación con licencia restringida: la tipografía no se debe modificar, incrustar ni intercambiar de ninguna manera sin obtener primero el permiso explícito del propietario legal.</value>
+  </data>
+  <data name="EmbeddingTypePreviewPrint" xml:space="preserve">
+    <value>Incrustación de vista previa e impresión: la tipografía se puede incrustar y cargar temporalmente en otros sistemas con fines de visualización o impresión del documento. Los documentos que contienen tipografías de vista previa e impresión deben abrirse como «solo lectura»; no se pueden aplicar modificaciones al documento.</value>
+  </data>
+  <data name="EmbeddingTypeEditable" xml:space="preserve">
+    <value>Incrustación editable: la tipografía se puede incrustar y cargar temporalmente en otros sistemas. Los documentos que contienen tipografías editables se pueden abrir para lectura. Además, se permite la edición, incluida la capacidad de dar formato a texto nuevo utilizando la tipografía incrustada, y se pueden guardar los cambios.</value>
+  </data>
+  <data name="EmbeddingTypeNoSubsetting" xml:space="preserve">
+    <value>Sin reducción de subconjunto: no se debe reducir el subconjunto de la tipografía antes de incrustarla.</value>
+  </data>
+  <data name="EmbeddingTypeBitmapOnly" xml:space="preserve">
+    <value>Incrustación solo de mapa de bits: solo se pueden incrustar los mapas de bits contenidos en la tipografía. No se pueden incrustar datos de contorno. Si no hay mapas de bits disponibles en la tipografía, esta se considerará no incrustable y los servicios de incrustación fallarán.</value>
+  </data>
+  <data name="FilterEmbeddingInstallable.Text" xml:space="preserve">
+    <value>Instalable</value>
+  </data>
+  <data name="FilterEmbeddingEditable.Text" xml:space="preserve">
+    <value>Editable</value>
+  </data>
+  <data name="FilterEmbeddingPreviewPrint.Text" xml:space="preserve">
+    <value>Vista previa e impresión</value>
+  </data>
+  <data name="FilterEmbeddingRestricted.Text" xml:space="preserve">
+    <value>Restringida</value>
+  </data>
+  <data name="FilterEmbeddingBitmap.Text" xml:space="preserve">
+    <value>Solo mapa de bits</value>
+  </data>
+  <data name="All.Text" xml:space="preserve">
+    <value>Todas</value>
+  </data>
+  <data name="UnihanTypeDescriptionZhuang" xml:space="preserve">
+    <value>La lectura habitual en zhuang para este ideograma. Las lecturas de palabras que no forman parte del léxico zhuang estándar llevan un asterisco como sufijo.</value>
+  </data>
+  <data name="UnicodeTypeNameZhuang" xml:space="preserve">
+    <value>Zhuang</value>
+  </data>
+  <data name="UnihanTypeDescriptionFanqie" xml:space="preserve">
+    <value>Método común en antiguos diccionarios y libros de rimas chinos para especificar la lectura de un ideograma. Utiliza dos ideogramas: el primero comparte la parte inicial y el segundo la parte final. Por ejemplo, 德 (tək) y 紅 (ɣuŋ) se usan para indicar la lectura en chino medio de 東 (tuŋ); por lo tanto, el valor de la propiedad Fanqie de U+6771 東 es el par 德紅. Se emplea un tercer ideograma final (ya sea 反 o 切, correspondientes a Fanqie), que no se incluye como parte del valor de la propiedad.</value>
+  </data>
+  <data name="UnihanTypeNameFanqie" xml:space="preserve">
+    <value>Fanqie</value>
+  </data>
+  <data name="PanoseFamily" xml:space="preserve">
+    <value>Familia</value>
+  </data>
+  <data name="PanoseFamily_Any" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseFamily_No_Fit" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseFamily_Text_Display" xml:space="preserve">
+    <value>Texto y pantalla</value>
+  </data>
+  <data name="PanoseFamily_Script" xml:space="preserve">
+    <value>Manuscrita</value>
+  </data>
+  <data name="PanoseFamily_Decorative" xml:space="preserve">
+    <value>Decorativa</value>
+  </data>
+  <data name="PanoseFamily_Symbol" xml:space="preserve">
+    <value>Símbolo</value>
+  </data>
+  <data name="PanoseFamily_Pictorial" xml:space="preserve">
+    <value>Pictórica</value>
+  </data>
+  <data name="PanoseSerifStyle" xml:space="preserve">
+    <value>Estilo de remate</value>
+  </data>
+  <data name="PanoseSerifStyle_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseSerifStyle_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseSerifStyle_COVE" xml:space="preserve">
+    <value>Cóncavo</value>
+  </data>
+  <data name="PanoseSerifStyle_OBTUSE_COVE" xml:space="preserve">
+    <value>Cóncavo obtuso</value>
+  </data>
+  <data name="PanoseSerifStyle_SQUARE_COVE" xml:space="preserve">
+    <value>Cóncavo cuadrado</value>
+  </data>
+  <data name="PanoseSerifStyle_OBTUSE_SQUARE_COVE" xml:space="preserve">
+    <value>Cóncavo cuadrado obtuso</value>
+  </data>
+  <data name="PanoseSerifStyle_SQUARE" xml:space="preserve">
+    <value>Cuadrado</value>
+  </data>
+  <data name="PanoseSerifStyle_THIN" xml:space="preserve">
+    <value>Fino</value>
+  </data>
+  <data name="PanoseSerifStyle_OVAL" xml:space="preserve">
+    <value>Ovalado</value>
+  </data>
+  <data name="PanoseSerifStyle_EXAGGERATED" xml:space="preserve">
+    <value>Exagerado</value>
+  </data>
+  <data name="PanoseSerifStyle_TRIANGLE" xml:space="preserve">
+    <value>Triangular</value>
+  </data>
+  <data name="PanoseSerifStyle_NORMAL_SANS" xml:space="preserve">
+    <value>Sin remate normal</value>
+  </data>
+  <data name="PanoseSerifStyle_OBTUSE_SANS" xml:space="preserve">
+    <value>Sin remate obtuso</value>
+  </data>
+  <data name="PanoseSerifStyle_PERPENDICULAR_SANS" xml:space="preserve">
+    <value>Sin remate perpendicular</value>
+  </data>
+  <data name="PanoseSerifStyle_FLARED" xml:space="preserve">
+    <value>Acampanado</value>
+  </data>
+  <data name="PanoseSerifStyle_ROUNDED" xml:space="preserve">
+    <value>Redondeado</value>
+  </data>
+  <data name="PanoseWeight" xml:space="preserve">
+    <value>Grosor</value>
+  </data>
+  <data name="PanoseWeight_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseWeight_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseWeight_VERY_LIGHT" xml:space="preserve">
+    <value>Muy ligero</value>
+  </data>
+  <data name="PanoseWeight_LIGHT" xml:space="preserve">
+    <value>Ligero</value>
+  </data>
+  <data name="PanoseWeight_THIN" xml:space="preserve">
+    <value>Fino</value>
+  </data>
+  <data name="PanoseWeight_BOOK" xml:space="preserve">
+    <value>Normal (Book)</value>
+  </data>
+  <data name="PanoseWeight_MEDIUM" xml:space="preserve">
+    <value>Medio</value>
+  </data>
+  <data name="PanoseWeight_DEMI" xml:space="preserve">
+    <value>Seminegrita</value>
+  </data>
+  <data name="PanoseWeight_BOLD" xml:space="preserve">
+    <value>Negrita</value>
+  </data>
+  <data name="PanoseWeight_HEAVY" xml:space="preserve">
+    <value>Pesado</value>
+  </data>
+  <data name="PanoseWeight_BLACK" xml:space="preserve">
+    <value>Negro</value>
+  </data>
+  <data name="PanoseWeight_EXTRA_BLACK" xml:space="preserve">
+    <value>Extranegro</value>
+  </data>
+  <data name="PanoseProportion" xml:space="preserve">
+    <value>Proporción</value>
+  </data>
+  <data name="PanoseProportion_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseProportion_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseProportion_OLD_STYLE" xml:space="preserve">
+    <value>Estilo antiguo</value>
+  </data>
+  <data name="PanoseProportion_MODERN" xml:space="preserve">
+    <value>Moderno</value>
+  </data>
+  <data name="PanoseProportion_EVEN_WIDTH" xml:space="preserve">
+    <value>Ancho uniforme</value>
+  </data>
+  <data name="PanoseProportion_EXPANDED" xml:space="preserve">
+    <value>Expandido</value>
+  </data>
+  <data name="PanoseProportion_CONDENSED" xml:space="preserve">
+    <value>Condensado</value>
+  </data>
+  <data name="PanoseProportion_VERY_EXPANDED" xml:space="preserve">
+    <value>Muy expandido</value>
+  </data>
+  <data name="PanoseProportion_VERY_CONDENSED" xml:space="preserve">
+    <value>Muy condensado</value>
+  </data>
+  <data name="PanoseProportion_MONOSPACED" xml:space="preserve">
+    <value>Monoespaciado</value>
+  </data>
+  <data name="PanoseContrast" xml:space="preserve">
+    <value>Contraste</value>
+  </data>
+  <data name="PanoseContrast_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseContrast_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseContrast_NONE" xml:space="preserve">
+    <value>Ninguno</value>
+  </data>
+  <data name="PanoseContrast_VERY_LOW" xml:space="preserve">
+    <value>Muy bajo</value>
+  </data>
+  <data name="PanoseContrast_LOW" xml:space="preserve">
+    <value>Bajo</value>
+  </data>
+  <data name="PanoseContrast_MEDIUM_LOW" xml:space="preserve">
+    <value>Medio bajo</value>
+  </data>
+  <data name="PanoseContrast_MEDIUM" xml:space="preserve">
+    <value>Medio</value>
+  </data>
+  <data name="PanoseContrast_MEDIUM_HIGH" xml:space="preserve">
+    <value>Medio alto</value>
+  </data>
+  <data name="PanoseContrast_HIGH" xml:space="preserve">
+    <value>Alto</value>
+  </data>
+  <data name="PanoseContrast_VERY_HIGH" xml:space="preserve">
+    <value>Muy alto</value>
+  </data>
+  <data name="PanoseContrast_HORIZONTAL_LOW" xml:space="preserve">
+    <value>Horizontal bajo</value>
+  </data>
+  <data name="PanoseContrast_HORIZONTAL_MEDIUM" xml:space="preserve">
+    <value>Horizontal medio</value>
+  </data>
+  <data name="PanoseContrast_HORIZONTAL_HIGH" xml:space="preserve">
+    <value>Horizontal alto</value>
+  </data>
+  <data name="PanoseContrast_BROKEN" xml:space="preserve">
+    <value>Fragmentado</value>
+  </data>
+  <data name="PanoseStrokeVariation" xml:space="preserve">
+    <value>Variación del trazo</value>
+  </data>
+  <data name="PanoseStrokeVariation_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseStrokeVariation_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseStrokeVariation_NO_VARIATION" xml:space="preserve">
+    <value>Sin variación</value>
+  </data>
+  <data name="PanoseStrokeVariation_GRADUAL_DIAGONAL" xml:space="preserve">
+    <value>Gradual/Diagonal</value>
+  </data>
+  <data name="PanoseStrokeVariation_GRADUAL_TRANSITIONAL" xml:space="preserve">
+    <value>Gradual/De transición</value>
+  </data>
+  <data name="PanoseStrokeVariation_GRADUAL_VERTICAL" xml:space="preserve">
+    <value>Gradual/Vertical</value>
+  </data>
+  <data name="PanoseStrokeVariation_GRADUAL_HORIZONTAL" xml:space="preserve">
+    <value>Gradual/Horizontal</value>
+  </data>
+  <data name="PanoseStrokeVariation_RAPID_VERTICAL" xml:space="preserve">
+    <value>Rápida/Vertical</value>
+  </data>
+  <data name="PanoseStrokeVariation_RAPID_HORIZONTAL" xml:space="preserve">
+    <value>Rápida/Horizontal</value>
+  </data>
+  <data name="PanoseStrokeVariation_INSTANT_VERTICAL" xml:space="preserve">
+    <value>Instantánea/Vertical</value>
+  </data>
+  <data name="PanoseStrokeVariation_INSTANT_HORIZONTAL" xml:space="preserve">
+    <value>Instantánea/Horizontal</value>
+  </data>
+  <data name="PanoseArmStyle" xml:space="preserve">
+    <value>Estilo de brazo</value>
+  </data>
+  <data name="PanoseArmStyle_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseArmStyle_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseArmStyle_STRAIGHT_ARMS_HORIZONTAL" xml:space="preserve">
+    <value>Brazos rectos/Horizontal</value>
+  </data>
+  <data name="PanoseArmStyle_STRAIGHT_ARMS_WEDGE" xml:space="preserve">
+    <value>Brazos rectos/En cuña</value>
+  </data>
+  <data name="PanoseArmStyle_STRAIGHT_ARMS_VERTICAL" xml:space="preserve">
+    <value>Brazos rectos/Vertical</value>
+  </data>
+  <data name="PanoseArmStyle_STRAIGHT_ARMS_SINGLE_SERIF" xml:space="preserve">
+    <value>Brazos rectos/Remate único</value>
+  </data>
+  <data name="PanoseArmStyle_STRAIGHT_ARMS_DOUBLE_SERIF" xml:space="preserve">
+    <value>Brazos rectos/Remate doble</value>
+  </data>
+  <data name="PanoseArmStyle_NONSTRAIGHT_ARMS_HORIZONTAL" xml:space="preserve">
+    <value>Brazos no rectos/Horizontal</value>
+  </data>
+  <data name="PanoseArmStyle_NONSTRAIGHT_ARMS_WEDGE" xml:space="preserve">
+    <value>Brazos no rectos/En cuña</value>
+  </data>
+  <data name="PanoseArmStyle_NONSTRAIGHT_ARMS_VERTICAL" xml:space="preserve">
+    <value>Brazos no rectos/Vertical</value>
+  </data>
+  <data name="PanoseArmStyle_NONSTRAIGHT_ARMS_SINGLE_SERIF" xml:space="preserve">
+    <value>Brazos no rectos/Remate único</value>
+  </data>
+  <data name="PanoseArmStyle_NONSTRAIGHT_ARMS_DOUBLE_SERIF" xml:space="preserve">
+    <value>Brazos no rectos/Remate doble</value>
+  </data>
+  <data name="PanoseLetterform" xml:space="preserve">
+    <value>Forma de letra</value>
+  </data>
+  <data name="PanoseLetterform_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseLetterform_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseLetterform_NORMAL_CONTACT" xml:space="preserve">
+    <value>Normal/De contacto</value>
+  </data>
+  <data name="PanoseLetterform_NORMAL_WEIGHTED" xml:space="preserve">
+    <value>Normal/Ponderada</value>
+  </data>
+  <data name="PanoseLetterform_NORMAL_BOXED" xml:space="preserve">
+    <value>Normal/Enmarcada</value>
+  </data>
+  <data name="PanoseLetterform_NORMAL_FLATTENED" xml:space="preserve">
+    <value>Normal/Aplanada</value>
+  </data>
+  <data name="PanoseLetterform_NORMAL_ROUNDED" xml:space="preserve">
+    <value>Normal/Redondeada</value>
+  </data>
+  <data name="PanoseLetterform_NORMAL_OFF_CENTER" xml:space="preserve">
+    <value>Normal/Descentrada</value>
+  </data>
+  <data name="PanoseLetterform_NORMAL_SQUARE" xml:space="preserve">
+    <value>Normal/Cuadrada</value>
+  </data>
+  <data name="PanoseLetterform_OBLIQUE_CONTACT" xml:space="preserve">
+    <value>Oblicua/De contacto</value>
+  </data>
+  <data name="PanoseLetterform_OBLIQUE_WEIGHTED" xml:space="preserve">
+    <value>Oblicua/Ponderada</value>
+  </data>
+  <data name="PanoseLetterform_OBLIQUE_BOXED" xml:space="preserve">
+    <value>Oblicua/Enmarcada</value>
+  </data>
+  <data name="PanoseLetterform_OBLIQUE_FLATTENED" xml:space="preserve">
+    <value>Oblicua/Aplanada</value>
+  </data>
+  <data name="PanoseLetterform_OBLIQUE_ROUNDED" xml:space="preserve">
+    <value>Oblicua/Redondeada</value>
+  </data>
+  <data name="PanoseLetterform_OBLIQUE_OFF_CENTER" xml:space="preserve">
+    <value>Oblicua/Descentrada</value>
+  </data>
+  <data name="PanoseLetterform_OBLIQUE_SQUARE" xml:space="preserve">
+    <value>Oblicua/Cuadrada</value>
+  </data>
+  <data name="PanoseMidline" xml:space="preserve">
+    <value>Línea media</value>
+  </data>
+  <data name="PanoseMidline_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseMidline_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseMidline_STANDARD_TRIMMED" xml:space="preserve">
+    <value>Estándar/Recortada</value>
+  </data>
+  <data name="PanoseMidline_STANDARD_POINTED" xml:space="preserve">
+    <value>Estándar/Puntiaguda</value>
+  </data>
+  <data name="PanoseMidline_STANDARD_SERIFED" xml:space="preserve">
+    <value>Estándar/Con remate</value>
+  </data>
+  <data name="PanoseMidline_HIGH_TRIMMED" xml:space="preserve">
+    <value>Alta/Recortada</value>
+  </data>
+  <data name="PanoseMidline_HIGH_POINTED" xml:space="preserve">
+    <value>Alta/Puntiaguda</value>
+  </data>
+  <data name="PanoseMidline_HIGH_SERIFED" xml:space="preserve">
+    <value>Alta/Con remate</value>
+  </data>
+  <data name="PanoseMidline_CONSTANT_TRIMMED" xml:space="preserve">
+    <value>Constante/Recortada</value>
+  </data>
+  <data name="PanoseMidline_CONSTANT_POINTED" xml:space="preserve">
+    <value>Constante/Puntiaguda</value>
+  </data>
+  <data name="PanoseMidline_CONSTANT_SERIFED" xml:space="preserve">
+    <value>Constante/Con remate</value>
+  </data>
+  <data name="PanoseMidline_LOW_TRIMMED" xml:space="preserve">
+    <value>Baja/Recortada</value>
+  </data>
+  <data name="PanoseMidline_LOW_POINTED" xml:space="preserve">
+    <value>Baja/Puntiaguda</value>
+  </data>
+  <data name="PanoseMidline_LOW_SERIFED" xml:space="preserve">
+    <value>Baja/Con remate</value>
+  </data>
+  <data name="PanoseXHeight" xml:space="preserve">
+    <value>Altura X</value>
+  </data>
+  <data name="PanoseXHeight_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseXHeight_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseXHeight_CONSTANT_SMALL" xml:space="preserve">
+    <value>Constante/Pequeña</value>
+  </data>
+  <data name="PanoseXHeight_CONSTANT_STANDARD" xml:space="preserve">
+    <value>Constante/Estándar</value>
+  </data>
+  <data name="PanoseXHeight_CONSTANT_LARGE" xml:space="preserve">
+    <value>Constante/Grande</value>
+  </data>
+  <data name="PanoseXHeight_DUCKING_SMALL" xml:space="preserve">
+    <value>Ajustada/Pequeña</value>
+  </data>
+  <data name="PanoseXHeight_DUCKING_STANDARD" xml:space="preserve">
+    <value>Ajustada/Estándar</value>
+  </data>
+  <data name="PanoseXHeight_DUCKING_LARGE" xml:space="preserve">
+    <value>Ajustada/Grande</value>
+  </data>
+  <data name="PanoseToolKind" xml:space="preserve">
+    <value>Tipo de herramienta</value>
+  </data>
+  <data name="PanoseToolKind_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseToolKind_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseToolKind_FLAT_NIB" xml:space="preserve">
+    <value>Plumilla plana</value>
+  </data>
+  <data name="PanoseToolKind_PRESSURE_POINT" xml:space="preserve">
+    <value>Punta de presión</value>
+  </data>
+  <data name="PanoseToolKind_ENGRAVED" xml:space="preserve">
+    <value>Grabado</value>
+  </data>
+  <data name="PanoseToolKind_BALL" xml:space="preserve">
+    <value>Punta de bola</value>
+  </data>
+  <data name="PanoseToolKind_BRUSH" xml:space="preserve">
+    <value>Pincel</value>
+  </data>
+  <data name="PanoseToolKind_ROUGH" xml:space="preserve">
+    <value>Rótulo/Texturizado</value>
+  </data>
+  <data name="PanoseToolKind_FELT_PEN_BRUSH_TIP" xml:space="preserve">
+    <value>Rotulador/Punta de pincel</value>
+  </data>
+  <data name="PanoseToolKind_WILD_BRUSH" xml:space="preserve">
+    <value>Pincel expresivo</value>
+  </data>
+  <data name="PanoseSpacing" xml:space="preserve">
+    <value>Espaciado</value>
+  </data>
+  <data name="PanoseSpacing_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseSpacing_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseSpacing_PROPORTIONAL_SPACED" xml:space="preserve">
+    <value>Proporcional</value>
+  </data>
+  <data name="PanoseSpacing_MONOSPACED" xml:space="preserve">
+    <value>Monoespaciado</value>
+  </data>
+  <data name="PanoseAspectRatio" xml:space="preserve">
+    <value>Relación de aspecto</value>
+  </data>
+  <data name="PanoseAspectRatio_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseAspectRatio_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseAspectRatio_VERY_CONDENSED" xml:space="preserve">
+    <value>Muy condensada</value>
+  </data>
+  <data name="PanoseAspectRatio_CONDENSED" xml:space="preserve">
+    <value>Condensada</value>
+  </data>
+  <data name="PanoseAspectRatio_NORMAL" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="PanoseAspectRatio_EXPANDED" xml:space="preserve">
+    <value>Expandida</value>
+  </data>
+  <data name="PanoseAspectRatio_VERY_EXPANDED" xml:space="preserve">
+    <value>Muy expandida</value>
+  </data>
+  <data name="PanoseScriptTopology" xml:space="preserve">
+    <value>Topología (Caligráfica)</value>
+  </data>
+  <data name="PanoseScriptTopology_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseScriptTopology_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseScriptTopology_ROMAN_DISCONNECTED" xml:space="preserve">
+    <value>Romana/Desconectada</value>
+  </data>
+  <data name="PanoseScriptTopology_ROMAN_TRAILING" xml:space="preserve">
+    <value>Romana/Con rasgo final</value>
+  </data>
+  <data name="PanoseScriptTopology_ROMAN_CONNECTED" xml:space="preserve">
+    <value>Romana/Conectada</value>
+  </data>
+  <data name="PanoseScriptTopology_CURSIVE_DISCONNECTED" xml:space="preserve">
+    <value>Cursiva/Desconectada</value>
+  </data>
+  <data name="PanoseScriptTopology_CURSIVE_TRAILING" xml:space="preserve">
+    <value>Cursiva/Con rasgo final</value>
+  </data>
+  <data name="PanoseScriptTopology_CURSIVE_CONNECTED" xml:space="preserve">
+    <value>Cursiva/Conectada</value>
+  </data>
+  <data name="PanoseScriptTopology_BLACKLETTER_DISCONNECTED" xml:space="preserve">
+    <value>Gótica/Desconectada</value>
+  </data>
+  <data name="PanoseScriptTopology_BLACKLETTER_TRAILING" xml:space="preserve">
+    <value>Gótica/Con rasgo final</value>
+  </data>
+  <data name="PanoseScriptTopology_BLACKLETTER_CONNECTED" xml:space="preserve">
+    <value>Gótica/Conectada</value>
+  </data>
+  <data name="PanoseScriptForm" xml:space="preserve">
+    <value>Forma (Caligráfica)</value>
+  </data>
+  <data name="PanoseScriptForm_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseScriptForm_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseScriptForm_UPRIGHT_NO_WRAPPING" xml:space="preserve">
+    <value>Vertical/Sin envolvente</value>
+  </data>
+  <data name="PanoseScriptForm_UPRIGHT_SOME_WRAPPING" xml:space="preserve">
+    <value>Vertical/Larga envolvente parcial</value>
+  </data>
+  <data name="PanoseScriptForm_UPRIGHT_MORE_WRAPPING" xml:space="preserve">
+    <value>Vertical/Mayor envolvente</value>
+  </data>
+  <data name="PanoseScriptForm_UPRIGHT_EXTREME_WRAPPING" xml:space="preserve">
+    <value>Vertical/Envolvente extrema</value>
+  </data>
+  <data name="PanoseScriptForm_OBLIQUE_NO_WRAPPING" xml:space="preserve">
+    <value>Oblicua/Sin envolvente</value>
+  </data>
+  <data name="PanoseScriptForm_OBLIQUE_SOME_WRAPPING" xml:space="preserve">
+    <value>Oblicua/Larga envolvente parcial</value>
+  </data>
+  <data name="PanoseScriptForm_OBLIQUE_MORE_WRAPPING" xml:space="preserve">
+    <value>Oblicua/Mayor envolvente</value>
+  </data>
+  <data name="PanoseScriptForm_OBLIQUE_EXTREME_WRAPPING" xml:space="preserve">
+    <value>Oblicua/Envolvente extrema</value>
+  </data>
+  <data name="PanoseScriptForm_EXAGGERATED_NO_WRAPPING" xml:space="preserve">
+    <value>Exagerada/Sin envolvente</value>
+  </data>
+  <data name="PanoseScriptForm_EXAGGERATED_SOME_WRAPPING" xml:space="preserve">
+    <value>Exagerada/Larga envolvente parcial</value>
+  </data>
+  <data name="PanoseScriptForm_EXAGGERATED_MORE_WRAPPING" xml:space="preserve">
+    <value>Exagerada/Mayor envolvente</value>
+  </data>
+  <data name="PanoseScriptForm_EXAGGERATED_EXTREME_WRAPPING" xml:space="preserve">
+    <value>Exagerada/Envolvente extrema</value>
+  </data>
+  <data name="PanoseFinials" xml:space="preserve">
+    <value>Terminales</value>
+  </data>
+  <data name="PanoseFinials_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseFinials_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseFinials_NONE_NO_LOOPS" xml:space="preserve">
+    <value>Ninguno/Sin bucles</value>
+  </data>
+  <data name="PanoseFinials_NONE_CLOSED_LOOPS" xml:space="preserve">
+    <value>Ninguno/Bucles cerrados</value>
+  </data>
+  <data name="PanoseFinials_NONE_OPEN_LOOPS" xml:space="preserve">
+    <value>Ninguno/Bucles abiertos</value>
+  </data>
+  <data name="PanoseFinials_SHARP_NO_LOOPS" xml:space="preserve">
+    <value>Afilados/Sin bucles</value>
+  </data>
+  <data name="PanoseFinials_SHARP_CLOSED_LOOPS" xml:space="preserve">
+    <value>Afilados/Bucles cerrados</value>
+  </data>
+  <data name="PanoseFinials_SHARP_OPEN_LOOPS" xml:space="preserve">
+    <value>Afilados/Bucles abiertos</value>
+  </data>
+  <data name="PanoseFinials_TAPERED_NO_LOOPS" xml:space="preserve">
+    <value>Afilados progresivos/Sin bucles</value>
+  </data>
+  <data name="PanoseFinials_TAPERED_CLOSED_LOOPS" xml:space="preserve">
+    <value>Afilados progresivos/Bucles cerrados</value>
+  </data>
+  <data name="PanoseFinials_TAPERED_OPEN_LOOPS" xml:space="preserve">
+    <value>Afilados progresivos/Bucles abiertos</value>
+  </data>
+  <data name="PanoseFinials_ROUND_NO_LOOPS" xml:space="preserve">
+    <value>Redondeados/Sin bucles</value>
+  </data>
+  <data name="PanoseFinials_ROUND_CLOSED_LOOPS" xml:space="preserve">
+    <value>Redondeados/Bucles cerrados</value>
+  </data>
+  <data name="PanoseFinials_ROUND_OPEN_LOOPS" xml:space="preserve">
+    <value>Redondeados/Bucles abiertos</value>
+  </data>
+  <data name="PanoseXAscent" xml:space="preserve">
+    <value>Ascendente de X</value>
+  </data>
+  <data name="PanoseXAscent_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseXAscent_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseXAscent_VERY_LOW" xml:space="preserve">
+    <value>Muy bajo</value>
+  </data>
+  <data name="PanoseXAscent_LOW" xml:space="preserve">
+    <value>Bajo</value>
+  </data>
+  <data name="PanoseXAscent_MEDIUM" xml:space="preserve">
+    <value>Medio</value>
+  </data>
+  <data name="PanoseXAscent_HIGH" xml:space="preserve">
+    <value>Alto</value>
+  </data>
+  <data name="PanoseXAscent_VERY_HIGH" xml:space="preserve">
+    <value>Muy alto</value>
+  </data>
+  <data name="PanoseDecorativeClass" xml:space="preserve">
+    <value>Clase (Decorativa)</value>
+  </data>
+  <data name="PanoseDecorativeClass_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseDecorativeClass_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseDecorativeClass_DERIVATIVE" xml:space="preserve">
+    <value>Derivada</value>
+  </data>
+  <data name="PanoseDecorativeClass_NONSTANDARD_TOPOLOGY" xml:space="preserve">
+    <value>Topología no estándar</value>
+  </data>
+  <data name="PanoseDecorativeClass_NONSTANDARD_ELEMENTS" xml:space="preserve">
+    <value>Elementos no estándar</value>
+  </data>
+  <data name="PanoseDecorativeClass_NONSTANDARD_ASPECT" xml:space="preserve">
+    <value>Aspecto no estándar</value>
+  </data>
+  <data name="PanoseDecorativeClass_INITIALS" xml:space="preserve">
+    <value>Letras capitulares</value>
+  </data>
+  <data name="PanoseDecorativeClass_CARTOON" xml:space="preserve">
+    <value>Caricatura/Cómics</value>
+  </data>
+  <data name="PanoseDecorativeClass_PICTURE_STEMS" xml:space="preserve">
+    <value>Astas con ilustraciones</value>
+  </data>
+  <data name="PanoseDecorativeClass_ORNAMENTED" xml:space="preserve">
+    <value>Ornamentada</value>
+  </data>
+  <data name="PanoseDecorativeClass_TEXT_AND_BACKGROUND" xml:space="preserve">
+    <value>Texto y fondo</value>
+  </data>
+  <data name="PanoseDecorativeClass_COLLAGE" xml:space="preserve">
+    <value>Collage</value>
+  </data>
+  <data name="PanoseDecorativeClass_MONTAGE" xml:space="preserve">
+    <value>Montaje</value>
+  </data>
+  <data name="PanoseAspect" xml:space="preserve">
+    <value>Aspecto</value>
+  </data>
+  <data name="PanoseAspect_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseAspect_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseAspect_SUPER_CONDENSED" xml:space="preserve">
+    <value>Supercondensado</value>
+  </data>
+  <data name="PanoseAspect_VERY_CONDENSED" xml:space="preserve">
+    <value>Muy condensado</value>
+  </data>
+  <data name="PanoseAspect_CONDENSED" xml:space="preserve">
+    <value>Condensado</value>
+  </data>
+  <data name="PanoseAspect_NORMAL" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="PanoseAspect_EXTENDED" xml:space="preserve">
+    <value>Expandido</value>
+  </data>
+  <data name="PanoseAspect_VERY_EXTENDED" xml:space="preserve">
+    <value>Muy expandido</value>
+  </data>
+  <data name="PanoseAspect_SUPER_EXTENDED" xml:space="preserve">
+    <value>Super-expandido</value>
+  </data>
+  <data name="PanoseAspect_MONOSPACED" xml:space="preserve">
+    <value>Monoespaciado</value>
+  </data>
+  <data name="PanoseFill" xml:space="preserve">
+    <value>Relleno</value>
+  </data>
+  <data name="PanoseFill_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseFill_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseFill_STANDARD_SOLID_FILL" xml:space="preserve">
+    <value>Relleno sólido estándar</value>
+  </data>
+  <data name="PanoseFill_NO_FILL" xml:space="preserve">
+    <value>Sin relleno</value>
+  </data>
+  <data name="PanoseFill_PATTERNED_FILL" xml:space="preserve">
+    <value>Relleno con patrón</value>
+  </data>
+  <data name="PanoseFill_COMPLEX_FILL" xml:space="preserve">
+    <value>Relleno complejo</value>
+  </data>
+  <data name="PanoseFill_SHAPED_FILL" xml:space="preserve">
+    <value>Relleno con forma</value>
+  </data>
+  <data name="PanoseFill_DRAWN_DISTRESSED" xml:space="preserve">
+    <value>Dibujado/Desgastado</value>
+  </data>
+  <data name="PanoseLining" xml:space="preserve">
+    <value>Delineado</value>
+  </data>
+  <data name="PanoseLining_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseLining_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseLining_NONE" xml:space="preserve">
+    <value>Ninguno</value>
+  </data>
+  <data name="PanoseLining_INLINE" xml:space="preserve">
+    <value>Línea interna</value>
+  </data>
+  <data name="PanoseLining_OUTLINE" xml:space="preserve">
+    <value>Contorno</value>
+  </data>
+  <data name="PanoseLining_ENGRAVED" xml:space="preserve">
+    <value>Grabado</value>
+  </data>
+  <data name="PanoseLining_SHADOW" xml:space="preserve">
+    <value>Sombra</value>
+  </data>
+  <data name="PanoseLining_RELIEF" xml:space="preserve">
+    <value>Relieve</value>
+  </data>
+  <data name="PanoseLining_BACKDROP" xml:space="preserve">
+    <value>Telón de fondo</value>
+  </data>
+  <data name="PanoseDecorativeTopology" xml:space="preserve">
+    <value>Topología (Decorativa)</value>
+  </data>
+  <data name="PanoseDecorativeTopology_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseDecorativeTopology_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseDecorativeTopology_STANDARD" xml:space="preserve">
+    <value>Estándar</value>
+  </data>
+  <data name="PanoseDecorativeTopology_SQUARE" xml:space="preserve">
+    <value>Cuadrada</value>
+  </data>
+  <data name="PanoseDecorativeTopology_MULTIPLE_SEGMENT" xml:space="preserve">
+    <value>Segmento múltiple</value>
+  </data>
+  <data name="PanoseDecorativeTopology_ART_DECO" xml:space="preserve">
+    <value>Art Déco</value>
+  </data>
+  <data name="PanoseDecorativeTopology_UNEVEN_WEIGHTING" xml:space="preserve">
+    <value>Grosor desigual</value>
+  </data>
+  <data name="PanoseDecorativeTopology_DIVERSE_ARMS" xml:space="preserve">
+    <value>Brazos diversos</value>
+  </data>
+  <data name="PanoseDecorativeTopology_DIVERSE_FORMS" xml:space="preserve">
+    <value>Formas diversas</value>
+  </data>
+  <data name="PanoseDecorativeTopology_LOMBARDIC_FORMS" xml:space="preserve">
+    <value>Formas lombardas</value>
+  </data>
+  <data name="PanoseDecorativeTopology_UPPER_CASE_IN_LOWER_CASE" xml:space="preserve">
+    <value>Mayúsculas en minúsculas</value>
+  </data>
+  <data name="PanoseDecorativeTopology_IMPLIED_TOPOLOGY" xml:space="preserve">
+    <value>Topología implícita</value>
+  </data>
+  <data name="PanoseDecorativeTopology_HORSESHOE_E_AND_A" xml:space="preserve">
+    <value>E y A en herradura</value>
+  </data>
+  <data name="PanoseDecorativeTopology_CURSIVE" xml:space="preserve">
+    <value>Cursiva</value>
+  </data>
+  <data name="PanoseDecorativeTopology_BLACKLETTER" xml:space="preserve">
+    <value>Gótica</value>
+  </data>
+  <data name="PanoseDecorativeTopology_SWASH_VARIANCE" xml:space="preserve">
+    <value>Variación de floritura</value>
+  </data>
+  <data name="PanoseCharacterRanges" xml:space="preserve">
+    <value>Rango de caracteres</value>
+  </data>
+  <data name="PanoseCharacterRanges_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseCharacterRanges_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseCharacterRanges_EXTENDED_COLLECTION" xml:space="preserve">
+    <value>Colección extendida</value>
+  </data>
+  <data name="PanoseCharacterRanges_LITERALS" xml:space="preserve">
+    <value>Literales</value>
+  </data>
+  <data name="PanoseCharacterRanges_NO_LOWER_CASE" xml:space="preserve">
+    <value>Sin minúsculas</value>
+  </data>
+  <data name="PanoseCharacterRanges_SMALL_CAPS" xml:space="preserve">
+    <value>Versalitas</value>
+  </data>
+  <data name="PanoseSymbolKind" xml:space="preserve">
+    <value>Clase (Símbolo)</value>
+  </data>
+  <data name="PanoseSymbolKind_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseSymbolKind_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseSymbolKind_MONTAGES" xml:space="preserve">
+    <value>Montajes</value>
+  </data>
+  <data name="PanoseSymbolKind_PICTURES" xml:space="preserve">
+    <value>Imágenes</value>
+  </data>
+  <data name="PanoseSymbolKind_SHAPES" xml:space="preserve">
+    <value>Formas</value>
+  </data>
+  <data name="PanoseSymbolKind_SCIENTIFIC" xml:space="preserve">
+    <value>Científico</value>
+  </data>
+  <data name="PanoseSymbolKind_MUSIC" xml:space="preserve">
+    <value>Música</value>
+  </data>
+  <data name="PanoseSymbolKind_EXPERT" xml:space="preserve">
+    <value>Expertos</value>
+  </data>
+  <data name="PanoseSymbolKind_PATTERNS" xml:space="preserve">
+    <value>Patrones</value>
+  </data>
+  <data name="PanoseSymbolKind_BOARDERS" xml:space="preserve">
+    <value>Bordes</value>
+  </data>
+  <data name="PanoseSymbolKind_ICONS" xml:space="preserve">
+    <value>Iconos</value>
+  </data>
+  <data name="PanoseSymbolKind_LOGOS" xml:space="preserve">
+    <value>Logotipos</value>
+  </data>
+  <data name="PanoseSymbolKind_INDUSTRY_SPECIFIC" xml:space="preserve">
+    <value>Específico de la industria</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio" xml:space="preserve">
+    <value>Relación de aspecto (Símbolo)</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio_ANY" xml:space="preserve">
+    <value>Cualquiera</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio_NO_FIT" xml:space="preserve">
+    <value>Sin ajuste</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio_NO_WIDTH" xml:space="preserve">
+    <value>Sin ancho</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio_EXCEPTIONALLY_WIDE" xml:space="preserve">
+    <value>Excepcionalmente ancho</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio_SUPER_WIDE" xml:space="preserve">
+    <value>Súper ancho</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio_VERY_WIDE" xml:space="preserve">
+    <value>Muy ancho</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio_WIDE" xml:space="preserve">
+    <value>Ancho</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio_NORMAL" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio_NARROW" xml:space="preserve">
+    <value>Estrecho</value>
+  </data>
+  <data name="PanoseSymbolAspectRatio_VERY_NARROW" xml:space="preserve">
+    <value>Muy estrecho</value>
+  </data>
+  <data name="PanoseAspectRatioAndContrast" xml:space="preserve">
+    <value>Relación de aspecto y contraste</value>
+  </data>
+  <data name="PanoseAspectRatio94" xml:space="preserve">
+    <value>Relación de aspecto del carácter 94</value>
+  </data>
+  <data name="PanoseAspectRatio119" xml:space="preserve">
+    <value>Relación de aspecto del carácter 119</value>
+  </data>
+  <data name="PanoseAspectRatio157" xml:space="preserve">
+    <value>Relación de aspecto del carácter 157</value>
+  </data>
+  <data name="PanoseAspectRatio163" xml:space="preserve">
+    <value>Relación de aspecto del carácter 163</value>
+  </data>
+  <data name="PanoseAspectRatio211" xml:space="preserve">
+    <value>Relación de aspecto del carácter 211</value>
+  </data>
+  <data name="SubsetterTitleBETA.Title" xml:space="preserve">
+    <value>Creador de subconjuntos de tipografías Segoe Icons (BETA)</value>
+  </data>
+  <data name="SubsetterTitleBETA.Description" xml:space="preserve">
+    <value>Crea un subconjunto personalizado de tipografías Segoe Icon.</value>
+  </data>
+  <data name="OutputPropertiesLabel.Text" xml:space="preserve">
+    <value>Propiedades de salida</value>
+  </data>
+  <data name="FontVersion" xml:space="preserve">
+    <value>Versión de la tipografía</value>
+  </data>
+  <data name="FontFamilyName" xml:space="preserve">
+    <value>Nombre de la familia tipográfica</value>
+  </data>
+  <data name="SubSetterClashWarningDescription.Text" xml:space="preserve">
+    <value>ADVERTENCIA: Esta tipografía tiene múltiples índices en conflicto. Por favor, elimina los caracteres en conflicto.</value>
+  </data>
+  <data name="SubSetterChosenGlyphsHeader.Text" xml:space="preserve">
+    <value>Caracteres seleccionados</value>
+  </data>
+  <data name="SubSetterChosenGlyphsLabel" xml:space="preserve">
+    <value>{0} seleccionados</value>
+  </data>
+  <data name="SubsetSuccessMessage" xml:space="preserve">
+    <value>Subconjunto de tipografía creado correctamente</value>
+  </data>
+  <data name="SettingsSubsetterBETA.Title" xml:space="preserve">
+    <value>Habilitar creador de subconjuntos Segoe Icon (BETA)</value>
+  </data>
+  <data name="SettingsSubsetterBETA.Description" xml:space="preserve">
+    <value>Si se habilita, permite usar el creador de subconjuntos Segoe Icon desde el menú principal de la aplicación.</value>
+  </data>
+  <data name="AddSVGHint.Text" xml:space="preserve">
+    <value>Añadir SVG</value>
+  </data>
+  <data name="CharacterMapDescription.Title" xml:space="preserve">
+    <value>Mapa de caracteres</value>
+  </data>
+  <data name="CharacterMapDescription.Description" xml:space="preserve">
+    <value>Visualiza los caracteres accesibles en una variante tipográfica (Font Face). Estos caracteres se pueden usar en la mayoría de las aplicaciones.</value>
+  </data>
+  <data name="GlyphMapDescription.Title" xml:space="preserve">
+    <value>Mapa de glifos</value>
+  </data>
+  <data name="GlyphMapDescription.Description" xml:space="preserve">
+    <value>Visualiza los glifos internos utilizados por la variante tipográfica para formar los caracteres. Por lo general, no son accesibles en otras aplicaciones.</value>
+  </data>
+  <data name="TypeRampDescription.Title" xml:space="preserve">
+    <value>Escala tipográfica</value>
+  </data>
+  <data name="TypeRampDescription.Description" xml:space="preserve">
+    <value>Muestra una vista previa de la tipografía a diferentes tamaños y explora los ejes de tipografías variables.</value>
+  </data>
+  <data name="FaceSelectorDescription.Title" xml:space="preserve">
+    <value>Variante tipográfica activa</value>
+  </data>
+  <data name="FaceSelectorDescription.Description" xml:space="preserve">
+    <value>Las variantes tipográficas (Font Faces) dentro de una misma familia pueden tener diferentes caracteres disponibles.
+
+Para las familias tipográficas que no incluyen variantes en negrita o cursiva, Windows proporcionará versiones simuladas. Es posible que estas variantes simuladas no estén disponibles en todas las aplicaciones.</value>
+  </data>
+  <data name="FaceMetadataDescription.Description" xml:space="preserve">
+    <value>Visualiza los metadatos comunes para esta variante tipográfica.</value>
+  </data>
+  <data name="FaceOpenTypeFeaturesDescription.Description" xml:space="preserve">
+    <value>Activa o desactiva funciones OpenType y glifos en color.</value>
+  </data>
+  <data name="CharacterFilterDescription.Description" xml:space="preserve">
+    <value>Filtra los caracteres mostrados según la categoría Unicode.</value>
+  </data>
+  <data name="GlyphsCount" xml:space="preserve">
+    <value>{0} glifos</value>
+  </data>
+  <data name="SimulatedFacesGlyphsMessage.Content" xml:space="preserve">
+    <value>Las variantes tipográficas simuladas solo mostrarán glifos de su variante original no simulada</value>
+  </data>
+  <data name="OptionOutlineTypes.Text" xml:space="preserve">
+    <value>Tipos de contorno</value>
+  </data>
+  <data name="FilterColorBitmap.Text" xml:space="preserve">
+    <value>Mapa de bits en color</value>
+  </data>
+  <data name="FilterLegacyBitmap.Text" xml:space="preserve">
+    <value>Mapa de bits heredado</value>
+  </data>
+  <data name="OutlineFilter" xml:space="preserve">
+    <value>contorno:</value>
+  </data>
+  <data name="SmartCollectionOutlineFilter.Text" xml:space="preserve">
+    <value>Filtro por contorno</value>
+  </data>
+  <data name="SupportedValuesHint" xml:space="preserve">
+    <value>Valores admitidos: {0}</value>
+  </data>
+  <data name="ClassNameInput.Header" xml:space="preserve">
+    <value>Nombre de clase</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Código</value>
+  </data>
+  <data name="PlusMore" xml:space="preserve">
+    <value>+ {0} más</value>
+  </data>
+</root>
