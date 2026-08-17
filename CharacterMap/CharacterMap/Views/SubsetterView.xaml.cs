@@ -1,6 +1,7 @@
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Views;
@@ -60,6 +61,25 @@ public sealed partial class SubsetterView : ViewBase, IInAppNotificationPresente
         _navHelper.Deactivate();
     }
 
+    private void NameTextBox_PreviewKeyDown(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+    {
+        /* 
+         * If we press TAB whilst focused on a name input TextBox in Preview mode, 
+         * focus the next TextBox in the list 
+         */
+        if (e.Key is not Windows.System.VirtualKey.Tab
+            || sender is not FrameworkElement f
+            || f.GetFirstAncestorOfType<SelectorItem>() is not SelectorItem container
+            || container.GetFirstAncestorOfType<GridView>() is not GridView list
+            || (list.Items.IndexOf(container.Content) is int index && index < 0)
+            || index + 1 >= list.Items.Count
+            || list.ContainerFromIndex(index + 1) is not SelectorItem nextContainer
+            || nextContainer.GetFirstDescendantOfType<TextBox>() is not TextBox nextInput)
+            return;
+
+        e.Handled = true;
+        nextInput.Focus(FocusState.Keyboard);
+    }
 
 
 
@@ -144,10 +164,12 @@ public sealed partial class SubsetterView : ViewBase, IInAppNotificationPresente
         CompositionFactory.PlayEntrance(PresentationRoot, s + 300, o);
     }
 
+
     //ConnectedAnimation _addHistoryAnim;
 
 
     #endregion
+
 
 
 }

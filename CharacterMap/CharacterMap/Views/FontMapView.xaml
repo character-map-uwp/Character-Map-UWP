@@ -720,7 +720,6 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-
                 <controls:UXRadioButtons
                     x:Name="ViewSelector"
                     ColumnSpacing="0"
@@ -729,8 +728,6 @@
                     MaxColumns="3"
                     SelectedIndex="{x:Bind ToInt(ViewModel.DisplayMode), Mode=OneWay}"
                     SelectedIndexChangedCommand="{x:Bind ViewModel.SetDisplayModeCommand}">
-
-
                     <Control.Resources>
                         <Style BasedOn="{StaticResource RadioButtonsButtonStyle}" TargetType="RadioButton">
                             <Setter Property="h:FluentAnimation.PointerOverOffset" Value="-2" />

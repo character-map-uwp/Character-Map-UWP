@@ -1,4 +1,4 @@
-﻿// Ignore Spelling: cfi
+// Ignore Spelling: cfi
 
 using Microsoft.Graphics.Canvas.Text;
 using System.Globalization;
@@ -50,9 +50,11 @@ public partial class CMFontFace : IDisposable
 
     public string FamilyName { get; }
 
-    public string FullName => field ??= $"{FamilyName} {PreferredName}";
+    public string FullName => field ??= $"{FamilyName} {PreferredName}".Trim();
 
-    public CanvasUnicodeRange[] UnicodeRanges => field ??= Face.GetUnicodeRanges();
+    // Face.GetUnicodeRanges CAN be null, as WinRT projects empty arrays as null.
+    // Who knows why. Ugh.
+    public CanvasUnicodeRange[] UnicodeRanges => field ??= Face.GetUnicodeRanges() ?? [];
 
     public Panose Panose => field ??= PanoseParser.Parse(Face.Properties);
 
@@ -78,6 +80,11 @@ public partial class CMFontFace : IDisposable
         (IsImported ? $"/Assets/Fonts/{FileName}#{FamilyName}" : Source);
 
     public DWriteFontFace Face { get; }
+
+    public string Key => field ??= $"{FullName}|{Version}";
+
+    public string Version => field ??= TryGetInfo(CanvasFontInformation.VersionStrings)?.Value ?? string.Empty;
+
 
     public CMFontFace(DWriteFontFace face, StorageFile file)
     {
@@ -209,6 +216,22 @@ public partial class CMFontFace : IDisposable
     //------------------------------------------------------
 
     public Dictionary<Character, string> SearchMap { get; set; }
+
+    /// <summary>
+    /// Attempts to return the font's own defined name for a glyph
+    /// </summary>
+    /// <param name="c"></param>
+    /// <returns></returns>
+    public string GetDefinedCharacterName(Character c)
+    {
+        if (SearchMap == null)
+            TypographyAnalyzer.PrepareSearchMap(this, TypographyAnalyzer.Analyze(this));
+
+        if (SearchMap != null && SearchMap.TryGetValue(c, out string mapping) && !string.IsNullOrWhiteSpace(mapping))
+            return mapping;
+
+        return null;
+    }
 
     public string GetDescription(Character c, bool allowUnihan = false)
     {
@@ -343,8 +366,6 @@ public partial class CMFontFace : IDisposable
         {
             Utils.BuilderPool.Return(sb);
         }
-
-
     }
 
 

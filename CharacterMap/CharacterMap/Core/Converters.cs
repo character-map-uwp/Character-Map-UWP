@@ -1,3 +1,4 @@
+using System.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
@@ -30,6 +31,8 @@ public static class Converters
     public static Visibility TrueAndTrueAndFalseToVis(bool a, bool b, bool c) => a && b && !c ? Visibility.Visible : Visibility.Collapsed;
     public static Visibility TrueAndTrueOrTrueToVis(bool a, bool b, bool c) => a && (b || c) ? Visibility.Visible : Visibility.Collapsed;
 
+    public static Visibility GreaterThanToVis(int bound, int count) => count > bound ? Visibility.Visible : Visibility.Collapsed;
+    public static bool GreaterThan(int bound, int count) => count > bound;
 
     public static bool IsNull(object obj) => obj == null;
     public static bool IsNotNull(object obj) => obj != null;
@@ -38,6 +41,7 @@ public static class Converters
     public static bool IsNotNullOrEmpty(string obj) => !string.IsNullOrEmpty(obj);
     public static bool IsNotNullOrWhiteSpace(string obj) => !string.IsNullOrWhiteSpace(obj);
     public static Visibility IsNullOrEmptyToVis(string obj) => string.IsNullOrEmpty(obj) ? Visibility.Visible : Visibility.Collapsed;
+    public static Visibility IsNotNullOrEmptyToVis(string obj) => !string.IsNullOrEmpty(obj) ? Visibility.Visible : Visibility.Collapsed;
 
     public static bool IsLongString(string str) => str != null && str.Length > 2048;
     public static bool IsNotLongString(string str) => !IsLongString(str);

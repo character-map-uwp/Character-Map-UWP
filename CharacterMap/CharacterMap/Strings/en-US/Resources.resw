@@ -2845,23 +2845,16 @@ Requires a restart to take effect.</value>
     <value>Active Font Face</value>
   </data>
   <data name="FaceSelectorDescription.Description" xml:space="preserve">
-    <value>Font Faces within the same Font Family may have different available characters.&#x0a;&#x0a;For Font Families that do not provide Bold or Oblique Faces, Windows will provide simulated versions. These Simulated Faces may not be available in all apps.</value>
+    <value>Font Faces within the same Font Family may have different available characters.
+
+For Font Families that do not provide Bold or Oblique Faces, Windows will provide simulated versions. These Simulated Faces may not be available in all apps.</value>
   </data>
-  <!--<data name="FaceMetadataDescription.Title" xml:space="preserve">
-    <value></value>
-  </data>-->
   <data name="FaceMetadataDescription.Description" xml:space="preserve">
     <value>View common Font metadata for this Font Face.</value>
   </data>
-  <!--<data name="FaceOpenTypeFeaturesDescription.Title" xml:space="preserve">
-    <value></value>
-  </data>-->
   <data name="FaceOpenTypeFeaturesDescription.Description" xml:space="preserve">
     <value>Toggle OpenType font features and colour glyphs.</value>
   </data>
-  <!--<data name="CharacterFilterDescription.Title" xml:space="preserve">
-    <value></value>
-  </data>-->
   <data name="CharacterFilterDescription.Description" xml:space="preserve">
     <value>Filter displayed characters by Unicode Category.</value>
   </data>
@@ -2871,7 +2864,31 @@ Requires a restart to take effect.</value>
   <data name="SimulatedFacesGlyphsMessage.Content" xml:space="preserve">
     <value>Simulated font faces will only display glyphs from their original non-simulated face</value>
   </data>
-
-
-  
+  <data name="OptionOutlineTypes.Text" xml:space="preserve">
+    <value>Outline Types</value>
+  </data>
+  <data name="FilterColorBitmap.Text" xml:space="preserve">
+    <value>Color Bitmap</value>
+  </data>
+  <data name="FilterLegacyBitmap.Text" xml:space="preserve">
+    <value>Legacy Bitmap</value>
+  </data>
+  <data name="OutlineFilter" xml:space="preserve">
+    <value>outline:</value>
+  </data>
+  <data name="SmartCollectionOutlineFilter.Text" xml:space="preserve">
+    <value>Outline Filter</value>
+  </data>
+  <data name="SupportedValuesHint" xml:space="preserve">
+    <value>Supported Values: {0}</value>
+  </data>
+  <data name="ClassNameInput.Header" xml:space="preserve">
+    <value>Class Name</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="PlusMore" xml:space="preserve">
+    <value>+ {0} more</value>
+  </data>
 </root>

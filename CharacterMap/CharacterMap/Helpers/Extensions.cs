@@ -10,6 +10,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Helpers;
 
@@ -228,5 +229,44 @@ public static class Extensions
             && bounds.Width > 0 
             && !double.IsInfinity(bounds.Height) 
             && bounds.Height > 0;
+    }
+
+    public static Matrix3x2 ToMatrix3x2(this Transform transform)
+    {
+        if (transform is null)
+            return Matrix3x2.Identity;
+
+        if (transform is MatrixTransform mt)
+        {
+            return new Matrix3x2(
+                (float)mt.Matrix.M11, (float)mt.Matrix.M12,
+                (float)mt.Matrix.M21, (float)mt.Matrix.M22,
+                (float)mt.Matrix.OffsetX, (float)mt.Matrix.OffsetY);
+        }
+        if (transform is TranslateTransform tt)
+            return Matrix3x2.CreateTranslation((float)tt.X, (float)tt.Y);
+
+        if (transform is ScaleTransform st)
+            return Matrix3x2.CreateScale((float)st.ScaleX, (float)st.ScaleY, new((float)st.CenterX, (float)st.CenterY));
+
+        if (transform is RotateTransform rt)
+            return Matrix3x2.CreateRotation((float)(rt.Angle * Math.PI / 180.0), new((float)rt.CenterX, (float)rt.CenterY));
+
+        if (transform is SkewTransform skt)
+        {
+            float radX = (float)(skt.AngleX * Math.PI / 180.0);
+            float radY = (float)(skt.AngleY * Math.PI / 180.0);
+            return Matrix3x2.CreateSkew(radX, radY, new((float)skt.CenterX, (float)skt.CenterY));
+        }
+
+        if (transform is TransformGroup tg)
+        {
+            Matrix3x2 result = Matrix3x2.Identity;
+            foreach (Transform child in tg.Children)
+                result *= child.ToMatrix3x2();
+            return result;
+        }
+
+        return Matrix3x2.Identity;
     }
 }

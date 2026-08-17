@@ -5,6 +5,7 @@
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:m="using:CharacterMap.Models"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Uid="DigCreateCollection"
     CornerRadius="{StaticResource PopupCornerRadius}"
@@ -169,6 +170,31 @@
                         </StackPanel>
                     </TextBox.Header>
                 </TextBox>
+                <TextBox Text="{Binding FilterOutlines, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" ToolTipService.ToolTip="{x:Bind core:Converters.GetFormat('SupportedValuesHint', m:BasicFontFilter.SUPPORTED_OUTLINE_VALUES)}">
+                    <TextBox.Header>
+                        <StackPanel
+                            Margin="0 -2"
+                            Background="Transparent"
+                            Orientation="Horizontal"
+                            Spacing="4">
+                            <TextBlock
+                                x:Uid="SmartCollectionOutlineFilter"
+                                VerticalAlignment="Center"
+                                d:Text="{core:Localizer Key=SmartCollectionOutlineFilter/Text}" />
+                            <Border
+                                Padding="4 2"
+                                VerticalAlignment="Center"
+                                Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                                CornerRadius="4">
+                                <TextBlock
+                                    FontFamily="Consolas"
+                                    FontSize="12"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Text="{core:Localizer Key=OutlineFilter}" />
+                            </Border>
+                        </StackPanel>
+                    </TextBox.Header>
+                </TextBox>
             </StackPanel>
         </StackPanel>
 
@@ -192,17 +218,24 @@
                 d:Text="11 results" />
 
             <ListView
-                MaxHeight="238"
+                MaxHeight="338"
                 core:Properties.ToolTipTemplate="{StaticResource FontListToolTipTemplate}"
                 ItemTemplate="{StaticResource FontListItemTemplateSimple}"
                 ItemsSource="{Binding ResultsPreview}"
                 SelectionMode="None">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="Margin" Value="0 0 0 2" />
+                        <Setter Property="Padding" Value="4" />
+                        <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="ListViewItem">
-                                    <ContentPresenter Content="{TemplateBinding Content}" />
+                                    <ContentPresenter
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        Content="{TemplateBinding Content}" />
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>

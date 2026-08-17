@@ -73,6 +73,12 @@ public static class InAppNotificationHelper
             var content = ResourceHelper.InflateDataTemplate("SubsetSuccessfulNotificationTemplate", ssm);
             ShowNotification(presenter, content, 5000);
         }
+        else if (msg.Data is ActionFailedMessage afm)
+        {
+            var content = ResourceHelper.InflateDataTemplate("ActionFailedNotification", afm);
+            content.Tag = InAppNotification.ERROR_STATE;
+            ShowNotification(presenter, content, 5000);
+        }
         else if (msg.Data is string s)
         {
             ShowNotification(presenter, s, msg.DurationInMilliseconds > 0 ? msg.DurationInMilliseconds : 4000);

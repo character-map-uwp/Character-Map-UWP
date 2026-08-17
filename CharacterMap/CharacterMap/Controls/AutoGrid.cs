@@ -7,7 +7,7 @@ namespace CharacterMap.Controls;
 [DependencyProperty<Orientation>("Orientation", Orientation.Vertical, nameof(InvalidateArrange))]
 public partial class AutoGrid : Grid
 {
-    partial void OnDefinitionsChanged(string o, string n) => Properties.SetGridDefinitions(this, n);
+    partial void OnDefinitionsChanged(string o, string n) { Properties.SetGridDefinitions(this, n); InvalidateArrange(); }
 
     protected override Size ArrangeOverride(Size finalSize)
     {

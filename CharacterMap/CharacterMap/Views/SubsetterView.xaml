@@ -209,7 +209,7 @@
                             core:Properties.CompositeTransform="True"
                             Background="Transparent"
                             BorderThickness="0"
-                            Command="{x:Bind ViewModel.GoBackCommand}"
+                            Click="{x:Bind ViewModel.GoBack}"
                             CornerRadius="0"
                             Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
                             Style="{StaticResource AccentButtonStyle}"
@@ -287,7 +287,7 @@
                                 <Button
                                     x:Name="OpenButton"
                                     Grid.Column="1"
-                                    Command="{x:Bind ViewModel.OpenCommand}"
+                                    Command="{x:Bind ViewModel.OpenFontCommand}"
                                     Style="{StaticResource SmolButton}"
                                     ToolTipService.ToolTip="{core:Localizer Key=FontFileMenuItem/Text}">
                                     <Button.KeyboardAccelerators>
@@ -373,7 +373,7 @@
 
                                 <Button
                                     x:Name="SelectAllButton"
-                                    Command="{x:Bind ViewModel.SelectAllCommand}"
+                                    Click="{x:Bind ViewModel.SelectAll}"
                                     Style="{StaticResource SmolButton}"
                                     ToolTipService.ToolTip="{core:Localizer Key=AppBtnSelectAll/Label}"
                                     d:IsEnabled="False"
@@ -383,7 +383,7 @@
 
                                 <Button
                                     x:Name="ClearSelectionButton"
-                                    Command="{x:Bind ViewModel.ClearSelectionCommand}"
+                                    Click="{x:Bind ViewModel.ClearSelection}"
                                     Style="{StaticResource SmolButton}"
                                     ToolTipService.ToolTip="{core:Localizer Key=ClearSelectionLabel}"
                                     d:IsEnabled="False"
@@ -513,11 +513,38 @@
                                 SelectionMode="None">
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="vm:FaceSelectionModel">
-                                        <TextBlock Margin="8" TextWrapping="Wrap">
-                                            <Run FontWeight="Bold" Text="{x:Bind DisplayName}" />
-                                            <Run FontWeight="Bold" Text="{x:Bind DisplayVariant}" />
-                                            <LineBreak /><Run Text="{x:Bind core:Converters.GetFormat('SubSetterChosenGlyphsLabel', SelectedCount), Mode=OneWay}" />
-                                        </TextBlock>
+                                        <StackPanel Margin="8" Spacing="8">
+                                            <TextBlock TextWrapping="Wrap">
+                                                <Run FontWeight="Bold" Text="{x:Bind DisplayName}" />
+                                                <Run FontWeight="Bold" Text="{x:Bind DisplayVariant}" />
+                                                <LineBreak /><Run Text="{x:Bind core:Converters.GetFormat('SubSetterChosenGlyphsLabel', SelectedCount), Mode=OneWay}" />
+                                            </TextBlock>
+                                            <StackPanel
+                                                x:Name="SVGPreview"
+                                                x:Load="{x:Bind core:Converters.GreaterThan(0, CustomGlyphs.Count), Mode=OneWay}"
+                                                Margin="0 8 0 0">
+                                                <ItemsControl ItemsSource="{x:Bind GetCustomPreview(20, CustomGlyphs.Count), Mode=OneWay}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <toolkit:WrapPanel HorizontalSpacing="8" VerticalSpacing="8" />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Image
+                                                                Width="20"
+                                                                Height="20"
+                                                                Source="{Binding CustomImagePath}"
+                                                                Stretch="Uniform" />
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                                <TextBlock
+                                                    Margin="0 8 0 0"
+                                                    Text="{x:Bind CustomFooter, Mode=OneWay}"
+                                                    Visibility="{x:Bind core:Converters.IsNotNullOrEmptyToVis(CustomFooter), Mode=OneWay}" />
+                                            </StackPanel>
+                                        </StackPanel>
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                             </ListView>
@@ -525,7 +552,7 @@
                             <controls:UXButton
                                 Grid.Row="3"
                                 HorizontalAlignment="Stretch"
-                                Command="{x:Bind ViewModel.ShowPreviewCommand}"
+                                Click="{x:Bind ViewModel.ShowPreview}"
                                 Content="{core:Localizer Key=Preview}"
                                 IsEnabled="{x:Bind ViewModel.IsPreviewable, Mode=OneWay}" />
 
@@ -533,6 +560,64 @@
 
 
                     </Grid>
+
+                </Grid>
+
+                <Grid
+                    x:Name="SVGImportPreviewRoot"
+                    core:Properties.CompositeTransform="True"
+                    core:Properties.GridDefinitions="r rAuto"
+                    ChildrenTransitions="{StaticResource RepositionTransitions}"
+                    Visibility="Collapsed">
+
+                    <Grid Padding="20 0" core:Properties.GridDefinitions="rAuto r rAuto rs12">
+
+                        <StackPanel Margin="0 36 0 -8">
+                            <TextBlock
+                                FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                FontSize="64"
+                                FontWeight="ExtraBlack"
+                                OpticalMarginAlignment="TrimSideBearings"
+                                Text="SVG IMPORT PREVIEW"
+                                TextTrimming="CharacterEllipsis" />
+
+                        </StackPanel>
+
+
+                        <Image
+                            Grid.Row="1"
+                            Margin="48"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Source="{Binding ViewModel.SvgPreview.CustomImagePath}"
+                            Stretch="Uniform" />
+                    </Grid>
+
+                    <Grid Grid.Row="1" Background="{StaticResource AltHostBrush}">
+
+                        <StackPanel
+                            Margin="8 8 8 16"
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal"
+                            Spacing="8">
+
+                            <Button
+                                MinWidth="128"
+                                h:FluentAnimation.PointerOver="ContentPresenter.Content"
+                                h:FluentAnimation.PointerOverOffset="-2"
+                                h:FluentAnimation.Pressed="ContentPresenter"
+                                Click="{x:Bind ViewModel.AcceptSVG}"
+                                Content="{core:Localizer Key=AddButton/Label}"
+                                Style="{StaticResource AccentButtonStyle}"
+                                d:Content="{core:Localizer Key=BtnContinue/Content}" />
+                            <Button
+                                MinWidth="128"
+                                Click="{x:Bind ViewModel.GoBack}"
+                                Content="{core:Localizer Key=Cancel}"
+                                Style="{StaticResource DefaultThemeButtonStyle}" />
+                        </StackPanel>
+                    </Grid>
+
 
                 </Grid>
 
@@ -632,14 +717,22 @@
                                                 <SvgImageSource UriSource="{Binding CustomImagePath}" />
                                             </Image.Source>
                                         </Image>
-                                        <TextBlock
-                                            Margin="0 0 0 4"
+                                        <TextBox
+                                            Height="24"
+                                            MinHeight="16"
+                                            Margin="0 0 0 0"
+                                            Padding="0 4 0 0"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Bottom"
+                                            Background="Transparent"
+                                            BorderThickness="0"
                                             FontSize="10"
                                             Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                            HorizontalTextAlignment="Center"
                                             IsTextScaleFactorEnabled="False"
-                                            Text="{x:Bind Character.UnicodeIndex}" />
+                                            PreviewKeyDown="NameTextBox_PreviewKeyDown"
+                                            Text="{x:Bind GlyphName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            TextAlignment="Center" />
                                         <Border
                                             x:Name="Warning"
                                             Width="20"
@@ -670,23 +763,6 @@
                         </GridView>
                     </Grid>
 
-                    <!--<Button
-                        x:Name="SaveButton"
-                        x:Uid="SaveButton"
-                        Grid.Column="1"
-                        HorizontalAlignment="Right"
-                        Command="{x:Bind ViewModel.SubsetCommand}"
-                        IsEnabled="{x:Bind ViewModel.IsExportable, Mode=OneWay}"
-                        Style="{StaticResource SmolButton}"
-                        d:ToolTipService.ToolTip="{core:Localizer Key=SaveButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
-                        <Button.KeyboardAccelerators>
-                            <KeyboardAccelerator Key="S" Modifiers="Control" />
-                        </Button.KeyboardAccelerators>
-
-                        <FontIcon core:Properties.ThemeIcon="Save" />
-                    </Button>-->
-
-
                     <Grid
                         x:Name="BottomBar"
                         Grid.Row="1"
@@ -698,6 +774,58 @@
                             HorizontalAlignment="Right"
                             Orientation="Horizontal"
                             Spacing="8">
+
+                            <Button
+                                MinWidth="128"
+                                Margin="0 0 48 0"
+                                Content="{core:Localizer Key=CodeLabel}"
+                                IsEnabled="{x:Bind ViewModel.PreviewList.HasNamedGlyphs, Mode=OneWay, FallbackValue=False}"
+                                Style="{StaticResource DefaultThemeButtonStyle}">
+                                <core:Properties.Flyout>
+                                    <Flyout x:Name="CopyFlyout" Opening="{x:Bind ViewModel.UpdateCode}">
+                                        <controls:AutoGrid
+                                            MaxWidth="400"
+                                            MaxHeight="600"
+                                            Padding="8"
+                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                            Definitions="rAuto rAuto r* rAuto rs8"
+                                            RequestedTheme="Light">
+
+                                            <TextBox
+                                                x:Uid="ClassNameInput"
+                                                PlaceholderText="{x:Bind ViewModel.FamilyName, Mode=OneWay}"
+                                                Text="{x:Bind ViewModel.GeneratedClassName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                            <ComboBox ItemsSource="{x:Bind h:CodeTemplates.Options}" SelectedItem="{x:Bind ViewModel.CodeTemplate, Mode=TwoWay}" />
+
+                                            <ScrollViewer>
+                                                <TextBlock
+                                                    IsTextSelectionEnabled="True"
+                                                    Text="{x:Bind ViewModel.GeneratedCode, Mode=OneWay}"
+                                                    TextWrapping="Wrap" />
+                                            </ScrollViewer>
+
+                                            <Grid core:Properties.GridDefinitions="c* c* cs8">
+                                                <Button
+                                                    HorizontalAlignment="Stretch"
+                                                    core:Properties.CloseOnInvoke="True"
+                                                    Click="{x:Bind ViewModel.CopyCode}"
+                                                    Content="{core:Localizer Key='BtnCopyGlyph/Label'}"
+                                                    Style="{StaticResource DefaultThemeButtonStyle}" />
+                                                <Button
+                                                    Grid.Column="1"
+                                                    HorizontalAlignment="Stretch"
+                                                    core:Properties.CloseOnInvoke="True"
+                                                    Command="{x:Bind ViewModel.SaveCodeCommand}"
+                                                    Content="{core:Localizer Key='BtnSaveGlyph/Label'}"
+                                                    Style="{StaticResource DefaultThemeButtonStyle}" />
+                                            </Grid>
+
+                                        </controls:AutoGrid>
+                                    </Flyout>
+                                </core:Properties.Flyout>
+                            </Button>
+
                             <Button
                                 MinWidth="128"
                                 h:FluentAnimation.PointerOver="ContentPresenter.Content"
@@ -715,7 +843,7 @@
                             </Button>
                             <Button
                                 MinWidth="128"
-                                Command="{x:Bind ViewModel.GoBackCommand}"
+                                Click="{x:Bind ViewModel.GoBack}"
                                 Content="{core:Localizer Key=Cancel}"
                                 Style="{StaticResource DefaultThemeButtonStyle}" />
                         </StackPanel>
@@ -802,8 +930,59 @@
 
                         </Storyboard>
                     </VisualTransition>
+                    <VisualTransition
+                        core:Properties.CreateReversed="{x:Bind ViewStates}"
+                        From="EditingState"
+                        To="SVGImportPreviewState">
+                        <Storyboard core:Properties.ReverseSpeedRatio="1.75">
+                            <ObjectAnimationUsingKeyFrames core:Properties.Target="EditRoot.Visibility" core:Properties.Value="Visible" />
+                            <ObjectAnimationUsingKeyFrames core:Properties.Target="SVGImportPreviewRoot.Visibility" core:Properties.Value="Visible" />
+                            <ObjectAnimationUsingKeyFrames core:Properties.Target="BackButton.Visibility" core:Properties.Value="Visible" />
+
+                            <!--  We need to specify the start/default keyframe for the auto-reversed state transition to create properly  -->
+                            <DoubleAnimationUsingKeyFrames core:Properties.Target="EditRoot.CompositeTransform.ScaleX">
+                                <EasingDoubleKeyFrame core:Properties.ReverseEasing="{StaticResource Accel}" KeyTime="0:0:0" Value="1" />
+                                <EasingDoubleKeyFrame EasingFunction="{StaticResource Deccel}" KeyTime="0:0:0.4" Value="0.8" />
+                            </DoubleAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames core:Properties.Target="EditRoot.CompositeTransform.ScaleY">
+                                <EasingDoubleKeyFrame core:Properties.ReverseEasing="{StaticResource Accel}" KeyTime="0:0:0" Value="1" />
+                                <EasingDoubleKeyFrame EasingFunction="{StaticResource Deccel}" KeyTime="0:0:0.4" Value="0.8" />
+                            </DoubleAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames core:Properties.Target="EditRoot.Opacity">
+                                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="1" />
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="1" />
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="0" />
+                            </DoubleAnimationUsingKeyFrames>
+
+                            <DoubleAnimationUsingKeyFrames core:Properties.Target="SVGImportPreviewRoot.CompositeTransform.TranslateY">
+                                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="200" />
+                                <EasingDoubleKeyFrame core:Properties.ReverseEasing="{StaticResource Deccel}" KeyTime="0:0:0.2" Value="200" />
+                                <EasingDoubleKeyFrame EasingFunction="{StaticResource Accel}" KeyTime="0:0:1" Value="0" />
+                            </DoubleAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames core:Properties.Target="SVGImportPreviewRoot.Opacity">
+                                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="0" />
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.6" Value="1" />
+                            </DoubleAnimationUsingKeyFrames>
+
+                            <DoubleAnimationUsingKeyFrames core:Properties.Target="BackButton.CompositeTransform.TranslateY">
+                                <EasingDoubleKeyFrame KeyTime="0:0:0" Value="-200" />
+                                <EasingDoubleKeyFrame core:Properties.ReverseEasing="{StaticResource Deccel}" KeyTime="0:0:0.2" Value="-200" />
+                                <EasingDoubleKeyFrame EasingFunction="{StaticResource Accel}" KeyTime="0:0:1" Value="0" />
+                            </DoubleAnimationUsingKeyFrames>
+
+                        </Storyboard>
+                    </VisualTransition>
+
                 </VisualStateGroup.Transitions>
                 <VisualState x:Name="EditingState" />
+                <VisualState x:Name="SVGImportPreviewState">
+                    <VisualState.Setters>
+                        <Setter Target="EditRoot.Visibility" Value="Collapsed" />
+                        <Setter Target="SVGImportPreviewRoot.Visibility" Value="Visible" />
+                        <Setter Target="BackButton.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
                 <VisualState x:Name="PreviewingState">
                     <VisualState.Setters>
                         <Setter Target="EditRoot.Visibility" Value="Collapsed" />
@@ -818,6 +997,12 @@
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ExportPreviewingState">
+                    <VisualState.Setters>
+                        <Setter Target="ExportRoot.Visibility" Value="Visible" />
+                        <Setter Target="Progress.IsActive" Value="True" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ExportSVGImportPreviewState">
                     <VisualState.Setters>
                         <Setter Target="ExportRoot.Visibility" Value="Visible" />
                         <Setter Target="Progress.IsActive" Value="True" />

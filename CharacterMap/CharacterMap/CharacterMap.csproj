@@ -213,7 +213,7 @@
     </Compile>
     <Compile Include="Controls\UXRadioButtons.cs" />
     <Compile Include="Controls\UXSlider.cs" />
-    <Compile Include="Converters\Converters.cs" />
+    <Compile Include="Controls\Converters.cs" />
     <Compile Include="Core\AlphaKeyGroup.cs" />
     <Compile Include="Core\AppSettings.cs" />
     <Compile Include="Core\DependencyPropertyAttribute.cs" />
@@ -223,9 +223,11 @@
     <Compile Include="Core\MultiValueDictionary.cs" />
     <Compile Include="Core\SvgPathParser.cs" />
     <Compile Include="Core\ThemeIconGlyph.cs" />
+    <Compile Include="Helpers\Fonts\FontClassGenerator.cs" />
+    <Compile Include="Helpers\Fonts\SfntWriter.cs" />
     <Compile Include="Helpers\StorageHelper.cs" />
-    <Compile Include="Helpers\Subsetter.cs" />
-    <Compile Include="Helpers\SVGGlyphHelper.cs" />
+    <Compile Include="Helpers\Fonts\Subsetter.cs" />
+    <Compile Include="Helpers\Fonts\SVGGlyphHelper.cs" />
     <Compile Include="Helpers\ZoomHelper.cs" />
     <Compile Include="Models\ExportOptions.cs" />
     <Compile Include="Models\FileNameWriter.cs" />
@@ -241,23 +243,23 @@
     <Compile Include="Models\SearchResultsGroup.cs" />
     <Compile Include="Models\UnicodeRangeGroup.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Helpers\Animation.cs" />
-    <Compile Include="Helpers\Composition.cs" />
-    <Compile Include="Helpers\CompositionExtensions.cs" />
-    <Compile Include="Helpers\CompositionProperty.cs" />
-    <Compile Include="Helpers\CompositionNaturalMotion.cs" />
-    <Compile Include="Helpers\FluentAnimation.cs" />
+    <Compile Include="Helpers\Animation\Animation.cs" />
+    <Compile Include="Helpers\Animation\Composition.cs" />
+    <Compile Include="Helpers\Animation\CompositionExtensions.cs" />
+    <Compile Include="Helpers\Animation\CompositionProperty.cs" />
+    <Compile Include="Helpers\Animation\CompositionNaturalMotion.cs" />
+    <Compile Include="Helpers\Animation\FluentAnimation.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="Helpers\SystemInformation.cs" />
-    <Compile Include="Helpers\Throttler.cs" />
+    <Compile Include="Helpers\Utils\Throttler.cs" />
     <Compile Include="Models\UnicodeRanges.cs" />
     <Compile Include="Models\UnicodeScriptTags.cs" />
-    <Compile Include="Helpers\WoffToOtf.cs" />
+    <Compile Include="Helpers\Fonts\WoffToOtf.cs" />
     <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Helpers\InAppNotificationHelper.cs" />
     <Compile Include="Helpers\PrintHelper.cs" />
     <Compile Include="Helpers\Unicode.cs" />
-    <Compile Include="Helpers\FontConverter.cs" />
+    <Compile Include="Helpers\Fonts\FontConverter.cs" />
     <Compile Include="Models\AdobeGlyphListMapping.cs" />
     <Compile Include="Models\BasicFontFilter.cs" />
     <Compile Include="Models\ExportNamingScheme.cs" />
@@ -268,7 +270,7 @@
     <Compile Include="Models\Messages.cs" />
     <Compile Include="Core\Converters.cs" />
     <Compile Include="Core\ExportManager.cs" />
-    <Compile Include="Helpers\CompositionFactory.cs" />
+    <Compile Include="Helpers\Animation\CompositionFactory.cs" />
     <Compile Include="Helpers\FlyoutHelper.cs" />
     <Compile Include="Core\FontFinder.cs" />
     <Compile Include="Core\CMFontFace.cs" />
@@ -279,15 +281,15 @@
     <Compile Include="Core\TypographyBehavior.cs" />
     <Compile Include="Models\SupportedLanguage.cs" />
     <Compile Include="Models\UnicodeGlyphData.cs" />
-    <Compile Include="Helpers\ConcurrencyToken.cs" />
-    <Compile Include="Helpers\Debouncer.cs" />
+    <Compile Include="Helpers\Utils\ConcurrencyToken.cs" />
+    <Compile Include="Helpers\Utils\Debouncer.cs" />
     <Compile Include="Helpers\Localization.cs" />
     <Compile Include="Helpers\ResourceHelper.cs" />
-    <Compile Include="Helpers\Singleton.cs" />
+    <Compile Include="Helpers\Utils\Singleton.cs" />
     <Compile Include="Core\Utils.cs" />
     <Compile Include="Helpers\Sqlite.cs" />
     <Compile Include="Helpers\TitleBarHelper.cs" />
-    <Compile Include="Helpers\VisualTreeHelperExtensions.cs" />
+    <Compile Include="Helpers\Utils\VisualTreeHelperExtensions.cs" />
     <Compile Include="Models\SearchTarget.cs" />
     <Compile Include="Models\DevOption.cs" />
     <Compile Include="Models\Unihan.cs" />
@@ -457,7 +459,9 @@
     <PRIResource Include="Strings\en-US\Resources.resw">
       <SubType>Designer</SubType>
     </PRIResource>
-    <PRIResource Include="Strings\en-GB\Resources.resw" />
+    <PRIResource Include="Strings\en-GB\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
     <PRIResource Include="Strings\de-DE\Resources.resw" />
     <PRIResource Include="Strings\fr-FR\Resources.resw" />
     <PRIResource Include="Strings\pl-PL\Resources.resw" />

@@ -21,11 +21,13 @@ namespace Microsoft.Toolkit.Uwp.UI.Controls;
 public partial class InAppNotification : ContentControl
 {
     private InAppNotificationDismissKind _lastDismissKind;
-    private DispatcherTimer _dismissTimer = new DispatcherTimer();
+    private DispatcherTimer _dismissTimer = new ();
     private Button _dismissButton;
     private VisualStateGroup _visualStateGroup;
     private ContentPresenter _contentProvider;
-    private List<NotificationOptions> _stackedNotificationOptions = new List<NotificationOptions>();
+    private List<NotificationOptions> _stackedNotificationOptions = [];
+
+    public const string ERROR_STATE = "ErrorState";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="InAppNotification"/> class.
@@ -86,12 +88,11 @@ public partial class InAppNotification : ContentControl
     public void Show(int duration = 0)
     {
         // We keep our current content
-        var notificationOptions = new NotificationOptions
+        NotificationOptions notificationOptions = new()
         {
             Duration = duration,
             Content = Content
         };
-
         Show(notificationOptions);
     }
 
@@ -102,7 +103,7 @@ public partial class InAppNotification : ContentControl
     /// <param name="duration">Displayed duration of the notification in ms (less or equal 0 means infinite duration)</param>
     public void Show(string text, int duration = 0)
     {
-        var notificationOptions = new NotificationOptions
+        NotificationOptions notificationOptions = new()
         {
             Duration = duration,
             Content = text
@@ -115,12 +116,13 @@ public partial class InAppNotification : ContentControl
     /// </summary>
     /// <param name="element">UIElement used as the content of the notification</param>
     /// <param name="duration">Displayed duration of the notification in ms (less or equal 0 means infinite duration)</param>
-    public void Show(UIElement element, int duration = 0)
+    public void Show(FrameworkElement element, int duration = 0)
     {
-        var notificationOptions = new NotificationOptions
+        NotificationOptions notificationOptions = new()
         {
             Duration = duration,
-            Content = element
+            Content = element,
+            IsError = element.Tag is string s && s == ERROR_STATE
         };
         Show(notificationOptions);
     }
@@ -132,7 +134,7 @@ public partial class InAppNotification : ContentControl
     /// <param name="duration">Displayed duration of the notification in ms (less or equal 0 means infinite duration)</param>
     public void Show(DataTemplate dataTemplate, int duration = 0)
     {
-        var notificationOptions = new NotificationOptions
+        NotificationOptions notificationOptions = new()
         {
             Duration = duration,
             Content = dataTemplate
@@ -246,6 +248,11 @@ public partial class InAppNotification : ContentControl
                 break;
         }
 
+        VisualStateManager.GoToState(
+            this,
+            notificationOptions.IsError ? "ErrorState" : "NormalState", 
+            false);
+
         RaiseAutomationNotification();
     }
 
@@ -255,7 +262,7 @@ public partial class InAppNotification : ContentControl
     /// <param name="notificationOptions">Information about the notification to display</param>
     private void Show(NotificationOptions notificationOptions)
     {
-        var eventArgs = new InAppNotificationOpeningEventArgs();
+        InAppNotificationOpeningEventArgs eventArgs = new ();
         Opening?.Invoke(this, eventArgs);
 
         if (eventArgs.Cancel)
@@ -662,6 +669,8 @@ internal class NotificationOptions
     /// Could be either a <see cref="string"/> or a <see cref="UIElement"/> or a <see cref="DataTemplate"/>
     /// </summary>
     public object Content { get; set; }
+
+    public bool IsError { get; set; }
 }
 
 /// <summary>

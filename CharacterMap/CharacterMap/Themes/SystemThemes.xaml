@@ -23,6 +23,11 @@
     <FontFamily x:Key="SymbolThemeFontFamily">Segoe MDL2 Assets</FontFamily>
     <FontFamily x:Key="ContentControlBoldThemeFontFamily">XamlAutoFontFamily</FontFamily>
 
+
+    <StaticResource x:Key="NotificationBackground" ResourceKey="SliderTrackValueFill" />
+    <StaticResource x:Key="NotificationBorderBrush" ResourceKey="SystemControlForegroundBaseLowBrush" />
+    <CornerRadius x:Key="NotificationCornerRadius">8</CornerRadius>
+
     <AcrylicBrush
         x:Key="DefaultHostBrush"
         win1903:TintLuminosityOpacity="0.8"
@@ -852,8 +857,8 @@
                             BackgroundTransition="{StaticResource QuickBrushTransition}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
+                            Canvas.ZIndex="-1"
                             CornerRadius="{TemplateBinding CornerRadius}" />
-
 
                         <muxc:ItemsRepeater
                             x:Name="InnerRepeater"
@@ -862,7 +867,6 @@
 
                         <ContentPresenter
                             x:Name="SelectorPresenter"
-                            x:Load="False"
                             Canvas.ZIndex="-1"
                             Content="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(controls:SelectorVisualElement.Element)}" />
 
