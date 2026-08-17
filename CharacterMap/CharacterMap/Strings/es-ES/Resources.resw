@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
+@@ -0,0 +1,2894 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -118,7 +119,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddToCollectionHint.Text" xml:space="preserve">
-    <value>Añadir a la librería</value>
+    <value>Añadir a la biblioteca</value>
   </data>
   <data name="AppName" xml:space="preserve">
     <value>Character Map UWP</value>
@@ -132,16 +133,22 @@
   <data name="BtnSelect.Content" xml:space="preserve">
     <value>Seleccionar</value>
   </data>
+  <data name="ColoredGlyphLabel.Text" xml:space="preserve">
+    <value>Glifo en color</value>
+  </data>
+  <data name="ColorGlyphToggle.OffContent" xml:space="preserve">
+    <value>Glifos monocromáticos</value>
+  </data>
   <data name="ColorGlyphToggle.OnContent" xml:space="preserve">
     <value>Glifo coloreado</value>
   </data>
   <data name="FontDisplayHeader.Text" xml:space="preserve">
-    <value>Opciones de visualización de tipografíaCaracterísticas de la tipografía</value>
+    <value>Opciones de visualización de tipografía</value>
   </data>
   <data name="FontOptionsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Características de la tipografía</value>
   </data>
-<data name="FontPropertiesButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="FontPropertiesButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Propiedades de la variante tipográfica</value>
   </data>
   <data name="FontPropFace.Text" xml:space="preserve">
@@ -248,7 +255,7 @@
   <data name="LoadingFontListError" xml:space="preserve">
     <value>Error al cargar la lista de tipografías</value>
   </data>
-<data name="NoticeLabel.Text" xml:space="preserve">
+  <data name="NoticeLabel.Text" xml:space="preserve">
     <value>Aviso</value>
   </data>
   <data name="ImportFileCopyFail" xml:space="preserve">
@@ -458,7 +465,7 @@
   <data name="DlgExceptionMessage.Text" xml:space="preserve">
     <value>Para ayudarnos a depurar y solucionar esto, considera abrir una incidencia en nuestra página de GitHub publicando los detalles. ¡Intentaremos solucionarlo de inmediato!</value>
   </data>
-<data name="BtnClose.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="BtnClose.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Cerrar</value>
   </data>
   <data name="BtnCopyDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
@@ -559,7 +566,7 @@ Requiere reiniciar para surtir efecto.</value>
     <value>Controla la mayoría de las animaciones dentro de la aplicación. Desactivar esto deshabilitará la mayoría de las animaciones.
 Activar esto tiene un impacto insignificante en el rendimiento.</value>
   </data>
-<data name="SettingsSimpleAnimationHeader.Text" xml:space="preserve">
+  <data name="SettingsSimpleAnimationHeader.Text" xml:space="preserve">
     <value>Activar animaciones</value>
   </data>
   <data name="SettingsThemeHeader.Text" xml:space="preserve">
@@ -693,7 +700,7 @@ Puedes cambiar el rango de páginas en la sección Configuración de página.</v
   <data name="SettingsCharLabel.Text" xml:space="preserve">
     <value>Etiqueta del carácter</value>
   </data>
-<data name="SettingsCharLabelDesc.Text" xml:space="preserve">
+  <data name="SettingsCharLabelDesc.Text" xml:space="preserve">
     <value>Elige la etiqueta que se mostrará debajo de cada carácter. Puede tener un leve impacto en el rendimiento del desplazamiento.</value>
   </data>
   <data name="SettingsManageSystemFonts.Content" xml:space="preserve">
@@ -822,7 +829,7 @@ Por favor, considera publicar los detalles sobre este error en GitHub para que p
   <data name="OptionScriptCJKUnifiedIdeographs.Text" xml:space="preserve">
     <value>CJK (Chino/Japonés/Coreano)</value>
   </data>
-<data name="OptionScriptCyrillic.Text" xml:space="preserve">
+  <data name="OptionScriptCyrillic.Text" xml:space="preserve">
     <value>Cirílico</value>
   </data>
   <data name="OptionScriptGreekAndCoptic.Text" xml:space="preserve">
@@ -948,7 +955,7 @@ Los archivos de tipografía importados se copian en el almacenamiento privado de
     <value>Agregar a la selección</value>
   </data>
   <data name="CopySequencePlaceholder.Text" xml:space="preserve">
-    <value>haz doble clic en un carácter o usa el botón Agregar</value>
+    <value>Haz doble clic en un carácter o usa el botón Agregar</value>
   </data>
   <data name="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Alternar panel de copia (Ctrl+B)</value>
@@ -984,7 +991,7 @@ Se copió la variante predeterminada.</value>
   <data name="DevPopupHeader.Text" xml:space="preserve">
     <value>Mostrar herramientas para desarrolladores</value>
   </data>
-<data name="ContextMenuDevCopyCommand" xml:space="preserve">
+  <data name="ContextMenuDevCopyCommand" xml:space="preserve">
     <value>Copiar {0}</value>
     <comment>Examples: "Copy Font Icon" or "Copy Glyph Code"</comment>
   </data>
@@ -1205,7 +1212,7 @@ Requiere reiniciar para aplicar los cambios.</value>
   <data name="GuideHeaderLabel.Text" xml:space="preserve">
     <value>Texto de guía</value>
   </data>
-<data name="GuideSizeLabel.Text" xml:space="preserve">
+  <data name="GuideSizeLabel.Text" xml:space="preserve">
     <value>Tamaño de la guía</value>
   </data>
   <data name="MenuToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
@@ -1458,7 +1465,7 @@ Mantén presionado para reordenar.</value>
 Tu tipografía web se convertirá al formato OTF para su instalación.</value>
     <comment>Word in such a way that encourages the user to read all the steps before continuing</comment>
   </data>
-<data name="InstallLabel.Text" xml:space="preserve">
+  <data name="InstallLabel.Text" xml:space="preserve">
     <value>Instalar</value>
   </data>
   <data name="OptionUnicodeRange/Text" xml:space="preserve">
@@ -1661,7 +1668,7 @@ De lo contrario, se seleccionará "Todas las tipografías" por defecto en cada i
   <data name="FileNameWriterXamlGlyphDesc" xml:space="preserve">
     <value>Código de glifo XAML</value>
   </data>
-<data name="SettingsGlyphNaming.Description" xml:space="preserve">
+  <data name="SettingsGlyphNaming.Description" xml:space="preserve">
     <value>Elige cómo se nombran los archivos de caracteres exportados.</value>
   </data>
   <data name="SettingsGlyphNaming.Title" xml:space="preserve">
@@ -1799,7 +1806,7 @@ Las variantes simuladas suelen ser estilos en negrita u oblicua para tipografía
 
 Requiere reiniciar la aplicación para aplicar los cambios.</value>
   </data>
-<data name="String1" xml:space="preserve">
+  <data name="String1" xml:space="preserve">
     <value>Si se activa, las variantes simuladas generadas automáticamente por Windows no se mostrarán en el selector de variantes. Las variantes simuladas suelen ser estilos en negrita u oblicua para tipografías que no incluyen sus propias variantes definidas.</value>
   </data>
   <data name="FontPropSimulated.Text" xml:space="preserve">
@@ -1942,7 +1949,7 @@ Requiere reiniciar la aplicación para aplicar los cambios.</value>
     <value>Sin remate perpendicular</value>
   </data>
   <data name="PanoseSerifStyle_FLARED" xml:space="preserve">
-    <value>Avasado</value>
+    <value>Acampanado</value>
   </data>
   <data name="PanoseSerifStyle_ROUNDED" xml:space="preserve">
     <value>Redondeado</value>
@@ -1965,7 +1972,7 @@ Requiere reiniciar la aplicación para aplicar los cambios.</value>
   <data name="PanoseWeight_THIN" xml:space="preserve">
     <value>Fino</value>
   </data>
-<data name="PanoseWeight_BOOK" xml:space="preserve">
+  <data name="PanoseWeight_BOOK" xml:space="preserve">
     <value>Normal (Book)</value>
   </data>
   <data name="PanoseWeight_MEDIUM" xml:space="preserve">
@@ -2178,7 +2185,7 @@ Requiere reiniciar la aplicación para aplicar los cambios.</value>
   <data name="PanoseLetterform_OBLIQUE_BOXED" xml:space="preserve">
     <value>Oblicua/Enmarcada</value>
   </data>
-<data name="PanoseLetterform_OBLIQUE_FLATTENED" xml:space="preserve">
+  <data name="PanoseLetterform_OBLIQUE_FLATTENED" xml:space="preserve">
     <value>Oblicua/Aplanada</value>
   </data>
   <data name="PanoseLetterform_OBLIQUE_ROUNDED" xml:space="preserve">
@@ -2361,7 +2368,7 @@ Requiere reiniciar la aplicación para aplicar los cambios.</value>
   <data name="PanoseScriptTopology_CURSIVE_CONNECTED" xml:space="preserve">
     <value>Cursiva/Conectada</value>
   </data>
-<data name="PanoseScriptTopology_BLACKLETTER_DISCONNECTED" xml:space="preserve">
+  <data name="PanoseScriptTopology_BLACKLETTER_DISCONNECTED" xml:space="preserve">
     <value>Gótica/Desconectada</value>
   </data>
   <data name="PanoseScriptTopology_BLACKLETTER_TRAILING" xml:space="preserve">
@@ -2586,7 +2593,7 @@ Requiere reiniciar la aplicación para aplicar los cambios.</value>
   <data name="PanoseFill_DRAWN_DISTRESSED" xml:space="preserve">
     <value>Dibujado/Desgastado</value>
   </data>
-<data name="PanoseLining" xml:space="preserve">
+  <data name="PanoseLining" xml:space="preserve">
     <value>Delineado</value>
   </data>
   <data name="PanoseLining_ANY" xml:space="preserve">
@@ -2763,7 +2770,7 @@ Requiere reiniciar la aplicación para aplicar los cambios.</value>
   <data name="PanoseSymbolAspectRatio_VERY_NARROW" xml:space="preserve">
     <value>Muy estrecho</value>
   </data>
-<data name="PanoseAspectRatioAndContrast" xml:space="preserve">
+  <data name="PanoseAspectRatioAndContrast" xml:space="preserve">
     <value>Relación de aspecto y contraste</value>
   </data>
   <data name="PanoseAspectRatio94" xml:space="preserve">
@@ -2782,22 +2789,22 @@ Requiere reiniciar la aplicación para aplicar los cambios.</value>
     <value>Relación de aspecto del carácter 211</value>
   </data>
   <data name="SubsetterTitleBETA.Title" xml:space="preserve">
-    <value>Creador de subconjuntos de fuentes Segoe Icons (BETA)</value>
+    <value>Creador de subconjuntos de tipografías Segoe Icons (BETA)</value>
   </data>
   <data name="SubsetterTitleBETA.Description" xml:space="preserve">
-    <value>Crea un subconjunto personalizado de fuentes Segoe Icon.</value>
+    <value>Crea un subconjunto personalizado de tipografías Segoe Icon.</value>
   </data>
   <data name="OutputPropertiesLabel.Text" xml:space="preserve">
     <value>Propiedades de salida</value>
   </data>
   <data name="FontVersion" xml:space="preserve">
-    <value>Versión de la fuente</value>
+    <value>Versión de la tipografía</value>
   </data>
   <data name="FontFamilyName" xml:space="preserve">
-    <value>Nombre de la familia de fuentes</value>
+    <value>Nombre de la familia tipográfica</value>
   </data>
   <data name="SubSetterClashWarningDescription.Text" xml:space="preserve">
-    <value>ADVERTENCIA: Esta fuente tiene múltiples índices en conflicto. Por favor, elimina los caracteres en conflicto.</value>
+    <value>ADVERTENCIA: Esta tipografía tiene múltiples índices en conflicto. Por favor, elimina los caracteres en conflicto.</value>
   </data>
   <data name="SubSetterChosenGlyphsHeader.Text" xml:space="preserve">
     <value>Caracteres seleccionados</value>
@@ -2806,7 +2813,7 @@ Requiere reiniciar la aplicación para aplicar los cambios.</value>
     <value>{0} seleccionados</value>
   </data>
   <data name="SubsetSuccessMessage" xml:space="preserve">
-    <value>Subconjunto de fuente creado correctamente</value>
+    <value>Subconjunto de tipografía creado correctamente</value>
   </data>
   <data name="SettingsSubsetterBETA.Title" xml:space="preserve">
     <value>Habilitar creador de subconjuntos Segoe Icon (BETA)</value>
@@ -2821,41 +2828,34 @@ Requiere reiniciar la aplicación para aplicar los cambios.</value>
     <value>Mapa de caracteres</value>
   </data>
   <data name="CharacterMapDescription.Description" xml:space="preserve">
-    <value>Visualiza los caracteres accesibles en una variante de fuente (Font Face). Estos caracteres se pueden usar en la mayoría de las aplicaciones.</value>
+    <value>Visualiza los caracteres accesibles en una variante tipográfica (Font Face). Estos caracteres se pueden usar en la mayoría de las aplicaciones.</value>
   </data>
   <data name="GlyphMapDescription.Title" xml:space="preserve">
     <value>Mapa de glifos</value>
   </data>
   <data name="GlyphMapDescription.Description" xml:space="preserve">
-    <value>Visualiza los glifos internos utilizados por la variante de fuente para formar los caracteres. Por lo general, no son accesibles en otras aplicaciones.</value>
+    <value>Visualiza los glifos internos utilizados por la variante tipográfica para formar los caracteres. Por lo general, no son accesibles en otras aplicaciones.</value>
   </data>
   <data name="TypeRampDescription.Title" xml:space="preserve">
     <value>Escala tipográfica</value>
   </data>
   <data name="TypeRampDescription.Description" xml:space="preserve">
-    <value>Muestra una vista previa de la fuente a diferentes tamaños y explora los ejes de fuentes variables.</value>
+    <value>Muestra una vista previa de la tipografía a diferentes tamaños y explora los ejes de tipografías variables.</value>
   </data>
   <data name="FaceSelectorDescription.Title" xml:space="preserve">
-    <value>Variante de fuente activa</value>
+    <value>Variante tipográfica activa</value>
   </data>
   <data name="FaceSelectorDescription.Description" xml:space="preserve">
-    <value>Las variantes de fuente (Font Faces) dentro de una misma familia pueden tener diferentes caracteres disponibles.&#x0a;&#x0a;Para las familias de fuentes que no incluyen variantes en negrita o cursiva, Windows proporcionará versiones simuladas. Es posible que estas variantes simuladas no estén disponibles en todas las aplicaciones.</value>
+    <value>Las variantes tipográficas (Font Faces) dentro de una misma familia pueden tener diferentes caracteres disponibles.
+
+Para las familias tipográficas que no incluyen variantes en negrita o cursiva, Windows proporcionará versiones simuladas. Es posible que estas variantes simuladas no estén disponibles en todas las aplicaciones.</value>
   </data>
-  <!--<data name="FaceMetadataDescription.Title" xml:space="preserve">
-    <value></value>
-  </data>-->
   <data name="FaceMetadataDescription.Description" xml:space="preserve">
-    <value>Visualiza los metadatos comunes para esta variante de fuente.</value>
+    <value>Visualiza los metadatos comunes para esta variante tipográfica.</value>
   </data>
-  <!--<data name="FaceOpenTypeFeaturesDescription.Title" xml:space="preserve">
-    <value></value>
-  </data>-->
   <data name="FaceOpenTypeFeaturesDescription.Description" xml:space="preserve">
     <value>Activa o desactiva funciones OpenType y glifos en color.</value>
   </data>
-  <!--<data name="CharacterFilterDescription.Title" xml:space="preserve">
-    <value></value>
-  </data>-->
   <data name="CharacterFilterDescription.Description" xml:space="preserve">
     <value>Filtra los caracteres mostrados según la categoría Unicode.</value>
   </data>
@@ -2863,9 +2863,33 @@ Requiere reiniciar la aplicación para aplicar los cambios.</value>
     <value>{0} glifos</value>
   </data>
   <data name="SimulatedFacesGlyphsMessage.Content" xml:space="preserve">
-    <value>Las variantes de fuente simuladas solo mostrarán glifos de su variante original no simulada</value>
+    <value>Las variantes tipográficas simuladas solo mostrarán glifos de su variante original no simulada</value>
   </data>
-
-
-  
+  <data name="OptionOutlineTypes.Text" xml:space="preserve">
+    <value>Tipos de contorno</value>
+  </data>
+  <data name="FilterColorBitmap.Text" xml:space="preserve">
+    <value>Mapa de bits en color</value>
+  </data>
+  <data name="FilterLegacyBitmap.Text" xml:space="preserve">
+    <value>Mapa de bits heredado</value>
+  </data>
+  <data name="OutlineFilter" xml:space="preserve">
+    <value>contorno:</value>
+  </data>
+  <data name="SmartCollectionOutlineFilter.Text" xml:space="preserve">
+    <value>Filtro por contorno</value>
+  </data>
+  <data name="SupportedValuesHint" xml:space="preserve">
+    <value>Valores admitidos: {0}</value>
+  </data>
+  <data name="ClassNameInput.Header" xml:space="preserve">
+    <value>Nombre de clase</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Código</value>
+  </data>
+  <data name="PlusMore" xml:space="preserve">
+    <value>+ {0} más</value>
+  </data>
 </root>
