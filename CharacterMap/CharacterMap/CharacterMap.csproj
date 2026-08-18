@@ -166,6 +166,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\AutoGrid.cs" />
+    <Compile Include="Controls\Brushes\MicaAltBrush.cs" />
     <Compile Include="Controls\ButtonGroup.cs" />
     <Compile Include="Controls\CategoryFlyout.cs" />
     <Compile Include="Controls\CharacterGridView.cs" />
@@ -193,6 +194,7 @@
     <Compile Include="Controls\CharacterPickerButton.cs" />
     <Compile Include="Controls\PreviewTip.cs" />
     <Compile Include="Controls\SelectorVisualElement.cs" />
+    <Compile Include="Controls\SmoothBorder.cs" />
     <Compile Include="Controls\SuggestionBox.cs" />
     <Compile Include="Controls\Toolkit\AdaptiveGridView.cs" />
     <Compile Include="Controls\UXButton.cs" />

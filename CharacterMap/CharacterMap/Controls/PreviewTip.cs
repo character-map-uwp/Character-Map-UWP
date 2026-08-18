@@ -23,6 +23,8 @@ public enum PreviewPlacement
 [AttachedProperty<FrameworkElement>("Ancestor", IsReadOnly =true)]
 public partial class PreviewTip : ContentControl
 {
+    public const double MOVE_DURATION = 0.2d;
+
     public double HorizontalOffset { get; set; }
     public double VerticalOffset { get; set; }
 
@@ -261,10 +263,11 @@ public partial class PreviewTip : ContentControl
             _v.Properties.StartAnimation(
                 _v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
                     .AddKeyFrame(1, t)
-                    .SetDuration(0.1));
+                    .SetDuration(MOVE_DURATION));
         else
             _v.SetTranslation(t);
     }
+
 
     void TrySetClamping()
     {

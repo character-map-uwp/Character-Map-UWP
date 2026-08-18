@@ -1,4 +1,4 @@
-﻿using Windows.UI;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -683,6 +683,28 @@ public static class Composition
         return animation;
     }
 
+    #region Path
+
+    public static PathKeyFrameAnimation AddKeyFrame(this PathKeyFrameAnimation animation, float normalizedProgressKey, CompositionPath value, CompositionEasingFunction ease = null)
+    {
+        animation.InsertKeyFrame(normalizedProgressKey, value, ease);
+        return animation;
+    }
+
+    public static PathKeyFrameAnimation AddKeyFrame(this PathKeyFrameAnimation animation, float normalizedProgressKey, CompositionPath value, KeySpline ease)
+    {
+        animation.InsertKeyFrame(normalizedProgressKey, value, animation.Compositor.CreateCubicBezierEasingFunction(ease));
+        return animation;
+    }
+
+    public static PathKeyFrameAnimation AddKeyFrame(this PathKeyFrameAnimation animation, float normalizedProgressKey, CompositionPath value, CubicBezierPoints ease)
+    {
+        animation.InsertKeyFrame(normalizedProgressKey, value, animation.Compositor.CreateCubicBezierEasingFunction(ease));
+        return animation;
+    }
+
+    #endregion
+
     #endregion
 
 
@@ -730,6 +752,11 @@ public static class Composition
     public static QuaternionKeyFrameAnimation CreateQuaternionKeyFrameAnimation(this CompositionObject visual, string targetProperty = null)
     {
         return TryAddGroup(visual, visual.Compositor.CreateQuaternionKeyFrameAnimation().SetSafeTarget(targetProperty));
+    }
+
+    public static PathKeyFrameAnimation CreatePathKeyFrameAnimation(this CompositionObject visual, string targetProperty = null)
+    {
+        return TryAddGroup(visual, visual.Compositor.CreatePathKeyFrameAnimation().SetSafeTarget(targetProperty));
     }
 
     public static ExpressionAnimation CreateExpressionAnimation(this CompositionObject visual)

@@ -1,4 +1,7 @@
-﻿using System.Globalization;
+﻿using Microsoft.Graphics.Canvas.Effects;
+using System.Globalization;
+using Windows.Graphics.Effects;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -641,6 +644,30 @@ public partial class CompositionFactory : DependencyObject
                         .SetDuration(DefaultOffsetDuration));
     }
 
+    public static CompositionEffectBrush CreateMicaAltBrush(Compositor compositor, bool isDark)
+    {
+        // 1. Sample desktop/wallpaper behind the window
+        CompositionBackdropBrush hostBackdrop = compositor.CreateHostBackdropBrush();
+        // 2. Mica Alt Tint Color (stronger opacity than standard Mica)
+        Color tintColor = isDark
+            ? Color.FromArgb(215, 32, 32, 32)   // Dark Theme Mica Alt tint
+            : Color.FromArgb(215, 240, 240, 240); // Light Theme Mica Alt tint
+                                                  // 3. Composite effect graph (Backdrop + Tint)
+        IGraphicsEffect graphicsEffect = new ArithmeticCompositeEffect
+        {
+            Name = "MicaAltBlend",
+            Source1 = new CompositionEffectSourceParameter("Backdrop"),
+            Source2 = new ColorSourceEffect { Name = "Tint", Color = tintColor },
+            MultiplyAmount = 0f,
+            Source1Amount = 0.25f, // Backdrop pass-through
+            Source2Amount = 0.75f, // Tint pass-through
+            Offset = 0f
+        };
+        CompositionEffectFactory factory = compositor.CreateEffectFactory(graphicsEffect);
+        CompositionEffectBrush brush = factory.CreateBrush();
+        brush.SetSourceParameter("Backdrop", hostBackdrop);
+        return brush;
+    }
 
 
 

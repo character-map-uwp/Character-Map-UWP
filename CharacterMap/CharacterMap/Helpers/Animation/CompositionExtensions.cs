@@ -39,6 +39,11 @@ public static class CompositionExtensions
         return c.GetCached("LINEAREASE", () => c.CreateLinearEasingFunction());
     }
 
+    public static CompositionEffectBrush GetMicaAltBrush(this Compositor c, bool isDark)
+    {
+        return c.GetCached($"__MICAALT{isDark}", () => CompositionFactory.CreateMicaAltBrush(c, isDark));
+    }
+
 
 
 

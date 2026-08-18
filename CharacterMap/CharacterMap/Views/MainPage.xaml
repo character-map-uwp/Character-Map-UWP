@@ -1183,6 +1183,7 @@
                     CornerRadius="0 4 4 4"
                     HorizontalOffset="5"
                     Placement="BottomEdgeLeftAligned"
+                    Style="{StaticResource PreviewTipHighContrastStyle}"
                     Target="{x:Bind FontsTabBar}" />
 
             </Grid>
