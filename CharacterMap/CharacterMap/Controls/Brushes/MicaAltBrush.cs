@@ -152,16 +152,19 @@ public class MicaAltBrush : XamlCompositionBrushBase, IXamlCompositionBrush
 
     private static Color GetTintColor(bool isDark)
     {
+        // Matches LayerOnMicaBaseAltFillColorDefault:
+        // Dark:  #733A3A3A (alpha 115, rgb 58, 58, 58)
+        // Light: #B3FFFFFF (alpha 179, rgb 255, 255, 255)
         return isDark
-            ? Color.FromArgb(215, 32, 32, 32)
-            : Color.FromArgb(215, 240, 240, 240);
+            ? Color.FromArgb(115, 58, 58, 58)
+            : Color.FromArgb(179, 255, 255, 255);
     }
 
     private static Color GetFallbackColor(bool isDark)
     {
         return isDark
-            ? Color.FromArgb(255, 32, 32, 32)
-            : Color.FromArgb(255, 240, 240, 240);
+            ? Color.FromArgb(255, 44, 44, 44)
+            : Color.FromArgb(255, 249, 249, 249);
     }
 
     public CompositionBrush GetCompositionBrush() => CompositionBrush;

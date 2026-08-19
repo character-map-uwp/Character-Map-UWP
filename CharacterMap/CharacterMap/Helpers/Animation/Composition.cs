@@ -2,6 +2,7 @@ using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
@@ -975,6 +976,107 @@ public static class Composition
     #endregion
 
 
+    #region Easing
+
+    public static CompositionEasingFunctionMode AsComp(this EasingMode mode)
+    {
+        return mode switch
+        {
+            EasingMode.EaseIn => CompositionEasingFunctionMode.In,
+            EasingMode.EaseOut => CompositionEasingFunctionMode.Out,
+            _ => CompositionEasingFunctionMode.InOut,
+        };
+    }
+
+    public static CompositionEasingFunction AsCompositionEase(this EasingFunctionBase ease, Compositor c = null)
+    {
+        if (ease is null)
+            return null;
+
+        c ??= Window.Current.Compositor;
+
+        if (ease is BackEase back)
+        {
+            return CompositionEasingFunction.CreateBackEasingFunction(
+                c, back.EasingMode.AsComp(), (float)back.Amplitude);
+        }
+
+        if (ease is BounceEase bounce)
+        {
+            return CompositionEasingFunction.CreateBounceEasingFunction(
+                c, bounce.EasingMode.AsComp(), bounce.Bounces, (float)bounce.Bounciness);
+        }
+
+        if (ease is ElasticEase elastic)
+        {
+            return CompositionEasingFunction.CreateElasticEasingFunction(
+                c, elastic.EasingMode.AsComp(), elastic.Oscillations, (float)elastic.Springiness);
+        }
+
+        if (ease is CircleEase circle)
+        {
+            return CompositionEasingFunction.CreateCircleEasingFunction(
+                c, circle.EasingMode.AsComp());
+        }
+
+        if (ease is CubicEase cubic)
+        {
+            return CompositionEasingFunction.CreateExponentialEasingFunction(
+                c, cubic.EasingMode.AsComp(), 3);
+        }
+
+        if (ease is ExponentialEase exp)
+        {
+            return CompositionEasingFunction.CreateExponentialEasingFunction(
+                c, exp.EasingMode.AsComp(), (float)exp.Exponent);
+        }
+
+        if (ease is PowerEase power)
+        {
+            return CompositionEasingFunction.CreatePowerEasingFunction(
+                c, power.EasingMode.AsComp(), (float)power.Power);
+        }
+
+        if (ease is QuadraticEase quad)
+        {
+            return CompositionEasingFunction.CreateExponentialEasingFunction(
+                c, quad.EasingMode.AsComp(), 4);
+        }
+
+        if (ease is QuarticEase quartic)
+        {
+            return CompositionEasingFunction.CreateExponentialEasingFunction(
+                c, quartic.EasingMode.AsComp(), 5);
+        }
+
+        if (ease is QuinticEase quintic)
+        {
+            return CompositionEasingFunction.CreateExponentialEasingFunction(
+                c, quintic.EasingMode.AsComp(), 6);
+        }
+
+        if (ease is SineEase sine)
+        {
+            return CompositionEasingFunction.CreateSineEasingFunction(
+                c, sine.EasingMode.AsComp());
+        }
+
+        return c.GetLinearEase();
+    }
+
+    public static CompositionEasingFunction AsCompositionEase(this Windows.UI.Xaml.Media.Animation.KeySpline spline, Compositor c = null)
+    {
+        if (spline is null)
+            return null;
+
+        c ??= Window.Current.Compositor;
+        return c.CreateCubicBezierEasingFunction(spline);
+    }
+
+
+    #endregion
+
+
     #region Extras
 
     public static CubicBezierEasingFunction CreateEase(this Compositor c, float x1, float y1, float x2, float y2)
@@ -1036,4 +1138,23 @@ public static class Composition
     #endregion
 
 
+}
+
+[DependencyProperty<Duration>("Duration", "CompositionFactory.OrchestrationDuration")]
+[DependencyProperty<EasingFunctionBase>("Ease")]
+[DependencyProperty<KeySpline>("Spline")]
+public partial class CompositionTransition : DependencyObject
+{
+    private Compositor _c => field ??= Window.Current.Compositor;
+
+    public CompositionEasingFunction GetEasingFunction()
+    {
+        if (Ease is not null)
+            return Ease.AsCompositionEase();
+
+        if (Spline is not null)
+            return _c.CreateCubicBezierEasingFunction(Spline);
+
+        return null;
+    }
 }

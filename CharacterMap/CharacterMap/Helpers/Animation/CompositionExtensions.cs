@@ -6,6 +6,21 @@ namespace CharacterMap.Helpers;
 
 public static class CompositionExtensions
 {
+    public static T UseOrchestration<T>(this T animation) where T : KeyFrameAnimation
+    {
+        return animation.AddKeyFrame(1, CompositionFactory.FINAL_VALUE).SetDuration(CompositionFactory.OrchestrationDurationSeconds);
+    }
+
+    public static Vector3KeyFrameAnimation UseOrchestration(this Vector3KeyFrameAnimation animation, Vector3 final)
+    {
+        return animation.AddKeyFrame(1, final).SetDuration(CompositionFactory.OrchestrationDurationSeconds);
+    }
+
+    public static PathKeyFrameAnimation UseOrchestration(this PathKeyFrameAnimation animation, CompositionPath final)
+    {
+        return animation.AddKeyFrame(1, final).SetDuration(CompositionFactory.OrchestrationDurationSeconds);
+    }
+
     public static UIElement EnableTranslation(this UIElement element, bool enable)
     {
         if (element is not null)
@@ -36,7 +51,7 @@ public static class CompositionExtensions
     /// <returns></returns>
     public static CompositionEasingFunction GetLinearEase(this Compositor c)
     {
-        return c.GetCached("LINEAREASE", () => c.CreateLinearEasingFunction());
+        return c.GetCached("__LINEAREASE", () => c.CreateLinearEasingFunction());
     }
 
     public static CompositionEffectBrush GetMicaAltBrush(this Compositor c, bool isDark)

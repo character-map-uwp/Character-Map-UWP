@@ -1009,7 +1009,7 @@
                     Grid.Row="1"
                     Grid.Column="1"
                     Margin="6 0 0 0">
-                    <muxc:TabView
+                    <controls:ExtendedTabView
                         x:Name="FontsTabBar"
                         x:Load="False"
                         core:Properties.ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
@@ -1028,7 +1028,7 @@
                         TabItemsSource="{x:Bind ViewModel.Fonts}"
                         Visibility="Collapsed"
                         d:Visibility="Visible">
-                        <muxc:TabView.TabItemTemplate>
+                        <controls:ExtendedTabView.TabItemTemplate>
                             <DataTemplate x:DataType="vm:FontItem" x:DefaultBindMode="OneWay">
                                 <muxc:TabViewItem
                                     core:Properties.IsCompact="{x:Bind IsCompact}"
@@ -1084,10 +1084,21 @@
                                             </TextBlock>
                                         </Grid>
                                     </muxc:TabViewItem.Header>
+                                    <core:Properties.Content>
+                                        <TextBlock
+                                            core:Properties.PreviewStringTrigger="{x:Bind Font.DefaultVariant}"
+                                            FontFamily="{Binding Font.DefaultVariant.Source}"
+                                            FontSize="18"
+                                            FontStretch="{Binding Font.DefaultVariant.DirectWriteProperties.Stretch}"
+                                            FontStyle="{Binding Font.DefaultVariant.DirectWriteProperties.Style}"
+                                            FontWeight="{Binding Font.DefaultVariant.DirectWriteProperties.Weight}"
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="Wrap" />
+                                    </core:Properties.Content>
                                 </muxc:TabViewItem>
                             </DataTemplate>
-                        </muxc:TabView.TabItemTemplate>
-                    </muxc:TabView>
+                        </controls:ExtendedTabView.TabItemTemplate>
+                    </controls:ExtendedTabView>
 
                 </Border>
 
@@ -1096,6 +1107,7 @@
                     x:Load="False"
                     Grid.Row="2"
                     Grid.ColumnSpan="3"
+                    helpers:CompositionFactory.UseSynchronisedReposition="True"
                     Background="{ThemeResource TopCardBrush}"
                     BackgroundTransition="{StaticResource RootBackgroundTransition}"
                     BorderBrush="{ThemeResource TabViewSelectedItemBorderBrush}"
@@ -1107,6 +1119,7 @@
                     Grid.Row="2"
                     Grid.ColumnSpan="3"
                     HorizontalAlignment="Stretch"
+                    helpers:CompositionFactory.UseSynchronisedReposition="True"
                     Font="{x:Bind ViewModel.CurrentFont, Mode=OneWay}">
                     <views:FontMapView.TitleRightContent>
                         <Border MinHeight="45">

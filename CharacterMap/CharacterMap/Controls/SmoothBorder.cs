@@ -30,6 +30,8 @@ public partial class SmoothBorder : ContentControl
     private DropShadow _dropShadow;
     private ShapeVisual _shapeVisual;
 
+    private SpriteVisual _bgVisual;
+
     private CompositionSpriteShape _borderShape;
     private CompositionPathGeometry _outerPathGeometry;
 
@@ -144,19 +146,18 @@ public partial class SmoothBorder : ContentControl
         _shapeVisual.Shapes.Add(_bgShape);
 
         // 3. Implicit Size Animation on _shapeVisual & _shadowVisual
-        _shapeVisual.SetImplicitAnimation(nameof(Visual.Size),
-            c.CreateVector2KeyFrameAnimation()
-                .SetTarget(nameof(Visual.Size))
-                .AddKeyFrame(1f, CompositionFactory.FINAL_VALUE)
-                .SetDuration(PreviewTip.MOVE_DURATION));
+        var size = _shapeVisual.GetCached<Vector2KeyFrameAnimation>("__SIZE_ORCHES",
+            () => _shapeVisual.CreateVector2KeyFrameAnimation(nameof(Visual.Size))
+                .UseOrchestration());
 
-        _shadowVisual.SetImplicitAnimation(nameof(Visual.Size),
-            c.CreateVector2KeyFrameAnimation()
-                .SetTarget(nameof(Visual.Size))
-                .AddKeyFrame(1f, CompositionFactory.FINAL_VALUE)
-                .SetDuration(PreviewTip.MOVE_DURATION));
+        _shapeVisual.SetImplicitAnimation(nameof(Visual.Size), size);
+        _shadowVisual.SetImplicitAnimation(nameof(Visual.Size), size);
+
+        _bgVisual = c.CreateSpriteVisual();
+        _bgVisual.SetImplicitAnimation(nameof(Visual.Size), size);
 
         _rootVisual.Children.InsertAtBottom(_shadowVisual);
+        _rootVisual.Children.InsertAbove(_bgVisual, _shadowVisual);
         _rootVisual.Children.InsertAtTop(_shapeVisual);
 
         _borderPresenter.SetChildVisual(_rootVisual);
@@ -203,6 +204,8 @@ public partial class SmoothBorder : ContentControl
             _isInitialized = true;
             UpdateGeometries(Vector2.Zero, newSize, false);
             _shapeVisual.Size = newSize;
+            if (_bgVisual is not null)
+                _bgVisual.Size = newSize;
             if (_shadowVisual is not null)
                 _shadowVisual.Size = newSize;
             return;
@@ -212,6 +215,8 @@ public partial class SmoothBorder : ContentControl
         UpdateGeometries(_currentSize, newSize, animate);
 
         _shapeVisual.Size = newSize;
+        if (_bgVisual is not null)
+            _bgVisual.Size = newSize;
         if (_shadowVisual is not null)
             _shadowVisual.Size = newSize;
     }
@@ -228,6 +233,8 @@ public partial class SmoothBorder : ContentControl
         {
             UpdateGeometries(Vector2.Zero, size, false);
             _shapeVisual.Size = size;
+            if (_bgVisual is not null)
+                _bgVisual.Size = size;
             if (_shadowVisual is not null)
                 _shadowVisual.Size = size;
             _isInitialized = true;
@@ -236,7 +243,6 @@ public partial class SmoothBorder : ContentControl
 
     private static void GetCornerParameters(CornerRadius cr, out float radius, out float topOffset, out float heightExtra)
     {
-
 
         bool hasTop = cr.TopLeft > 0 || cr.TopRight > 0;
         bool hasBottom = cr.BottomLeft > 0 || cr.BottomRight > 0;
@@ -326,14 +332,12 @@ public partial class SmoothBorder : ContentControl
             // Animate outer border path
             _outerPathGeometry.StartAnimation(
                 _outerPathGeometry.CreatePathKeyFrameAnimation(nameof(CompositionPathGeometry.Path))
-                    .AddKeyFrame(1.0f, outerPathNew)
-                    .SetDuration(PreviewTip.MOVE_DURATION));
+                    .UseOrchestration(outerPathNew));
 
             // Animate inner background path
             _innerPathGeometry.StartAnimation(
                 _innerPathGeometry.CreatePathKeyFrameAnimation(nameof(CompositionPathGeometry.Path))
-                    .AddKeyFrame(1.0f, innerPathNew)
-                    .SetDuration(PreviewTip.MOVE_DURATION));
+                    .UseOrchestration(innerPathNew));
         }
         else
         {
@@ -391,29 +395,44 @@ public partial class SmoothBorder : ContentControl
 
         using CanvasPathBuilder builder = new(resourceCreator);
 
-        // Start at top edge right before top-right corner
+        // Start at top edge before top-right corner
         builder.BeginFigure(new Vector2(right - tr, top));
 
-        // Top-right corner arc
-        builder.AddArc(new Vector2(right, top + tr), Math.Max(0.001f, tr), Math.Max(0.001f, tr), 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
+        // Top-right corner
+        if (tr > 0)
+            builder.AddArc(new Vector2(right, top + tr), tr, tr, 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
+        else
+            builder.AddLine(new Vector2(right, top));
 
         // Right edge line
         builder.AddLine(new Vector2(right, bottom - br));
 
-        // Bottom-right corner arc
-        builder.AddArc(new Vector2(right - br, bottom), Math.Max(0.001f, br), Math.Max(0.001f, br), 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
+        // Bottom-right corner
+        if (br > 0)
+            builder.AddArc(new Vector2(right - br, bottom), br, br, 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
+        else
+            builder.AddLine(new Vector2(right, bottom));
 
         // Bottom edge line
         builder.AddLine(new Vector2(left + bl, bottom));
 
-        // Bottom-left corner arc
-        builder.AddArc(new Vector2(left, bottom - bl), Math.Max(0.001f, bl), Math.Max(0.001f, bl), 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
+        // Bottom-left corner
+        if (bl > 0)
+            builder.AddArc(new Vector2(left, bottom - bl), bl, bl, 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
+        else
+            builder.AddLine(new Vector2(left, bottom));
 
         // Left edge line
         builder.AddLine(new Vector2(left, top + tl));
 
-        // Top-left corner arc
-        builder.AddArc(new Vector2(left + tl, top), Math.Max(0.001f, tl), Math.Max(0.001f, tl), 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
+        // Top-left corner
+        if (tl > 0)
+            builder.AddArc(new Vector2(left + tl, top), tl, tl, 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
+        else
+            builder.AddLine(new Vector2(left, top));
+
+        // Top edge line back to figure start
+        builder.AddLine(new Vector2(right - tr, top));
 
         builder.EndFigure(CanvasFigureLoop.Closed);
         return CanvasGeometry.CreatePath(builder);
@@ -447,6 +466,23 @@ public partial class SmoothBorder : ContentControl
             return;
 
         Compositor c = _bgShape.Compositor;
+
+        if (Background is IXamlCompositionBrush xaml)
+        {
+            _bgShape.FillBrush = null;
+            _bgVisual.Brush = xaml.GetCompositionBrush();
+            _bgVisual.Clip = _geometricClip;
+            _bgVisual.IsVisible = true;
+            _fillBrush = null;
+            return;
+        }
+
+        if (_bgVisual is not null)
+        {
+            _bgVisual.Brush = null;
+            _bgVisual.IsVisible = false;
+        }
+
         _fillBrush = CreateOrUpdateBrush(Background, _fillBrush, c);
         _bgShape.FillBrush = _fillBrush;
     }
@@ -489,9 +525,6 @@ public partial class SmoothBorder : ContentControl
 
         if (brush is LinearGradientBrush lgb)
             return lgb.AsCompositionBrush(compositor, existing as CompositionGradientBrush);
-
-        if (brush is IXamlCompositionBrush xaml)
-            return xaml.GetCompositionBrush();
 
         return null;
     }
