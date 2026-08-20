@@ -179,7 +179,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 UpdateStates();
                 UpdateDisplayMode(false);
                 break;
-            case nameof(ViewModel.SelectedVariant):
+            case nameof(ViewModel.SelectedFace):
                 _ = SetCharacterSelectionAsync();
                 break;
             case nameof(ViewModel.SelectedTypography):
@@ -199,13 +199,13 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
                             // Empty glyphs will cause the connected animation service to crash, so manually
                             // check if the rendered glyph contains content
-                            if (CharGrid.ContainerFromItem(ViewModel.SelectedChar) is FrameworkElement container
+                            if (CharGrid.ContainerFromItem(ViewModel.SelectedChar.Char) is FrameworkElement container
                                 && container.GetFirstDescendantOfType<TextBlock>() is TextBlock t)
                             {
                                 t.Measure(container.DesiredSize);
                                 if (t.DesiredSize.Height != 0 && t.DesiredSize.Width != 0)
                                 {
-                                    var ani = CharGrid.PrepareConnectedAnimation("PP", ViewModel.SelectedChar, "Text");
+                                    var ani = CharGrid.PrepareConnectedAnimation("PP", ViewModel.SelectedChar.Char, "Text");
                                     ani.TryStart(TxtPreview);
                                     CompositionFactory.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
                                 }
@@ -296,7 +296,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             switch (e.Key)
             {
                 case VirtualKey.C when Utils.IsKeyDown(VirtualKey.Shift):
-                    if (ViewModel.SelectedCharAnalysis.IsFullVectorBased)
+                    if (ViewModel.SelectedChar.Analysis.IsFullVectorBased)
                         TryCopy(CopyDataType.SVG);
                     break;
                 case VirtualKey.C:
@@ -310,10 +310,10 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 case VirtualKey.P:
                     FlyoutHelper.PrintRequested();
                     break;
-                case VirtualKey.S when ViewModel.SelectedVariant is CMFontFace v:
+                case VirtualKey.S when ViewModel.SelectedFace is CMFontFace v:
                     ExportManager.RequestExportFontFile(v);
                     break;
-                case VirtualKey.E when ViewModel.SelectedVariant is CMFontFace:
+                case VirtualKey.E when ViewModel.SelectedFace is CMFontFace:
                     Messenger.Send(new ExportRequestedMessage());
                     break;
                 case VirtualKey.Add:
@@ -338,8 +338,8 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 case VirtualKey.K:
                     _ = QuickCompareView.CreateWindowAsync(new(false));
                     break;
-                case VirtualKey.Q when ViewModel.SelectedVariant is CMFontFace va:
-                    _ = QuickCompareView.AddAsync(ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy() });
+                case VirtualKey.Q when ViewModel.SelectedFace is CMFontFace va:
+                    _ = QuickCompareView.AddAsync(ViewModel.RenderingOptions with { Axis = ViewModel.SelectedFaceAnalysis.VariationAxis.Copy() });
                     break;
                 case VirtualKey.I:
                     OpenCalligraphy();
@@ -602,9 +602,9 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         {
             ExportStyle style = ExportStyle.Black;
             Character c = ViewModel.SelectedFont?.DisplayMode == FontDisplayMode.CharacterMapState
-                ? ViewModel.SelectedChar
+                ? ViewModel.SelectedChar.Char
                 : new GlyphCharacter((ushort)(GlyphRepeater.SelectedItem is uint i ? i : 0));
-            if (ViewModel.GetCharAnalysis(c).HasColorGlyphs
+            if (ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFace).HasColorGlyphs
                 && ViewModel.ShowColorGlyphs)
                 style = ExportStyle.ColorGlyph;
 
@@ -612,7 +612,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                     new CopyToClipboardMessage(
                         DevValueType.Char,
                         c,
-                        ViewModel.GetCharAnalysis(c), type)
+                        ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFace), type)
                     { Style = style });
         }
         else
@@ -671,7 +671,6 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         }
     }
 
-
     private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         // Make sure the PreviewColumn fits properly.
@@ -697,23 +696,23 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void OnSearchBoxGotFocus(AutoSuggestBox searchBox)
     {
-        if (ViewModel.SearchResults is not null)
+        if (ViewModel.Search.Results is not null)
             searchBox.IsSuggestionListOpen = true;
         else
-            ViewModel.DebounceSearch(ViewModel.SearchQuery, ViewModel.Settings.InstantSearchDelay);
+            ViewModel.Search.DebounceSearch(ViewModel.Search.Query, ViewModel.Settings.InstantSearchDelay);
     }
 
     internal void OnSearchBoxSubmittedQuery(AutoSuggestBox searchBox)
     {
         // commented below line because it will keep search result list open even when user selected an item in search result
         // searchBox.IsSuggestionListOpen = true;
-        if (!string.IsNullOrWhiteSpace(ViewModel.SearchQuery))
+        if (!string.IsNullOrWhiteSpace(ViewModel.Search.Query))
         {
-            ViewModel.DebounceSearch(ViewModel.SearchQuery, ViewModel.Settings.InstantSearchDelay, SearchSource.ManualSubmit);
+            ViewModel.Search.DebounceSearch(ViewModel.Search.Query, ViewModel.Settings.InstantSearchDelay, SearchSource.ManualSubmit);
         }
         else
         {
-            ViewModel.SearchResults = null;
+            ViewModel.Search.Results = null;
         }
     }
 
@@ -724,7 +723,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             && string.IsNullOrEmpty(sender.Text)
             && !ViewModel.Settings.UseInstantSearch)
         {
-            ViewModel.DebounceSearch(sender.Text, 0, SearchSource.ManualSubmit);
+            ViewModel.Search.DebounceSearch(sender.Text, 0, SearchSource.ManualSubmit);
         }
     }
 
@@ -786,7 +785,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             FlyoutHelper.CreateMenu(
                 MoreMenu,
                 item.Font,
-                ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy(), Family = ViewModel.SelectedFont.Font },
+                ViewModel.RenderingOptions with { Axis = ViewModel.SelectedFaceAnalysis.VariationAxis.Copy(), Family = ViewModel.SelectedFont.Font },
                 this.Tag as FrameworkElement,
                 new()
                 {
@@ -839,7 +838,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         {
             if (null != CharGrid.SelectedItem)
             {
-                CharGrid.ScrollIntoView(ViewModel.SelectedChar, ScrollIntoViewAlignment.Default);
+                CharGrid.ScrollIntoView(CharGrid.SelectedItem, ScrollIntoViewAlignment.Default);
             }
         }, CoreDispatcherPriority.Low);
     }
@@ -911,7 +910,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             {
                 _ = ViewModel.RequestCopyToClipboardAsync(
                     new CopyToClipboardMessage(
-                        DevValueType.Char, c, ViewModel.GetCharAnalysis(c), CopyDataType.PNG)
+                        DevValueType.Char, c, ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFace), CopyDataType.PNG)
                     { Style = style });
             }
         }
@@ -937,7 +936,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             {
                 _ = ViewModel.RequestCopyToClipboardAsync(
                     new CopyToClipboardMessage(
-                        DevValueType.Char, c, ViewModel.GetCharAnalysis(c), CopyDataType.SVG)
+                        DevValueType.Char, c, ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFace), CopyDataType.SVG)
                     { Style = style });
             }
         }
@@ -951,7 +950,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
           && item.CommandParameter is DevValueType type)
         {
             _ = ViewModel.RequestCopyToClipboardAsync(
-                    new CopyToClipboardMessage(type, c, ViewModel.GetCharAnalysis(c)));
+                    new CopyToClipboardMessage(type, c, ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFace)));
         }
     }
 
@@ -996,7 +995,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void AppBarButton_Click(object sender, RoutedEventArgs e)
     {
-        AddCharToSequence(ViewModel.SelectedChar);
+        AddCharToSequence(ViewModel.SelectedChar.Char);
     }
 
     async void AddCharToSequence(Character c)
@@ -1008,7 +1007,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         ViewModel.AddCharToSequence(
             CopySequenceText.SelectionStart,
             CopySequenceText.SelectionLength,
-            ViewModel.SelectedChar);
+            ViewModel.SelectedChar.Char);
         CopySequenceText.SelectionStart = selection + 1;
 
         await Task.Delay(64);
@@ -1037,7 +1036,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void InstallButton_Click(object sender, RoutedEventArgs e)
     {
-        _ = new InstallFontDialog(ViewModel.SelectedVariantAnalysis).ShowAsync(ContentDialogPlacement.Popup);
+        _ = new InstallFontDialog(ViewModel.SelectedFaceAnalysis.Analysis).ShowAsync(ContentDialogPlacement.Popup);
     }
 
     private void AdvancedSettings_Click(object sender, RoutedEventArgs e)
@@ -1128,6 +1127,10 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     /* Character Grid Binding Helpers */
 
+    Character GetChar(CharacterAnalysisModel c) => c?.Char;
+
+    void ToModel(object c) => ViewModel.SelectedChar = new (ViewModel.SelectedFace, c as Character, ViewModel);
+
     private void UpdateDisplay()
     {
         TxtPreview.FontSize = Core.Converters.GetFontSize(ViewModel.Settings.GridSize);
@@ -1185,14 +1188,14 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
         void Update()
         {
-            if (ViewModel.SelectedCharVariations != null)
+            if (ViewModel.SelectedChar?.Variations is { } vars)
             {
                 // The character might not support the current ViewModel typography, so make sure we fallback
                 // too an appropriate selection
-                if (ViewModel.SelectedCharVariations.Contains(global))
+                if (vars.Contains(global))
                     PreviewTypographySelector.SelectedItem = global;
                 else
-                    PreviewTypographySelector.SelectedItem = ViewModel.SelectedCharVariations.FirstOrDefault();
+                    PreviewTypographySelector.SelectedItem = vars.FirstOrDefault();
             }
         }
 

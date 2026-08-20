@@ -1,6 +1,7 @@
 using CharacterMap.Views;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Graphics.Canvas.Text;
+using SQLitePCL;
 using System.Collections;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -9,6 +10,7 @@ using Windows.System;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
+using static SQLite.SQLite3;
 
 namespace CharacterMap.ViewModels;
 
@@ -24,6 +26,268 @@ public partial class RampOption : ObservableObject
     public int FontSize { get; set; } = 12;
     [ObservableProperty]
     CharacterRenderingOptions _option;
+}
+
+public partial class FaceAnalysisModel : ViewModelBase
+{
+    private CMFontFace _face;
+
+    [ObservableProperty] IReadOnlyList<DWriteFontAxis> _variationAxis;
+
+    [ObservableProperty] IReadOnlyList<Suggestion> _rampOptions;
+
+    public bool HasFontOptions { get; }
+
+    public bool ShowColorGlyphs { get; }
+
+    public FontAnalysis Analysis { get; }
+
+    public bool IsMDL2Font { get; }
+
+    public FontFamily FontFamily { get; }
+
+    public GlyphCollection Glyphs { get; }
+
+    public FaceAnalysisModel(CMFontFace face)
+    {
+        if (face is null)
+            return;
+
+        _face = face;
+
+        var analysis = face.GetAnalysis();
+        TypographyAnalyzer.PrepareSearchMap(face, analysis);
+        analysis.ResetVariableAxis();
+
+        FontFamily = new(face.Source);
+        IsMDL2Font = FontFinder.IsMDL2(face);
+        HasFontOptions = analysis.ContainsVectorColorGlyphs || face.HasXamlTypographyFeatures;
+        ShowColorGlyphs = face.DirectWriteProperties.IsColorFont;
+
+        Analysis = analysis;
+        Glyphs = new(face);
+
+        UpdateVariations();
+        UpdateRampOptions();
+    }
+
+    public void UpdateVariations()
+    {
+        VariationAxis =
+            Analysis?.Axis?.Where(a => (a.Attribute & DWriteFontAxisAttribute.Variable) != 0).ToList()
+            ?? [];
+    }
+
+    public void UpdateRampOptions()
+    {
+        RampOptions = GetRampOptions(_face);
+    }
+
+    private IReadOnlyList<Suggestion> GetRampOptions(CMFontFace variant)
+    {
+        if (variant == null)
+            return [];
+
+        var list = GlyphService.GetRampOptions();
+
+        if (variant?.TryGetSampleText() is String s)
+            list.Insert(0, new Suggestion(Localization.Get("SuggestOptionSample/Text"), s));
+
+        if (Unicode.ContainsRange(variant, UnicodeRange.Emoticons))
+        {
+            string emoji = "😂😍😭💁👍💋🐱🦉🌺🌲🍓🍕🎂🏰🏠🚄🚒🛫🛍";
+            if (!list.Any(s => s.Text == emoji))
+                list.Add(new Suggestion(Localization.Get("SuggestOptionEmoji/Text"), emoji));
+        }
+
+        return list;
+    }
+
+}
+
+public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<CharacterAnalysisModel>
+{
+    private NativeInterop _interop = Utils.GetInterop();
+
+    public Character Char { get; }
+
+    [ObservableProperty] bool _isSvgChar;
+    [ObservableProperty] CanvasTextLayoutAnalysis _analysis;
+    [ObservableProperty] List<TypographyFeatureInfo> _variations;
+    [ObservableProperty] UnihanData _unihanData;
+
+    private readonly FontMapViewModel _vm;
+    private readonly CMFontFace face;
+
+    public CharacterAnalysisModel(CMFontFace face, Character c, FontMapViewModel vm)
+    {
+        if (c is null || face is null || vm is null)
+            return; // we are empty shell;
+
+        Char = c;
+        _vm = vm;
+        Analysis = GetCharAnalysis(c, face);
+        Variations = TypographyAnalyzer.GetCharacterVariants(face, c);
+        IsSvgChar = Analysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
+        UnihanData = GlyphService.GetUnihanData(c.UnicodeIndex);
+    }
+
+    public  CanvasTextLayoutAnalysis GetCharAnalysis(Character c, CMFontFace face)
+    {
+        if (c is GlyphCharacter gc)
+            return _interop.AnalyzeGlyphLayout(face.Face, gc.GlyphIndex);
+
+        using CanvasTextLayout layout = new(Utils.CanvasDevice, $"{c.Char}", new()
+        {
+            FontSize = (float)Core.Converters.GetFontSize(Settings.GridSize),
+            FontFamily = face.Source,
+            FontStretch = face.DirectWriteProperties.Stretch,
+            FontWeight = face.DirectWriteProperties.Weight,
+            FontStyle = face.DirectWriteProperties.Style,
+            HorizontalAlignment = CanvasHorizontalAlignment.Left,
+        }, Settings.GridSize, Settings.GridSize);
+
+        // This doesn't work if it's set during the property constructor.
+        // Leave it as a separate line.
+        layout.Options = CanvasDrawTextOptions.EnableColorFont;
+
+        ApplyEffectiveTypography(layout);
+        return _interop.AnalyzeCharacterLayout(layout);
+    }
+
+    private void ApplyEffectiveTypography(CanvasTextLayout layout)
+    {
+        using var type = GetEffectiveTypography();
+        layout.SetTypography(0, 1, type);
+    }
+
+    private CanvasTypography GetEffectiveTypography(TypographyFeatureInfo typography = null)
+    {
+        if (typography == null)
+            typography = _vm.SelectedTypography;
+
+        CanvasTypography typo = new();
+        if (typography != null && typography.Feature != CanvasTypographyFeatureName.None)
+            typo.AddFeature(typography.Feature, 1u);
+
+        return typo;
+    }
+
+    #region Equality Overrides
+
+    public override bool Equals(object obj)
+    {
+        return Equals(obj as CharacterAnalysisModel);
+    }
+
+    public bool Equals(CharacterAnalysisModel other)
+    {
+        return other is not null &&
+               EqualityComparer<Character>.Default.Equals(Char, other.Char) &&
+               EqualityComparer<FontMapViewModel>.Default.Equals(_vm, other._vm) &&
+               EqualityComparer<CMFontFace>.Default.Equals(face, other.face);
+    }
+
+    public override int GetHashCode()
+    {
+        int hashCode = -831823616;
+        hashCode = hashCode * -1521134295 + EqualityComparer<Character>.Default.GetHashCode(Char);
+        hashCode = hashCode * -1521134295 + EqualityComparer<FontMapViewModel>.Default.GetHashCode(_vm);
+        hashCode = hashCode * -1521134295 + EqualityComparer<CMFontFace>.Default.GetHashCode(face);
+        return hashCode;
+    }
+
+    public static bool operator ==(CharacterAnalysisModel left, CharacterAnalysisModel right)
+    {
+        return EqualityComparer<CharacterAnalysisModel>.Default.Equals(left, right);
+    }
+
+    public static bool operator !=(CharacterAnalysisModel left, CharacterAnalysisModel right)
+    {
+        return !(left == right);
+    }
+
+    #endregion
+}
+
+public partial class FontMapSearchModel : ViewModelBase
+{
+    private Debouncer _debouncer { get; } = new();
+    private ConcurrencyToken.ConcurrencyTokenGenerator _tokenFactory { get; } = new();
+    private CMFontFace _face;
+    private IReadOnlyList<UnicodeRangeModel> _categories;
+
+    [ObservableProperty] string _query;
+    [ObservableProperty] IEnumerable _results;
+    [ObservableProperty] bool _isGrouped;
+    [ObservableProperty] bool _isSearching;
+
+    partial void OnQueryChanged(string value)
+    {
+        DebounceSearch(value, Settings.InstantSearchDelay, SearchSource.AutoProperty);
+    }
+    public void SetContext(CMFontFace face, IReadOnlyList<UnicodeRangeModel> categories)
+    {
+        _face = face;
+        _categories = categories;
+    }
+    public void Clear()
+    {
+        _tokenFactory.GenerateToken(); // Invalidate inflight searches
+        //Query = string.Empty;
+        Results = null;
+        IsGrouped = false;
+        IsSearching = false;
+    }
+    public void DebounceSearch(string query, int delayMilliseconds = 500, SearchSource from = SearchSource.AutoProperty)
+    {
+        if (from == SearchSource.AutoProperty && !Settings.UseInstantSearch)
+            return;
+        if (from == SearchSource.ManualSubmit || delayMilliseconds <= 0)
+            Search(query);
+        else
+            _debouncer.Debounce(delayMilliseconds, () => Search(query));
+    }
+    public async void Search(string query)
+    {
+        if (_face is null || string.IsNullOrWhiteSpace(query))
+        {
+            Results = null;
+            IsGrouped = false;
+            return;
+        }
+        ConcurrencyToken token = _tokenFactory.GenerateToken();
+        IsSearching = true;
+        try
+        {
+            IReadOnlyList<IGlyphData> results = await GlyphService.SearchAsync(query, _face);
+            if (!token.IsValid())
+                return;
+            IsGrouped = false;
+            if (results is null || results.Count == 0)
+            {
+                Results = null;
+                return;
+            }
+            // Group search results if filtering is active on glyph categories
+            if (_categories is not null && _categories.Any(c => !c.IsSelected))
+            {
+                if (SearchResultsGroup.CreateGroups(results, _categories) is { } groups
+                    && groups.HasHiddenResults)
+                {
+                    IsGrouped = true;
+                    Results = groups;
+                    return;
+                }
+            }
+            Results = results;
+        }
+        finally
+        {
+            if (token.IsValid())
+                IsSearching = false;
+        }
+    }
 }
 
 public partial class FontMapViewModel : ViewModelBase
@@ -59,38 +323,29 @@ public partial class FontMapViewModel : ViewModelBase
     public List<UnicodeRangeModel> SelectedGlyphCategories { get => Get<List<UnicodeRangeModel>>(); private set => Set(value); }
     public List<RampOption> Ramps { get; }
 
+    public FontMapSearchModel Search { get; } = new();
+
     [ObservableProperty] CharacterRenderingOptions _renderingOptions;
-    [ObservableProperty] CanvasTextLayoutAnalysis _selectedCharAnalysis;
-    [ObservableProperty] List<TypographyFeatureInfo> _selectedCharVariations;
-    [ObservableProperty] UnihanData _unihanData;
-    [ObservableProperty] IReadOnlyList<Suggestion> _rampOptions;
+
     [ObservableProperty] IReadOnlyList<Character> _chars;
-    [ObservableProperty] IEnumerable _searchResults;
-    [ObservableProperty] IReadOnlyList<DWriteFontAxis> _variationAxis;
     [ObservableProperty] IReadOnlyList<DevProviderBase> _providers;
     [ObservableProperty] IReadOnlyList<TypographyFeatureInfo> _typographyFeatures;
     [ObservableProperty] ObservableCollection<UnicodeRangeGroup> _groupedChars;
-    [ObservableProperty] GlyphCollection _glyphs;
 
     [ObservableProperty] bool _showColorGlyphs = true;
     [ObservableProperty] bool _importButtonEnabled = true;
     [ObservableProperty] bool _showingUnihan = true;
     [ObservableProperty] bool _isLoading;
-    [ObservableProperty] bool _isSearchGrouped;
-    [ObservableProperty] bool _hasFontOptions;
-    [ObservableProperty] bool _isSvgChar;
     [ObservableProperty] bool _isSequenceRootVisible;
-    [ObservableProperty] bool _isMDL2Font;
     [ObservableProperty] bool _isFiltered;
     [ObservableProperty] string _titlePrefix;
     [ObservableProperty] string _xamlPath;
     [ObservableProperty] string _sequence = string.Empty;
     [ObservableProperty] FontItem _selectedFont;
-    [ObservableProperty] FontFamily _fontFamily;
     [ObservableProperty] FolderContents _folder;
     [ObservableProperty] DevProviderBase _selectedProvider;
+    [ObservableProperty] FaceAnalysisModel _selectedFaceAnalysis;
     public FontDisplayMode DisplayMode { get => Get<FontDisplayMode>(); set { if (Set(value)) { UpdateTypography(); } } }
-    public FontAnalysis SelectedVariantAnalysis { get => Get<FontAnalysis>(); set { if (Set(value)) { UpdateVariations(); } } }
 
     public bool IsInstallable =>
         IsExternalFile
@@ -123,26 +378,24 @@ public partial class FontMapViewModel : ViewModelBase
             SelectedFont.PropertyChanged += SelectedFont_PropertyChanged;
 
             TitlePrefix = value.Font.Name + " -";
-            SelectedVariant = value.Selected;
+            SelectedFace = value.Selected;
 
             if (Set(SelectedFont.DisplayMode, nameof(DisplayMode), false))
                 UpdateTypography();
         }
         else
-            SelectedVariant = null;
+            SelectedFace = null;
     }
 
-    private CMFontFace _selectedVariant;
-    public CMFontFace SelectedVariant
+    public CMFontFace SelectedFace
     {
-        get => _selectedVariant;
+        get => field;
         set
         {
-            if (value != _selectedVariant)
+            if (value != field)
             {
                 Chars = null;
-                _selectedVariant = value;
-                FontFamily = value == null ? null : new FontFamily(value.Source);
+                field = value;
                 int idx = Settings.LastSelectedCharIndex;
                 LoadVariant(value);
                 OnPropertyChanged();
@@ -157,43 +410,29 @@ public partial class FontMapViewModel : ViewModelBase
         }
     }
 
-    private string _searchQuery;
-    public string SearchQuery
+    public CharacterAnalysisModel SelectedChar
     {
-        get => _searchQuery;
+        get => field;
         set
         {
-            if (Set(ref _searchQuery, value))
-                DebounceSearch(value, Settings.InstantSearchDelay, SearchSource.AutoProperty);
-        }
-    }
-
-    private Character _selectedChar;
-    public Character SelectedChar
-    {
-        get => _selectedChar;
-        set
-        {
-            if (_selectedChar == value || _blockChar) return;
-            _selectedChar = value;
+            if (field == value || _blockChar) return;
+            field = value;
             if (value is not null)
-                Settings.LastSelectedCharIndex = (int)value.UnicodeIndex;
+                Settings.LastSelectedCharIndex = (int)value.Char.UnicodeIndex;
             OnPropertyChanged();
-            UpdateCharAnalysis();
             UpdateDevValues();
         }
     }
 
-    private string _typeRampText;
     public string TypeRampText
     {
-        get => _typeRampText;
+        get => field;
         set
         {
             if (value != null && value.Length > 100)
                 value = value.Substring(0, 100);
 
-            Set(ref _typeRampText, value);
+            Set(ref field, value);
         }
     }
 
@@ -238,23 +477,21 @@ public partial class FontMapViewModel : ViewModelBase
         }
     }
 
-    private void UpdateTextOptions()
-    {
-        OnSyncContext(() => { RampOptions = GlyphService.GetRampOptions(); });
-    }
+    private void UpdateTextOptions() => OnSyncContext(() => { SelectedFaceAnalysis?.UpdateRampOptions(); });
 
     private void SelectedFont_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if (sender is FontItem item)
         {
             if (e.PropertyName == nameof(FontItem.Selected))
-                SelectedVariant = item.Selected;
+                SelectedFace = item.Selected;
         }
     }
 
     public void UpdateCategories(IList<UnicodeRangeModel> value)
     {
         SelectedGlyphCategories = value.ToList();
+        Search.SetContext(SelectedFace, SelectedGlyphCategories);
         UpdateCharacters();
     }
 
@@ -265,20 +502,20 @@ public partial class FontMapViewModel : ViewModelBase
         if (!SelectedGlyphCategories.Any(c => !c.IsSelected))
         {
             // Fast path : all characters;
-            Chars = SelectedVariant?.GetCharacters();
-            GroupedChars = UnicodeRangeGroup.CreateGroups(Chars, IsMDL2Font);
+            Chars = SelectedFace?.GetCharacters();
+            GroupedChars = UnicodeRangeGroup.CreateGroups(Chars, SelectedFaceAnalysis.IsMDL2Font);
             IsFiltered = false;
         }
         else
         {
             // Filter characters
-            var items = Unicode.FilterCharacters(SelectedVariant?.GetCharacters(), SelectedGlyphCategories, false);
+            var items = Unicode.FilterCharacters(SelectedFace?.GetCharacters(), SelectedGlyphCategories, false);
 
             // Only change the character source if we actually need too
             if (Chars is null || items.Count != Chars.Count)
             {
                 Chars = items;
-                GroupedChars = UnicodeRangeGroup.CreateGroups(items, IsMDL2Font);
+                GroupedChars = UnicodeRangeGroup.CreateGroups(items, SelectedFaceAnalysis.IsMDL2Font);
             }
             else
             {
@@ -286,7 +523,7 @@ public partial class FontMapViewModel : ViewModelBase
                     if (items[i] != Chars[i])
                     {
                         Chars = items;
-                        GroupedChars = UnicodeRangeGroup.CreateGroups(items, IsMDL2Font);
+                        GroupedChars = UnicodeRangeGroup.CreateGroups(items, SelectedFaceAnalysis.IsMDL2Font);
                         break;
                     }
             }
@@ -304,36 +541,29 @@ public partial class FontMapViewModel : ViewModelBase
             IsLoadingCharacters = true;
 
             // 1. Update categories
-            IsMDL2Font = FontFinder.IsMDL2(variant);
-            SelectedGlyphCategories = Unicode.GetCategories(SelectedVariant, IsMDL2Font);
+            SelectedGlyphCategories = Unicode.GetCategories(SelectedFace, FontFinder.IsMDL2(SelectedFace));
 
-            // 2. Update characters
-            UpdateCharacters();
-
-            // 3. Load variant data
+            // 2. Load variant data
             if (variant != null)
             {
-                var analysis = variant.GetAnalysis();
-                TypographyAnalyzer.PrepareSearchMap(variant, analysis);
-                analysis.ResetVariableAxis();
-                SelectedVariantAnalysis = analysis;
-                HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
-                ShowColorGlyphs = variant.DirectWriteProperties.IsColorFont;
+                SelectedFaceAnalysis = new(SelectedFace);
+                ShowColorGlyphs = SelectedFaceAnalysis.ShowColorGlyphs;
             }
             else
             {
-                SelectedVariantAnalysis = new FontAnalysis();
-                HasFontOptions = false;
+                SelectedFaceAnalysis = new (null);
                 ShowColorGlyphs = false;
                 ImportButtonEnabled = false;
             }
 
-            RampOptions = GetRampOptions(variant);
-            SelectedTypography = TypographyFeatureInfo.None;
-            SearchResults = null;
-            DebounceSearch(SearchQuery, 100);
+            // 3. Update characters
+            UpdateCharacters();
 
-            Glyphs = new(variant);
+            SelectedTypography = TypographyFeatureInfo.None;
+
+            Search.Clear();
+            Search.SetContext(variant, SelectedGlyphCategories);
+            Search.DebounceSearch(Search.Query, 100);
 
             IsLoadingCharacters = false;
         }
@@ -349,36 +579,15 @@ public partial class FontMapViewModel : ViewModelBase
             Window.Current.Dispatcher.Enqueue(async () =>
             {
                 await Task.Delay(100);
-                if (variant == SelectedVariant)
+                if (variant == SelectedFace)
                     LoadVariant(variant);
             }, Windows.UI.Core.CoreDispatcherPriority.Low);
         }
     }
-    private IReadOnlyList<Suggestion> GetRampOptions(CMFontFace variant)
-    {
-        if (variant == null)
-            return new List<Suggestion>();
-
-        var list = GlyphService.GetRampOptions();
-
-        if (variant?.TryGetSampleText() is String s)
-            list.Insert(0, new Suggestion(Localization.Get("SuggestOptionSample/Text"), s));
-
-        if (Unicode.ContainsRange(variant, UnicodeRange.Emoticons))
-        {
-            string emoji = "😂😍😭💁👍💋🐱🦉🌺🌲🍓🍕🎂🏰🏠🚄🚒🛫🛍";
-            if (!list.Any(s => s.Text == emoji))
-                list.Add(new Suggestion(Localization.Get("SuggestOptionEmoji/Text"), emoji));
-        }
-
-        return list;
-    }
-
+ 
     internal void UpdateVariations()
     {
-        VariationAxis = 
-            SelectedVariantAnalysis?.Axis?.Where(a => (a.Attribute & DWriteFontAxisAttribute.Variable) != 0).ToList() 
-            ?? new List<DWriteFontAxis>();
+        SelectedFaceAnalysis?.UpdateVariations();
         UpdateRampOptions();
     }
 
@@ -386,12 +595,12 @@ public partial class FontMapViewModel : ViewModelBase
     {
         var current = this.SelectedTypography;
 
-        if (SelectedVariant == null)
-            TypographyFeatures = new List<TypographyFeatureInfo>();
+        if (SelectedFace == null)
+            TypographyFeatures = [];
         else if (DisplayMode == FontDisplayMode.TypeRampState)
-            TypographyFeatures = SelectedVariant.TypographyFeatures;
+            TypographyFeatures = SelectedFace.TypographyFeatures;
         else
-            TypographyFeatures = SelectedVariant.XamlTypographyFeatures;
+            TypographyFeatures = SelectedFace.XamlTypographyFeatures;
 
         // Ensure ColorFont option propagates
         if (DisplayMode is FontDisplayMode.TypeRampState)
@@ -401,67 +610,9 @@ public partial class FontMapViewModel : ViewModelBase
         OnPropertyChanged(nameof(SelectedTypography)); // Required.
     }
 
-    private void UpdateCharAnalysis()
-    {
-        if (SelectedChar == null)
-        {
-            UnihanData = null;
-            SelectedCharAnalysis = new();
-            IsSvgChar = false;
-            SelectedCharVariations = new();
-            return;
-        }
-
-        SelectedCharAnalysis = GetCharAnalysis(SelectedChar);
-        SelectedCharVariations = TypographyAnalyzer.GetCharacterVariants(SelectedVariant, SelectedChar);
-        IsSvgChar = SelectedCharAnalysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
-        UnihanData = GlyphService.GetUnihanData(SelectedChar.UnicodeIndex);
-    }
-
-    internal CanvasTextLayoutAnalysis GetCharAnalysis(Character c)
-    {
-        if (c is GlyphCharacter gc)
-            return _interop.AnalyzeGlyphLayout(SelectedVariant.Face, gc.GlyphIndex);
-
-        using CanvasTextLayout layout = new(Utils.CanvasDevice, $"{c.Char}", new()
-        {
-            FontSize = (float)Core.Converters.GetFontSize(Settings.GridSize),
-            FontFamily = SelectedVariant.Source,
-            FontStretch = SelectedVariant.DirectWriteProperties.Stretch,
-            FontWeight = SelectedVariant.DirectWriteProperties.Weight,
-            FontStyle = SelectedVariant.DirectWriteProperties.Style,
-            HorizontalAlignment = CanvasHorizontalAlignment.Left,
-        }, Settings.GridSize, Settings.GridSize);
-
-        // This doesn't work if it's set during the property constructor.
-        // Leave it as a separate line.
-        layout.Options = CanvasDrawTextOptions.EnableColorFont;
-
-        ApplyEffectiveTypography(layout);
-        return _interop.AnalyzeCharacterLayout(layout);
-    }
-
-    private CanvasTypography GetEffectiveTypography(TypographyFeatureInfo typography = null)
-    {
-        if (typography == null)
-            typography = SelectedTypography;
-
-        CanvasTypography typo = new();
-        if (typography != null && typography.Feature != CanvasTypographyFeatureName.None)
-            typo.AddFeature(typography.Feature, 1u);
-
-        return typo;
-    }
-
-    private void ApplyEffectiveTypography(CanvasTextLayout layout)
-    {
-        using var type = GetEffectiveTypography();
-        layout.SetTypography(0, 1, type);
-    }
-
     internal void UpdateDevValues()
     {
-        if (SelectedVariant == null || SelectedChar == null)
+        if (SelectedFace == null || SelectedChar == null)
         {
             // Do nothing.
         }
@@ -470,18 +621,18 @@ public partial class FontMapViewModel : ViewModelBase
             var t = SelectedProvider?.Type ?? Settings.SelectedDevProvider;
 
             RenderingOptions = new CharacterRenderingOptions(
-                SelectedVariant,
+                SelectedFace,
                 new() { SelectedCharTypography },
                 64,
-                SelectedCharAnalysis,
-                VariationAxis);
+                SelectedChar.Analysis,
+                SelectedFaceAnalysis.VariationAxis);
 
             UpdateRampOptions();
 
-            Providers = RenderingOptions.GetDevProviders(SelectedChar);
+            Providers = RenderingOptions.GetDevProviders(SelectedChar.Char);
             SetDev(t);
 
-            XamlPath = $"{SelectedVariant.FileName}#{SelectedVariant.FamilyName}";
+            XamlPath = $"{SelectedFace.FileName}#{SelectedFace.FamilyName}";
         }
     }
 
@@ -490,7 +641,9 @@ public partial class FontMapViewModel : ViewModelBase
         if (RenderingOptions is null)
             return;
 
-        var ops = RenderingOptions with { Axis = VariationAxis };
+        //SelectedFaceAnalysis?.UpdateRampOptions();
+
+        var ops = RenderingOptions with { Axis = SelectedFaceAnalysis.VariationAxis };
         foreach (var ramp in Ramps)
             ramp.Option = ops;
     }
@@ -506,14 +659,16 @@ public partial class FontMapViewModel : ViewModelBase
 
         if (Chars.FirstOrDefault(i => i.UnicodeIndex == idx)
             is Character lastSelectedChar
-            && SelectedVariant.Face.HasCharacter((uint)lastSelectedChar.UnicodeIndex))
+            && SelectedFace.Face.HasCharacter((uint)lastSelectedChar.UnicodeIndex))
         {
-            SelectedChar = lastSelectedChar;
+            SelectedChar = new(SelectedFace, lastSelectedChar, this);
         }
         else
         {
-            SelectedChar = Chars?.FirstOrDefault(
-                c => !Windows.Data.Text.UnicodeCharacters.IsWhitespace((uint)c.UnicodeIndex)) ?? Chars.FirstOrDefault();
+            SelectedChar = new(
+                SelectedFace, Chars?.FirstOrDefault(
+                c => !Windows.Data.Text.UnicodeCharacters.IsWhitespace((uint)c.UnicodeIndex)) ?? Chars.FirstOrDefault(),
+                this);
         }
 
         if (set)
@@ -538,15 +693,15 @@ public partial class FontMapViewModel : ViewModelBase
 
     public string GetCharName(Character c)
     {
-        if (SelectedVariant == null || c == null)
+        if (SelectedFace == null || c == null)
             return null;
 
-        return SelectedVariant.GetDescription(c, allowUnihan: true);
+        return SelectedFace.GetDescription(c, allowUnihan: true);
     }
 
     public string GetCharDescription(Character c)
     {
-        if (SelectedVariant == null || c == null)
+        if (SelectedFace == null || c == null)
             return null;
 
         if (GlyphService.GetCharacterKeystroke(c.UnicodeIndex) is string k)
@@ -555,46 +710,6 @@ public partial class FontMapViewModel : ViewModelBase
             return c.UnicodeString;
     }
 
-    public void DebounceSearch(string query, int delayMilliseconds = 500, SearchSource from = SearchSource.AutoProperty)
-    {
-        if (from == SearchSource.AutoProperty && !Settings.UseInstantSearch)
-            return;
-
-        if (from == SearchSource.ManualSubmit || delayMilliseconds <= 0)
-            Search(query);
-        else
-            _searchDebouncer.Debounce(delayMilliseconds, () => Search(query));
-    }
-
-    internal async void Search(string query)
-    {
-        var token = _searchTokenFactory.GenerateToken();
-        if (await GlyphService.SearchAsync(query, SelectedVariant) is IReadOnlyList<IGlyphData> results
-            && token.IsValid())
-        {
-            SearchResults = null;
-            IsSearchGrouped = false;
-
-            if (results.Count == 0)
-                results = null;
-
-            // If we have filtered out any characters from the character list we should
-            // group the search results into characters that are shown and characters
-            // that are hidden by filtering
-            if (results != null && SelectedGlyphCategories.Any(c => c.IsSelected is false))
-            {
-                if (SearchResultsGroup.CreateGroups(results, SelectedGlyphCategories) is { } groups
-                    && groups.HasHiddenResults)
-                {
-                    IsSearchGrouped = true;
-                    SearchResults = groups;
-                    return;
-                }
-            }
-
-            SearchResults = results;
-        }
-    }
 
     [RelayCommand]
     private void SetDev(DevProviderType type) //, bool save = true)
@@ -621,13 +736,13 @@ public partial class FontMapViewModel : ViewModelBase
 
     internal async Task SaveGlyphAsync(ExportFormat format, ExportParameters args)
     {
-        Character character = SelectedChar;
-        CanvasTextLayoutAnalysis analysis = SelectedCharAnalysis;
+        Character character = SelectedChar.Char;
+        CanvasTextLayoutAnalysis analysis = SelectedChar.Analysis;
 
         if (args.Character != null)
         {
             character = args.Character;
-            analysis = GetCharAnalysis(args.Character);
+            analysis = SelectedChar.GetCharAnalysis(args.Character, SelectedFace);
         }
 
         ExportResult result = await ExportManager.ExportGlyphAsync(
@@ -729,7 +844,7 @@ public partial class FontMapViewModel : ViewModelBase
 
     public async void LaunchInstall()
     {
-        var path = FontFinder.GetAppPath(SelectedVariantAnalysis.FilePath).ToLower();
+        var path = FontFinder.GetAppPath(SelectedFaceAnalysis.Analysis.FilePath).ToLower();
         var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri(path));
         var result = await Launcher.LaunchFileAsync(file, new LauncherOptions { DisplayApplicationPicker = true });
     }

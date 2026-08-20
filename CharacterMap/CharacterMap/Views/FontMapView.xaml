@@ -17,8 +17,8 @@
     xmlns:views="using:CharacterMap.Views"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
     x:Name="ViewRoot"
-    views:FontMapView.GlyphsLoaded="{x:Bind ViewModel.Glyphs.IsLoaded, Mode=OneWay}"
-    views:FontMapView.GlyphsLoading="{x:Bind ViewModel.Glyphs.IsLoading, Mode=OneWay}"
+    views:FontMapView.GlyphsLoaded="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs.IsLoaded, Mode=OneWay, FallbackValue=False}"
+    views:FontMapView.GlyphsLoading="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs.IsLoading, Mode=OneWay, FallbackValue=False}"
     BorderThickness="0"
     FontFamily="{ThemeResource ContentControlThemeFontFamily}"
     SizeChanged="UserControl_SizeChanged"
@@ -157,8 +157,8 @@
         <CollectionViewSource
             x:Key="SearchResultsSource"
             x:Name="SearchResultsSource"
-            IsSourceGrouped="{Binding ViewModel.IsSearchGrouped, ElementName=ViewRoot, Mode=OneWay}"
-            Source="{Binding ViewModel.SearchResults, ElementName=ViewRoot, Mode=OneWay}" />
+            IsSourceGrouped="{Binding ViewModel.Search.IsGrouped, ElementName=ViewRoot, Mode=OneWay}"
+            Source="{Binding ViewModel.Search.Results, ElementName=ViewRoot, Mode=OneWay}" />
 
         <MenuFlyout x:Name="SuggestionFlyout" AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
             <MenuFlyoutItem
@@ -250,7 +250,7 @@
                     CommandParameter="{x:Bind ViewModel.BlackColor}"
                     Style="{StaticResource ThemeMenuFlyoutItemStyle}"
                     Tag="Copy"
-                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}"
+                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedChar.Analysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}"
                     d:Text="{core:Localizer Key=BlackFill/Text}">
                     <MenuFlyoutItem.Icon>
                         <FontIcon core:Properties.ThemeIcon="FilledSquare" Foreground="Black" />
@@ -262,7 +262,7 @@
                     CommandParameter="{x:Bind ViewModel.WhiteColor}"
                     Style="{StaticResource ThemeMenuFlyoutItemStyle}"
                     Tag="Copy"
-                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}"
+                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedChar.Analysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}"
                     d:Text="{core:Localizer Key=WhiteFill/Text}">
                     <MenuFlyoutItem.Icon>
                         <FontIcon core:Properties.ThemeIcon="FilledSquare" Foreground="White" />
@@ -272,7 +272,7 @@
                     x:Uid="CopyAsSvgItem"
                     KeyboardAcceleratorTextOverride="Ctrl+Shift+C"
                     Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}"
-                    Visibility="{x:Bind ViewModel.SelectedCharAnalysis.IsFullVectorBased, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.SelectedChar.Analysis.IsFullVectorBased, Mode=OneWay}"
                     d:Text="{core:Localizer Key=CopyAsSvgItem/Text}" />
                 <MenuFlyoutItem
                     x:Name="CopySvgColouredItem"
@@ -281,7 +281,7 @@
                     CommandParameter="{x:Bind ViewModel.GlyphColor}"
                     Style="{StaticResource ThemeMenuFlyoutItemStyle}"
                     Tag="Copy"
-                    Visibility="{x:Bind core:Converters.TrueAndTrueOrTrueToVis(ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.SelectedCharAnalysis.HasColorGlyphs, ViewModel.IsSvgChar), Mode=OneWay}"
+                    Visibility="{x:Bind core:Converters.TrueAndTrueOrTrueToVis(ViewModel.SelectedChar.Analysis.IsFullVectorBased, ViewModel.SelectedChar.Analysis.HasColorGlyphs, ViewModel.SelectedChar.IsSvgChar), Mode=OneWay}"
                     d:Text="{core:Localizer Key=ColoredGlyphLabel/Text}">
                     <MenuFlyoutItem.Icon>
                         <IconSourceElement IconSource="{StaticResource ColourSource}" />
@@ -293,7 +293,7 @@
                     CommandParameter="{x:Bind ViewModel.BlackColor}"
                     Style="{StaticResource ThemeMenuFlyoutItemStyle}"
                     Tag="Copy"
-                    Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay, FallbackValue=Collapsed}"
+                    Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedChar.Analysis.IsFullVectorBased, ViewModel.SelectedChar.IsSvgChar), Mode=OneWay, FallbackValue=Collapsed}"
                     d:Text="{core:Localizer Key=BlackFill/Text}">
                     <MenuFlyoutItem.Icon>
                         <FontIcon core:Properties.ThemeIcon="FilledSquare" Foreground="Black" />
@@ -305,7 +305,7 @@
                     CommandParameter="{x:Bind ViewModel.WhiteColor}"
                     Style="{StaticResource ThemeMenuFlyoutItemStyle}"
                     Tag="Copy"
-                    Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay, FallbackValue=Collapsed}"
+                    Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedChar.Analysis.IsFullVectorBased, ViewModel.SelectedChar.IsSvgChar), Mode=OneWay, FallbackValue=Collapsed}"
                     d:Text="{core:Localizer Key=WhiteFill/Text}">
                     <MenuFlyoutItem.Icon>
                         <FontIcon core:Properties.ThemeIcon="FilledSquare" Foreground="White" />
@@ -599,10 +599,10 @@
                     Width="290"
                     Margin="6 0 6 0"
                     VerticalAlignment="Center"
-                    core:Properties.FontFamily="{x:Bind ViewModel.FontFamily, Mode=OneWay}"
-                    core:Properties.FontStretch="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.Stretch, Mode=OneWay}"
-                    core:Properties.FontStyle="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.Style, Mode=OneWay}"
-                    core:Properties.FontWeight="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.Weight, Mode=OneWay}"
+                    core:Properties.FontFamily="{x:Bind ViewModel.SelectedFaceAnalysis.FontFamily, Mode=OneWay, FallbackValue={x:Null}}"
+                    core:Properties.FontStretch="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Stretch, Mode=OneWay}"
+                    core:Properties.FontStyle="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Style, Mode=OneWay}"
+                    core:Properties.FontWeight="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Weight, Mode=OneWay}"
                     core:Properties.ToolTipMemberPath="Description"
                     core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
                     GotFocus="SearchBox_GotFocus"
@@ -613,7 +613,7 @@
                     RenderTransformOrigin="0.5,0.5"
                     Style="{ThemeResource DefaultThemeAutoSuggestBoxStyle}"
                     SuggestionChosen="SearchBox_SuggestionChosen"
-                    Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Text="{Binding Search.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     TextChanged="SearchBox_TextChanged"
                     TextMemberPath="Description"
                     UpdateTextOnSelect="False"
@@ -787,14 +787,14 @@
                                         FontSize="12"
                                         FontWeight="Normal"
                                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                        Text="{x:Bind UpdateStatusBarLabel(ViewModel.SelectedVariant, SelectorLabel.IsHitTestVisible), Mode=OneWay}"
+                                        Text="{x:Bind UpdateStatusBarLabel(ViewModel.SelectedFace, SelectorLabel.IsHitTestVisible), Mode=OneWay}"
                                         Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedFont.IsGlyphMap), Mode=OneWay, FallbackValue=Visible}" />
                                     <TextBlock
                                         x:Name="GlyphSelectorLabel"
                                         FontSize="12"
                                         FontWeight="Normal"
                                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                        Text="{x:Bind UpdateGlyphLabel(ViewModel.SelectedVariant, SelectorLabel.IsHitTestVisible), Mode=OneWay}"
+                                        Text="{x:Bind UpdateGlyphLabel(ViewModel.SelectedFace, SelectorLabel.IsHitTestVisible), Mode=OneWay}"
                                         Visibility="{x:Bind ViewModel.SelectedFont.IsGlyphMap, Mode=OneWay, FallbackValue=Collapsed}" />
                                 </Grid>
 
@@ -892,81 +892,81 @@
                                                         Text="{Binding SelectedFont.Font.Name}" />
 
                                                     <TextBlock x:Uid="FontPropFace" d:Text="{core:Localizer Key=FontPropFace/Text}" />
-                                                    <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.PreferredName}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedFace.PreferredName}" />
 
                                                     <TextBlock x:Uid="FontPropCharCount" d:Text="{core:Localizer Key=FontPropCharCount/Text}" />
-                                                    <TextBlock Style="{StaticResource Value}" Text="{x:Bind ViewModel.SelectedVariant.Characters.Count, Mode=OneWay}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{x:Bind ViewModel.SelectedFace.Characters.Count, Mode=OneWay}" />
 
                                                     <TextBlock x:Uid="FontPropCount" d:Text="{core:Localizer Key=FontPropCount/Text}" />
-                                                    <TextBlock Style="{StaticResource Value}" Text="{x:Bind ViewModel.SelectedVariant.Face.GlyphCount, Mode=OneWay}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{x:Bind ViewModel.SelectedFace.Face.GlyphCount, Mode=OneWay}" />
 
                                                     <!--<TextBlock Text="Ligature Count" />
-                                                    <TextBlock Style="{StaticResource Value}" Text="{x:Bind ViewModel.SelectedVariant.CharacterLigatureCount, Mode=OneWay}" />-->
+                                                    <TextBlock Style="{StaticResource Value}" Text="{x:Bind ViewModel.SelectedFace.CharacterLigatureCount, Mode=OneWay}" />-->
 
                                                     <TextBlock x:Uid="FontPropType" d:Text="{core:Localizer Key=FontPropType/Text}" />
-                                                    <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.Face.FileFormatType}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedFace.Face.FileFormatType}" />
 
                                                     <TextBlock x:Uid="FontPropSymbol" d:Text="{core:Localizer Key=FontPropSymbol/Text}" />
-                                                    <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.DirectWriteProperties.IsSymbolFont}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedFace.DirectWriteProperties.IsSymbolFont}" />
 
                                                     <TextBlock x:Uid="FontPropMonospaced" d:Text="{core:Localizer Key=FontPropMonospaced/Text}" />
-                                                    <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.DirectWriteProperties.IsMonospacedFont}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedFace.DirectWriteProperties.IsMonospacedFont}" />
 
                                                     <TextBlock x:Uid="FontPropSimulated" d:Text="{core:Localizer Key=FontPropSimulated/Text}" />
-                                                    <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.DirectWriteProperties.IsSimulated}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedFace.DirectWriteProperties.IsSimulated}" />
 
                                                     <TextBlock x:Uid="FontPropStyle" d:Text="{core:Localizer Key=FontPropStyle/Text}" />
-                                                    <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.DirectWriteProperties.Style}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedFace.DirectWriteProperties.Style}" />
 
                                                     <TextBlock x:Uid="FontPropStretch" d:Text="{core:Localizer Key=FontPropStretch/Text}" />
-                                                    <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.DirectWriteProperties.Stretch}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedFace.DirectWriteProperties.Stretch}" />
 
                                                     <TextBlock x:Uid="FontPropWeight" d:Text="{core:Localizer Key=FontPropWeight/Text}" />
-                                                    <TextBlock Style="{StaticResource Value}" Text="{x:Bind core:Converters.GetWeightName(ViewModel.SelectedVariant.DirectWriteProperties.Weight), Mode=OneWay}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{x:Bind core:Converters.GetWeightName(ViewModel.SelectedFace.DirectWriteProperties.Weight), Mode=OneWay}" />
 
                                                     <TextBlock
                                                         x:Name="FontPropColourFormats"
-                                                        x:Load="{x:Bind ViewModel.SelectedVariant.Face.Properties.IsColorFont, Mode=OneWay, FallbackValue=False}"
+                                                        x:Load="{x:Bind ViewModel.SelectedFace.Face.Properties.IsColorFont, Mode=OneWay, FallbackValue=False}"
                                                         x:Uid="FontPropColourFormats"
                                                         d:Text="{core:Localizer Key=FontPropColourFormats/Text}" />
                                                     <TextBlock
                                                         x:Name="FontProperColourFormatsValue"
-                                                        x:Load="{x:Bind ViewModel.SelectedVariant.Face.Properties.IsColorFont, Mode=OneWay, FallbackValue=False}"
+                                                        x:Load="{x:Bind ViewModel.SelectedFace.Face.Properties.IsColorFont, Mode=OneWay, FallbackValue=False}"
                                                         Style="{StaticResource Value}"
-                                                        Text="{x:Bind core:Converters.GetColourGlyphFormats(ViewModel.SelectedVariantAnalysis), Mode=OneWay}" />
+                                                        Text="{x:Bind core:Converters.GetColourGlyphFormats(ViewModel.SelectedFaceAnalysis.Analysis), Mode=OneWay}" />
 
                                                     <TextBlock
                                                         x:Name="FontPropCOLRVersion"
-                                                        x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.HasCOLRGlyphs, Mode=OneWay, FallbackValue=False}"
+                                                        x:Load="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.HasCOLRGlyphs, Mode=OneWay, FallbackValue=False}"
                                                         x:Uid="FontPropCOLRVersion"
                                                         d:Text="{core:Localizer Key=FontPropCOLRVersion/Text}" />
                                                     <TextBlock
                                                         x:Name="FontProperCOLRVersionValue"
-                                                        x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.HasCOLRGlyphs, Mode=OneWay, FallbackValue=False}"
+                                                        x:Load="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.HasCOLRGlyphs, Mode=OneWay, FallbackValue=False}"
                                                         Style="{StaticResource Value}"
-                                                        Text="{x:Bind ViewModel.SelectedVariantAnalysis.COLRVersion, Mode=OneWay}" />
+                                                        Text="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.COLRVersion, Mode=OneWay}" />
 
                                                     <TextBlock x:Uid="FontPropFileSize" d:Text="{core:Localizer Key=FontPropFileSize/Text}" />
-                                                    <TextBlock Style="{StaticResource Value}" Text="{x:Bind core:Converters.GetFileSize(ViewModel.SelectedVariantAnalysis.FileSize), Mode=OneWay}" />
+                                                    <TextBlock Style="{StaticResource Value}" Text="{x:Bind core:Converters.GetFileSize(ViewModel.SelectedFaceAnalysis.Analysis.FileSize), Mode=OneWay}" />
 
                                                     <TextBlock
                                                         x:Name="FontPropSrc"
-                                                        x:Load="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.IsRemote, Mode=OneWay, FallbackValue=False}"
+                                                        x:Load="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.IsRemote, Mode=OneWay, FallbackValue=False}"
                                                         x:Uid="FontPropInstallType"
                                                         d:Text="{core:Localizer Key=FontPropInstallType/Text}" />
                                                     <TextBlock
                                                         x:Name="FontPropSrcValue"
-                                                        x:Load="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.IsRemote, Mode=OneWay, FallbackValue=False}"
+                                                        x:Load="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.IsRemote, Mode=OneWay, FallbackValue=False}"
                                                         Style="{StaticResource Value}"
                                                         Text="{core:Localizer Key='DWriteSourceRemoteFontProvider'}" />
 
 
                                                     <!--<TextBlock x:Uid="FontPropInstallType" d:Text="{core:Localizer Key=FontPropInstallType/Text}" />
-                                                <TextBlock Style="{StaticResource Value}" Text="{x:Bind ViewModel.SelectedVariant.GetProviderName(), Mode=OneWay}" />-->
+                                                <TextBlock Style="{StaticResource Value}" Text="{x:Bind ViewModel.SelectedFace.GetProviderName(), Mode=OneWay}" />-->
 
                                                     <StackPanel
                                                         x:Name="XAMLSource"
-                                                        x:Load="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=False}"
+                                                        x:Load="{x:Bind ViewModel.SelectedFace.IsImported, Mode=OneWay, FallbackValue=False}"
                                                         Grid.ColumnSpan="2"
                                                         Spacing="8">
                                                         <TextBlock
@@ -988,7 +988,7 @@
                                                         x:Name="FilePath"
                                                         Grid.ColumnSpan="2"
                                                         Spacing="8"
-                                                        Visibility="{x:Bind ShowFilePath(ViewModel.SelectedVariantAnalysis.FilePath, ViewModel.SelectedVariant.IsImported), Mode=OneWay, FallbackValue=Collapsed}">
+                                                        Visibility="{x:Bind ShowFilePath(ViewModel.SelectedFaceAnalysis.Analysis.FilePath, ViewModel.SelectedFace.IsImported), Mode=OneWay, FallbackValue=Collapsed}">
                                                         <TextBlock
                                                             x:Uid="FontPropFilePath"
                                                             Grid.Column="0"
@@ -999,12 +999,12 @@
                                                             Grid.ColumnSpan="2"
                                                             Margin="0,-4,0,0"
                                                             Style="{StaticResource Value}"
-                                                            Text="{x:Bind ViewModel.SelectedVariantAnalysis.FilePath, Mode=OneWay}" />
+                                                            Text="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.FilePath, Mode=OneWay}" />
                                                     </StackPanel>
 
                                                 </controls:AutoGrid>
 
-                                                <ItemsControl ItemsSource="{Binding SelectedVariant.FontInformation}">
+                                                <ItemsControl ItemsSource="{Binding SelectedFace.FontInformation}">
                                                     <ItemsControl.ItemsPanel>
                                                         <ItemsPanelTemplate>
                                                             <StackPanel Spacing="12" />
@@ -1029,10 +1029,10 @@
                                                 <TextBlock
                                                     x:Uid="FontPropPanoseTitle"
                                                     FontWeight="Bold"
-                                                    Visibility="{x:Bind ViewModel.SelectedVariant.Panose.HasPanose, Mode=OneWay}"
+                                                    Visibility="{x:Bind ViewModel.SelectedFace.Panose.HasPanose, Mode=OneWay}"
                                                     d:Text="{core:Localizer Key=FontPropPanoseTitle/Text}" />
 
-                                                <ItemsControl ItemsSource="{x:Bind ViewModel.SelectedVariant.Panose.GetValues(), Mode=OneWay}" Visibility="{x:Bind ViewModel.SelectedVariant.Panose.HasPanose, Mode=OneWay}">
+                                                <ItemsControl ItemsSource="{x:Bind ViewModel.SelectedFace.Panose.GetValues(), Mode=OneWay}" Visibility="{x:Bind ViewModel.SelectedFace.Panose.HasPanose, Mode=OneWay}">
                                                     <ItemsControl.ItemsPanel>
                                                         <ItemsPanelTemplate>
                                                             <StackPanel Spacing="8" />
@@ -1117,7 +1117,7 @@
                                                 <StackPanel Margin="12,4" Spacing="12">
                                                     <TextBlock
                                                         x:Name="ColorHeader"
-                                                        x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.ContainsVectorColorGlyphs, Mode=OneWay}"
+                                                        x:Load="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.ContainsVectorColorGlyphs, Mode=OneWay}"
                                                         x:Uid="FontDisplayHeader"
                                                         FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                                         FontWeight="Bold"
@@ -1125,7 +1125,7 @@
                                                         d:Text="{core:Localizer Key=FontDisplayHeader/Text}" />
                                                     <ToggleSwitch
                                                         x:Name="ColorGlyphToggle"
-                                                        x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.ContainsVectorColorGlyphs, Mode=OneWay}"
+                                                        x:Load="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.ContainsVectorColorGlyphs, Mode=OneWay}"
                                                         x:Uid="ColorGlyphToggle"
                                                         VerticalAlignment="Bottom"
                                                         IsOn="{Binding ShowColorGlyphs, Mode=TwoWay}"
@@ -1137,7 +1137,7 @@
                                                         FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                                         FontWeight="Bold"
                                                         Opacity="0.5"
-                                                        Visibility="{x:Bind ViewModel.SelectedVariant.HasXamlTypographyFeatures, Mode=OneWay}"
+                                                        Visibility="{x:Bind ViewModel.SelectedFace.HasXamlTypographyFeatures, Mode=OneWay}"
                                                         d:Text="{core:Localizer Key=TypographyVariantsHeader/Text}" />
                                                 </StackPanel>
                                             </ListView.Header>
@@ -1327,12 +1327,12 @@
                     ItemAnnotation="{x:Bind ViewModel.Settings.GlyphAnnotation, Mode=OneTime}"
                     ItemContainerTransitions="{StaticResource NoTransitions}"
                     ItemDoubleTapped="CharGrid_ItemDoubleTapped"
-                    ItemFontFace="{x:Bind ViewModel.SelectedVariant.Face, Mode=OneWay}"
-                    ItemFontFamily="{x:Bind ViewModel.FontFamily, Mode=OneWay}"
-                    ItemFontVariant="{x:Bind ViewModel.SelectedVariant, Mode=OneWay}"
+                    ItemFontFace="{x:Bind ViewModel.SelectedFace.Face, Mode=OneWay}"
+                    ItemFontFamily="{x:Bind ViewModel.SelectedFaceAnalysis.FontFamily, Mode=OneWay, FallbackValue={x:Null}}"
+                    ItemFontVariant="{x:Bind ViewModel.SelectedFace, Mode=OneWay}"
                     ItemTypography="{x:Bind ViewModel.SelectedTypography, Mode=OneWay}"
                     ItemsSource="{Binding Source={StaticResource CharacterSource}}"
-                    SelectedItem="{Binding SelectedChar, Mode=TwoWay}"
+                    SelectedItem="{x:Bind GetChar(ViewModel.SelectedChar), BindBack=ToModel, Mode=TwoWay}"
                     SelectionMode="Single"
                     ShowColorGlyphs="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
                     ShowVariationsInToolTips="True"
@@ -1349,7 +1349,7 @@
 
                             <controls:InfoBar
                                 x:Name="VariableFeaturesMessage"
-                                x:Load="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.HasVariations, Mode=OneWay, FallbackValue=False}"
+                                x:Load="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.HasVariations, Mode=OneWay, FallbackValue=False}"
                                 Content="{core:Localizer Key=VariableFeaturesMessage/Text}">
                                 <controls:InfoBar.SecondaryContent>
                                     <Button
@@ -1366,7 +1366,7 @@
 
                             <controls:InfoBar
                                 x:Name="ColrV1SupportMessage"
-                                x:Load="{x:Bind ViewModel.SelectedVariant.SupportsCOLRv1Rendering, Mode=OneWay, FallbackValue=False}"
+                                x:Load="{x:Bind ViewModel.SelectedFace.SupportsCOLRv1Rendering, Mode=OneWay, FallbackValue=False}"
                                 Content="{core:Localizer Key=ColrV1SupportMessage/Text}">
                                 <controls:InfoBar.SecondaryContent>
                                     <Button
@@ -1383,7 +1383,7 @@
 
                             <controls:InfoBar
                                 x:Name="DeprecatedIconsInfoBar"
-                                x:Load="{x:Bind core:Converters.TrueTrueTrue(ViewModel.IsFiltered, ViewModel.Settings.HideDeprecatedMDL2, ViewModel.IsMDL2Font), Mode=OneWay, FallbackValue=False}"
+                                x:Load="{x:Bind core:Converters.TrueTrueTrue(ViewModel.IsFiltered, ViewModel.Settings.HideDeprecatedMDL2, ViewModel.SelectedFaceAnalysis.IsMDL2Font), Mode=OneWay, FallbackValue=False}"
                                 Content="{core:Localizer Key=HiddenGlyphsMessage/Text}">
                                 <controls:InfoBar.SecondaryContent>
                                     <StackPanel Orientation="Horizontal" Spacing="12">
@@ -1503,11 +1503,11 @@
                             x:Name="CopySequenceText"
                             Margin="24"
                             VerticalAlignment="Center"
-                            FontFamily="{Binding SelectedVariant.DisplaySource}"
+                            FontFamily="{Binding SelectedFace.DisplaySource}"
                             FontSize="48"
-                            FontStretch="{Binding SelectedVariant.DirectWriteProperties.Stretch}"
-                            FontStyle="{Binding SelectedVariant.DirectWriteProperties.Style}"
-                            FontWeight="{Binding SelectedVariant.DirectWriteProperties.Weight}"
+                            FontStretch="{Binding SelectedFace.DirectWriteProperties.Stretch}"
+                            FontStyle="{Binding SelectedFace.DirectWriteProperties.Style}"
+                            FontWeight="{Binding SelectedFace.DirectWriteProperties.Weight}"
                             Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                             InputScope="Text"
                             IsColorFontEnabled="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
@@ -1576,11 +1576,11 @@
                     core:Properties.Boolean="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
                     core:Properties.Double="{x:Bind ViewModel.Settings.GridSize, Mode=OneWay}"
                     core:Properties.FontSize="{x:Bind core:Converters.GetFontSize(ViewModel.Settings.GridSize), Mode=OneWay}"
-                    core:Properties.FontUri="{x:Bind ViewModel.Glyphs.FontUri, TargetNullValue={x:Null}, FallbackValue={x:Null}, Mode=OneWay}"
+                    core:Properties.FontUri="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs.FontUri, TargetNullValue={x:Null}, FallbackValue={x:Null}, Mode=OneWay}"
                     ContainerContentChanging="CharGrid_ContainerContentChanging"
                     ContextRequested="Grid_ContextRequested"
                     DataFetchSize="1000"
-                    ItemsSource="{x:Bind ViewModel.Glyphs, Mode=OneWay}"
+                    ItemsSource="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs, Mode=OneWay}"
                     SelectionChanged="GlyphRepeater_SelectionChanged"
                     SelectionMode="Single"
                     ShowsScrollingPlaceholders="False"
@@ -1589,7 +1589,7 @@
                         <StackPanel x:Name="GlyphsInfoHeader" RequestedTheme="Dark">
                             <controls:InfoBar
                                 x:Name="SimulatedFacesGlyphsMessage"
-                                x:Load="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.IsSimulated, Mode=OneWay, FallbackValue=False}"
+                                x:Load="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.IsSimulated, Mode=OneWay, FallbackValue=False}"
                                 x:Uid="SimulatedFacesGlyphsMessage"
                                 SecondaryContent=" " />
                         </StackPanel>
@@ -1663,7 +1663,7 @@
                     <controls:SuggestionBox
                         x:Name="TypeRampSuggestionBox"
                         Margin="24 12 0 12"
-                        ItemsSource="{x:Bind ViewModel.RampOptions, Mode=OneWay}"
+                        ItemsSource="{x:Bind ViewModel.SelectedFaceAnalysis.RampOptions, Mode=OneWay, FallbackValue={x:Null}}"
                         RenderingOptions="{x:Bind ViewModel.RenderingOptions, Mode=OneWay}"
                         Text="{Binding TypeRampText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
@@ -1695,7 +1695,7 @@
 
                 <ScrollViewer
                     x:Name="VariationScroller"
-                    x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.HasVariationAxis, Mode=OneWay, FallbackValue=False, TargetNullValue=False}"
+                    x:Load="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.HasVariationAxis, Mode=OneWay, FallbackValue=False, TargetNullValue=False}"
                     Grid.Row="1"
                     MaxHeight="246">
                     <ItemsControl
@@ -1703,7 +1703,7 @@
                         Margin="24 0 24 0"
                         Padding="12"
                         Background="LightGray"
-                        ItemsSource="{x:Bind ViewModel.SelectedVariantAnalysis.VariableAxis, Mode=OneWay}">
+                        ItemsSource="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.VariableAxis, Mode=OneWay}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="cx:DWriteFontAxis">
                                 <Grid Margin="0 0 0 2">
@@ -1766,10 +1766,10 @@
                     ZoomMode="Enabled">
                     <ItemsControl
                         x:Name="TypeRampList"
-                        FontFamily="{Binding FontFamily, Mode=OneWay, FallbackValue='Segoe UI'}"
-                        FontStretch="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.Stretch, Mode=OneWay}"
-                        FontStyle="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.Style, Mode=OneWay}"
-                        FontWeight="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.Weight, Mode=OneWay}"
+                        FontFamily="{Binding SelectedFaceAnalysis.FontFamily, Mode=OneWay, FallbackValue='Segoe UI'}"
+                        FontStretch="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Stretch, Mode=OneWay}"
+                        FontStyle="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Style, Mode=OneWay}"
+                        FontWeight="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Weight, Mode=OneWay}"
                         ItemsSource="{x:Bind ViewModel.Ramps, Mode=OneWay}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -1859,6 +1859,9 @@
 
             </Grid>
 
+
+
+
             <!--  Preview Column  -->
             <Grid
                 x:Name="PreviewGrid"
@@ -1890,12 +1893,12 @@
                             <cxc:DirectText
                                 x:Name="TxtPreview"
                                 VerticalAlignment="Center"
-                                FontFace="{Binding SelectedVariant.Face}"
-                                FontFamily="{Binding SelectedVariant.Source}"
+                                FontFace="{Binding SelectedFace.Face}"
+                                FontFamily="{Binding SelectedFace.Source}"
                                 FontSize="24"
-                                FontStretch="{Binding SelectedVariant.DirectWriteProperties.Stretch}"
-                                FontStyle="{Binding SelectedVariant.DirectWriteProperties.Style}"
-                                FontWeight="{Binding SelectedVariant.DirectWriteProperties.Weight}"
+                                FontStretch="{Binding SelectedFace.DirectWriteProperties.Stretch}"
+                                FontStyle="{Binding SelectedFace.DirectWriteProperties.Style}"
+                                FontWeight="{Binding SelectedFace.DirectWriteProperties.Weight}"
                                 Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                 IsCharacterFitEnabled="True"
                                 IsColorFontEnabled="{Binding ShowColorGlyphs}"
@@ -1968,16 +1971,16 @@
                                 BorderThickness="1"
                                 ContentOrientation="Vertical"
                                 ContentSpacing="0"
-                                FontFamily="{Binding FontFamily}"
+                                FontFamily="{Binding SelectedFaceAnalysis.FontFamily}"
                                 FontSize="12"
-                                FontStretch="{Binding SelectedVariant.DirectWriteProperties.Stretch}"
-                                FontStyle="{Binding SelectedVariant.DirectWriteProperties.Style}"
-                                FontWeight="{Binding SelectedVariant.DirectWriteProperties.Weight}"
-                                ItemsSource="{x:Bind ViewModel.SelectedCharVariations, Mode=OneWay}"
+                                FontStretch="{Binding SelectedFace.DirectWriteProperties.Stretch}"
+                                FontStyle="{Binding SelectedFace.DirectWriteProperties.Style}"
+                                FontWeight="{Binding SelectedFace.DirectWriteProperties.Weight}"
+                                ItemsSource="{x:Bind ViewModel.SelectedChar.Variations, Mode=OneWay}"
                                 SelectedItem="{x:Bind ViewModel.SelectedTypography, Mode=OneWay}"
                                 SelectionChanged="PreviewTypographySelector_SelectionChanged"
                                 Style="{StaticResource VariantComboBoxStyle}"
-                                Visibility="{x:Bind GetAlternatesVis(ViewModel.SelectedTypography, ViewModel.SelectedCharVariations), Mode=OneWay}">
+                                Visibility="{x:Bind GetAlternatesVis(ViewModel.SelectedTypography, ViewModel.SelectedChar.Variations), Mode=OneWay}">
                                 <controls:UXComboBox.PreContent>
                                     <TextBlock
                                         Margin="0 0 0 1"
@@ -1986,7 +1989,7 @@
                                         FontStyle="Normal"
                                         FontWeight="Normal"
                                         TextTrimming="CharacterEllipsis">
-                                        <Run Text="{x:Bind ViewModel.SelectedCharVariations.Count, Mode=OneWay}" d:Text="6" />
+                                        <Run Text="{x:Bind ViewModel.SelectedChar.Variations.Count, Mode=OneWay}" d:Text="6" />
                                         <Run x:Uid="TypographyVariationsSelectorRun" d:Text="{core:Localizer Key=TypographyVariationsSelectorRun/Text}" />
                                     </TextBlock>
                                 </controls:UXComboBox.PreContent>
@@ -2030,7 +2033,7 @@
                                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                     FontSize="12"
                                     IsTextSelectionEnabled="True"
-                                    Text="{x:Bind ViewModel.GetCharName(ViewModel.SelectedChar), Mode=OneWay}"
+                                    Text="{x:Bind ViewModel.GetCharName(ViewModel.SelectedChar.Char), Mode=OneWay}"
                                     TextWrapping="Wrap"
                                     d:Text="Latin Small Letter A" />
                                 <TextBlock
@@ -2040,15 +2043,15 @@
                                     IsTextSelectionEnabled="True"
                                     TextWrapping="Wrap"
                                     d:Text="U+0061, Latin Extended Supplemental">
-                                    <Run Text="{x:Bind ViewModel.GetCharDescription(ViewModel.SelectedChar), Mode=OneWay}" /><Run Text="," />
-                                    <Run Text="{x:Bind ViewModel.SelectedChar.Range.Name, Mode=OneWay}" />
+                                    <Run Text="{x:Bind ViewModel.GetCharDescription(ViewModel.SelectedChar.Char), Mode=OneWay}" /><Run Text="," />
+                                    <Run Text="{x:Bind ViewModel.SelectedChar.Char.Range.Name, Mode=OneWay}" />
                                 </TextBlock>
                             </StackPanel>
 
                             <!--  Unihan  -->
                             <Grid
                                 x:Name="UnihanRoot"
-                                x:Load="{x:Bind core:Converters.IsNotNull(ViewModel.UnihanData), FallbackValue=False, Mode=OneWay}"
+                                x:Load="{x:Bind core:Converters.IsNotNull(ViewModel.SelectedChar.UnihanData), FallbackValue=False, Mode=OneWay}"
                                 Grid.Row="3"
                                 MaxHeight="170"
                                 core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
@@ -2115,7 +2118,7 @@
                                             <ItemsControl
                                                 Margin="12 0"
                                                 ItemTemplate="{StaticResource UnihanDataTemplate}"
-                                                ItemsSource="{x:Bind ViewModel.UnihanData.Pronunciations, Mode=OneWay}" />
+                                                ItemsSource="{x:Bind ViewModel.SelectedChar.UnihanData.Pronunciations, Mode=OneWay}" />
 
                                         </StackPanel>
 
@@ -2126,7 +2129,7 @@
 
                             <Button
                                 x:Name="UnihanButton"
-                                x:Load="{x:Bind core:Converters.IsNotNull(ViewModel.UnihanData), FallbackValue=False, Mode=OneWay}"
+                                x:Load="{x:Bind core:Converters.IsNotNull(ViewModel.SelectedChar.UnihanData), FallbackValue=False, Mode=OneWay}"
                                 Grid.Row="4"
                                 Margin="4 2"
                                 core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
@@ -2245,7 +2248,7 @@
                                                         h:FluentAnimation.PointerOverOffset="-2"
                                                         Command="{Binding SavePngCommand}"
                                                         Style="{StaticResource Mfi}"
-                                                        Visibility="{x:Bind ViewModel.SelectedCharAnalysis.HasColorGlyphs, Mode=OneWay}"
+                                                        Visibility="{x:Bind ViewModel.SelectedChar.Analysis.HasColorGlyphs, Mode=OneWay}"
                                                         d:Text="{core:Localizer Key=ColoredGlyphLabel/Text}">
                                                         <MenuFlyoutItem.CommandParameter>
                                                             <models:ExportParameters Style="{x:Bind ViewModel.GlyphColor}" Typography="{x:Bind (core:TypographyFeatureInfo)PreviewTypographySelector.SelectedItem, Mode=OneWay}" />
@@ -2256,7 +2259,7 @@
                                                         h:FluentAnimation.PointerOverOffset="-2"
                                                         Command="{Binding SavePngCommand}"
                                                         Style="{StaticResource Mfi}"
-                                                        Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}"
+                                                        Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedChar.Analysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}"
                                                         d:Text="{core:Localizer Key=BlackFill/Text}">
                                                         <MenuFlyoutItem.CommandParameter>
                                                             <models:ExportParameters Style="{x:Bind ViewModel.BlackColor}" Typography="{x:Bind (core:TypographyFeatureInfo)PreviewTypographySelector.SelectedItem, Mode=OneWay}" />
@@ -2267,7 +2270,7 @@
                                                         h:FluentAnimation.PointerOverOffset="-2"
                                                         Command="{Binding SavePngCommand}"
                                                         Style="{StaticResource Mfi}"
-                                                        Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}"
+                                                        Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedChar.Analysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}"
                                                         d:Text="{core:Localizer Key=WhiteFill/Text}">
                                                         <MenuFlyoutItem.CommandParameter>
                                                             <models:ExportParameters Style="{x:Bind ViewModel.WhiteColor}" Typography="{x:Bind (core:TypographyFeatureInfo)PreviewTypographySelector.SelectedItem, Mode=OneWay}" />
@@ -2278,14 +2281,14 @@
                                                         x:Uid="ExportSVGLabel"
                                                         h:FluentAnimation.PointerOverOffset="-2"
                                                         Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}"
-                                                        Visibility="{x:Bind ViewModel.SelectedCharAnalysis.IsFullVectorBased, Mode=OneWay}"
+                                                        Visibility="{x:Bind ViewModel.SelectedChar.Analysis.IsFullVectorBased, Mode=OneWay}"
                                                         d:Text="{core:Localizer Key=ExportSVGLabel/Text}" />
                                                     <MenuFlyoutItem
                                                         x:Uid="ExportSVGGlyphLabel"
                                                         h:FluentAnimation.PointerOverOffset="-2"
                                                         Command="{Binding SaveSvgCommand}"
                                                         Style="{StaticResource Mfi}"
-                                                        Visibility="{x:Bind ViewModel.IsSvgChar, Mode=OneWay}"
+                                                        Visibility="{x:Bind ViewModel.SelectedChar.IsSvgChar, Mode=OneWay}"
                                                         d:Text="{core:Localizer Key=ExportSVGGlyphLabel/Text}">
                                                         <MenuFlyoutItem.CommandParameter>
                                                             <models:ExportParameters Style="{x:Bind ViewModel.GlyphColor}" Typography="{x:Bind (core:TypographyFeatureInfo)PreviewTypographySelector.SelectedItem, Mode=OneWay}" />
@@ -2296,7 +2299,7 @@
                                                         h:FluentAnimation.PointerOverOffset="-2"
                                                         Command="{Binding SaveSvgCommand}"
                                                         Style="{StaticResource Mfi}"
-                                                        Visibility="{x:Bind core:Converters.TrueAndTrueAndFalseToVis(ViewModel.SelectedCharAnalysis.HasColorGlyphs, ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}"
+                                                        Visibility="{x:Bind core:Converters.TrueAndTrueAndFalseToVis(ViewModel.SelectedChar.Analysis.HasColorGlyphs, ViewModel.SelectedChar.Analysis.IsFullVectorBased, ViewModel.SelectedChar.IsSvgChar), Mode=OneWay}"
                                                         d:Text="{core:Localizer Key=ColoredGlyphLabel/Text}">
                                                         <MenuFlyoutItem.CommandParameter>
                                                             <models:ExportParameters Style="{x:Bind ViewModel.GlyphColor}" Typography="{x:Bind (core:TypographyFeatureInfo)PreviewTypographySelector.SelectedItem, Mode=OneWay}" />
@@ -2307,7 +2310,7 @@
                                                         h:FluentAnimation.PointerOverOffset="-2"
                                                         Command="{Binding SaveSvgCommand}"
                                                         Style="{StaticResource Mfi}"
-                                                        Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}"
+                                                        Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedChar.Analysis.IsFullVectorBased, ViewModel.SelectedChar.IsSvgChar), Mode=OneWay}"
                                                         d:Text="{core:Localizer Key=BlackFill/Text}">
                                                         <MenuFlyoutItem.CommandParameter>
                                                             <models:ExportParameters Style="{x:Bind ViewModel.BlackColor}" Typography="{x:Bind (core:TypographyFeatureInfo)PreviewTypographySelector.SelectedItem, Mode=OneWay}" />
@@ -2318,7 +2321,7 @@
                                                         h:FluentAnimation.PointerOverOffset="-2"
                                                         Command="{Binding SaveSvgCommand}"
                                                         Style="{StaticResource Mfi}"
-                                                        Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}"
+                                                        Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedChar.Analysis.IsFullVectorBased, ViewModel.SelectedChar.IsSvgChar), Mode=OneWay}"
                                                         d:Text="{core:Localizer Key=WhiteFill/Text}">
                                                         <MenuFlyoutItem.CommandParameter>
                                                             <models:ExportParameters Style="{x:Bind ViewModel.WhiteColor}" Typography="{x:Bind (core:TypographyFeatureInfo)PreviewTypographySelector.SelectedItem, Mode=OneWay}" />
@@ -2843,7 +2846,7 @@
             <VisualStateGroup x:Name="OptionsStates">
                 <VisualState x:Name="HasOptionsState">
                     <VisualState.StateTriggers>
-                        <StateTrigger IsActive="{x:Bind core:Converters.TrueFalse(ViewModel.HasFontOptions, ViewModel.SelectedFont.IsGlyphMap), FallbackValue=False, Mode=OneWay}" />
+                        <StateTrigger IsActive="{x:Bind core:Converters.TrueFalse(ViewModel.SelectedFaceAnalysis.HasFontOptions, ViewModel.SelectedFont.IsGlyphMap), FallbackValue=False, Mode=OneWay}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="FontOptionsButton.Visibility" Value="Visible" />

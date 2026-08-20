@@ -210,22 +210,23 @@ public static class Utils
                 dp.SetData("image/png", stream);
                 dp.SetData("PNG", stream);
             }
-            else if (!v.SelectedVariant.IsImported)
+            else if (!v.SelectedFace.IsImported)
             {
                 // We can allow users to also copy the glyph with the font meta-data included,
                 // so when they paste into a supported program like Microsoft Word or 
                 // Adobe Photoshop the correct font is automatically applied to the paste.
                 // This can't include any Typographic variations unfortunately.
 
-                var rtf = $@"{{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang2057{{\fonttbl{{\f0\fnil {v.FontFamily.Source};}}}} " +
+                var src = v.SelectedFaceAnalysis.FontFamily.Source;
+                var rtf = $@"{{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang2057{{\fonttbl{{\f0\fnil {src};}}}} " +
                            $@"{{\colortbl;\red0\green0\blue0; }}\pard\plain\f0 {formatted}}}";
                 dp.SetRtf(rtf);
 
-                var longName = v.FontFamily.Source;
-                if (v.SelectedVariant.TryGetInfo(CanvasFontInformation.FullName) is { } info
+                var longName = src;
+                if (v.SelectedFace.TryGetInfo(CanvasFontInformation.FullName) is { } info
                     && info.Value != longName)
                 {
-                    longName = $"{v.FontFamily.Source}, {info.Value}";
+                    longName = $"{src}, {info.Value}";
                 }
                 dp.SetHtmlFormat($"<p style=\"font-family:'{longName}'; \">{raw}</p>");
             }

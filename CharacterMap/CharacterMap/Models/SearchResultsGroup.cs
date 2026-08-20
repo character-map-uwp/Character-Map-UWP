@@ -19,7 +19,7 @@ public class SearchResultsGroup : List<IGlyphData>, IGrouping<string, IGlyphData
         Key = key;
     }
 
-    public static SearchResultsGroups CreateGroups(IEnumerable<IGlyphData> items, List<UnicodeRangeModel> categories)
+    public static SearchResultsGroups CreateGroups(IEnumerable<IGlyphData> items, IReadOnlyList<UnicodeRangeModel> categories)
     {
         SearchResultsGroup active = new(null,
             items.Where(g => categories.Where(c => c.IsSelected).Any(c => c.Range.Contains((uint)g.UnicodeIndex))));

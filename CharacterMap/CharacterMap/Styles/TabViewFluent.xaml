@@ -511,7 +511,7 @@
                             VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
                             ZoomMode="{TemplateBinding ScrollViewer.ZoomMode}">
 
-                            <ItemsPresenter x:Name="TabsItemsPresenter" Padding="{TemplateBinding Padding}" >
+                            <ItemsPresenter x:Name="TabsItemsPresenter" Padding="{TemplateBinding Padding}">
                                 <!--<ItemsPresenter.Header>
                                     <Grid Width="4">
                                         <Border
