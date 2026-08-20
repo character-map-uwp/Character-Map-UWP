@@ -3,6 +3,7 @@ using System.Globalization;
 using Windows.Graphics.Effects;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -18,12 +19,14 @@ namespace CharacterMap.Helpers;
 [AttachedProperty<bool>("EnableBounceScale")]
 [AttachedProperty<double>("CornerRadius", 0d)]
 [AttachedProperty<bool>("UseSynchronisedReposition")]
+[AttachedProperty<bool>("UseWindowAwareSynchronisedReposition")]
 [AttachedProperty<Point>("RelativeCenterPoint", "new Point()")]
 [AttachedProperty<double>("RotationAngleInDegrees")]
 [AttachedProperty<CompositionTransition>("RotationAngleInDegreesTransition")]
+[AttachedProperty<ResizeHelper>("ResizeHelper", IsReadOnly = true)]
 public partial class CompositionFactory : DependencyObject
 {
-    public static double OrchestrationDurationSeconds => 0.325;
+    public static double OrchestrationDurationSeconds => 0.25;
 
     public static Duration OrchestrationDuration => new Duration(TimeSpan.FromSeconds(OrchestrationDurationSeconds));
 
@@ -43,6 +46,21 @@ public partial class CompositionFactory : DependencyObject
     public const int DEFAULT_STAGGER_MS = 83;
 
     #region Attached Properties
+
+    static partial void OnUseWindowAwareSynchronisedRepositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement u && e.NewValue is bool b)
+        {
+            if (GetResizeHelper(u) is { } helper)
+            {
+                helper.Dispose();
+                SetResizeHelper(u, null);
+            }
+
+            if (b)
+                SetResizeHelper(u, new ResizeHelper(u));
+        }
+    }
 
     static partial void OnRotationAngleInDegreesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -952,4 +970,38 @@ public partial class CompositionFactory : DependencyObject
     //        target.Shadow = nt;
     //    }
     //}
+}
+
+public record WindowResizingMessage(CoreDispatcher Dispatcher);
+
+public class ResizeHelper : IDisposable
+{
+    private FrameworkElement _target;
+    Debouncer _debouncer = new(250);
+
+    public ResizeHelper(FrameworkElement target)
+    {
+        CompositionFactory.SetUseSynchronisedReposition(target, true);
+
+        WeakReferenceMessenger.Default.Register<WindowResizingMessage>(this, (o, m) =>
+            {
+                if (m.Dispatcher != target.Dispatcher)
+                    return;
+
+                CompositionFactory.SetUseSynchronisedReposition(target, false);
+                _debouncer.Debounce(() =>
+                {
+                    CompositionFactory.SetUseSynchronisedReposition(target, true);
+                });
+            });
+        _target = target;
+    }
+
+    public void Dispose()
+    {
+        _debouncer.Cancel();
+        WeakReferenceMessenger.Default.UnregisterAll(this);
+        CompositionFactory.SetUseSynchronisedReposition(_target, false);
+        _target = null;
+    }
 }

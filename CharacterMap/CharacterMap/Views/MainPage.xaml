@@ -1020,6 +1020,7 @@
                         AllowDropTabs="True"
                         Background="{x:Null}"
                         CanDragTabs="True"
+                        IsExpandedChanged="FontsTabBar_IsExpandedChanged"
                         Loaded="FontsTabBar_Loaded"
                         SelectedIndex="{x:Bind ViewModel.TabIndex, Mode=TwoWay}"
                         Style="{StaticResource TabViewStyle}"
@@ -1107,6 +1108,7 @@
                     x:Load="False"
                     Grid.Row="2"
                     Grid.ColumnSpan="3"
+                    Margin="0 0 0 -80"
                     helpers:CompositionFactory.UseSynchronisedReposition="True"
                     Background="{ThemeResource TopCardBrush}"
                     BackgroundTransition="{StaticResource RootBackgroundTransition}"
@@ -1559,6 +1561,7 @@
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
+
         </VisualStateManager.VisualStateGroups>
     </Grid>
 </views:ViewBase>

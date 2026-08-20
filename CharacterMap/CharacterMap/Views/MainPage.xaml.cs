@@ -1011,6 +1011,14 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
     {
         _ = SubsetterView.CreateWindowAsync(new());
     }
+
+    private void FontsTabBar_IsExpandedChanged(object sender, bool e)
+    {
+        // Hacks to allow a smooth animation.
+        // 76 is the height of the expanded tab preview area
+        FontMap.BottomHeight = new(e ? 76 : 0);
+        FontMap.Margin = e ? new(0, 0, 0, -76) : new();
+    }
 }
 
 public partial class MainPage

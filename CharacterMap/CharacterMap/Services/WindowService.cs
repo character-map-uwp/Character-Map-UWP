@@ -73,6 +73,8 @@ public static class WindowService
         if (mainView)
         {
             view = CoreApplication.MainView;
+            view.CoreWindow.SizeChanged -= Current_SizeChanged;
+            view.CoreWindow.SizeChanged += Current_SizeChanged;
         }
         else
         {
@@ -143,9 +145,15 @@ public static class WindowService
 
         info.CoreView.Dispatcher.Enqueue(() =>
         {
+            Window.Current.SizeChanged -= Current_SizeChanged;
             Window.Current.Close();
             Window.Current.Content = null;
         });
+    }
+
+    private static void Current_SizeChanged(object sender, WindowSizeChangedEventArgs e)
+    {
+        WeakReferenceMessenger.Default.Send(new WindowResizingMessage(((CoreWindow)sender).Dispatcher));
     }
 
     public static async Task ReactivateMainAsync()
@@ -165,6 +173,10 @@ public static class WindowService
         await ApplicationViewSwitcher.TryShowAsStandaloneAsync(WindowService.MainWindow.View.Id);
         await Task.Delay(100);
         WindowService.MainWindow.CoreView.CoreWindow.Activate();
+
+        WindowService.MainWindow.CoreView.CoreWindow.SizeChanged -= Current_SizeChanged;
+        WindowService.MainWindow.CoreView.CoreWindow.SizeChanged += Current_SizeChanged;
+
     }
 
     public static async Task TrySwitchToWindowAsync(WindowInformation info, bool main)
@@ -209,6 +221,8 @@ public static class WindowService
         sender.Activated -= CoreView_Activated;
         sender.CoreWindow.Dispatcher.ExecuteAsync(async () =>
         {
+            sender.CoreWindow.SizeChanged -= Current_SizeChanged;
+            sender.CoreWindow.SizeChanged += Current_SizeChanged;
             await ApplicationViewSwitcher.SwitchAsync(ApplicationView.GetForCurrentView().Id);
         });
     }

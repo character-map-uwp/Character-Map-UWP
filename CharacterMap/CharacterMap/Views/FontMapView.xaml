@@ -444,6 +444,7 @@
             <RowDefinition x:Name="TitleRow" Height="{StaticResource TitleRowGridHeight}" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="{x:Bind BottomHeight, Mode=OneWay}" />
         </Grid.RowDefinitions>
 
         <Border
@@ -1234,7 +1235,7 @@
                     x:Uid="BtnMoreIcon"
                     Grid.Column="2"
                     VerticalAlignment="Top"
-                    core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
+                    h:CompositionFactory.UseWindowAwareSynchronisedReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                     h:FluentAnimation.PointerOver="FluentContentPresenter"
                     h:FluentAnimation.PointerOverOffset="-2"
                     DataContext="{x:Bind ViewModel.SelectedFont, Mode=OneWay}"
@@ -1468,6 +1469,7 @@
                     x:Name="CopySequenceRoot"
                     Grid.Row="3"
                     Height="120"
+                    h:CompositionFactory.UseWindowAwareSynchronisedReposition="True"
                     BackgroundTransition="{StaticResource RootBackgroundTransition}"
                     Loading="{x:Bind h:CompositionFactory.LoadingSlideIn}"
                     Visibility="Collapsed"
@@ -1519,7 +1521,7 @@
                             Style="{StaticResource ChromelessTextBoxStyle}"
                             Text="{x:Bind ViewModel.Sequence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <Grid Grid.Column="1" core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
+                        <Grid Grid.Column="1">
                             <Grid.Resources>
                                 <Style BasedOn="{StaticResource LabelAppBarButtonStyle}" TargetType="AppBarButton">
                                     <Setter Property="Padding" Value="12 6" />
@@ -1838,6 +1840,7 @@
                         Margin="-4 0 0 0"
                         VerticalAlignment="Center"
                         core:Properties.ThemeIcon="DragIndicator"
+                        h:CompositionFactory.UseWindowAwareSynchronisedReposition="True"
                         FontSize="18"
                         Foreground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
                         IsHitTestVisible="False"
@@ -1956,7 +1959,10 @@
                         </Border>
                     </Grid>
 
-                    <StackPanel x:Name="CharacterPreviewDetailsRoot" Grid.Row="1">
+                    <StackPanel
+                        x:Name="CharacterPreviewDetailsRoot"
+                        Grid.Row="1"
+                        h:CompositionFactory.UseWindowAwareSynchronisedReposition="True">
                         <StackPanel>
                             <controls:UXComboBox
                                 x:Name="PreviewTypographySelector"

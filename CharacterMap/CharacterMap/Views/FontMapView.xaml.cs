@@ -39,6 +39,7 @@ public class VariantTemplateSelector : DataTemplateSelector
 [DependencyProperty<FontItem>("Font")]
 [AttachedProperty<bool>("GlyphsLoading")]
 [AttachedProperty<bool>("GlyphsLoaded")]
+[DependencyProperty<GridLength>("BottomHeight")]
 public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter, IPopoverPresenter
 {
     private BrushTransition t = new() { Duration = TimeSpan.FromSeconds(0.115) };
@@ -195,6 +196,8 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                             if (PreviewGrid.Visibility == Visibility.Collapsed || PreviewGridContent.Visibility == Visibility.Collapsed)
                                 return;
 
+                            CompositionFactory.SetUseWindowAwareSynchronisedReposition(TxtPreview, false);
+
                             TxtPreview.ClearValue(CharacterMapCX.Controls.DirectText.GlyphIndexProperty);
 
                             // Empty glyphs will cause the connected animation service to crash, so manually
@@ -210,6 +213,9 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                                     CompositionFactory.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
                                 }
                             }
+
+                            _resizerBouncer.Debounce(
+                                () => CompositionFactory.SetUseWindowAwareSynchronisedReposition(TxtPreview, true));
                         }
                         catch
                         {
@@ -1240,10 +1246,14 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private int ToInt(FontDisplayMode mode) => (int)mode;
 
+    Debouncer _resizerBouncer = new(250);
+
     private void GlyphRepeater_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (GlyphRepeater.SelectedItem is uint i)
         {
+            CompositionFactory.SetUseWindowAwareSynchronisedReposition(TxtPreview, false);
+
             TxtPreview.GlyphIndex = (int)i;
 
             // Empty glyphs will cause the connected animation service to crash, so manually
@@ -1259,6 +1269,10 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                     //CompositionFactory.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
                 }
             }
+
+            _resizerBouncer.Debounce(
+                () => CompositionFactory.SetUseWindowAwareSynchronisedReposition(TxtPreview, true));
+
         }
     }
 }

@@ -16,6 +16,8 @@ public partial class ExtendedTabView : TabView
 {
     TabViewListView _tabListView = null;
 
+    public event EventHandler<bool> IsExpandedChanged;
+
     public ExtendedTabView()
     {
 
@@ -63,6 +65,8 @@ public partial class ExtendedTabView : TabView
             foreach (var item in _tabListView.GetFirstLevelDescendantsOfType<TabViewItem>())
                 VisualStateManager.GoToState(item, state, true);
         }
+
+        IsExpandedChanged?.Invoke(this, n);
     }
 
     private void Tlv_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
