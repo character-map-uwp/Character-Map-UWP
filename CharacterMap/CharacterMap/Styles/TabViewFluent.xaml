@@ -359,8 +359,6 @@
                                     x:Name="OtherButton"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Command="{TemplateBinding AddTabButtonCommand}"
-                                    CommandParameter="{TemplateBinding AddTabButtonCommandParameter}"
                                     HighContrastAdjustment="None"
                                     IsTextScaleFactorEnabled="False"
                                     Style="{ThemeResource TabViewButtonStyle}">

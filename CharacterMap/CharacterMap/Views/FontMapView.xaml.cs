@@ -187,40 +187,22 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 UpdateTypography(ViewModel.SelectedTypography);
                 break;
             case nameof(ViewModel.SelectedChar):
-                if (ResourceHelper.AllowAnimation)
+                if (ViewModel.SelectedChar is not null)
                 {
-                    if (ViewModel.SelectedChar is not null)
+                    try
                     {
-                        try
+                        if (PreviewGrid.Visibility == Visibility.Collapsed || PreviewGridContent.Visibility == Visibility.Collapsed)
+                            return;
+
+                        SetWithoutReposition(TxtPreview, _resizerBouncer, () =>
                         {
-                            if (PreviewGrid.Visibility == Visibility.Collapsed || PreviewGridContent.Visibility == Visibility.Collapsed)
-                                return;
-
-                            CompositionFactory.SetUseWindowAwareSynchronisedReposition(TxtPreview, false);
-
                             TxtPreview.ClearValue(CharacterMapCX.Controls.DirectText.GlyphIndexProperty);
-
-                            // Empty glyphs will cause the connected animation service to crash, so manually
-                            // check if the rendered glyph contains content
-                            if (CharGrid.ContainerFromItem(ViewModel.SelectedChar.Char) is FrameworkElement container
-                                && container.GetFirstDescendantOfType<TextBlock>() is TextBlock t)
-                            {
-                                t.Measure(container.DesiredSize);
-                                if (t.DesiredSize.Height != 0 && t.DesiredSize.Width != 0)
-                                {
-                                    var ani = CharGrid.PrepareConnectedAnimation("PP", ViewModel.SelectedChar.Char, "Text");
-                                    ani.TryStart(TxtPreview);
-                                    CompositionFactory.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
-                                }
-                            }
-
-                            _resizerBouncer.Debounce(
-                                () => CompositionFactory.SetUseWindowAwareSynchronisedReposition(TxtPreview, true));
-                        }
-                        catch
-                        {
-                            // Nu Hair Don't care
-                        }
+                            AnimationSelectionFromCharacter();
+                        });
+                    }
+                    catch
+                    {
+                        // Nu Hair Don't care
                     }
 
                     //CompositionFactory.PlayScaleEntrance(TxtPreview, .85f, 1f);
@@ -1252,28 +1234,22 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     {
         if (GlyphRepeater.SelectedItem is uint i)
         {
-            CompositionFactory.SetUseWindowAwareSynchronisedReposition(TxtPreview, false);
-
-            TxtPreview.GlyphIndex = (int)i;
-
-            // Empty glyphs will cause the connected animation service to crash, so manually
-            // check if the rendered glyph contains content
-            if (GlyphRepeater.ContainerFromItem(GlyphRepeater.SelectedItem) is FrameworkElement container
-                && container.GetFirstDescendantOfType<Glyphs>() is Glyphs t)
+            SetWithoutReposition(TxtPreview, _resizerBouncer, () =>
             {
-                t.Measure(container.DesiredSize);
-                if (t.DesiredSize.Height != 0 && t.DesiredSize.Width != 0)
-                {
-                    var ani = GlyphRepeater.PrepareConnectedAnimation("PP", GlyphRepeater.SelectedItem, "Text");
-                    ani.TryStart(TxtPreview);
-                    //CompositionFactory.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
-                }
-            }
-
-            _resizerBouncer.Debounce(
-                () => CompositionFactory.SetUseWindowAwareSynchronisedReposition(TxtPreview, true));
-
+                TxtPreview.GlyphIndex = (int)i;
+                AnimateSelectionFromGlyph();
+            });
         }
+    }
+
+    static void SetWithoutReposition(FrameworkElement repositionTarget, Debouncer debouncer, Action action)
+    {
+        CompositionFactory.SetUseWindowAwareSynchronisedReposition(repositionTarget, false);
+
+        action?.Invoke();
+
+        debouncer.Debounce(
+            () => CompositionFactory.SetUseWindowAwareSynchronisedReposition(repositionTarget, true));
     }
 }
 

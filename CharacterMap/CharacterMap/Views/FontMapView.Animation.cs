@@ -76,6 +76,42 @@ public partial class FontMapView
     }
 
 
+    private void AnimateSelectionFromGlyph()
+    {
+        // Empty glyphs will cause the connected animation service to crash, so manually
+        // check if the rendered glyph contains content
+        if (ResourceHelper.AllowAnimation
+            && GlyphRepeater.ContainerFromItem(GlyphRepeater.SelectedItem) is FrameworkElement container
+            && container.GetFirstDescendantOfType<Glyphs>() is Glyphs t)
+        {
+            t.Measure(container.DesiredSize);
+            if (t.DesiredSize.Height != 0 && t.DesiredSize.Width != 0)
+            {
+                var ani = GlyphRepeater.PrepareConnectedAnimation("PP", GlyphRepeater.SelectedItem, "Text");
+                ani.TryStart(TxtPreview);
+            }
+        }
+    }
+
+    void AnimationSelectionFromCharacter()
+    {
+        // Empty glyphs will cause the connected animation service to crash, so manually
+        // check if the rendered glyph contains content
+        if (ResourceHelper.AllowAnimation
+            && CharGrid.ContainerFromItem(ViewModel.SelectedChar.Char) is FrameworkElement container
+            && container.GetFirstDescendantOfType<TextBlock>() is TextBlock t)
+        {
+            t.Measure(container.DesiredSize);
+            if (t.DesiredSize.Height != 0 && t.DesiredSize.Width != 0)
+            {
+                var ani = CharGrid.PrepareConnectedAnimation("PP", ViewModel.SelectedChar.Char, "Text");
+                ani.TryStart(TxtPreview);
+                CompositionFactory.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
+            }
+        }
+    }
+
+
 
     List<FrameworkElement> GetTypeRampAnimationTargets()
     {

@@ -741,6 +741,10 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
+                                <Grid.Resources>
+                                    <x:Double x:Key="AppBarThemeMinHeight">10</x:Double>
+                                </Grid.Resources>
+
                                 <TextBlock
                                     x:Uid="SystemFontsExpiredMessage"
                                     Margin="0 -2 0 0"
@@ -755,6 +759,7 @@
                                     VerticalAlignment="Center"
                                     Click="{x:Bind ViewModel.ReloadFontSet}"
                                     Icon="Refresh"
+                                    Style="{StaticResource AppBarButtonRevealStyle}"
                                     ToolTipService.Placement="Bottom" />
 
                             </Grid>
@@ -1012,6 +1017,7 @@
                     <controls:ExtendedTabView
                         x:Name="FontsTabBar"
                         x:Load="False"
+                        x:FieldModifier="public"
                         core:Properties.ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
                         core:Properties.IsTabOpenAnimationEnabled="True"
                         core:Properties.RequireOpenTab="True"

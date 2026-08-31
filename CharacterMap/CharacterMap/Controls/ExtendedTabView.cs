@@ -58,12 +58,12 @@ public partial class ExtendedTabView : TabView
     partial void OnIsExpandedChanged(bool o, bool n)
     {
         string state = n ? "ExpandedState" : "NotExpandedState";
-        VisualStateManager.GoToState(this, state, true);
+        VisualStateManager.GoToState(this, state, ResourceHelper.AllowAnimation);
 
         if (_tabListView is not null)
         {
             foreach (var item in _tabListView.GetFirstLevelDescendantsOfType<TabViewItem>())
-                VisualStateManager.GoToState(item, state, true);
+                VisualStateManager.GoToState(item, state, ResourceHelper.AllowAnimation);
         }
 
         IsExpandedChanged?.Invoke(this, n);
@@ -74,7 +74,7 @@ public partial class ExtendedTabView : TabView
         if (args.ItemContainer is not { } container) return;
 
         string state = IsExpanded ? "ExpandedState" : "NotExpandedState";
-        VisualStateManager.GoToState(args.ItemContainer, state, true);
+        VisualStateManager.GoToState(args.ItemContainer, state, ResourceHelper.AllowAnimation);
     }
 
     private void Tlv_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)

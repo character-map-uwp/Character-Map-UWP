@@ -36,6 +36,9 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
     private object _blockRefreshScroll = null;
 
+    bool _disableMapChange = true;
+
+
     public MainPage() : this(null) { }
 
     public MainPage(MainViewModelArgs args)
@@ -113,8 +116,6 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             ViewModel.SelectedCollection = e as IFontCollection;
         });
     }
-
-    bool _disableMapChange = true;
 
     void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
