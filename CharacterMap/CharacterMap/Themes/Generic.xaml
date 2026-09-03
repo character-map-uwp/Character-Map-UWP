@@ -415,25 +415,28 @@
                                     TextAlignment="Left" />
                             </StackPanel>
 
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <ContentPresenter x:Name="TitleRightContentPresenter" Content="{x:Null}" />
+                                <controls:UXButton
+                                    x:Name="BtnClose"
+                                    x:Uid="BtnClose"
+                                    Width="45"
+                                    Height="45"
+                                    HorizontalAlignment="Right"
+                                    h:FluentAnimation.PointerDownScale="0.8"
+                                    h:FluentAnimation.PointerOver="FluentContentPresenter"
+                                    h:FluentAnimation.PointerOverOffset="-2"
+                                    h:FluentAnimation.UsePointerOver="True"
+                                    Style="{StaticResource DefaultThemeAppBarButtonStyle}"
+                                    Visibility="{TemplateBinding CloseButtonVisibility}">
+                                    <FontIcon Glyph="{TemplateBinding CloseGlyph}" Style="{StaticResource ThemeFontIconStyle}" />
+                                    <Button.KeyboardAccelerators>
+                                        <KeyboardAccelerator Key="Escape" Modifiers="None" />
+                                    </Button.KeyboardAccelerators>
+                                </controls:UXButton>
+                            </StackPanel>
 
-                            <controls:UXButton
-                                x:Name="BtnClose"
-                                x:Uid="BtnClose"
-                                Grid.Column="1"
-                                Width="45"
-                                Height="45"
-                                HorizontalAlignment="Right"
-                                h:FluentAnimation.PointerDownScale="0.8"
-                                h:FluentAnimation.PointerOver="FluentContentPresenter"
-                                h:FluentAnimation.PointerOverOffset="-2"
-                                h:FluentAnimation.UsePointerOver="True"
-                                Style="{StaticResource DefaultThemeAppBarButtonStyle}"
-                                Visibility="{TemplateBinding CloseButtonVisibility}">
-                                <FontIcon Glyph="{TemplateBinding CloseGlyph}" Style="{StaticResource ThemeFontIconStyle}" />
-                                <Button.KeyboardAccelerators>
-                                    <KeyboardAccelerator Key="Escape" Modifiers="None" />
-                                </Button.KeyboardAccelerators>
-                            </controls:UXButton>
+
 
                         </Grid>
 
@@ -1093,7 +1096,7 @@
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="ExpansionStates">
-                                <VisualState x:Name="NonExpandedState" />
+                                <VisualState x:Name="NotExpandedState" />
                                 <VisualState x:Name="ExpandedState">
                                     <VisualState.StateTriggers>
                                         <StateTrigger IsActive="{Binding ViewModel.IsExpanded, RelativeSource={RelativeSource Mode=TemplatedParent}, FallbackValue=False, TargetNullValue=False}" />

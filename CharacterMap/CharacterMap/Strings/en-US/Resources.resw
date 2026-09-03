@@ -2891,4 +2891,7 @@ For Font Families that do not provide Bold or Oblique Faces, Windows will provid
   <data name="PlusMore" xml:space="preserve">
     <value>+ {0} more</value>
   </data>
+  <data name="OnlineDocumentationHint.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>View online documentation</value>
+  </data>
 </root>

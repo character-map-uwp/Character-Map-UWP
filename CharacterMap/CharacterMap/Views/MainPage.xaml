@@ -1202,7 +1202,7 @@
                     BorderThickness="1 0 1 1"
                     ContentTemplate="{StaticResource FontListItemToolTipTemplate}"
                     CornerRadius="0 4 4 4"
-                    HorizontalOffset="5"
+                    HorizontalOffset="7"
                     Placement="BottomEdgeLeftAligned"
                     Style="{StaticResource PreviewTipHighContrastStyle}"
                     Target="{x:Bind FontsTabBar}" />
@@ -1426,6 +1426,7 @@
                         <Setter Target="OverlayPaneRootBackground.Background" Value="{ThemeResource SystemChromeMediumColor}" />
                         <Setter Target="FontMap.Margin" Value="0 0 2 0" />
                         <Setter Target="FontMap.Padding" Value="0 0 0 4" />
+                        <Setter Target="FontsTabBar.ExpansionButtonVisibility" Value="Visible" />
                         <Setter Target="ZoomGridView.SelectorVisual">
                             <Setter.Value>
                                 <controls:SelectorVisualElement

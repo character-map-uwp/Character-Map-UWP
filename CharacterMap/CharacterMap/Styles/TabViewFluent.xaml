@@ -303,14 +303,14 @@
         </Setter>
     </Style>
 
-    <Style x:Key="TabViewStyle" TargetType="controls:TabView">
+    <Style x:Key="TabViewStyle" TargetType="controls1:ExtendedTabView">
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="Padding" Value="{ThemeResource TabViewHeaderPadding}" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Background" Value="{ThemeResource TabViewBackground}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="controls:TabView">
+                <ControlTemplate TargetType="controls1:ExtendedTabView">
                     <Grid Margin="{TemplateBinding Padding}">
                         <Grid x:Name="TabContainerGrid" XYFocusKeyboardNavigation="Enabled">
                             <Grid.ColumnDefinitions>
@@ -361,7 +361,8 @@
                                     VerticalAlignment="Center"
                                     HighContrastAdjustment="None"
                                     IsTextScaleFactorEnabled="False"
-                                    Style="{ThemeResource TabViewButtonStyle}">
+                                    Style="{ThemeResource TabViewButtonStyle}"
+                                    Visibility="{TemplateBinding ExpansionButtonVisibility}">
                                     <FontIcon
                                         x:Name="DownIcon"
                                         core:Properties.ThemeIcon="ChevronDown"

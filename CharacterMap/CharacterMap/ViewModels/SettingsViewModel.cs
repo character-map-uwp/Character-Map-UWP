@@ -125,7 +125,11 @@ public partial class SettingsViewModel : ViewModelBase
         // is to expose features people may not be aware exist inside the
         // application rather than bug-fixes or visual changes.
         return [
-             new("Latest Update (August 2026)", // August 2026
+            new("Latest Update (September 2026)", // September 2026
+                """
+                - Added expandable tab-bar preview thumbnails for Windows 11 theme
+                """),
+             new("2026.5.1.0 (August 2026)", // August 2026
                 """
                 - Added option to filter by outline type
                 - Added option to name characters in Segoe Icon Subsetter tool during the Preview phase and generating code for various languages based on these names.

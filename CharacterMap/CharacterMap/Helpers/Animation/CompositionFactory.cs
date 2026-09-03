@@ -343,6 +343,23 @@ public partial class CompositionFactory : DependencyObject
         target.GetElementVisual().StartAnimationGroup(animation);
     }
 
+    public static void PlayTabEntrace(UIElement target, double ratio)
+    {
+        if (!UISettings.AnimationsEnabled || target == null)
+            return;
+
+        var v = target.GetElementVisual();
+        v.CenterPoint = new(v.Size.X * (float)ratio, 0f, 0f);
+        v.StartAnimation(
+            v.CreateVector3KeyFrameAnimation(nameof(Visual.Scale))
+                .AddKeyFrame(0f, new Vector3(0.1f))
+                .AddKeyFrame(1, Vector3.One, KeySplines.FluentDecelerate)
+                .SetDuration(0.4));
+
+        //var animation = CreateEntranceAnimation(target, new Vector3(fromOffsetX, fromOffsetY, 0), delayMs, durationMs);
+        //target.GetElementVisual().StartAnimationGroup(animation);
+    }
+
     public static void SetStandardEntrance(FrameworkElement sender, object args)
     {
         if (!UISettings.AnimationsEnabled)

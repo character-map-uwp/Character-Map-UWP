@@ -12,6 +12,7 @@ using Windows.UI.Xaml;
 namespace CharacterMap.Controls;
 
 [DependencyProperty<bool>("IsExpanded")]
+[DependencyProperty<Visibility>("ExpansionButtonVisibility", Visibility.Collapsed)]
 public partial class ExtendedTabView : TabView
 {
     TabViewListView _tabListView = null;
@@ -20,7 +21,7 @@ public partial class ExtendedTabView : TabView
 
     public ExtendedTabView()
     {
-
+        this.DefaultStyleKey = typeof(ExtendedTabView);
     }
 
     protected override void OnApplyTemplate()
@@ -37,8 +38,8 @@ public partial class ExtendedTabView : TabView
         {
             _tabListView = tlv;
 
-            tlv.ChoosingItemContainer -= Tlv_ChoosingItemContainer;
-            tlv.ChoosingItemContainer += Tlv_ChoosingItemContainer;
+            //tlv.ChoosingItemContainer -= Tlv_ChoosingItemContainer;
+            //tlv.ChoosingItemContainer += Tlv_ChoosingItemContainer;
             tlv.ContainerContentChanging -= Tlv_ContainerContentChanging;
             tlv.ContainerContentChanging += Tlv_ContainerContentChanging;
         }
@@ -77,8 +78,8 @@ public partial class ExtendedTabView : TabView
         VisualStateManager.GoToState(args.ItemContainer, state, ResourceHelper.AllowAnimation);
     }
 
-    private void Tlv_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
-    {
-        if (args.ItemContainer is not { } container) return;
-    }
+    //private void Tlv_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+    //{
+    //    if (args.ItemContainer is not { } container) return;
+    //}
 }

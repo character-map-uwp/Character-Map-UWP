@@ -178,7 +178,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         {
             case nameof(ViewModel.SelectedFont):
                 UpdateStates();
-                UpdateDisplayMode(false);
+                UpdateDisplayMode();
                 break;
             case nameof(ViewModel.SelectedFace):
                 _ = SetCharacterSelectionAsync();
@@ -444,7 +444,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         // Make sure this stays in sync with programmatic changes
         ViewSelector.SelectedIndex = (int)ViewModel.DisplayMode;
 
-        if (animate)
+        //if (animate)
             PlayFontChanged(false);
     }
 
