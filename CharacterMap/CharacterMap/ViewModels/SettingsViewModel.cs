@@ -128,6 +128,7 @@ public partial class SettingsViewModel : ViewModelBase
             new("Latest Update (September 2026)", // September 2026
                 """
                 - Added expandable tab-bar preview thumbnails for Windows 11 theme
+                - Typographic variants of a glyph will now attempt to copy as text if the glyph of the typographic variant also exists as a mapped character
                 """),
              new("2026.5.1.0 (August 2026)", // August 2026
                 """

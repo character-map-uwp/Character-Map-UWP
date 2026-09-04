@@ -603,7 +603,7 @@ public static class FlyoutHelper
                 }
 
                 // 5.1. Get providers for the grid character
-                var options = viewmodel.RenderingOptions with { Typography = viewmodel.TypographyFeatures, Axis = viewmodel.SelectedFaceAnalysis.VariationAxis.Copy() };
+                var options = viewmodel.RenderingOptions with { Typography = viewmodel.TypographyFeatures.Select(f => f.Feature).ToList(), Axis = viewmodel.SelectedFaceAnalysis.VariationAxis.Copy() };
                 var providers = DevProviderBase.GetProviders(options, c);
 
                 // 5.2. Create child items.

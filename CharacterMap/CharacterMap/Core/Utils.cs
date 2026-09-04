@@ -143,23 +143,21 @@ public static class Utils
         string c = msg.RequestedItem.GetClipboardString();
 
         if (msg.DataType == CopyDataType.Text)
-        {
             return await TryCopyToClipboardInternalAsync(msg.RequestedItem.Char, c, viewModel);
-        }
-        else if (msg.DataType == CopyDataType.SVG)
-        {
-            CharacterRenderingOptions renderOpts = msg.Analysis is not null
-                ? viewModel.RenderingOptions with { Analysis = msg.Analysis }
+
+
+        CharacterRenderingOptions renderOpts = msg.Analysis is not null
+                ? viewModel.RenderingOptions with { Analysis = msg.Analysis, Typography = [viewModel.SelectedTypography.Feature] }
                 : viewModel.RenderingOptions;
+        
+        if (msg.DataType == CopyDataType.SVG)
+        {
             ExportOptions ops = new(ExportFormat.Svg, msg.Style) { Options = renderOpts };
             var svg = ExportManager.GetSVG(ops, msg.RequestedItem);
             return await TryCopyToClipboardInternalAsync(svg, c, viewModel, msg.DataType);
         }
         else if (msg.DataType == CopyDataType.PNG)
         {
-            CharacterRenderingOptions renderOpts = msg.Analysis is not null
-                ? viewModel.RenderingOptions with { Analysis = msg.Analysis }
-                : viewModel.RenderingOptions;
             ExportOptions ops = new(ExportFormat.Png, msg.Style) { Options = renderOpts };
             IRandomAccessStream data = await ExportManager.GetGlyphPNGStreamAsync(ops, msg.RequestedItem);
             return await TryCopyToClipboardInternalAsync(null, c, viewModel, msg.DataType, data);

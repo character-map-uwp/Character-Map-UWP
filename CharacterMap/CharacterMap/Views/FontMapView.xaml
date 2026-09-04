@@ -1143,7 +1143,7 @@
                                                 </StackPanel>
                                             </ListView.Header>
                                             <ListView.ItemTemplate>
-                                                <DataTemplate x:DataType="core:TypographyFeatureInfo">
+                                                <DataTemplate x:DataType="viewmodels:TypographyVariation">
                                                     <TextBlock
                                                         x:Name="TemplateContent"
                                                         Margin="12 0"
@@ -1331,7 +1331,7 @@
                     ItemFontFace="{x:Bind ViewModel.SelectedFace.Face, Mode=OneWay}"
                     ItemFontFamily="{x:Bind ViewModel.SelectedFaceAnalysis.FontFamily, Mode=OneWay, FallbackValue={x:Null}}"
                     ItemFontVariant="{x:Bind ViewModel.SelectedFace, Mode=OneWay}"
-                    ItemTypography="{x:Bind ViewModel.SelectedTypography, Mode=OneWay}"
+                    ItemTypography="{x:Bind ViewModel.SelectedTypography.Feature, Mode=OneWay}"
                     ItemsSource="{Binding Source={StaticResource CharacterSource}}"
                     SelectedItem="{x:Bind GetChar(ViewModel.SelectedChar), BindBack=ToModel, Mode=TwoWay}"
                     SelectionMode="Single"
@@ -2000,7 +2000,7 @@
                                     </TextBlock>
                                 </controls:UXComboBox.PreContent>
                                 <ComboBox.ItemTemplate>
-                                    <DataTemplate x:DataType="core:TypographyFeatureInfo">
+                                    <DataTemplate x:DataType="viewmodels:TypographyVariation">
                                         <Grid Height="40" Margin="-12 0">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="60" />
@@ -2010,7 +2010,7 @@
                                             <TextBlock
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
-                                                core:Properties.Typography="{x:Bind}"
+                                                core:Properties.Typography="{x:Bind Feature}"
                                                 FontSize="24"
                                                 Text="{Binding ElementName=TxtPreview, Path=Text}" />
 
@@ -2257,7 +2257,7 @@
                                                         Visibility="{x:Bind ViewModel.SelectedChar.Analysis.HasColorGlyphs, Mode=OneWay}"
                                                         d:Text="{core:Localizer Key=ColoredGlyphLabel/Text}">
                                                         <MenuFlyoutItem.CommandParameter>
-                                                            <models:ExportParameters Style="{x:Bind ViewModel.GlyphColor}" Typography="{x:Bind (core:TypographyFeatureInfo)PreviewTypographySelector.SelectedItem, Mode=OneWay}" />
+                                                            <models:ExportParameters Style="{x:Bind ViewModel.GlyphColor}" Typography="{x:Bind ViewModel.SelectedTypography.Feature, Mode=OneWay}" />
                                                         </MenuFlyoutItem.CommandParameter>
                                                     </MenuFlyoutItem>
                                                     <MenuFlyoutItem
@@ -2268,7 +2268,7 @@
                                                         Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedChar.Analysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}"
                                                         d:Text="{core:Localizer Key=BlackFill/Text}">
                                                         <MenuFlyoutItem.CommandParameter>
-                                                            <models:ExportParameters Style="{x:Bind ViewModel.BlackColor}" Typography="{x:Bind (core:TypographyFeatureInfo)PreviewTypographySelector.SelectedItem, Mode=OneWay}" />
+                                                            <models:ExportParameters Style="{x:Bind ViewModel.BlackColor}" Typography="{x:Bind ViewModel.SelectedTypography.Feature, Mode=OneWay}" />
                                                         </MenuFlyoutItem.CommandParameter>
                                                     </MenuFlyoutItem>
                                                     <MenuFlyoutItem
@@ -2279,7 +2279,7 @@
                                                         Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedChar.Analysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}"
                                                         d:Text="{core:Localizer Key=WhiteFill/Text}">
                                                         <MenuFlyoutItem.CommandParameter>
-                                                            <models:ExportParameters Style="{x:Bind ViewModel.WhiteColor}" Typography="{x:Bind (core:TypographyFeatureInfo)PreviewTypographySelector.SelectedItem, Mode=OneWay}" />
+                                                            <models:ExportParameters Style="{x:Bind ViewModel.WhiteColor}" Typography="{x:Bind ViewModel.SelectedTypography.Feature, Mode=OneWay}" />
                                                         </MenuFlyoutItem.CommandParameter>
                                                     </MenuFlyoutItem>
 
@@ -2297,7 +2297,7 @@
                                                         Visibility="{x:Bind ViewModel.SelectedChar.IsSvgChar, Mode=OneWay}"
                                                         d:Text="{core:Localizer Key=ExportSVGGlyphLabel/Text}">
                                                         <MenuFlyoutItem.CommandParameter>
-                                                            <models:ExportParameters Style="{x:Bind ViewModel.GlyphColor}" Typography="{x:Bind (core:TypographyFeatureInfo)PreviewTypographySelector.SelectedItem, Mode=OneWay}" />
+                                                            <models:ExportParameters Style="{x:Bind ViewModel.GlyphColor}" Typography="{x:Bind ViewModel.SelectedTypography.Feature, Mode=OneWay}" />
                                                         </MenuFlyoutItem.CommandParameter>
                                                     </MenuFlyoutItem>
                                                     <MenuFlyoutItem
@@ -2308,7 +2308,7 @@
                                                         Visibility="{x:Bind core:Converters.TrueAndTrueAndFalseToVis(ViewModel.SelectedChar.Analysis.HasColorGlyphs, ViewModel.SelectedChar.Analysis.IsFullVectorBased, ViewModel.SelectedChar.IsSvgChar), Mode=OneWay}"
                                                         d:Text="{core:Localizer Key=ColoredGlyphLabel/Text}">
                                                         <MenuFlyoutItem.CommandParameter>
-                                                            <models:ExportParameters Style="{x:Bind ViewModel.GlyphColor}" Typography="{x:Bind (core:TypographyFeatureInfo)PreviewTypographySelector.SelectedItem, Mode=OneWay}" />
+                                                            <models:ExportParameters Style="{x:Bind ViewModel.GlyphColor}" Typography="{x:Bind ViewModel.SelectedTypography.Feature, Mode=OneWay}" />
                                                         </MenuFlyoutItem.CommandParameter>
                                                     </MenuFlyoutItem>
                                                     <MenuFlyoutItem
@@ -2319,7 +2319,7 @@
                                                         Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedChar.Analysis.IsFullVectorBased, ViewModel.SelectedChar.IsSvgChar), Mode=OneWay}"
                                                         d:Text="{core:Localizer Key=BlackFill/Text}">
                                                         <MenuFlyoutItem.CommandParameter>
-                                                            <models:ExportParameters Style="{x:Bind ViewModel.BlackColor}" Typography="{x:Bind (core:TypographyFeatureInfo)PreviewTypographySelector.SelectedItem, Mode=OneWay}" />
+                                                            <models:ExportParameters Style="{x:Bind ViewModel.BlackColor}" Typography="{x:Bind ViewModel.SelectedTypography.Feature, Mode=OneWay}" />
                                                         </MenuFlyoutItem.CommandParameter>
                                                     </MenuFlyoutItem>
                                                     <MenuFlyoutItem
@@ -2330,7 +2330,7 @@
                                                         Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedChar.Analysis.IsFullVectorBased, ViewModel.SelectedChar.IsSvgChar), Mode=OneWay}"
                                                         d:Text="{core:Localizer Key=WhiteFill/Text}">
                                                         <MenuFlyoutItem.CommandParameter>
-                                                            <models:ExportParameters Style="{x:Bind ViewModel.WhiteColor}" Typography="{x:Bind (core:TypographyFeatureInfo)PreviewTypographySelector.SelectedItem, Mode=OneWay}" />
+                                                            <models:ExportParameters Style="{x:Bind ViewModel.WhiteColor}" Typography="{x:Bind ViewModel.SelectedTypography.Feature, Mode=OneWay}" />
                                                         </MenuFlyoutItem.CommandParameter>
                                                     </MenuFlyoutItem>
                                                 </MenuFlyout>

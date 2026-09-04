@@ -105,6 +105,42 @@ public partial class FaceAnalysisModel : ViewModelBase
 
 }
 
+[DebuggerDisplay("TV {DisplayName}, IsMapped: {IsVariationMapped}")]
+public class TypographyVariation
+{
+    public static TypographyVariation None { get; } = new();
+
+    public TypographyVariation() { }
+
+    public TypographyVariation(TypographyFeatureInfo feature)
+    {
+        Feature = feature;
+    }
+
+    public TypographyFeatureInfo Feature { get; set; } = TypographyFeatureInfo.None;
+
+    /// <summary>
+    /// If <see cref="IsVariationMapped"/> is true, this represents the Unicode character mapping for the typography variation.
+    /// </summary>
+    public int FaceCharacterMapping { get; set; } = -1;
+
+    /// <summary>
+    /// If true, the typographic variation glyph is also mapped as a Unicode character in the font face. 
+    /// This means that the variation can be accessed directly as a character, rather than just as a typography feature.
+    /// </summary>
+    public bool IsVariationMapped => FaceCharacterMapping >= 0;
+
+    public bool IsNone => Feature == TypographyFeatureInfo.None;
+
+    public string DisplayName => Feature?.DisplayName;
+
+    public override string ToString() => DisplayName;
+
+    public override bool Equals(object obj) => obj is TypographyVariation other && Equals(Feature, other.Feature);
+
+    public override int GetHashCode() => Feature?.GetHashCode() ?? 0;
+}
+
 public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<CharacterAnalysisModel>
 {
     private NativeInterop _interop = Utils.GetInterop();
@@ -113,7 +149,7 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
 
     [ObservableProperty] bool _isSvgChar;
     [ObservableProperty] CanvasTextLayoutAnalysis _analysis;
-    [ObservableProperty] List<TypographyFeatureInfo> _variations;
+    [ObservableProperty] List<TypographyVariation> _variations;
     [ObservableProperty] UnihanData _unihanData;
 
     private readonly FontMapViewModel _vm;
@@ -124,10 +160,11 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
         if (c is null || face is null || vm is null)
             return; // we are empty shell;
 
+        this.face = face;
         Char = c;
         _vm = vm;
         Analysis = GetCharAnalysis(c, face);
-        Variations = TypographyAnalyzer.GetCharacterVariants(face, c);
+        Variations = TypographyAnalyzer.GetCharacterVariations(face, c);
         IsSvgChar = Analysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
         UnihanData = GlyphService.GetUnihanData(c.UnicodeIndex);
     }
@@ -164,7 +201,7 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
     private CanvasTypography GetEffectiveTypography(TypographyFeatureInfo typography = null)
     {
         if (typography == null)
-            typography = _vm.SelectedTypography;
+            typography = _vm.SelectedTypography.Feature;
 
         CanvasTypography typo = new();
         if (typography != null && typography.Feature != CanvasTypographyFeatureName.None)
@@ -318,7 +355,7 @@ public partial class FontMapViewModel : ViewModelBase
     public bool IsExternalFile { get; set; }
     internal bool IsLoadingCharacters { get; private set; }
 
-    public TypographyFeatureInfo SelectedTypography { get => GetV(TypographyFeatureInfo.None); set => Set(value ?? TypographyFeatureInfo.None); }
+    public TypographyVariation SelectedTypography { get => GetV(TypographyVariation.None); set => Set(value ?? TypographyVariation.None); }
     public TypographyFeatureInfo SelectedCharTypography { get => GetV(TypographyFeatureInfo.None); set => Set(value ?? TypographyFeatureInfo.None); }
     public List<UnicodeRangeModel> SelectedGlyphCategories { get => Get<List<UnicodeRangeModel>>(); private set => Set(value); }
     public List<RampOption> Ramps { get; }
@@ -329,7 +366,7 @@ public partial class FontMapViewModel : ViewModelBase
 
     [ObservableProperty] IReadOnlyList<Character> _chars;
     [ObservableProperty] IReadOnlyList<DevProviderBase> _providers;
-    [ObservableProperty] IReadOnlyList<TypographyFeatureInfo> _typographyFeatures;
+    [ObservableProperty] IReadOnlyList<TypographyVariation> _typographyFeatures;
     [ObservableProperty] ObservableCollection<UnicodeRangeGroup> _groupedChars;
 
     [ObservableProperty] bool _showColorGlyphs = true;
@@ -401,7 +438,7 @@ public partial class FontMapViewModel : ViewModelBase
                 OnPropertyChanged();
                 UpdateTypography();
                 SetDefaultChar(idx);
-                SelectedTypography = TypographyFeatures.FirstOrDefault() ?? TypographyFeatureInfo.None;
+                SelectedTypography = TypographyFeatures.FirstOrDefault() ?? TypographyVariation.None;
                 UpdateDevValues();
 
                 if (value is not null)
@@ -466,7 +503,7 @@ public partial class FontMapViewModel : ViewModelBase
         switch (propertyName)
         {
             case nameof(SelectedTypography):
-                SelectedCharTypography = SelectedTypography;
+                SelectedCharTypography = SelectedTypography.Feature;
                 break;
             case nameof(SelectedCharTypography):
                 UpdateDevValues();
@@ -559,7 +596,7 @@ public partial class FontMapViewModel : ViewModelBase
             // 3. Update characters
             UpdateCharacters();
 
-            SelectedTypography = TypographyFeatureInfo.None;
+            SelectedTypography = TypographyVariation.None;
 
             Search.Clear();
             Search.SetContext(variant, SelectedGlyphCategories);
@@ -598,15 +635,15 @@ public partial class FontMapViewModel : ViewModelBase
         if (SelectedFace == null)
             TypographyFeatures = [];
         else if (DisplayMode == FontDisplayMode.TypeRampState)
-            TypographyFeatures = SelectedFace.TypographyFeatures;
+            TypographyFeatures = SelectedFace.TypographyFeatures.Select(f => new TypographyVariation(f)).ToList();
         else
-            TypographyFeatures = SelectedFace.XamlTypographyFeatures;
+            TypographyFeatures = SelectedFace.XamlTypographyFeatures.Select(f => new TypographyVariation(f)).ToList();
 
         // Ensure ColorFont option propagates
         if (DisplayMode is FontDisplayMode.TypeRampState)
             UpdateRampOptions();
 
-        this.SelectedTypography = TypographyFeatures.FirstOrDefault(t => t.Feature == current.Feature);
+        this.SelectedTypography = TypographyFeatures.FirstOrDefault(t => t.Feature == current.Feature) ?? TypographyVariation.None;
         OnPropertyChanged(nameof(SelectedTypography)); // Required.
     }
 

@@ -1,4 +1,6 @@
-﻿using Microsoft.Graphics.Canvas.Text;
+using CharacterMap.Models;
+using CharacterMap.ViewModels;
+using Microsoft.Graphics.Canvas.Text;
 
 namespace CharacterMap.Core;
 
@@ -13,6 +15,52 @@ public static class TypographyAnalyzer
 
         var list = features.Select(f => new TypographyFeatureInfo((CanvasTypographyFeatureName)f)).OrderBy(f => f.DisplayName).ToList();
         return list;
+    }
+
+    /// <summary>
+    /// Returns a list of Typographic Variations for a character supported by the font,
+    /// including whether the variation glis mapped to a character in the font face.
+    /// </summary>
+    public static List<TypographyVariation> GetCharacterVariations(CMFontFace font, Character character)
+    {
+        List<TypographyVariation> supported = [TypographyVariation.None];
+
+        if (font.HasXamlTypographyFeatures)
+        {
+            CanvasTextAnalyzer textAnalyzer = new(character.Char, CanvasTextDirection.TopToBottomThenLeftToRight);
+            KeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript> analyzed = textAnalyzer.GetScript().First();
+
+            CanvasGlyph[] glyphs = textAnalyzer.GetGlyphs(analyzed.Key, font.FontFace, 24, false, false, analyzed.Value);
+            int baseGlyphIndex = glyphs.Length > 0 ? glyphs[0].Index : -1;
+
+            NativeInterop interop = Utils.GetInterop();
+
+            foreach (TypographyFeatureInfo feature in font.XamlTypographyFeatures)
+            {
+                if (feature == TypographyFeatureInfo.None)
+                    continue;
+
+                bool[] results = font.FontFace.GetTypographicFeatureGlyphSupport(analyzed.Value, feature.Feature, glyphs);
+
+                if (results.Any(r => r))
+                {
+                    TypographyVariation variation = new() { Feature = feature };
+
+                    int variantGlyphIndex = interop.GetTypographicGlyph(font.Face, character.Char, feature.Feature);
+
+                    if (variantGlyphIndex > 0 && variantGlyphIndex != baseGlyphIndex)
+                    {
+                        if (font.TryGetCharacterForGlyph(variantGlyphIndex, out Character mappedChar)
+                            && mappedChar.UnicodeIndex != character.UnicodeIndex)
+                            variation.FaceCharacterMapping = (int)mappedChar.UnicodeIndex;
+                    }
+
+                    supported.Add(variation);
+                }
+            }
+        }
+
+        return supported;
     }
 
     /// <summary>

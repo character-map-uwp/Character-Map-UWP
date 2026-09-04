@@ -19,6 +19,7 @@ public partial class CMFontFace : IDisposable
     /* Using a character cache avoids a lot of unnecessary allocations */
     private static Dictionary<int, Character> _characters { get; } = [];
 
+    private Dictionary<int, Character> _glyphToCharacterMap = null;
     private IReadOnlyList<NamedUnicodeRange> _ranges = null;
     private FontAnalysis _analysis = null;
     private FaceMetadataInfo _designLangRawSearch = null;
@@ -159,6 +160,37 @@ public partial class CMFontFace : IDisposable
     public uint GetGlyphIndex(Character c) => (uint)Face.GetGlyphIndice(c.UnicodeIndex);
 
     public uint[] GetGlyphUnicodeIndexes() => GetCharacters().Select(c => c.UnicodeIndex).ToArray();
+
+    public bool TryGetCharacterForGlyph(int glyphIndex, out Character character)
+    {
+        if (_glyphToCharacterMap == null)
+        {
+            Dictionary<int, Character> map = [];
+            uint[] uni = GetGlyphUnicodeIndexes();
+            int[] gly = Face.GetGlyphIndices(uni);
+            IReadOnlyList<Character> chars = GetCharacters();
+
+            for (int i = 0; i < chars.Count; i++)
+            {
+                int g = gly[i];
+                if (g <= 0)
+                    continue;
+
+                if (!map.ContainsKey(g))
+                    map[g] = chars[i];
+            }
+
+            _glyphToCharacterMap = map;
+        }
+
+        return _glyphToCharacterMap.TryGetValue(glyphIndex, out character);
+    }
+
+    public bool TryGetCharacter(int unicodeIndex, out Character character)
+    {
+        GetCharacters();
+        return _characters.TryGetValue(unicodeIndex, out character);
+    }
 
     public FontAnalysis GetAnalysis() => _analysis ??= TypographyAnalyzer.Analyze(this);
 

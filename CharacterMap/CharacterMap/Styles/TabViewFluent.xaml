@@ -194,7 +194,7 @@
 
 
     <x:Double x:Key="TabViewItemHeaderCloseButtonHeight">24</x:Double>
-    <x:Double x:Key="TabViewItemHeaderCloseButtonWidth">32</x:Double>
+    <x:Double x:Key="TabViewItemHeaderCloseButtonWidth">24</x:Double>
 
     <x:Double x:Key="TabViewItemHeaderCloseButtonSize">16</x:Double>
     <x:Double x:Key="TabViewItemHeaderCloseFontSize">12</x:Double>
@@ -641,7 +641,7 @@
         <Setter Property="FontSize" Value="{ThemeResource TabViewItemHeaderCloseFontSize}" />
         <Setter Property="CornerRadius" Value="4" />
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
-        <Setter Property="Width" Value="{ThemeResource TabViewItemHeaderCloseButtonWidth}" />
+        <Setter Property="Width" Value="28" />
         <Setter Property="Height" Value="{ThemeResource TabViewItemHeaderCloseButtonHeight}" />
         <Setter Property="Background" Value="{ThemeResource TabViewItemHeaderCloseButtonBackground}" />
         <Setter Property="Foreground" Value="{ThemeResource TabViewItemHeaderCloseButtonForeground}" />
@@ -1169,9 +1169,14 @@
                                                     IsHitTestVisible="False"
                                                     OpticalMarginAlignment="TrimSideBearings" />
 
-                                                <Border x:Name="CloseButtonContainer" Grid.Column="1">
+                                                <Border
+                                                    x:Name="CloseButtonContainer"
+                                                    Grid.Column="1"
+                                                    Margin="0 2 0 -2"
+                                                    VerticalAlignment="Center">
                                                     <Button
                                                         x:Name="CloseButton"
+                                                        VerticalAlignment="Center"
                                                         core:Properties.CompositeTransform="True"
                                                         core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
                                                         Content="&#xE711;"

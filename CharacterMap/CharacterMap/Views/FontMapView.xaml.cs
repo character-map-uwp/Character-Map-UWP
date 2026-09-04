@@ -611,11 +611,28 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private async void TryCopyInternal()
     {
-        if (CharGrid.SelectedItem is Character character
-            && await Utils.TryCopyToClipboardAsync(character, ViewModel))
+        if (CharGrid.SelectedItem is not Character character)
+            return;
+
+        Character charToCopy = character;
+        bool isVariantCopied = false;
+
+        if (PreviewTypographySelector.SelectedItem 
+            is TypographyVariation { IsNone: false, IsVariationMapped: true } variation)
+        {
+            if (ViewModel.SelectedFace?.TryGetCharacter(variation.FaceCharacterMapping, out Character mappedChar) is true)
+                charToCopy = mappedChar;
+            else
+                charToCopy = new((uint)variation.FaceCharacterMapping);
+
+            isVariantCopied = true;
+        }
+
+        if (await Utils.TryCopyToClipboardAsync(charToCopy, ViewModel))
         {
             BorderFadeInStoryboard.Begin();
-            TxtCopiedVariantMessage.SetVisible(PreviewTypographySelector.SelectedItem as TypographyFeatureInfo != TypographyFeatureInfo.None);
+            bool isVariantSelected = PreviewTypographySelector.SelectedItem is TypographyVariation { IsNone: false };
+            TxtCopiedVariantMessage.SetVisible(isVariantSelected && !isVariantCopied);
         }
     }
 
@@ -890,7 +907,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 _ = ViewModel.SavePngAsync(new()
                 {
                     Style = style,
-                    Typography = ViewModel.SelectedTypography,
+                    Typography = ViewModel.SelectedTypography.Feature,
                     Character= c
                 });
             }
@@ -916,7 +933,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 _ = ViewModel.SaveSvgAsync(new()
                 {
                     Style = style,
-                    Typography = ViewModel.SelectedTypography,
+                    Typography = ViewModel.SelectedTypography.Feature,
                      Character = c
                 });
             }
@@ -1004,7 +1021,12 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void PreviewTypographySelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        UpdateTypography(PreviewTypographySelector.SelectedItem as TypographyFeatureInfo, true);
+        if (PreviewTypographySelector.SelectedItem is TypographyVariation tv)
+            UpdateTypography(tv, true);
+        else if (PreviewTypographySelector.SelectedItem is TypographyFeatureInfo info)
+        {
+            Debugger.Break();
+        }
     }
 
     private void InfoFlyout_Opening(object sender, object e)
@@ -1151,26 +1173,26 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         });
     }
 
-    void UpdateTypography(TypographyFeatureInfo info, bool previewOnly = false)
+    void UpdateTypography(TypographyVariation info, bool previewOnly = false)
     {
         if (ViewModel.IsLoadingCharacters || ViewModel.Chars == null)
             return;
 
         if (CharGrid.ItemsSource != null && CharGrid.ItemsPanelRoot != null)
         {
-            ViewModel.SelectedCharTypography = info;
+            ViewModel.SelectedCharTypography = info.Feature;
             IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(TxtPreview);
-            CharacterGridView.UpdateTypography(_xamlDirect, p, info);
+            CharacterGridView.UpdateTypography(_xamlDirect, p, info.Feature);
         }
 
         if (CopySequenceText != null && !previewOnly)
         {
             IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(CopySequenceText);
-            CharacterGridView.UpdateTypography(_xamlDirect, p, info);
+            CharacterGridView.UpdateTypography(_xamlDirect, p, info.Feature);
         }
     }
 
-    Visibility GetAlternatesVis(TypographyFeatureInfo global, List<TypographyFeatureInfo> info)
+    Visibility GetAlternatesVis(TypographyVariation global, List<TypographyVariation> info)
     {
         Visibility vis = info == null || info.Count <= 1 ? Visibility.Collapsed : Visibility.Visible;
 
@@ -1180,8 +1202,8 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             {
                 // The character might not support the current ViewModel typography, so make sure we fallback
                 // too an appropriate selection
-                if (vars.Contains(global))
-                    PreviewTypographySelector.SelectedItem = global;
+                if (vars.FirstOrDefault(v => v.Feature == global.Feature) is { } match)
+                    PreviewTypographySelector.SelectedItem = match;
                 else
                     PreviewTypographySelector.SelectedItem = vars.FirstOrDefault();
             }
@@ -1282,7 +1304,7 @@ public partial class FontMapView
             if (options != null && options.Variant != null && font.Variants.Contains(options.Variant))
             {
                 if (options.DefaultTypography != null)
-                    map.ViewModel.SelectedTypography = options.DefaultTypography;
+                    map.ViewModel.SelectedTypography = new(options.DefaultTypography);
             }
 
             Window.Current.Content = map;

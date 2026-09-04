@@ -748,7 +748,7 @@
                             ItemFontFamily="{x:Bind _fontMap.ViewModel.SelectedFaceAnalysis.FontFamily}"
                             ItemSize="{x:Bind _fontMap.CharGrid.ItemSize}"
                             ItemTemplate="{x:Bind _fontMap.CharGrid.ItemTemplate}"
-                            ItemTypography="{x:Bind _fontMap.ViewModel.SelectedTypography}"
+                            ItemTypography="{x:Bind _fontMap.ViewModel.SelectedTypography.Feature}"
                             ItemsSource="{x:Bind ViewModel.Characters, Mode=OneWay}"
                             SelectionMode="None"
                             ShowColorGlyphs="{x:Bind ViewModel.ExportColor, Mode=OneWay}">
