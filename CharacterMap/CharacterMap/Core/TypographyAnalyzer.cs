@@ -19,7 +19,7 @@ public static class TypographyAnalyzer
 
     /// <summary>
     /// Returns a list of Typographic Variations for a character supported by the font,
-    /// including whether the variation glis mapped to a character in the font face.
+    /// including whether the variation glyph is mapped to a character in the font face.
     /// </summary>
     public static List<TypographyVariation> GetCharacterVariations(CMFontFace font, Character character)
     {

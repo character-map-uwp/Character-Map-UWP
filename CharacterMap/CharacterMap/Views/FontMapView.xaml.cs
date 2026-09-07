@@ -1012,7 +1012,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         ViewModel.AddCharToSequence(
             CopySequenceText.SelectionStart,
             CopySequenceText.SelectionLength,
-            ViewModel.SelectedChar.Char);
+            ViewModel.SelectedChar);
         CopySequenceText.SelectionStart = selection + 1;
 
         await Task.Delay(64);

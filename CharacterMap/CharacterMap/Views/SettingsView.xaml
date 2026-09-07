@@ -771,6 +771,13 @@
                                     d:Text="{core:Localizer Key=SettingsAdvancedOptionsLabel/Text}" />
 
                                 <controls:SettingsPresenter
+                                    x:Uid="SettingsCopyTypographicVariantsAsMappedCharacters"
+                                    d:Description="{core:Localizer Key=SettingsCopyTypographicVariantsAsMappedCharacters/Description}"
+                                    d:Title="{core:Localizer Key=SettingsCopyTypographicVariantsAsMappedCharacters/Title}">
+                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.CopyTypographicVariantsAsMappedChars, Mode=TwoWay}" />
+                                </controls:SettingsPresenter>
+
+                                <controls:SettingsPresenter
                                     x:Uid="SettingsDeprecatedIconsPresenter"
                                     d:Description="{core:Localizer Key=SettingsDeprecatedIconsPresenter/Description}"
                                     d:Title="{core:Localizer Key=SettingsDeprecatedIconsPresenter/Title}">
