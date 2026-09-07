@@ -86,9 +86,9 @@ public partial class PrintViewModel : ViewModelBase
         PrintViewModel model = new()
         {
             ShowColorGlyphs = viewModel.ShowColorGlyphs,
-            Typography = viewModel.SelectedTypography,
-            FontFamily = viewModel.FontFamily,
-            Font = viewModel.SelectedVariant,
+            Typography = viewModel.SelectedTypography.Feature,
+            FontFamily = viewModel.SelectedFaceAnalysis.FontFamily,
+            Font = viewModel.SelectedFace,
             Annotation = viewModel.Settings.GlyphAnnotation,
             Categories = viewModel.SelectedGlyphCategories.Select(c => c.Clone()).ToList()
         };

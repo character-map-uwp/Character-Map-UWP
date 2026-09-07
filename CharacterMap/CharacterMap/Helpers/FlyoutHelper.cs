@@ -534,7 +534,7 @@ public static class FlyoutHelper
             FlyoutBase.SetAttachedFlyout(target, menu);
 
             // 2. Analyse the character to know which options we should show in the menu
-            var analysis = viewmodel.GetCharAnalysis(c);
+            var analysis = viewmodel.SelectedChar.GetCharAnalysis(c, viewmodel.SelectedFace);
 
             // 3. Handle PNG options
             var pngRoot = Child<MenuFlyoutSubItem>("PngRoot");
@@ -603,7 +603,7 @@ public static class FlyoutHelper
                 }
 
                 // 5.1. Get providers for the grid character
-                var options = viewmodel.RenderingOptions with { Typography = viewmodel.TypographyFeatures, Axis = viewmodel.VariationAxis.Copy() };
+                var options = viewmodel.RenderingOptions with { Typography = viewmodel.TypographyFeatures.Select(f => f.Feature).ToList(), Axis = viewmodel.SelectedFaceAnalysis.VariationAxis.Copy() };
                 var providers = DevProviderBase.GetProviders(options, c);
 
                 // 5.2. Create child items.

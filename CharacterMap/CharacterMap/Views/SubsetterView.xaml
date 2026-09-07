@@ -222,10 +222,29 @@
                                 Foreground="{ThemeResource AppBarItemForegroundThemeBrush}" />
                         </Button>
                     </controls:XamlTitleBar>
-
                 </Grid>
-
             </controls:ModalPagePresenter.TitleBarContent>
+            <controls:ModalPagePresenter.TitleRightContent>
+                <controls:UXButton
+                    x:Uid="OnlineDocumentationHint"
+                    MinWidth="24"
+                    MinHeight="24"
+                    Margin="0 08 24 0"
+                    Padding="4"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    core:Properties.Cursor="Hand"
+                    core:Properties.Hyperlink="https://github.com/character-map-uwp/Character-Map-UWP/wiki/Font-Subsetter"
+                    h:FluentAnimation.PointerOverOffset="-1"
+                    CornerRadius="12">
+                    <TextBlock
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="12"
+                        Foreground="{ThemeResource AccentFillColorDefaultBrush}"
+                        IsTextScaleFactorEnabled="False"
+                        Text="&#xE897;" />
+                </controls:UXButton>
+            </controls:ModalPagePresenter.TitleRightContent>
 
             <Grid x:Name="ContentRoot">
                 <Grid
@@ -403,6 +422,8 @@
                                     Height="40"
                                     Margin="0 -4"
                                     VerticalAlignment="Stretch" />
+
+
                             </toolkit:WrapPanel>
 
 

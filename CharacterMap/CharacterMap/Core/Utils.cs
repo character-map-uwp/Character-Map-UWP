@@ -143,23 +143,21 @@ public static class Utils
         string c = msg.RequestedItem.GetClipboardString();
 
         if (msg.DataType == CopyDataType.Text)
-        {
             return await TryCopyToClipboardInternalAsync(msg.RequestedItem.Char, c, viewModel);
-        }
-        else if (msg.DataType == CopyDataType.SVG)
-        {
-            CharacterRenderingOptions renderOpts = msg.Analysis is not null
-                ? viewModel.RenderingOptions with { Analysis = msg.Analysis }
+
+
+        CharacterRenderingOptions renderOpts = msg.Analysis is not null
+                ? viewModel.RenderingOptions with { Analysis = msg.Analysis, Typography = [viewModel.SelectedTypography.Feature] }
                 : viewModel.RenderingOptions;
+        
+        if (msg.DataType == CopyDataType.SVG)
+        {
             ExportOptions ops = new(ExportFormat.Svg, msg.Style) { Options = renderOpts };
             var svg = ExportManager.GetSVG(ops, msg.RequestedItem);
             return await TryCopyToClipboardInternalAsync(svg, c, viewModel, msg.DataType);
         }
         else if (msg.DataType == CopyDataType.PNG)
         {
-            CharacterRenderingOptions renderOpts = msg.Analysis is not null
-                ? viewModel.RenderingOptions with { Analysis = msg.Analysis }
-                : viewModel.RenderingOptions;
             ExportOptions ops = new(ExportFormat.Png, msg.Style) { Options = renderOpts };
             IRandomAccessStream data = await ExportManager.GetGlyphPNGStreamAsync(ops, msg.RequestedItem);
             return await TryCopyToClipboardInternalAsync(null, c, viewModel, msg.DataType, data);
@@ -210,22 +208,23 @@ public static class Utils
                 dp.SetData("image/png", stream);
                 dp.SetData("PNG", stream);
             }
-            else if (!v.SelectedVariant.IsImported)
+            else if (!v.SelectedFace.IsImported)
             {
                 // We can allow users to also copy the glyph with the font meta-data included,
                 // so when they paste into a supported program like Microsoft Word or 
                 // Adobe Photoshop the correct font is automatically applied to the paste.
                 // This can't include any Typographic variations unfortunately.
 
-                var rtf = $@"{{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang2057{{\fonttbl{{\f0\fnil {v.FontFamily.Source};}}}} " +
+                var src = v.SelectedFaceAnalysis.FontFamily.Source;
+                var rtf = $@"{{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang2057{{\fonttbl{{\f0\fnil {src};}}}} " +
                            $@"{{\colortbl;\red0\green0\blue0; }}\pard\plain\f0 {formatted}}}";
                 dp.SetRtf(rtf);
 
-                var longName = v.FontFamily.Source;
-                if (v.SelectedVariant.TryGetInfo(CanvasFontInformation.FullName) is { } info
+                var longName = src;
+                if (v.SelectedFace.TryGetInfo(CanvasFontInformation.FullName) is { } info
                     && info.Value != longName)
                 {
-                    longName = $"{v.FontFamily.Source}, {info.Value}";
+                    longName = $"{src}, {info.Value}";
                 }
                 dp.SetHtmlFormat($"<p style=\"font-family:'{longName}'; \">{raw}</p>");
             }

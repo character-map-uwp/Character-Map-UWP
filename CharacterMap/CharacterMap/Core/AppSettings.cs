@@ -19,6 +19,12 @@ public class AppSettings : INotifyPropertyChanged
         set => Set(value);
     }
 
+    public bool CopyTypographicVariantsAsMappedChars
+    {
+        get => Get(true);
+        set => Set(value);
+    }
+
     public string FileNameTemplate
     {
         get => Get<string>(ExportOptions.DefaultTemplate);
@@ -105,7 +111,6 @@ public class AppSettings : INotifyPropertyChanged
         get => Get(0);
         set => BroadcastSet(value);
     }
-
 
     public int FontListFontSizeIndex
     {
@@ -220,8 +225,8 @@ public class AppSettings : INotifyPropertyChanged
 
     public DevProviderType SelectedDevProvider
     {
-        get => (DevProviderType)Get((int)DevProviderType.None);
-        set => Set((int)value);
+        get => (DevProviderType)Get((int)DevProviderType.None, "DevProvider2");
+        set => Set((int)value, "DevProvider2");
     }
 
     public bool EnablePreviewPane

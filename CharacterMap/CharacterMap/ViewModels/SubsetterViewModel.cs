@@ -173,7 +173,7 @@ public partial class SubsetterViewModel : ViewModelBase
     [ObservableProperty] string _generatedClassName = null;
     [ObservableProperty] CodeTemplateOption _codeTemplate = null;
     FontClassGenerator _generator = null;
-    string _className = null;
+    string _computedClassName = null;
 
 
    
@@ -295,6 +295,14 @@ public partial class SubsetterViewModel : ViewModelBase
                     if (!string.IsNullOrWhiteSpace(ver)
                         && Version == DEFAULT_VERSION)
                         Version = ver;
+
+                    // If we are an existing icon font created with Character Map UWP,
+                    // probably we are editing the font, so select all glyphs by default
+                    if (CMSVTable.TryDecode(family.Default.Face) is { } table)
+                    {
+                        GeneratedClassName = table.ClassName;
+                        SelectAll();
+                    }
                 }
             }
             else
@@ -347,7 +355,7 @@ public partial class SubsetterViewModel : ViewModelBase
 
 
             // 3. Note: version string currently isn't supported by the subsetter table-rewritter
-            var file = await FontSubsetter.CreateSubsetAsync(new(fontName, PreviewList, _className, target, version));
+            var file = await FontSubsetter.CreateSubsetAsync(new(fontName, PreviewList, _computedClassName, target, version));
             if (file is not null && await FontImporter.LoadFromFileAsync(file) is CMFontFamily font)
                 Notify(new SubsetResultMessage(font, file));
             else
@@ -417,7 +425,7 @@ public partial class SubsetterViewModel : ViewModelBase
     async Task SaveCodeAsync()
     {
         if (await StorageHelper.PickSaveFileAsync(
-                $"{_className}", CodeTemplate.Language, [CodeTemplate.FileExtension], PickerLocationId.Unspecified)
+                $"{_computedClassName}", CodeTemplate.Language, [CodeTemplate.FileExtension], PickerLocationId.Unspecified)
             is not StorageFile file)
             return;
 
@@ -447,6 +455,7 @@ public partial class SubsetterViewModel : ViewModelBase
 
     private void UpdateCodeInternal()
     {
+        if (_generator is null) return;
         var generated = _generator.ProcessTemplate(
             CodeTemplate,
             FamilyName,
@@ -455,7 +464,7 @@ public partial class SubsetterViewModel : ViewModelBase
             PreviewList,
             true);
 
-        _className = generated.OutputClassName;
+        _computedClassName = generated.OutputClassName;
         GeneratedCode = generated.Content;
     }
 

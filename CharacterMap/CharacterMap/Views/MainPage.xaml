@@ -741,6 +741,10 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
+                                <Grid.Resources>
+                                    <x:Double x:Key="AppBarThemeMinHeight">10</x:Double>
+                                </Grid.Resources>
+
                                 <TextBlock
                                     x:Uid="SystemFontsExpiredMessage"
                                     Margin="0 -2 0 0"
@@ -755,6 +759,7 @@
                                     VerticalAlignment="Center"
                                     Click="{x:Bind ViewModel.ReloadFontSet}"
                                     Icon="Refresh"
+                                    Style="{StaticResource AppBarButtonRevealStyle}"
                                     ToolTipService.Placement="Bottom" />
 
                             </Grid>
@@ -1009,9 +1014,10 @@
                     Grid.Row="1"
                     Grid.Column="1"
                     Margin="6 0 0 0">
-                    <muxc:TabView
+                    <controls:ExtendedTabView
                         x:Name="FontsTabBar"
                         x:Load="False"
+                        x:FieldModifier="public"
                         core:Properties.ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
                         core:Properties.IsTabOpenAnimationEnabled="True"
                         core:Properties.RequireOpenTab="True"
@@ -1020,6 +1026,7 @@
                         AllowDropTabs="True"
                         Background="{x:Null}"
                         CanDragTabs="True"
+                        IsExpandedChanged="FontsTabBar_IsExpandedChanged"
                         Loaded="FontsTabBar_Loaded"
                         SelectedIndex="{x:Bind ViewModel.TabIndex, Mode=TwoWay}"
                         Style="{StaticResource TabViewStyle}"
@@ -1028,7 +1035,7 @@
                         TabItemsSource="{x:Bind ViewModel.Fonts}"
                         Visibility="Collapsed"
                         d:Visibility="Visible">
-                        <muxc:TabView.TabItemTemplate>
+                        <controls:ExtendedTabView.TabItemTemplate>
                             <DataTemplate x:DataType="vm:FontItem" x:DefaultBindMode="OneWay">
                                 <muxc:TabViewItem
                                     core:Properties.IsCompact="{x:Bind IsCompact}"
@@ -1084,10 +1091,21 @@
                                             </TextBlock>
                                         </Grid>
                                     </muxc:TabViewItem.Header>
+                                    <core:Properties.Content>
+                                        <TextBlock
+                                            core:Properties.PreviewStringTrigger="{x:Bind Font.DefaultVariant}"
+                                            FontFamily="{Binding Font.DefaultVariant.Source}"
+                                            FontSize="18"
+                                            FontStretch="{Binding Font.DefaultVariant.DirectWriteProperties.Stretch}"
+                                            FontStyle="{Binding Font.DefaultVariant.DirectWriteProperties.Style}"
+                                            FontWeight="{Binding Font.DefaultVariant.DirectWriteProperties.Weight}"
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="Wrap" />
+                                    </core:Properties.Content>
                                 </muxc:TabViewItem>
                             </DataTemplate>
-                        </muxc:TabView.TabItemTemplate>
-                    </muxc:TabView>
+                        </controls:ExtendedTabView.TabItemTemplate>
+                    </controls:ExtendedTabView>
 
                 </Border>
 
@@ -1096,6 +1114,8 @@
                     x:Load="False"
                     Grid.Row="2"
                     Grid.ColumnSpan="3"
+                    Margin="0 0 0 -80"
+                    helpers:CompositionFactory.UseSynchronisedReposition="True"
                     Background="{ThemeResource TopCardBrush}"
                     BackgroundTransition="{StaticResource RootBackgroundTransition}"
                     BorderBrush="{ThemeResource TabViewSelectedItemBorderBrush}"
@@ -1107,6 +1127,7 @@
                     Grid.Row="2"
                     Grid.ColumnSpan="3"
                     HorizontalAlignment="Stretch"
+                    helpers:CompositionFactory.UseSynchronisedReposition="True"
                     Font="{x:Bind ViewModel.CurrentFont, Mode=OneWay}">
                     <views:FontMapView.TitleRightContent>
                         <Border MinHeight="45">
@@ -1181,8 +1202,9 @@
                     BorderThickness="1 0 1 1"
                     ContentTemplate="{StaticResource FontListItemToolTipTemplate}"
                     CornerRadius="0 4 4 4"
-                    HorizontalOffset="5"
+                    HorizontalOffset="7"
                     Placement="BottomEdgeLeftAligned"
+                    Style="{StaticResource PreviewTipHighContrastStyle}"
                     Target="{x:Bind FontsTabBar}" />
 
             </Grid>
@@ -1404,6 +1426,7 @@
                         <Setter Target="OverlayPaneRootBackground.Background" Value="{ThemeResource SystemChromeMediumColor}" />
                         <Setter Target="FontMap.Margin" Value="0 0 2 0" />
                         <Setter Target="FontMap.Padding" Value="0 0 0 4" />
+                        <Setter Target="FontsTabBar.ExpansionButtonVisibility" Value="Visible" />
                         <Setter Target="ZoomGridView.SelectorVisual">
                             <Setter.Value>
                                 <controls:SelectorVisualElement
@@ -1545,6 +1568,7 @@
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
+
         </VisualStateManager.VisualStateGroups>
     </Grid>
 </views:ViewBase>

@@ -1,5 +1,4 @@
 ﻿using Microsoft.UI.Xaml.Controls;
-using System.Reflection.Metadata.Ecma335;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.UI.Composition;
@@ -16,6 +15,26 @@ public enum PreviewPlacement
     RightEdgeTopAligned,
     BottomEdgeLeftAligned
 }
+
+[DependencyProperty<double>("RenderedHeight")]
+[DependencyProperty<double>("Offset")]
+[DependencyProperty<double>("OffsetRenderedHeight")]
+[DependencyProperty<Point>("OffsetRenderedPointSize", "new Point()")]
+public partial class MeasuredContentControl : ContentControl
+{
+    public MeasuredContentControl()
+    {
+        this.SizeChanged += MeasuredContentControl_SizeChanged;
+    }
+
+    private void MeasuredContentControl_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        RenderedHeight = e.NewSize.Height;
+        OffsetRenderedHeight = e.NewSize.Height + Offset;
+        OffsetRenderedPointSize = new(0, OffsetRenderedHeight);
+    }
+}
+
 
 [AttachedProperty<PreviewTip>("RegisterWith")]
 [AttachedProperty<object>("DisplayContent")]
@@ -260,11 +279,11 @@ public partial class PreviewTip : ContentControl
         if (_root.Visibility is Visibility.Visible && ResourceHelper.AllowAnimation)
             _v.Properties.StartAnimation(
                 _v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
-                    .AddKeyFrame(1, t)
-                    .SetDuration(0.1));
+                    .UseOrchestration(t));
         else
             _v.SetTranslation(t);
     }
+
 
     void TrySetClamping()
     {

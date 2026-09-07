@@ -2891,4 +2891,17 @@ For Font Families that do not provide Bold or Oblique Faces, Windows will provid
   <data name="PlusMore" xml:space="preserve">
     <value>+ {0} more</value>
   </data>
+  <data name="OnlineDocumentationHint.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>View online documentation</value>
+  </data>
+  <data name="SettingsCopyTypographicVariantsAsMappedCharacters.Description" xml:space="preserve">
+    <value>If enabled, if the font has a typographic variant glyph mapped as a Unicode character, typographic variants will be copied as their Unicode mapped characters. 
+
+This will break glyph mapping when changing font and spellchecking, but is the only way to copy typographic variants successfully between applications. 
+
+Not all fonts present typographic variants as mapped characters.</value>
+  </data>
+  <data name="SettingsCopyTypographicVariantsAsMappedCharacters.Title" xml:space="preserve">
+    <value>Copy typographic variants as mapped Unicode characters</value>
+  </data>
 </root>

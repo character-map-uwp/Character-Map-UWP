@@ -1,6 +1,7 @@
 ﻿using System.Transactions;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 
@@ -20,11 +21,24 @@ public partial class FontMapView
 
     private Random _r { get; } = new Random();
 
-    public void PlayFontChanged(bool withHeader = true)
+    public void PlayFontChanged(bool withHeader = true, bool isTabChange = false)
     {
         /* Create the animation that is played upon changing font */
         if (ResourceHelper.AllowAnimation)
         {
+            //if (this.GetFirstAncestorOfType<MainPage>() is { FontsTabBar: { TabItemsSource: ObservableCollection<FontItem> items } tabBar })
+            //{
+            //    var idx = items.IndexOf(items.FirstOrDefault(i => i == ViewModel.SelectedFont));
+            //    if (idx < 0 || tabBar.ContainerFromIndex(idx) is not FrameworkElement container)
+            //        return;
+
+            //    if (container.GetBoundingRect(this) is not Rect bounds) return;
+            //    var center = bounds.Left + (bounds.Width / 2f);
+            //    var ratio = center / this.ActualWidth;
+            //    CompositionFactory.PlayTabEntrace(this, ratio);
+            //    return;
+            //}
+
             int offset = 0;
             if (withHeader)
             {
@@ -50,21 +64,14 @@ public partial class FontMapView
 
                 if (TypeRampList != null)
                 {
-                    List<UIElement> items = new() { VariableAxis };
-                    items.AddRange(TypeRampList.TryGetChildren());
-                    CompositionFactory.PlayEntrance(items, (offset * 2) + 34);
+                    List<UIElement> itms = new() { VariableAxis };
+                    itms.AddRange(TypeRampList.TryGetChildren());
+                    CompositionFactory.PlayEntrance(itms, (offset * 2) + 34);
                 }
             }
             else if (ViewModel.DisplayMode == FontDisplayMode.GlyphMapState)
             {
                 CompositionFactory.PlayEntrance(GlyphsRoot, offset * 2);
-
-                //if (TypeRampList != null)
-                //{
-                //    List<UIElement> items = new() { VariableAxis };
-                //    items.AddRange(TypeRampList.TryGetChildren());
-                //    CompositionFactory.PlayEntrance(items, (offset * 2) + 34);
-                //}
             }
         }
     }
@@ -73,6 +80,42 @@ public partial class FontMapView
     {
         CopySequenceRoot.SetTranslation(new Vector3(0, (float)CopySequenceRoot.Height, 0));
         CopySequenceRoot.GetElementVisual().StartAnimation(CompositionFactory.TRANSLATION, CompositionFactory.CreateSlideIn(sender));
+    }
+
+
+    private void AnimateSelectionFromGlyph()
+    {
+        // Empty glyphs will cause the connected animation service to crash, so manually
+        // check if the rendered glyph contains content
+        if (ResourceHelper.AllowAnimation
+            && GlyphRepeater.ContainerFromItem(GlyphRepeater.SelectedItem) is FrameworkElement container
+            && container.GetFirstDescendantOfType<Glyphs>() is Glyphs t)
+        {
+            t.Measure(container.DesiredSize);
+            if (t.DesiredSize.Height != 0 && t.DesiredSize.Width != 0)
+            {
+                var ani = GlyphRepeater.PrepareConnectedAnimation("PP", GlyphRepeater.SelectedItem, "Text");
+                ani.TryStart(TxtPreview);
+            }
+        }
+    }
+
+    void AnimationSelectionFromCharacter()
+    {
+        // Empty glyphs will cause the connected animation service to crash, so manually
+        // check if the rendered glyph contains content
+        if (ResourceHelper.AllowAnimation
+            && CharGrid.ContainerFromItem(ViewModel.SelectedChar.Char) is FrameworkElement container
+            && container.GetFirstDescendantOfType<TextBlock>() is TextBlock t)
+        {
+            t.Measure(container.DesiredSize);
+            if (t.DesiredSize.Height != 0 && t.DesiredSize.Width != 0)
+            {
+                var ani = CharGrid.PrepareConnectedAnimation("PP", ViewModel.SelectedChar.Char, "Text");
+                ani.TryStart(TxtPreview);
+                CompositionFactory.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
+            }
+        }
     }
 
 

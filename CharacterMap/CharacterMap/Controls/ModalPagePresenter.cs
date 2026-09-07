@@ -6,6 +6,7 @@ using Windows.UI.Xaml.Media;
 namespace CharacterMap.Controls;
 
 [DependencyProperty("TitleBarContent", null, nameof(OnTitleContentChanged))]
+[DependencyProperty("TitleRightContent")]
 [DependencyProperty<bool>("AllowShadows")]
 [DependencyProperty<bool>("IsWindowRoot")]
 [DependencyProperty<string>("Title")]
@@ -50,6 +51,7 @@ public sealed partial class ModalPagePresenter : ContentControl
         }
 
         OnTitleContentChanged();
+        OnTitleRightContentChanged(null, TitleRightContent);
         UpdateClose();
     }
 
@@ -61,9 +63,13 @@ public sealed partial class ModalPagePresenter : ContentControl
     private void OnTitleContentChanged()
     {
         if (this.GetTemplateChild("TitleBarPresenter") is ContentPresenter c)
-        {
             c.Content = this.TitleBarContent ?? new Border();
-        }
+    }
+
+    partial void OnTitleRightContentChanged(object o, object n)
+    {
+        if (this.GetTemplateChild("TitleRightContentPresenter") is ContentPresenter c)
+            c.Content = n ?? new Border();
     }
 
     private void Close_Click(object sender, RoutedEventArgs e)

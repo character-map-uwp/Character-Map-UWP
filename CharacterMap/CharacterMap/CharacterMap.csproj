@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -166,6 +166,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\AutoGrid.cs" />
+    <Compile Include="Controls\Brushes\MicaAltBrush.cs" />
     <Compile Include="Controls\ButtonGroup.cs" />
     <Compile Include="Controls\CategoryFlyout.cs" />
     <Compile Include="Controls\CharacterGridView.cs" />
@@ -177,6 +178,7 @@
     </Compile>
     <Compile Include="Controls\DirectTextBlock.cs" />
     <Compile Include="Controls\ExtendedSplitView.cs" />
+    <Compile Include="Controls\ExtendedTabView.cs" />
     <Compile Include="Controls\FilterFlyout.xaml.cs">
       <DependentUpon>FilterFlyout.xaml</DependentUpon>
     </Compile>
@@ -193,6 +195,8 @@
     <Compile Include="Controls\CharacterPickerButton.cs" />
     <Compile Include="Controls\PreviewTip.cs" />
     <Compile Include="Controls\SelectorVisualElement.cs" />
+    <Compile Include="Controls\SmoothBorder.cs" />
+    <Compile Include="Controls\StackPanelEx.cs" />
     <Compile Include="Controls\SuggestionBox.cs" />
     <Compile Include="Controls\Toolkit\AdaptiveGridView.cs" />
     <Compile Include="Controls\UXButton.cs" />
@@ -337,6 +341,7 @@
     <Compile Include="ViewModels\FontMapViewModel.cs" />
     <Compile Include="Models\GlyphAnnotation.cs" />
     <Compile Include="Models\PrintLayout.cs" />
+    <Compile Include="ViewModels\FontMapViewModel.SubModels.cs" />
     <Compile Include="ViewModels\GlyphFileNameViewModel.cs" />
     <Compile Include="ViewModels\PrintViewModel.cs" />
     <Compile Include="ViewModels\QuickCompareViewModel.cs" />

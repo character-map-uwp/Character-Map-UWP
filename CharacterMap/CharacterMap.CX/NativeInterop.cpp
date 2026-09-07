@@ -397,3 +397,99 @@ ComPtr<IDWriteTextFormat3> CharacterMapCX::NativeInterop::CreateIDWriteTextForma
 	ThrowIfFailed(tempFormat.As(&idFormat));
 	return idFormat;
 }
+
+class GlyphCollector : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDWriteTextRenderer, IDWritePixelSnapping>
+{
+public:
+	INT32 GlyphIndex = -1;
+
+	GlyphCollector() { }
+
+	IFACEMETHOD(IsPixelSnappingDisabled)(_In_opt_ void* clientDrawingContext, _Out_ BOOL* isDisabled) override
+	{
+		*isDisabled = FALSE;
+		return S_OK;
+	}
+
+	IFACEMETHOD(GetCurrentTransform)(_In_opt_ void* clientDrawingContext, _Out_ DWRITE_MATRIX* transform) override
+	{
+		transform->m11 = 1.0f; transform->m12 = 0.0f;
+		transform->m21 = 0.0f; transform->m22 = 1.0f;
+		transform->dx = 0.0f; transform->dy = 0.0f;
+		return S_OK;
+	}
+
+	IFACEMETHOD(GetPixelsPerDip)(_In_opt_ void* clientDrawingContext, _Out_ FLOAT* pixelsPerDip) override
+	{
+		*pixelsPerDip = 1.0f;
+		return S_OK;
+	}
+
+	IFACEMETHOD(DrawGlyphRun)(
+		_In_opt_ void* clientDrawingContext,
+		FLOAT baselineOriginX,
+		FLOAT baselineOriginY,
+		DWRITE_MEASURING_MODE measuringMode,
+		_In_ DWRITE_GLYPH_RUN const* glyphRun,
+		_In_ DWRITE_GLYPH_RUN_DESCRIPTION const* glyphRunDescription,
+		IUnknown* clientDrawingEffect) override
+	{
+		if (glyphRun != nullptr && glyphRun->glyphCount > 0)
+		{
+			GlyphIndex = glyphRun->glyphIndices[0];
+		}
+		return S_OK;
+	}
+
+	IFACEMETHOD(DrawUnderline)(_In_opt_ void*, FLOAT, FLOAT, _In_ DWRITE_UNDERLINE const*, IUnknown*) override { return S_OK; }
+	IFACEMETHOD(DrawStrikethrough)(_In_opt_ void*, FLOAT, FLOAT, _In_ DWRITE_STRIKETHROUGH const*, IUnknown*) override { return S_OK; }
+	IFACEMETHOD(DrawInlineObject)(_In_opt_ void*, FLOAT, FLOAT, IDWriteInlineObject*, BOOL, BOOL, IUnknown*) override { return S_OK; }
+};
+
+INT32 CharacterMapCX::NativeInterop::GetTypographicGlyph(
+	DWriteFontFace^ fontFace,
+	Platform::String^ text,
+	CanvasTypographyFeatureName feature)
+{
+	if (fontFace == nullptr || text == nullptr || text->Length() == 0)
+		return -1;
+
+	FontWeight weight;
+	weight.Weight = fontFace->Properties->Weight.Weight;
+	FontStyle style = fontFace->Properties->Style;
+	FontStretch stretch = fontFace->Properties->Stretch;
+	ComPtr<IDWriteTextFormat3> idFormat = CreateIDWriteTextFormat(fontFace, weight, style, stretch, 24.0f);
+
+	ComPtr<IDWriteTextLayout> textLayout;
+	HRESULT hr = m_dwriteFactory->CreateTextLayout(
+		text->Data(),
+		text->Length(),
+		idFormat.Get(),
+		1000.0f,
+		1000.0f,
+		&textLayout);
+
+	if (FAILED(hr))
+		return -1;
+
+	if (feature != CanvasTypographyFeatureName::None)
+	{
+		ComPtr<IDWriteTypography> typography;
+		if (SUCCEEDED(m_dwriteFactory->CreateTypography(&typography)))
+		{
+			DWRITE_FONT_FEATURE f;
+			f.nameTag = static_cast<DWRITE_FONT_FEATURE_TAG>(feature);
+			f.parameter = 1;
+			typography->AddFontFeature(f);
+			textLayout->SetTypography(typography.Get(), DWRITE_TEXT_RANGE{ 0, text->Length() });
+		}
+	}
+
+	auto collector = Make<GlyphCollector>();
+	hr = textLayout->Draw(nullptr, collector.Get(), 0, 0);
+
+	if (SUCCEEDED(hr))
+		return collector->GlyphIndex;
+
+	return -1;
+}

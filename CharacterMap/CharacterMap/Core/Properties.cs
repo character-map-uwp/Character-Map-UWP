@@ -90,7 +90,6 @@ public enum MaterialCornerStyle
 [AttachedProperty<string>("ToolTipStyleKey")] // Helper to attempt force-overriding ToolTip style that is broken by MUXC
 [AttachedProperty<string>("GridDefinitions", "string.Empty")]
 [AttachedProperty<string>("Hyperlink")] // Adds clickable hyperlink behaviour to ButtonBase
-[AttachedProperty<object>("Tag")] // Additional object storage
 [AttachedProperty<CoreCursorType>("Cursor", CoreCursorType.Arrow)]
 [AttachedProperty<FrameworkElement>("Receiver")] // Adds a receiver to ThemeShadow.Receivers
 [AttachedProperty<double>("Depth")] // Sets UIElement.Translation.Z
@@ -98,12 +97,11 @@ public enum MaterialCornerStyle
 [AttachedProperty<bool>("IsContainerEnabled", true)] // Is the parent ItemContainer enabled?
 [AttachedProperty<MaterialCornerStyle>("MaterialCornerStyle", MaterialCornerStyle.None)]
 [AttachedProperty<ThemeIcon>]
-[AttachedProperty<Color>]
 [AttachedProperty<bool>("UseZoomHelper")]
 [AttachedProperty<ZoomHelper>]
 [AttachedProperty<BrushTransition>("BackgroundTransition")]
-[AttachedProperty<System.Windows.Input.ICommand>("ItemClickCommand")]
-[AttachedProperty<bool>("CompositeTransform")]
+[AttachedProperty<System.Windows.Input.ICommand>("ItemClickCommand")] // Adds an ItemClick command to ListViewBase
+[AttachedProperty<bool>("CompositeTransform")] // Ensures a composite transform exists on a FrameworkElement. Useful if a Storyboard is targetting it.
 [AttachedProperty<object>("Target")] // Sets Storyboard TargetName and TargetProperty using VisualState setter syntax
 [AttachedProperty<object>("Value")] // Clears all keyframes and adds an instant value to a keyframe animation
 [AttachedProperty<VisualStateGroup>("CreateReversed")] // Automatically generated a reversed VisualStateTransition
@@ -113,10 +111,13 @@ public enum MaterialCornerStyle
 [AttachedProperty<Dictionary<string, BindingBase>>("BindingCache", IsReadOnly = true)] // Not currently used
 [AttachedProperty<HorizontalAlignment>("HeaderHorizontalAlignment")]
 [AttachedProperty<Uri>("FontUri")] // Sets Glyphs.FontUri which cannot be set in XAML
-[AttachedProperty<Double>] // generic property store
-[AttachedProperty<Boolean>] // generic property store
-[AttachedProperty<double>("FontSize")] // generic property store
 [AttachedProperty<bool>("CloseOnInvoke")]
+[AttachedProperty<Color>] // Generic property store
+[AttachedProperty<Double>] // Generic property store
+[AttachedProperty<Boolean>] // Generic property store
+[AttachedProperty<object>("Tag")] // Generic property store
+[AttachedProperty<object>("Content")] // Generic property store
+[AttachedProperty<double>("FontSize")] // Generic property store
 public partial class Properties : DependencyObject
 {
     #region BindingCache

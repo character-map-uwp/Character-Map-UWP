@@ -71,6 +71,11 @@ namespace CharacterMapCX
 			FontStretch stretch,
 			float fontSize);
 
+		INT32 GetTypographicGlyph(
+			DWriteFontFace^ fontFace,
+			Platform::String^ text,
+			CanvasTypographyFeatureName feature);
+
 	internal:
 
 		ComPtr<IDWriteTextFormat3> CreateIDWriteTextFormat(

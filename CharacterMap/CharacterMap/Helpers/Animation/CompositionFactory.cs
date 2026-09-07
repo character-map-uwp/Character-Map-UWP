@@ -1,5 +1,9 @@
-﻿using System.Globalization;
+﻿using Microsoft.Graphics.Canvas.Effects;
+using System.Globalization;
+using Windows.Graphics.Effects;
+using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -14,8 +18,18 @@ namespace CharacterMap.Helpers;
 [AttachedProperty<double>("BounceDuration", 0.15)]
 [AttachedProperty<bool>("EnableBounceScale")]
 [AttachedProperty<double>("CornerRadius", 0d)]
+[AttachedProperty<bool>("UseSynchronisedReposition")]
+[AttachedProperty<bool>("UseWindowAwareSynchronisedReposition")]
+[AttachedProperty<Point>("RelativeCenterPoint", "new Point()")]
+[AttachedProperty<double>("RotationAngleInDegrees")]
+[AttachedProperty<CompositionTransition>("RotationAngleInDegreesTransition")]
+[AttachedProperty<ResizeHelper>("ResizeHelper", IsReadOnly = true)]
 public partial class CompositionFactory : DependencyObject
 {
+    public static double OrchestrationDurationSeconds => 0.25;
+
+    public static Duration OrchestrationDuration => new Duration(TimeSpan.FromSeconds(OrchestrationDurationSeconds));
+
     public const double DefaultOffsetDuration = 0.325;
 
     public static bool AnimationEnabled { get; set; }
@@ -32,6 +46,85 @@ public partial class CompositionFactory : DependencyObject
     public const int DEFAULT_STAGGER_MS = 83;
 
     #region Attached Properties
+
+    static partial void OnUseWindowAwareSynchronisedRepositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement u && e.NewValue is bool b)
+        {
+            if (GetResizeHelper(u) is { } helper)
+            {
+                helper.Dispose();
+                SetResizeHelper(u, null);
+            }
+
+            if (b)
+                SetResizeHelper(u, new ResizeHelper(u));
+        }
+    }
+
+    static partial void OnRotationAngleInDegreesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is UIElement u && e.NewValue is double value)
+            u.GetElementVisual().RotationAngleInDegrees = (float)value;
+    }
+
+    static partial void OnRelativeCenterPointChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is UIElement u && e.NewValue is Point p)
+            CompositionFactory.StartCentering(u.GetElementVisual(), ((float)p.X), ((float)p.Y));
+    }
+
+    static partial void OnRotationAngleInDegreesTransitionChanged(DependencyObject f, DependencyPropertyChangedEventArgs v)
+    {
+        if (f is FrameworkElement element)
+            SetTransition<float>(
+                element, v.NewValue as CompositionTransition, nameof(Visual.RotationAngleInDegrees));
+    }
+
+    static void SetTransition<T>(FrameworkElement e, CompositionTransition t, string target, bool targetPropertySet = false)
+    {
+        Visual c = e.GetElementVisual();
+        CompositionObject cObj = targetPropertySet ? c.Properties : c;
+
+        if (t is not null && t.Duration.HasTimeSpan && t.Duration.TimeSpan.TotalMilliseconds > 0)
+        {
+            KeyFrameAnimation ani = null;
+
+            if (typeof(T) == typeof(float))
+                ani = c.CreateScalarKeyFrameAnimation();
+            else if (typeof(T) == typeof(Vector2))
+                ani = c.CreateVector2KeyFrameAnimation();
+            else if (typeof(T) == typeof(Vector3))
+                ani = c.CreateVector3KeyFrameAnimation();
+            else if (typeof(T) == typeof(Vector4))
+                ani = c.CreateVector4KeyFrameAnimation();
+
+            if (ani is not null)
+            {
+                ani.SetTarget(target)
+                    .AddKeyFrame(1, FINAL_VALUE, t.GetEasingFunction())
+                    .SetDuration(t.Duration.TimeSpan);
+
+                cObj.SetImplicitAnimation(target, ani);
+                return;
+            }
+        }
+
+        cObj.SetImplicitAnimation(target, null);
+    }
+
+    static partial void OnUseSynchronisedRepositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement f && f.GetElementVisual() is { } v && e.NewValue is bool b)
+        {
+            if (b is false)
+                v.SetImplicitAnimation(nameof(Visual.Offset), null);
+            else
+                v.SetImplicitAnimation(nameof(Visual.Offset),
+                    v.CreateVector3KeyFrameAnimation(nameof(Visual.Offset))
+                     .UseOrchestration());
+        }
+    }
 
     static partial void OnBounceDurationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -248,6 +341,23 @@ public partial class CompositionFactory : DependencyObject
 
         var animation = CreateEntranceAnimation(target, new Vector3(fromOffsetX, fromOffsetY, 0), delayMs, durationMs);
         target.GetElementVisual().StartAnimationGroup(animation);
+    }
+
+    public static void PlayTabEntrace(UIElement target, double ratio)
+    {
+        if (!UISettings.AnimationsEnabled || target == null)
+            return;
+
+        var v = target.GetElementVisual();
+        v.CenterPoint = new(v.Size.X * (float)ratio, 0f, 0f);
+        v.StartAnimation(
+            v.CreateVector3KeyFrameAnimation(nameof(Visual.Scale))
+                .AddKeyFrame(0f, new Vector3(0.1f))
+                .AddKeyFrame(1, Vector3.One, KeySplines.FluentDecelerate)
+                .SetDuration(0.4));
+
+        //var animation = CreateEntranceAnimation(target, new Vector3(fromOffsetX, fromOffsetY, 0), delayMs, durationMs);
+        //target.GetElementVisual().StartAnimationGroup(animation);
     }
 
     public static void SetStandardEntrance(FrameworkElement sender, object args)
@@ -641,6 +751,30 @@ public partial class CompositionFactory : DependencyObject
                         .SetDuration(DefaultOffsetDuration));
     }
 
+    public static CompositionEffectBrush CreateMicaAltBrush(Compositor compositor, bool isDark)
+    {
+        // 1. Sample desktop/wallpaper behind the window
+        CompositionBackdropBrush hostBackdrop = compositor.CreateHostBackdropBrush();
+        // 2. Mica Alt Tint Color (stronger opacity than standard Mica)
+        Color tintColor = isDark
+            ? Color.FromArgb(215, 32, 32, 32)   // Dark Theme Mica Alt tint
+            : Color.FromArgb(215, 240, 240, 240); // Light Theme Mica Alt tint
+                                                  // 3. Composite effect graph (Backdrop + Tint)
+        IGraphicsEffect graphicsEffect = new ArithmeticCompositeEffect
+        {
+            Name = "MicaAltBlend",
+            Source1 = new CompositionEffectSourceParameter("Backdrop"),
+            Source2 = new ColorSourceEffect { Name = "Tint", Color = tintColor },
+            MultiplyAmount = 0f,
+            Source1Amount = 0.25f, // Backdrop pass-through
+            Source2Amount = 0.75f, // Tint pass-through
+            Offset = 0f
+        };
+        CompositionEffectFactory factory = compositor.CreateEffectFactory(graphicsEffect);
+        CompositionEffectBrush brush = factory.CreateBrush();
+        brush.SetSourceParameter("Backdrop", hostBackdrop);
+        return brush;
+    }
 
 
 
@@ -853,4 +987,38 @@ public partial class CompositionFactory : DependencyObject
     //        target.Shadow = nt;
     //    }
     //}
+}
+
+public record WindowResizingMessage(CoreDispatcher Dispatcher);
+
+public class ResizeHelper : IDisposable
+{
+    private FrameworkElement _target;
+    Debouncer _debouncer = new(250);
+
+    public ResizeHelper(FrameworkElement target)
+    {
+        CompositionFactory.SetUseSynchronisedReposition(target, true);
+
+        WeakReferenceMessenger.Default.Register<WindowResizingMessage>(this, (o, m) =>
+            {
+                if (m.Dispatcher != target.Dispatcher)
+                    return;
+
+                CompositionFactory.SetUseSynchronisedReposition(target, false);
+                _debouncer.Debounce(() =>
+                {
+                    CompositionFactory.SetUseSynchronisedReposition(target, true);
+                });
+            });
+        _target = target;
+    }
+
+    public void Dispose()
+    {
+        _debouncer.Cancel();
+        WeakReferenceMessenger.Default.UnregisterAll(this);
+        CompositionFactory.SetUseSynchronisedReposition(_target, false);
+        _target = null;
+    }
 }

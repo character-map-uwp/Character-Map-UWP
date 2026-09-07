@@ -36,6 +36,9 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
     private object _blockRefreshScroll = null;
 
+    bool _disableMapChange = true;
+
+
     public MainPage() : this(null) { }
 
     public MainPage(MainViewModelArgs args)
@@ -113,8 +116,6 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             ViewModel.SelectedCollection = e as IFontCollection;
         });
     }
-
-    bool _disableMapChange = true;
 
     void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
@@ -1010,6 +1011,14 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
     private void Button_Click(object sender, RoutedEventArgs e)
     {
         _ = SubsetterView.CreateWindowAsync(new());
+    }
+
+    private void FontsTabBar_IsExpandedChanged(object sender, bool e)
+    {
+        // Hacks to allow a smooth animation.
+        // 76 is the height of the expanded tab preview area
+        FontMap.BottomHeight = new(e ? 76 : 0);
+        FontMap.Margin = e ? new(0, 0, 0, -76) : new();
     }
 }
 
