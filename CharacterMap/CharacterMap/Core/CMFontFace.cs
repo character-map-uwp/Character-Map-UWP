@@ -214,17 +214,6 @@ public partial class CMFontFace : IDisposable
     
     public bool ContainsBitmapGlyphs => DirectWriteProperties.IsColorFont && GetAnalysisInternal().HasBitmapGlyphs;
 
-    public bool HasVariationSequences => GetAnalysisInternal().HasVariationSequences;
-
-    public IReadOnlyList<VariationSequence> GetVariationSequences(uint unicodeIndex)
-    {
-        FontAnalysis analysis = GetAnalysis();
-        if (analysis.HasVariationSequences && analysis.VariationSequences.TryGetValue(unicodeIndex, out IReadOnlyList<VariationSequence> list))
-            return list;
-
-        return [];
-    }
-
     /// <summary>
     /// Hack used for QuickCompare - we show ALL colour fonts using manual DirectWrite rendering (using DirectText control) rather than 
     /// XAML TextBlock. We cannot use the flag above to filter only COLRv1 fonts as the FontAnalysis object requires actually opening and 
