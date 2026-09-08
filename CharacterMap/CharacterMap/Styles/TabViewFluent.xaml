@@ -1140,7 +1140,7 @@
                                         HorizontalContentAlignment="Stretch"
                                         Offset="8">
                                         <controls1:StackPanelEx Spacing="8">
-                                            <Grid>
+                                            <Grid MinHeight="{ThemeResource TabViewItemHeaderCloseButtonHeight}">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="Auto" />
