@@ -1,0 +1,121 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:c="clr-namespace:CharacterMap.Wpf.Controls">
+ <SolidColorBrush x:Key="PageBrush" Color="#FCFAFC"/>
+ <SolidColorBrush x:Key="PaneBrush" Color="#F7F1F1"/>
+ <SolidColorBrush x:Key="TabBarBrush" Color="#F3F1F9"/>
+ <SolidColorBrush x:Key="CardBrush" Color="#F9F8FA"/>
+ <SolidColorBrush x:Key="TextBrush" Color="#252525"/>
+ <SolidColorBrush x:Key="SecondaryBrush" Color="#777477"/>
+ <SolidColorBrush x:Key="StrokeBrush" Color="#E4E0E4"/>
+ <SolidColorBrush x:Key="HoverBrush" Color="#0C808080"/>
+ <Style x:Key="QuietButton" TargetType="Button">
+  <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+  <Setter Property="Background" Value="Transparent"/><Setter Property="Padding" Value="10,7"/>
+  <Setter Property="BorderThickness" Value="0"/><Setter Property="Cursor" Value="Hand"/>
+  <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button">
+   <Border x:Name="Root" Background="{TemplateBinding Background}" CornerRadius="5" Padding="{TemplateBinding Padding}">
+    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+   </Border>
+   <ControlTemplate.Triggers>
+    <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Root" Property="Background" Value="{DynamicResource HoverBrush}"/></Trigger>
+    <Trigger Property="IsPressed" Value="True"><Setter TargetName="Root" Property="Opacity" Value="0.6"/></Trigger>
+    <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/><Setter TargetName="Root" Property="BorderThickness" Value="1"/></Trigger>
+    <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.35"/></Trigger>
+   </ControlTemplate.Triggers>
+  </ControlTemplate></Setter.Value></Setter>
+ </Style>
+ <Style x:Key="IconButton" TargetType="Button" BasedOn="{StaticResource QuietButton}">
+  <Setter Property="FontFamily" Value="Segoe Fluent Icons, Segoe MDL2 Assets"/><Setter Property="FontSize" Value="19"/><Setter Property="MinWidth" Value="36"/><Setter Property="MinHeight" Value="36"/>
+ </Style>
+ <Style TargetType="c:LabelButton">
+  <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/><Setter Property="Background" Value="Transparent"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+  <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="c:LabelButton">
+   <Border x:Name="Root" Background="{TemplateBinding Background}" Padding="16,18" BorderBrush="{DynamicResource StrokeBrush}" BorderThickness="0,0,0,1">
+    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="42"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+     <TextBlock Text="{TemplateBinding Icon}" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="28" VerticalAlignment="Center"/>
+     <StackPanel Grid.Column="1" VerticalAlignment="Center"><WrapPanel><TextBlock Text="{TemplateBinding Title}" FontSize="15"/>
+      <TextBlock Text="{TemplateBinding Shortcut}" Foreground="{DynamicResource SecondaryBrush}" Margin="5,2,0,0" FontSize="12"/></WrapPanel>
+      <TextBlock x:Name="Description" Text="{TemplateBinding Description}" FontSize="13" Foreground="{DynamicResource SecondaryBrush}" TextWrapping="Wrap" Margin="0,3,0,0"/>
+     </StackPanel></Grid>
+   </Border><ControlTemplate.Triggers>
+    <Trigger Property="Description" Value=""><Setter TargetName="Description" Property="Visibility" Value="Collapsed"/></Trigger>
+    <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Root" Property="Background" Value="{DynamicResource HoverBrush}"/></Trigger>
+    <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Root" Property="Background" Value="{DynamicResource HoverBrush}"/></Trigger>
+    <Trigger Property="IsPressed" Value="True"><Setter TargetName="Root" Property="Opacity" Value="0.65"/></Trigger>
+    <Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.4"/></Trigger>
+   </ControlTemplate.Triggers>
+  </ControlTemplate></Setter.Value></Setter>
+ </Style>
+ <Style TargetType="c:ButtonGroup">
+  <Setter Property="Background" Value="{DynamicResource CardBrush}"/>
+  <Setter Property="ItemsPanel"><Setter.Value><ItemsPanelTemplate><StackPanel Orientation="{Binding Orientation, RelativeSource={RelativeSource AncestorType=c:ButtonGroup}}"/></ItemsPanelTemplate></Setter.Value></Setter>
+  <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="c:ButtonGroup"><Border Background="{TemplateBinding Background}" BorderBrush="{DynamicResource StrokeBrush}" BorderThickness="1" CornerRadius="8" ClipToBounds="True"><ItemsPresenter/></Border></ControlTemplate></Setter.Value></Setter>
+ </Style>
+ <Style TargetType="c:SuggestionBox">
+  <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/><Setter Property="Background" Value="{DynamicResource CardBrush}"/><Setter Property="FontSize" Value="13"/>
+  <Setter Property="VerticalContentAlignment" Value="Center"/><Setter Property="MinHeight" Value="34"/>
+  <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="c:SuggestionBox">
+   <Border x:Name="Root" Background="{TemplateBinding Background}" CornerRadius="4" BorderBrush="{DynamicResource SecondaryBrush}" BorderThickness="0,0,0,1" Padding="10,6">
+    <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="22"/><ColumnDefinition/></Grid.ColumnDefinitions>
+     <TextBlock Text="&#xE721;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Foreground="{DynamicResource SecondaryBrush}" VerticalAlignment="Center"/>
+     <ScrollViewer Grid.Column="1" x:Name="PART_ContentHost" VerticalAlignment="Center"/>
+     <TextBlock Grid.Column="1" x:Name="Placeholder" Text="{TemplateBinding PlaceholderText}" Foreground="{DynamicResource SecondaryBrush}" FontStyle="Italic" IsHitTestVisible="False" Visibility="Collapsed" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+    </Grid></Border><ControlTemplate.Triggers>
+    <Trigger Property="Text" Value=""><Setter TargetName="Placeholder" Property="Visibility" Value="Visible"/></Trigger>
+    <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/><Setter TargetName="Root" Property="BorderThickness" Value="0,0,0,2"/></Trigger>
+   </ControlTemplate.Triggers>
+  </ControlTemplate></Setter.Value></Setter>
+ </Style>
+ <Style TargetType="c:CharacterGridView">
+  <Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/>
+  <Setter Property="ScrollViewer.CanContentScroll" Value="True"/><Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/><Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+  <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True"/>
+  <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="c:CharacterGridView"><ScrollViewer Focusable="False" CanContentScroll="True" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Padding="0"><ItemsPresenter/></ScrollViewer></ControlTemplate></Setter.Value></Setter>
+  <Setter Property="ItemsPanel"><Setter.Value><ItemsPanelTemplate><c:VirtualizingWrapPanel ItemSize="{Binding ItemSize, RelativeSource={RelativeSource AncestorType=c:CharacterGridView}}"/></ItemsPanelTemplate></Setter.Value></Setter>
+  <Setter Property="ItemContainerStyle"><Setter.Value><Style TargetType="ListBoxItem">
+   <Setter Property="Padding" Value="8"/><Setter Property="Margin" Value="2"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="VerticalContentAlignment" Value="Stretch"/>
+   <Setter Property="ToolTip" Value="{Binding Description}"/><Setter Property="AutomationProperties.Name" Value="{Binding Description}"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="Cell" BorderBrush="Transparent" BorderThickness="2" Background="Transparent" Padding="{TemplateBinding Padding}"><ContentPresenter/></Border><ControlTemplate.Triggers>
+    <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Cell" Property="Background" Value="{DynamicResource HoverBrush}"/></Trigger>
+    <Trigger Property="IsSelected" Value="True"><Setter TargetName="Cell" Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/></Trigger>
+   </ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+  </Style></Setter.Value></Setter>
+  <Setter Property="ItemTemplate"><Setter.Value><DataTemplate><Grid>
+   <c:DirectText CodePoint="{Binding CodePoint}" GlyphTypeface="{Binding ItemFontFace, RelativeSource={RelativeSource AncestorType=c:CharacterGridView}}" FontSize="{Binding FontSize, RelativeSource={RelativeSource AncestorType=c:CharacterGridView}}" Foreground="{DynamicResource TextBrush}" Padding="2,2,2,14"/>
+   <TextBlock Text="{Binding Code}" FontFamily="Segoe UI" FontSize="10" Foreground="{DynamicResource SecondaryBrush}" HorizontalAlignment="Center" VerticalAlignment="Bottom" Visibility="{Binding ShowAnnotations, RelativeSource={RelativeSource AncestorType=c:CharacterGridView}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+  </Grid></DataTemplate></Setter.Value></Setter>
+ </Style>
+ <Style TargetType="c:ExtendedListView" BasedOn="{StaticResource {x:Type ListBox}}">
+  <Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/>
+  <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/><Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+  <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True"/><Setter Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="True"/><Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling"/>
+  <Setter Property="ItemContainerStyle"><Setter.Value><Style TargetType="ListBoxItem">
+   <Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Padding" Value="14,10"/><Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="Root" Background="Transparent" CornerRadius="4" Padding="{TemplateBinding Padding}" Margin="3,0"><ContentPresenter/></Border><ControlTemplate.Triggers>
+    <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Root" Property="Background" Value="{DynamicResource HoverBrush}"/></Trigger>
+    <Trigger Property="IsSelected" Value="True"><Setter TargetName="Root" Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/><Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/></Trigger>
+   </ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+  </Style></Setter.Value></Setter>
+  <Setter Property="ItemTemplate"><Setter.Value><DataTemplate><DockPanel>
+   <TextBlock DockPanel.Dock="Right" Text="{Binding VariantCount}" Opacity="0.5" FontSize="12" VerticalAlignment="Center" Margin="8,0,0,0"/>
+   <TextBlock Text="{Binding DisplayName}" FontFamily="{Binding Family}" FontSize="15" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+  </DockPanel></DataTemplate></Setter.Value></Setter>
+ </Style>
+ <Style TargetType="c:ExtendedTabView">
+  <Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/>
+  <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="c:ExtendedTabView"><ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled"><ItemsPresenter/></ScrollViewer></ControlTemplate></Setter.Value></Setter>
+  <Setter Property="ItemsPanel"><Setter.Value><ItemsPanelTemplate><StackPanel Orientation="Horizontal"/></ItemsPanelTemplate></Setter.Value></Setter>
+  <Setter Property="ItemContainerStyle"><Setter.Value><Style TargetType="ListBoxItem">
+   <Setter Property="Width" Value="210"/><Setter Property="Margin" Value="0,6,3,0"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="Root" CornerRadius="7,7,0,0" Padding="12,3" Background="Transparent"><ContentPresenter/></Border><ControlTemplate.Triggers>
+    <Trigger Property="IsSelected" Value="True"><Setter TargetName="Root" Property="Background" Value="{DynamicResource PageBrush}"/></Trigger>
+    <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource StrokeBrush}"/><Setter TargetName="Root" Property="BorderThickness" Value="1,1,1,0"/></Trigger>
+   </ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+  </Style></Setter.Value></Setter>
+  <Setter Property="ItemTemplate"><Setter.Value><DataTemplate><DockPanel>
+   <Button DockPanel.Dock="Right" Content="&#xE8BB;" Style="{StaticResource IconButton}" FontSize="10" MinWidth="24" MinHeight="24" Padding="4" ToolTip="关闭标签页" AutomationProperties.Name="关闭标签页" Command="{Binding DataContext.CloseTabCommand, RelativeSource={RelativeSource AncestorType=c:ExtendedTabView}}" CommandParameter="{Binding}"/>
+   <TextBlock Text="&#xE80A;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" Margin="0,0,10,0" VerticalAlignment="Center" Foreground="{DynamicResource SecondaryBrush}"/>
+   <TextBlock Text="{Binding Title}" FontFamily="{Binding Font.Family}" Foreground="{DynamicResource TextBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+  </DockPanel></DataTemplate></Setter.Value></Setter>
+ </Style>
+</ResourceDictionary>

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="CharacterMap.Wpf/CharacterMap.Wpf.csproj" />
+  <Project Path="CharacterMap.Wpf.Tests/CharacterMap.Wpf.Tests.csproj" />
+</Solution>
