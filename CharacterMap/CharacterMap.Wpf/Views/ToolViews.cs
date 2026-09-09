@@ -105,6 +105,7 @@ public sealed class FontInfoView : UserControl
         panel.Children.Add(ViewElements.Label(vm.SelectedFont?.DisplayName ?? "字体信息", 24));
         panel.Children.Add(ViewElements.Label($"字形变体：{vm.SelectedVariant?.Name}\n{vm.GlyphCountLabel}\n\n字体来源：{vm.SelectedFont?.SourceLabel}\n\n字重：{vm.CurrentFace?.Weight}\n字宽：{vm.CurrentFace?.Stretch}\n版本：{vm.CurrentFace?.Version}"));
         var face = vm.CurrentFace;
+        if (face != null) panel.Children.Add(ViewElements.Label(OpenTypeMetadata.ForFace(face).Description));
         foreach (var (label, value) in new[] { ("设计者", face?.DesignerNames.Values.FirstOrDefault()), ("版权", face?.Copyrights.Values.FirstOrDefault()), ("描述", face?.Descriptions.Values.FirstOrDefault()) })
             if (!string.IsNullOrWhiteSpace(value)) panel.Children.Add(ViewElements.Label($"{label}\n{value}"));
         Content = new ScrollViewer { Content = panel, VerticalScrollBarVisibility = ScrollBarVisibility.Auto };

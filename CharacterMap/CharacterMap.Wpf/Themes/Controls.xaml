@@ -91,6 +91,11 @@
   <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True"/><Setter Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="True"/><Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling"/>
   <Setter Property="ItemContainerStyle"><Setter.Value><Style TargetType="ListBoxItem">
    <Setter Property="HorizontalContentAlignment" Value="Stretch"/><Setter Property="Padding" Value="14,10"/><Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+   <Setter Property="ToolTipService.InitialShowDelay" Value="500"/>
+   <Setter Property="ToolTipService.ShowDuration" Value="30000"/>
+   <Setter Property="ToolTip"><Setter.Value><ToolTip Placement="Right" Background="{DynamicResource PageBrush}" Foreground="{DynamicResource TextBrush}" Padding="12" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+    <StackPanel><TextBlock Text="{Binding DisplayName}" FontSize="14" Margin="0,0,0,10"/><c:FontHoverPreview Font="{Binding}"/></StackPanel>
+   </ToolTip></Setter.Value></Setter>
    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="Root" Background="Transparent" CornerRadius="4" Padding="{TemplateBinding Padding}" Margin="3,0"><ContentPresenter/></Border><ControlTemplate.Triggers>
     <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Root" Property="Background" Value="{DynamicResource HoverBrush}"/></Trigger>
     <Trigger Property="IsSelected" Value="True"><Setter TargetName="Root" Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/><Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/></Trigger>
@@ -98,7 +103,7 @@
   </Style></Setter.Value></Setter>
   <Setter Property="ItemTemplate"><Setter.Value><DataTemplate><DockPanel>
    <TextBlock DockPanel.Dock="Right" Text="{Binding VariantCount}" Opacity="0.5" FontSize="12" VerticalAlignment="Center" Margin="8,0,0,0"/>
-   <TextBlock Text="{Binding DisplayName}" FontFamily="{Binding Family}" FontSize="15" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+   <TextBlock Text="{Binding DisplayName}" FontFamily="{Binding DisplayFamily}" FontSize="15" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
   </DockPanel></DataTemplate></Setter.Value></Setter>
  </Style>
  <Style TargetType="c:ExtendedTabView">
@@ -107,6 +112,7 @@
   <Setter Property="ItemsPanel"><Setter.Value><ItemsPanelTemplate><StackPanel Orientation="Horizontal"/></ItemsPanelTemplate></Setter.Value></Setter>
   <Setter Property="ItemContainerStyle"><Setter.Value><Style TargetType="ListBoxItem">
    <Setter Property="Width" Value="210"/><Setter Property="Margin" Value="0,6,3,0"/><Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+   <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
    <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ListBoxItem"><Border x:Name="Root" CornerRadius="7,7,0,0" Padding="12,3" Background="Transparent"><ContentPresenter/></Border><ControlTemplate.Triggers>
     <Trigger Property="IsSelected" Value="True"><Setter TargetName="Root" Property="Background" Value="{DynamicResource PageBrush}"/></Trigger>
     <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource StrokeBrush}"/><Setter TargetName="Root" Property="BorderThickness" Value="1,1,1,0"/></Trigger>

@@ -35,6 +35,18 @@ internal static class Program
             Pump(vm.InitializeAsync());
             Check(vm.AllFonts.Count > 0 && vm.CurrentFace != null && vm.Glyphs.Count > 0, "font catalog initialization");
             int fontCount = vm.AllFonts.Count;
+            foreach (var font in vm.AllFonts.Where(f => f.DisplayName is "Segoe Fluent Icons" or "Segoe MDL2 Assets"))
+                Check(font.DisplayFamily.Source == "Segoe UI", $"{font.DisplayName} has a readable list name");
+            var latin = vm.AllFonts.First(f => f.DisplayName == "Segoe UI");
+            Check(ReferenceEquals(latin.DisplayFamily, latin.Family), "supported font names retain their own preview font");
+            var missingName = new FontEntry("Missing\U0010FFFF", latin.Family, latin.GlyphTypeface);
+            Check(!ReferenceEquals(missingName.DisplayFamily, missingName.Family), "unsupported name characters use UI fallback");
+            var icon = System.Windows.Application.GetResourceStream(new Uri("pack://application:,,,/CharacterMap.Wpf;component/Assets/CharacterMap.ico"));
+            using (var iconStream = icon.Stream)
+            {
+                var frames = new IconBitmapDecoder(iconStream, BitmapCreateOptions.None, BitmapCacheOption.OnLoad).Frames;
+                Check(new[] { 16, 24, 32, 48, 256 }.All(size => frames.Any(frame => frame.PixelWidth == size)), "application icon includes native shell and high-DPI sizes");
+            }
             Pump(vm.InitializeAsync());
             Check(vm.AllFonts.Count == fontCount, "repeated Loaded events do not reload or duplicate fonts");
             var uncached = new FontEntry("Test", vm.SelectedFont!.Family, vm.CurrentFace!);
@@ -64,6 +76,8 @@ internal static class Program
             Check(vm.CurrentFace != regular && vm.CurrentFace!.Weight == FontWeights.Bold, "actual bold font face");
             var entry = new FontCatalogService().LoadFontCollection(vm.CurrentFace!.FontUri.LocalPath);
             Check(entry.Count > 0 && entry[0].Variants.Count > 0, "local font file import");
+            AdvancedFontTests.Run(vm, Check);
+            TestColorPreview(vm);
             TestGrid(vm.CurrentFace);
             TestExport(vm.CurrentFace);
             TestWindowBindings();
@@ -96,6 +110,45 @@ internal static class Program
         grid.ItemsSource = new[] { new GlyphItem(0x31) }; Layout(grid);
         Check(grid.ItemContainerGenerator.ContainerFromIndex(0) != null, "refill after empty results");
     }
+    private static void TestColorPreview(MainWindowViewModel vm)
+    {
+        var emoji = vm.AllFonts.First(f => f.DisplayName == "Segoe UI Emoji");
+        var face = emoji.GlyphTypeface;
+        var layers = ColorGlyphService.ForFace(face).GetLayers(face.CharacterToGlyphMap[0x1F600]);
+        Check(layers is { Count: > 1 }, "Segoe UI Emoji supplies multiple color layers");
+        var fontBytes = File.ReadAllBytes(face.FontUri.LocalPath);
+        int U16(int p) => System.Buffers.Binary.BinaryPrimitives.ReadUInt16BigEndian(fontBytes.AsSpan(p));
+        int U32(int p) => (int)System.Buffers.Binary.BinaryPrimitives.ReadUInt32BigEndian(fontBytes.AsSpan(p));
+        int colrEntry = Enumerable.Range(0, U16(4)).Select(i => 12 + i * 16).Single(p => U32(p) == 0x434F4C52);
+        int colrStart = U32(colrEntry + 8), layerStart = colrStart + U32(colrStart + 8);
+        var invalid = (byte[])fontBytes.Clone();
+        System.Buffers.Binary.BinaryPrimitives.WriteUInt16BigEndian(invalid.AsSpan(layerStart), ushort.MaxValue);
+        bool rejected = false;
+        try { ColorGlyphService.Parse(invalid, face.GlyphCount); } catch (InvalidDataException) { rejected = true; }
+        Check(rejected, "invalid color layer glyph reference is rejected before rendering");
+        rejected = false;
+        try { ColorGlyphService.Parse(fontBytes[..(colrStart + 8)], face.GlyphCount); } catch (InvalidDataException) { rejected = true; }
+        Check(rejected, "truncated color table is rejected");
+        var glyph = new DirectText { GlyphTypeface = face, CodePoint = 0x1F600, Width = 160, Height = 160, FitToBounds = true, Padding = new Thickness(8), Foreground = Brushes.Black };
+        Layout(glyph);
+        int ColoredPixels(Visual visual, int width, int height)
+        {
+            var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            bitmap.Render(visual);
+            var pixels = new byte[width * height * 4]; bitmap.CopyPixels(pixels, width * 4, 0);
+            return Enumerable.Range(0, width * height).Count(i => pixels[i * 4 + 3] > 100 && Math.Abs(pixels[i * 4 + 2] - pixels[i * 4]) > 40);
+        }
+        Check(ColoredPixels(glyph, 160, 160) > 1000, "emoji renders colored pixels, not monochrome outlines");
+        glyph.CodePoint = 0x1F499; Layout(glyph);
+        Check(ColoredPixels(glyph, 160, 160) > 1000, "recycled glyph refreshes color layers when code point changes");
+        glyph.GlyphTypeface = vm.AllFonts.First(f => f.DisplayName == "Segoe UI").GlyphTypeface; glyph.CodePoint = 0x41; Layout(glyph);
+        Check(ColoredPixels(glyph, 160, 160) == 0 && glyph.GetOutline() is { Bounds.IsEmpty: false }, "ordinary fonts retain monochrome outlines after switching face");
+
+        var preview = new FontHoverPreview { Font = emoji, Height = 168 };
+        preview.RaiseEvent(new RoutedEventArgs(FrameworkElement.LoadedEvent)); Layout(preview);
+        Check(preview.Children.Count == 18 && ColoredPixels(preview, 336, 168) > 1000, "hover preview contains eighteen actual colored glyphs");
+        GlyphExportService.SavePng(Path.Combine(AppContext.BaseDirectory, "wpf-emoji-hover.png"), preview, 336, 168);
+    }
     private static void TestWindowBindings()
     {
         var window = new CharacterMap.Wpf.MainWindow();
@@ -114,6 +167,15 @@ internal static class Program
         Check(container != null, "filtered font row is realized");
         container!.SetCurrentValue(ListBoxItem.IsSelectedProperty, true); Drain();
         Check(vm.SelectedFont == script, "selection still updates after filtering the font list");
+        var tip = container.ToolTip as ToolTip;
+        Check(tip != null && ToolTipService.GetInitialShowDelay(container) == 500, "font rows expose delayed hover preview");
+        tip!.PlacementTarget = container; Drain();
+        Check(ReferenceEquals(tip.DataContext, script), "hover tooltip binds to its own font row");
+        var hover = Descendants((DependencyObject)tip.Content).OfType<FontHoverPreview>().Single();
+        Check(ReferenceEquals(hover.Font, script), "tooltip preview receives hovered font independently of selection");
+        var tabs = Descendants(content).OfType<ExtendedTabView>().Single();
+        Check(!System.Windows.Shell.WindowChrome.GetIsHitTestVisibleInChrome(tabs), "empty tab strip remains a native caption drag region");
+        Check(Descendants(tabs).OfType<ListBoxItem>().All(System.Windows.Shell.WindowChrome.GetIsHitTestVisibleInChrome), "tab items remain interactive in caption");
         var grid = (CharacterGridView)window.FindName("CharacterGrid");
         var glyph = vm.Glyphs.First(g => g.CodePoint == 0x31);
         grid.SetCurrentValue(ListBox.SelectedItemProperty, glyph); Drain();

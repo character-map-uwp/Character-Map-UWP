@@ -12,6 +12,19 @@ public sealed class FontEntry(
 {
     public string DisplayName { get; } = displayName;
     public FontFamily Family { get; } = family;
+    private FontFamily? _displayFamily;
+    // Symbol fonts often have no Latin letters; render their names with the UI
+    // font instead. Check the same normal face that the list TextBlock requests.
+    public FontFamily DisplayFamily => _displayFamily ??= CanRenderName()
+        ? Family : new FontFamily("Segoe UI");
+    private bool CanRenderName()
+    {
+        var typeface = new Typeface(Family, System.Windows.FontStyles.Normal,
+            System.Windows.FontWeights.Normal, System.Windows.FontStretches.Normal);
+        return typeface.TryGetGlyphTypeface(out var face) && !face.Symbol
+            && DisplayName.EnumerateRunes().All(rune =>
+                face.CharacterToGlyphMap.TryGetValue(rune.Value, out ushort glyph) && glyph != 0);
+    }
     public GlyphTypeface GlyphTypeface { get; } = glyphTypeface;
     public string? SourcePath { get; } = sourcePath;
     public string SourceLabel => SourcePath is null ? "系统字体" : SourcePath;

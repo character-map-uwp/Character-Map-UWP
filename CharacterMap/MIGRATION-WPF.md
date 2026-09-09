@@ -23,7 +23,7 @@ application to build without the retired UWP toolchain and C++/CX project.
 - Built-in .NET Fluent theme with `ThemeMode="System"`, including live Windows
   light/dark mode and accent-color synchronization
 - Installed-font discovery using WPF's DirectWrite-backed font objects
-- Local TTF/OTF/TTC/OTC opening, folder import and file drop
+- Local TTF/OTF/TTC/OTC/WOFF opening, folder import and file drop
 - Font filtering and actual character-to-glyph map enumeration
 - Continuous, adaptive glyph browsing with viewport virtualization
 - Shared UWP Unicode names and blocks; literal, hex and name search
@@ -50,7 +50,8 @@ application to build without the retired UWP toolchain and C++/CX project.
 The view model uses stable font object identity: caching a family's variants must
 not change its hash while WPF selectors have it in their selection tables. Unicode
 data is embedded from the existing UWP resources; it is not a second manually
-maintained name table. Glyph rendering currently supports monochrome outlines.
+maintained name table. Glyph previews support monochrome outlines and COLR/CPAL
+base color layers, including Segoe UI Emoji.
 
 ## Verification
 
@@ -76,7 +77,45 @@ pen hardware and every secondary-window interaction have not been manually teste
 
 1. Introduce a DirectWrite interop boundary and port variable-font/OpenType metadata.
 2. Port user collections and migrate existing UWP data.
-3. Implement WOFF/WOFF2/ZIP decoding, font installation and subsetting.
+3. Implement WOFF2/ZIP decoding, font installation and subsetting.
 4. Match remaining UWP tool-view options, color glyphs, OpenType shaping controls,
    variable axes, drag-reordering of tabs, animation and touch behavior.
 5. Import `.resw` resources, add UI Automation coverage, and produce MSIX/unpackaged releases.
+
+## Conservative advanced-font compatibility
+
+- `OpenTypeMetadata` reads color table presence and `fvar` axis tags, signed ranges
+  and defaults on demand for the selected face, with bounded reads and validated
+  offsets. Font information shows these values read-only. Collection fonts are
+  explicitly reported as unknown because WPF does not expose a reliable face
+  index for this parser; another collection face's metadata is never substituted.
+- A persistent preview notice identifies color/variable fonts and unknown metadata.
+  Character previews render COLR/CPAL base color layers in their original order
+  with the default palette; unsupported formats, SVG/PNG export and printing still
+  use available monochrome outlines. Arbitrary variable-axis values are not applied.
+- `WebFontDecoder` reconstructs WOFF 1 TrueType/OpenType tables using .NET zlib.
+  Input and decoded data are capped at 64 MiB; table ranges, alignment, overlap,
+  checksums and exact decompressed lengths are checked. The sfnt checksum adjustment
+  is recomputed. Optional metadata/private blocks are range-checked but not extracted.
+  Original files are unchanged. Decoded fonts live in a unique process temporary
+  directory, with best-effort deletion at normal process exit (crashes or font locks
+  can leave temporary files). No system font installation or new package is needed.
+- WOFF2 is recognized by signature and extension and rejected with an explicit
+  TTF/OTF alternative. WOFF2 needs its own transformed-table decoder; it is not
+  treated as ordinary Brotli data. Batch imports retain successful fonts and show
+  up to three concrete errors, also available in the status tooltip.
+- Tests cover compressed/uncompressed WOFF round trips using a real system font,
+  unchanged table contents, imported character maps, checksums, malformed ranges,
+  output limits, truncated data, signed axes, color detection and failure recovery.
+
+Format references: [WOFF 1](https://www.w3.org/TR/WOFF/),
+[WOFF 2](https://www.w3.org/TR/WOFF2/),
+[OpenType fvar](https://learn.microsoft.com/en-us/typography/opentype/otspec181/fvar),
+[COLR](https://learn.microsoft.com/en-us/typography/opentype/spec/colr),
+[CPAL](https://learn.microsoft.com/en-us/typography/opentype/spec/cpal).
+
+The font list provides delayed hover cards using the hovered face's glyphs, with
+color emoji samples where available. The tab strip marks only its tab items and
+buttons as interactive chrome, leaving empty space available for native dragging
+and double-click maximize. Regression checks cover tooltip bindings, caption
+properties, actual colored pixels, face/code-point changes and malformed color tables.

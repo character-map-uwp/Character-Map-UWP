@@ -71,6 +71,18 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
     public IReadOnlyList<GlyphItem> Glyphs { get => _glyphs; private set => SetField(ref _glyphs, value); }
     public IReadOnlyList<FontVariant> Variants => SelectedFont?.Variants ?? [];
     public GlyphTypeface? CurrentFace => SelectedVariant?.GlyphTypeface ?? SelectedFont?.GlyphTypeface;
+    public string FontSupportNotice => CurrentFace is { } face ? OpenTypeMetadata.ForFace(face).Description : "";
+    public string FontSupportSummary
+    {
+        get
+        {
+            if (CurrentFace is not { } face) return "";
+            var metadata = OpenTypeMetadata.ForFace(face);
+            if (metadata.Unavailable != null) return "高级字体特性未能检测；当前使用单色轮廓。详情见字体信息。";
+            return metadata.ColorTables.Count > 0 || metadata.Axes.Count > 0
+                ? "预览支持 COLR/CPAL 颜色图层；其他格式、导出和打印使用单色轮廓，轴值不可调。详情见字体信息。" : "";
+        }
+    }
     public ICommand CopyCommand => _copyCommand;
     public ICommand AddCommand => _addCommand;
     public ICommand CopyTextCommand => _copyTextCommand;
@@ -113,7 +125,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
     public FontVariant? SelectedVariant
     {
         get => _selectedVariant;
-        set { if (SetField(ref _selectedVariant, value)) { OnPropertyChanged(nameof(CurrentFace)); LoadGlyphs(); } }
+        set { if (SetField(ref _selectedVariant, value)) { OnPropertyChanged(nameof(CurrentFace)); OnPropertyChanged(nameof(FontSupportNotice)); OnPropertyChanged(nameof(FontSupportSummary)); LoadGlyphs(); } }
     }
     public GlyphItem? SelectedGlyph
     {
@@ -208,7 +220,7 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
     }
     private void OpenFont()
     {
-        var dialog = new OpenFileDialog { Title = "打开字体文件", Multiselect = true, Filter = "字体文件 (*.ttf;*.otf;*.ttc;*.otc)|*.ttf;*.otf;*.ttc;*.otc" };
+        var dialog = new OpenFileDialog { Title = "打开字体文件", Multiselect = true, Filter = "字体文件 (*.ttf;*.otf;*.ttc;*.otc;*.woff)|*.ttf;*.otf;*.ttc;*.otc;*.woff|WOFF2（暂不支持解码）|*.woff2" };
         if (dialog.ShowDialog() == true) ImportFiles(dialog.FileNames);
     }
     private void OpenFolder()
@@ -218,10 +230,11 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
         try { ImportFiles(Directory.EnumerateFiles(dialog.FolderName, "*", new EnumerationOptions { RecurseSubdirectories = true, IgnoreInaccessible = true }).Where(IsFontFile).ToArray()); }
         catch (Exception ex) { StatusText = $"无法读取文件夹：{ex.Message}"; }
     }
-    public static bool IsFontFile(string path) => new[] { ".ttf", ".otf", ".ttc", ".otc" }.Contains(Path.GetExtension(path).ToLowerInvariant());
+    public static bool IsFontFile(string path) => new[] { ".ttf", ".otf", ".ttc", ".otc", ".woff", ".woff2" }.Contains(Path.GetExtension(path).ToLowerInvariant());
     public void ImportFiles(IEnumerable<string> paths)
     {
         int loaded = 0, failed = 0; FontEntry? first = null;
+        var errors = new List<string>();
         foreach (string path in paths)
         {
             try
@@ -233,11 +246,15 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged
                     first ??= existing ?? font;
                 }
             }
-            catch { failed++; }
+            catch (Exception ex)
+            {
+                failed++;
+                if (errors.Count < 3) errors.Add($"{Path.GetFileName(path)}：{ex.Message}");
+            }
         }
         Fonts.Refresh();
         FontSearch = ""; if (first != null) { CodePointSearch = ""; SelectedFont = first; }
-        OnPropertyChanged(nameof(FontCountLabel)); StatusText = $"已打开 {loaded} 个字体系列" + (failed > 0 ? $"，{failed} 个文件无法读取" : "");
+        OnPropertyChanged(nameof(FontCountLabel)); StatusText = $"已打开 {loaded} 个字体系列" + (failed > 0 ? $"，{failed} 个文件无法读取。{string.Join("；", errors)}" : "");
     }
     private bool SetField<T>(ref T field, T value, [CallerMemberName] string? name = null)
     {

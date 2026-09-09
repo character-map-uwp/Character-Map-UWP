@@ -1,10 +1,11 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using CharacterMap.Wpf.Services;
 
 namespace CharacterMap.Wpf.Controls;
 
-/// <summary>Renders the selected face's actual glyph outline, including supplementary-plane glyphs, without font fallback.</summary>
+/// <summary>Renders the selected face's outlines and COLR/CPAL layers without font fallback.</summary>
 public sealed class DirectText : Control
 {
     public static readonly DependencyProperty GlyphTypefaceProperty = DependencyProperty.Register(nameof(GlyphTypeface), typeof(GlyphTypeface), typeof(DirectText), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsRender, InvalidateGeometry));
@@ -14,7 +15,23 @@ public sealed class DirectText : Control
     public int CodePoint { get => (int)GetValue(CodePointProperty); set => SetValue(CodePointProperty, value); }
     public bool FitToBounds { get => (bool)GetValue(FitToBoundsProperty); set => SetValue(FitToBoundsProperty, value); }
     private Geometry? _outline;
-    private static void InvalidateGeometry(DependencyObject d, DependencyPropertyChangedEventArgs e) => ((DirectText)d)._outline = null;
+    private (Geometry Geometry, Brush? Brush)[]? _layers;
+    private static void InvalidateGeometry(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        var control = (DirectText)d; control._outline = null; control._layers = null;
+    }
+    private (Geometry Geometry, Brush? Brush)[] GetLayers()
+    {
+        if (_layers != null) return _layers;
+        if (GlyphTypeface?.CharacterToGlyphMap.TryGetValue(CodePoint, out ushort glyph) != true) return [];
+        _layers = ColorGlyphService.ForFace(GlyphTypeface).GetLayers(glyph)?.Select(layer =>
+        {
+            var geometry = GlyphTypeface.GetGlyphOutline(layer.Glyph, 100, 100);
+            if (geometry.CanFreeze) geometry.Freeze();
+            return (geometry, layer.Brush);
+        }).ToArray() ?? [];
+        return _layers;
+    }
     public Geometry? GetOutline()
     {
         if (_outline != null) return _outline;
@@ -26,9 +43,11 @@ public sealed class DirectText : Control
     protected override void OnRender(DrawingContext dc)
     {
         base.OnRender(dc);
-        var geometry = GetOutline();
-        if (geometry == null || geometry.Bounds.IsEmpty || geometry.Bounds.Width <= 0 || geometry.Bounds.Height <= 0) return;
-        var bounds = geometry.Bounds;
+        var layers = GetLayers();
+        var geometry = layers.Length == 0 ? GetOutline() : null;
+        var bounds = geometry?.Bounds ?? Rect.Empty;
+        foreach (var layer in layers) bounds.Union(layer.Geometry.Bounds);
+        if (bounds.IsEmpty || bounds.Width <= 0 || bounds.Height <= 0) return;
         double availableWidth = Math.Max(1, ActualWidth - Padding.Left - Padding.Right);
         double availableHeight = Math.Max(1, ActualHeight - Padding.Top - Padding.Bottom);
         double scale = Math.Min(availableWidth / bounds.Width, availableHeight / bounds.Height);
@@ -36,7 +55,8 @@ public sealed class DirectText : Control
         dc.PushTransform(new TranslateTransform(Padding.Left + (availableWidth - bounds.Width * scale) / 2 - bounds.X * scale,
             Padding.Top + (availableHeight - bounds.Height * scale) / 2 - bounds.Y * scale));
         dc.PushTransform(new ScaleTransform(scale, scale));
-        dc.DrawGeometry(Foreground, null, geometry);
+        if (layers.Length == 0) dc.DrawGeometry(Foreground, null, geometry);
+        else foreach (var layer in layers) dc.DrawGeometry(layer.Brush ?? Foreground, null, layer.Geometry);
         dc.Pop(); dc.Pop();
     }
 }
