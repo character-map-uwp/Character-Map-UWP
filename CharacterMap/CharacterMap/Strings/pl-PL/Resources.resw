@@ -1306,4 +1306,19 @@ Dotknij i przytrzymaj, aby rozmieścić.</value>
   <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
     <value>Wybierz folder</value>
   </data>
+  <data name="FileTrueTypeFontDisplayName" xml:space="preserve">
+    <value>Czcionką TrueType</value>
+  </data>
+  <data name="FileOpenTypeFontDisplayName" xml:space="preserve">
+    <value>Czcionką OpenType</value>
+  </data>
+  <data name="FileWebFontDisplayName" xml:space="preserve">
+    <value>Czcionką WOFF</value>
+  </data>
+  <data name="FileWebFontTwoDisplayName" xml:space="preserve">
+    <value>Czcionką WOFF2</value>
+  </data>
+  <data name="FileZipFileDisplayName" xml:space="preserve">
+    <value>Folder skompresowany (ZIP)</value>
+  </data>
 </root>
