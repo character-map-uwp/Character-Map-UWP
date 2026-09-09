@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>CharacterMap.Wpf</AssemblyName>
+    <RootNamespace>CharacterMap.Wpf</RootNamespace>
+    <ApplicationIcon>Assets\CharacterMap.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Resource Include="Assets\CharacterMap.ico" />
+    <EmbeddedResource Include="../CharacterMap/Assets/Data/UnicodeData.txt" LogicalName="UnicodeData.txt" />
+    <EmbeddedResource Include="../CharacterMap/Models/UnicodeRanges.cs" LogicalName="UnicodeRanges.txt" />
+  </ItemGroup>
+</Project>
