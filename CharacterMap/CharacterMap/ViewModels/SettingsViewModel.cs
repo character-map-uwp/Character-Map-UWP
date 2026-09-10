@@ -129,6 +129,8 @@ public partial class SettingsViewModel : ViewModelBase
                 """
                 - Added expandable tab-bar preview thumbnails for Windows 11 theme
                 - Typographic variants of a glyph will now attempt to copy as text if the glyph of the typographic variant also exists as a mapped character
+                - Glyph indexes for Characters are now shown in Unicode tools
+                - For Characters formed of multiple glyphs, each glyph component is now listed below the character preview pane
                 """),
              new("2026.5.1.0 (August 2026)", // August 2026
                 """

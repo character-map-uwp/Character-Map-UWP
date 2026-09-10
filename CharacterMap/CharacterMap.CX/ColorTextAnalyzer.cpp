@@ -92,8 +92,16 @@ HRESULT ColorTextAnalyzer::DrawGlyphRun(
 			}
 		}
 	}
+	else
+	{
+		if (IsCharacterAnalysisMode && glyphRun != nullptr && glyphRun->glyphCount > 0)
+		{
+			std::vector<uint16> glyphIndices(glyphRun->glyphIndices, glyphRun->glyphIndices + glyphRun->glyphCount);
+			GlyphIndicies.push_back(std::move(glyphIndices));
+		}
+	}
 
-	return hr;
+	return S_OK;
 }
 
 IFACEMETHODIMP ColorTextAnalyzer::DrawUnderline(

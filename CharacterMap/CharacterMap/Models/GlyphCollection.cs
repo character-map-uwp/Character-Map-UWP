@@ -85,5 +85,15 @@ public class GlyphCollection : ObservableCollection<uint>, ISupportIncrementalLo
         
     }
 
+    public async Task EnsureLoadedUpToAsync(uint index)
+    {
+        while (Count <= index && HasMoreItems)
+        {
+            uint needed = (index + 1) - (uint)Count;
+            uint batch = Math.Max(needed, 1000);
+            await LoadMoreItemsAsync(batch);
+        }
+    }
+
     public bool HasMoreItems => Count < MaxCount;
 }

@@ -28,6 +28,7 @@ CharacterMapCX::CanvasTextLayoutAnalysis::CanvasTextLayoutAnalysis(ComPtr<ColorT
 		m_colors = colors;
 
 		auto gd = ref new Array<IVectorView<uint16>^>(analyzer->GlyphIndicies.size());
+		auto allGlyphs = ref new Vector<uint16>();
 
 		for (unsigned int a = 0; a < analyzer->GlyphIndicies.size(); a = a + 1)
 		{
@@ -36,12 +37,14 @@ CharacterMapCX::CanvasTextLayoutAnalysis::CanvasTextLayoutAnalysis(ComPtr<ColorT
 			for (unsigned int b = 0; b < runGlyphs.size(); b = b + 1)
 			{
 				ind->Append(runGlyphs[b]);
+				allGlyphs->Append(runGlyphs[b]);
 			}
 
 			gd[a] = ind->GetView();
 		}
 
 		m_indicies = gd;
+		m_glyphIndices = allGlyphs->GetView();
 	}
 
 	for (GlyphImageFormat t : analyzer->GlyphFormats)

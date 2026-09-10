@@ -71,6 +71,11 @@ namespace CharacterMapCX
 			Array<IVectorView<uint16>^>^ get() { return m_indicies; }
 		}
 
+		property IVectorView<uint16>^ GlyphIndices
+		{
+			IVectorView<uint16>^ get() { return m_glyphIndices; }
+		}
+
 	internal:
 		CanvasTextLayoutAnalysis(ComPtr<ColorTextAnalyzer> analyzer, ComPtr<IDWriteFontFaceReference> layout);
 
@@ -83,5 +88,6 @@ namespace CharacterMapCX
 		IVectorView<GlyphImageFormat>^ m_glyphFormats;
 		Array<Windows::UI::Color>^ m_colors;
 		Array<IVectorView<uint16>^>^ m_indicies;
+		IVectorView<uint16>^ m_glyphIndices;
 	};
 }

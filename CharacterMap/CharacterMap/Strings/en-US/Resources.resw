@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -2903,5 +2903,14 @@ Not all fonts present typographic variants as mapped characters.</value>
   </data>
   <data name="SettingsCopyTypographicVariantsAsMappedCharacters.Title" xml:space="preserve">
     <value>Copy typographic variants as mapped Unicode characters</value>
+  </data>
+  <data name="TxtGlyphHeader" xml:space="preserve">
+    <value>Glyph:</value>
+  </data>
+  <data name="TxtGlyphsHeader" xml:space="preserve">
+    <value>Glyphs:</value>
+  </data>
+  <data name="TxtGlyphIndex.Header" xml:space="preserve">
+    <value>Glyph Index</value>
   </data>
 </root>

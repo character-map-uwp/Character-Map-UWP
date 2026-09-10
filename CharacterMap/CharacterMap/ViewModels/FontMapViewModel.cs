@@ -202,6 +202,7 @@ public partial class FontMapViewModel : ViewModelBase
                 SelectedCharTypography = SelectedTypography.Feature;
                 break;
             case nameof(SelectedCharTypography):
+                SelectedChar?.UpdateAnalysis(SelectedCharTypography);
                 UpdateDevValues();
                 break;
             case nameof(DisplayMode) when SelectedFont is not null:

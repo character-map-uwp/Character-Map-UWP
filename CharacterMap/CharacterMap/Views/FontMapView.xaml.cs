@@ -429,11 +429,11 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         {
             if (animate)
             {
+                this.FindName(nameof(GlyphsRoot));
                 if (MapDisplayStates.CurrentState == CharacterMapState)
                     UpdateGridToGlyphTransition();
                 else if (MapDisplayStates.CurrentState == TypeRampState)
                 {
-                    this.FindName(nameof(GlyphsRoot)); // x:Load
                     UpdateRampToGridTransition(GlyphRepeater, RampToGlyphTransition);
                 }
             }
@@ -663,9 +663,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void BtnCopyCode_OnClick(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement f
-            && f.DataContext is DevOption o
-            && f.Tag is string s)
+        if (sender is FrameworkElement { DataContext:DevOption o, Tag: string s })
         {
             Utils.CopyToClipBoard(s.Trim());
             BorderFadeInStoryboard.Begin();
@@ -805,8 +803,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void DevFlyout_Opening(object sender, object e)
     {
-        if (sender is MenuFlyout menu 
-            && menu.Items?.Count < 2
+        if (sender is MenuFlyout { Items: { Count: > 2 } } menu 
             && ViewModel.Providers is not null)
         {
             Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
@@ -855,12 +852,8 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void AxisReset_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement b
-            && b.Tag is Slider s
-            && b.DataContext is DWriteFontAxis axis)
-        {
+        if (sender is FrameworkElement {Tag: Slider s, DataContext: DWriteFontAxis axis })
             s.Value = axis.DefaultValue;
-        }
     }
 
     private void CharGrid_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -898,9 +891,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     private void SavePng_Click(object sender, RoutedEventArgs e)
     {
         /* Save from Character Grid Context Menu */
-        if (sender is MenuFlyoutItem item
-            && item.DataContext is Character c
-            && item.CommandParameter is ExportStyle style)
+        if (sender is MenuFlyoutItem { DataContext: Character c, CommandParameter: ExportStyle style } item)
         {
             if (item.Tag is null)
             {
@@ -924,9 +915,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     private void SaveSvg_Click(object sender, RoutedEventArgs e)
     {
         /* Save from Character Grid Context Menu */
-        if (sender is MenuFlyoutItem item
-            && item.DataContext is Character c
-            && item.CommandParameter is ExportStyle style)
+        if (sender is MenuFlyoutItem { DataContext: Character c, CommandParameter: ExportStyle style } item)
         {
             if (item.Tag is null)
             {
@@ -950,9 +939,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     private void CopyClick(object sender, RoutedEventArgs e)
     {
         /* Copy from Character Grid Context Menu */
-        if (sender is MenuFlyoutItem item
-          && item.DataContext is Character c
-          && item.CommandParameter is DevValueType type)
+        if (sender is MenuFlyoutItem { DataContext: Character c, CommandParameter: DevValueType type })
         {
             _ = ViewModel.RequestCopyToClipboardAsync(
                     new CopyToClipboardMessage(type, c, ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFace)));
@@ -961,17 +948,13 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void AddClick(object sender, RoutedEventArgs e)
     {
-        if (sender is MenuFlyoutItem item
-            && item.DataContext is Character c)
-        {
+        if (sender is MenuFlyoutItem { DataContext: Character c })
             ViewModel.Sequence += c.Char;
-        }
     }
 
     private void OpenCalligraphyClick(object sender, RoutedEventArgs e)
     {
-        if (sender is MenuFlyoutItem item
-            && item.DataContext is Character c)
+        if (sender is MenuFlyoutItem {DataContext: Character c })
         {
             _ = CalligraphyView.CreateWindowAsync(
                     ViewModel.RenderingOptions, c.Char);
@@ -1073,6 +1056,31 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             SelectCharacter(c);
             m.CharacterSearch(c.Char);
         }
+    }
+
+    private void BtnGlyph_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: GlyphCharacter g })
+            NavigateToGlyph(g.GlyphIndex);
+    }
+
+    public async void NavigateToGlyph(ushort glyphIndex)
+    {
+        ViewModel.DisplayMode = FontDisplayMode.GlyphMapState;
+
+        if (ViewModel.SelectedFaceAnalysis?.Glyphs is GlyphCollection coll)
+            await coll.EnsureLoadedUpToAsync(glyphIndex);
+
+        this.Enqueue(() =>
+        {
+            GlyphRepeater.SelectedItem = (uint)glyphIndex;
+            GlyphRepeater.ScrollIntoView((uint)glyphIndex);
+        }, CoreDispatcherPriority.Low);
+    }
+
+    private void ToolTip_Opened(object sender, RoutedEventArgs e)
+    {
+        _ = ViewModel?.SelectedFaceAnalysis?.LoadGlyphFontAsync();
     }
 
 

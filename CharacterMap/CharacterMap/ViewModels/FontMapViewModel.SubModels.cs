@@ -1,5 +1,7 @@
-﻿using Microsoft.Graphics.Canvas.Text;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.Graphics.Canvas.Text;
 using System.Collections;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.ViewModels;
@@ -24,6 +26,26 @@ public partial class FaceAnalysisModel : ViewModelBase
 
     public GlyphCollection Glyphs { get; }
 
+    private Task<Uri> _loadingTask = null;
+
+    [RelayCommand]
+    public Task<Uri> LoadGlyphFontAsync()
+    {
+        if (Glyphs.FontUri is not null)
+            return Task.FromResult(Glyphs.FontUri);
+
+        if (_face is null)
+            return Task.FromResult<Uri>(null);
+
+        return _loadingTask ??= LoadGlyphFontInternalAsync();
+    }
+
+    private async Task<Uri> LoadGlyphFontInternalAsync()
+    {
+        await Glyphs.LoadMoreItemsAsync(10).AsTask();
+        return Glyphs.FontUri;
+    }
+
     public FaceAnalysisModel(CMFontFace face)
     {
         if (face is null)
@@ -31,7 +53,7 @@ public partial class FaceAnalysisModel : ViewModelBase
 
         _face = face;
 
-        var analysis = face.GetAnalysis();
+        FontAnalysis analysis = face.GetAnalysis();
         TypographyAnalyzer.PrepareSearchMap(face, analysis);
         analysis.ResetVariableAxis();
 
@@ -127,6 +149,20 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
     [ObservableProperty] CanvasTextLayoutAnalysis _analysis;
     [ObservableProperty] List<TypographyVariation> _variations;
     [ObservableProperty] UnihanData _unihanData;
+    [ObservableProperty] IReadOnlyList<ushort> _glyphIndices;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasMultipleGlyphs), nameof(HasGlyphs), nameof(GlyphHeader))]
+    IReadOnlyList<GlyphCharacter> _glyphs;
+
+    public bool HasMultipleGlyphs => GlyphIndices is { Count: > 1 };
+    public bool HasGlyphs => GlyphIndices is { Count: > 0 };
+    public string GlyphHeader => HasMultipleGlyphs ? Localization.Get("TxtGlyphsHeader") : Localization.Get("TxtGlyphHeader");
+    //public string GlyphSummary => GlyphIndices switch
+    //{
+    //    null or { Count: 0 } => null,
+    //    [ushort single] => $"Glyph {single}",
+    //    _ => $"Glyphs: {string.Join(", ", GlyphIndices)}"
+    //};
 
     private readonly FontMapViewModel _vm;
     private readonly CMFontFace face;
@@ -143,9 +179,42 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
         Variations = TypographyAnalyzer.GetCharacterVariations(face, c);
         IsSvgChar = Analysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
         UnihanData = GlyphService.GetUnihanData(c.UnicodeIndex);
+        UpdateGlyphIndices();
     }
 
-    public CanvasTextLayoutAnalysis GetCharAnalysis(Character c, CMFontFace face)
+    public void UpdateAnalysis(TypographyFeatureInfo typography = null)
+    {
+        Analysis = GetCharAnalysis(Char, face, typography);
+        IsSvgChar = Analysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
+        UpdateGlyphIndices();
+    }
+
+    private void UpdateGlyphIndices()
+    {
+        if (Char is GlyphCharacter gc)
+        {
+            GlyphIndices = [gc.GlyphIndex];
+            Glyphs = [gc];
+        }
+        else if (Analysis?.GlyphIndices is { Count: > 0 } indices)
+        {
+            GlyphIndices = [.. indices];
+            Glyphs = [.. indices.Select(i => new GlyphCharacter(i))];
+        }
+        else if (Analysis?.Indicies is { Length: > 0 } runIndices)
+        {
+            List<ushort> list = [.. runIndices.SelectMany(r => r)];
+            GlyphIndices = list;
+            Glyphs = [.. list.Select(i => new GlyphCharacter(i))];
+        }
+        else
+        {
+            GlyphIndices = [];
+            Glyphs = [];
+        }
+    }
+
+    public CanvasTextLayoutAnalysis GetCharAnalysis(Character c, CMFontFace face, TypographyFeatureInfo typography = null)
     {
         if (c is GlyphCharacter gc)
             return _interop.AnalyzeGlyphLayout(face.Face, gc.GlyphIndex);
@@ -164,13 +233,13 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
         // Leave it as a separate line.
         layout.Options = CanvasDrawTextOptions.EnableColorFont;
 
-        ApplyEffectiveTypography(layout);
+        ApplyEffectiveTypography(layout, typography);
         return _interop.AnalyzeCharacterLayout(layout);
     }
 
-    private void ApplyEffectiveTypography(CanvasTextLayout layout)
+    private void ApplyEffectiveTypography(CanvasTextLayout layout, TypographyFeatureInfo typography = null)
     {
-        using var type = GetEffectiveTypography();
+        using CanvasTypography type = GetEffectiveTypography(typography);
         layout.SetTypography(0, 1, type);
     }
 

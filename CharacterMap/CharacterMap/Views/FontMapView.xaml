@@ -2052,6 +2052,89 @@
                                     <Run Text="{x:Bind ViewModel.GetCharDescription(ViewModel.SelectedChar.Char), Mode=OneWay}" /><Run Text="," />
                                     <Run Text="{x:Bind ViewModel.SelectedChar.Char.Range.Name, Mode=OneWay}" />
                                 </TextBlock>
+                                <Grid
+                                    ColumnSpacing="4"
+                                    Margin="0 4 0 0"
+                                    Visibility="{x:Bind ViewModel.SelectedChar.HasMultipleGlyphs, Mode=OneWay, FallbackValue=Collapsed}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock
+                                        VerticalAlignment="Top"
+                                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                        FontSize="12"
+                                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                        Text="{x:Bind ViewModel.SelectedChar.GlyphHeader, Mode=OneWay, FallbackValue=''}" />
+                                    <ItemsControl
+                                        x:Name="CharGlyphsRepeater"
+                                        Grid.Column="1"
+                                        DataContext="{x:Bind ViewModel}"
+                                        ItemsSource="{x:Bind ViewModel.SelectedChar.Glyphs, Mode=OneWay, FallbackValue={x:Null}}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <toolkit:WrapPanel
+                                                    HorizontalSpacing="4"
+                                                    Orientation="Horizontal"
+                                                    VerticalSpacing="2" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="models:GlyphCharacter">
+                                                <Button
+                                                    Padding="4 1"
+                                                    Click="BtnGlyph_Click"
+                                                    Style="{StaticResource ThemeTextBlockButtonStyle}">
+                                                    <ToolTipService.ToolTip>
+                                                        <ToolTip Opened="ToolTip_Opened">
+                                                            <StackPanel HorizontalAlignment="Center" Spacing="6">
+                                                                <Grid Width="72" Height="72">
+                                                                    <Border
+                                                                        Background="{ThemeResource LayerFillColorDefaultBrush}"
+                                                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                                        BorderThickness="1"
+                                                                        CornerRadius="4" />
+                                                                    <ProgressRing
+                                                                        Width="24"
+                                                                        Height="24"
+                                                                        HorizontalAlignment="Center"
+                                                                        VerticalAlignment="Center"
+                                                                        IsActive="{Binding DataContext.SelectedFaceAnalysis.Glyphs.IsLoading, Mode=OneWay, ElementName=CharGlyphsRepeater}" />
+                                                                    <Glyphs
+                                                                        HorizontalAlignment="Center"
+                                                                        VerticalAlignment="Center"
+                                                                        core:Properties.FontUri="{Binding DataContext.SelectedFaceAnalysis.Glyphs.FontUri, Mode=OneWay, ElementName=CharGlyphsRepeater}"
+                                                                        Fill="{ThemeResource ApplicationForegroundThemeBrush}"
+                                                                        FontRenderingEmSize="36"
+                                                                        Indices="{x:Bind GlyphIndex, Mode=OneTime}"
+                                                                        IsColorFontEnabled="{Binding DataContext.SelectedFaceAnalysis.Glyphs.IsColorFontEnabled, Mode=OneWay, ElementName=CharGlyphsRepeater}" />
+                                                                </Grid>
+                                                                <StackPanel HorizontalAlignment="Center" Spacing="2">
+                                                                    <TextBlock
+                                                                        HorizontalAlignment="Center"
+                                                                        FontSize="12"
+                                                                        FontWeight="SemiBold"
+                                                                        Text="{Binding GlyphIndex, Mode=OneTime}" />
+                                                                    <TextBlock
+                                                                        HorizontalAlignment="Center"
+                                                                        FontSize="11"
+                                                                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                                        Text="{core:Localizer Key=BtnXAMLGeometry/Content}" />
+                                                                </StackPanel>
+                                                            </StackPanel>
+                                                        </ToolTip>
+                                                    </ToolTipService.ToolTip>
+                                                    <TextBlock
+                                                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                                        FontSize="12"
+                                                        FontWeight="SemiBold"
+                                                        Foreground="{ThemeResource SystemAccentColor}"
+                                                        Text="{Binding GlyphIndex, Mode=OneTime}" />
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Grid>
                             </StackPanel>
 
                             <!--  Unihan  -->
