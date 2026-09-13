@@ -21,23 +21,20 @@ using namespace concurrency;
 
 CanvasFontSet^ DirectWrite::CreateFontSet(String^ path)
 {
-	/* 
-		Sometimes creating a CanvasFontSet directly in Win2D
-		throws error:
-		"The font URI specified is not a valid application URI that 
-		can be opened by StorageFile.GetFileFromApplicationUriAsync"
-		So, we create an IDWriteFontSet directly and cast it to CanvasFontSet;
+	/*
+		We need to validate the font has a family name.
+		Although other platforms and font renderers can read and understand fonts
+		without a FamilyName set in the 'name' table (for example, WOFF fonts),
+		XAML font rendering engine does not support these types of fonts.
+		Our basic WOFF conversion may give us fonts that are perfectly fine
+		except for this missing field.
+
+		WOFF2 fonts may also give the same problem.
 	*/
 
-	auto customFontManager = CustomFontManager::GetInstance();
-
-	auto fontCollection = customFontManager->GetFontCollection(path);
-
-	if (!fontCollection)
+	ComPtr<IDWriteFontSet> dwFontSet = CreateIDWriteFontSet(path);
+	if (!dwFontSet)
 		ThrowHR(E_INVALIDARG);
-
-	ComPtr<IDWriteFontSet> dwFontSet;
-	ThrowIfFailed(fontCollection->GetFontSet(&dwFontSet));
 
 	CanvasFontSet^ fontSet = GetOrCreate<CanvasFontSet>(dwFontSet.Get());
 	return fontSet;
@@ -45,16 +42,52 @@ CanvasFontSet^ DirectWrite::CreateFontSet(String^ path)
 
 ComPtr<IDWriteFontSet> DirectWrite::CreateIDWriteFontSet(String^ path)
 {
-	auto customFontManager = CustomFontManager::GetInstance();
-	auto fontCollection = customFontManager->GetFontCollection(path);
+	if (path == nullptr || path->IsEmpty())
+		return nullptr;
 
-	if (!fontCollection)
-		ThrowHR(E_INVALIDARG);
+	try
+	{
+		ComPtr<IDWriteFactory7> factory;
+		HRESULT hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory7), &factory);
+		if (FAILED(hr))
+			return nullptr;
 
-	ComPtr<IDWriteFontSet> dwFontSet;
-	ThrowIfFailed(fontCollection->GetFontSet(&dwFontSet));
+		ComPtr<IDWriteFontFile> fontFile;
+		hr = factory->CreateFontFileReference(path->Data(), nullptr, &fontFile);
+		if (FAILED(hr))
+			return nullptr;
 
-	return dwFontSet;
+		BOOL isSupported = FALSE;
+		DWRITE_FONT_FILE_TYPE fileType;
+		DWRITE_FONT_FACE_TYPE faceType;
+		UINT32 numberOfFaces = 0;
+		hr = fontFile->Analyze(&isSupported, &fileType, &faceType, &numberOfFaces);
+		if (FAILED(hr) || !isSupported || numberOfFaces == 0)
+			return nullptr;
+
+		ComPtr<IDWriteFontSetBuilder1> builder;
+		hr = factory->CreateFontSetBuilder(&builder);
+		if (FAILED(hr))
+			return nullptr;
+
+		for (UINT32 i = 0; i < numberOfFaces; ++i)
+		{
+			ComPtr<IDWriteFontFaceReference> faceRef;
+			if (SUCCEEDED(factory->CreateFontFaceReference(fontFile.Get(), i, DWRITE_FONT_SIMULATIONS_NONE, &faceRef)))
+				builder->AddFontFaceReference(faceRef.Get());
+		}
+
+		ComPtr<IDWriteFontSet> dwFontSet;
+		hr = builder->CreateFontSet(&dwFontSet);
+		if (FAILED(hr))
+			return nullptr;
+
+		return dwFontSet;
+	}
+	catch (...)
+	{
+		return nullptr;
+	}
 }
 
 String^ DirectWrite::GetTagName(UINT32 tag)
@@ -434,42 +467,31 @@ Platform::String^ DirectWrite::GetFileName(DWriteFontFace^ fontFace)
 
 bool DirectWrite::HasValidFonts(StorageFile^ file)
 {
-	/*
-	   To avoid garbage collection issues with CanvasFontSet in C# preventing us from
-	   immediately deleting the StorageFile, we shall do this here in C++
-	   */
+	if (file == nullptr)
+		return false;
 
-	auto path = file->Path->Data();
 	auto dwFontSet = CreateIDWriteFontSet(file->Path);
+	if (!dwFontSet || dwFontSet->GetFontCount() == 0)
+		return false;
+
 	bool valid = false;
 
-	if (dwFontSet->GetFontCount() > 0)
+	try
 	{
-		/*
-			We need to validate the font has a family name.
-			Although other platforms and font renderers can read and understand fonts 
-			without a FamilyName set in the 'name' table (for example, WOFF fonts), 
-			XAML font rendering engine does not support these types of fonts. 
-			Our basic WOFF conversion may give us fonts that are perfectly fine 
-			except for this missing field.
-
-			WOFF2 fonts may also give the same problem.
-
-		*/
-
 		ComPtr<IDWriteStringList> names;
-		dwFontSet->GetPropertyValues(
+		if (SUCCEEDED(dwFontSet->GetPropertyValues(
 			DWRITE_FONT_PROPERTY_ID_WIN32_FAMILY_NAME,
-			&names);
-
-		// We just need to *prove* there is a readable name - we don't need to 
-		// read it.
-		UINT32 nameLength;
-		names->GetStringLength(0, &nameLength);
-		valid = nameLength > 0;
+			&names)) && names && names->GetCount() > 0)
+		{
+			UINT32 nameLength = 0;
+			if (SUCCEEDED(names->GetStringLength(0, &nameLength)))
+				valid = nameLength > 0;
+		}
 	}
-
-	dwFontSet = nullptr;
+	catch (...)
+	{
+		valid = false;
+	}
 
 	return valid;
 }

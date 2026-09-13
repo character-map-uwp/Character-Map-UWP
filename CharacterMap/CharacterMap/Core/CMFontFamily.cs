@@ -1,4 +1,4 @@
-﻿namespace CharacterMap.Core;
+namespace CharacterMap.Core;
 
 /// <summary>
 /// Represents an entire FontFamily (currently under the WWS definition)
@@ -42,23 +42,31 @@ public class CMFontFamily : IComparable, IEquatable<CMFontFamily>
         _variants = new();
     }
 
-    public CMFontFamily(string name, DWriteFontFace face, StorageFile file = null) : this(name)
+    public CMFontFamily(string name, DWriteFontFace face) : this(name, face, (string)null) { }
+
+    public CMFontFamily(string name, DWriteFontFace face, StorageFile file) : this(name, face, file?.Path) { }
+
+    public CMFontFamily(string name, DWriteFontFace face, string filePath) : this(name)
     {
-        AddVariant(face, file);
+        AddVariant(face, filePath);
     }
 
 
-    public void AddVariant(DWriteFontFace fontFace, StorageFile file = null)
+    public void AddVariant(DWriteFontFace fontFace) => AddVariant(fontFace, (string)null);
+
+    public void AddVariant(DWriteFontFace fontFace, StorageFile file) => AddVariant(fontFace, file?.Path);
+
+    public void AddVariant(DWriteFontFace fontFace, string filePath)
     {
         if (fontFace.Properties.IsSimulated is false)
-            _variants.Add(new(fontFace, file));
+            _variants.Add(new(fontFace, filePath));
         else
         {
-            _simulatedVariants ??= new();
-            _simulatedVariants.Add(new(fontFace, file));
+            _simulatedVariants ??= [];
+            _simulatedVariants.Add(new(fontFace, filePath));
         }
 
-        if (file != null)
+        if (!string.IsNullOrEmpty(filePath))
             HasImportedFiles = true;
     }
 

@@ -54,7 +54,10 @@ namespace CharacterMapCX
 
 		DWriteFallbackFont^ CreateEmptyFallback();
 
-		__inline DWriteFontSet^ GetFonts(StorageFile^ files);
+		[Windows::Foundation::Metadata::DefaultOverload]
+		DWriteFontSet^ GetFonts(StorageFile^ files);
+
+		DWriteFontSet^ GetFonts(Platform::String^ filePath);
 
 		IVectorView<DWriteFontSet^>^ GetFonts(IVectorView<StorageFile^>^ files);
 

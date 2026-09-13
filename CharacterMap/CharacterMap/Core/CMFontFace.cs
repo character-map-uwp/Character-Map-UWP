@@ -87,25 +87,27 @@ public partial class CMFontFace : IDisposable
     public string Version => field ??= TryGetInfo(CanvasFontInformation.VersionStrings)?.Value ?? string.Empty;
 
 
-    public CMFontFace(DWriteFontFace face, StorageFile file)
+    public CMFontFace(DWriteFontFace face) : this(face, (string)null) { }
+
+    public CMFontFace(DWriteFontFace face, StorageFile file) : this(face, file?.Path) { }
+
+    public CMFontFace(DWriteFontFace face, string filePath)
     {
         DWriteProperties dwProps = face.Properties;
         Face = face;
         FamilyName = dwProps.FamilyName;
 
-        if (file != null)
+        if (!string.IsNullOrEmpty(filePath))
         {
             IsImported = true;
-            FileName = file.Name;
-            Source = $"{FontFinder.GetAppPath(file)}#{dwProps.FamilyName}";
+            FileName = Path.GetFileName(filePath);
+            Source = $"{FontFinder.GetAppPath(filePath)}#{dwProps.FamilyName}";
         }
         else
-        {
             Source = dwProps.FamilyName;
-        }
 
         string name = dwProps.FaceName;
-        if (String.IsNullOrEmpty(name))
+        if (string.IsNullOrEmpty(name))
             name = Utils.GetVariantDescription(face);
 
         DirectWriteProperties = dwProps;
@@ -213,6 +215,10 @@ public partial class CMFontFace : IDisposable
     public bool ContainsSVGGlyphs => DirectWriteProperties.IsColorFont && GetAnalysisInternal().HasSVGGlyphs;
     
     public bool ContainsBitmapGlyphs => DirectWriteProperties.IsColorFont && GetAnalysisInternal().HasBitmapGlyphs;
+
+    public IReadOnlyList<FontPalette> Palettes => GetAnalysis().Palettes;
+
+    public bool HasPalettes => GetAnalysis().HasPalettes;
 
     /// <summary>
     /// Hack used for QuickCompare - we show ALL colour fonts using manual DirectWrite rendering (using DirectText control) rather than 
@@ -415,7 +421,7 @@ public partial class CMFontFace
 {
     public static CMFontFace CreateDefault(DWriteFontFace face)
     {
-        return new CMFontFace(face, null)
+        return new CMFontFace(face)
         {
             PreferredName = face.Properties.FaceName,
             // These default characters are used by Subsetter.cs
