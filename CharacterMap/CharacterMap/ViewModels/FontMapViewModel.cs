@@ -88,7 +88,7 @@ public partial class FontMapViewModel : ViewModelBase
     partial void OnShowColorGlyphsChanged(bool value)
     {
         if (RenderingOptions is not null)
-            RenderingOptions = RenderingOptions with { IsColourFontEnabled = value };
+            RenderingOptions = RenderingOptions with { ColorRenderOption = value ? DWriteColorRenderOption.Default : DWriteColorRenderOption.Monochrome };
         if (DisplayMode == FontDisplayMode.TypeRampState)
             UpdateRampOptions();
     }

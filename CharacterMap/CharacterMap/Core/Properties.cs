@@ -235,8 +235,8 @@ public partial class Properties : DependencyObject
                 d.FontStretch = o.Variant.DirectWriteProperties.Stretch;
                 d.FontStyle = o.Variant.DirectWriteProperties.Style;
                 d.FontWeight = o.Variant.DirectWriteProperties.Weight;
-                d.IsColorFontEnabled = o.IsColourFontEnabled;
                 d.Typography = o.DXTypography;
+                d.ColorRenderOption = o.ColorRenderOption;
             }
             else
             {
@@ -249,6 +249,7 @@ public partial class Properties : DependencyObject
                 d.ClearValue(DirectText.FontWeightProperty);
                 d.ClearValue(DirectText.IsColorFontEnabledProperty);
                 d.ClearValue(DirectText.TypographyProperty);
+                d.ClearValue(DirectText.ColorRenderOptionProperty);
             }
 
             d.Update();
@@ -261,7 +262,7 @@ public partial class Properties : DependencyObject
                 t.FontStretch = o.Variant.DirectWriteProperties.Stretch;
                 t.FontStyle = o.Variant.DirectWriteProperties.Style;
                 t.FontWeight = o.Variant.DirectWriteProperties.Weight;
-                t.IsColorFontEnabled = o.IsColourFontEnabled;
+                t.IsColorFontEnabled = o.ColorRenderOption != DWriteColorRenderOption.Monochrome;
                 SetTypography(t, o.DefaultTypography);
             }
             else

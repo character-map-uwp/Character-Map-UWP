@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ColorTextAnalyzer.h"
 #include "GlyphImageFormat.h"
+#include "ColrTableReader.h"
 
 using namespace CharacterMapCX;
 
@@ -15,6 +16,8 @@ ColorTextAnalyzer::ColorTextAnalyzer(
 	m_d2dDeviceContext(d2dContext)
 {
 	HasColorGlyphs = false;
+	HasColrV0 = false;
+	HasColrV1 = false;
 }
 
 ColorTextAnalyzer::~ColorTextAnalyzer()
@@ -35,6 +38,48 @@ HRESULT ColorTextAnalyzer::DrawGlyphRun(
 )
 {
 	HRESULT hr = DWRITE_E_NOCOLOR;
+
+	if (glyphRun != nullptr && glyphRun->fontFace != nullptr && glyphRun->glyphCount > 0)
+	{
+		ComPtr<IDWriteFontFace4> fontFace4;
+		if (SUCCEEDED(glyphRun->fontFace->QueryInterface(__uuidof(IDWriteFontFace4), &fontFace4)))
+		{
+			for (UINT32 i = 0; i < glyphRun->glyphCount; ++i)
+			{
+				DWRITE_GLYPH_IMAGE_FORMATS formats = DWRITE_GLYPH_IMAGE_FORMATS_NONE;
+				if (SUCCEEDED(fontFace4->GetGlyphImageFormats(glyphRun->glyphIndices[i], 0, UINT32_MAX, &formats)))
+				{
+					if ((formats & DWRITE_GLYPH_IMAGE_FORMATS_COLR) != 0)
+						HasColrV0 = true;
+					if ((formats & DWRITE_GLYPH_IMAGE_FORMATS_COLR_PAINT_TREE) != 0)
+						HasColrV1 = true;
+				}
+			}
+		}
+
+		if (!HasColrV0 || !HasColrV1)
+		{
+			const void* tableData = nullptr;
+			UINT32 tableSize = 0;
+			void* tableContext = nullptr;
+			BOOL exists = FALSE;
+			if (SUCCEEDED(glyphRun->fontFace->TryGetFontTable(
+				DWRITE_MAKE_OPENTYPE_TAG('C', 'O', 'L', 'R'),
+				&tableData, &tableSize, &tableContext, &exists)) && exists)
+			{
+				auto reader = ref new ColrTableReader(tableData, tableSize);
+				for (UINT32 i = 0; i < glyphRun->glyphCount; ++i)
+				{
+					if (!HasColrV0 && reader->HasGlyphColrV0(glyphRun->glyphIndices[i]))
+						HasColrV0 = true;
+					if (!HasColrV1 && reader->HasGlyphColrV1(glyphRun->glyphIndices[i]))
+						HasColrV1 = true;
+				}
+				delete reader;
+				glyphRun->fontFace->ReleaseFontTable(tableContext);
+			}
+		}
+	}
 
 	D2D1_POINT_2F baselineOrigin = D2D1::Point2F(baselineOriginX, baselineOriginY);
 
@@ -60,9 +105,9 @@ HRESULT ColorTextAnalyzer::DrawGlyphRun(
 		&glyphRunEnumerator
 	);
 
-	HasColorGlyphs = hr != DWRITE_E_NOCOLOR;
+	HasColorGlyphs = (hr != DWRITE_E_NOCOLOR) || HasColrV0 || HasColrV1;
 
-	if (HasColorGlyphs)
+	if (hr != DWRITE_E_NOCOLOR)
 	{
 
 		for (;;)
@@ -78,9 +123,15 @@ HRESULT ColorTextAnalyzer::DrawGlyphRun(
 			GlyphImageFormat format = static_cast<GlyphImageFormat>(colorRun->glyphImageFormat);
 			GlyphFormats.push_back(format);
 
+			if ((format & GlyphImageFormat::Colr) == GlyphImageFormat::Colr)
+			{
+				HasColrV0 = true;
+			}
+
 			if (IsCharacterAnalysisMode)
 			{
 				RunColors.push_back(colorRun->runColor);
+				PaletteIndices.push_back(colorRun->paletteIndex);
 
 				std::vector<uint16> glyphIndices(colorRun->glyphRun.glyphIndices, colorRun->glyphRun.glyphIndices + colorRun->glyphRun.glyphCount);
 				GlyphIndicies.push_back(std::move(glyphIndices));
@@ -98,7 +149,38 @@ HRESULT ColorTextAnalyzer::DrawGlyphRun(
 		{
 			std::vector<uint16> glyphIndices(glyphRun->glyphIndices, glyphRun->glyphIndices + glyphRun->glyphCount);
 			GlyphIndicies.push_back(std::move(glyphIndices));
+			PaletteIndices.push_back(0xFFFF);
 		}
+	}
+
+	if (HasColrV0)
+	{
+		bool hasColr = false;
+		for (auto f : GlyphFormats)
+		{
+			if ((f & GlyphImageFormat::Colr) == GlyphImageFormat::Colr)
+			{
+				hasColr = true;
+				break;
+			}
+		}
+		if (!hasColr)
+			GlyphFormats.push_back(GlyphImageFormat::Colr);
+	}
+
+	if (HasColrV1)
+	{
+		bool hasColrPaintTree = false;
+		for (auto f : GlyphFormats)
+		{
+			if ((f & GlyphImageFormat::ColrPaintTree) == GlyphImageFormat::ColrPaintTree)
+			{
+				hasColrPaintTree = true;
+				break;
+			}
+		}
+		if (!hasColrPaintTree)
+			GlyphFormats.push_back(GlyphImageFormat::ColrPaintTree);
 	}
 
 	return S_OK;

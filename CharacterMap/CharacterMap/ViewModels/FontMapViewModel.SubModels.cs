@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Graphics.Canvas.Text;
 using System.Collections;
+using Windows.UI;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 
@@ -19,6 +20,10 @@ public partial class FaceAnalysisModel : ViewModelBase
     public bool ShowColorGlyphs { get; }
 
     public FontAnalysis Analysis { get; }
+
+    public IReadOnlyList<FontPalette> Palettes => Analysis.Palettes;
+
+    public bool HasPalettes => Analysis.HasPalettes;
 
     public bool IsMDL2Font { get; }
 
@@ -103,6 +108,7 @@ public partial class FaceAnalysisModel : ViewModelBase
 
 }
 
+
 [DebuggerDisplay("TV {DisplayName}, IsMapped: {IsVariationMapped}")]
 public class TypographyVariation
 {
@@ -141,18 +147,39 @@ public class TypographyVariation
 
 public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<CharacterAnalysisModel>
 {
+    private static IReadOnlyList<NamedTag> _emptyRenderOptions = [ new("Default", DWriteColorRenderOption.Default)];
+
+    public static NamedTag DefaultRenderOption = new("Default", DWriteColorRenderOption.Default);
+    public static NamedTag SVGRenderOption = new("SVG", DWriteColorRenderOption.Default);
+    public static NamedTag PNGRenderOption = new("PNG", DWriteColorRenderOption.Default);
+    public static NamedTag JPGRenderOption = new("JPG", DWriteColorRenderOption.Default);
+    public static NamedTag BMPRenderOption = new("BMP", DWriteColorRenderOption.Default);
+    public static NamedTag TIFFRenderOption = new("TIFF", DWriteColorRenderOption.Default);
+    public static NamedTag ColrV0RenderOption = new("COLRv0", DWriteColorRenderOption.ColrV0);
+    public static NamedTag ColrV1RenderOption = new("COLRv1", DWriteColorRenderOption.ColrV1);
+    public static NamedTag MonoRenderOption = new("Mono", DWriteColorRenderOption.Monochrome);
+
     private NativeInterop _interop = Utils.GetInterop();
 
     public Character Char { get; }
 
+    public bool SupportsCOLRv1 => _analysis is not null && (_analysis.SupportsColrV1 || _analysis.GlyphFormats.Contains(GlyphImageFormat.ColrPaintTree));
+    public bool SupportsCOLRv0 => _analysis is not null && (_analysis.SupportsColrV0 || _analysis.GlyphFormats.Contains(GlyphImageFormat.Colr));
+
     [ObservableProperty] bool _isSvgChar;
-    [ObservableProperty] CanvasTextLayoutAnalysis _analysis;
+    [ObservableProperty][NotifyPropertyChangedFor(nameof(SupportsCOLRv1), nameof(SupportsCOLRv0))] CanvasTextLayoutAnalysis _analysis;
     [ObservableProperty] List<TypographyVariation> _variations;
     [ObservableProperty] UnihanData _unihanData;
     [ObservableProperty] IReadOnlyList<ushort> _glyphIndices;
+    [ObservableProperty] IReadOnlyList<int> _paletteIndices;
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasMultipleGlyphs), nameof(HasGlyphs), nameof(GlyphHeader))]
     IReadOnlyList<GlyphCharacter> _glyphs;
+
+    public IReadOnlyList<NamedTag> ColorRenderOptions = _emptyRenderOptions;
+    public NamedTag DefaultTag { get; }
+    public bool HasColorRenderOptions { get; private set; }
+    public ItemsSelectionModel ColrRenderItems { get; }
 
     public bool HasMultipleGlyphs => GlyphIndices is { Count: > 1 };
     public bool HasGlyphs => GlyphIndices is { Count: > 0 };
@@ -167,7 +194,7 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
     private readonly FontMapViewModel _vm;
     private readonly CMFontFace face;
 
-    public CharacterAnalysisModel(CMFontFace face, Character c, FontMapViewModel vm)
+    public CharacterAnalysisModel(CMFontFace face, Character c, FontMapViewModel vm, NamedTag defaultTag = null)
     {
         if (c is null || face is null || vm is null)
             return; // we are empty shell;
@@ -180,6 +207,43 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
         IsSvgChar = Analysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
         UnihanData = GlyphService.GetUnihanData(c.UnicodeIndex);
         UpdateGlyphIndices();
+
+        // Build Color Render Options
+        if (SupportsCOLRv0 || SupportsCOLRv1)
+        {
+            List<NamedTag> options = [];
+            if (SupportsCOLRv0)
+                options.Add(ColrV0RenderOption);
+            if (SupportsCOLRv1)
+                options.Add(ColrV1RenderOption);
+
+            options.Add(MonoRenderOption);
+            ColorRenderOptions = options;
+            HasColorRenderOptions = true;
+            if (defaultTag is null || defaultTag == DefaultRenderOption)
+                defaultTag = ColrV0RenderOption;
+        }
+        else if (IsSvgChar)
+            CreateOp(SVGRenderOption);
+        else if (Analysis.GlyphFormats.Contains(GlyphImageFormat.Png))
+            CreateOp(PNGRenderOption);
+        else if (Analysis.GlyphFormats.Contains(GlyphImageFormat.Jpeg))
+            CreateOp(JPGRenderOption);
+        else if (Analysis.GlyphFormats.Contains(GlyphImageFormat.PremultipliedB8G8R8A8))
+            CreateOp(BMPRenderOption);
+        else if (Analysis.GlyphFormats.Contains(GlyphImageFormat.Tiff))
+            CreateOp(TIFFRenderOption);
+
+        void CreateOp(NamedTag tag)
+        {
+            ColorRenderOptions = [tag, MonoRenderOption];
+            HasColorRenderOptions = true;
+            if (defaultTag is null || defaultTag == DefaultRenderOption)
+                defaultTag = tag;
+        }
+
+        DefaultTag = defaultTag ?? DefaultRenderOption;
+        ColrRenderItems = new () {  ItemsSource = ColorRenderOptions, SelectedItem = DefaultTag };
     }
 
     public void UpdateAnalysis(TypographyFeatureInfo typography = null)
@@ -191,25 +255,43 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
 
     private void UpdateGlyphIndices()
     {
+        // TODO: Palettes implementation is stupid and useless.
+        // Palettes should actually be a list that contains a list of glyphs for each palette.
+
         if (Char is GlyphCharacter gc)
         {
             GlyphIndices = [gc.GlyphIndex];
+            //PaletteIndices = [gc.PaletteIndex];
             Glyphs = [gc];
         }
         else if (Analysis?.GlyphIndices is { Count: > 0 } indices)
         {
             GlyphIndices = [.. indices];
-            Glyphs = [.. indices.Select(i => new GlyphCharacter(i))];
+            //IReadOnlyList<int> palettes = Analysis.PaletteIndices;
+            IReadOnlyList<Color> colors = Analysis.Colors;
+            //PaletteIndices = palettes is { Count: > 0 } ? [.. palettes] : [];
+
+            List<GlyphCharacter> glyphs = new(indices.Count);
+            for (int i = 0; i < indices.Count; i++)
+            {
+                //int paletteIndex = palettes is { Count: > 0 } && i < palettes.Count ? palettes[i] : -1;
+                Color? color = colors is { Count: > 0 } && i < colors.Count ? colors[i] : null;
+                glyphs.Add(new(indices[i], -1, color));
+            }
+
+            Glyphs = glyphs;
         }
         else if (Analysis?.Indicies is { Length: > 0 } runIndices)
         {
             List<ushort> list = [.. runIndices.SelectMany(r => r)];
             GlyphIndices = list;
+            PaletteIndices = [];
             Glyphs = [.. list.Select(i => new GlyphCharacter(i))];
         }
         else
         {
             GlyphIndices = [];
+            PaletteIndices = [];
             Glyphs = [];
         }
     }

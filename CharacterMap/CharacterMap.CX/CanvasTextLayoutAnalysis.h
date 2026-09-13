@@ -45,6 +45,9 @@ namespace CharacterMapCX
 			bool get() { return m_glyphLayerCount > 1; }
 		}
 
+		property bool SupportsColrV0 { bool get() { return m_colrv0; } }
+		property bool SupportsColrV1 { bool get() { return m_colrv1; } }
+
 		/// <summary>
 		/// The number of glyphs that make up this rendered character. For
 		/// COLR fonts this defines the number of glyphs composited together
@@ -76,10 +79,17 @@ namespace CharacterMapCX
 			IVectorView<uint16>^ get() { return m_glyphIndices; }
 		}
 
+		property IVectorView<int>^ PaletteIndices
+		{
+			IVectorView<int>^ get() { return m_paletteIndices; }
+		}
+
 	internal:
 		CanvasTextLayoutAnalysis(ComPtr<ColorTextAnalyzer> analyzer, ComPtr<IDWriteFontFaceReference> layout);
 
 	private:
+		bool m_colrv0 = false;
+		bool m_colrv1 = false;
 		bool m_hasColorGlyphs = false;
 		bool m_containsBitmapGlyphs = false;
 		bool m_containsVectorColorGlyphs = false;
@@ -89,5 +99,6 @@ namespace CharacterMapCX
 		Array<Windows::UI::Color>^ m_colors;
 		Array<IVectorView<uint16>^>^ m_indicies;
 		IVectorView<uint16>^ m_glyphIndices;
+		IVectorView<int>^ m_paletteIndices;
 	};
 }

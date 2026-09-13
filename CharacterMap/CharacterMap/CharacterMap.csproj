@@ -242,6 +242,8 @@
     <Compile Include="Core\TypographyFeatureInfo.cs" />
     <Compile Include="Models\GlyphCharacter.cs" />
     <Compile Include="Models\GlyphCollection.cs" />
+    <Compile Include="Models\ItemsSelectionModel.cs" />
+    <Compile Include="Models\NamedTag.cs" />
     <Compile Include="Models\Records.cs" />
     <Compile Include="Models\NamedUnicodeRange.cs" />
     <Compile Include="Models\SearchResultsGroup.cs" />

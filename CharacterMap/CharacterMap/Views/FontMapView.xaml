@@ -1880,10 +1880,35 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
+                    <controls:UXRadioButtons
+                        x:Name="ColrSelector"
+                        Grid.Row="1"
+                        Margin="0 0 0 12"
+                        HorizontalAlignment="Center"
+                        ForceSelection="True"
+                        MaxColumns="3"
+                        SelectedItemsSource="{x:Bind ViewModel.SelectedChar.ColrRenderItems, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.SelectedChar.HasColorRenderOptions, Mode=OneWay, FallbackValue=Collapsed}">
+                        <Control.Resources>
+                            <Style BasedOn="{StaticResource RadioButtonsButtonStyle}" TargetType="RadioButton">
+                                <Setter Property="h:FluentAnimation.PointerOverOffset" Value="-2" />
+                                <!--<Setter Property="MinHeight" Value="40" />-->
+                                <Setter Property="MinWidth" Value="60" />
+                                <Setter Property="VerticalAlignment" Value="Stretch" />
+                            </Style>
+                        </Control.Resources>
+                        <muxc:RadioButtons.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DisplayName}" />
+                            </DataTemplate>
+                        </muxc:RadioButtons.ItemTemplate>
+                    </controls:UXRadioButtons>
+
                     <!--  Character Preview  -->
-                    <Grid>
+                    <Grid Grid.Row="0">
                         <Border x:Name="PreviewBorder" />
                         <Border
                             x:Name="TxtPreviewViewBox"
@@ -1896,6 +1921,7 @@
                             <cxc:DirectText
                                 x:Name="TxtPreview"
                                 VerticalAlignment="Center"
+                                ColorRenderOption="{Binding ElementName=ColrSelector, Path=SelectedItem.Tag, FallbackValue=Default, TargetNullValue=Default}"
                                 FontFace="{Binding SelectedFace.Face}"
                                 FontFamily="{Binding SelectedFace.Source}"
                                 FontSize="24"
@@ -1904,7 +1930,6 @@
                                 FontWeight="{Binding SelectedFace.DirectWriteProperties.Weight}"
                                 Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                 IsCharacterFitEnabled="True"
-                                IsColorFontEnabled="{Binding ShowColorGlyphs}"
                                 IsOverwriteCompensationEnabled="True"
                                 IsTextScaleFactorEnabled="False"
                                 Text="{Binding SelectedChar.Char}"
@@ -1961,7 +1986,7 @@
 
                     <StackPanel
                         x:Name="CharacterPreviewDetailsRoot"
-                        Grid.Row="1"
+                        Grid.Row="2"
                         h:CompositionFactory.UseWindowAwareSynchronisedReposition="True">
                         <StackPanel>
                             <controls:UXComboBox
@@ -2087,8 +2112,21 @@
                                                     Style="{StaticResource ThemeTextBlockButtonStyle}">
                                                     <ToolTipService.ToolTip>
                                                         <ToolTip Opened="ToolTip_Opened">
-                                                            <StackPanel HorizontalAlignment="Center" Spacing="6">
-                                                                <Grid Width="72" Height="72">
+                                                            <StackPanel
+                                                                HorizontalAlignment="Center"
+                                                                DataContext="{Binding DataContext, Mode=OneWay, ElementName=CharGlyphsRepeater}"
+                                                                Spacing="4">
+                                                                <Panel.Resources>
+                                                                    <SolidColorBrush x:Key="Color" Color="{x:Bind Color.Value, FallbackValue=Transparent}" />
+                                                                </Panel.Resources>
+                                                                <TextBlock
+                                                                    HorizontalAlignment="Center"
+                                                                    FontSize="12"
+                                                                    FontWeight="SemiBold">
+                                                                    <Run Text="Glyph" />
+                                                                    <Run Text="{x:Bind GlyphIndex}" />
+                                                                </TextBlock>
+                                                                <Grid Width="80" Height="80">
                                                                     <Border
                                                                         Background="{ThemeResource LayerFillColorDefaultBrush}"
                                                                         BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
@@ -2099,27 +2137,45 @@
                                                                         Height="24"
                                                                         HorizontalAlignment="Center"
                                                                         VerticalAlignment="Center"
-                                                                        IsActive="{Binding DataContext.SelectedFaceAnalysis.Glyphs.IsLoading, Mode=OneWay, ElementName=CharGlyphsRepeater}" />
+                                                                        IsActive="{Binding SelectedFaceAnalysis.Glyphs.IsLoading}" />
                                                                     <Glyphs
                                                                         HorizontalAlignment="Center"
                                                                         VerticalAlignment="Center"
-                                                                        core:Properties.FontUri="{Binding DataContext.SelectedFaceAnalysis.Glyphs.FontUri, Mode=OneWay, ElementName=CharGlyphsRepeater}"
-                                                                        Fill="{ThemeResource ApplicationForegroundThemeBrush}"
-                                                                        FontRenderingEmSize="36"
-                                                                        Indices="{x:Bind GlyphIndex, Mode=OneTime}"
-                                                                        IsColorFontEnabled="{Binding DataContext.SelectedFaceAnalysis.Glyphs.IsColorFontEnabled, Mode=OneWay, ElementName=CharGlyphsRepeater}" />
+                                                                        core:Properties.FontUri="{Binding SelectedFaceAnalysis.Glyphs.FontUri}"
+                                                                        Fill="{StaticResource Color}"
+                                                                        FontRenderingEmSize="40"
+                                                                        Indices="{x:Bind GlyphIndex}"
+                                                                        IsColorFontEnabled="{Binding ShowColorGlyphs, Mode=OneWay}" />
                                                                 </Grid>
-                                                                <StackPanel HorizontalAlignment="Center" Spacing="2">
-                                                                    <TextBlock
+                                                                <StackPanel HorizontalAlignment="Center" Spacing="0">
+                                                                    <!--<TextBlock FontSize="11" TextAlignment="Center">
+                                                                        <Run Text="Palette Index:" />
+                                                                        <Run Text="{x:Bind PaletteIndex}" />
+                                                                    </TextBlock>-->
+                                                                    <StackPanel
                                                                         HorizontalAlignment="Center"
-                                                                        FontSize="12"
-                                                                        FontWeight="SemiBold"
-                                                                        Text="{Binding GlyphIndex, Mode=OneTime}" />
-                                                                    <TextBlock
+                                                                        Orientation="Horizontal"
+                                                                        Spacing="4">
+                                                                        <TextBlock
+                                                                            VerticalAlignment="Center"
+                                                                            FontSize="11"
+                                                                            Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                                            TextAlignment="Center"
+                                                                            TextLineBounds="Tight">
+                                                                            <!--<Run Text="Default Color:" />-->
+                                                                            <Run Text="{x:Bind Color.Value, FallbackValue='None'}" />
+                                                                        </TextBlock>
+                                                                        <Rectangle
+                                                                            Width="12"
+                                                                            Height="12"
+                                                                            Fill="{StaticResource Color}" />
+                                                                    </StackPanel>
+
+                                                                    <!--<TextBlock
                                                                         HorizontalAlignment="Center"
                                                                         FontSize="11"
                                                                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                                                        Text="{core:Localizer Key=BtnXAMLGeometry/Content}" />
+                                                                        Text="{core:Localizer Key=BtnXAMLGeometry/Content}" />-->
                                                                 </StackPanel>
                                                             </StackPanel>
                                                         </ToolTip>
