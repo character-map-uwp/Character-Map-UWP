@@ -40,7 +40,7 @@ public class VariantTemplateSelector : DataTemplateSelector
 [AttachedProperty<bool>("GlyphsLoading")]
 [AttachedProperty<bool>("GlyphsLoaded")]
 [DependencyProperty<GridLength>("BottomHeight")]
-public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter, IPopoverPresenter
+public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter, IPopoverPresenter, IWindowContent
 {
     private BrushTransition t = new() { Duration = TimeSpan.FromSeconds(0.115) };
 
@@ -98,8 +98,6 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 .SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible);
 
             Window.Current.Activate();
-            Window.Current.Closed -= Current_Closed;
-            Window.Current.Closed += Current_Closed;
 
             LayoutRoot.KeyDown -= LayoutRoot_KeyDown;
             LayoutRoot.KeyDown += LayoutRoot_KeyDown;
@@ -163,17 +161,17 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         ViewModel?.Deactivated();
     }
 
+    bool _cleaned = false;
+
     public void Cleanup()
     {
+        if (_cleaned)
+            return;
+
+        _cleaned = true;
         this.Bindings.StopTracking();
     }
 
-    private void Current_Closed(object sender, CoreWindowEventArgs e)
-    {
-        this.Bindings.StopTracking();
-        Window.Current.Closed -= Current_Closed;
-        Window.Current.Content = null;
-    }
 
     private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
