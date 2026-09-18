@@ -17,29 +17,6 @@ public record FaceMetadataInfo(string Key, string[] Values, CanvasFontInformatio
 [System.Diagnostics.DebuggerDisplay("{FamilyName} {PreferredName}")]
 public partial class CMFontFace : IDisposable
 {
-    /* Using a tiered character cache avoids a lot of unnecessary allocations */
-    private static Character[] _bmpCharacters { get; } = new Character[65536];
-    private static Dictionary<int, Character> _supplementaryCharacters { get; } = [];
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static Character GetCachedCharacter(int i)
-    {
-        if ((uint)i < 65536)
-        {
-            Character c = _bmpCharacters[i];
-            if (c is null)
-                _bmpCharacters[i] = c = new((uint)i);
-            return c;
-        }
-
-        lock (_supplementaryCharacters)
-        {
-            if (!_supplementaryCharacters.TryGetValue(i, out Character c))
-                _supplementaryCharacters[i] = c = new((uint)i);
-            return c;
-        }
-    }
-
     private IReadOnlyList<NamedUnicodeRange> _ranges = null;
     private FontAnalysis _analysis = null;
     private FaceMetadataInfo _designLangRawSearch = null;
@@ -175,22 +152,28 @@ public partial class CMFontFace : IDisposable
         {
             uint[] uni = GetGlyphUnicodeIndexes();
             int[] gly = Face.GetGlyphIndices(uni);
+
             IReadOnlyList<Character> chars = GetCharacters();
-            // DirectWrite glyph indices are 0 to GlyphCount - 1
+
+            // DirectWrite glyph indices are strictly bounded by Face.GlyphCount
             Character[] map = new Character[Face.GlyphCount];
+
             for (int i = 0; i < chars.Count; i++)
             {
                 int g = gly[i];
                 if ((uint)g < (uint)map.Length && map[g] == null)
                     map[g] = chars[i];
             }
+
             _glyphToCharacterMap = map;
         }
+
         if ((uint)glyphIndex < (uint)_glyphToCharacterMap.Length)
         {
             character = _glyphToCharacterMap[glyphIndex];
             return character != null;
         }
+
         character = null;
         return false;
     }
@@ -439,8 +422,9 @@ public partial class CMFontFace
         return new CMFontFace(face)
         {
             PreferredName = face.Properties.FaceName,
+
             // These default characters are used by Subsetter.cs
-            Characters = [ Character.Null, Character.CarriageReturn, Character.Space ]
+            Characters = new FontCharacterList([Character.Null, Character.CarriageReturn, Character.Space])
         };
     }
 
@@ -459,4 +443,27 @@ public partial class CMFontFace
         CanvasFontInformation.LicenseInfoUrl,
         CanvasFontInformation.LicenseDescription,
     };
+
+    /* Using a tiered character cache avoids a lot of unnecessary allocations */
+    private static Character[] _bmpCharacters { get; } = new Character[65536];
+    private static Dictionary<int, Character> _supplementaryCharacters { get; } = [];
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static Character GetCachedCharacter(int i)
+    {
+        if ((uint)i < 65536)
+        {
+            Character c = _bmpCharacters[i];
+            if (c is null)
+                _bmpCharacters[i] = c = new((uint)i);
+            return c;
+        }
+
+        lock (_supplementaryCharacters)
+        {
+            if (!_supplementaryCharacters.TryGetValue(i, out Character c))
+                _supplementaryCharacters[i] = c = new((uint)i);
+            return c;
+        }
+    }
 }
