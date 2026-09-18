@@ -126,13 +126,17 @@ public class FontFinder
                     continue;
 
                 DWriteFontSet importedFonts = sets[i];
+                if (importedFonts == null)
+                    continue;
+
                 UpdateMeta(importedFonts);
                 ImportedFaceCount += importedFonts.FaceCount;
                 ImportedFamilyCount += importedFonts.Families.Count;
 
-                foreach (DWriteFontFace font in importedFonts.Fonts)
+                if (importedFonts.Fonts is not null)
                 {
-                    AddFont(resultList, font, file);
+                    foreach (DWriteFontFace font in importedFonts.Fonts)
+                        AddFont(resultList, font, file);
                 }
             }
 
@@ -208,26 +212,33 @@ public class FontFinder
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void AddFont(
         IDictionary<string, CMFontFamily> fontList,
+        DWriteFontFace font) => AddFont(fontList, font, (string)null);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void AddFont(
+        IDictionary<string, CMFontFamily> fontList,
         DWriteFontFace font,
-        StorageFile file = null)
+        StorageFile file) => AddFont(fontList, font, file?.Path);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void AddFont(
+        IDictionary<string, CMFontFamily> fontList,
+        DWriteFontFace font,
+        string filePath)
     {
         try
         {
             if (font.Properties.IsSimulated && ResourceHelper.AppSettings.HideSimulatedFontFaces)
                 return;
 
-            var familyName = font.Properties.FamilyName;
+            string familyName = font.Properties.FamilyName;
             if (!string.IsNullOrEmpty(familyName))
             {
                 /* Check if we already have a listing for this fontFamily */
-                if (fontList.TryGetValue(familyName, out var fontFamily))
-                {
-                    fontFamily.AddVariant(font, file);
-                }
+                if (fontList.TryGetValue(familyName, out CMFontFamily fontFamily))
+                    fontFamily.AddVariant(font, filePath);
                 else
-                {
-                    fontList[familyName] = new CMFontFamily(familyName, font, file);
-                }
+                    fontList[familyName] = new(familyName, font, filePath);
             }
         }
         catch (Exception)

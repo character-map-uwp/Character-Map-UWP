@@ -18,7 +18,7 @@ namespace CharacterMap.Models
         public float FontSize { get; init; }
         public CanvasTextLayoutAnalysis Analysis { get; init; }
         public IReadOnlyList<TypographyFeatureInfo> Typography { get; init; }
-        public bool IsColourFontEnabled { get; init; } = true;
+        public DWriteColorRenderOption ColorRenderOption { get; init; } = DWriteColorRenderOption.Default;
         public IReadOnlyList<DWriteFontAxis> Axis { get; init; }
         public bool IsVariation { get; }
 

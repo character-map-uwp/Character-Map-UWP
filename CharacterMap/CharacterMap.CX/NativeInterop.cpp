@@ -121,11 +121,66 @@ IVectorView<DWriteFontSet^>^ NativeInterop::GetFonts(IVectorView<StorageFile^>^ 
 	return fontSets->GetView();
 }
 
+DWriteFontSet^ NativeInterop::GetFonts(Platform::String^ filePath)
+{
+	if (filePath == nullptr || filePath->IsEmpty())
+		return nullptr;
+
+	try
+	{
+		ComPtr<IDWriteFontFile> fontFile;
+		HRESULT hr = m_dwriteFactory->CreateFontFileReference(filePath->Data(), nullptr, &fontFile);
+		if (FAILED(hr))
+			return nullptr;
+
+		BOOL isSupported = FALSE;
+		DWRITE_FONT_FILE_TYPE fileType;
+		DWRITE_FONT_FACE_TYPE faceType;
+		UINT32 numberOfFaces = 0;
+		hr = fontFile->Analyze(&isSupported, &fileType, &faceType, &numberOfFaces);
+		if (FAILED(hr) || !isSupported || numberOfFaces == 0)
+			return nullptr;
+
+		ComPtr<IDWriteFontSetBuilder1> builder;
+		hr = m_dwriteFactory->CreateFontSetBuilder(&builder);
+		if (FAILED(hr))
+			return nullptr;
+
+		for (UINT32 i = 0; i < numberOfFaces; ++i)
+		{
+			ComPtr<IDWriteFontFaceReference> faceRef;
+			if (SUCCEEDED(m_dwriteFactory->CreateFontFaceReference(fontFile.Get(), i, DWRITE_FONT_SIMULATIONS_NONE, &faceRef)))
+				builder->AddFontFaceReference(faceRef.Get());
+		}
+
+		ComPtr<IDWriteFontSet> fontSet;
+		hr = builder->CreateFontSet(&fontSet);
+		if (FAILED(hr))
+			return nullptr;
+
+		ComPtr<IDWriteFontCollection1> collection1;
+		hr = m_dwriteFactory->CreateFontCollectionFromFontSet(fontSet.Get(), &collection1);
+		if (FAILED(hr))
+			return nullptr;
+
+		ComPtr<IDWriteFontCollection3> collection3;
+		if (FAILED(collection1.As<IDWriteFontCollection3>(&collection3)) || !collection3)
+			return nullptr;
+
+		return DirectWrite::GetFonts(collection3)->Inflate();
+	}
+	catch (...)
+	{
+		return nullptr;
+	}
+}
+
 DWriteFontSet^ NativeInterop::GetFonts(StorageFile^ file)
 {
-	auto collection = m_fontManager->GetFontCollection(file->Path);
-	DWriteFontSet^ set = DirectWrite::GetFonts(collection)->Inflate();
-	return set;
+	if (file == nullptr)
+		return nullptr;
+
+	return GetFonts(file->Path);
 }
 
 DWriteFallbackFont^ NativeInterop::CreateEmptyFallback()

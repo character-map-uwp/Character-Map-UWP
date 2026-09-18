@@ -1,11 +1,16 @@
 ﻿using Microsoft.UI.Xaml.Controls;
+using System.Collections;
 using System.Windows.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls;
+
+
 
 /// <summary>
 /// Extends RadioButtons with native selector visual support and additional useful events
@@ -13,6 +18,8 @@ namespace CharacterMap.Controls;
 [AttachedProperty<double>("ColumnSpacing")]
 [AttachedProperty<double>("RowSpacing")]
 [AttachedProperty<DataTemplate>("LayoutTemplate", null)]
+[DependencyProperty<bool>("ForceSelection")] // Attempt to persist the selected index between ItemsSource changes
+[DependencyProperty<ItemsSelectionModel>("SelectedItemsSource")] 
 public partial class UXRadioButtons : RadioButtons
 {
     public ICommand SelectedIndexChangedCommand { get; set; }
@@ -23,12 +30,64 @@ public partial class UXRadioButtons : RadioButtons
 
     Vector2 _prevPoint = Vector2.Zero;
 
+    long token = -1;
+
+    Debouncer _debouncer => field ?? new(8);
+
     public UXRadioButtons()
     {
         this.DefaultStyleKey = typeof(RadioButtons);
         this.Loaded += UXRadioButtons_Loaded;
         this.SelectionChanged += UXRadioButtons_SelectionChanged;
+
+       this.RegisterPropertyChangedCallback(RadioButtons.ItemsSourceProperty, ItemsSourceChanged);
     }
+
+    partial void OnSelectedItemsSourceChanged(ItemsSelectionModel o, ItemsSelectionModel n)
+    {
+        this.ItemsSource = n?.ItemsSource;
+        this.SelectedItem = n?.SelectedItem;
+    }
+
+    private void ItemsSourceChanged(DependencyObject sender, DP dp)
+    {
+        if(ItemsSource is null || !this.ForceSelection)
+            return;
+
+        _debouncer.Debounce(() =>
+        {
+            if (this.SelectedItem is null && this.ItemsSource is IList {Count: >0 } list)
+                this.SelectedItem = list[0];
+
+            if (SelectorVisualElement.GetElement(this) is not { } selector)
+                return;
+
+
+            selector.MoveTo(
+                this.InnerRepeater?.GetFirstLevelDescendants().FirstOrDefault(f => f.DataContext == this.SelectedItem),
+                this,
+                animate: false);
+        });
+    }
+
+    //int previousIndex = -1;
+
+    //private void SelectedIndexChanged(DependencyObject sender, DP dp)
+    //{
+    //    if (SelectedIndex < 0 && previousIndex >= 0 && PersistSelectedIndex)
+    //    {
+    //        var idx = previousIndex;
+
+    //        _debouncer.Debounce(() =>
+    //        {
+    //            if (ItemsSource is IList items && idx > -1 && idx <= items.Count - 1)
+    //                SelectedIndex = idx;
+    //        });
+    //    }
+
+    //    previousIndex = SelectedIndex;
+    //}
+
 
     private void UXRadioButtons_Loaded(object sender, RoutedEventArgs e)
     {
@@ -69,9 +128,23 @@ public partial class UXRadioButtons : RadioButtons
             true);
     }
 
+    Binding _templateBinding = null;
+
     private void OnElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
     {
         this.ElementPrepared?.Invoke(this, args);
+
+        //if (args.Element is RadioButton b && this.ItemTemplate is not null)
+        //{
+        //    _templateBinding ??= new Binding
+        //    {
+        //        Source = this,
+        //        Path = new(nameof(ItemTemplate))
+        //    };
+
+        //    b.SetBinding(RadioButton.ContentTemplateProperty, _templateBinding);
+        //    b.ContentTemplate = this.ItemTemplate as DataTemplate;
+        //}
 
         if (args.Element is { } element)
         {

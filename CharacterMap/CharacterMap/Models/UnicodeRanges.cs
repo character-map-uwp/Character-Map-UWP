@@ -8,6 +8,28 @@ public class MakeBasicFilterAttribute : Attribute
      */
 }
 
+
+public static partial class UnicodeRanges
+{
+    public static NamedUnicodeRange GetRange(uint index)
+    {
+        int low = 0;
+        int high = All.Count - 1;
+        while (low <= high)
+        {
+            int mid = (low + high) >>> 1;
+            NamedUnicodeRange range = All[mid];
+            if (index < range.Start)
+                high = mid - 1;
+            else if (index > range.End)
+                low = mid + 1;
+            else
+                return range;
+        }
+        return Unassigned;
+    }
+}
+
 public static partial class UnicodeRanges
 {
     /* Created using https://dotnetfiddle.net/jexT5V */

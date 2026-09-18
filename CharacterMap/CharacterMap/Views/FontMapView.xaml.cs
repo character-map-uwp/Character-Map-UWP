@@ -40,7 +40,7 @@ public class VariantTemplateSelector : DataTemplateSelector
 [AttachedProperty<bool>("GlyphsLoading")]
 [AttachedProperty<bool>("GlyphsLoaded")]
 [DependencyProperty<GridLength>("BottomHeight")]
-public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter, IPopoverPresenter
+public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter, IPopoverPresenter, IWindowContent
 {
     private BrushTransition t = new() { Duration = TimeSpan.FromSeconds(0.115) };
 
@@ -53,6 +53,9 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     private bool _isCompactOverlay = false;
 
     public bool IsStandalone { get; set; }
+
+    // Declared here to use as x:Bind Fallback
+    DWriteColorRenderOption DefaultColorRenderOption = DWriteColorRenderOption.Default;
 
 
     public FontMapView()
@@ -95,8 +98,6 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 .SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible);
 
             Window.Current.Activate();
-            Window.Current.Closed -= Current_Closed;
-            Window.Current.Closed += Current_Closed;
 
             LayoutRoot.KeyDown -= LayoutRoot_KeyDown;
             LayoutRoot.KeyDown += LayoutRoot_KeyDown;
@@ -160,17 +161,17 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         ViewModel?.Deactivated();
     }
 
+    bool _cleaned = false;
+
     public void Cleanup()
     {
+        if (_cleaned)
+            return;
+
+        _cleaned = true;
         this.Bindings.StopTracking();
     }
 
-    private void Current_Closed(object sender, CoreWindowEventArgs e)
-    {
-        this.Bindings.StopTracking();
-        Window.Current.Closed -= Current_Closed;
-        Window.Current.Content = null;
-    }
 
     private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
@@ -406,7 +407,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             {
                 if (MapDisplayStates.CurrentState == CharacterMapState)
                     UpdateGridToRampTransition(GridToRampTransition, CharGrid);
-                else if (MapDisplayStates.CurrentState== GlyphMapState)
+                else if (MapDisplayStates.CurrentState == GlyphMapState)
                     UpdateGridToRampTransition(GlyphToRampTransition, GlyphRepeater);
             }
             GoToState(TypeRampState.Name, animate);
@@ -429,11 +430,11 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         {
             if (animate)
             {
+                this.FindName(nameof(GlyphsRoot));
                 if (MapDisplayStates.CurrentState == CharacterMapState)
                     UpdateGridToGlyphTransition();
                 else if (MapDisplayStates.CurrentState == TypeRampState)
                 {
-                    this.FindName(nameof(GlyphsRoot)); // x:Load
                     UpdateRampToGridTransition(GlyphRepeater, RampToGlyphTransition);
                 }
             }
@@ -445,7 +446,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         ViewSelector.SelectedIndex = (int)ViewModel.DisplayMode;
 
         //if (animate)
-            PlayFontChanged(false);
+        PlayFontChanged(false);
     }
 
     private void UpdateCharacterFit()
@@ -617,7 +618,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         Character charToCopy = character;
         bool isVariantCopied = false;
 
-        if (PreviewTypographySelector.SelectedItem 
+        if (PreviewTypographySelector.SelectedItem
             is TypographyVariation { IsNone: false, IsVariationMapped: true } variation)
         {
             if (ViewModel.SelectedFace?.TryGetCharacter(variation.FaceCharacterMapping, out Character mappedChar) is true)
@@ -663,9 +664,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void BtnCopyCode_OnClick(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement f
-            && f.DataContext is DevOption o
-            && f.Tag is string s)
+        if (sender is FrameworkElement { DataContext: DevOption o, Tag: string s })
         {
             Utils.CopyToClipBoard(s.Trim());
             BorderFadeInStoryboard.Begin();
@@ -805,8 +804,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void DevFlyout_Opening(object sender, object e)
     {
-        if (sender is MenuFlyout menu 
-            && menu.Items?.Count < 2
+        if (sender is MenuFlyout { Items: { Count: < 2 } } menu
             && ViewModel.Providers is not null)
         {
             Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
@@ -855,12 +853,8 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void AxisReset_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement b
-            && b.Tag is Slider s
-            && b.DataContext is DWriteFontAxis axis)
-        {
+        if (sender is FrameworkElement { Tag: Slider s, DataContext: DWriteFontAxis axis })
             s.Value = axis.DefaultValue;
-        }
     }
 
     private void CharGrid_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -898,9 +892,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     private void SavePng_Click(object sender, RoutedEventArgs e)
     {
         /* Save from Character Grid Context Menu */
-        if (sender is MenuFlyoutItem item
-            && item.DataContext is Character c
-            && item.CommandParameter is ExportStyle style)
+        if (sender is MenuFlyoutItem { DataContext: Character c, CommandParameter: ExportStyle style } item)
         {
             if (item.Tag is null)
             {
@@ -908,7 +900,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 {
                     Style = style,
                     Typography = ViewModel.SelectedTypography.Feature,
-                    Character= c
+                    Character = c
                 });
             }
             else
@@ -924,9 +916,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     private void SaveSvg_Click(object sender, RoutedEventArgs e)
     {
         /* Save from Character Grid Context Menu */
-        if (sender is MenuFlyoutItem item
-            && item.DataContext is Character c
-            && item.CommandParameter is ExportStyle style)
+        if (sender is MenuFlyoutItem { DataContext: Character c, CommandParameter: ExportStyle style } item)
         {
             if (item.Tag is null)
             {
@@ -934,7 +924,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 {
                     Style = style,
                     Typography = ViewModel.SelectedTypography.Feature,
-                     Character = c
+                    Character = c
                 });
             }
             else
@@ -950,9 +940,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     private void CopyClick(object sender, RoutedEventArgs e)
     {
         /* Copy from Character Grid Context Menu */
-        if (sender is MenuFlyoutItem item
-          && item.DataContext is Character c
-          && item.CommandParameter is DevValueType type)
+        if (sender is MenuFlyoutItem { DataContext: Character c, CommandParameter: DevValueType type })
         {
             _ = ViewModel.RequestCopyToClipboardAsync(
                     new CopyToClipboardMessage(type, c, ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFace)));
@@ -961,17 +949,13 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void AddClick(object sender, RoutedEventArgs e)
     {
-        if (sender is MenuFlyoutItem item
-            && item.DataContext is Character c)
-        {
+        if (sender is MenuFlyoutItem { DataContext: Character c })
             ViewModel.Sequence += c.Char;
-        }
     }
 
     private void OpenCalligraphyClick(object sender, RoutedEventArgs e)
     {
-        if (sender is MenuFlyoutItem item
-            && item.DataContext is Character c)
+        if (sender is MenuFlyoutItem { DataContext: Character c })
         {
             _ = CalligraphyView.CreateWindowAsync(
                     ViewModel.RenderingOptions, c.Char);
@@ -1075,6 +1059,31 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         }
     }
 
+    private void BtnGlyph_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: GlyphCharacter g })
+            NavigateToGlyph(g.GlyphIndex);
+    }
+
+    public async void NavigateToGlyph(ushort glyphIndex)
+    {
+        ViewModel.DisplayMode = FontDisplayMode.GlyphMapState;
+
+        if (ViewModel.SelectedFaceAnalysis?.Glyphs is GlyphCollection coll)
+            await coll.EnsureLoadedUpToAsync(glyphIndex);
+
+        this.Enqueue(() =>
+        {
+            GlyphRepeater.SelectedItem = (uint)glyphIndex;
+            GlyphRepeater.ScrollIntoView((uint)glyphIndex);
+        }, CoreDispatcherPriority.Low);
+    }
+
+    private void ToolTip_Opened(object sender, RoutedEventArgs e)
+    {
+        _ = ViewModel?.SelectedFaceAnalysis?.LoadGlyphFontAsync();
+    }
+
 
 
 
@@ -1139,7 +1148,19 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     Character GetChar(CharacterAnalysisModel c) => c?.Char;
 
-    void ToModel(object c) => ViewModel.SelectedChar = new (ViewModel.SelectedFace, c as Character, ViewModel);
+    void ToModel(object c)
+    {
+        if (ViewModel.SelectedChar?.Char == c)
+            return;
+
+        // 1. Persist render option
+        var opt = ViewModel.ShowColorGlyphs ? CharacterAnalysisModel.DefaultRenderOption : CharacterAnalysisModel.MonoRenderOption;
+        if (ViewModel.SelectedChar is { HasColorRenderOptions: true } existing
+            && ColrSelector.SelectedItem is NamedTag tag)
+            opt = tag;
+
+        ViewModel.SelectedChar = new(ViewModel.SelectedFace, c as Character, ViewModel, opt);
+    }
 
     private void UpdateDisplay()
     {
@@ -1273,8 +1294,24 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         debouncer.Debounce(
             () => CompositionFactory.SetUseWindowAwareSynchronisedReposition(repositionTarget, true));
     }
-}
 
+    private void ColrSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        //if (ColrSelector.Visibility == Visibility.Collapsed)
+        //    TxtPreview.SetBinding(CharacterMapCX.Controls.DirectText.IsColorFontEnabledProperty,
+        //        (Binding)TxtPreviewViewBox.Resources["IsColorFontEnabledBinding"]);
+
+        //if (e.AddedItems.Count == 0) return;
+        //var item = e.AddedItems[0];
+
+        //TxtPreview.IsColorFontEnabled = e.AddedItems[0] != MonoOption;
+
+        //if (item == ColrV0Option)
+        //    TxtPreview.COLRRenderVersion = 0;
+        //else
+        //    TxtPreview.COLRRenderVersion = 1;
+    }
+}
 
 
 

@@ -95,6 +95,20 @@ namespace CharacterMapCX
 			}
 		}
 
+		void ReleaseResources()
+		{
+			if (m_fontFace != nullptr)
+			{
+				delete m_fontFace;
+				m_fontFace = nullptr;
+			}
+
+			m_fontResource = nullptr;
+
+			if (m_font != nullptr)
+				m_face = nullptr;
+		}
+
 		property UINT32 GlyphCount
 		{
 			UINT32 get() { return GetFontFace()->GetGlyphCount(); }
@@ -216,12 +230,9 @@ namespace CharacterMapCX
 
 		INT32 GetGlyphIndice(UINT32 indicie)
 		{
-			std::vector<unsigned int> in(1);
-			in[0] = indicie;
-			std::vector<unsigned short> out(1);
-			ThrowIfFailed(GetFontFace()->GetGlyphIndices(in.data(), 1, out.data()));
-
-			return static_cast<INT32>(out[0]);
+			UINT16 out = 0;
+			ThrowIfFailed(GetFontFace()->GetGlyphIndices(&indicie, 1, &out));
+			return static_cast<INT32>(out);
 		}
 
 		property UINT16 DesignUnitsPerEm
@@ -398,25 +409,22 @@ namespace CharacterMapCX
 			if (m_face != nullptr)
 				return m_face;
 
-			ComPtr<IDWriteFontFaceReference> faceRef = GetReference();;
+			ComPtr<IDWriteFontFaceReference> faceRef = GetReference();
 			ComPtr<IDWriteFontFace3> face;
 			faceRef->CreateFontFace(&face);
-			return face;
+			m_face = face;
+			return m_face;
 		}
 
 		DWRITE_FONT_METRICS1 GetMetrics()
 		{
-			if (m_hasMetrics == false)
-			{
-				if (m_face != nullptr)
-					m_face->GetMetrics(&m_metrics);
-				else
-					m_font->GetMetrics(&m_metrics);
+			DWRITE_FONT_METRICS1 metrics{};
+			if (m_face != nullptr)
+				m_face->GetMetrics(&metrics);
+			else if (m_font != nullptr)
+				m_font->GetMetrics(&metrics);
 
-				m_hasMetrics = true;
-			}
-
-			return m_metrics;
+			return metrics;
 		}
 
 		void SetProperties(DWriteProperties^ props)
@@ -511,10 +519,8 @@ namespace CharacterMapCX
 		}
 
 		bool m_loadedEmbed = false;
-		bool m_hasMetrics = false;
 
 		FontEmbeddingType m_embeddingType = FontEmbeddingType::Installable;
-		DWRITE_FONT_METRICS1 m_metrics{};
 		CanvasFontFace^ m_fontFace = nullptr;
 		ComPtr<IDWriteFontFaceReference> m_fontResource = nullptr;
 	};
