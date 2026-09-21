@@ -169,7 +169,81 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             return;
 
         _cleaned = true;
+
         this.Bindings.StopTracking();
+
+        /* Release Mode in a secondary window can result in an internal XAML crash when
+         * .NET GC tries to shutdown XAML objects. To avoid this we need to manually
+         * remove some XAML elements from the tree ourselves.
+         * 
+         * This crash is typically in the internal tear-down of ListView-based controls so
+         * we mostly focus on manually destroying/emptying ListViews
+         *  
+         *  -> Windows_UI_Xaml!DirectUI::DXamlCore::ShutdownAllPeers
+            -> SharedLibrary!ICLRServices.DisconnectRCWsInCurrentApartment
+              -> SharedLibrary!McgMarshal.ReleaseRCWsInCurrentApartment
+                -> SharedLibrary!ComObjectCache.RemoveRCWsForContext
+                  -> SharedLibrary!$8_System::__ComObject.FinalReleaseSelf
+                    -> SharedLibrary!$8_System::__ComObject.Cleanup
+                      -> SharedLibrary!McgMarshal.ComRelease
+                        -> Windows_UI_Xaml!DirectUI::DependencyObject::OnFinalRelease
+                          -> Windows_UI_Xaml!DirectUI::DependencyObject::DisconnectFrameworkPeerCore
+                            -> Windows_UI_Xaml!CGrid::`scalar deleting destructor'
+                              -> Windows_UI_Xaml!CFrameworkElement::~CFrameworkElement
+                                -> Windows_UI_Xaml!CUIElement::~CUIElement
+                                  -> Windows_UI_Xaml!CCollection::Clear
+                                    -> Windows_UI_Xaml!CCollection::Destroy
+                                      -> Windows_UI_Xaml!CDOCollection::Neat
+                                        -> Windows_UI_Xaml!CDOCollection::ChildLeave
+                                          -> Windows_UI_Xaml!CDependencyObject::SetParent
+                                            -> Windows_UI_Xaml!DirectUI::DXamlCore::GetPeerPrivate
+                                              -> Windows_UI_Xaml!ctl::ComObject<DirectUI::ListView>::AddRef  <-- [AV 0xC0000005]
+
+            00007ffa`6f888770 f85f8100 ldur  x0, [x8, #-8]  ; load m_pUnkOuter (CCW) from [this - 8]
+            00007ffa`6f888774 b4000120 cbz   x0, ...
+            00007ffa`6f888778 f9400008 ldr   x8, [x0]       ; load CCW vtable
+            00007ffa`6f88877c f9400508 ldr   x8, [x8, #8]   ; CRASH: Attempting to dereference freed CCW memory
+        */
+
+        // 0. We'll also tear down the PrintPresenter because it can cause crashes too.
+        if (PrintPresenter != null)
+        {
+            if (PrintPresenter.Child is PopoverViewBase popover)
+                popover.Hide();
+            PrintPresenter.Child = null;
+        }
+
+        if (PrintCanvas != null)
+            PrintCanvas.Children.Clear();
+
+        // 1. Detach and unbind the main Character Grid
+        if (CharGrid != null)
+        {
+            CharGrid.ContainerContentChanging -= CharGrid_ContainerContentChanging;
+            CharGrid.ItemDoubleTapped -= CharGrid_ItemDoubleTapped;
+            CharGrid.ItemsSource = null;
+        }
+
+        // 2. Empty the container grid so CDOCollection has 0 children during peer shutdown
+        if (CharGridRoot != null)
+            CharGridRoot.Children.Clear();
+
+        // 3. Clean up GlyphRepeater if it was loaded
+        if (GlyphRepeater != null)
+        {
+            GlyphRepeater.ContainerContentChanging -= CharGrid_ContainerContentChanging;
+            GlyphRepeater.SelectionChanged -= GlyphRepeater_SelectionChanged;
+            GlyphRepeater.ItemsSource = null;
+        }
+
+        if (GlyphsRoot != null)
+            GlyphsRoot.Children.Clear();
+
+        if (OptionsList != null)
+            OptionsList.ItemsSource = null;
+
+        if (LayoutRoot != null)
+            LayoutRoot.Children.Clear();
     }
 
 

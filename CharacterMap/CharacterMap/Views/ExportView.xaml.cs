@@ -40,6 +40,14 @@ public sealed partial class ExportView : PopoverViewBase
         base.Show();
     }
 
+    public override void Hide()
+    {
+        base.Hide();
+        this.Bindings.StopTracking();
+        ItemsGridView.ItemsSource = null;
+        ItemsGridView.ContainerContentChanging -= ItemsPanel_ContainerContentChanging;
+    }
+
     private void StartShowAnimation()
     {
         if (!ResourceHelper.AllowAnimation)
@@ -69,8 +77,6 @@ public sealed partial class ExportView : PopoverViewBase
             elements.AddRange(BottomButtonOptions.Children);
             CompositionFactory.PlayEntrance(elements, 0, 200);
         }
-
-       
     }
 
     private void ItemsPanel_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

@@ -150,7 +150,6 @@ public static class WindowService
 
         info.CoreView.Activated -= CoreView_Activated;
 
-    
         info.CoreView.DispatcherQueue.ShutdownStarting += (s, args) =>
         {
             var deferral = args.GetDeferral();
@@ -183,7 +182,7 @@ public static class WindowService
             });
 
             // Allow dispatcher to process all marshaled COM releases
-            await Task.Delay(100);
+            await Task.Delay(250);
 
             Window.Current.Close();
         });
