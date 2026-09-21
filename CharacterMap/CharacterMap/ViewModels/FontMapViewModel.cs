@@ -12,7 +12,8 @@ public enum FontDisplayMode
 {
     CharacterMapState = 0,
     GlyphMapState = 1,
-    TypeRampState = 2
+    TypeRampState = 2,
+    LigaturesState = 3
 }
 
 public partial class RampOption : ObservableObject
@@ -421,6 +422,7 @@ public partial class FontMapViewModel : ViewModelBase
         {
             FontDisplayMode.CharacterMapState => FontDisplayMode.GlyphMapState,
             FontDisplayMode.GlyphMapState => FontDisplayMode.TypeRampState,
+            FontDisplayMode.TypeRampState => FontDisplayMode.LigaturesState,
             _ => FontDisplayMode.CharacterMapState
         };
     }

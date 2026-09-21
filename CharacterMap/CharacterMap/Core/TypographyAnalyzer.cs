@@ -17,6 +17,41 @@ public static class TypographyAnalyzer
         return list;
     }
 
+    public static List<LigatureGroup> GetLigatures(CMFontFace fontFace)
+    {
+        IReadOnlyList<DWriteLigatureFeature> rawFeatures = DirectWrite.GetLigatures(fontFace.Face);
+        if (rawFeatures is null || rawFeatures.Count == 0)
+            return [];
+
+        List<LigatureGroup> groups = [];
+
+        foreach (DWriteLigatureFeature rawFeature in rawFeatures)
+        {
+            CanvasTypographyFeatureName feature = (CanvasTypographyFeatureName)rawFeature.FeatureTag;
+            List<LigatureModel> ligatures = [];
+
+            foreach (DWriteLigature rawLig in rawFeature.Ligatures)
+            {
+                List<LigatureComponent> components = [];
+                foreach (ushort compGlyphId in rawLig.ComponentGlyphs)
+                {
+                    string ch = fontFace.TryGetCharacterForGlyph(compGlyphId, out Character mappedChar)
+                        ? mappedChar.Char
+                        : null;
+
+                    components.Add(new(compGlyphId, ch));
+                }
+
+                ligatures.Add(new(rawLig.LigatureGlyph, components, feature));
+            }
+
+            if (ligatures.Count > 0)
+                groups.Add(new(rawFeature.FeatureName, feature, ligatures));
+        }
+
+        return groups;
+    }
+
     /// <summary>
     /// Returns a list of Typographic Variations for a character supported by the font,
     /// including whether the variation glyph is mapped to a character in the font face.

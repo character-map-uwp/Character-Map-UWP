@@ -1,3 +1,4 @@
+using CharacterMap.Models;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Graphics.Canvas.Text;
 using System.Collections;
@@ -30,6 +31,18 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
     public FontFamily FontFamily { get; }
 
     public GlyphCollection Glyphs { get; }
+
+    private IReadOnlyList<LigatureGroup> _ligatures;
+    public IReadOnlyList<LigatureGroup> Ligatures => _ligatures ??= (Face is not null ? TypographyAnalyzer.GetLigatures(Face) : []);
+
+    public int TotalLigaturesCount => Ligatures.Sum(g => g.Count);
+
+    public int LigatureFeatureCount => Ligatures.Count;
+
+    public bool HasLigatures => Ligatures.Count > 0;
+
+    public string LigaturesSummary =>
+        $"{TotalLigaturesCount} ligatures in {LigatureFeatureCount} OpenType features";
 
     private Task<Uri> _loadingTask = null;
 

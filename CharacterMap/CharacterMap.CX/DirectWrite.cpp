@@ -104,6 +104,16 @@ String^ DirectWrite::GetTagName(String^ tag)
 	else if (tag == "MIDL") return "Midline";
 	else if (tag == "wdth") return "Width";
 
+	/* Ligature & Contextual Features */
+	else if (tag == "liga") return "Standard Ligatures";
+	else if (tag == "dlig") return "Discretionary Ligatures";
+	else if (tag == "hlig") return "Historical Ligatures";
+	else if (tag == "clig") return "Contextual Ligatures";
+	else if (tag == "rlig") return "Required Ligatures";
+	else if (tag == "locl") return "Localized Forms";
+	else if (tag == "calt") return "Contextual Alternates";
+	else if (tag == "ccmp") return "Glyph Composition / Decomposition";
+
 	/* OpenType feature Tags */
 	/* Only a subset of common tags are identified here */
 	/* TODO: Implement this better, including details of rendering 
@@ -163,9 +173,21 @@ String^ DirectWrite::GetTagName(String^ tag)
 		auto d = tag->Data();
 		if (d[0] == 'c' && d[1] == 'v')
 			return "Character Variant " + d[2] + d[3];
+		else if (d[0] == 's' && d[1] == 's')
+			return "Stylistic Set " + d[2] + d[3];
 
 		else return tag;
 	}
+}
+
+String^ DirectWrite::GetFeatureName(UINT32 tag)
+{
+	return GetFeatureName(GetFeatureTag(tag));
+}
+
+String^ DirectWrite::GetFeatureName(String^ tag)
+{
+	return GetTagName(tag);
 }
 
 /// <summary>
@@ -219,6 +241,48 @@ IMapView<UINT32, UINT32>^ DirectWrite::GetSupportedTypography(ComPtr<IDWriteFont
 	}
 
 	return map;
+}
+
+IVectorView<DWriteLigatureFeature^>^ DirectWrite::GetLigatures(DWriteFontFace^ canvasFontFace)
+{
+	ComPtr<IDWriteFontFaceReference> faceRef = canvasFontFace->GetReference();
+	return GetLigatures(faceRef);
+}
+
+IVectorView<DWriteLigatureFeature^>^ DirectWrite::GetLigatures(ComPtr<IDWriteFontFaceReference> faceRef)
+{
+	ComPtr<IDWriteFontFace3> f3;
+	HRESULT hr = faceRef->CreateFontFace(&f3);
+	if (FAILED(hr) || f3 == nullptr)
+		return (ref new Vector<DWriteLigatureFeature^>())->GetView();
+
+	ComPtr<IDWriteFontFace5> face;
+	hr = f3.As(&face);
+	if (FAILED(hr) || face == nullptr)
+		return (ref new Vector<DWriteLigatureFeature^>())->GetView();
+
+	const void* tableData;
+	UINT32 tableSize;
+	BOOL exists;
+	void* context;
+	face->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('G', 'S', 'U', 'B'), &tableData, &tableSize, &context, &exists);
+
+	IVectorView<DWriteLigatureFeature^>^ list = nullptr;
+
+	if (exists)
+	{
+		auto reader = ref new GsubTableReader(tableData, tableSize);
+		list = reader->LigatureFeatures;
+		delete reader;
+
+		face->ReleaseFontTable(context);
+	}
+	else
+	{
+		list = (ref new Vector<DWriteLigatureFeature^>())->GetView();
+	}
+
+	return list;
 }
 
 IVectorView<DWriteFontAxis^>^ DirectWrite::GetAxis(DWriteFontFace^ canvasFontFace)
