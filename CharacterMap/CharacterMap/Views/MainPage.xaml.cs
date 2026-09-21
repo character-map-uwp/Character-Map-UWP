@@ -222,6 +222,10 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             this.Bindings.StopTracking();
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
             this.FontMap.Cleanup();
+
+            //foreach (var font in this.ViewModel.FontList)
+            //    foreach (var face in font.Variants)
+            //        face.Trim();
         }
         else
         {

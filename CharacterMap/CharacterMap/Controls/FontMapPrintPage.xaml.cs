@@ -129,7 +129,7 @@ public sealed partial class FontMapPrintPage : Page
         TextBlock description = ((TextBlock)((StackPanel)g.Children[1]).Children[1]);
         try
         {
-            description.Text = PrintModel.Font.GetDescription(c);
+            description.Text = PrintModel.FaceAnalysis.GetDescription(c);
         }
         catch { }
 

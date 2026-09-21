@@ -744,6 +744,7 @@
                             IsItemClickEnabled="False"
                             ItemAnnotation="None"
                             ItemContainerTransitions="{StaticResource NoTransitions}"
+                            ItemFaceAnalysis="{x:Bind _fontMap.ViewModel.SelectedFaceAnalysis}"
                             ItemFontFace="{x:Bind _fontMap.ViewModel.SelectedFace.Face}"
                             ItemFontFamily="{x:Bind _fontMap.ViewModel.SelectedFaceAnalysis.FontFamily}"
                             ItemSize="{x:Bind _fontMap.CharGrid.ItemSize}"

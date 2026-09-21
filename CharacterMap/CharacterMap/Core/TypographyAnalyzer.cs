@@ -21,36 +21,36 @@ public static class TypographyAnalyzer
     /// Returns a list of Typographic Variations for a character supported by the font,
     /// including whether the variation glyph is mapped to a character in the font face.
     /// </summary>
-    public static List<TypographyVariation> GetCharacterVariations(CMFontFace font, Character character)
+    public static List<TypographyVariation> GetCharacterVariations(CMFontFace fontFace, Character character)
     {
         List<TypographyVariation> supported = [TypographyVariation.None];
 
-        if (font.HasXamlTypographyFeatures)
+        if (fontFace.HasXamlTypographyFeatures)
         {
             CanvasTextAnalyzer textAnalyzer = new(character.Char, CanvasTextDirection.TopToBottomThenLeftToRight);
             KeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript> analyzed = textAnalyzer.GetScript().First();
 
-            CanvasGlyph[] glyphs = textAnalyzer.GetGlyphs(analyzed.Key, font.FontFace, 24, false, false, analyzed.Value);
+            CanvasGlyph[] glyphs = textAnalyzer.GetGlyphs(analyzed.Key, fontFace.FontFace, 24, false, false, analyzed.Value);
             int baseGlyphIndex = glyphs.Length > 0 ? glyphs[0].Index : -1;
 
             NativeInterop interop = Utils.GetInterop();
 
-            foreach (TypographyFeatureInfo feature in font.XamlTypographyFeatures)
+            foreach (TypographyFeatureInfo feature in fontFace.XamlTypographyFeatures)
             {
                 if (feature == TypographyFeatureInfo.None)
                     continue;
 
-                bool[] results = font.FontFace.GetTypographicFeatureGlyphSupport(analyzed.Value, feature.Feature, glyphs);
+                bool[] results = fontFace.FontFace.GetTypographicFeatureGlyphSupport(analyzed.Value, feature.Feature, glyphs);
 
                 if (results.Any(r => r))
                 {
                     TypographyVariation variation = new() { Feature = feature };
 
-                    int variantGlyphIndex = interop.GetTypographicGlyph(font.Face, character.Char, feature.Feature);
+                    int variantGlyphIndex = interop.GetTypographicGlyph(fontFace.Face, character.Char, feature.Feature);
 
                     if (variantGlyphIndex > 0 && variantGlyphIndex != baseGlyphIndex)
                     {
-                        if (font.TryGetCharacterForGlyph(variantGlyphIndex, out Character mappedChar)
+                        if (fontFace.TryGetCharacterForGlyph(variantGlyphIndex, out Character mappedChar)
                             && mappedChar.UnicodeIndex != character.UnicodeIndex)
                             variation.FaceCharacterMapping = (int)mappedChar.UnicodeIndex;
                     }
@@ -96,41 +96,44 @@ public static class TypographyAnalyzer
     /// Creates a FontAnalysis object for a FontVariant and ensures the custom
     /// search map for the font is loaded
     /// </summary>
-    /// <param name="variant"></param>
+    /// <param name="model"></param>
     /// <returns></returns>
-    public static FontAnalysis Analyze(CMFontFace variant, bool loadGlyphNames = true)
+    public static FontAnalysis Analyze(FaceAnalysisModel model, bool loadGlyphNames = true)
     {
-        FontAnalysis analysis = new(variant.Face);
+        FontAnalysis analysis = new (model.Face.Face);
         if (loadGlyphNames && analysis.HasGlyphNames)
-            PrepareSearchMap(variant, analysis.GlyphNameMappings);
+            PrepareSearchMap(model, analysis.GlyphNameMappings);
         return analysis;
     }
 
-    public static void PrepareSearchMap(CMFontFace variant, FontAnalysis a)
+    public static FontAnalysis QuickAnalyze(CMFontFace fontFace)
     {
-        if (variant.SearchMap is null && a.HasGlyphNames)
-            PrepareSearchMap(variant, a.GlyphNameMappings);
+        return new(fontFace.Face);
     }
 
-    private static void PrepareSearchMap(CMFontFace variant, IReadOnlyDictionary<int, string> names)
+    public static void PrepareSearchMap(FaceAnalysisModel model, FontAnalysis a)
     {
-        if (variant.SearchMap == null)
+        if (model.SearchMap is null && a.HasGlyphNames)
+            PrepareSearchMap(model, a.GlyphNameMappings);
+    }
+
+    private static void PrepareSearchMap(FaceAnalysisModel model, IReadOnlyDictionary<int, string> names)
+    {
+        if (model.SearchMap == null)
         {
-            uint[] uni = variant.GetGlyphUnicodeIndexes();
-            int[] gly = variant.Face.GetGlyphIndices(uni);
-            IReadOnlyList<Character> chars = variant.GetCharacters();
+            uint[] uni = model.Face.GetGlyphUnicodeIndexes();
+            int[] gly = model.Face.Face.GetGlyphIndices(uni);
+            IReadOnlyList<Character> chars = model.Face.GetCharacters();
             Dictionary<Character, string> map = new();
 
             for (int i = 0; i < chars.Count; i++)
             {
                 Character c = chars[i];
                 if (names.TryGetValue(gly[i], out string mapping) && !string.IsNullOrEmpty(mapping))
-                {
                     map.Add(c, mapping);
-                }
             }
 
-            variant.SearchMap = map;
+            model.SearchMap = map;
         }
     }
 }

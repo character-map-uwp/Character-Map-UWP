@@ -7,9 +7,9 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.ViewModels;
 
-public partial class FaceAnalysisModel : ViewModelBase
+public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
 {
-    private CMFontFace _face;
+    public CMFontFace Face { get; }
 
     [ObservableProperty] IReadOnlyList<DWriteFontAxis> _variationAxis;
 
@@ -39,7 +39,7 @@ public partial class FaceAnalysisModel : ViewModelBase
         if (Glyphs.FontUri is not null)
             return Task.FromResult(Glyphs.FontUri);
 
-        if (_face is null)
+        if (Face is null)
             return Task.FromResult<Uri>(null);
 
         return _loadingTask ??= LoadGlyphFontInternalAsync();
@@ -51,25 +51,26 @@ public partial class FaceAnalysisModel : ViewModelBase
         return Glyphs.FontUri;
     }
 
-    public FaceAnalysisModel(CMFontFace face)
+    public FaceAnalysisModel(CMFontFace face, bool loadFull = true)
     {
         if (face is null)
             return;
 
-        _face = face;
+        Face = face;
 
-        FontAnalysis analysis = face.GetAnalysis();
-        TypographyAnalyzer.PrepareSearchMap(face, analysis);
-        analysis.ResetVariableAxis();
-
-        FontFamily = new(face.Source);
-        IsMDL2Font = FontFinder.IsMDL2(face);
-        HasFontOptions = analysis.ContainsVectorColorGlyphs || face.HasXamlTypographyFeatures;
         ShowColorGlyphs = face.DirectWriteProperties.IsColorFont;
 
+        FontAnalysis analysis = TypographyAnalyzer.Analyze(this);
+        analysis.ResetVariableAxis();
         Analysis = analysis;
-        Glyphs = new(face);
 
+        if (loadFull is false)
+            return;
+
+        IsMDL2Font = FontFinder.IsMDL2(face);
+        FontFamily = new(face.Source);
+        Glyphs = new(face);
+        HasFontOptions = analysis.ContainsVectorColorGlyphs || face.HasXamlTypographyFeatures;
         UpdateVariations();
         UpdateRampOptions();
     }
@@ -83,7 +84,7 @@ public partial class FaceAnalysisModel : ViewModelBase
 
     public void UpdateRampOptions()
     {
-        RampOptions = GetRampOptions(_face);
+        RampOptions = GetRampOptions(Face);
     }
 
     private IReadOnlyList<Suggestion> GetRampOptions(CMFontFace variant)
@@ -106,6 +107,52 @@ public partial class FaceAnalysisModel : ViewModelBase
         return list;
     }
 
+
+
+
+    //------------------------------------------------------
+    //
+    // Searching
+    //
+    //------------------------------------------------------
+
+    public Dictionary<Character, string> SearchMap { get; set; }
+
+    /// <summary>
+    /// Attempts to return the font's own defined name for a glyph
+    /// </summary>
+    /// <param name="c"></param>
+    /// <returns></returns>
+    public string GetDefinedCharacterName(Character c)
+    {
+        if (SearchMap is null)
+            TypographyAnalyzer.PrepareSearchMap(this, Analysis);
+
+        if (SearchMap != null && SearchMap.TryGetValue(c, out string mapping) && !string.IsNullOrWhiteSpace(mapping))
+            return mapping;
+
+        return null;
+    }
+
+    public string GetDescription(Character c, bool allowUnihan = false)
+    {
+        if (SearchMap == null
+            || !SearchMap.TryGetValue(c, out string mapping)
+            || string.IsNullOrWhiteSpace(mapping))
+        {
+            string name = GlyphService.GetCharacterDescription(c.UnicodeIndex, this.Face);
+
+            if (allowUnihan
+                && string.IsNullOrWhiteSpace(name)
+                && Unicode.CouldBeUnihan(c.UnicodeIndex)
+                && GlyphService.GetUnihanData(c.UnicodeIndex)?.Definition is { } def)
+                name = def.Description;
+
+            return name;
+        }
+
+        return GlyphService.TryGetAGLFNName(mapping);
+    }
 }
 
 
@@ -378,7 +425,7 @@ public partial class FontMapSearchModel : ViewModelBase
 {
     private Debouncer _debouncer { get; } = new();
     private ConcurrencyToken.ConcurrencyTokenGenerator _tokenFactory { get; } = new();
-    private CMFontFace _face;
+    private FaceAnalysisModel _face;
     private IReadOnlyList<UnicodeRangeModel> _categories;
 
     [ObservableProperty] string _query;
@@ -390,11 +437,13 @@ public partial class FontMapSearchModel : ViewModelBase
     {
         DebounceSearch(value, Settings.InstantSearchDelay, SearchSource.AutoProperty);
     }
-    public void SetContext(CMFontFace face, IReadOnlyList<UnicodeRangeModel> categories)
+
+    public void SetContext(FaceAnalysisModel face, IReadOnlyList<UnicodeRangeModel> categories)
     {
         _face = face;
         _categories = categories;
     }
+
     public void Clear()
     {
         _tokenFactory.GenerateToken(); // Invalidate inflight searches
@@ -403,6 +452,7 @@ public partial class FontMapSearchModel : ViewModelBase
         IsGrouped = false;
         IsSearching = false;
     }
+
     public void DebounceSearch(string query, int delayMilliseconds = 500, SearchSource from = SearchSource.AutoProperty)
     {
         if (from == SearchSource.AutoProperty && !Settings.UseInstantSearch)
@@ -412,6 +462,7 @@ public partial class FontMapSearchModel : ViewModelBase
         else
             _debouncer.Debounce(delayMilliseconds, () => Search(query));
     }
+
     public async void Search(string query)
     {
         if (_face is null || string.IsNullOrWhiteSpace(query))

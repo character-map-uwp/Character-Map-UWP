@@ -46,7 +46,7 @@ public interface IGlyphDataProvider
     string GetCharacterDescription(int unicodeIndex, CMFontFace variant);
     List<UnihanReading> GetUnihanReadings(int unicodeIndex);
     string GetAdobeGlyphListMapping(string postscriptName);
-    Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, CMFontFace variant);
+    Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, IFaceSearchSource variant);
 }
 
 public static class GlyphService
@@ -79,12 +79,12 @@ public static class GlyphService
         return Task.CompletedTask;
     }
 
-    internal static string GetCharacterDescription(uint unicodeIndex, CMFontFace variant)
+    internal static string GetCharacterDescription(uint unicodeIndex, CMFontFace fontFace)
     {
-        if (variant == null || _provider == null)
+        if (fontFace == null || _provider == null)
             return null;
 
-        return _provider.GetCharacterDescription((int)unicodeIndex, variant);
+        return _provider.GetCharacterDescription((int)unicodeIndex, fontFace);
     }
 
     internal static string TryGetAGLFNName(string aglfn)
@@ -112,7 +112,7 @@ public static class GlyphService
         return null;
     }
 
-    internal static Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, CMFontFace variant)
+    internal static Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, IFaceSearchSource variant)
     {
         if (variant == null)
             return Task.FromResult(EMPTY_SEARCH);

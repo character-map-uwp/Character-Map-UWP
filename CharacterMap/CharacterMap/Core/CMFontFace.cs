@@ -192,8 +192,6 @@ public partial class CMFontFace : IDisposable
             return _supplementaryCharacters.TryGetValue(unicodeIndex, out character);
     }
 
-    public FontAnalysis GetAnalysis() => _analysis ??= TypographyAnalyzer.Analyze(this);
-
     public string QuickFilePath => GetAnalysisInternal().FilePath;
 
     /// <summary>
@@ -201,7 +199,7 @@ public partial class CMFontFace : IDisposable
     /// take care to ensure it's created by manually calling <see cref="TypographyAnalyzer.PrepareSearchMap(CMFontFace, FontAnalysis)"/>
     /// </summary>
     /// <returns></returns>
-    private FontAnalysis GetAnalysisInternal() => _analysis ??= TypographyAnalyzer.Analyze(this, false);
+    private FontAnalysis GetAnalysisInternal() => _analysis ??= TypographyAnalyzer.QuickAnalyze(this);
 
     /// <summary>
     /// Used temporarily to allow insider builds to access COLRv1. Do not use elsewhere. Very expensive.
@@ -213,10 +211,6 @@ public partial class CMFontFace : IDisposable
     public bool ContainsSVGGlyphs => DirectWriteProperties.IsColorFont && GetAnalysisInternal().HasSVGGlyphs;
     
     public bool ContainsBitmapGlyphs => DirectWriteProperties.IsColorFont && GetAnalysisInternal().HasBitmapGlyphs;
-
-    public IReadOnlyList<FontPalette> Palettes => GetAnalysis().Palettes;
-
-    public bool HasPalettes => GetAnalysis().HasPalettes;
 
     /// <summary>
     /// Hack used for QuickCompare - we show ALL colour fonts using manual DirectWrite rendering (using DirectText control) rather than 
@@ -241,54 +235,6 @@ public partial class CMFontFace : IDisposable
     }
 
     public bool CouldContainUnihan() => UnicodeRanges.Any(r => Unicode.UNIHAN_IDX >= r.First && Unicode.UNIHAN_IDX <= r.Last);
-
-
-
-
-    //------------------------------------------------------
-    //
-    // Searching
-    //
-    //------------------------------------------------------
-
-    public Dictionary<Character, string> SearchMap { get; set; }
-
-    /// <summary>
-    /// Attempts to return the font's own defined name for a glyph
-    /// </summary>
-    /// <param name="c"></param>
-    /// <returns></returns>
-    public string GetDefinedCharacterName(Character c)
-    {
-        if (SearchMap == null)
-            TypographyAnalyzer.PrepareSearchMap(this, TypographyAnalyzer.Analyze(this));
-
-        if (SearchMap != null && SearchMap.TryGetValue(c, out string mapping) && !string.IsNullOrWhiteSpace(mapping))
-            return mapping;
-
-        return null;
-    }
-
-    public string GetDescription(Character c, bool allowUnihan = false)
-    {
-        if (SearchMap == null
-            || !SearchMap.TryGetValue(c, out string mapping)
-            || string.IsNullOrWhiteSpace(mapping))
-        {
-            string name = GlyphService.GetCharacterDescription(c.UnicodeIndex, this);
-            if (string.IsNullOrWhiteSpace(name)
-                && allowUnihan
-                && Unicode.CouldBeUnihan(c.UnicodeIndex)
-                && GlyphService.GetUnihanData(c.UnicodeIndex)?.Definition
-                    is { } def)
-                name = def.Description;
-
-            return name;
-        }
-
-
-        return GlyphService.TryGetAGLFNName(mapping);
-    }
 
 
 
@@ -404,12 +350,21 @@ public partial class CMFontFace : IDisposable
         }
     }
 
-
+    public void Trim()
+    {
+        Face.ReleaseResources();
+        _glyphToCharacterMap = null;
+        Characters = null;
+    }
 
 
     /* .NET */
 
-    public void Dispose() => FontFace?.Dispose();
+    public void Dispose()
+    {
+        Trim();
+        FontFace?.Dispose();
+    }
 
     public override string ToString() => PreferredName;
 }

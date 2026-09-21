@@ -1328,6 +1328,7 @@
                     ItemAnnotation="{x:Bind ViewModel.Settings.GlyphAnnotation, Mode=OneTime}"
                     ItemContainerTransitions="{StaticResource NoTransitions}"
                     ItemDoubleTapped="CharGrid_ItemDoubleTapped"
+                    ItemFaceAnalysis="{x:Bind ViewModel.SelectedFaceAnalysis, Mode=OneWay, FallbackValue={x:Null}}"
                     ItemFontFace="{x:Bind ViewModel.SelectedFace.Face, Mode=OneWay}"
                     ItemFontFamily="{x:Bind ViewModel.SelectedFaceAnalysis.FontFamily, Mode=OneWay, FallbackValue={x:Null}}"
                     ItemFontVariant="{x:Bind ViewModel.SelectedFace, Mode=OneWay}"

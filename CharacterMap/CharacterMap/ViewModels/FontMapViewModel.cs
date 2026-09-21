@@ -225,7 +225,7 @@ public partial class FontMapViewModel : ViewModelBase
     public void UpdateCategories(IList<UnicodeRangeModel> value)
     {
         SelectedGlyphCategories = value.ToList();
-        Search.SetContext(SelectedFace, SelectedGlyphCategories);
+        Search.SetContext(SelectedFaceAnalysis, SelectedGlyphCategories);
         UpdateCharacters();
     }
 
@@ -296,7 +296,7 @@ public partial class FontMapViewModel : ViewModelBase
             SelectedTypography = TypographyVariation.None;
 
             Search.Clear();
-            Search.SetContext(variant, SelectedGlyphCategories);
+            Search.SetContext(SelectedFaceAnalysis, SelectedGlyphCategories);
             Search.DebounceSearch(Search.Query, 100);
 
             IsLoadingCharacters = false;
@@ -430,7 +430,7 @@ public partial class FontMapViewModel : ViewModelBase
         if (SelectedFace == null || c == null)
             return null;
 
-        return SelectedFace.GetDescription(c, allowUnihan: true);
+        return SelectedFaceAnalysis.GetDescription(c, allowUnihan: true);
     }
 
     public string GetCharDescription(Character c)
