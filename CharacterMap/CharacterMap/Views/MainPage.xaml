@@ -1071,6 +1071,17 @@
                                                 core:Properties.ThemeIcon="GlyphMapView"
                                                 FontSize="11" />
 
+                                            <FontIcon
+                                                x:Name="LigatureMapIcon"
+                                                x:Load="{x:Bind IsLigatures}"
+                                                Margin="0 2 0 0"
+                                                core:Properties.ThemeIcon="GlyphMapView"
+                                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                                FontSize="11"
+                                                Glyph="ffi"
+                                                Typography.ContextualLigatures="True"
+                                                Typography.DiscretionaryLigatures="True" />
+
                                             <TextBlock
                                                 x:Name="TitleText"
                                                 x:Load="{x:Bind core:Converters.False(IsCompact)}"

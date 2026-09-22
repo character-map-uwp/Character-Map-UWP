@@ -28,6 +28,25 @@ public class GlyphCollection : ObservableCollection<uint>, ISupportIncrementalLo
     {
         _fontFace = fontFace;
         _context = SynchronizationContext.Current;
+
+        // If we're a local font file we can optimise the UI
+        // by skipping asynchronous loading later and pre-populating
+        // some basic glyph
+        var path = DirectWrite.GetFileName(_fontFace.Face);
+        if (StorageHelper.IsAppPath(path))
+        {
+            FontUri = new Uri(StorageHelper.GetAppPath(path));
+            _loadingTask = Task.FromResult(true);
+
+            // Prepare some glyph
+            var size = Math.Min(MaxCount - currentOffset, 256);
+            var items = Enumerable.Range((int)currentOffset, (int)size).ToList();
+
+            foreach (var item in items)
+                base.Items.Add((uint)item);
+
+            currentOffset = (uint)this.Count;
+        }
     }
 
     public uint MaxCount => _fontFace.Face.GlyphCount;
@@ -46,7 +65,8 @@ public class GlyphCollection : ObservableCollection<uint>, ISupportIncrementalLo
 
     private async Task LoadFontAsync()
     {
-        FontUri =  await StorageHelper.GetTempGlyphsLocalCopyAsync(_fontFace);
+        FontUri = await StorageHelper.GetTempGlyphsLocalCopyAsync(_fontFace);
+
         OnPropertyChanged(new(nameof(FontUri)));
 
         IsLoading = false;
@@ -59,7 +79,8 @@ public class GlyphCollection : ObservableCollection<uint>, ISupportIncrementalLo
         {
             // 1. Ensure font is loaded
             _loadingTask ??= LoadFontAsync();
-            await _loadingTask.ConfigureAwait(false);
+            if (_loadingTask.IsCompleted is false)
+                await _loadingTask.ConfigureAwait(false);
 
             // 2. Give us some things
             var size = Math.Min(MaxCount - currentOffset, count);

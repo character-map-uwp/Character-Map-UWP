@@ -1,4 +1,4 @@
-﻿using System.Transactions;
+using System.Transactions;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -73,6 +73,14 @@ public partial class FontMapView
             {
                 CompositionFactory.PlayEntrance(GlyphsRoot, offset * 2);
             }
+            else if (ViewModel.DisplayMode == FontDisplayMode.LigaturesState)
+            {
+                if (LigaturesRoot != null)
+                {
+                    _ = ViewModel?.SelectedFaceAnalysis?.LoadGlyphFontAsync();
+                    CompositionFactory.PlayEntrance(LigaturesRoot, offset * 2);
+                }
+            }
         }
     }
 
@@ -83,18 +91,19 @@ public partial class FontMapView
     }
 
 
-    private void AnimateSelectionFromGlyph()
+    private void AnimateSelectionFromGlyph(ListViewBase source = null)
     {
         // Empty glyphs will cause the connected animation service to crash, so manually
         // check if the rendered glyph contains content
+        source ??= GlyphRepeater;
         if (ResourceHelper.AllowAnimation
-            && GlyphRepeater.ContainerFromItem(GlyphRepeater.SelectedItem) is FrameworkElement container
+            && source.ContainerFromItem(source.SelectedItem) is FrameworkElement container
             && container.GetFirstDescendantOfType<Glyphs>() is Glyphs t)
         {
             t.Measure(container.DesiredSize);
             if (t.DesiredSize.Height != 0 && t.DesiredSize.Width != 0)
             {
-                var ani = GlyphRepeater.PrepareConnectedAnimation("PP", GlyphRepeater.SelectedItem, "Text");
+                var ani = source.PrepareConnectedAnimation("PP", source.SelectedItem, "Text");
                 ani.TryStart(TxtPreview);
             }
         }
@@ -334,10 +343,41 @@ public partial class FontMapView
     {
         // 0. Realise items
         this.FindName(nameof(GlyphsRoot));
+        UpdateGridToXTransition(GlyphRepeater, GridToGlyphTransition);
+        return;
+    }
 
-        if (GlyphRepeater.ItemsPanelRoot is null)
+    void UpdateGridToXTransition(ListViewBase repeater, VisualTransition transition)
+    {
+        UpdateXToXTransition(CharGrid, repeater, transition);
+    }
+
+    void UpdateXToXTransition(ListViewBase from, ListViewBase too, VisualTransition transition)
+    {
+        if (too.ItemsPanelRoot is null)
         {
-            GlyphRepeater.Measure(CharGrid.DesiredSize);
+            too.Measure(CharGrid.DesiredSize);
+            if (too.ItemsPanelRoot is null)
+                return;
+        }
+
+        StoryboardBuilderArgs args = new();
+        transition.Storyboard = args.Storyboard;
+
+        CreateGridOut(args, from, false);
+        CreateGridIn(args, too, false);
+
+        return;
+    }
+
+    public void UpdateGridToLigatureTransition()
+    {
+        // 0. Realise items
+        this.FindName(nameof(LigaturesRoot));
+
+        if (LigaturesRepeater.ItemsPanelRoot is null)
+        {
+            LigaturesRepeater.Measure(CharGrid.DesiredSize);
             if (GlyphRepeater.ItemsPanelRoot is null)
                 return;
         }
@@ -346,7 +386,7 @@ public partial class FontMapView
         GridToGlyphTransition.Storyboard = args.Storyboard;
 
         CreateGridOut(args, CharGrid, false);
-        CreateGridIn(args, GlyphRepeater, false);
+        CreateGridIn(args, LigaturesRepeater, false);
 
         return;
     }
@@ -386,15 +426,20 @@ public partial class FontMapView
         CreateGridIn(args, grid, true);
     }
 
-    public void UpdateGlyphToGridTransition()
+    public void UpdateRepeaterToGridTransition(ListViewBase repeater, VisualTransition transition)
     {
-        if (GlyphRepeater == null)
+        UpdateRepeaterToXTransition(repeater, CharGrid, transition);
+    }
+
+    public void UpdateRepeaterToXTransition(ListViewBase repeater, ListViewBase to, VisualTransition transition)
+    {
+        if (repeater == null)
             return;
 
         StoryboardBuilderArgs args = new StoryboardBuilderArgs { FromDepth = 300, ToDepth = -400 };
-        GlyphToGridTransition.Storyboard = args.Storyboard;
-        CreateGridOut(args, GlyphRepeater, false);
-        CreateGridIn(args, CharGrid, false);
+        transition.Storyboard = args.Storyboard;
+        CreateGridOut(args, repeater, false);
+        CreateGridIn(args, to, false);
         return;
     }
 
@@ -403,6 +448,18 @@ public partial class FontMapView
 
 
     #region PARTS
+
+    FrameworkElement GetGridTarget(FrameworkElement f)
+    {
+        if (f == GlyphRepeater)
+            return GlyphsRoot;
+        if (f == LigaturesRepeater)
+            return LigaturesRoot;
+        if (f == CharGrid)
+            return f;
+
+        throw new Exception("Unsupported Target");
+    }
 
     void CreateGridOut(StoryboardBuilderArgs args, ListViewBase grid, bool toRamp)
     {
@@ -453,9 +510,13 @@ public partial class FontMapView
 
         if (toRamp)
         {
-            if (grid == CharGrid && GlyphsRoot != null)
+            if (grid != LigaturesRepeater && LigaturesRoot != null)
+                sb.CreateTimeline(LigaturesRoot, Visibility.Collapsed);
+
+            if (grid != GlyphRepeater && GlyphsRoot != null)
                 sb.CreateTimeline(GlyphsRoot, Visibility.Collapsed);
-            else
+
+            if (grid != CharGrid)
                 sb.CreateTimeline(CharGrid, Visibility.Collapsed);
         }
 
@@ -507,7 +568,7 @@ public partial class FontMapView
         }
 
         // 4. Adjust visibility on CharGrid/TypeRamp in the middle of the animation
-        sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(grid == GlyphRepeater ? GlyphsRoot : grid, TargetProperty.Visibility)
+        sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(GetGridTarget(grid), TargetProperty.Visibility)
             .AddKeyFrame(0, Visibility.Visible)
             .AddKeyFrame(startOffset.Add(duration.Multiply(0.8)), Visibility.Collapsed);
 
@@ -545,7 +606,13 @@ public partial class FontMapView
 
         if (args.CurrentOffset.TotalSeconds > 0)
         {
-            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(grid == GlyphRepeater ? GlyphsRoot : grid, TargetProperty.Visibility)
+            FrameworkElement vt = grid;
+            if (vt == GlyphRepeater)
+                vt = GlyphsRoot;
+            else if (vt == LigaturesRepeater)
+                vt = LigaturesRoot;
+
+            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(vt, TargetProperty.Visibility)
                .AddKeyFrame(0, Visibility.Collapsed)
                .AddKeyFrame(startOffset, Visibility.Visible);
         }
@@ -604,7 +671,7 @@ public partial class FontMapView
             sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(item, TargetProperty.Opacity)
                 .AddKeyFrame(TimeSpan.Zero, 0)
                 .AddKeyFrame(startOffset, 0)
-                .AddKeyFrame(startOffset.Add(durationOpacityIn), 1, KeySplines.DepthZoomOpacity);
+                .AddKeyFrame(startOffset.Add(durationOpacityIn), (double)item.GetAnimationBaseValue(FrameworkElement.OpacityProperty), KeySplines.DepthZoomOpacity);
 
             // 3.3. Animate the 3D depth translation
             if (fromDepth != 0)

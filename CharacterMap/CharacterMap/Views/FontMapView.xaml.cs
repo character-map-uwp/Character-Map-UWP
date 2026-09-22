@@ -239,6 +239,15 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         if (GlyphsRoot != null)
             GlyphsRoot.Children.Clear();
 
+        if (LigaturesRepeater != null)
+        {
+            LigaturesRepeater.SelectionChanged -= LigaturesRepeater_SelectionChanged;
+            LigaturesRepeater.ItemsSource = null;
+        }
+
+        if (LigaturesRoot != null)
+            LigaturesRoot.Children.Clear();
+
         if (OptionsList != null)
             OptionsList.ItemsSource = null;
 
@@ -483,6 +492,8 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                     UpdateGridToRampTransition(GridToRampTransition, CharGrid);
                 else if (MapDisplayStates.CurrentState == GlyphMapState)
                     UpdateGridToRampTransition(GlyphToRampTransition, GlyphRepeater);
+                else if (MapDisplayStates.CurrentState == LigatureMapState)
+                    UpdateGridToRampTransition(LigatureToRampTransition, LigaturesRepeater);
             }
             GoToState(TypeRampState.Name, animate);
         }
@@ -493,7 +504,9 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 if (MapDisplayStates.CurrentState == TypeRampState)
                     UpdateRampToGridTransition(CharGrid, RampToGridTransition);
                 else if (MapDisplayStates.CurrentState == GlyphMapState)
-                    UpdateGlyphToGridTransition();
+                    UpdateRepeaterToXTransition(GlyphRepeater, CharGrid, GlyphToGridTransition);
+                else if (MapDisplayStates.CurrentState == LigatureMapState)
+                    UpdateRepeaterToXTransition(LigaturesRepeater, CharGrid, LigatureToGridTransition);
             }
             else if (CharGrid.ItemsPanelRoot is null)
                 CharGrid.Measure(CharGrid.DesiredSize);
@@ -506,14 +519,30 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             {
                 this.FindName(nameof(GlyphsRoot));
                 if (MapDisplayStates.CurrentState == CharacterMapState)
-                    UpdateGridToGlyphTransition();
+                    UpdateXToXTransition(CharGrid, GlyphRepeater, GridToGlyphTransition);
                 else if (MapDisplayStates.CurrentState == TypeRampState)
-                {
                     UpdateRampToGridTransition(GlyphRepeater, RampToGlyphTransition);
-                }
+                else if (MapDisplayStates.CurrentState == LigatureMapState)
+                    UpdateRepeaterToXTransition(LigaturesRepeater, GlyphRepeater, LigatureToGlyphTransition);
             }
 
             GoToState(GlyphMapState.Name, animate);
+        }
+        else if (ViewModel.DisplayMode == FontDisplayMode.LigaturesState)
+        {
+            if (animate)
+            {
+                this.FindName(nameof(LigaturesRoot));
+                if (MapDisplayStates.CurrentState == CharacterMapState)
+                    UpdateXToXTransition(CharGrid, LigaturesRepeater, GridToLigaturesTransition);
+                else if  (MapDisplayStates.CurrentState == GlyphMapState)
+                    UpdateXToXTransition(GlyphRepeater, LigaturesRepeater, GlyphToLigaturesTransition);
+                else if (MapDisplayStates.CurrentState == TypeRampState)
+                    UpdateRampToGridTransition(LigaturesRepeater, RampToLigaturesTransition);
+            }
+
+            _ = ViewModel?.SelectedFaceAnalysis?.LoadGlyphFontAsync();
+            GoToState(LigatureMapState.Name, animate);
         }
 
         // Make sure this stays in sync with programmatic changes
@@ -1384,6 +1413,73 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         //    TxtPreview.COLRRenderVersion = 0;
         //else
         //    TxtPreview.COLRRenderVersion = 1;
+    }
+
+    private void LigaturesRepeater_Loaded(object sender, RoutedEventArgs e)
+    {
+        //LigaturesRepeater.ItemsSource = LigaturesSource;
+        _ = ViewModel?.SelectedFaceAnalysis?.LoadGlyphFontAsync();
+    }
+
+    private void LigaturesRepeater_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (LigaturesRepeater.SelectedItem is LigatureModel model)
+        {
+            SetWithoutReposition(TxtPreview, _resizerBouncer, () =>
+            {
+                TxtPreview.GlyphIndex = (int)model.LigatureGlyph;
+                AnimateSelectionFromGlyph(LigaturesRepeater);
+            });
+        }
+    }
+
+    private void LigatureCard_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+    {
+        if (sender is FrameworkElement { DataContext: LigatureModel target }
+            && args.TryGetPosition(sender, out Point p))
+        {
+            MenuFlyout menu = new();
+
+            if (!string.IsNullOrEmpty(target.CombinedString))
+            {
+                MenuFlyoutItem copyItem = new()
+                {
+                    Text = $"Copy sequence \"{target.CombinedString}\"",
+                    Icon = new FontIcon { Glyph = "\uE8C8" }
+                };
+                copyItem.Click += (_, _) =>
+                {
+                    Utils.CopyToClipBoard(target.CombinedString);
+                    GetNotifier().Show($"Copied \"{target.CombinedString}\" to clipboard", 2000);
+                };
+                menu.Items.Add(copyItem);
+            }
+
+            //MenuFlyoutItem copyGlyphItem = new()
+            //{
+            //    Text = $"Copy Glyph Index (#{target.LigatureGlyph})",
+            //    Icon = new FontIcon { Glyph = "\uE8C8" }
+            //};
+            //copyGlyphItem.Click += (_, _) =>
+            //{
+            //    Utils.CopyToClipBoard(target.LigatureGlyph.ToString());
+            //    GetNotifier().Show($"Copied Glyph #{target.LigatureGlyph} to clipboard", 2000);
+            //};
+            //menu.Items.Add(copyGlyphItem);
+
+            menu.Items.Add(new MenuFlyoutSeparator());
+
+            MenuFlyoutItem viewGlyphItem = new()
+            {
+                Text = $"View Glyph #{target.LigatureGlyph} in Glyph Map",
+                Icon = new FontIcon { Glyph = "\uE8A9" }
+            };
+            viewGlyphItem.Click += (_, _) => NavigateToGlyph((ushort)target.LigatureGlyph);
+            menu.Items.Add(viewGlyphItem);
+
+            menu.ShowAt(sender, p);
+            args.Handled = true;
+        }
     }
 }
 

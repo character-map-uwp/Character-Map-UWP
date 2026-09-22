@@ -27,6 +27,8 @@ public static class TypographyAnalyzer
 
         foreach (DWriteLigatureFeature rawFeature in rawFeatures)
         {
+            string tag = DirectWrite.GetFeatureTag(rawFeature.FeatureTag);
+            string title = string.IsNullOrEmpty(rawFeature.FeatureName) || rawFeature.FeatureName == tag ? tag : $"{rawFeature.FeatureName} ({tag})";
             CanvasTypographyFeatureName feature = (CanvasTypographyFeatureName)rawFeature.FeatureTag;
             List<LigatureModel> ligatures = [];
 
@@ -35,18 +37,47 @@ public static class TypographyAnalyzer
                 List<LigatureComponent> components = [];
                 foreach (ushort compGlyphId in rawLig.ComponentGlyphs)
                 {
-                    string ch = fontFace.TryGetCharacterForGlyph(compGlyphId, out Character mappedChar)
-                        ? mappedChar.Char
-                        : null;
+                    bool hasChar = fontFace.TryGetCharacterForGlyph(compGlyphId, out Character mappedChar);
+                    string ch = hasChar ? mappedChar.Char : null;
+                    uint? uniIndex = hasChar ? mappedChar.UnicodeIndex : null;
 
-                    components.Add(new(compGlyphId, ch));
+                    string tip = null;
+                    if (hasChar)
+                    {
+                        string desc = mappedChar.UnicodeIndex switch
+                        {
+                            0x200D => "Zero Width Joiner (ZWJ)",
+                            0x200C => "Zero Width Non-Joiner (ZWNJ)",
+                            0x200B => "Zero Width Space (ZWSP)",
+                            0xFE0F => "Variation Selector-16 (VS16, Emoji)",
+                            0xFE0E => "Variation Selector-15 (VS15, Text)",
+                            0x00A0 => "No-Break Space (NBSP)",
+                            0x0020 => "Space",
+                            _ => GlyphService.GetCharacterDescription(mappedChar.UnicodeIndex, fontFace)
+                        };
+
+                        tip = !string.IsNullOrWhiteSpace(desc)
+                            ? $"{desc}\r\nUnicode: U+{mappedChar.UnicodeIndex:X4}\r\nGlyph #{compGlyphId}"
+                            : $"Unicode: U+{mappedChar.UnicodeIndex:X4}\r\nGlyph #{compGlyphId}";
+                    }
+                    else
+                        tip = $"Glyph #{compGlyphId}";
+
+                    components.Add(new(compGlyphId, ch, uniIndex, tip));
                 }
 
-                ligatures.Add(new(rawLig.LigatureGlyph, components, feature));
+                string ligName = null;
+                if (fontFace.TryGetCharacterForGlyph((ushort)rawLig.LigatureGlyph, out Character ligChar))
+                {
+                    string desc = GlyphService.GetCharacterDescription(ligChar.UnicodeIndex, fontFace);
+                    ligName = !string.IsNullOrWhiteSpace(desc) ? desc : ligChar.Char;
+                }
+
+                ligatures.Add(new(rawLig.LigatureGlyph, components, feature, ligName));
             }
 
             if (ligatures.Count > 0)
-                groups.Add(new(rawFeature.FeatureName, feature, ligatures));
+                groups.Add(new(title, tag, rawFeature.FeatureName, feature, ligatures));
         }
 
         return groups;

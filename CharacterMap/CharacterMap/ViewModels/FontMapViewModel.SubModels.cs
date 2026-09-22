@@ -41,8 +41,10 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
 
     public bool HasLigatures => Ligatures.Count > 0;
 
+    public string LigaturesFeatureSuffix => LigatureFeatureCount == 1 ? "feature" : "features";
+
     public string LigaturesSummary =>
-        $"{TotalLigaturesCount} ligatures in {LigatureFeatureCount} OpenType features";
+        $"{TotalLigaturesCount} ligatures in {LigatureFeatureCount} OpenType {LigaturesFeatureSuffix}";
 
     private Task<Uri> _loadingTask = null;
 
