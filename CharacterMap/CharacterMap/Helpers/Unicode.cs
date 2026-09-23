@@ -148,4 +148,23 @@ public static class Unicode
 
         return true;
     }
+
+
+    public static bool IsZWJ(uint i) => i == 0x200D;
+    public static bool IsZWJ(string c) => c == "\u200D";
+
+    public static bool IsZWNJ(uint i) => i == 0x200C;
+    public static bool IsZWNJ(string c) => c == "\u200C";
+
+    public static bool IsSpecial(uint? i) => i is uint u && IsSpecial(u);
+    public static bool IsSpecial(uint i)
+    {
+        return i
+            is 0x200C // ZWNJ
+            or 0x200D // ZWJ
+            or 0xFE0F // VS16
+            or 0xFE0E // VS15
+            or 0x00A0 // NBSP
+            or 0x0020; // Space
+    }
 }

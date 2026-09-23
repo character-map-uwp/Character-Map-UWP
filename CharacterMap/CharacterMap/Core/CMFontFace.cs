@@ -379,7 +379,7 @@ public partial class CMFontFace
             PreferredName = face.Properties.FaceName,
 
             // These default characters are used by Subsetter.cs
-            Characters = new FontCharacterList([Character.Null, Character.CarriageReturn, Character.Space])
+            Characters = new ([SpecialCharacters.Null, SpecialCharacters.CarriageReturn, SpecialCharacters.Space])
         };
     }
 

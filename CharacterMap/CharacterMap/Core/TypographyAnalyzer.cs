@@ -44,18 +44,7 @@ public static class TypographyAnalyzer
                     string tip = null;
                     if (hasChar)
                     {
-                        string desc = mappedChar.UnicodeIndex switch
-                        {
-                            0x200D => "Zero Width Joiner (ZWJ)",
-                            0x200C => "Zero Width Non-Joiner (ZWNJ)",
-                            0x200B => "Zero Width Space (ZWSP)",
-                            0xFE0F => "Variation Selector-16 (VS16, Emoji)",
-                            0xFE0E => "Variation Selector-15 (VS15, Text)",
-                            0x00A0 => "No-Break Space (NBSP)",
-                            0x0020 => "Space",
-                            _ => GlyphService.GetCharacterDescription(mappedChar.UnicodeIndex, fontFace)
-                        };
-
+                        string desc = GlyphService.GetCharacterDescription(mappedChar.UnicodeIndex, fontFace);
                         tip = !string.IsNullOrWhiteSpace(desc)
                             ? $"{desc}\r\nUnicode: U+{mappedChar.UnicodeIndex:X4}\r\nGlyph #{compGlyphId}"
                             : $"Unicode: U+{mappedChar.UnicodeIndex:X4}\r\nGlyph #{compGlyphId}";

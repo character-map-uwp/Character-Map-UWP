@@ -9,9 +9,9 @@ namespace CharacterMap.Models;
 public record LigatureComponent(uint GlyphIndex, string Character, uint? UnicodeIndex = null, string TooltipText = null)
 {
     public bool HasCharacter => !string.IsNullOrEmpty(Character);
-    public bool IsZwj => UnicodeIndex == 0x200D || Character == "\u200D";
-    public bool IsZwnj => UnicodeIndex == 0x200C || Character == "\u200C";
-    public bool IsSpecial => IsZwj || IsZwnj || UnicodeIndex is 0xFE0F or 0xFE0E or 0x200B or 0x00A0 or 0x0020;
+    public bool IsZWJ => UnicodeIndex is uint i ? Unicode.IsZWJ(i) : Unicode.IsZWJ(Character);
+    public bool IsZWNJ => UnicodeIndex is uint i ? Unicode.IsZWNJ(i) : Unicode.IsZWNJ(Character);
+    public bool IsSpecial => IsZWJ || IsZWNJ || Unicode.IsSpecial(UnicodeIndex);
 
     public string DisplayText => UnicodeIndex switch
     {
@@ -45,10 +45,13 @@ public record LigatureComponent(uint GlyphIndex, string Character, uint? Unicode
 [DebuggerDisplay("LigatureModel Glyph: {LigatureGlyph}, {Components.Count} components")]
 public record LigatureModel(uint LigatureGlyph, IReadOnlyList<LigatureComponent> Components, CanvasTypographyFeatureName Feature, string Name = null)
 {
-    public bool ContainsZwj => Components.Any(c => c.IsZwj);
+    // PROPERTIES
+    public string CombinedString => field ??= string.Join(string.Empty, Components.Select(c => c.Character));
+    
+    // ON-DEMAND PROPERTIES
+    public bool ContainsZwj => Components.Any(c => c.IsZWJ);
     public string GlyphName => !string.IsNullOrWhiteSpace(Name) ? Name : $"#{LigatureGlyph}";
     public string ComponentMakeupString => string.Join(" + ", Components.Select(c => c.DisplayText));
-    public string CombinedString => field ??= string.Join(string.Empty, Components.Select(c => c.Character));
     public string ClipboardText => !string.IsNullOrEmpty(CombinedString) ? CombinedString : $"#{LigatureGlyph}";
 }
 
@@ -61,7 +64,6 @@ public class LigatureGroup : IGrouping<string, LigatureModel>
     public string Tag { get; }
     public string FeatureName { get; }
     public string Key { get; }
-    public string Title => Key;
 
     public LigatureGroup(string title, string tag, string featureName, CanvasTypographyFeatureName feature, IReadOnlyList<LigatureModel> ligatures)
     {

@@ -493,7 +493,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 else if (MapDisplayStates.CurrentState == GlyphMapState)
                     UpdateGridToRampTransition(GlyphToRampTransition, GlyphRepeater);
                 else if (MapDisplayStates.CurrentState == LigatureMapState)
-                    UpdateGridToRampTransition(LigatureToRampTransition, LigaturesRepeater);
+                    UpdateGridToRampTransition(LigatureToRampTransition, LigaturesRepeater, true);
             }
             GoToState(TypeRampState.Name, animate);
         }
@@ -538,7 +538,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 else if  (MapDisplayStates.CurrentState == GlyphMapState)
                     UpdateXToXTransition(GlyphRepeater, LigaturesRepeater, GlyphToLigaturesTransition);
                 else if (MapDisplayStates.CurrentState == TypeRampState)
-                    UpdateRampToGridTransition(LigaturesRepeater, RampToLigaturesTransition);
+                    UpdateRampToGridTransition(LigaturesRepeater, RampToLigaturesTransition, true);
             }
 
             _ = ViewModel?.SelectedFaceAnalysis?.LoadGlyphFontAsync();

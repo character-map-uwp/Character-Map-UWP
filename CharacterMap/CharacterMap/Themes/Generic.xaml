@@ -990,8 +990,8 @@
                             </Grid.ColumnDefinitions>
 
                             <FontIcon
-                                FontSize="13.333"
                                 Margin="0 1 0 0"
+                                FontSize="13.333"
                                 Glyph="{core:ThemeIconGlyph Icon=FontInfo}"
                                 Style="{StaticResource ThemeFontIconStyle}" />
 

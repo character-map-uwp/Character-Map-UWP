@@ -330,18 +330,21 @@ public partial class FontMapView
         return sb;
     }
 
-    public void UpdateGridToRampTransition(VisualTransition transition, ListViewBase grid)
+    public void UpdateGridToRampTransition(VisualTransition transition, ListViewBase grid, bool reverse = false)
     {
         StoryboardBuilderArgs args = new();
         transition.Storyboard = args.Storyboard;
 
+        if (reverse)
+            args.ToDepth *= -1;
+
         CreateGridOut(args, grid, true);
-        CreateRampIn(args);
+        CreateRampIn(args, reverse ? 400 : -400);
     }
 
     public void UpdateGridToGlyphTransition()
     {
-        // 0. Realise items
+        // 0. Realize items
         this.FindName(nameof(GlyphsRoot));
         UpdateGridToXTransition(GlyphRepeater, GridToGlyphTransition);
         return;
@@ -391,7 +394,6 @@ public partial class FontMapView
         return;
     }
 
-
     private void UpdateGlyphLoadedTransition()
     {
         if (GlyphRepeater == null)
@@ -414,15 +416,15 @@ public partial class FontMapView
         CreateGridIn(args, GlyphRepeater, false, true);
     }
 
-    public void UpdateRampToGridTransition(ListViewBase grid, VisualTransition t)
+    public void UpdateRampToGridTransition(ListViewBase grid, VisualTransition t, bool forward = false)
     {
         if (TypeRampList == null || grid == null)
             return;
 
-        StoryboardBuilderArgs args = new StoryboardBuilderArgs { FromDepth = 300 };
+        StoryboardBuilderArgs args = new StoryboardBuilderArgs { FromDepth = forward ? -300 : 300 };
         t.Storyboard = args.Storyboard;
 
-        CreateRampOut(args);
+        CreateRampOut(args, args.FromDepth * -1);
         CreateGridIn(args, grid, true);
     }
 
@@ -687,7 +689,7 @@ public partial class FontMapView
         }
     }
 
-    void CreateRampIn(StoryboardBuilderArgs args)
+    void CreateRampIn(StoryboardBuilderArgs args, double fromDepth = -400)
     {
         Storyboard sb = args.Storyboard;
         TimeSpan startOffset = args.CurrentOffset;
@@ -699,8 +701,6 @@ public partial class FontMapView
         List<FrameworkElement> toChilds = GetTypeRampAnimationTargets();
 
         // 1.1. Default animation configuration
-        double fromDepth = -400;
-
         sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(TypeRampRoot, TargetProperty.Visibility)
             .AddKeyFrame(0, Visibility.Collapsed)
             .AddKeyFrame(startOffset, Visibility.Visible);
@@ -734,7 +734,7 @@ public partial class FontMapView
 
     }
 
-    void CreateRampOut(StoryboardBuilderArgs args)
+    void CreateRampOut(StoryboardBuilderArgs args, double toDepth = -300)
     {
         List<FrameworkElement> toChilds = GetGridAnimationTargets(CharGrid);
         if (toChilds.Count == 0)
@@ -743,8 +743,6 @@ public partial class FontMapView
         Storyboard sb = args.Storyboard;
 
         var childs = GetTypeRampAnimationTargets();
-
-        double toDepth = -300;
 
         TimeSpan charStagger = TimeSpan.FromMilliseconds(250d / toChilds.Count);
 

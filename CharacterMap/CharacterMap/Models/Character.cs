@@ -1,16 +1,7 @@
 ﻿namespace CharacterMap.Models;
 
-public record FontLigature(ushort GlyphIndex, string Sequence);
-
-public class Character : IEquatable<Character>
+public partial class Character : IEquatable<Character>
 {
-    public static Character Null => field ??= new(0);
-    public static Character CarriageReturn => field ??= new(13);
-    public static Character Space => field ??= new(32);
-
-
-
-
     public uint UnicodeIndex { get; }
 
     public Character(uint unicodeIndex) => UnicodeIndex = unicodeIndex;
@@ -24,8 +15,6 @@ public class Character : IEquatable<Character>
     public NamedUnicodeRange Range => UnicodeRanges.GetRange(UnicodeIndex);
 
     public override string ToString() => Char;
-
-
 
 
     public string GetAnnotation(GlyphAnnotation a)
@@ -54,29 +43,29 @@ public class Character : IEquatable<Character>
 
 
 
-    public override bool Equals(object obj)
-    {
-        return Equals(obj as Character);
-    }
+    #region Equality
 
-    public bool Equals(Character other)
-    {
-        return other != null &&
-               UnicodeIndex == other.UnicodeIndex;
-    }
+    public override bool Equals(object obj) => Equals(obj as Character);
 
-    public override int GetHashCode()
-    {
-        return 1044413180 + UnicodeIndex.GetHashCode();
-    }
+    public bool Equals(Character other) => other != null && UnicodeIndex == other.UnicodeIndex;
 
-    public static bool operator ==(Character left, Character right)
-    {
-        return EqualityComparer<Character>.Default.Equals(left, right);
-    }
+    public override int GetHashCode() => 1044413180 + UnicodeIndex.GetHashCode();
 
-    public static bool operator !=(Character left, Character right)
-    {
-        return !(left == right);
-    }
+    public static bool operator ==(Character left, Character right) => EqualityComparer<Character>.Default.Equals(left, right);
+
+    public static bool operator !=(Character left, Character right) => !(left == right);
+
+    #endregion
+}
+
+public class SpecialCharacters
+{
+    public static Character Null => field ??= new(0);
+    public static Character CarriageReturn => field ??= new(13);
+    public static Character Space => field ??= new(0x0020);
+
+    public static Character NonBreakingSpace => field ??= new(0x00A0);
+    public static Character ZeroWidthSpace => field ??= new(0x200B);
+    public static Character ZeroWidthNonJoiner => field ??= new(0x200C);
+    public static Character ZeroWidthJoiner => field ??= new(0x200D);
 }
