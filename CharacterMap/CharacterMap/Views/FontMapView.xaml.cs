@@ -1398,22 +1398,16 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             () => CompositionFactory.SetUseWindowAwareSynchronisedReposition(repositionTarget, true));
     }
 
-    private void ColrSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        //if (ColrSelector.Visibility == Visibility.Collapsed)
-        //    TxtPreview.SetBinding(CharacterMapCX.Controls.DirectText.IsColorFontEnabledProperty,
-        //        (Binding)TxtPreviewViewBox.Resources["IsColorFontEnabledBinding"]);
 
-        //if (e.AddedItems.Count == 0) return;
-        //var item = e.AddedItems[0];
 
-        //TxtPreview.IsColorFontEnabled = e.AddedItems[0] != MonoOption;
 
-        //if (item == ColrV0Option)
-        //    TxtPreview.COLRRenderVersion = 0;
-        //else
-        //    TxtPreview.COLRRenderVersion = 1;
-    }
+
+
+    //------------------------------------------------------
+    //
+    //  Ligatures Map
+    //
+    //------------------------------------------------------
 
     private void LigaturesRepeater_Loaded(object sender, RoutedEventArgs e)
     {
@@ -1435,7 +1429,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void LigatureCard_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
     {
-        if (sender is FrameworkElement { DataContext: LigatureModel target }
+        if (sender is ContentPresenter { Content: LigatureModel target }
             && args.TryGetPosition(sender, out Point p))
         {
             MenuFlyout menu = new();
@@ -1444,13 +1438,13 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             {
                 MenuFlyoutItem copyItem = new()
                 {
-                    Text = $"Copy sequence \"{target.CombinedString}\"",
-                    Icon = new FontIcon { Glyph = "\uE8C8" }
+                    Text = Localization.Get("CopySequenceMessage", target.CombinedString),
+                    Icon = ThemeIconGlyph.CreateIcon(ThemeIcon.Copy)
                 };
                 copyItem.Click += (_, _) =>
                 {
                     Utils.CopyToClipBoard(target.CombinedString);
-                    GetNotifier().Show($"Copied \"{target.CombinedString}\" to clipboard", 2000);
+                    GetNotifier().Show(Localization.Get("NotificationCopied"), 2000);
                 };
                 menu.Items.Add(copyItem);
             }
@@ -1467,12 +1461,12 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             //};
             //menu.Items.Add(copyGlyphItem);
 
-            menu.Items.Add(new MenuFlyoutSeparator());
+            menu.AddSeparator();
 
             MenuFlyoutItem viewGlyphItem = new()
             {
-                Text = $"View Glyph #{target.LigatureGlyph} in Glyph Map",
-                Icon = new FontIcon { Glyph = "\uE8A9" }
+                Text = Localization.Get("ViewInGlyphMapMessage", target.LigatureGlyph),
+                Icon = ThemeIconGlyph.CreateIcon(ThemeIcon.GlyphMapView)
             };
             viewGlyphItem.Click += (_, _) => NavigateToGlyph((ushort)target.LigatureGlyph);
             menu.Items.Add(viewGlyphItem);

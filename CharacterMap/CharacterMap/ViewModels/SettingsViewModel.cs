@@ -127,6 +127,7 @@ public partial class SettingsViewModel : ViewModelBase
         return [
             new("Latest Update (September 2026)", // September 2026
                 """
+                - Added Ligatures view
                 - Added expandable tab-bar preview thumbnails for Windows 11 theme
                 - Typographic variants of a glyph will now attempt to copy as text if the glyph of the typographic variant also exists as a mapped character
                 - Glyph indexes for Characters are now shown in Unicode tools

@@ -1795,6 +1795,15 @@ public partial class Properties : DependencyObject
                 else
                     f.FontFamily = ResourceHelper.Get<FontFamily>("FallbackSymbolThemeFontFamily");
 
+                if (ti == ThemeIcon.LigatureMapView)
+                {
+                    f.FontFamily = ResourceHelper.Get<FontFamily>("ContentControlThemeFontFamily");
+                    if (f.ReadLocalValue(FontIcon.FontSizeProperty) == DependencyProperty.UnsetValue)
+                        f.FontSize = 20;
+                    Typography.SetContextualLigatures(f, true);
+                    Typography.SetDiscretionaryLigatures(f, true);
+                }
+
                 f.Glyph = result.glyph;
             }
 

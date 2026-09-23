@@ -16,13 +16,7 @@ public partial class MenuButton : UXRadioButtonBase
     partial void OnThemeIconChanged(ThemeIcon o, ThemeIcon n)
     {
         if (n is not Core.ThemeIcon.None)
-        {
-            this.Icon = new FontIcon
-            {
-                Style = ResourceHelper.Get<Style>("ThemeFontIconStyle"),
-                Glyph = Core.ThemeIconGlyph.Get(n)
-            };
-        }
+            this.Icon = ThemeIconGlyph.CreateIcon(n);
     }
 }
 

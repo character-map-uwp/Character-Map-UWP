@@ -2913,4 +2913,22 @@ Not all fonts present typographic variants as mapped characters.</value>
   <data name="TxtGlyphIndex.Header" xml:space="preserve">
     <value>Glyph Index</value>
   </data>
+  <data name="NoLigaturesMessage" xml:space="preserve">
+    <value>This font does not contain any OpenType ligatures.</value>
+  </data>
+  <data name="LigaturesSummaryString" xml:space="preserve">
+    <value>Contains {0} ligatures across {1} OpenType features</value>
+  </data>
+  <data name="CopySequenceMessage" xml:space="preserve">
+    <value>Copy sequence</value>
+  </data>
+  <data name="ViewInGlyphMapMessage" xml:space="preserve">
+    <value>View {0} in Glyph Map</value>
+  </data>
+  <data name="LigatureMapDescription.Title" xml:space="preserve">
+    <value>Ligatures</value>
+  </data>
+  <data name="LigatureMapDescription.Description" xml:space="preserve">
+    <value>View the ligature combinations supported by the Font Face and their component makeup </value>
+  </data>
 </root>

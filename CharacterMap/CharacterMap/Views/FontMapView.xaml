@@ -760,14 +760,9 @@
                             <views:TitledDescription x:Uid="TypeRampDescription" />
                         </FontIcon.Tag>
                     </FontIcon>
-                    <FontIcon
-                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                        FontSize="20"
-                        Glyph="ffi"
-                        Typography.ContextualLigatures="True"
-                        Typography.DiscretionaryLigatures="True">
+                    <FontIcon core:Properties.ThemeIcon="LigatureMapView">
                         <FontIcon.Tag>
-                            <views:TitledDescription Title="Ligatures" Description="View all the ligature combinations supported by the font face" />
+                            <views:TitledDescription x:Uid="LigatureMapDescription" />
                         </FontIcon.Tag>
                     </FontIcon>
                 </controls:UXRadioButtons>
@@ -1886,6 +1881,7 @@
                                             BorderBrush="{TemplateBinding BorderBrush}"
                                             BorderThickness="{TemplateBinding BorderThickness}"
                                             ContentTransitions="{TemplateBinding ContentTransitions}"
+                                            ContextRequested="LigatureCard_ContextRequested"
                                             Control.IsTemplateFocusTarget="True"
                                             CornerRadius="{TemplateBinding CornerRadius}"
                                             FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
@@ -1962,7 +1958,7 @@
                                 x:Name="NoLigaturesMessage"
                                 x:Load="{x:Bind core:Converters.False(ViewModel.SelectedFaceAnalysis.HasLigatures), Mode=OneWay, FallbackValue=False}"
                                 Margin="0 0 0 4"
-                                Content="This font does not contain any OpenType ligatures."
+                                Content="{core:Localizer Key=NoLigaturesMessage}"
                                 FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                                 Foreground="White"
                                 SecondaryContent=" " />
@@ -1971,13 +1967,14 @@
                             <TextBlock
                                 FontSize="16"
                                 Style="{ThemeResource SubtitleTextBlockStyle}"
+                                Text="{x:Bind ViewModel.SelectedFaceAnalysis.LigaturesSummary, Mode=OneWay}"
                                 TextWrapping="Wrap">
-                                <Run Text="Contains" />
+                                <!--<Run Text="Contains" />
                                 <Run FontWeight="Bold" Text="{x:Bind ViewModel.SelectedFaceAnalysis.TotalLigaturesCount, Mode=OneWay}" />
                                 <Run Text="ligatures across" />
                                 <Run FontWeight="Bold" Text="{x:Bind ViewModel.SelectedFaceAnalysis.LigatureFeatureCount, Mode=OneWay}" />
                                 <Run Text="OpenType" />
-                                <Run Text="{x:Bind ViewModel.SelectedFaceAnalysis.LigaturesFeatureSuffix, Mode=OneWay}" />
+                                <Run Text="{x:Bind ViewModel.SelectedFaceAnalysis.LigaturesFeatureSuffix, Mode=OneWay}" />-->
                             </TextBlock>
 
                             <!--  Subtitle  -->
@@ -2036,7 +2033,7 @@
 
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="models:LigatureModel">
-                            <Border ContextRequested="LigatureCard_ContextRequested">
+                            <Border>
                                 <Grid ColumnSpacing="12">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
@@ -2096,6 +2093,7 @@
 
                                         <!--  Row 0: Name / Glyph  -->
                                         <TextBlock
+                                            x:Phase="1"
                                             Grid.Column="1"
                                             VerticalAlignment="Center"
                                             FontFamily="{ThemeResource ContentControlThemeFontFamily}"
@@ -2112,6 +2110,7 @@
                                             Opacity="0.6"
                                             Text="Components" />-->
                                         <ItemsControl
+                                            x:Phase="2"
                                             Grid.Row="2"
                                             Margin="0 4 0 0"
                                             ItemsSource="{x:Bind Components}">
@@ -2136,6 +2135,7 @@
                                                         <ToolTipService.ToolTip>
                                                             <StackPanel Orientation="Vertical" Spacing="4">
                                                                 <Glyphs
+                                                                    x:Phase="2"
                                                                     HorizontalAlignment="Center"
                                                                     VerticalAlignment="Center"
                                                                     core:Properties.FontUri="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.FontUri)}"

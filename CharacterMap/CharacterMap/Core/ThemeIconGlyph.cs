@@ -54,6 +54,7 @@ public enum ThemeIcon
     CharacterMapView,
     TypeRampView,
     GlyphMapView,
+    LigatureMapView,
     Calligraphy,
     RenderingOptions,
     CompareFonts,
@@ -149,6 +150,7 @@ public class ThemeIconGlyph : MarkupExtension
         [ThemeIcon.CharacterMapView] = V(0xE8A9),
         [ThemeIcon.TypeRampView] = V(0xEA37),
         [ThemeIcon.GlyphMapView] = V(0xE8C1),
+        [ThemeIcon.LigatureMapView] = "ffi",
         [ThemeIcon.About] = V(0xE946),
         [ThemeIcon.Back] = V(0xE72B),
 
@@ -292,4 +294,9 @@ public class ThemeIconGlyph : MarkupExtension
     }
 
     protected override object ProvideValue() => Get(Icon);
+
+    public static FontIcon CreateIcon(ThemeIcon icon)
+    {
+        return (new FontIcon()).WithThemeIcon(icon);
+    }
 }
