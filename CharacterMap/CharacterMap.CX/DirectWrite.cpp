@@ -99,20 +99,20 @@ String^ DirectWrite::GetTagName(String^ tag)
 {
 	/* Variation Tags */
 	if (tag == "wght") return "Weight";
-	else if (tag == "slnt") return "Slant";
-	else if (tag == "CONT") return "Contrast";
-	else if (tag == "MIDL") return "Midline";
-	else if (tag == "wdth") return "Width";
+	if (tag == "slnt") return "Slant";
+	if (tag == "CONT") return "Contrast";
+	if (tag == "MIDL") return "Midline";
+	if (tag == "wdth") return "Width";
 
 	/* Ligature & Contextual Features */
-	else if (tag == "liga") return "Standard Ligatures";
-	else if (tag == "dlig") return "Discretionary Ligatures";
-	else if (tag == "hlig") return "Historical Ligatures";
-	else if (tag == "clig") return "Contextual Ligatures";
-	else if (tag == "rlig") return "Required Ligatures";
-	else if (tag == "locl") return "Localized Forms";
-	else if (tag == "calt") return "Contextual Alternates";
-	else if (tag == "ccmp") return "Glyph Composition / Decomposition";
+	if (tag == "liga") return "Standard Ligatures";
+	if (tag == "dlig") return "Discretionary Ligatures";
+	if (tag == "hlig") return "Historical Ligatures";
+	if (tag == "clig") return "Contextual Ligatures";
+	if (tag == "rlig") return "Required Ligatures";
+	if (tag == "locl") return "Localized Forms";
+	if (tag == "calt") return "Contextual Alternates";
+	if (tag == "ccmp") return "Glyph Composition / Decomposition";
 
 	/* OpenType feature Tags */
 	/* Only a subset of common tags are identified here */
@@ -120,64 +120,143 @@ String^ DirectWrite::GetTagName(String^ tag)
 	         properties for tags, like is it for single characters
 			 or glyph runs, editable, etc.
     */
-	else if (tag == "aalt") return "Access All Alternates";
-	else if (tag == "abvf") return "Above-base Forms";
-	else if (tag == "abvm") return "Above-base Mark Positioning";
-	else if (tag == "abvs") return "Above-base Substitutions";
-	else if (tag == "akhn") return "Akhand";
-	else if (tag == "blwf") return "Below-base Forms";
-	else if (tag == "blwm") return "Below-base Mark Positioning";
-	else if (tag == "blws") return "Below-base Substitutions";
-	else if (tag == "cfar") return "Conjunct Form After Ro";
-	else if (tag == "cjct") return "Conjunct Forms";
-	else if (tag == "dist") return "Distances";
-	else if (tag == "dpng") return "Diphthongs";
-	else if (tag == "dnom") return "Denominators";
-	else if (tag == "falt") return "Final Glyph on Line Alternates";
-	else if (tag == "fin2") return "Terminal Form #2";
-	else if (tag == "fin3") return "Terminal Form #3";
-	else if (tag == "fina") return "Terminal Forms";
-	else if (tag == "init") return "Initial Forms";
-	else if (tag == "isol") return "Isolated Forms";
-	else if (tag == "ital") return "Italics";
-	else if (tag == "ljmo") return "Leading Jamo Forms";
-	else if (tag == "mark") return "Mark Positioning";
-	else if (tag == "med2") return "Medial Forms #2";
-	else if (tag == "medi") return "Medial Forms";
-	else if (tag == "nukt") return "Nukta Forms";
-	else if (tag == "numr") return "Numerators";
-	else if (tag == "opsz") return "Optical size";
-	else if (tag == "ornm") return "Ornaments";
-	else if (tag == "pkna") return "Proportional Kana";
-	else if (tag == "pref") return "Pre-base Forms";
-	else if (tag == "pres") return "Pre-base Substitutions";
-	else if (tag == "pstf") return "Post-base Forms";
-	else if (tag == "psts") return "Post-base Substitutions";
-	else if (tag == "rclt") return "Required Contextual Alternates";
-	else if (tag == "rkrf") return "Rakar Forms";
-	else if (tag == "rphf") return "Reph Form";
-	else if (tag == "rtlm") return "Right-to-left mirrored forms";
-	else if (tag == "rvrn") return "Required Variation Alternates";
-	else if (tag == "size") return "Optical size";
-	else if (tag == "stch") return "Stretching Glyph Decomposition";
-	else if (tag == "tjmo") return "Trailing Jamo Forms";
-	else if (tag == "valt") return "Alternate Vertical Metrics";
-	else if (tag == "vatu") return "Vattu Variants";
-	else if (tag == "vhal") return "Alternate Vertical Half Metrics";
-	else if (tag == "vjmo") return "Vowel Jamo Forms";
-	else if (tag == "vkna") return "Vertical Kana Alternates";
-	else if (tag == "vkrn") return "Vertical Kerning";
-	else if (tag == "vpal") return "Proportional Alternate Vertical Metrics";
-	else
+	if (tag == "aalt") return "Access All Alternates";
+	if (tag == "abvf") return "Above-base Forms";
+	if (tag == "abvm") return "Above-base Mark Positioning";
+	if (tag == "abvs") return "Above-base Substitutions";
+	if (tag == "afrc") return "Alternative Fractions";
+	if (tag == "akhn") return "Akhand";
+	if (tag == "apkn") return "Kerning for Alternate Proportional Widths";
+	if (tag == "blwf") return "Below-base Forms";
+	if (tag == "blwm") return "Below-base Mark Positioning";
+	if (tag == "blws") return "Below-base Substitutions";
+	if (tag == "c2pc") return "Petite Capitals From Capitals";
+	if (tag == "c2sc") return "Small Capitals From Capitals";
+	if (tag == "calt") return "Contextual Alternates";
+	if (tag == "case") return "Case-sensitive Forms";
+	if (tag == "ccmp") return "Glyph Composition / Decomposition";
+	if (tag == "cfar") return "Conjunct Form After Ro";
+	if (tag == "chws") return "Contextual Half-width Spacing";
+	if (tag == "cjct") return "Conjunct Forms";
+	if (tag == "clig") return "Contextual Ligatures";
+	if (tag == "cpct") return "Centered CJK Punctuation";
+	if (tag == "cpsp") return "Capital Spacing";
+	if (tag == "cswh") return "Contextual Swash";
+	if (tag == "curs") return "Cursive Positioning";
+	if (tag == "dist") return "Distances";
+	if (tag == "dlig") return "Discretionary Ligatures";
+	if (tag == "dnom") return "Denominators";
+	if (tag == "dpng") return "Diphthongs";
+	if (tag == "dtls") return "Dotless Forms";
+	if (tag == "expt") return "Expert Forms";
+	if (tag == "falt") return "Final Glyph on Line Alternates";
+	if (tag == "fin2") return "Terminal Forms #2";
+	if (tag == "fin3") return "Terminal Forms #3";
+	if (tag == "fina") return "Terminal Forms";
+	if (tag == "flac") return "Flattened Accent Forms";
+	if (tag == "frac") return "Fractions";
+	if (tag == "fwid") return "Full Widths";
+	if (tag == "half") return "Half Forms";
+	if (tag == "haln") return "Halant Forms";
+	if (tag == "halt") return "Alternate Half Widths";
+	if (tag == "hist") return "Historical Forms";
+	if (tag == "hkna") return "Horizontal Kana Alternates";
+	if (tag == "hlig") return "Historical Ligatures";
+	if (tag == "hngl") return "Hangul";
+	if (tag == "hojo") return "Hojo Kanji Forms (JIS X 0212-1990 Kanji Forms)";
+	if (tag == "hwid") return "Half Widths";
+	if (tag == "init") return "Initial Forms";
+	if (tag == "isol") return "Isolated Forms";
+	if (tag == "ital") return "Italics";
+	if (tag == "jalt") return "Justification Alternates";
+	if (tag == "jp78") return "JIS78 Forms";
+	if (tag == "jp83") return "JIS83 Forms";
+	if (tag == "jp90") return "JIS90 Forms";
+	if (tag == "jp04") return "JIS2004 Forms";
+	if (tag == "kern") return "Kerning";
+	if (tag == "lfbd") return "Left Bounds";
+	if (tag == "liga") return "Standard Ligatures";
+	if (tag == "ljmo") return "Leading Jamo Forms";
+	if (tag == "lnum") return "Lining Figures";
+	if (tag == "locl") return "Localized Forms";
+	if (tag == "ltra") return "Left-to-right Alternates";
+	if (tag == "ltrm") return "Left-to-right Mirrored Forms";
+	if (tag == "mark") return "Mark Positioning";
+	if (tag == "med2") return "Medial Forms #2";
+	if (tag == "medi") return "Medial Forms";
+	if (tag == "mgrk") return "Mathematical Greek";
+	if (tag == "mkmk") return "Mark to Mark Positioning";
+	if (tag == "mset") return "Mark Positioning via Substitution";
+	if (tag == "nalt") return "Alternate Annotation Forms";
+	if (tag == "nlck") return "NLC Kanji Forms";
+	if (tag == "nukt") return "Nukta Forms";
+	if (tag == "numr") return "Numerators";
+	if (tag == "onum") return "Oldstyle Figures";
+	if (tag == "opbd") return "Optical Bounds";
+	if (tag == "opsz") return "Optical size";
+	if (tag == "ordn") return "Ordinals";
+	if (tag == "ornm") return "Ornaments";
+	if (tag == "palt") return "Proportional Alternate Widths";
+	if (tag == "pcap") return "Petite Capitals";
+	if (tag == "pkna") return "Proportional Kana";
+	if (tag == "pnum") return "Proportional Figures";
+	if (tag == "pref") return "Pre-base Forms";
+	if (tag == "pres") return "Pre-base Substitutions";
+	if (tag == "pstf") return "Post-base Forms";
+	if (tag == "psts") return "Post-base Substitutions";
+	if (tag == "pwid") return "Proportional Widths";
+	if (tag == "qwid") return "Quarter Widths";
+	if (tag == "rand") return "Randomize";
+	if (tag == "rclt") return "Required Contextual Alternates";
+	if (tag == "rkrf") return "Rakar Forms";
+	if (tag == "rlig") return "Required Ligatures";
+	if (tag == "rphf") return "Reph Form";
+	if (tag == "rtbd") return "Right Bounds";
+	if (tag == "rtla") return "Right-to-left Alternates";
+	if (tag == "rtlm") return "Right-to-left Mirrored Forms";
+	if (tag == "ruby") return "Ruby Notation Forms";
+	if (tag == "rvrn") return "Required Variation Alternates";
+	if (tag == "salt") return "Stylistic Alternates";
+	if (tag == "sinf") return "Scientific Inferiors";
+	if (tag == "size") return "Optical size";
+	if (tag == "smcp") return "Small Capitals";
+	if (tag == "smpl") return "Simplified Forms";
+	if (tag == "ssty") return "Math Script-style Alternates";
+	if (tag == "stch") return "Stretching Glyph Decomposition";
+	if (tag == "subs") return "Subscript";
+	if (tag == "sups") return "Superscript";
+	if (tag == "swsh") return "Swash";
+	if (tag == "titl") return "Titling";
+	if (tag == "tjmo") return "Trailing Jamo Forms";
+	if (tag == "tnam") return "Traditional Name Forms";
+	if (tag == "tnum") return "Tabular Figures";
+	if (tag == "trad") return "Traditional Forms";
+	if (tag == "twid") return "Third Widths";
+	if (tag == "unic") return "Unicase";
+	if (tag == "valt") return "Alternate Vertical Metrics";
+	if (tag == "vapk") return "Kerning for Alternate Proportional Vertical Metrics";
+	if (tag == "vatu") return "Vattu Variants";
+	if (tag == "vchw") return "Vertical Contextual Half-width Spacing";
+	if (tag == "vert") return "Vertical Alternates";
+	if (tag == "vhal") return "Alternate Vertical Half Metrics";
+	if (tag == "vjmo") return "Vowel Jamo Forms";
+	if (tag == "vkna") return "Vertical Kana Alternates";
+	if (tag == "vkrn") return "Vertical Kerning";
+	if (tag == "vpal") return "Proportional Alternate Vertical Metrics";
+	if (tag == "vrt2") return "Vertical Alternates and Rotation";
+	if (tag == "vrtr") return "Vertical Alternates for Rotation";
+	if (tag == "zero") return "Slashed Zero";
+
+	if (tag != nullptr && tag->Length() >= 4)
 	{
 		auto d = tag->Data();
 		if (d[0] == 'c' && d[1] == 'v')
 			return "Character Variant " + d[2] + d[3];
-		else if (d[0] == 's' && d[1] == 's')
+		if (d[0] == 's' && d[1] == 's')
 			return "Stylistic Set " + d[2] + d[3];
-
-		else return tag;
 	}
+
+	return tag;
 }
 
 String^ DirectWrite::GetFeatureName(UINT32 tag)
