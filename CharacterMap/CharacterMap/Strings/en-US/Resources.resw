@@ -2932,6 +2932,6 @@ Not all fonts present typographic variants as mapped characters.</value>
     <value>View the ligature combinations supported by the Font Face and their component makeup </value>
   </data>
   <data name="GlyphsSummary.Text" xml:space="preserve">
-    <value>Contains {0} Glyphs mapped to {1} Characters</value>
+    <value>Contains {0} glyphs mapped to {1} characters</value>
   </data>
 </root>

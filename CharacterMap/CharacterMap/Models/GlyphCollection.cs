@@ -37,6 +37,8 @@ public class GlyphCollection : ObservableCollection<uint>, ISupportIncrementalLo
         {
             FontUri = new Uri(StorageHelper.GetAppPath(path));
             _loadingTask = Task.FromResult(true);
+            IsLoading = false;
+            IsLoaded = true;
 
             // Prepare some glyph
             var size = Math.Min(MaxCount - currentOffset, 256);

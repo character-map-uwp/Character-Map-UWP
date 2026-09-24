@@ -1997,25 +1997,7 @@
                                 FontWeight="Bold"
                                 Style="{ThemeResource SubtitleTextBlockStyle}"
                                 Text="{x:Bind ViewModel.SelectedFaceAnalysis.LigaturesSummary, Mode=OneWay}"
-                                TextWrapping="Wrap">
-                                <!--<Run Text="Contains" />
-                                <Run FontWeight="Bold" Text="{x:Bind ViewModel.SelectedFaceAnalysis.TotalLigaturesCount, Mode=OneWay}" />
-                                <Run Text="ligatures across" />
-                                <Run FontWeight="Bold" Text="{x:Bind ViewModel.SelectedFaceAnalysis.LigatureFeatureCount, Mode=OneWay}" />
-                                <Run Text="OpenType" />
-                                <Run Text="{x:Bind ViewModel.SelectedFaceAnalysis.LigaturesFeatureSuffix, Mode=OneWay}" />-->
-                            </TextBlock>
-
-                            <!--  Subtitle  -->
-                            <!--<TextBlock
-                                Margin="0 1 0 0"
-                                FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                FontSize="13"
-                                Opacity="0.6"
-                                Text="Ligatures and their component characters (not affected by OpenType switches or font variations settings)."
-                                TextWrapping="Wrap" />-->
-
-
+                                TextWrapping="Wrap" />
                         </StackPanel>
                     </GridView.Header>
 
@@ -2172,17 +2154,17 @@
                                                         CornerRadius="4">
                                                         <ToolTipService.ToolTip>
                                                             <StackPanel Orientation="Vertical" Spacing="4">
-                                                                <Glyphs
+                                                                <controls:FontGlyph
                                                                     x:Phase="2"
-                                                                    HorizontalAlignment="Center"
-                                                                    VerticalAlignment="Center"
-                                                                    core:Properties.FontUri="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.FontUri)}"
-                                                                    Fill="{ThemeResource ApplicationForegroundThemeBrush}"
-                                                                    FontRenderingEmSize="44"
+                                                                    FontFace="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Footer)}"
+                                                                    FontSize="44"
+                                                                    FontUri="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.FontUri)}"
+                                                                    Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                                                                     Indices="{x:Bind GlyphIndex}"
                                                                     IsColorFontEnabled="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Boolean)}"
                                                                     StyleSimulations="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Tag)}" />
                                                                 <TextBlock
+                                                                    x:Phase="1"
                                                                     FontStretch="Normal"
                                                                     FontStyle="Normal"
                                                                     FontWeight="Normal"
@@ -2213,8 +2195,8 @@
                     Height="60"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    IsActive="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs.IsLoading, Mode=OneWay}"
-                    Visibility="{x:Bind core:Converters.TrueToVis(ViewModel.SelectedFaceAnalysis.Glyphs.IsLoading), Mode=OneWay}" />
+                    IsActive="{x:Bind ViewRoot.(views:FontMapView.GlyphsLoading), Mode=OneWay}"
+                    Visibility="{x:Bind core:Converters.TrueToVis(ViewRoot.(views:FontMapView.GlyphsLoading)), Mode=OneWay}" />
             </Grid>
 
 
