@@ -400,10 +400,11 @@ public partial class FontMapViewModel : ViewModelBase
         }
         else
         {
-            SelectedChar = new(
-                SelectedFace, Chars?.FirstOrDefault(
-                c => !Windows.Data.Text.UnicodeCharacters.IsWhitespace((uint)c.UnicodeIndex)) ?? Chars.FirstOrDefault(),
-                this);
+            // Fonts with out a CMAP table will have no Characters
+            // e.g. Rohingya Gonya Leyka Noories
+            var c = Chars?.FirstOrDefault(
+                c => !Windows.Data.Text.UnicodeCharacters.IsWhitespace((uint)c.UnicodeIndex)) ?? Chars.FirstOrDefault();
+            SelectedChar = c is not null ? new(SelectedFace, c, this) : null;
         }
 
         if (set)
