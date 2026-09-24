@@ -156,6 +156,7 @@ public static class TypographyAnalyzer
     public static FontAnalysis Analyze(FaceAnalysisModel model, bool loadGlyphNames = true)
     {
         FontAnalysis analysis = new (model.Face.Face);
+        analysis.ResetVariableAxis();
         if (loadGlyphNames && analysis.HasGlyphNames)
             PrepareSearchMap(model, analysis.GlyphNameMappings);
         return analysis;

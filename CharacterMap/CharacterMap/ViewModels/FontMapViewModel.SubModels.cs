@@ -18,7 +18,7 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
 
     public bool HasFontOptions { get; }
 
-    public bool ShowColorGlyphs { get; }
+    public bool ShowColorGlyphs => Face.DirectWriteProperties.IsColorFont;
 
     public FontAnalysis Analysis { get; }
 
@@ -30,7 +30,7 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
 
     public FontFamily FontFamily { get; }
 
-    public GlyphCollection Glyphs { get; }
+    public GlyphCollection Glyphs => field ??= new(Face);
 
     private IReadOnlyList<LigatureGroup> _ligatures;
     public IReadOnlyList<LigatureGroup> Ligatures => _ligatures ??= (Face is not null ? TypographyAnalyzer.GetLigatures(Face) : []);
@@ -43,25 +43,11 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
 
     public string LigaturesSummary => Localization.Get("LigaturesSummaryString", TotalLigaturesCount, LigatureFeatureCount);
 
+    public StyleSimulations StyleSimulation { get; }
+
     private Task<Uri> _loadingTask = null;
 
-    [RelayCommand]
-    public Task<Uri> LoadGlyphFontAsync()
-    {
-        if (Glyphs.FontUri is not null)
-            return Task.FromResult(Glyphs.FontUri);
 
-        if (Face is null)
-            return Task.FromResult<Uri>(null);
-
-        return _loadingTask ??= LoadGlyphFontInternalAsync();
-    }
-
-    private async Task<Uri> LoadGlyphFontInternalAsync()
-    {
-        await Glyphs.LoadMoreItemsAsync(10).AsTask();
-        return Glyphs.FontUri;
-    }
 
     public FaceAnalysisModel(CMFontFace face, bool loadFull = true)
     {
@@ -70,21 +56,33 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
 
         Face = face;
 
-        ShowColorGlyphs = face.DirectWriteProperties.IsColorFont;
-
-        FontAnalysis analysis = TypographyAnalyzer.Analyze(this);
-        analysis.ResetVariableAxis();
-        Analysis = analysis;
+        Analysis = TypographyAnalyzer.Analyze(this);
 
         if (loadFull is false)
             return;
 
         IsMDL2Font = FontFinder.IsMDL2(face);
         FontFamily = new(face.Source);
-        Glyphs = new(face);
-        HasFontOptions = analysis.ContainsVectorColorGlyphs || face.HasXamlTypographyFeatures;
+        HasFontOptions = Analysis.ContainsVectorColorGlyphs || face.HasXamlTypographyFeatures;
         UpdateVariations();
         UpdateRampOptions();
+
+        if (face.DirectWriteProperties.IsSimulated)
+        {
+            bool oblique = face.DirectWriteProperties.Style is Windows.UI.Text.FontStyle.Italic or Windows.UI.Text.FontStyle.Oblique;
+            bool bold = face.DirectWriteProperties.Weight.Weight > 500;
+
+            if (oblique && bold)
+                StyleSimulation = StyleSimulations.BoldItalicSimulation;
+            else if (oblique)
+                StyleSimulation = StyleSimulations.ItalicSimulation;
+            else if (bold)
+                StyleSimulation = StyleSimulations.BoldSimulation;
+            else
+                StyleSimulation = StyleSimulations.None;
+        }
+        else
+            StyleSimulation = StyleSimulations.None;
     }
 
     public void UpdateVariations()
@@ -164,6 +162,33 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
         }
 
         return GlyphService.TryGetAGLFNName(mapping);
+    }
+
+
+
+
+    //------------------------------------------------------
+    //
+    // Glyphs
+    //
+    //------------------------------------------------------
+
+    [RelayCommand]
+    public Task<Uri> LoadGlyphFontAsync()
+    {
+        if (Glyphs.FontUri is not null)
+            return Task.FromResult(Glyphs.FontUri);
+
+        if (Face is null)
+            return Task.FromResult<Uri>(null);
+
+        return _loadingTask ??= LoadGlyphFontInternalAsync();
+    }
+
+    private async Task<Uri> LoadGlyphFontInternalAsync()
+    {
+        await Glyphs.LoadMoreItemsAsync(10).AsTask();
+        return Glyphs.FontUri;
     }
 }
 

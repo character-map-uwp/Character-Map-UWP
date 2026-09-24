@@ -155,13 +155,6 @@
             Source="{Binding ViewModel.GroupedChars, ElementName=ViewRoot, Mode=OneWay}" />
 
         <CollectionViewSource
-            x:Key="LigaturesSource"
-            x:Name="LigaturesSource"
-            IsSourceGrouped="True"
-            Source="{Binding ViewModel.SelectedFaceAnalysis.Ligatures, ElementName=ViewRoot, Mode=OneWay, FallbackValue={x:Null}, TargetNullValue={x:Null}}" />
-
-
-        <CollectionViewSource
             x:Key="SearchResultsSource"
             x:Name="SearchResultsSource"
             IsSourceGrouped="{Binding ViewModel.Search.IsGrouped, ElementName=ViewRoot, Mode=OneWay}"
@@ -1592,6 +1585,7 @@
                     core:Properties.Double="{x:Bind ViewModel.Settings.GridSize, Mode=OneWay}"
                     core:Properties.FontSize="{x:Bind core:Converters.GetFontSize(ViewModel.Settings.GridSize), Mode=OneWay}"
                     core:Properties.FontUri="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs.FontUri, TargetNullValue={x:Null}, FallbackValue={x:Null}, Mode=OneWay}"
+                    core:Properties.Tag="{x:Bind ViewModel.SelectedFaceAnalysis.StyleSimulation, Mode=OneWay}"
                     ContainerContentChanging="CharGrid_ContainerContentChanging"
                     ContextRequested="Grid_ContextRequested"
                     DataFetchSize="1000"
@@ -1606,7 +1600,7 @@
                             <Setter Property="MinWidth" Value="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Double)}" />
                         </Style>
                     </Control.Resources>
-                    <ListViewBase.Header>
+                    <!--<ListViewBase.Header>
                         <StackPanel x:Name="GlyphsInfoHeader" RequestedTheme="Dark">
                             <controls:InfoBar
                                 x:Name="SimulatedFacesGlyphsMessage"
@@ -1614,7 +1608,7 @@
                                 x:Uid="SimulatedFacesGlyphsMessage"
                                 SecondaryContent=" " />
                         </StackPanel>
-                    </ListViewBase.Header>
+                    </ListViewBase.Header>-->
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <!--  TODO : Use ContainerContent changing or ElementPrepared to set this?  -->
@@ -1632,7 +1626,8 @@
                                     Fill="{ThemeResource ApplicationForegroundThemeBrush}"
                                     FontRenderingEmSize="{Binding ElementName=GlyphRepeater, Path=(core:Properties.FontSize)}"
                                     Indices="{Binding}"
-                                    IsColorFontEnabled="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Boolean)}" />
+                                    IsColorFontEnabled="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Boolean)}"
+                                    StyleSimulations="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Tag)}" />
                                 <TextBlock Style="{StaticResource CharItemUnicodeStyle}" Text="{Binding}" />
                             </Grid>
                         </DataTemplate>
@@ -1644,7 +1639,8 @@
                     Width="100"
                     Height="100"
                     HorizontalAlignment="Center"
-                    VerticalAlignment="Center" />
+                    VerticalAlignment="Center"
+                    IsActive="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs.IsLoading, Mode=OneWay, FallbackValue=False}" />
             </Grid>
 
 
@@ -1841,6 +1837,13 @@
                 Grid.Row="2"
                 Grid.ColumnSpan="1"
                 Visibility="Collapsed">
+                <Grid.Resources>
+                    <CollectionViewSource
+                        x:Key="LigaturesSource"
+                        x:Name="LigaturesSource"
+                        IsSourceGrouped="True"
+                        Source="{Binding ViewModel.SelectedFaceAnalysis.Ligatures, ElementName=ViewRoot, Mode=OneWay, FallbackValue={x:Null}, TargetNullValue={x:Null}}" />
+                </Grid.Resources>
                 <GridView
                     x:Name="LigaturesRepeater"
                     Padding="12 0 12 70"
@@ -1848,8 +1851,12 @@
                     core:Properties.Double="{x:Bind ViewModel.Settings.GridSize, Mode=OneWay}"
                     core:Properties.FontSize="{x:Bind core:Converters.GetFontSize(ViewModel.Settings.GridSize), Mode=OneWay}"
                     core:Properties.FontUri="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs.FontUri, TargetNullValue={x:Null}, FallbackValue={x:Null}, Mode=OneWay}"
+                    core:Properties.Tag="{x:Bind ViewModel.SelectedFaceAnalysis.StyleSimulation, Mode=OneWay}"
                     DataFetchSize="1000"
                     FontFamily="{x:Bind ViewModel.SelectedFaceAnalysis.FontFamily, Mode=OneWay}"
+                    FontStretch="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Stretch, Mode=OneWay}"
+                    FontStyle="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Style, Mode=OneWay}"
+                    FontWeight="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Weight, Mode=OneWay}"
                     ItemsSource="{Binding Source={StaticResource LigaturesSource}}"
                     Loaded="LigaturesRepeater_Loaded"
                     SelectionChanged="LigaturesRepeater_SelectionChanged"
@@ -1953,19 +1960,30 @@
                     <GridView.Header>
                         <StackPanel Padding="12 4 12 8" Spacing="4">
 
+                            <!--<controls:InfoBar
+                                x:Name="SimulatedFacesGlyphsMessage2"
+                                x:Load="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.IsSimulated, Mode=OneWay, FallbackValue=False}"
+                                x:Uid="SimulatedFacesGlyphsMessage"
+                                Margin="0 0 0 4"
+                                SecondaryContent=" " />-->
+
                             <!--  Empty state info if no ligatures  -->
                             <controls:InfoBar
                                 x:Name="NoLigaturesMessage"
                                 x:Load="{x:Bind core:Converters.False(ViewModel.SelectedFaceAnalysis.HasLigatures), Mode=OneWay, FallbackValue=False}"
                                 Margin="0 0 0 4"
                                 Content="{core:Localizer Key=NoLigaturesMessage}"
-                                FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                Foreground="White"
+                                FontStretch="Normal"
+                                FontStyle="Normal"
+                                FontWeight="Normal"
                                 SecondaryContent=" " />
 
                             <!--  Main Title: The font {FontName} contains {N} ligatures in {M} OpenType features  -->
                             <TextBlock
                                 FontSize="16"
+                                FontStretch="Normal"
+                                FontStyle="Normal"
+                                FontWeight="Bold"
                                 Style="{ThemeResource SubtitleTextBlockStyle}"
                                 Text="{x:Bind ViewModel.SelectedFaceAnalysis.LigaturesSummary, Mode=OneWay}"
                                 TextWrapping="Wrap">
@@ -2023,6 +2041,8 @@
                                 <DataTemplate>
                                     <TextBlock
                                         FontSize="12"
+                                        FontStretch="Normal"
+                                        FontStyle="Normal"
                                         FontWeight="SemiBold"
                                         Opacity="0.6"
                                         Text="{Binding Key}" />
@@ -2040,7 +2060,7 @@
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
 
-                                    <!--  Left: Square Glyph Preview Box with bottom-corner metrics (matching FontDrop!)  -->
+                                    <!--  Left: Square Glyph Preview Box  -->
                                     <Border
                                         Width="84"
                                         Height="84"
@@ -2059,7 +2079,8 @@
                                                 Fill="{ThemeResource ApplicationForegroundThemeBrush}"
                                                 FontRenderingEmSize="44"
                                                 Indices="{x:Bind LigatureGlyph}"
-                                                IsColorFontEnabled="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Boolean)}" />
+                                                IsColorFontEnabled="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Boolean)}"
+                                                StyleSimulations="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Tag)}" />
 
                                             <!--  Bottom-Left: 0 (left bearing indicator)  -->
                                             <!--<TextBlock
@@ -2078,6 +2099,9 @@
                                                 VerticalAlignment="Bottom"
                                                 FontFamily="Consolas"
                                                 FontSize="9.5"
+                                                FontStretch="Normal"
+                                                FontStyle="Normal"
+                                                FontWeight="Normal"
                                                 Opacity="0.45"
                                                 Text="{x:Bind LigatureGlyph}" />
                                         </Grid>
@@ -2098,6 +2122,9 @@
                                             VerticalAlignment="Center"
                                             FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                                             FontSize="12"
+                                            FontStretch="Normal"
+                                            FontStyle="Normal"
+                                            FontWeight="Normal"
                                             Text="{x:Bind GlyphName}"
                                             TextTrimming="CharacterEllipsis"
                                             ToolTipService.ToolTip="{x:Bind GlyphName}" />
@@ -2142,8 +2169,13 @@
                                                                     Fill="{ThemeResource ApplicationForegroundThemeBrush}"
                                                                     FontRenderingEmSize="44"
                                                                     Indices="{x:Bind GlyphIndex}"
-                                                                    IsColorFontEnabled="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Boolean)}" />
-                                                                <TextBlock Text="{x:Bind Tooltip}" />
+                                                                    IsColorFontEnabled="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Boolean)}"
+                                                                    StyleSimulations="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Tag)}" />
+                                                                <TextBlock
+                                                                    FontStretch="Normal"
+                                                                    FontStyle="Normal"
+                                                                    FontWeight="Normal"
+                                                                    Text="{x:Bind Tooltip}" />
                                                             </StackPanel>
                                                         </ToolTipService.ToolTip>
                                                         <TextBlock
@@ -3261,7 +3293,7 @@
                 <VisualState x:Name="GlyphMapLoadingState">
                     <VisualState.Setters>
                         <Setter Target="GlyphsRoot.IsHitTestVisible" Value="True" />
-                        <Setter Target="GlyphRing.IsActive" Value="True" />
+                        <!--<Setter Target="GlyphRing.IsActive" Value="True" />-->
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="GlyphMapLoadedState">
