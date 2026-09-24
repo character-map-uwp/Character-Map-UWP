@@ -12,6 +12,7 @@
     xmlns:models="using:CharacterMap.Models"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:services="using:CharacterMap.Services"
+    xmlns:sys="using:System"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
@@ -1610,7 +1611,7 @@
                         </StackPanel>
                     </ListViewBase.Header>-->
                     <ItemsControl.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="sys:UInt32">
                             <!--  TODO : Use ContainerContent changing or ElementPrepared to set this?  -->
                             <Grid
                                 x:Name="Target"
@@ -1618,17 +1619,21 @@
                                 Height="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Double)}"
                                 Padding="4"
                                 Tag="{Binding}">
-                                <Glyphs
-                                    x:Name="Text"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    core:Properties.FontUri="{Binding ElementName=GlyphRepeater, Path=(core:Properties.FontUri)}"
-                                    Fill="{ThemeResource ApplicationForegroundThemeBrush}"
-                                    FontRenderingEmSize="{Binding ElementName=GlyphRepeater, Path=(core:Properties.FontSize)}"
-                                    Indices="{Binding}"
-                                    IsColorFontEnabled="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Boolean)}"
-                                    StyleSimulations="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Tag)}" />
-                                <TextBlock Style="{StaticResource CharItemUnicodeStyle}" Text="{Binding}" />
+                                <controls:CompositionViewBox>
+                                    <Glyphs
+                                        x:Name="Text"
+                                        x:Phase="2"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        core:Properties.FontUri="{Binding ElementName=GlyphRepeater, Path=(core:Properties.FontUri)}"
+                                        Fill="{ThemeResource ApplicationForegroundThemeBrush}"
+                                        FontRenderingEmSize="{Binding ElementName=GlyphRepeater, Path=(core:Properties.FontSize)}"
+                                        Indices="{x:Bind}"
+                                        IsColorFontEnabled="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Boolean)}"
+                                        StyleSimulations="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Tag)}" />
+                                </controls:CompositionViewBox>
+
+                                <TextBlock Style="{StaticResource CharItemUnicodeStyle}" Text="{x:Bind}" />
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -2070,17 +2075,20 @@
                                         BorderThickness="1"
                                         CornerRadius="{ThemeResource ControlCornerRadius}">
                                         <Grid>
-                                            <!--  Center: Ligature Glyph  -->
-                                            <Glyphs
-                                                x:Name="Text"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                core:Properties.FontUri="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.FontUri)}"
-                                                Fill="{ThemeResource ApplicationForegroundThemeBrush}"
-                                                FontRenderingEmSize="44"
-                                                Indices="{x:Bind LigatureGlyph}"
-                                                IsColorFontEnabled="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Boolean)}"
-                                                StyleSimulations="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Tag)}" />
+                                            <controls:CompositionViewBox>
+                                                <!--  Center: Ligature Glyph  -->
+                                                <Glyphs
+                                                    x:Name="Text"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    core:Properties.FontUri="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.FontUri)}"
+                                                    Fill="{ThemeResource ApplicationForegroundThemeBrush}"
+                                                    FontRenderingEmSize="44"
+                                                    Indices="{x:Bind LigatureGlyph}"
+                                                    IsColorFontEnabled="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Boolean)}"
+                                                    StyleSimulations="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Tag)}" />
+                                            </controls:CompositionViewBox>
+
 
                                             <!--  Bottom-Left: 0 (left bearing indicator)  -->
                                             <!--<TextBlock

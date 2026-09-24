@@ -34,6 +34,8 @@ public static partial class UnicodeRanges
 {
     /* Created using https://dotnetfiddle.net/jexT5V */
 
+    /* NOTE: THESE MUST REMIAN IN RANGE ORDER */
+
     [MakeBasicFilter] public static NamedUnicodeRange BasicLatin = new(0x0000, 0x007F, "Basic Latin");
     [MakeBasicFilter] public static NamedUnicodeRange Latin1Supplement = new(0x0080, 0x00FF, "Latin-1 Supplement");
     [MakeBasicFilter] public static NamedUnicodeRange LatinExtendedA = new(0x0100, 0x017F, "Latin Extended-A");

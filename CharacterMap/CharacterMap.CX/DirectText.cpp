@@ -469,7 +469,7 @@ void CharacterMapCX::Controls::DirectText::EnsureCanvas()
         m_canvas = ref new CanvasControl();
         m_canvas->HorizontalAlignment = Windows::UI::Xaml::HorizontalAlignment::Stretch;
         m_canvas->VerticalAlignment = Windows::UI::Xaml::VerticalAlignment::Stretch;
-        m_canvas->UseSharedDevice = false;
+        m_canvas->UseSharedDevice = true;
         root->Child = m_canvas;
 
         m_drawToken = m_canvas->Draw +=

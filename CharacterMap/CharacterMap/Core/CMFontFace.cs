@@ -122,8 +122,37 @@ public partial class CMFontFace : IDisposable
 
     public IReadOnlyList<NamedUnicodeRange> GetRanges()
     {
-        return _ranges ??=
-            GetCharacters().GroupBy(c => c.Range).Select(g => g.Key).ToList();
+        if (_ranges is not null)
+            return _ranges;
+
+        CanvasUnicodeRange[] fontRanges = UnicodeRanges;
+        if (fontRanges.Length == 0)
+            return _ranges = [];
+
+        // We assume UnicodeRanges.All is in range order
+        IReadOnlyList<NamedUnicodeRange> allRanges = CharacterMap.Models.UnicodeRanges.All;
+        List<NamedUnicodeRange> ranges = [];
+        int namedIndex = 0;
+
+        for (int i = 0; i < fontRanges.Length; i++)
+        {
+            CanvasUnicodeRange cur = fontRanges[i];
+
+            while (namedIndex < allRanges.Count && allRanges[namedIndex].End < cur.First)
+                namedIndex++;
+
+            for (int j = namedIndex; j < allRanges.Count; j++)
+            {
+                NamedUnicodeRange named = allRanges[j];
+                if (named.Start > cur.Last)
+                    break;
+
+                if (ranges.Count == 0 || ranges[^1] != named)
+                    ranges.Add(named);
+            }
+        }
+
+        return _ranges = ranges;
     }
 
     public IReadOnlyList<Character> GetCharacters()
@@ -142,36 +171,59 @@ public partial class CMFontFace : IDisposable
 
     public uint GetGlyphIndex(Character c) => (uint)Face.GetGlyphIndice(c.UnicodeIndex);
 
-    public uint[] GetGlyphUnicodeIndexes() => GetCharacters().Select(c => c.UnicodeIndex).ToArray();
+    public uint[] GetGlyphUnicodeIndexes()
+    {
+        if (Characters is not null)
+            return Characters.Select(c => c.UnicodeIndex).ToArray();
+
+        CanvasUnicodeRange[] ranges = UnicodeRanges;
+        int count = 0;
+        for (int i = 0; i < ranges.Length; i++)
+            count += (int)(ranges[i].Last - ranges[i].First + 1);
+
+        uint[] uni = new uint[count];
+        int idx = 0;
+        for (int i = 0; i < ranges.Length; i++)
+        {
+            CanvasUnicodeRange r = ranges[i];
+            for (uint cp = r.First; cp <= r.Last; cp++)
+                uni[idx++] = cp;
+        }
+
+        return uni;
+    }
 
     
-    private Character[] _glyphToCharacterMap = null;
+    private int[] _glyphToCodepointMap = null;
     public bool TryGetCharacterForGlyph(int glyphIndex, out Character character)
     {
-        if (_glyphToCharacterMap == null)
+        if (_glyphToCodepointMap == null)
         {
             uint[] uni = GetGlyphUnicodeIndexes();
             int[] gly = Face.GetGlyphIndices(uni);
 
-            IReadOnlyList<Character> chars = GetCharacters();
-
             // DirectWrite glyph indices are strictly bounded by Face.GlyphCount
-            Character[] map = new Character[Face.GlyphCount];
+            int[] map = new int[Face.GlyphCount];
+            Array.Fill(map, -1);
 
-            for (int i = 0; i < chars.Count; i++)
+            for (int i = 0; i < uni.Length; i++)
             {
                 int g = gly[i];
-                if ((uint)g < (uint)map.Length && map[g] == null)
-                    map[g] = chars[i];
+                if ((uint)g < (uint)map.Length && map[g] == -1)
+                    map[g] = (int)uni[i];
             }
 
-            _glyphToCharacterMap = map;
+            _glyphToCodepointMap = map;
         }
 
-        if ((uint)glyphIndex < (uint)_glyphToCharacterMap.Length)
+        if ((uint)glyphIndex < (uint)_glyphToCodepointMap.Length)
         {
-            character = _glyphToCharacterMap[glyphIndex];
-            return character != null;
+            int cp = _glyphToCodepointMap[glyphIndex];
+            if (cp >= 0)
+            {
+                character = GetCachedCharacter(cp);
+                return true;
+            }
         }
 
         character = null;
@@ -353,7 +405,7 @@ public partial class CMFontFace : IDisposable
     public void Trim()
     {
         Face.ReleaseResources();
-        _glyphToCharacterMap = null;
+        _glyphToCodepointMap = null;
         Characters = null;
     }
 

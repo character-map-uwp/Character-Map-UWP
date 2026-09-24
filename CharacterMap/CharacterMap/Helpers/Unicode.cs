@@ -1,4 +1,4 @@
-﻿using Windows.Data.Text;
+using Windows.Data.Text;
 
 namespace CharacterMap.Helpers;
 
@@ -87,9 +87,8 @@ public static class Unicode
 
     public static List<UnicodeRangeModel> GetCategories(CMFontFace variant, bool mdl2)
     {
-        var ranges = variant.GetRanges();
-        var cats = UnicodeRanges.All
-            .Where(r => ranges.Any(g => g.Name == r.Name))
+        IReadOnlyList<NamedUnicodeRange> ranges = variant.GetRanges();
+        List<UnicodeRangeModel> cats = ranges
             .Select(r => new UnicodeRangeModel(r))
             .ToList();
 
