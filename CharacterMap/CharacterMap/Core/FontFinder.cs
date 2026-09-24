@@ -39,24 +39,14 @@ public class FontFinder
         NativeInterop interop = Utils.GetInterop();
         DWriteFontSet systemFonts = interop.GetSystemFonts();
 
-        Parallel.ForEach(systemFonts.Families, l =>
-        {
-            l.Inflate();
-        });
-        systemFonts.Update();
-
         try
         {
             if (DefaultFont is null)
             {
                 DWriteFontFamily segoeFamily = systemFonts.Families.FirstOrDefault(f => f.Name == "Segoe UI");
+                segoeFamily?.Inflate();
                 DWriteFontFace segoe = segoeFamily?.Fonts?.FirstOrDefault(
                        f => f.Properties.Weight.Weight == FontWeights.Normal.Weight
-                            && f.Properties.Stretch == FontStretch.Normal
-                            && f.Properties.Style == FontStyle.Normal)
-                       ?? systemFonts.Fonts.FirstOrDefault(
-                       f => f.Properties.FamilyName == "Segoe UI"
-                            && f.Properties.Weight.Weight == FontWeights.Normal.Weight
                             && f.Properties.Stretch == FontStretch.Normal
                             && f.Properties.Style == FontStyle.Normal);
 
@@ -106,10 +96,26 @@ public class FontFinder
                 return sets;
             });
 
-            // 1.2. Perform cleanup
+            // 1.2. Perform cleanup 
             Task delete = DefaultFont == null ? Task.WhenAll(
-                    FontImporter.CleanUpTempFolderAsync(),
-                    FontImporter.CleanUpPendingDeletesAsync()) : Task.CompletedTask;
+                  FontImporter.CleanUpTempFolderAsync(),
+                  FontImporter.CleanUpPendingDeletesAsync()) : Task.CompletedTask;
+
+
+            /* in background without blocking startup */
+            //if (DefaultFont is null)
+            //{
+            //    _ = Task.Run(async () =>
+            //    {
+            //        try
+            //        {
+            //            await Task.WhenAll(
+            //                FontImporter.CleanUpTempFolderAsync(),
+            //                FontImporter.CleanUpPendingDeletesAsync());
+            //        }
+            //        catch { }
+            //    });
+            //}
 
             // 1.3. Load installed fonts
             Task<DWriteFontSet> init = InitialiseAsync();
@@ -154,9 +160,6 @@ public class FontFinder
             bool hideSimulated = ResourceHelper.AppSettings.HideSimulatedFontFaces;
             foreach (DWriteFontFamily family in systemFonts.Families)
             {
-                if (family.Fonts is null || family.Fonts.Count == 0)
-                    continue;
-
                 string familyName = family.Name;
                 if (string.IsNullOrEmpty(familyName))
                     continue;
@@ -171,22 +174,7 @@ public class FontFinder
                     }
                 }
                 else
-                {
-                    CMFontFamily cmFamily = null;
-                    foreach (DWriteFontFace font in family.Fonts)
-                    {
-                        if (font.Properties.IsSimulated && hideSimulated)
-                            continue;
-
-                        if (cmFamily is null)
-                            cmFamily = new(familyName, font);
-                        else
-                            cmFamily.AddVariant(font);
-                    }
-
-                    if (cmFamily is not null)
-                        resultList[familyName] = cmFamily;
-                }
+                    resultList[familyName] = new(familyName, family);
             }
 
             /* Order everything appropriately */
