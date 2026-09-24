@@ -559,14 +559,26 @@ String^ DirectWrite::GetLocaleString(ComPtr<IDWriteLocalizedStrings> strings, in
 	if (SUCCEEDED(hr))
 		hr = strings->GetStringLength(fidx, &length);
 
+	if (!SUCCEEDED(hr) || length == 0)
+		return nullptr;
+
+	constexpr UINT32 STACK_BUFFER_SIZE = 128;
+	if (length < STACK_BUFFER_SIZE)
+	{
+		wchar_t stackBuf[STACK_BUFFER_SIZE];
+		if (SUCCEEDED(strings->GetString(fidx, stackBuf, length + 1)))
+			return ref new String(stackBuf, length);
+		return nullptr;
+	}
+
 	wchar_t* name = new (std::nothrow) wchar_t[length + 1];
-	if (name == NULL)
-		hr = E_OUTOFMEMORY;
+	if (name == nullptr)
+		return nullptr;
 
-	if (SUCCEEDED(hr))
-		hr = strings->GetString(fidx, name, length + 1);
+	String^ str = nullptr;
+	if (SUCCEEDED(strings->GetString(fidx, name, length + 1)))
+		str = ref new String(name, length);
 
-	auto str = ref new String(name);
 	delete[] name;
 	return str;
 }

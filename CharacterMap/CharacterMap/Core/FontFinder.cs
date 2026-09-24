@@ -39,7 +39,7 @@ public class FontFinder
         NativeInterop interop = Utils.GetInterop();
         DWriteFontSet systemFonts = interop.GetSystemFonts();
 
-        Parallel.ForEach(systemFonts.Families, new ParallelOptions { MaxDegreeOfParallelism = 50 }, l =>
+        Parallel.ForEach(systemFonts.Families, l =>
         {
             l.Inflate();
         });
@@ -47,15 +47,20 @@ public class FontFinder
 
         try
         {
-            if (DefaultFont == null)
+            if (DefaultFont is null)
             {
-                DWriteFontFace segoe = systemFonts.Fonts.FirstOrDefault(
+                DWriteFontFamily segoeFamily = systemFonts.Families.FirstOrDefault(f => f.Name == "Segoe UI");
+                DWriteFontFace segoe = segoeFamily?.Fonts?.FirstOrDefault(
+                       f => f.Properties.Weight.Weight == FontWeights.Normal.Weight
+                            && f.Properties.Stretch == FontStretch.Normal
+                            && f.Properties.Style == FontStyle.Normal)
+                       ?? systemFonts.Fonts.FirstOrDefault(
                        f => f.Properties.FamilyName == "Segoe UI"
                             && f.Properties.Weight.Weight == FontWeights.Normal.Weight
                             && f.Properties.Stretch == FontStretch.Normal
                             && f.Properties.Style == FontStyle.Normal);
 
-                if (segoe != null)
+                if (segoe is not null)
                     DefaultFont = CMFontFamily.CreateDefault(segoe);
             }
         }
@@ -113,7 +118,7 @@ public class FontFinder
 
             // Load in System Fonts
             DWriteFontSet systemFonts = init.Result;
-            Dictionary<string, CMFontFamily> resultList = new(systemFonts.Fonts.Count);
+            Dictionary<string, CMFontFamily> resultList = new(systemFonts.Families.Count + 16);
             UpdateMeta(systemFonts);
 
             /* Add imported fonts */
@@ -146,8 +151,43 @@ public class FontFinder
             SystemFamilyCount = systemFonts.Families.Count;
             SystemFaceCount = systemFonts.FaceCount;
 
-            foreach (var font in systemFonts.Fonts)
-                AddFont(resultList, font);
+            bool hideSimulated = ResourceHelper.AppSettings.HideSimulatedFontFaces;
+            foreach (DWriteFontFamily family in systemFonts.Families)
+            {
+                if (family.Fonts is null || family.Fonts.Count == 0)
+                    continue;
+
+                string familyName = family.Name;
+                if (string.IsNullOrEmpty(familyName))
+                    continue;
+
+                if (resultList.TryGetValue(familyName, out CMFontFamily existingFamily))
+                {
+                    foreach (DWriteFontFace font in family.Fonts)
+                    {
+                        if (font.Properties.IsSimulated && hideSimulated)
+                            continue;
+                        existingFamily.AddVariant(font);
+                    }
+                }
+                else
+                {
+                    CMFontFamily cmFamily = null;
+                    foreach (DWriteFontFace font in family.Fonts)
+                    {
+                        if (font.Properties.IsSimulated && hideSimulated)
+                            continue;
+
+                        if (cmFamily is null)
+                            cmFamily = new(familyName, font);
+                        else
+                            cmFamily.AddVariant(font);
+                    }
+
+                    if (cmFamily is not null)
+                        resultList[familyName] = cmFamily;
+                }
+            }
 
             /* Order everything appropriately */
             Fonts = CreateFontList(resultList);
@@ -170,11 +210,12 @@ public class FontFinder
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static List<CMFontFamily> CreateFontList(Dictionary<string, CMFontFamily> fonts)
     {
-        return fonts.OrderBy(f => f.Key).Select(f =>
-        {
-            f.Value.SortVariants();
-            return f.Value;
-        }).ToList();
+        List<CMFontFamily> list = [.. fonts.Values];
+        foreach (CMFontFamily family in list)
+            family.SortVariants();
+
+        list.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.CurrentCulture));
+        return list;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

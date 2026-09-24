@@ -10,12 +10,28 @@ namespace CharacterMapCX
 	public:
 		void Inflate();
 
+		property Platform::String^ Name
+		{
+			Platform::String^ get()
+			{
+				if (m_name == nullptr)
+					Inflate();
+				return m_name;
+			}
+		}
+
+		property IVectorView<DWriteFontFace^>^ Fonts
+		{
+			IVectorView<DWriteFontFace^>^ get() { return m_fonts; }
+		}
+
 	internal:
 		DWriteFontFamily(ComPtr<IDWriteFontFamily2> family)
 		{
 			m_family = family;
 		}
 
+		Platform::String^ m_name = nullptr;
 		IVectorView<DWriteFontFace^>^ m_fonts = nullptr;
 
 	private:

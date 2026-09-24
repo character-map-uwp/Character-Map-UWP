@@ -84,7 +84,8 @@ public class CMFontFamily : IComparable, IEquatable<CMFontFamily>
 
     public void SortVariants()
     {
-        _variants = _variants.OrderBy(v => v.DirectWriteProperties.Weight.Weight).ToList();
+        if (_variants.Count > 1)
+            _variants.Sort((a, b) => a.DirectWriteProperties.Weight.Weight.CompareTo(b.DirectWriteProperties.Weight.Weight));
     }
 
     public void PrepareForDelete()
