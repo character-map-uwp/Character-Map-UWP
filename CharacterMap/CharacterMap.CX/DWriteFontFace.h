@@ -252,6 +252,23 @@ namespace CharacterMapCX
 			return (int64)((lsb << 32) | aw);
 		}
 
+		Windows::Foundation::Rect GetDesignGlyphBounds(UINT16 glyphIndex)
+		{
+			UINT16 indices[] = { glyphIndex };
+			DWRITE_GLYPH_METRICS metrics{};
+			auto face = GetFontFace();
+			if (SUCCEEDED(face->GetDesignGlyphMetrics(indices, 1, &metrics, FALSE)))
+			{
+				float left = (float)metrics.leftSideBearing;
+				float width = (float)((double)metrics.advanceWidth - metrics.leftSideBearing - metrics.rightSideBearing);
+				float top = (float)metrics.topSideBearing;
+				float height = (float)((double)metrics.advanceHeight - metrics.topSideBearing - metrics.bottomSideBearing);
+				if (width > 0 && height > 0)
+					return Windows::Foundation::Rect(left, top, width, height);
+			}
+			return Windows::Foundation::Rect(0, 0, 0, 0);
+		}
+
 		IVectorView<Platform::String^>^ GetTableTags()
 		{
 			auto tags = ref new Vector<Platform::String^>();

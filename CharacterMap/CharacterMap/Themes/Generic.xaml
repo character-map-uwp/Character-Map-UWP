@@ -1515,18 +1515,25 @@
         </Setter>
     </Style>
 
-    <Style TargetType="controls:CompositionViewBox">
+    <Style TargetType="controls:FontGlyph">
         <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="FontSize" Value="8" />
+        <Setter Property="Foreground" Value="{ThemeResource AppBarItemForegroundThemeBrush}" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="controls:CompositionViewBox">
-                    <ContentPresenter
+                <ControlTemplate TargetType="controls:FontGlyph">
+                    <Glyphs
                         x:Name="Presenter"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        Background="{TemplateBinding Background}" />
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        core:Properties.FontUri="{TemplateBinding FontUri}"
+                        Fill="{TemplateBinding Foreground}"
+                        FontRenderingEmSize="{TemplateBinding FontSize}"
+                        Indices="{TemplateBinding Indices}"
+                        IsColorFontEnabled="{TemplateBinding IsColorFontEnabled}"
+                        StyleSimulations="{TemplateBinding StyleSimulations}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -46,9 +46,7 @@ public enum MaterialCornerStyle
 [AttachedProperty<Thickness>("InsetClip")] // Applies a composition InsetClip with the given insets
 [AttachedProperty<bool>("IsMouseInputEnabled")] // Enables Mouse & Touch input on an InkCanvas
 [AttachedProperty<InkToolbarToolButton>("DefaultTool")] // Sets the default tool for an InkToolbar
-[AttachedProperty<string>("Name")]
 [AttachedProperty<string>("Uppercase", "string.Empty")] // Sets text on a TextBlock in UpperCase
-[AttachedProperty<object>("Footer")] // Generic object storage. Intended for List footers.
 [AttachedProperty<string>("StyleKey")]
 [AttachedProperty<string>("IconString")]
 [AttachedProperty<IconElement>("Icon")]
@@ -115,9 +113,11 @@ public enum MaterialCornerStyle
 [AttachedProperty<Color>] // Generic property store
 [AttachedProperty<Double>] // Generic property store
 [AttachedProperty<Boolean>] // Generic property store
+[AttachedProperty<string>("Name")] // Generic property store
 [AttachedProperty<object>("Tag")] // Generic property store
 [AttachedProperty<object>("Content")] // Generic property store
 [AttachedProperty<double>("FontSize")] // Generic property store
+[AttachedProperty<object>("Footer")] // Generic object storage. Intended for List footers.
 public partial class Properties : DependencyObject
 {
     #region BindingCache

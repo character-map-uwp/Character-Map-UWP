@@ -1587,6 +1587,7 @@
                     core:Properties.FontSize="{x:Bind core:Converters.GetFontSize(ViewModel.Settings.GridSize), Mode=OneWay}"
                     core:Properties.FontUri="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs.FontUri, TargetNullValue={x:Null}, FallbackValue={x:Null}, Mode=OneWay}"
                     core:Properties.Tag="{x:Bind ViewModel.SelectedFaceAnalysis.StyleSimulation, Mode=OneWay}"
+                    core:Properties.Footer="{x:Bind ViewModel.SelectedFaceAnalysis.Face.Face, Mode=OneWay}"
                     ContainerContentChanging="CharGrid_ContainerContentChanging"
                     ContextRequested="Grid_ContextRequested"
                     DataFetchSize="1000"
@@ -1619,19 +1620,18 @@
                                 Height="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Double)}"
                                 Padding="4"
                                 Tag="{Binding}">
-                                <controls:CompositionViewBox>
-                                    <Glyphs
-                                        x:Name="Text"
-                                        x:Phase="2"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        core:Properties.FontUri="{Binding ElementName=GlyphRepeater, Path=(core:Properties.FontUri)}"
-                                        Fill="{ThemeResource ApplicationForegroundThemeBrush}"
-                                        FontRenderingEmSize="{Binding ElementName=GlyphRepeater, Path=(core:Properties.FontSize)}"
-                                        Indices="{x:Bind}"
-                                        IsColorFontEnabled="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Boolean)}"
-                                        StyleSimulations="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Tag)}" />
-                                </controls:CompositionViewBox>
+                                <controls:FontGlyph
+                                    x:Name="Text"
+                                    x:Phase="2"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    FontFace="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Footer)}"
+                                    FontUri="{Binding ElementName=GlyphRepeater, Path=(core:Properties.FontUri)}"
+                                    Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                    FontSize="{Binding ElementName=GlyphRepeater, Path=(core:Properties.FontSize)}"
+                                    Indices="{x:Bind}"
+                                    IsColorFontEnabled="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Boolean)}"
+                                    StyleSimulations="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Tag)}" />
 
                                 <TextBlock Style="{StaticResource CharItemUnicodeStyle}" Text="{x:Bind}" />
                             </Grid>
@@ -1856,6 +1856,7 @@
                     core:Properties.Double="{x:Bind ViewModel.Settings.GridSize, Mode=OneWay}"
                     core:Properties.FontSize="{x:Bind core:Converters.GetFontSize(ViewModel.Settings.GridSize), Mode=OneWay}"
                     core:Properties.FontUri="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs.FontUri, TargetNullValue={x:Null}, FallbackValue={x:Null}, Mode=OneWay}"
+                    core:Properties.Footer="{x:Bind ViewModel.SelectedFaceAnalysis.Face.Face, Mode=OneWay}"
                     core:Properties.Tag="{x:Bind ViewModel.SelectedFaceAnalysis.StyleSimulation, Mode=OneWay}"
                     DataFetchSize="1000"
                     FontFamily="{x:Bind ViewModel.SelectedFaceAnalysis.FontFamily, Mode=OneWay}"
@@ -2075,19 +2076,16 @@
                                         BorderThickness="1"
                                         CornerRadius="{ThemeResource ControlCornerRadius}">
                                         <Grid>
-                                            <controls:CompositionViewBox>
-                                                <!--  Center: Ligature Glyph  -->
-                                                <Glyphs
-                                                    x:Name="Text"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    core:Properties.FontUri="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.FontUri)}"
-                                                    Fill="{ThemeResource ApplicationForegroundThemeBrush}"
-                                                    FontRenderingEmSize="44"
-                                                    Indices="{x:Bind LigatureGlyph}"
-                                                    IsColorFontEnabled="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Boolean)}"
-                                                    StyleSimulations="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Tag)}" />
-                                            </controls:CompositionViewBox>
+                                            <!--  Center: Ligature Glyph  -->
+                                            <controls:FontGlyph
+                                                x:Name="Text"
+                                                FontFace="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Footer)}"
+                                                FontSize="44"
+                                                FontUri="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.FontUri)}"
+                                                Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                                Indices="{x:Bind LigatureGlyph}"
+                                                IsColorFontEnabled="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Boolean)}"
+                                                StyleSimulations="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Tag)}" />
 
 
                                             <!--  Bottom-Left: 0 (left bearing indicator)  -->
