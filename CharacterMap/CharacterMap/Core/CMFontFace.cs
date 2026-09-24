@@ -169,6 +169,8 @@ public partial class CMFontFace : IDisposable
         return Characters;
     }
 
+    public int CharacterCount => GetCharacters().Count;
+
     public uint GetGlyphIndex(Character c) => (uint)Face.GetGlyphIndice(c.UnicodeIndex);
 
     public uint[] GetGlyphUnicodeIndexes()
