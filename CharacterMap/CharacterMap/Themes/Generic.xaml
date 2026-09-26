@@ -1528,13 +1528,7 @@
                     <Glyphs
                         x:Name="Presenter"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        core:Properties.FontUri="{TemplateBinding FontUri}"
-                        Fill="{TemplateBinding Foreground}"
-                        FontRenderingEmSize="{TemplateBinding FontSize}"
-                        Indices="{TemplateBinding Indices}"
-                        IsColorFontEnabled="{TemplateBinding IsColorFontEnabled}"
-                        StyleSimulations="{TemplateBinding StyleSimulations}" />
+                        VerticalAlignment="Center" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
