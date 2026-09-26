@@ -82,6 +82,7 @@ public enum MaterialCornerStyle
 [AttachedProperty<FontWeight>("FontWeight", "FontWeights.Normal")] // Sets the FontWeight on a RichEditBox
 [AttachedProperty<FontFamily>] // Sets the FontFamily on a RichEditBox
 [AttachedProperty<string>("ToolTipMemberPath")] // PropertyPath on an ItemContainer's Content to use as the ItemContainer's ToolTip
+[AttachedProperty<DataTemplate>("LazyToolTipTemplate")] // ToolTip DataTemplate for ItemsControl
 [AttachedProperty<DataTemplate>("ToolTipTemplate")] // ToolTip DataTemplate for ItemsControl
 [AttachedProperty<PlacementMode>("ToolTipPlacement", PlacementMode.Mouse)]
 [AttachedProperty<object>("ToolTip")] // Sets ToolTip with default Theme style
@@ -1179,6 +1180,35 @@ public partial class Properties : DependencyObject
 
     #region ToolTip MemberPath, Template, StyleKey
 
+    static partial void OnLazyToolTipTemplateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not FrameworkElement element)
+            return;
+
+        if (e.NewValue is DataTemplate template)
+        {
+            ToolTip toolTip = new();
+            toolTip.ContentTemplate = template;
+
+            if (ResourceHelper.TryGet("DefaultThemeToolTipStyle", out Style style))
+                toolTip.Style = style;
+
+            toolTip.Opened += (s, args) =>
+            {
+                toolTip.ContentTemplate = template;
+                toolTip.Content = element.DataContext;
+            };
+
+            // Release the visual tree from memory as soon as it closes
+            toolTip.Closed += (s, args) => { toolTip.Content = null; };
+            ToolTipService.SetToolTip(element, toolTip);
+        }
+        else
+        {
+            ToolTipService.SetToolTip(element, null);
+        }
+    }
+
     static partial void OnToolTipMemberPathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is ListViewBase lvb)
@@ -1313,6 +1343,7 @@ public partial class Properties : DependencyObject
             // 2. Update any existing containers
             if (lvb.ItemsPanelRoot is null)
                 return;
+
             foreach (var item in lvb.ItemsPanelRoot.Children.OfType<SelectorItem>())
             {
                 var tooltip = ToolTipService.GetToolTip(item) as ToolTip;

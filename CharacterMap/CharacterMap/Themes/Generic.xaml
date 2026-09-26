@@ -1226,6 +1226,7 @@
     <Style TargetType="controls:ExtendedGridView">
         <Setter Property="Padding" Value="0,0,0,10" />
         <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="ShowsScrollingPlaceholders" Value="False" />
         <Setter Property="TabNavigation" Value="Once" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />

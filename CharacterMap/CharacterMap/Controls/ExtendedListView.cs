@@ -73,6 +73,7 @@ public class ExtendedGridViewItem : GridViewItem, IExtendedListViewBaseItem
 [DependencyProperty<INotifyCollectionChanged>("BindableSelectedItems")]
 [DependencyProperty<DataTemplate>("SelectorTemplate")]
 [AttachedProperty<SelectorVisualElement>("SelectorVisual")]
+[DependencyProperty<DataTemplate>("ItemToolTipTemplate")]
 public partial  class ExtendedListView : ListView
 {
     long token = 0;
@@ -138,7 +139,34 @@ public partial  class ExtendedListView : ListView
         if (item is IExtendedListViewBaseItem extendedItem)
             extendedItem.Owner = this;
 
+        item.PointerEntered += Item_PointerEntered;
+
         return item;
+    }
+
+    private void Item_PointerEntered(object sender, PointerRoutedEventArgs e)
+    {
+        if (ItemToolTipTemplate is null 
+            || sender is not FrameworkElement f 
+            || ToolTipService.GetToolTip(f) is ToolTip)
+            return;
+
+        ToolTip tooltip = new();
+        tooltip.Tag = f;
+        tooltip.ContentTemplate = this.ItemToolTipTemplate;
+        tooltip.Opened += (s, e) =>
+        {
+            if (s is ToolTip tt && tt.Tag is FrameworkElement f)
+            {
+                tt.ContentTemplate = this.ItemToolTipTemplate;
+                tt.Content = f.Tag;
+            }
+        };
+        
+        if (ResourceHelper.TryGet("DefaultThemeToolTipStyle", out Style style))
+            tooltip.Style = style;
+
+        ToolTipService.SetToolTip(f, tooltip);
     }
 
 
@@ -325,4 +353,9 @@ public class ExtendedGridView : ExtendedListView
     protected override Type GetStyleKey() => typeof(ExtendedGridView);
 
     protected override SelectorItem CreateContainer() => new ExtendedGridViewItem();
+
+    protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
+    {
+        base.PrepareContainerForItemOverride(element, item);
+    }
 }

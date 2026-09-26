@@ -143,6 +143,99 @@
 
     <Control.Resources>
 
+        <Style x:Key="SmallCardGridViewItem" TargetType="controls:ExtendedGridViewItem">
+            <Setter Property="CornerRadius" Value="{ThemeResource CardCornerRadius}" />
+            <Setter Property="Margin" Value="4" />
+            <Setter Property="Padding" Value="8" />
+            <Setter Property="MinWidth" Value="328" />
+            <Setter Property="MinHeight" Value="100" />
+            <Setter Property="Background" Value="{ThemeResource ControlFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Top" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:ExtendedGridViewItem">
+                        <ContentPresenter
+                            x:Name="ContentPresenter"
+                            Padding="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Background="{TemplateBinding Background}"
+                            BackgroundTransition="{StaticResource QuickBrushTransition}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                            ContextRequested="LigatureCard_ContextRequested"
+                            Control.IsTemplateFocusTarget="True"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                            FocusVisualSecondaryBrush="{ThemeResource SystemControlHighlightListLowBrush}"
+                            FocusVisualSecondaryThickness="2">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                                            <Setter Target="ContentPresenter.BorderThickness" Value="1" />
+                                        </VisualState.Setters>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+
+                                    <VisualState x:Name="Selected">
+                                        <VisualState.Setters>
+                                            <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource ListViewItemBackgroundSelected}" />
+                                            <Setter Target="ContentPresenter.BorderThickness" Value="1" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                    <VisualState x:Name="PointerOverSelected">
+                                        <VisualState.Setters>
+                                            <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource ListViewItemBackgroundSelected}" />
+                                            <Setter Target="ContentPresenter.BorderThickness" Value="1" />
+                                        </VisualState.Setters>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+
+                                    <VisualState x:Name="PressedSelected">
+                                        <VisualState.Setters>
+                                            <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                                            <Setter Target="ContentPresenter.BorderThickness" Value="1" />
+                                        </VisualState.Setters>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </ContentPresenter>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
         <Binding
             x:Key="CharBinding"
             ElementName="ViewRoot"
@@ -1581,7 +1674,7 @@
                 Visibility="Collapsed">
                 <controls:ExtendedGridView
                     x:Name="GlyphRepeater"
-                    Padding="0 0 0 70"
+                    Padding="12 0 4 70"
                     core:Properties.Boolean="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
                     core:Properties.Double="{x:Bind ViewModel.Settings.GridSize, Mode=OneWay}"
                     core:Properties.FontSize="{x:Bind core:Converters.GetFontSize(ViewModel.Settings.GridSize), Mode=OneWay}"
@@ -1596,12 +1689,13 @@
                     SelectionMode="Single"
                     ShowsScrollingPlaceholders="False"
                     Transform3D="{StaticResource Perspective}">
-                    <Control.Resources>
-                        <Style BasedOn="{StaticResource DefaultThemeGridViewItemStyle}" TargetType="controls:ExtendedGridViewItem">
+                    <ListViewBase.ItemContainerStyle>
+                        <Style BasedOn="{StaticResource SmallCardGridViewItem}" TargetType="controls:ExtendedGridViewItem">
+                            <Setter Property="Padding" Value="0" />
                             <Setter Property="MinHeight" Value="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Double)}" />
                             <Setter Property="MinWidth" Value="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Double)}" />
                         </Style>
-                    </Control.Resources>
+                    </ListViewBase.ItemContainerStyle>
                     <ListViewBase.Header>
                         <StackPanel Padding="24 4 12 8" Spacing="4">
                             <TextBlock
@@ -1848,13 +1942,68 @@
                 Grid.ColumnSpan="1"
                 Visibility="Collapsed">
                 <Grid.Resources>
+                    <Binding
+                        x:Key="FontFaceBinding"
+                        Path="(core:Properties.Footer)"
+                        Source="{x:Bind LigaturesRepeater}" />
+
+                    <Binding
+                        x:Key="FontUriBinding"
+                        Path="(core:Properties.FontUri)"
+                        Source="{x:Bind LigaturesRepeater}" />
+
+                    <Binding
+                        x:Key="StyleSimulationsBinding"
+                        Path="(core:Properties.Tag)"
+                        Source="{x:Bind LigaturesRepeater}" />
+
+
+                    <DataTemplate x:Key="GlyphComponentToolTipTemplate" x:DataType="models:LigatureComponent">
+                        <StackPanel Orientation="Vertical" Spacing="4">
+                            <controls:FontGlyph
+                                FontFace="{StaticResource FontFaceBinding}"
+                                FontSize="44"
+                                FontUri="{StaticResource FontUriBinding}"
+                                Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                Indices="{Binding GlyphIndex}"
+                                IsColorFontEnabled="False"
+                                StyleSimulations="{StaticResource StyleSimulationsBinding}" />
+                            <TextBlock
+                                FontStretch="Normal"
+                                FontStyle="Normal"
+                                FontWeight="Normal"
+                                Text="{x:Bind Tooltip}" />
+                        </StackPanel>
+                    </DataTemplate>
+
+                    <DataTemplate x:Key="GlyphComponentItemTemplate" x:DataType="models:LigatureComponent">
+                        <Border
+                            Height="32"
+                            MinWidth="32"
+                            Padding="4 1"
+                            core:Properties.LazyToolTipTemplate="{StaticResource GlyphComponentToolTipTemplate}"
+                            Background="{ThemeResource ControlFillColorSecondaryBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="4">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                Text="{x:Bind DisplayText}" />
+                        </Border>
+                    </DataTemplate>
+
                     <CollectionViewSource
                         x:Key="LigaturesSource"
                         x:Name="LigaturesSource"
                         IsSourceGrouped="True"
                         Source="{Binding ViewModel.SelectedFaceAnalysis.Ligatures, ElementName=ViewRoot, Mode=OneWay, FallbackValue={x:Null}, TargetNullValue={x:Null}}" />
                 </Grid.Resources>
-                <GridView
+
+                <controls:ExtendedGridView
                     x:Name="LigaturesRepeater"
                     Padding="12 0 12 70"
                     core:Properties.Boolean="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
@@ -1863,112 +2012,18 @@
                     core:Properties.FontUri="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs.FontUri, TargetNullValue={x:Null}, FallbackValue={x:Null}, Mode=OneWay}"
                     core:Properties.Footer="{x:Bind ViewModel.SelectedFaceAnalysis.Face.Face, Mode=OneWay}"
                     core:Properties.Tag="{x:Bind ViewModel.SelectedFaceAnalysis.StyleSimulation, Mode=OneWay}"
-                    DataFetchSize="1000"
                     FontFamily="{x:Bind ViewModel.SelectedFaceAnalysis.FontFamily, Mode=OneWay}"
                     FontStretch="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Stretch, Mode=OneWay}"
                     FontStyle="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Style, Mode=OneWay}"
                     FontWeight="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Weight, Mode=OneWay}"
+                    ItemContainerStyle="{StaticResource SmallCardGridViewItem}"
                     ItemsSource="{Binding Source={StaticResource LigaturesSource}}"
                     Loaded="LigaturesRepeater_Loaded"
                     SelectionChanged="LigaturesRepeater_SelectionChanged"
                     SelectionMode="Single"
-                    ShowsScrollingPlaceholders="False"
                     Transform3D="{StaticResource Perspective}">
-                    <GridView.Resources>
-                        <Style TargetType="GridViewItem">
-                            <Setter Property="CornerRadius" Value="{ThemeResource CardCornerRadius}" />
-                            <Setter Property="Margin" Value="4" />
-                            <Setter Property="Padding" Value="8" />
-                            <Setter Property="MinWidth" Value="328" />
-                            <Setter Property="MinHeight" Value="100" />
-                            <Setter Property="Background" Value="{ThemeResource ControlFillColorDefaultBrush}" />
-                            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                            <Setter Property="BorderThickness" Value="1" />
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            <Setter Property="VerticalContentAlignment" Value="Top" />
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="GridViewItem">
-                                        <ContentPresenter
-                                            x:Name="ContentPresenter"
-                                            Padding="{TemplateBinding Padding}"
-                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                            Background="{TemplateBinding Background}"
-                                            BackgroundTransition="{StaticResource QuickBrushTransition}"
-                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="{TemplateBinding BorderThickness}"
-                                            ContentTransitions="{TemplateBinding ContentTransitions}"
-                                            ContextRequested="LigatureCard_ContextRequested"
-                                            Control.IsTemplateFocusTarget="True"
-                                            CornerRadius="{TemplateBinding CornerRadius}"
-                                            FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
-                                            FocusVisualSecondaryBrush="{ThemeResource SystemControlHighlightListLowBrush}"
-                                            FocusVisualSecondaryThickness="2">
-                                            <VisualStateManager.VisualStateGroups>
-                                                <VisualStateGroup x:Name="CommonStates">
-                                                    <VisualState x:Name="Normal" />
 
-                                                    <VisualState x:Name="PointerOver">
-                                                        <VisualState.Setters>
-                                                            <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                                                            <Setter Target="ContentPresenter.BorderThickness" Value="1" />
-                                                        </VisualState.Setters>
-                                                        <Storyboard>
-                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
-                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
-                                                            </ObjectAnimationUsingKeyFrames>
-                                                        </Storyboard>
-                                                    </VisualState>
-
-                                                    <VisualState x:Name="Pressed">
-                                                        <Storyboard>
-                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
-                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
-                                                            </ObjectAnimationUsingKeyFrames>
-                                                        </Storyboard>
-                                                    </VisualState>
-
-                                                    <VisualState x:Name="Selected">
-                                                        <VisualState.Setters>
-                                                            <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource ListViewItemBackgroundSelected}" />
-                                                            <Setter Target="ContentPresenter.BorderThickness" Value="1" />
-                                                        </VisualState.Setters>
-                                                    </VisualState>
-
-                                                    <VisualState x:Name="PointerOverSelected">
-                                                        <VisualState.Setters>
-                                                            <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource ListViewItemBackgroundSelected}" />
-                                                            <Setter Target="ContentPresenter.BorderThickness" Value="1" />
-                                                        </VisualState.Setters>
-                                                        <Storyboard>
-                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
-                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
-                                                            </ObjectAnimationUsingKeyFrames>
-                                                        </Storyboard>
-                                                    </VisualState>
-
-                                                    <VisualState x:Name="PressedSelected">
-                                                        <VisualState.Setters>
-                                                            <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-                                                            <Setter Target="ContentPresenter.BorderThickness" Value="1" />
-                                                        </VisualState.Setters>
-                                                        <Storyboard>
-                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
-                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
-                                                            </ObjectAnimationUsingKeyFrames>
-                                                        </Storyboard>
-                                                    </VisualState>
-                                                </VisualStateGroup>
-                                            </VisualStateManager.VisualStateGroups>
-                                        </ContentPresenter>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </GridView.Resources>
-
-                    <GridView.Header>
+                    <controls:ExtendedGridView.Header>
                         <StackPanel Padding="12 4 12 8" Spacing="4">
 
                             <!--<controls:InfoBar
@@ -1999,28 +2054,28 @@
                                 Text="{x:Bind ViewModel.SelectedFaceAnalysis.LigaturesSummary, Mode=OneWay}"
                                 TextWrapping="Wrap" />
                         </StackPanel>
-                    </GridView.Header>
+                    </controls:ExtendedGridView.Header>
 
-                    <GridView.ItemsPanel>
+                    <controls:ExtendedGridView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsWrapGrid
                                 AreStickyGroupHeadersEnabled="True"
                                 ItemWidth="340"
                                 Orientation="Horizontal" />
                         </ItemsPanelTemplate>
-                    </GridView.ItemsPanel>
+                    </controls:ExtendedGridView.ItemsPanel>
 
-                    <GridView.GroupStyle>
+                    <controls:ExtendedGridView.GroupStyle>
                         <GroupStyle HidesIfEmpty="True">
                             <GroupStyle.HeaderContainerStyle>
-                                <Style TargetType="GridViewHeaderItem">
+                                <Style TargetType="ListViewHeaderItem">
                                     <Setter Property="Padding" Value="12 20 0 8" />
                                     <Setter Property="Margin" Value="0" />
                                     <Setter Property="MinHeight" Value="0" />
                                     <Setter Property="BorderBrush" Value="Transparent" />
                                     <Setter Property="Template">
                                         <Setter.Value>
-                                            <ControlTemplate TargetType="GridViewHeaderItem">
+                                            <ControlTemplate TargetType="ListViewHeaderItem">
                                                 <ContentPresenter
                                                     Margin="{TemplateBinding Padding}"
                                                     Content="{TemplateBinding Content}"
@@ -2042,9 +2097,9 @@
                                 </DataTemplate>
                             </GroupStyle.HeaderTemplate>
                         </GroupStyle>
-                    </GridView.GroupStyle>
+                    </controls:ExtendedGridView.GroupStyle>
 
-                    <GridView.ItemTemplate>
+                    <controls:ExtendedGridView.ItemTemplate>
                         <DataTemplate x:DataType="models:LigatureModel">
                             <Border>
                                 <Grid ColumnSpacing="12">
@@ -2133,6 +2188,7 @@
                                             x:Phase="2"
                                             Grid.Row="2"
                                             Margin="0 4 0 0"
+                                            ItemTemplate="{StaticResource GlyphComponentItemTemplate}"
                                             ItemsSource="{x:Bind Components}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
@@ -2142,52 +2198,13 @@
                                                         VerticalSpacing="4" />
                                                 </ItemsPanelTemplate>
                                             </ItemsControl.ItemsPanel>
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate x:DataType="models:LigatureComponent">
-                                                    <Border
-                                                        Height="32"
-                                                        MinWidth="32"
-                                                        Padding="4 1"
-                                                        Background="{ThemeResource ControlFillColorSecondaryBrush}"
-                                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                                        BorderThickness="1"
-                                                        CornerRadius="4">
-                                                        <ToolTipService.ToolTip>
-                                                            <StackPanel Orientation="Vertical" Spacing="4">
-                                                                <controls:FontGlyph
-                                                                    x:Phase="2"
-                                                                    FontFace="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Footer)}"
-                                                                    FontSize="44"
-                                                                    FontUri="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.FontUri)}"
-                                                                    Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
-                                                                    Indices="{x:Bind GlyphIndex}"
-                                                                    IsColorFontEnabled="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Boolean)}"
-                                                                    StyleSimulations="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Tag)}" />
-                                                                <TextBlock
-                                                                    x:Phase="1"
-                                                                    FontStretch="Normal"
-                                                                    FontStyle="Normal"
-                                                                    FontWeight="Normal"
-                                                                    Text="{x:Bind Tooltip}" />
-                                                            </StackPanel>
-                                                        </ToolTipService.ToolTip>
-                                                        <TextBlock
-                                                            HorizontalAlignment="Center"
-                                                            VerticalAlignment="Center"
-                                                            FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                                            FontSize="12"
-                                                            FontWeight="SemiBold"
-                                                            Text="{x:Bind DisplayText}" />
-                                                    </Border>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
                                         </ItemsControl>
                                     </Grid>
                                 </Grid>
                             </Border>
                         </DataTemplate>
-                    </GridView.ItemTemplate>
-                </GridView>
+                    </controls:ExtendedGridView.ItemTemplate>
+                </controls:ExtendedGridView>
 
                 <ProgressRing
                     x:Name="LigaturesRing"
