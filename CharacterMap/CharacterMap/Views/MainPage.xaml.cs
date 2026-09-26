@@ -222,6 +222,10 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             this.Bindings.StopTracking();
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
             this.FontMap.Cleanup();
+
+            //foreach (var font in this.ViewModel.FontList)
+            //    foreach (var face in font.Variants)
+            //        face.Trim();
         }
         else
         {
@@ -744,6 +748,24 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         });
     }
 
+    private void Button_Click(object sender, RoutedEventArgs e)
+    {
+        _ = SubsetterView.CreateWindowAsync(new());
+    }
+
+    private void FontsTabBar_IsExpandedChanged(object sender, bool e)
+    {
+        // Hacks to allow a smooth animation.
+        // 76 is the height of the expanded tab preview area
+        FontMap.BottomHeight = new(e ? 76 : 0);
+        FontMap.Margin = e ? new(0, 0, 0, -76) : new();
+    }
+
+    private void FontsSemanticZoom_ViewChangeStarted(object sender, SemanticZoomViewChangedEventArgs e)
+    {
+        this.FindName(nameof(ZoomGridView));
+    }
+
 
 
 
@@ -1006,19 +1028,6 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         CompositionFactory.PlayEntrance(LoadingStack.Children.ToList(), 60);
 
         // TODO : What if TypeRamp view loads first
-    }
-
-    private void Button_Click(object sender, RoutedEventArgs e)
-    {
-        _ = SubsetterView.CreateWindowAsync(new());
-    }
-
-    private void FontsTabBar_IsExpandedChanged(object sender, bool e)
-    {
-        // Hacks to allow a smooth animation.
-        // 76 is the height of the expanded tab preview area
-        FontMap.BottomHeight = new(e ? 76 : 0);
-        FontMap.Margin = e ? new(0, 0, 0, -76) : new();
     }
 }
 

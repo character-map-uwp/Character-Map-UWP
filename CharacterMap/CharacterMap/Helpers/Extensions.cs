@@ -8,6 +8,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
@@ -16,6 +17,12 @@ namespace CharacterMap.Helpers;
 
 public static class Extensions
 {
+    public static FontIcon WithThemeIcon(this FontIcon f, ThemeIcon icon)
+    {
+        Core.Properties.SetThemeIcon(f, icon);
+        return f;
+    }
+
     /// <summary>
     /// Creates a copy if the axis list with "new" instances of each axis with matching values.
     /// </summary>

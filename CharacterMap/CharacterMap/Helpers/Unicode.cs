@@ -1,4 +1,4 @@
-﻿using Windows.Data.Text;
+using Windows.Data.Text;
 
 namespace CharacterMap.Helpers;
 
@@ -13,6 +13,9 @@ public static class Unicode
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool CouldBeUnihan(uint index) => index >= UNIHAN_IDX;
+
+    private static readonly string[] _latinCache = [.. Enumerable.Range(0, 256).Select(i => GetHexValue((uint)i))];
+    public static string GetChar(uint i) => i < 256 ? _latinCache[i] : GetHexValue(i);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string GetHexValue(uint i) => (i <= 0x10FFFF && (i < 0xD800 || i > 0xDFFF)) ? char.ConvertFromUtf32((int)i) : new string((char)i, 1);
@@ -84,9 +87,8 @@ public static class Unicode
 
     public static List<UnicodeRangeModel> GetCategories(CMFontFace variant, bool mdl2)
     {
-        var ranges = variant.GetRanges();
-        var cats = UnicodeRanges.All
-            .Where(r => ranges.Any(g => g.Name == r.Name))
+        IReadOnlyList<NamedUnicodeRange> ranges = variant.GetRanges();
+        List<UnicodeRangeModel> cats = ranges
             .Select(r => new UnicodeRangeModel(r))
             .ToList();
 
@@ -144,5 +146,24 @@ public static class Unicode
         }
 
         return true;
+    }
+
+
+    public static bool IsZWJ(uint i) => i == 0x200D;
+    public static bool IsZWJ(string c) => c == "\u200D";
+
+    public static bool IsZWNJ(uint i) => i == 0x200C;
+    public static bool IsZWNJ(string c) => c == "\u200C";
+
+    public static bool IsSpecial(uint? i) => i is uint u && IsSpecial(u);
+    public static bool IsSpecial(uint i)
+    {
+        return i
+            is 0x200C // ZWNJ
+            or 0x200D // ZWJ
+            or 0xFE0F // VS16
+            or 0xFE0E // VS15
+            or 0x00A0 // NBSP
+            or 0x0020; // Space
     }
 }

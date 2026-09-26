@@ -36,6 +36,7 @@ internal class CharacterGridViewTemplateSettings
 [DependencyProperty<DWriteFontFace>("ItemFontFace")]
 [DependencyProperty<TypographyFeatureInfo>("ItemTypography")]
 [DependencyProperty<CMFontFace>("ItemFontVariant")]
+[DependencyProperty<FaceAnalysisModel>("ItemFaceAnalysis")]
 [DependencyProperty<GlyphAnnotation>("ItemAnnotation")]
 [AttachedProperty<ItemTooltipData>("ToolTipData")]
 [DependencyProperty<bool>("HasSelection")]
@@ -92,7 +93,7 @@ public partial class CharacterGridView : GridView
     public class ItemTooltipData
     {
         public Character Char { get; set; }
-        public CMFontFace Variant { get; set; }
+        public FaceAnalysisModel FaceAnalysis { get; set; }
         public GridViewItem Container { get; set; }
     }
 
@@ -157,8 +158,8 @@ public partial class CharacterGridView : GridView
                             // No idea why.
                              TextBlock t = new();
                              t.TextWrapping = TextWrapping.Wrap;
-                             string txt = data.Variant is not null
-                                 ? data.Variant.GetDescription(data.Char, allowUnihan: true)
+                             string txt = data?.FaceAnalysis.Face is not null
+                                 ? data.FaceAnalysis.GetDescription(data.Char, allowUnihan: true)
                                  : string.Empty;
 
                             //string formatLabel = FlyoutHelper.GetGlyphFormatLabel(data.Variant, data.Char);
@@ -168,7 +169,7 @@ public partial class CharacterGridView : GridView
                             t.Text = txt ?? data.Char.UnicodeString;
 
                             // Manually construct the variations popup
-                            if (ShowVariationsInToolTips && TypographyAnalyzer.GetCharacterVariants(data.Variant, data.Char) is { Count: > 1 } list)
+                            if (ShowVariationsInToolTips && TypographyAnalyzer.GetCharacterVariants(data.FaceAnalysis.Face, data.Char) is { Count: > 1 } list)
                             {
                                 // Store current template settings - we need to change these to render the variations
                                 var size = _templateSettings.Size;
@@ -236,7 +237,7 @@ public partial class CharacterGridView : GridView
                     ToolTipService.SetToolTip(item, t);
                 }
 
-                CharacterGridView.SetToolTipData(t, new ItemTooltipData { Char = c, Container = item, Variant = ItemFontVariant });
+                CharacterGridView.SetToolTipData(t, new ItemTooltipData { Char = c, Container = item, FaceAnalysis = ItemFaceAnalysis });
             }
         }
 
@@ -424,7 +425,7 @@ public partial class CharacterGridView : GridView
         // 2 - Use XAML direct to set new properties, rather than through DP's
         // 3 - Access any required data properties from parents through normal properties, 
         //     not DP's - DP access can be order of magnitudes slower.
-        // Note : This will be faster via C++ as it avoids all marshalling costs.
+        // Note : This will be faster via C++ as it avoids all marshaling costs.
         // Note: For more improved performance, do **not** use XAML ItemTemplate.
         //       Create entire template via XamlDirect, and never directly reference the 
         //       WinRT XAML object.

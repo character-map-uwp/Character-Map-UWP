@@ -1,5 +1,6 @@
 ﻿namespace CharacterMap.Models;
 
+
 [DebuggerDisplay("{Name}, Start: {Start}, End: {End}")]
 public record class NamedUnicodeRange
 {

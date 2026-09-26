@@ -125,7 +125,14 @@ public partial class SettingsViewModel : ViewModelBase
         // is to expose features people may not be aware exist inside the
         // application rather than bug-fixes or visual changes.
         return [
-            new("Latest Update (September 2026)", // September 2026
+            new("Latest Update (October 2026)", // September 2026
+                """
+                - Added Ligatures view
+                - Glyph indexes for Characters are now shown in Unicode tools
+                - For Characters formed of multiple glyphs, each glyph component is now listed below the character preview pane
+                - Added ability to switch between ColrV0 and ColrV1 glyphs in the Preview Pane
+                """),
+            new("2026.5.1.0 (September 2026)", // September 2026
                 """
                 - Added expandable tab-bar preview thumbnails for Windows 11 theme
                 - Typographic variants of a glyph will now attempt to copy as text if the glyph of the typographic variant also exists as a mapped character

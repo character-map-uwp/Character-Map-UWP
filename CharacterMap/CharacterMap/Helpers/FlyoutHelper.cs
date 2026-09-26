@@ -711,9 +711,9 @@ public static class FlyoutHelper
         return flyout;
     }
 
-    public static string GetGlyphFormatLabel(CMFontFace variant, Character c)
+    public static string GetGlyphFormatLabel(FaceAnalysisModel model, Character c)
     {
-        if (variant == null || c == null)
+        if (model == null || c == null)
             return string.Empty;
 
         List<string> formats = [];
@@ -722,10 +722,10 @@ public static class FlyoutHelper
         {
             ushort glyphIndex = c is GlyphCharacter gc
                 ? gc.GlyphIndex
-                : (ushort)variant.GetGlyphIndex(c);
+                : (ushort)model.Face.GetGlyphIndex(c);
 
-            if (variant.Face != null
-                && Utils.GetInterop().AnalyzeGlyphLayout(variant.Face, glyphIndex) is { } analysis
+            if (model.Face != null
+                && Utils.GetInterop().AnalyzeGlyphLayout(model.Face.Face, glyphIndex) is { } analysis
                 && analysis.GlyphFormats != null
                 && analysis.GlyphFormats.Count > 0)
             {
@@ -737,7 +737,7 @@ public static class FlyoutHelper
                             if (!formats.Contains("SVG")) formats.Add("SVG");
                             break;
                         case GlyphImageFormat.Colr:
-                            FontAnalysis colrFa = variant.GetAnalysis();
+                            FontAnalysis colrFa = model.Analysis;
                             string colrVer = colrFa != null && colrFa.COLRVersion >= 1 ? "COLRv1" : "COLRv0";
                             if (!formats.Contains(colrVer)) formats.Add(colrVer);
                             break;
@@ -759,7 +759,7 @@ public static class FlyoutHelper
         }
         catch { }
 
-        if (formats.Count == 0 && variant.GetAnalysis() is { } fa)
+        if (formats.Count == 0 && model.Analysis is { } fa)
         {
             if (fa.HasCOLRGlyphs && fa.COLRVersion >= 1) formats.Add("COLRv1");
             else if (fa.HasSVGGlyphs) formats.Add("SVG");

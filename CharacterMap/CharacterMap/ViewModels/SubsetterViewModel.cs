@@ -2,8 +2,6 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Collections.Extensions;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using Windows.ApplicationModel.VoiceCommands;
-using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.ViewModels;
@@ -52,6 +50,8 @@ public partial class FaceSelectionModel : ObservableObject
 
     public CMFontFace Face { get; }
 
+    public FaceAnalysisModel FaceAnalysis { get; }
+
     public int SelectedCount => SelectedCharacters.Count + CustomGlyphs.Count;
 
     public string DisplayName => IsPhysical ? Face.FamilyName : "Imported SVG Glyphs";
@@ -75,6 +75,7 @@ public partial class FaceSelectionModel : ObservableObject
 
         IsPhysical = face is not null;
         Face ??= FontFinder.DefaultFont.DefaultVariant;
+        FaceAnalysis = new(Face);
 
         // Notify when our selection changes
         SelectedCharacters.CollectionChanged += Selection_CollectionChanged;
@@ -93,7 +94,7 @@ public partial class FaceSelectionModel : ObservableObject
             return;
 
         SelectedCharacters.CollectionChanged -= Selection_CollectionChanged;
-        SelectedCharacters = [.. Face.Characters];
+        SelectedCharacters = [.. Face.GetCharacters()];
         SelectedCharacters.CollectionChanged += Selection_CollectionChanged;
         _messenger.Send(new CollectionChangedMessage(this, null));
     }
@@ -101,7 +102,7 @@ public partial class FaceSelectionModel : ObservableObject
     private string GetGlyphName(Character c)
     {
         // If the font has post/name table, try to load the name from there.
-        return Face.GetDefinedCharacterName(c);
+        return FaceAnalysis.GetDefinedCharacterName(c);
     }
 
     /// <summary>
@@ -160,7 +161,7 @@ public partial class SubsetterViewModel : ViewModelBase
 
     /// <summary>
     /// Unicode indexes that appear more than once in <see cref="PreviewList"/>,
-    /// meaning two glyphs from different source fonts share the same codepoint
+    /// meaning two glyphs from different source fonts share the same code-point
     /// and will clash in the output font.
     /// </summary>
     [ObservableProperty] HashSet<uint> _clashingIndexes = [];
@@ -354,7 +355,7 @@ public partial class SubsetterViewModel : ViewModelBase
                 return;
 
 
-            // 3. Note: version string currently isn't supported by the subsetter table-rewritter
+            // 3. Note: version string currently isn't supported by the subsetter table-re-writer
             var file = await FontSubsetter.CreateSubsetAsync(new(fontName, PreviewList, _computedClassName, target, version));
             if (file is not null && await FontImporter.LoadFromFileAsync(file) is CMFontFamily font)
                 Notify(new SubsetResultMessage(font, file));
@@ -369,7 +370,7 @@ public partial class SubsetterViewModel : ViewModelBase
 
     
 
-    // Start at 'Private-Use Supplmentary A' to avoid Segoe glyphs
+    // Start at 'Private-Use Supplementary A' to avoid Segoe glyphs
     uint _nextCustomPua = 0xF0000;
     string prevState = EDIT_STATE;
 

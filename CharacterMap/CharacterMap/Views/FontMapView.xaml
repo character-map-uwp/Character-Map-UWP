@@ -12,6 +12,7 @@
     xmlns:models="using:CharacterMap.Models"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:services="using:CharacterMap.Services"
+    xmlns:sys="using:System"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
@@ -141,6 +142,99 @@
     </Control.Tag>
 
     <Control.Resources>
+
+        <Style x:Key="SmallCardGridViewItem" TargetType="controls:ExtendedGridViewItem">
+            <Setter Property="CornerRadius" Value="{ThemeResource CardCornerRadius}" />
+            <Setter Property="Margin" Value="4" />
+            <Setter Property="Padding" Value="8" />
+            <Setter Property="MinWidth" Value="328" />
+            <Setter Property="MinHeight" Value="100" />
+            <Setter Property="Background" Value="{ThemeResource ControlFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Top" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:ExtendedGridViewItem">
+                        <ContentPresenter
+                            x:Name="ContentPresenter"
+                            Padding="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Background="{TemplateBinding Background}"
+                            BackgroundTransition="{StaticResource QuickBrushTransition}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                            ContextRequested="LigatureCard_ContextRequested"
+                            Control.IsTemplateFocusTarget="True"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                            FocusVisualSecondaryBrush="{ThemeResource SystemControlHighlightListLowBrush}"
+                            FocusVisualSecondaryThickness="2">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                                            <Setter Target="ContentPresenter.BorderThickness" Value="1" />
+                                        </VisualState.Setters>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+
+                                    <VisualState x:Name="Selected">
+                                        <VisualState.Setters>
+                                            <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource ListViewItemBackgroundSelected}" />
+                                            <Setter Target="ContentPresenter.BorderThickness" Value="1" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                    <VisualState x:Name="PointerOverSelected">
+                                        <VisualState.Setters>
+                                            <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource ListViewItemBackgroundSelected}" />
+                                            <Setter Target="ContentPresenter.BorderThickness" Value="1" />
+                                        </VisualState.Setters>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+
+                                    <VisualState x:Name="PressedSelected">
+                                        <VisualState.Setters>
+                                            <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                                            <Setter Target="ContentPresenter.BorderThickness" Value="1" />
+                                        </VisualState.Setters>
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </ContentPresenter>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
 
         <Binding
             x:Key="CharBinding"
@@ -726,7 +820,7 @@
                     ColumnSpacing="0"
                     Margin="12 0 0 0"
                     VerticalAlignment="Center"
-                    MaxColumns="3"
+                    MaxColumns="4"
                     SelectedIndex="{x:Bind ToInt(ViewModel.DisplayMode), Mode=OneWay}"
                     SelectedIndexChangedCommand="{x:Bind ViewModel.SetDisplayModeCommand}">
                     <Control.Resources>
@@ -751,6 +845,11 @@
                     <FontIcon core:Properties.ThemeIcon="TypeRampView">
                         <FontIcon.Tag>
                             <views:TitledDescription x:Uid="TypeRampDescription" />
+                        </FontIcon.Tag>
+                    </FontIcon>
+                    <FontIcon core:Properties.ThemeIcon="LigatureMapView">
+                        <FontIcon.Tag>
+                            <views:TitledDescription x:Uid="LigatureMapDescription" />
                         </FontIcon.Tag>
                     </FontIcon>
                 </controls:UXRadioButtons>
@@ -1328,6 +1427,7 @@
                     ItemAnnotation="{x:Bind ViewModel.Settings.GlyphAnnotation, Mode=OneTime}"
                     ItemContainerTransitions="{StaticResource NoTransitions}"
                     ItemDoubleTapped="CharGrid_ItemDoubleTapped"
+                    ItemFaceAnalysis="{x:Bind ViewModel.SelectedFaceAnalysis, Mode=OneWay, FallbackValue={x:Null}}"
                     ItemFontFace="{x:Bind ViewModel.SelectedFace.Face, Mode=OneWay}"
                     ItemFontFamily="{x:Bind ViewModel.SelectedFaceAnalysis.FontFamily, Mode=OneWay, FallbackValue={x:Null}}"
                     ItemFontVariant="{x:Bind ViewModel.SelectedFace, Mode=OneWay}"
@@ -1574,11 +1674,13 @@
                 Visibility="Collapsed">
                 <controls:ExtendedGridView
                     x:Name="GlyphRepeater"
-                    Padding="0 0 0 70"
+                    Padding="12 0 4 70"
                     core:Properties.Boolean="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
                     core:Properties.Double="{x:Bind ViewModel.Settings.GridSize, Mode=OneWay}"
                     core:Properties.FontSize="{x:Bind core:Converters.GetFontSize(ViewModel.Settings.GridSize), Mode=OneWay}"
                     core:Properties.FontUri="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs.FontUri, TargetNullValue={x:Null}, FallbackValue={x:Null}, Mode=OneWay}"
+                    core:Properties.Footer="{x:Bind ViewModel.SelectedFaceAnalysis.Face.Face, Mode=OneWay}"
+                    core:Properties.Tag="{x:Bind ViewModel.SelectedFaceAnalysis.StyleSimulation, Mode=OneWay}"
                     ContainerContentChanging="CharGrid_ContainerContentChanging"
                     ContextRequested="Grid_ContextRequested"
                     DataFetchSize="1000"
@@ -1587,17 +1689,29 @@
                     SelectionMode="Single"
                     ShowsScrollingPlaceholders="False"
                     Transform3D="{StaticResource Perspective}">
+                    <ListViewBase.ItemContainerStyle>
+                        <Style BasedOn="{StaticResource SmallCardGridViewItem}" TargetType="controls:ExtendedGridViewItem">
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="MinHeight" Value="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Double)}" />
+                            <Setter Property="MinWidth" Value="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Double)}" />
+                        </Style>
+                    </ListViewBase.ItemContainerStyle>
                     <ListViewBase.Header>
-                        <StackPanel x:Name="GlyphsInfoHeader" RequestedTheme="Dark">
-                            <controls:InfoBar
-                                x:Name="SimulatedFacesGlyphsMessage"
-                                x:Load="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.IsSimulated, Mode=OneWay, FallbackValue=False}"
-                                x:Uid="SimulatedFacesGlyphsMessage"
-                                SecondaryContent=" " />
+                        <StackPanel Padding="24 4 12 8" Spacing="4">
+                            <TextBlock
+                                FontSize="16"
+                                FontStretch="Normal"
+                                FontStyle="Normal"
+                                FontWeight="Bold"
+                                Style="{ThemeResource SubtitleTextBlockStyle}"
+                                Text="{x:Bind core:Converters.GetFormat2('GlyphsSummary/Text', ViewModel.SelectedFace.Face.GlyphCount, ViewModel.SelectedFace.CharacterCount), Mode=OneWay}"
+                                TextWrapping="Wrap" />
                         </StackPanel>
+
                     </ListViewBase.Header>
+
                     <ItemsControl.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="sys:UInt32">
                             <!--  TODO : Use ContainerContent changing or ElementPrepared to set this?  -->
                             <Grid
                                 x:Name="Target"
@@ -1605,16 +1719,20 @@
                                 Height="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Double)}"
                                 Padding="4"
                                 Tag="{Binding}">
-                                <Glyphs
+                                <controls:FontGlyph
                                     x:Name="Text"
+                                    x:Phase="2"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    core:Properties.FontUri="{Binding ElementName=GlyphRepeater, Path=(core:Properties.FontUri)}"
-                                    Fill="{ThemeResource ApplicationForegroundThemeBrush}"
-                                    FontRenderingEmSize="{Binding ElementName=GlyphRepeater, Path=(core:Properties.FontSize)}"
-                                    Indices="{Binding}"
-                                    IsColorFontEnabled="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Boolean)}" />
-                                <TextBlock Style="{StaticResource CharItemUnicodeStyle}" Text="{Binding}" />
+                                    FontFace="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Footer)}"
+                                    FontSize="{Binding ElementName=GlyphRepeater, Path=(core:Properties.FontSize)}"
+                                    FontUri="{Binding ElementName=GlyphRepeater, Path=(core:Properties.FontUri)}"
+                                    Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                    Indices="{x:Bind}"
+                                    IsColorFontEnabled="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Boolean)}"
+                                    StyleSimulations="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Tag)}" />
+
+                                <TextBlock Style="{StaticResource CharItemUnicodeStyle}" Text="{x:Bind}" />
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -1625,8 +1743,10 @@
                     Width="100"
                     Height="100"
                     HorizontalAlignment="Center"
-                    VerticalAlignment="Center" />
+                    VerticalAlignment="Center"
+                    IsActive="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs.IsLoading, Mode=OneWay, FallbackValue=False}" />
             </Grid>
+
 
 
 
@@ -1814,6 +1934,292 @@
 
 
 
+            <!--  Ligatures  -->
+            <Grid
+                x:Name="LigaturesRoot"
+                x:Load="False"
+                Grid.Row="2"
+                Grid.ColumnSpan="1"
+                Visibility="Collapsed">
+                <Grid.Resources>
+                    <Binding
+                        x:Key="FontFaceBinding"
+                        Path="(core:Properties.Footer)"
+                        Source="{x:Bind LigaturesRepeater}" />
+
+                    <Binding
+                        x:Key="FontUriBinding"
+                        Path="(core:Properties.FontUri)"
+                        Source="{x:Bind LigaturesRepeater}" />
+
+                    <Binding
+                        x:Key="StyleSimulationsBinding"
+                        Path="(core:Properties.Tag)"
+                        Source="{x:Bind LigaturesRepeater}" />
+
+
+                    <DataTemplate x:Key="GlyphComponentToolTipTemplate" x:DataType="models:LigatureComponent">
+                        <StackPanel Orientation="Vertical" Spacing="4">
+                            <controls:FontGlyph
+                                FontFace="{StaticResource FontFaceBinding}"
+                                FontSize="44"
+                                FontUri="{StaticResource FontUriBinding}"
+                                Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                Indices="{Binding GlyphIndex}"
+                                IsColorFontEnabled="False"
+                                StyleSimulations="{StaticResource StyleSimulationsBinding}" />
+                            <TextBlock
+                                FontStretch="Normal"
+                                FontStyle="Normal"
+                                FontWeight="Normal"
+                                Text="{x:Bind Tooltip}" />
+                        </StackPanel>
+                    </DataTemplate>
+
+                    <DataTemplate x:Key="GlyphComponentItemTemplate" x:DataType="models:LigatureComponent">
+                        <Border
+                            Height="32"
+                            MinWidth="32"
+                            Padding="4 1"
+                            core:Properties.LazyToolTipTemplate="{StaticResource GlyphComponentToolTipTemplate}"
+                            Background="{ThemeResource ControlFillColorSecondaryBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="4">
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                FontSize="12"
+                                FontWeight="SemiBold"
+                                Text="{x:Bind DisplayText}" />
+                        </Border>
+                    </DataTemplate>
+
+                    <CollectionViewSource
+                        x:Key="LigaturesSource"
+                        x:Name="LigaturesSource"
+                        IsSourceGrouped="True"
+                        Source="{Binding ViewModel.SelectedFaceAnalysis.Ligatures, ElementName=ViewRoot, Mode=OneWay, FallbackValue={x:Null}, TargetNullValue={x:Null}}" />
+                </Grid.Resources>
+
+                <controls:ExtendedGridView
+                    x:Name="LigaturesRepeater"
+                    Padding="12 0 12 70"
+                    core:Properties.Boolean="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
+                    core:Properties.Double="{x:Bind ViewModel.Settings.GridSize, Mode=OneWay}"
+                    core:Properties.FontSize="{x:Bind core:Converters.GetFontSize(ViewModel.Settings.GridSize), Mode=OneWay}"
+                    core:Properties.FontUri="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs.FontUri, TargetNullValue={x:Null}, FallbackValue={x:Null}, Mode=OneWay}"
+                    core:Properties.Footer="{x:Bind ViewModel.SelectedFaceAnalysis.Face.Face, Mode=OneWay}"
+                    core:Properties.Tag="{x:Bind ViewModel.SelectedFaceAnalysis.StyleSimulation, Mode=OneWay}"
+                    FontFamily="{x:Bind ViewModel.SelectedFaceAnalysis.FontFamily, Mode=OneWay}"
+                    FontStretch="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Stretch, Mode=OneWay}"
+                    FontStyle="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Style, Mode=OneWay}"
+                    FontWeight="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Weight, Mode=OneWay}"
+                    ItemContainerStyle="{StaticResource SmallCardGridViewItem}"
+                    ItemsSource="{Binding Source={StaticResource LigaturesSource}}"
+                    Loaded="LigaturesRepeater_Loaded"
+                    SelectionChanged="LigaturesRepeater_SelectionChanged"
+                    SelectionMode="Single"
+                    Transform3D="{StaticResource Perspective}">
+
+                    <controls:ExtendedGridView.Header>
+                        <StackPanel Padding="12 4 12 8" Spacing="4">
+
+                            <!--<controls:InfoBar
+                                x:Name="SimulatedFacesGlyphsMessage2"
+                                x:Load="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.IsSimulated, Mode=OneWay, FallbackValue=False}"
+                                x:Uid="SimulatedFacesGlyphsMessage"
+                                Margin="0 0 0 4"
+                                SecondaryContent=" " />-->
+
+                            <!--  Empty state info if no ligatures  -->
+                            <controls:InfoBar
+                                x:Name="NoLigaturesMessage"
+                                x:Load="{x:Bind core:Converters.False(ViewModel.SelectedFaceAnalysis.HasLigatures), Mode=OneWay, FallbackValue=False}"
+                                Margin="0 0 0 4"
+                                Content="{core:Localizer Key=NoLigaturesMessage}"
+                                FontStretch="Normal"
+                                FontStyle="Normal"
+                                FontWeight="Normal"
+                                SecondaryContent=" " />
+
+                            <!--  Main Title: The font {FontName} contains {N} ligatures in {M} OpenType features  -->
+                            <TextBlock
+                                FontSize="16"
+                                FontStretch="Normal"
+                                FontStyle="Normal"
+                                FontWeight="Bold"
+                                Style="{ThemeResource SubtitleTextBlockStyle}"
+                                Text="{x:Bind ViewModel.SelectedFaceAnalysis.LigaturesSummary, Mode=OneWay}"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                    </controls:ExtendedGridView.Header>
+
+                    <controls:ExtendedGridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid
+                                AreStickyGroupHeadersEnabled="True"
+                                ItemWidth="340"
+                                Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </controls:ExtendedGridView.ItemsPanel>
+
+                    <controls:ExtendedGridView.GroupStyle>
+                        <GroupStyle HidesIfEmpty="True">
+                            <GroupStyle.HeaderContainerStyle>
+                                <Style TargetType="ListViewHeaderItem">
+                                    <Setter Property="Padding" Value="12 20 0 8" />
+                                    <Setter Property="Margin" Value="0" />
+                                    <Setter Property="MinHeight" Value="0" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListViewHeaderItem">
+                                                <ContentPresenter
+                                                    Margin="{TemplateBinding Padding}"
+                                                    Content="{TemplateBinding Content}"
+                                                    ContentTemplate="{TemplateBinding ContentTemplate}" />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.HeaderContainerStyle>
+                            <GroupStyle.HeaderTemplate>
+                                <DataTemplate>
+                                    <TextBlock
+                                        FontSize="12"
+                                        FontStretch="Normal"
+                                        FontStyle="Normal"
+                                        FontWeight="SemiBold"
+                                        Opacity="0.6"
+                                        Text="{Binding Key}" />
+                                </DataTemplate>
+                            </GroupStyle.HeaderTemplate>
+                        </GroupStyle>
+                    </controls:ExtendedGridView.GroupStyle>
+
+                    <controls:ExtendedGridView.ItemTemplate>
+                        <DataTemplate x:DataType="models:LigatureModel">
+                            <Border>
+                                <Grid ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <!--  Left: Square Glyph Preview Box  -->
+                                    <Border
+                                        Width="84"
+                                        Height="84"
+                                        VerticalAlignment="Top"
+                                        Background="{ThemeResource LayerFillColorDefaultBrush}"
+                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="{ThemeResource ControlCornerRadius}">
+                                        <Grid>
+                                            <!--  Center: Ligature Glyph  -->
+                                            <controls:FontGlyph
+                                                x:Name="Text"
+                                                FontFace="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Footer)}"
+                                                FontSize="44"
+                                                FontUri="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.FontUri)}"
+                                                Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                                Indices="{x:Bind LigatureGlyph}"
+                                                IsColorFontEnabled="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Boolean)}"
+                                                StyleSimulations="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Tag)}" />
+
+
+                                            <!--  Bottom-Left: 0 (left bearing indicator)  -->
+                                            <!--<TextBlock
+                                                Margin="4 0 0 2"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Bottom"
+                                                FontFamily="Consolas"
+                                                FontSize="9.5"
+                                                Opacity="0.45"
+                                                Text="0" />-->
+
+                                            <!--  Bottom-Right: Glyph Index  -->
+                                            <TextBlock
+                                                Margin="0 0 4 2"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Bottom"
+                                                FontFamily="Consolas"
+                                                FontSize="9.5"
+                                                FontStretch="Normal"
+                                                FontStyle="Normal"
+                                                FontWeight="Normal"
+                                                Opacity="0.45"
+                                                Text="{x:Bind LigatureGlyph}" />
+                                        </Grid>
+                                    </Border>
+
+                                    <!--  Right: Details (Name & Component Badges)  -->
+                                    <Grid Grid.Column="1" VerticalAlignment="Stretch">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+
+                                        <!--  Row 0: Name / Glyph  -->
+                                        <TextBlock
+                                            x:Phase="1"
+                                            Grid.Column="1"
+                                            VerticalAlignment="Center"
+                                            FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                            FontSize="12"
+                                            FontStretch="Normal"
+                                            FontStyle="Normal"
+                                            FontWeight="Normal"
+                                            Text="{x:Bind GlyphName}"
+                                            TextTrimming="CharacterEllipsis"
+                                            ToolTipService.ToolTip="{x:Bind GlyphName}" />
+
+                                        <!--  Row 1: Components  -->
+                                        <!--<TextBlock
+                                            Grid.Row="1"
+                                            VerticalAlignment="Center"
+                                            FontSize="12"
+                                            Opacity="0.6"
+                                            Text="Components" />-->
+                                        <ItemsControl
+                                            x:Phase="2"
+                                            Grid.Row="2"
+                                            Margin="0 4 0 0"
+                                            ItemTemplate="{StaticResource GlyphComponentItemTemplate}"
+                                            ItemsSource="{x:Bind Components}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <toolkit:WrapPanel
+                                                        HorizontalSpacing="4"
+                                                        Orientation="Horizontal"
+                                                        VerticalSpacing="4" />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                        </ItemsControl>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </controls:ExtendedGridView.ItemTemplate>
+                </controls:ExtendedGridView>
+
+                <ProgressRing
+                    x:Name="LigaturesRing"
+                    Width="60"
+                    Height="60"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    IsActive="{x:Bind ViewRoot.(views:FontMapView.GlyphsLoading), Mode=OneWay}"
+                    Visibility="{x:Bind core:Converters.TrueToVis(ViewRoot.(views:FontMapView.GlyphsLoading)), Mode=OneWay}" />
+            </Grid>
+
+
+
+
+
             <!--  Column Grid Splitter  -->
             <Grid
                 x:Name="SplitterContainer"
@@ -1880,10 +2286,35 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
+                    <controls:UXRadioButtons
+                        x:Name="ColrSelector"
+                        Grid.Row="1"
+                        Margin="0 0 0 12"
+                        HorizontalAlignment="Center"
+                        ForceSelection="True"
+                        MaxColumns="3"
+                        SelectedItemsSource="{x:Bind ViewModel.SelectedChar.ColrRenderItems, Mode=OneWay}"
+                        Visibility="{x:Bind ViewModel.SelectedChar.HasColorRenderOptions, Mode=OneWay, FallbackValue=Collapsed}">
+                        <Control.Resources>
+                            <Style BasedOn="{StaticResource RadioButtonsButtonStyle}" TargetType="RadioButton">
+                                <Setter Property="h:FluentAnimation.PointerOverOffset" Value="-2" />
+                                <!--<Setter Property="MinHeight" Value="40" />-->
+                                <Setter Property="MinWidth" Value="60" />
+                                <Setter Property="VerticalAlignment" Value="Stretch" />
+                            </Style>
+                        </Control.Resources>
+                        <muxc:RadioButtons.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DisplayName}" />
+                            </DataTemplate>
+                        </muxc:RadioButtons.ItemTemplate>
+                    </controls:UXRadioButtons>
+
                     <!--  Character Preview  -->
-                    <Grid>
+                    <Grid Grid.Row="0">
                         <Border x:Name="PreviewBorder" />
                         <Border
                             x:Name="TxtPreviewViewBox"
@@ -1896,6 +2327,7 @@
                             <cxc:DirectText
                                 x:Name="TxtPreview"
                                 VerticalAlignment="Center"
+                                ColorRenderOption="{Binding ElementName=ColrSelector, Path=SelectedItem.Tag, FallbackValue=Default, TargetNullValue=Default}"
                                 FontFace="{Binding SelectedFace.Face}"
                                 FontFamily="{Binding SelectedFace.Source}"
                                 FontSize="24"
@@ -1904,7 +2336,6 @@
                                 FontWeight="{Binding SelectedFace.DirectWriteProperties.Weight}"
                                 Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                 IsCharacterFitEnabled="True"
-                                IsColorFontEnabled="{Binding ShowColorGlyphs}"
                                 IsOverwriteCompensationEnabled="True"
                                 IsTextScaleFactorEnabled="False"
                                 Text="{Binding SelectedChar.Char}"
@@ -1961,7 +2392,7 @@
 
                     <StackPanel
                         x:Name="CharacterPreviewDetailsRoot"
-                        Grid.Row="1"
+                        Grid.Row="2"
                         h:CompositionFactory.UseWindowAwareSynchronisedReposition="True">
                         <StackPanel>
                             <controls:UXComboBox
@@ -2052,6 +2483,120 @@
                                     <Run Text="{x:Bind ViewModel.GetCharDescription(ViewModel.SelectedChar.Char), Mode=OneWay}" /><Run Text="," />
                                     <Run Text="{x:Bind ViewModel.SelectedChar.Char.Range.Name, Mode=OneWay}" />
                                 </TextBlock>
+                                <Grid
+                                    ColumnSpacing="4"
+                                    Margin="0 4 0 0"
+                                    Visibility="{x:Bind ViewModel.SelectedChar.HasMultipleGlyphs, Mode=OneWay, FallbackValue=Collapsed}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock
+                                        VerticalAlignment="Top"
+                                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                        FontSize="12"
+                                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                        Text="{x:Bind ViewModel.SelectedChar.GlyphHeader, Mode=OneWay, FallbackValue=''}" />
+                                    <ItemsControl
+                                        x:Name="CharGlyphsRepeater"
+                                        Grid.Column="1"
+                                        DataContext="{x:Bind ViewModel}"
+                                        ItemsSource="{x:Bind ViewModel.SelectedChar.Glyphs, Mode=OneWay, FallbackValue={x:Null}}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <toolkit:WrapPanel
+                                                    HorizontalSpacing="4"
+                                                    Orientation="Horizontal"
+                                                    VerticalSpacing="2" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate x:DataType="models:GlyphCharacter">
+                                                <Button
+                                                    Padding="4 1"
+                                                    Click="BtnGlyph_Click"
+                                                    Style="{StaticResource ThemeTextBlockButtonStyle}">
+                                                    <ToolTipService.ToolTip>
+                                                        <ToolTip Opened="ToolTip_Opened">
+                                                            <StackPanel
+                                                                HorizontalAlignment="Center"
+                                                                DataContext="{Binding DataContext, Mode=OneWay, ElementName=CharGlyphsRepeater}"
+                                                                Spacing="4">
+                                                                <Panel.Resources>
+                                                                    <SolidColorBrush x:Key="Color" Color="{x:Bind Color.Value, FallbackValue=Transparent}" />
+                                                                </Panel.Resources>
+                                                                <TextBlock
+                                                                    HorizontalAlignment="Center"
+                                                                    FontSize="12"
+                                                                    FontWeight="SemiBold">
+                                                                    <Run Text="Glyph" />
+                                                                    <Run Text="{x:Bind GlyphIndex}" />
+                                                                </TextBlock>
+                                                                <Grid Width="80" Height="80">
+                                                                    <Border
+                                                                        Background="{ThemeResource LayerFillColorDefaultBrush}"
+                                                                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                                        BorderThickness="1"
+                                                                        CornerRadius="4" />
+                                                                    <ProgressRing
+                                                                        Width="24"
+                                                                        Height="24"
+                                                                        HorizontalAlignment="Center"
+                                                                        VerticalAlignment="Center"
+                                                                        IsActive="{Binding SelectedFaceAnalysis.Glyphs.IsLoading}" />
+                                                                    <Glyphs
+                                                                        HorizontalAlignment="Center"
+                                                                        VerticalAlignment="Center"
+                                                                        core:Properties.FontUri="{Binding SelectedFaceAnalysis.Glyphs.FontUri}"
+                                                                        Fill="{StaticResource Color}"
+                                                                        FontRenderingEmSize="40"
+                                                                        Indices="{x:Bind GlyphIndex}"
+                                                                        IsColorFontEnabled="{Binding ShowColorGlyphs, Mode=OneWay}" />
+                                                                </Grid>
+                                                                <StackPanel HorizontalAlignment="Center" Spacing="0">
+                                                                    <!--<TextBlock FontSize="11" TextAlignment="Center">
+                                                                        <Run Text="Palette Index:" />
+                                                                        <Run Text="{x:Bind PaletteIndex}" />
+                                                                    </TextBlock>-->
+                                                                    <StackPanel
+                                                                        HorizontalAlignment="Center"
+                                                                        Orientation="Horizontal"
+                                                                        Spacing="4">
+                                                                        <TextBlock
+                                                                            VerticalAlignment="Center"
+                                                                            FontSize="11"
+                                                                            Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                                            TextAlignment="Center"
+                                                                            TextLineBounds="Tight">
+                                                                            <!--<Run Text="Default Color:" />-->
+                                                                            <Run Text="{x:Bind Color.Value, FallbackValue='None'}" />
+                                                                        </TextBlock>
+                                                                        <Rectangle
+                                                                            Width="12"
+                                                                            Height="12"
+                                                                            Fill="{StaticResource Color}" />
+                                                                    </StackPanel>
+
+                                                                    <!--<TextBlock
+                                                                        HorizontalAlignment="Center"
+                                                                        FontSize="11"
+                                                                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                                        Text="{core:Localizer Key=BtnXAMLGeometry/Content}" />-->
+                                                                </StackPanel>
+                                                            </StackPanel>
+                                                        </ToolTip>
+                                                    </ToolTipService.ToolTip>
+                                                    <TextBlock
+                                                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                                        FontSize="12"
+                                                        FontWeight="SemiBold"
+                                                        Foreground="{ThemeResource SystemAccentColor}"
+                                                        Text="{Binding GlyphIndex, Mode=OneTime}" />
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Grid>
                             </StackPanel>
 
                             <!--  Unihan  -->
@@ -2628,10 +3173,10 @@
                         From="CharacterMapState"
                         To="GlyphMapState" />
                     <VisualTransition
-                        x:Name="RampToGridTransition"
+                        x:Name="GridToLigaturesTransition"
                         GeneratedDuration="00:00:00"
-                        From="TypeRampState"
-                        To="CharacterMapState" />
+                        From="CharacterMapState"
+                        To="LigatureMapState" />
                     <VisualTransition
                         x:Name="GlyphToGridTransition"
                         GeneratedDuration="00:00:00"
@@ -2643,10 +3188,40 @@
                         From="GlyphMapState"
                         To="TypeRampState" />
                     <VisualTransition
+                        x:Name="GlyphToLigaturesTransition"
+                        GeneratedDuration="00:00:00"
+                        From="GlyphMapState"
+                        To="LigatureMapState" />
+                    <VisualTransition
                         x:Name="RampToGlyphTransition"
                         GeneratedDuration="00:00:00"
                         From="TypeRampState"
                         To="GlyphMapState" />
+                    <VisualTransition
+                        x:Name="RampToGridTransition"
+                        GeneratedDuration="00:00:00"
+                        From="TypeRampState"
+                        To="CharacterMapState" />
+                    <VisualTransition
+                        x:Name="RampToLigaturesTransition"
+                        GeneratedDuration="00:00:00"
+                        From="TypeRampState"
+                        To="LigatureMapState" />
+                    <VisualTransition
+                        x:Name="LigatureToGlyphTransition"
+                        GeneratedDuration="00:00:00"
+                        From="LigatureMapState"
+                        To="GlyphMapState" />
+                    <VisualTransition
+                        x:Name="LigatureToGridTransition"
+                        GeneratedDuration="00:00:00"
+                        From="LigatureMapState"
+                        To="CharacterMapState" />
+                    <VisualTransition
+                        x:Name="LigatureToRampTransition"
+                        GeneratedDuration="00:00:00"
+                        From="LigatureMapState"
+                        To="TypeRampState" />
                 </VisualStateGroup.Transitions>
                 <VisualState x:Name="CharacterMapState">
                     <VisualState.Setters>
@@ -2662,6 +3237,23 @@
 
                         <Setter Target="CharGridRoot.Visibility" Value="Collapsed" />
                         <Setter Target="GlyphsRoot.Visibility" Value="Visible" />
+
+                        <Setter Target="SearchBox.Visibility" Value="Collapsed" />
+                        <Setter Target="CharacterFilterButton.Visibility" Value="Collapsed" />
+
+                        <!--  Don't disable this button, breaks the binding  -->
+                        <Setter Target="ToggleCopyPaneButton.IsHitTestVisible" Value="False" />
+                        <Setter Target="ToggleCopyPaneButton.Opacity" Value="0.4" />
+                        <Setter Target="ToggleCopyPaneButton.IsTabStop" Value="False" />
+                    </VisualState.Setters>
+                </VisualState>
+
+                <VisualState x:Name="LigatureMapState">
+                    <VisualState.Setters>
+                        <Setter Target="CharacterPreviewDetailsRoot.Visibility" Value="Collapsed" />
+
+                        <Setter Target="CharGridRoot.Visibility" Value="Collapsed" />
+                        <Setter Target="LigaturesRoot.Visibility" Value="Visible" />
 
                         <Setter Target="SearchBox.Visibility" Value="Collapsed" />
                         <Setter Target="CharacterFilterButton.Visibility" Value="Collapsed" />
@@ -2711,7 +3303,7 @@
                 <VisualState x:Name="GlyphMapLoadingState">
                     <VisualState.Setters>
                         <Setter Target="GlyphsRoot.IsHitTestVisible" Value="True" />
-                        <Setter Target="GlyphRing.IsActive" Value="True" />
+                        <!--<Setter Target="GlyphRing.IsActive" Value="True" />-->
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="GlyphMapLoadedState">
@@ -2852,7 +3444,7 @@
             <VisualStateGroup x:Name="OptionsStates">
                 <VisualState x:Name="HasOptionsState">
                     <VisualState.StateTriggers>
-                        <StateTrigger IsActive="{x:Bind core:Converters.TrueFalse(ViewModel.SelectedFaceAnalysis.HasFontOptions, ViewModel.SelectedFont.IsGlyphMap), FallbackValue=False, Mode=OneWay}" />
+                        <StateTrigger IsActive="{x:Bind core:Converters.TrueFalseFalse(ViewModel.SelectedFaceAnalysis.HasFontOptions, ViewModel.SelectedFont.IsGlyphMap, ViewModel.SelectedFont.IsLigatures), FallbackValue=False, Mode=OneWay}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="FontOptionsButton.Visibility" Value="Visible" />
@@ -2870,6 +3462,8 @@
                         <Setter Target="ViewRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
                         <!--<Setter Target="BackgroundBorder.Visibility" Value="Collapsed" />-->
                         <Setter Target="CopyTopBorder.Visibility" Value="Collapsed" />
+                        <!--<Setter Target="OptionsPanel.Shadow" Value="{StaticResource FluentShadow}" />
+                        <Setter Target="OptionsPanel.(core:Properties.Depth)" Value="80" />-->
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ClassicThemeState">

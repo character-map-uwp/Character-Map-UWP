@@ -40,7 +40,7 @@ public class VariantTemplateSelector : DataTemplateSelector
 [AttachedProperty<bool>("GlyphsLoading")]
 [AttachedProperty<bool>("GlyphsLoaded")]
 [DependencyProperty<GridLength>("BottomHeight")]
-public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter, IPopoverPresenter
+public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter, IPopoverPresenter, IWindowContent
 {
     private BrushTransition t = new() { Duration = TimeSpan.FromSeconds(0.115) };
 
@@ -53,6 +53,9 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     private bool _isCompactOverlay = false;
 
     public bool IsStandalone { get; set; }
+
+    // Declared here to use as x:Bind Fallback
+    DWriteColorRenderOption DefaultColorRenderOption = DWriteColorRenderOption.Default;
 
 
     public FontMapView()
@@ -95,8 +98,6 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 .SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible);
 
             Window.Current.Activate();
-            Window.Current.Closed -= Current_Closed;
-            Window.Current.Closed += Current_Closed;
 
             LayoutRoot.KeyDown -= LayoutRoot_KeyDown;
             LayoutRoot.KeyDown += LayoutRoot_KeyDown;
@@ -160,17 +161,100 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         ViewModel?.Deactivated();
     }
 
+    bool _cleaned = false;
+
     public void Cleanup()
     {
+        if (_cleaned)
+            return;
+
+        _cleaned = true;
+
         this.Bindings.StopTracking();
+
+        /* Release Mode in a secondary window can result in an internal XAML crash when
+         * .NET GC tries to shutdown XAML objects. To avoid this we need to manually
+         * remove some XAML elements from the tree ourselves.
+         * 
+         * This crash is typically in the internal tear-down of ListView-based controls so
+         * we mostly focus on manually destroying/emptying ListViews
+         *  
+         *  -> Windows_UI_Xaml!DirectUI::DXamlCore::ShutdownAllPeers
+            -> SharedLibrary!ICLRServices.DisconnectRCWsInCurrentApartment
+              -> SharedLibrary!McgMarshal.ReleaseRCWsInCurrentApartment
+                -> SharedLibrary!ComObjectCache.RemoveRCWsForContext
+                  -> SharedLibrary!$8_System::__ComObject.FinalReleaseSelf
+                    -> SharedLibrary!$8_System::__ComObject.Cleanup
+                      -> SharedLibrary!McgMarshal.ComRelease
+                        -> Windows_UI_Xaml!DirectUI::DependencyObject::OnFinalRelease
+                          -> Windows_UI_Xaml!DirectUI::DependencyObject::DisconnectFrameworkPeerCore
+                            -> Windows_UI_Xaml!CGrid::`scalar deleting destructor'
+                              -> Windows_UI_Xaml!CFrameworkElement::~CFrameworkElement
+                                -> Windows_UI_Xaml!CUIElement::~CUIElement
+                                  -> Windows_UI_Xaml!CCollection::Clear
+                                    -> Windows_UI_Xaml!CCollection::Destroy
+                                      -> Windows_UI_Xaml!CDOCollection::Neat
+                                        -> Windows_UI_Xaml!CDOCollection::ChildLeave
+                                          -> Windows_UI_Xaml!CDependencyObject::SetParent
+                                            -> Windows_UI_Xaml!DirectUI::DXamlCore::GetPeerPrivate
+                                              -> Windows_UI_Xaml!ctl::ComObject<DirectUI::ListView>::AddRef  <-- [AV 0xC0000005]
+
+            00007ffa`6f888770 f85f8100 ldur  x0, [x8, #-8]  ; load m_pUnkOuter (CCW) from [this - 8]
+            00007ffa`6f888774 b4000120 cbz   x0, ...
+            00007ffa`6f888778 f9400008 ldr   x8, [x0]       ; load CCW vtable
+            00007ffa`6f88877c f9400508 ldr   x8, [x8, #8]   ; CRASH: Attempting to dereference freed CCW memory
+        */
+
+        // 0. We'll also tear down the PrintPresenter because it can cause crashes too.
+        if (PrintPresenter != null)
+        {
+            if (PrintPresenter.Child is PopoverViewBase popover)
+                popover.Hide();
+            PrintPresenter.Child = null;
+        }
+
+        if (PrintCanvas != null)
+            PrintCanvas.Children.Clear();
+
+        // 1. Detach and unbind the main Character Grid
+        if (CharGrid != null)
+        {
+            CharGrid.ContainerContentChanging -= CharGrid_ContainerContentChanging;
+            CharGrid.ItemDoubleTapped -= CharGrid_ItemDoubleTapped;
+            CharGrid.ItemsSource = null;
+        }
+
+        // 2. Empty the container grid so CDOCollection has 0 children during peer shutdown
+        if (CharGridRoot != null)
+            CharGridRoot.Children.Clear();
+
+        // 3. Clean up GlyphRepeater if it was loaded
+        if (GlyphRepeater != null)
+        {
+            GlyphRepeater.ContainerContentChanging -= CharGrid_ContainerContentChanging;
+            GlyphRepeater.SelectionChanged -= GlyphRepeater_SelectionChanged;
+            GlyphRepeater.ItemsSource = null;
+        }
+
+        if (GlyphsRoot != null)
+            GlyphsRoot.Children.Clear();
+
+        if (LigaturesRepeater != null)
+        {
+            LigaturesRepeater.SelectionChanged -= LigaturesRepeater_SelectionChanged;
+            LigaturesRepeater.ItemsSource = null;
+        }
+
+        if (LigaturesRoot != null)
+            LigaturesRoot.Children.Clear();
+
+        if (OptionsList != null)
+            OptionsList.ItemsSource = null;
+
+        if (LayoutRoot != null)
+            LayoutRoot.Children.Clear();
     }
 
-    private void Current_Closed(object sender, CoreWindowEventArgs e)
-    {
-        this.Bindings.StopTracking();
-        Window.Current.Closed -= Current_Closed;
-        Window.Current.Content = null;
-    }
 
     private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
@@ -222,6 +306,10 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 break;
             case nameof(ViewModel.SelectedProvider):
                 UpdateDevUtils();
+                break;
+            case nameof(ViewModel.SelectedFaceAnalysis):
+                if (MapDisplayStates.CurrentState == LigatureMapState)
+                    _ = ViewModel?.SelectedFaceAnalysis?.LoadGlyphFontAsync() ?? Task.CompletedTask;
                 break;
         }
     }
@@ -406,8 +494,10 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             {
                 if (MapDisplayStates.CurrentState == CharacterMapState)
                     UpdateGridToRampTransition(GridToRampTransition, CharGrid);
-                else if (MapDisplayStates.CurrentState== GlyphMapState)
+                else if (MapDisplayStates.CurrentState == GlyphMapState)
                     UpdateGridToRampTransition(GlyphToRampTransition, GlyphRepeater);
+                else if (MapDisplayStates.CurrentState == LigatureMapState)
+                    UpdateGridToRampTransition(LigatureToRampTransition, LigaturesRepeater, true);
             }
             GoToState(TypeRampState.Name, animate);
         }
@@ -418,7 +508,9 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 if (MapDisplayStates.CurrentState == TypeRampState)
                     UpdateRampToGridTransition(CharGrid, RampToGridTransition);
                 else if (MapDisplayStates.CurrentState == GlyphMapState)
-                    UpdateGlyphToGridTransition();
+                    UpdateRepeaterToXTransition(GlyphRepeater, CharGrid, GlyphToGridTransition);
+                else if (MapDisplayStates.CurrentState == LigatureMapState)
+                    UpdateRepeaterToXTransition(LigaturesRepeater, CharGrid, LigatureToGridTransition);
             }
             else if (CharGrid.ItemsPanelRoot is null)
                 CharGrid.Measure(CharGrid.DesiredSize);
@@ -429,23 +521,42 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         {
             if (animate)
             {
+                this.FindName(nameof(GlyphsRoot));
                 if (MapDisplayStates.CurrentState == CharacterMapState)
-                    UpdateGridToGlyphTransition();
+                    UpdateXToXTransition(CharGrid, GlyphRepeater, GridToGlyphTransition);
                 else if (MapDisplayStates.CurrentState == TypeRampState)
-                {
-                    this.FindName(nameof(GlyphsRoot)); // x:Load
                     UpdateRampToGridTransition(GlyphRepeater, RampToGlyphTransition);
-                }
+                else if (MapDisplayStates.CurrentState == LigatureMapState)
+                    UpdateRepeaterToXTransition(LigaturesRepeater, GlyphRepeater, LigatureToGlyphTransition);
             }
 
+            if (ViewModel.SelectedFaceAnalysis?.Glyphs?.IsLoaded ?? false)
+                GoToState(nameof(GlyphMapLoadedState));
+
             GoToState(GlyphMapState.Name, animate);
+        }
+        else if (ViewModel.DisplayMode == FontDisplayMode.LigaturesState)
+        {
+            if (animate)
+            {
+                this.FindName(nameof(LigaturesRoot));
+                if (MapDisplayStates.CurrentState == CharacterMapState)
+                    UpdateXToXTransition(CharGrid, LigaturesRepeater, GridToLigaturesTransition);
+                else if  (MapDisplayStates.CurrentState == GlyphMapState)
+                    UpdateXToXTransition(GlyphRepeater, LigaturesRepeater, GlyphToLigaturesTransition);
+                else if (MapDisplayStates.CurrentState == TypeRampState)
+                    UpdateRampToGridTransition(LigaturesRepeater, RampToLigaturesTransition, true);
+            }
+
+            _ = ViewModel?.SelectedFaceAnalysis?.LoadGlyphFontAsync();
+            GoToState(LigatureMapState.Name, animate);
         }
 
         // Make sure this stays in sync with programmatic changes
         ViewSelector.SelectedIndex = (int)ViewModel.DisplayMode;
 
         //if (animate)
-            PlayFontChanged(false);
+        PlayFontChanged(false);
     }
 
     private void UpdateCharacterFit()
@@ -617,7 +728,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         Character charToCopy = character;
         bool isVariantCopied = false;
 
-        if (PreviewTypographySelector.SelectedItem 
+        if (PreviewTypographySelector.SelectedItem
             is TypographyVariation { IsNone: false, IsVariationMapped: true } variation)
         {
             if (ViewModel.SelectedFace?.TryGetCharacter(variation.FaceCharacterMapping, out Character mappedChar) is true)
@@ -663,9 +774,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void BtnCopyCode_OnClick(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement f
-            && f.DataContext is DevOption o
-            && f.Tag is string s)
+        if (sender is FrameworkElement { DataContext: DevOption o, Tag: string s })
         {
             Utils.CopyToClipBoard(s.Trim());
             BorderFadeInStoryboard.Begin();
@@ -805,8 +914,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void DevFlyout_Opening(object sender, object e)
     {
-        if (sender is MenuFlyout menu 
-            && menu.Items?.Count < 2
+        if (sender is MenuFlyout { Items: { Count: < 2 } } menu
             && ViewModel.Providers is not null)
         {
             Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
@@ -855,12 +963,8 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void AxisReset_Click(object sender, RoutedEventArgs e)
     {
-        if (sender is FrameworkElement b
-            && b.Tag is Slider s
-            && b.DataContext is DWriteFontAxis axis)
-        {
+        if (sender is FrameworkElement { Tag: Slider s, DataContext: DWriteFontAxis axis })
             s.Value = axis.DefaultValue;
-        }
     }
 
     private void CharGrid_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -898,9 +1002,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     private void SavePng_Click(object sender, RoutedEventArgs e)
     {
         /* Save from Character Grid Context Menu */
-        if (sender is MenuFlyoutItem item
-            && item.DataContext is Character c
-            && item.CommandParameter is ExportStyle style)
+        if (sender is MenuFlyoutItem { DataContext: Character c, CommandParameter: ExportStyle style } item)
         {
             if (item.Tag is null)
             {
@@ -908,7 +1010,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 {
                     Style = style,
                     Typography = ViewModel.SelectedTypography.Feature,
-                    Character= c
+                    Character = c
                 });
             }
             else
@@ -924,9 +1026,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     private void SaveSvg_Click(object sender, RoutedEventArgs e)
     {
         /* Save from Character Grid Context Menu */
-        if (sender is MenuFlyoutItem item
-            && item.DataContext is Character c
-            && item.CommandParameter is ExportStyle style)
+        if (sender is MenuFlyoutItem { DataContext: Character c, CommandParameter: ExportStyle style } item)
         {
             if (item.Tag is null)
             {
@@ -934,7 +1034,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 {
                     Style = style,
                     Typography = ViewModel.SelectedTypography.Feature,
-                     Character = c
+                    Character = c
                 });
             }
             else
@@ -950,9 +1050,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     private void CopyClick(object sender, RoutedEventArgs e)
     {
         /* Copy from Character Grid Context Menu */
-        if (sender is MenuFlyoutItem item
-          && item.DataContext is Character c
-          && item.CommandParameter is DevValueType type)
+        if (sender is MenuFlyoutItem { DataContext: Character c, CommandParameter: DevValueType type })
         {
             _ = ViewModel.RequestCopyToClipboardAsync(
                     new CopyToClipboardMessage(type, c, ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFace)));
@@ -961,17 +1059,13 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void AddClick(object sender, RoutedEventArgs e)
     {
-        if (sender is MenuFlyoutItem item
-            && item.DataContext is Character c)
-        {
+        if (sender is MenuFlyoutItem { DataContext: Character c })
             ViewModel.Sequence += c.Char;
-        }
     }
 
     private void OpenCalligraphyClick(object sender, RoutedEventArgs e)
     {
-        if (sender is MenuFlyoutItem item
-            && item.DataContext is Character c)
+        if (sender is MenuFlyoutItem { DataContext: Character c })
         {
             _ = CalligraphyView.CreateWindowAsync(
                     ViewModel.RenderingOptions, c.Char);
@@ -1075,6 +1169,31 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         }
     }
 
+    private void BtnGlyph_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement { DataContext: GlyphCharacter g })
+            NavigateToGlyph(g.GlyphIndex);
+    }
+
+    public async void NavigateToGlyph(ushort glyphIndex)
+    {
+        ViewModel.DisplayMode = FontDisplayMode.GlyphMapState;
+
+        if (ViewModel.SelectedFaceAnalysis?.Glyphs is GlyphCollection coll)
+            await coll.EnsureLoadedUpToAsync(glyphIndex);
+
+        this.Enqueue(() =>
+        {
+            GlyphRepeater.SelectedItem = (uint)glyphIndex;
+            GlyphRepeater.ScrollIntoView((uint)glyphIndex);
+        }, CoreDispatcherPriority.Low);
+    }
+
+    private void ToolTip_Opened(object sender, RoutedEventArgs e)
+    {
+        _ = ViewModel?.SelectedFaceAnalysis?.LoadGlyphFontAsync();
+    }
+
 
 
 
@@ -1139,7 +1258,19 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     Character GetChar(CharacterAnalysisModel c) => c?.Char;
 
-    void ToModel(object c) => ViewModel.SelectedChar = new (ViewModel.SelectedFace, c as Character, ViewModel);
+    void ToModel(object c)
+    {
+        if (ViewModel.SelectedChar?.Char == c)
+            return;
+
+        // 1. Persist render option
+        var opt = ViewModel.ShowColorGlyphs ? CharacterAnalysisModel.DefaultRenderOption : CharacterAnalysisModel.MonoRenderOption;
+        if (ViewModel.SelectedChar is { HasColorRenderOptions: true } existing
+            && ColrSelector.SelectedItem is NamedTag tag)
+            opt = tag;
+
+        ViewModel.SelectedChar = new(ViewModel.SelectedFace, c as Character, ViewModel, opt);
+    }
 
     private void UpdateDisplay()
     {
@@ -1238,6 +1369,9 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     {
         if (d is FontMapView view && e.NewValue is bool b && b)
         {
+            if (view.MapDisplayStates.CurrentState != view.GlyphMapState)
+                return;
+
             view.Enqueue(() =>
             {
                 if (view.GlyphMapStates.CurrentState == view.GlyphMapLoadingState)
@@ -1273,8 +1407,85 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         debouncer.Debounce(
             () => CompositionFactory.SetUseWindowAwareSynchronisedReposition(repositionTarget, true));
     }
-}
 
+
+
+
+
+
+    //------------------------------------------------------
+    //
+    //  Ligatures Map
+    //
+    //------------------------------------------------------
+
+    private void LigaturesRepeater_Loaded(object sender, RoutedEventArgs e)
+    {
+        //LigaturesRepeater.ItemsSource = LigaturesSource;
+        _ = ViewModel?.SelectedFaceAnalysis?.LoadGlyphFontAsync();
+    }
+
+    private void LigaturesRepeater_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (LigaturesRepeater.SelectedItem is LigatureModel model)
+        {
+            SetWithoutReposition(TxtPreview, _resizerBouncer, () =>
+            {
+                TxtPreview.GlyphIndex = (int)model.LigatureGlyph;
+                AnimateSelectionFromGlyph(LigaturesRepeater);
+            });
+        }
+    }
+
+    private void LigatureCard_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+    {
+        if (sender is ContentPresenter { Content: LigatureModel target }
+            && args.TryGetPosition(sender, out Point p))
+        {
+            MenuFlyout menu = new();
+
+            if (!string.IsNullOrEmpty(target.CombinedString))
+            {
+                MenuFlyoutItem copyItem = new()
+                {
+                    Text = Localization.Get("CopySequenceMessage", target.CombinedString),
+                    Icon = ThemeIconGlyph.CreateIcon(ThemeIcon.Copy)
+                };
+                copyItem.Click += (_, _) =>
+                {
+                    Utils.CopyToClipBoard(target.CombinedString);
+                    GetNotifier().Show(Localization.Get("NotificationCopied"), 2000);
+                };
+                menu.Items.Add(copyItem);
+            }
+
+            //MenuFlyoutItem copyGlyphItem = new()
+            //{
+            //    Text = $"Copy Glyph Index (#{target.LigatureGlyph})",
+            //    Icon = new FontIcon { Glyph = "\uE8C8" }
+            //};
+            //copyGlyphItem.Click += (_, _) =>
+            //{
+            //    Utils.CopyToClipBoard(target.LigatureGlyph.ToString());
+            //    GetNotifier().Show($"Copied Glyph #{target.LigatureGlyph} to clipboard", 2000);
+            //};
+            //menu.Items.Add(copyGlyphItem);
+
+            menu.AddSeparator();
+
+            MenuFlyoutItem viewGlyphItem = new()
+            {
+                Text = Localization.Get("ViewInGlyphMapMessage", target.LigatureGlyph),
+                Icon = ThemeIconGlyph.CreateIcon(ThemeIcon.GlyphMapView)
+            };
+            viewGlyphItem.Click += (_, _) => NavigateToGlyph((ushort)target.LigatureGlyph);
+            menu.Items.Add(viewGlyphItem);
+
+            menu.ShowAt(sender, p);
+            args.Handled = true;
+        }
+    }
+}
 
 
 

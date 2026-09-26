@@ -21,23 +21,20 @@ using namespace concurrency;
 
 CanvasFontSet^ DirectWrite::CreateFontSet(String^ path)
 {
-	/* 
-		Sometimes creating a CanvasFontSet directly in Win2D
-		throws error:
-		"The font URI specified is not a valid application URI that 
-		can be opened by StorageFile.GetFileFromApplicationUriAsync"
-		So, we create an IDWriteFontSet directly and cast it to CanvasFontSet;
+	/*
+		We need to validate the font has a family name.
+		Although other platforms and font renderers can read and understand fonts
+		without a FamilyName set in the 'name' table (for example, WOFF fonts),
+		XAML font rendering engine does not support these types of fonts.
+		Our basic WOFF conversion may give us fonts that are perfectly fine
+		except for this missing field.
+
+		WOFF2 fonts may also give the same problem.
 	*/
 
-	auto customFontManager = CustomFontManager::GetInstance();
-
-	auto fontCollection = customFontManager->GetFontCollection(path);
-
-	if (!fontCollection)
+	ComPtr<IDWriteFontSet> dwFontSet = CreateIDWriteFontSet(path);
+	if (!dwFontSet)
 		ThrowHR(E_INVALIDARG);
-
-	ComPtr<IDWriteFontSet> dwFontSet;
-	ThrowIfFailed(fontCollection->GetFontSet(&dwFontSet));
 
 	CanvasFontSet^ fontSet = GetOrCreate<CanvasFontSet>(dwFontSet.Get());
 	return fontSet;
@@ -45,16 +42,52 @@ CanvasFontSet^ DirectWrite::CreateFontSet(String^ path)
 
 ComPtr<IDWriteFontSet> DirectWrite::CreateIDWriteFontSet(String^ path)
 {
-	auto customFontManager = CustomFontManager::GetInstance();
-	auto fontCollection = customFontManager->GetFontCollection(path);
+	if (path == nullptr || path->IsEmpty())
+		return nullptr;
 
-	if (!fontCollection)
-		ThrowHR(E_INVALIDARG);
+	try
+	{
+		ComPtr<IDWriteFactory7> factory;
+		HRESULT hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory7), &factory);
+		if (FAILED(hr))
+			return nullptr;
 
-	ComPtr<IDWriteFontSet> dwFontSet;
-	ThrowIfFailed(fontCollection->GetFontSet(&dwFontSet));
+		ComPtr<IDWriteFontFile> fontFile;
+		hr = factory->CreateFontFileReference(path->Data(), nullptr, &fontFile);
+		if (FAILED(hr))
+			return nullptr;
 
-	return dwFontSet;
+		BOOL isSupported = FALSE;
+		DWRITE_FONT_FILE_TYPE fileType;
+		DWRITE_FONT_FACE_TYPE faceType;
+		UINT32 numberOfFaces = 0;
+		hr = fontFile->Analyze(&isSupported, &fileType, &faceType, &numberOfFaces);
+		if (FAILED(hr) || !isSupported || numberOfFaces == 0)
+			return nullptr;
+
+		ComPtr<IDWriteFontSetBuilder1> builder;
+		hr = factory->CreateFontSetBuilder(&builder);
+		if (FAILED(hr))
+			return nullptr;
+
+		for (UINT32 i = 0; i < numberOfFaces; ++i)
+		{
+			ComPtr<IDWriteFontFaceReference> faceRef;
+			if (SUCCEEDED(factory->CreateFontFaceReference(fontFile.Get(), i, DWRITE_FONT_SIMULATIONS_NONE, &faceRef)))
+				builder->AddFontFaceReference(faceRef.Get());
+		}
+
+		ComPtr<IDWriteFontSet> dwFontSet;
+		hr = builder->CreateFontSet(&dwFontSet);
+		if (FAILED(hr))
+			return nullptr;
+
+		return dwFontSet;
+	}
+	catch (...)
+	{
+		return nullptr;
+	}
 }
 
 String^ DirectWrite::GetTagName(UINT32 tag)
@@ -66,10 +99,20 @@ String^ DirectWrite::GetTagName(String^ tag)
 {
 	/* Variation Tags */
 	if (tag == "wght") return "Weight";
-	else if (tag == "slnt") return "Slant";
-	else if (tag == "CONT") return "Contrast";
-	else if (tag == "MIDL") return "Midline";
-	else if (tag == "wdth") return "Width";
+	if (tag == "slnt") return "Slant";
+	if (tag == "CONT") return "Contrast";
+	if (tag == "MIDL") return "Midline";
+	if (tag == "wdth") return "Width";
+
+	/* Ligature & Contextual Features */
+	if (tag == "liga") return "Standard Ligatures";
+	if (tag == "dlig") return "Discretionary Ligatures";
+	if (tag == "hlig") return "Historical Ligatures";
+	if (tag == "clig") return "Contextual Ligatures";
+	if (tag == "rlig") return "Required Ligatures";
+	if (tag == "locl") return "Localized Forms";
+	if (tag == "calt") return "Contextual Alternates";
+	if (tag == "ccmp") return "Glyph Composition / Decomposition";
 
 	/* OpenType feature Tags */
 	/* Only a subset of common tags are identified here */
@@ -77,62 +120,153 @@ String^ DirectWrite::GetTagName(String^ tag)
 	         properties for tags, like is it for single characters
 			 or glyph runs, editable, etc.
     */
-	else if (tag == "aalt") return "Access All Alternates";
-	else if (tag == "abvf") return "Above-base Forms";
-	else if (tag == "abvm") return "Above-base Mark Positioning";
-	else if (tag == "abvs") return "Above-base Substitutions";
-	else if (tag == "akhn") return "Akhand";
-	else if (tag == "blwf") return "Below-base Forms";
-	else if (tag == "blwm") return "Below-base Mark Positioning";
-	else if (tag == "blws") return "Below-base Substitutions";
-	else if (tag == "cfar") return "Conjunct Form After Ro";
-	else if (tag == "cjct") return "Conjunct Forms";
-	else if (tag == "dist") return "Distances";
-	else if (tag == "dpng") return "Diphthongs";
-	else if (tag == "dnom") return "Denominators";
-	else if (tag == "falt") return "Final Glyph on Line Alternates";
-	else if (tag == "fin2") return "Terminal Form #2";
-	else if (tag == "fin3") return "Terminal Form #3";
-	else if (tag == "fina") return "Terminal Forms";
-	else if (tag == "init") return "Initial Forms";
-	else if (tag == "isol") return "Isolated Forms";
-	else if (tag == "ital") return "Italics";
-	else if (tag == "ljmo") return "Leading Jamo Forms";
-	else if (tag == "mark") return "Mark Positioning";
-	else if (tag == "med2") return "Medial Forms #2";
-	else if (tag == "medi") return "Medial Forms";
-	else if (tag == "nukt") return "Nukta Forms";
-	else if (tag == "numr") return "Numerators";
-	else if (tag == "opsz") return "Optical size";
-	else if (tag == "ornm") return "Ornaments";
-	else if (tag == "pkna") return "Proportional Kana";
-	else if (tag == "pref") return "Pre-base Forms";
-	else if (tag == "pres") return "Pre-base Substitutions";
-	else if (tag == "pstf") return "Post-base Forms";
-	else if (tag == "psts") return "Post-base Substitutions";
-	else if (tag == "rclt") return "Required Contextual Alternates";
-	else if (tag == "rkrf") return "Rakar Forms";
-	else if (tag == "rphf") return "Reph Form";
-	else if (tag == "rtlm") return "Right-to-left mirrored forms";
-	else if (tag == "rvrn") return "Required Variation Alternates";
-	else if (tag == "size") return "Optical size";
-	else if (tag == "stch") return "Stretching Glyph Decomposition";
-	else if (tag == "tjmo") return "Trailing Jamo Forms";
-	else if (tag == "valt") return "Alternate Vertical Metrics";
-	else if (tag == "vatu") return "Vattu Variants";
-	else if (tag == "vhal") return "Alternate Vertical Half Metrics";
-	else if (tag == "vjmo") return "Vowel Jamo Forms";
-	else if (tag == "vkna") return "Vertical Kana Alternates";
-	else if (tag == "vkrn") return "Vertical Kerning";
-	else if (tag == "vpal") return "Proportional Alternate Vertical Metrics";
-	else
+	if (tag == "aalt") return "Access All Alternates";
+	if (tag == "abvf") return "Above-base Forms";
+	if (tag == "abvm") return "Above-base Mark Positioning";
+	if (tag == "abvs") return "Above-base Substitutions";
+	if (tag == "afrc") return "Alternative Fractions";
+	if (tag == "akhn") return "Akhand";
+	if (tag == "apkn") return "Kerning for Alternate Proportional Widths";
+	if (tag == "blwf") return "Below-base Forms";
+	if (tag == "blwm") return "Below-base Mark Positioning";
+	if (tag == "blws") return "Below-base Substitutions";
+	if (tag == "c2pc") return "Petite Capitals From Capitals";
+	if (tag == "c2sc") return "Small Capitals From Capitals";
+	if (tag == "calt") return "Contextual Alternates";
+	if (tag == "case") return "Case-sensitive Forms";
+	if (tag == "ccmp") return "Glyph Composition / Decomposition";
+	if (tag == "cfar") return "Conjunct Form After Ro";
+	if (tag == "chws") return "Contextual Half-width Spacing";
+	if (tag == "cjct") return "Conjunct Forms";
+	if (tag == "clig") return "Contextual Ligatures";
+	if (tag == "cpct") return "Centered CJK Punctuation";
+	if (tag == "cpsp") return "Capital Spacing";
+	if (tag == "cswh") return "Contextual Swash";
+	if (tag == "curs") return "Cursive Positioning";
+	if (tag == "dist") return "Distances";
+	if (tag == "dlig") return "Discretionary Ligatures";
+	if (tag == "dnom") return "Denominators";
+	if (tag == "dpng") return "Diphthongs";
+	if (tag == "dtls") return "Dotless Forms";
+	if (tag == "expt") return "Expert Forms";
+	if (tag == "falt") return "Final Glyph on Line Alternates";
+	if (tag == "fin2") return "Terminal Forms #2";
+	if (tag == "fin3") return "Terminal Forms #3";
+	if (tag == "fina") return "Terminal Forms";
+	if (tag == "flac") return "Flattened Accent Forms";
+	if (tag == "frac") return "Fractions";
+	if (tag == "fwid") return "Full Widths";
+	if (tag == "half") return "Half Forms";
+	if (tag == "haln") return "Halant Forms";
+	if (tag == "halt") return "Alternate Half Widths";
+	if (tag == "hist") return "Historical Forms";
+	if (tag == "hkna") return "Horizontal Kana Alternates";
+	if (tag == "hlig") return "Historical Ligatures";
+	if (tag == "hngl") return "Hangul";
+	if (tag == "hojo") return "Hojo Kanji Forms (JIS X 0212-1990 Kanji Forms)";
+	if (tag == "hwid") return "Half Widths";
+	if (tag == "init") return "Initial Forms";
+	if (tag == "isol") return "Isolated Forms";
+	if (tag == "ital") return "Italics";
+	if (tag == "jalt") return "Justification Alternates";
+	if (tag == "jp78") return "JIS78 Forms";
+	if (tag == "jp83") return "JIS83 Forms";
+	if (tag == "jp90") return "JIS90 Forms";
+	if (tag == "jp04") return "JIS2004 Forms";
+	if (tag == "kern") return "Kerning";
+	if (tag == "lfbd") return "Left Bounds";
+	if (tag == "liga") return "Standard Ligatures";
+	if (tag == "ljmo") return "Leading Jamo Forms";
+	if (tag == "lnum") return "Lining Figures";
+	if (tag == "locl") return "Localized Forms";
+	if (tag == "ltra") return "Left-to-right Alternates";
+	if (tag == "ltrm") return "Left-to-right Mirrored Forms";
+	if (tag == "mark") return "Mark Positioning";
+	if (tag == "med2") return "Medial Forms #2";
+	if (tag == "medi") return "Medial Forms";
+	if (tag == "mgrk") return "Mathematical Greek";
+	if (tag == "mkmk") return "Mark to Mark Positioning";
+	if (tag == "mset") return "Mark Positioning via Substitution";
+	if (tag == "nalt") return "Alternate Annotation Forms";
+	if (tag == "nlck") return "NLC Kanji Forms";
+	if (tag == "nukt") return "Nukta Forms";
+	if (tag == "numr") return "Numerators";
+	if (tag == "onum") return "Oldstyle Figures";
+	if (tag == "opbd") return "Optical Bounds";
+	if (tag == "opsz") return "Optical size";
+	if (tag == "ordn") return "Ordinals";
+	if (tag == "ornm") return "Ornaments";
+	if (tag == "palt") return "Proportional Alternate Widths";
+	if (tag == "pcap") return "Petite Capitals";
+	if (tag == "pkna") return "Proportional Kana";
+	if (tag == "pnum") return "Proportional Figures";
+	if (tag == "pref") return "Pre-base Forms";
+	if (tag == "pres") return "Pre-base Substitutions";
+	if (tag == "pstf") return "Post-base Forms";
+	if (tag == "psts") return "Post-base Substitutions";
+	if (tag == "pwid") return "Proportional Widths";
+	if (tag == "qwid") return "Quarter Widths";
+	if (tag == "rand") return "Randomize";
+	if (tag == "rclt") return "Required Contextual Alternates";
+	if (tag == "rkrf") return "Rakar Forms";
+	if (tag == "rlig") return "Required Ligatures";
+	if (tag == "rphf") return "Reph Form";
+	if (tag == "rtbd") return "Right Bounds";
+	if (tag == "rtla") return "Right-to-left Alternates";
+	if (tag == "rtlm") return "Right-to-left Mirrored Forms";
+	if (tag == "ruby") return "Ruby Notation Forms";
+	if (tag == "rvrn") return "Required Variation Alternates";
+	if (tag == "salt") return "Stylistic Alternates";
+	if (tag == "sinf") return "Scientific Inferiors";
+	if (tag == "size") return "Optical size";
+	if (tag == "smcp") return "Small Capitals";
+	if (tag == "smpl") return "Simplified Forms";
+	if (tag == "ssty") return "Math Script-style Alternates";
+	if (tag == "stch") return "Stretching Glyph Decomposition";
+	if (tag == "subs") return "Subscript";
+	if (tag == "sups") return "Superscript";
+	if (tag == "swsh") return "Swash";
+	if (tag == "titl") return "Titling";
+	if (tag == "tjmo") return "Trailing Jamo Forms";
+	if (tag == "tnam") return "Traditional Name Forms";
+	if (tag == "tnum") return "Tabular Figures";
+	if (tag == "trad") return "Traditional Forms";
+	if (tag == "twid") return "Third Widths";
+	if (tag == "unic") return "Unicase";
+	if (tag == "valt") return "Alternate Vertical Metrics";
+	if (tag == "vapk") return "Kerning for Alternate Proportional Vertical Metrics";
+	if (tag == "vatu") return "Vattu Variants";
+	if (tag == "vchw") return "Vertical Contextual Half-width Spacing";
+	if (tag == "vert") return "Vertical Alternates";
+	if (tag == "vhal") return "Alternate Vertical Half Metrics";
+	if (tag == "vjmo") return "Vowel Jamo Forms";
+	if (tag == "vkna") return "Vertical Kana Alternates";
+	if (tag == "vkrn") return "Vertical Kerning";
+	if (tag == "vpal") return "Proportional Alternate Vertical Metrics";
+	if (tag == "vrt2") return "Vertical Alternates and Rotation";
+	if (tag == "vrtr") return "Vertical Alternates for Rotation";
+	if (tag == "zero") return "Slashed Zero";
+
+	if (tag != nullptr && tag->Length() >= 4)
 	{
 		auto d = tag->Data();
 		if (d[0] == 'c' && d[1] == 'v')
 			return "Character Variant " + d[2] + d[3];
-
-		else return tag;
+		if (d[0] == 's' && d[1] == 's')
+			return "Stylistic Set " + d[2] + d[3];
 	}
+
+	return tag;
+}
+
+String^ DirectWrite::GetFeatureName(UINT32 tag)
+{
+	return GetFeatureName(GetFeatureTag(tag));
+}
+
+String^ DirectWrite::GetFeatureName(String^ tag)
+{
+	return GetTagName(tag);
 }
 
 /// <summary>
@@ -186,6 +320,48 @@ IMapView<UINT32, UINT32>^ DirectWrite::GetSupportedTypography(ComPtr<IDWriteFont
 	}
 
 	return map;
+}
+
+IVectorView<DWriteLigatureFeature^>^ DirectWrite::GetLigatures(DWriteFontFace^ canvasFontFace)
+{
+	ComPtr<IDWriteFontFaceReference> faceRef = canvasFontFace->GetReference();
+	return GetLigatures(faceRef);
+}
+
+IVectorView<DWriteLigatureFeature^>^ DirectWrite::GetLigatures(ComPtr<IDWriteFontFaceReference> faceRef)
+{
+	ComPtr<IDWriteFontFace3> f3;
+	HRESULT hr = faceRef->CreateFontFace(&f3);
+	if (FAILED(hr) || f3 == nullptr)
+		return (ref new Vector<DWriteLigatureFeature^>())->GetView();
+
+	ComPtr<IDWriteFontFace5> face;
+	hr = f3.As(&face);
+	if (FAILED(hr) || face == nullptr)
+		return (ref new Vector<DWriteLigatureFeature^>())->GetView();
+
+	const void* tableData;
+	UINT32 tableSize;
+	BOOL exists;
+	void* context;
+	face->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('G', 'S', 'U', 'B'), &tableData, &tableSize, &context, &exists);
+
+	IVectorView<DWriteLigatureFeature^>^ list = nullptr;
+
+	if (exists)
+	{
+		auto reader = ref new GsubTableReader(tableData, tableSize);
+		list = reader->LigatureFeatures;
+		delete reader;
+
+		face->ReleaseFontTable(context);
+	}
+	else
+	{
+		list = (ref new Vector<DWriteLigatureFeature^>())->GetView();
+	}
+
+	return list;
 }
 
 IVectorView<DWriteFontAxis^>^ DirectWrite::GetAxis(DWriteFontFace^ canvasFontFace)
@@ -383,14 +559,26 @@ String^ DirectWrite::GetLocaleString(ComPtr<IDWriteLocalizedStrings> strings, in
 	if (SUCCEEDED(hr))
 		hr = strings->GetStringLength(fidx, &length);
 
+	if (!SUCCEEDED(hr) || length == 0)
+		return nullptr;
+
+	constexpr UINT32 STACK_BUFFER_SIZE = 128;
+	if (length < STACK_BUFFER_SIZE)
+	{
+		wchar_t stackBuf[STACK_BUFFER_SIZE];
+		if (SUCCEEDED(strings->GetString(fidx, stackBuf, length + 1)))
+			return ref new String(stackBuf, length);
+		return nullptr;
+	}
+
 	wchar_t* name = new (std::nothrow) wchar_t[length + 1];
-	if (name == NULL)
-		hr = E_OUTOFMEMORY;
+	if (name == nullptr)
+		return nullptr;
 
-	if (SUCCEEDED(hr))
-		hr = strings->GetString(fidx, name, length + 1);
+	String^ str = nullptr;
+	if (SUCCEEDED(strings->GetString(fidx, name, length + 1)))
+		str = ref new String(name, length);
 
-	auto str = ref new String(name);
 	delete[] name;
 	return str;
 }
@@ -434,42 +622,31 @@ Platform::String^ DirectWrite::GetFileName(DWriteFontFace^ fontFace)
 
 bool DirectWrite::HasValidFonts(StorageFile^ file)
 {
-	/*
-	   To avoid garbage collection issues with CanvasFontSet in C# preventing us from
-	   immediately deleting the StorageFile, we shall do this here in C++
-	   */
+	if (file == nullptr)
+		return false;
 
-	auto path = file->Path->Data();
 	auto dwFontSet = CreateIDWriteFontSet(file->Path);
+	if (!dwFontSet || dwFontSet->GetFontCount() == 0)
+		return false;
+
 	bool valid = false;
 
-	if (dwFontSet->GetFontCount() > 0)
+	try
 	{
-		/*
-			We need to validate the font has a family name.
-			Although other platforms and font renderers can read and understand fonts 
-			without a FamilyName set in the 'name' table (for example, WOFF fonts), 
-			XAML font rendering engine does not support these types of fonts. 
-			Our basic WOFF conversion may give us fonts that are perfectly fine 
-			except for this missing field.
-
-			WOFF2 fonts may also give the same problem.
-
-		*/
-
 		ComPtr<IDWriteStringList> names;
-		dwFontSet->GetPropertyValues(
+		if (SUCCEEDED(dwFontSet->GetPropertyValues(
 			DWRITE_FONT_PROPERTY_ID_WIN32_FAMILY_NAME,
-			&names);
-
-		// We just need to *prove* there is a readable name - we don't need to 
-		// read it.
-		UINT32 nameLength;
-		names->GetStringLength(0, &nameLength);
-		valid = nameLength > 0;
+			&names)) && names && names->GetCount() > 0)
+		{
+			UINT32 nameLength = 0;
+			if (SUCCEEDED(names->GetStringLength(0, &nameLength)))
+				valid = nameLength > 0;
+		}
 	}
-
-	dwFontSet = nullptr;
+	catch (...)
+	{
+		valid = false;
+	}
 
 	return valid;
 }

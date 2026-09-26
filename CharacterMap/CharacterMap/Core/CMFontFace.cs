@@ -2,6 +2,7 @@
 
 using Microsoft.Graphics.Canvas.Text;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace CharacterMap.Core;
 
@@ -16,10 +17,6 @@ public record FaceMetadataInfo(string Key, string[] Values, CanvasFontInformatio
 [System.Diagnostics.DebuggerDisplay("{FamilyName} {PreferredName}")]
 public partial class CMFontFace : IDisposable
 {
-    /* Using a character cache avoids a lot of unnecessary allocations */
-    private static Dictionary<int, Character> _characters { get; } = [];
-
-    private Dictionary<int, Character> _glyphToCharacterMap = null;
     private IReadOnlyList<NamedUnicodeRange> _ranges = null;
     private FontAnalysis _analysis = null;
     private FaceMetadataInfo _designLangRawSearch = null;
@@ -41,7 +38,7 @@ public partial class CMFontFace : IDisposable
 
     public string PreferredName { get; private set; }
 
-    public IReadOnlyList<Character> Characters { get; private set; }
+    public FontCharacterList Characters { get; private set; }
 
     public double CharacterHash { get; private set; }
 
@@ -49,7 +46,7 @@ public partial class CMFontFace : IDisposable
 
     public string FileName { get; }
 
-    public string FamilyName { get; }
+    public string FamilyName => Face.Properties.FamilyName;
 
     public string FullName => field ??= $"{FamilyName} {PreferredName}".Trim();
 
@@ -59,7 +56,7 @@ public partial class CMFontFace : IDisposable
 
     public Panose Panose => field ??= PanoseParser.Parse(Face.Properties);
 
-    public DWriteProperties DirectWriteProperties { get; }
+    public DWriteProperties DirectWriteProperties => Face.Properties;
 
     /// <summary>
     /// File-system path for DWrite / XAML to construct a font for use in this application
@@ -87,28 +84,28 @@ public partial class CMFontFace : IDisposable
     public string Version => field ??= TryGetInfo(CanvasFontInformation.VersionStrings)?.Value ?? string.Empty;
 
 
-    public CMFontFace(DWriteFontFace face, StorageFile file)
+    public CMFontFace(DWriteFontFace face) : this(face, (string)null) { }
+
+    public CMFontFace(DWriteFontFace face, StorageFile file) : this(face, file?.Path) { }
+
+    public CMFontFace(DWriteFontFace face, string filePath)
     {
         DWriteProperties dwProps = face.Properties;
         Face = face;
-        FamilyName = dwProps.FamilyName;
 
-        if (file != null)
+        if (!string.IsNullOrEmpty(filePath))
         {
             IsImported = true;
-            FileName = file.Name;
-            Source = $"{FontFinder.GetAppPath(file)}#{dwProps.FamilyName}";
+            FileName = Path.GetFileName(filePath);
+            Source = $"{FontFinder.GetAppPath(filePath)}#{dwProps.FamilyName}";
         }
         else
-        {
             Source = dwProps.FamilyName;
-        }
 
         string name = dwProps.FaceName;
-        if (String.IsNullOrEmpty(name))
+        if (string.IsNullOrEmpty(name))
             name = Utils.GetVariantDescription(face);
 
-        DirectWriteProperties = dwProps;
         PreferredName = name;
     }
 
@@ -125,74 +122,129 @@ public partial class CMFontFace : IDisposable
 
     public IReadOnlyList<NamedUnicodeRange> GetRanges()
     {
-        return _ranges ??=
-            GetCharacters().GroupBy(c => c.Range).Select(g => g.Key).ToList();
+        if (_ranges is not null)
+            return _ranges;
+
+        CanvasUnicodeRange[] fontRanges = UnicodeRanges;
+        if (fontRanges.Length == 0)
+            return _ranges = [];
+
+        // We assume UnicodeRanges.All is in range order
+        IReadOnlyList<NamedUnicodeRange> allRanges = CharacterMap.Models.UnicodeRanges.All;
+        List<NamedUnicodeRange> ranges = [];
+        int namedIndex = 0;
+
+        for (int i = 0; i < fontRanges.Length; i++)
+        {
+            CanvasUnicodeRange cur = fontRanges[i];
+
+            while (namedIndex < allRanges.Count && allRanges[namedIndex].End < cur.First)
+                namedIndex++;
+
+            for (int j = namedIndex; j < allRanges.Count; j++)
+            {
+                NamedUnicodeRange named = allRanges[j];
+                if (named.Start > cur.Last)
+                    break;
+
+                if (ranges.Count == 0 || ranges[^1] != named)
+                    ranges.Add(named);
+            }
+        }
+
+        return _ranges = ranges;
     }
 
     public IReadOnlyList<Character> GetCharacters()
     {
         if (Characters == null)
         {
-            List<Character> characters = [];
-            foreach (var range in UnicodeRanges)
+            foreach (CanvasUnicodeRange range in UnicodeRanges)
             {
                 CharacterHash += range.First;
                 CharacterHash += range.Last;
-
-                int last = (int)range.Last;
-                for (int i = (int)range.First; i <= last; i++)
-                {
-                    if (!_characters.TryGetValue(i, out Character c))
-                    {
-                        c = new Character((uint)i);
-                        _characters[i] = c;
-                    }
-
-                    characters.Add(c);
-                }
             }
-            Characters = characters;
+            Characters = new FontCharacterList(UnicodeRanges);
         }
-
         return Characters;
     }
 
+    public int CharacterCount => GetCharacters().Count;
+
     public uint GetGlyphIndex(Character c) => (uint)Face.GetGlyphIndice(c.UnicodeIndex);
 
-    public uint[] GetGlyphUnicodeIndexes() => GetCharacters().Select(c => c.UnicodeIndex).ToArray();
-
-    public bool TryGetCharacterForGlyph(int glyphIndex, out Character character)
+    public uint[] GetGlyphUnicodeIndexes()
     {
-        if (_glyphToCharacterMap == null)
+        if (Characters is not null)
+            return Characters.Select(c => c.UnicodeIndex).ToArray();
+
+        CanvasUnicodeRange[] ranges = UnicodeRanges;
+        int count = 0;
+        for (int i = 0; i < ranges.Length; i++)
+            count += (int)(ranges[i].Last - ranges[i].First + 1);
+
+        uint[] uni = new uint[count];
+        int idx = 0;
+        for (int i = 0; i < ranges.Length; i++)
         {
-            Dictionary<int, Character> map = [];
-            uint[] uni = GetGlyphUnicodeIndexes();
-            int[] gly = Face.GetGlyphIndices(uni);
-            IReadOnlyList<Character> chars = GetCharacters();
-
-            for (int i = 0; i < chars.Count; i++)
-            {
-                int g = gly[i];
-                if (g <= 0)
-                    continue;
-
-                if (!map.ContainsKey(g))
-                    map[g] = chars[i];
-            }
-
-            _glyphToCharacterMap = map;
+            CanvasUnicodeRange r = ranges[i];
+            for (uint cp = r.First; cp <= r.Last; cp++)
+                uni[idx++] = cp;
         }
 
-        return _glyphToCharacterMap.TryGetValue(glyphIndex, out character);
+        return uni;
     }
+
+    
+    private int[] _glyphToCodepointMap = null;
+    public bool TryGetCharacterForGlyph(int glyphIndex, out Character character)
+    {
+        if (_glyphToCodepointMap == null)
+        {
+            uint[] uni = GetGlyphUnicodeIndexes();
+            int[] gly = Face.GetGlyphIndices(uni);
+
+            // DirectWrite glyph indices are strictly bounded by Face.GlyphCount
+            int[] map = new int[Face.GlyphCount];
+            Array.Fill(map, -1);
+
+            for (int i = 0; i < uni.Length; i++)
+            {
+                int g = gly[i];
+                if ((uint)g < (uint)map.Length && map[g] == -1)
+                    map[g] = (int)uni[i];
+            }
+
+            _glyphToCodepointMap = map;
+        }
+
+        if ((uint)glyphIndex < (uint)_glyphToCodepointMap.Length)
+        {
+            int cp = _glyphToCodepointMap[glyphIndex];
+            if (cp >= 0)
+            {
+                character = GetCachedCharacter(cp);
+                return true;
+            }
+        }
+
+        character = null;
+        return false;
+    }
+
 
     public bool TryGetCharacter(int unicodeIndex, out Character character)
     {
         GetCharacters();
-        return _characters.TryGetValue(unicodeIndex, out character);
-    }
+        if ((uint)unicodeIndex < 65536)
+        {
+            character = _bmpCharacters[unicodeIndex];
+            return character != null;
+        }
 
-    public FontAnalysis GetAnalysis() => _analysis ??= TypographyAnalyzer.Analyze(this);
+        lock (_supplementaryCharacters)
+            return _supplementaryCharacters.TryGetValue(unicodeIndex, out character);
+    }
 
     public string QuickFilePath => GetAnalysisInternal().FilePath;
 
@@ -201,7 +253,7 @@ public partial class CMFontFace : IDisposable
     /// take care to ensure it's created by manually calling <see cref="TypographyAnalyzer.PrepareSearchMap(CMFontFace, FontAnalysis)"/>
     /// </summary>
     /// <returns></returns>
-    private FontAnalysis GetAnalysisInternal() => _analysis ??= TypographyAnalyzer.Analyze(this, false);
+    private FontAnalysis GetAnalysisInternal() => _analysis ??= TypographyAnalyzer.QuickAnalyze(this);
 
     /// <summary>
     /// Used temporarily to allow insider builds to access COLRv1. Do not use elsewhere. Very expensive.
@@ -237,54 +289,6 @@ public partial class CMFontFace : IDisposable
     }
 
     public bool CouldContainUnihan() => UnicodeRanges.Any(r => Unicode.UNIHAN_IDX >= r.First && Unicode.UNIHAN_IDX <= r.Last);
-
-
-
-
-    //------------------------------------------------------
-    //
-    // Searching
-    //
-    //------------------------------------------------------
-
-    public Dictionary<Character, string> SearchMap { get; set; }
-
-    /// <summary>
-    /// Attempts to return the font's own defined name for a glyph
-    /// </summary>
-    /// <param name="c"></param>
-    /// <returns></returns>
-    public string GetDefinedCharacterName(Character c)
-    {
-        if (SearchMap == null)
-            TypographyAnalyzer.PrepareSearchMap(this, TypographyAnalyzer.Analyze(this));
-
-        if (SearchMap != null && SearchMap.TryGetValue(c, out string mapping) && !string.IsNullOrWhiteSpace(mapping))
-            return mapping;
-
-        return null;
-    }
-
-    public string GetDescription(Character c, bool allowUnihan = false)
-    {
-        if (SearchMap == null
-            || !SearchMap.TryGetValue(c, out string mapping)
-            || string.IsNullOrWhiteSpace(mapping))
-        {
-            string name = GlyphService.GetCharacterDescription(c.UnicodeIndex, this);
-            if (string.IsNullOrWhiteSpace(name)
-                && allowUnihan
-                && Unicode.CouldBeUnihan(c.UnicodeIndex)
-                && GlyphService.GetUnihanData(c.UnicodeIndex)?.Definition
-                    is { } def)
-                name = def.Description;
-
-            return name;
-        }
-
-
-        return GlyphService.TryGetAGLFNName(mapping);
-    }
 
 
 
@@ -400,12 +404,21 @@ public partial class CMFontFace : IDisposable
         }
     }
 
-
+    public void Trim()
+    {
+        Face.ReleaseResources();
+        _glyphToCodepointMap = null;
+        Characters = null;
+    }
 
 
     /* .NET */
 
-    public void Dispose() => FontFace?.Dispose();
+    public void Dispose()
+    {
+        Trim();
+        FontFace?.Dispose();
+    }
 
     public override string ToString() => PreferredName;
 }
@@ -415,11 +428,12 @@ public partial class CMFontFace
 {
     public static CMFontFace CreateDefault(DWriteFontFace face)
     {
-        return new CMFontFace(face, null)
+        return new CMFontFace(face)
         {
             PreferredName = face.Properties.FaceName,
+
             // These default characters are used by Subsetter.cs
-            Characters = [ Character.Null, Character.CarriageReturn, Character.Space ]
+            Characters = new ([SpecialCharacters.Null, SpecialCharacters.CarriageReturn, SpecialCharacters.Space])
         };
     }
 
@@ -438,4 +452,27 @@ public partial class CMFontFace
         CanvasFontInformation.LicenseInfoUrl,
         CanvasFontInformation.LicenseDescription,
     };
+
+    /* Using a tiered character cache avoids a lot of unnecessary allocations */
+    private static Character[] _bmpCharacters { get; } = new Character[65536];
+    private static Dictionary<int, Character> _supplementaryCharacters { get; } = [];
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static Character GetCachedCharacter(int i)
+    {
+        if ((uint)i < 65536)
+        {
+            Character c = _bmpCharacters[i];
+            if (c is null)
+                _bmpCharacters[i] = c = new((uint)i);
+            return c;
+        }
+
+        lock (_supplementaryCharacters)
+        {
+            if (!_supplementaryCharacters.TryGetValue(i, out Character c))
+                _supplementaryCharacters[i] = c = new((uint)i);
+            return c;
+        }
+    }
 }

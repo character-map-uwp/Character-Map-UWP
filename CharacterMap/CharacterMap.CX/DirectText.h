@@ -52,6 +52,11 @@ namespace CharacterMapCX
 
 			static void RegisterDependencyProperties();
 
+			static property DependencyProperty^ ColorRenderOptionProperty
+			{
+				DependencyProperty^ get() { return _ColorRenderOptionProperty; }
+			}
+
 			static property DependencyProperty^ IsColorFontEnabledProperty
 			{
 				DependencyProperty^ get() { return _IsColorFontEnabledProperty; }
@@ -111,6 +116,12 @@ namespace CharacterMapCX
 			{
 				DWriteFallbackFont^ get() { return (DWriteFallbackFont^)GetValue(FallbackFontProperty); }
 				void set(DWriteFallbackFont^ value) { SetValue(FallbackFontProperty, value); }
+			}
+
+			property DWriteColorRenderOption ColorRenderOption
+			{
+				DWriteColorRenderOption get() { return (DWriteColorRenderOption)GetValue(ColorRenderOptionProperty); }
+				void set(DWriteColorRenderOption value) { SetValue(ColorRenderOptionProperty, value); }
 			}
 
 			property bool IsColorFontEnabled
@@ -182,6 +193,7 @@ namespace CharacterMapCX
 
 		private:
 			static DependencyProperty^ _FallbackFontProperty;
+			static DependencyProperty^ _ColorRenderOptionProperty;
 			static DependencyProperty^ _IsColorFontEnabledProperty;
 			static DependencyProperty^ _IsOverwriteCompensationEnabledProperty;
 			static DependencyProperty^ _UnicodeIndexProperty;
@@ -243,6 +255,12 @@ namespace CharacterMapCX
 			{
 				_FallbackFontProperty = DependencyProperty::Register(
 					"FallbackFont", DWriteFallbackFont::typeid, DirectText::typeid, meta);
+			}
+
+			if (_ColorRenderOptionProperty == nullptr)
+			{
+				_ColorRenderOptionProperty = DependencyProperty::Register(
+					"ColorRenderOption", DWriteColorRenderOption::typeid, DirectText::typeid, ref new PropertyMetadata(DWriteColorRenderOption::Default, callback));
 			}
 
 			if (_IsCharacterFitEnabledProperty == nullptr)

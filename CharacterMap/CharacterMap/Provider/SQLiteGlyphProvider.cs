@@ -1,9 +1,16 @@
-﻿using SQLite;
+﻿using Microsoft.Graphics.Canvas.Text;
+using SQLite;
 using System.Globalization;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Provider;
+
+public interface IFaceSearchSource
+{
+    Dictionary<Character, String> SearchMap { get; }
+    CMFontFace Face { get; }
+}
 
 public partial class SQLiteGlyphProvider : IGlyphDataProvider
 {
@@ -108,18 +115,18 @@ public partial class SQLiteGlyphProvider : IGlyphDataProvider
 
     #region SEARCH
 
-    public Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, CMFontFace variant)
+    public Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, IFaceSearchSource variant)
     {
         if (string.IsNullOrWhiteSpace(query))
             return Task.FromResult(GlyphService.EMPTY_SEARCH);
 
         /* MDL2 has special dataset */
-        if (FontFinder.IsMDL2(variant))
+        if (FontFinder.IsMDL2(variant.Face))
             return SearchMDL2Async(query, variant);
 
         foreach (SearchTarget target in SearchTarget.KnownTargets)
         {
-            if (target.IsTarget(variant))
+            if (target.IsTarget(variant.Face))
                 return InternalSearchAsync(target.SearchTable, target.TargetType.Name, query, variant);
         }
 
@@ -127,17 +134,17 @@ public partial class SQLiteGlyphProvider : IGlyphDataProvider
         return SearchUnicodeAsync(query, variant);
     }
 
-    private Task<IReadOnlyList<IGlyphData>> SearchUnicodeAsync(string query, CMFontFace variant)
+    private Task<IReadOnlyList<IGlyphData>> SearchUnicodeAsync(string query, IFaceSearchSource variant)
     {
         return InternalSearchAsync(UNICODE_SEARCH_TABLE, nameof(UnicodeGlyphData), query, variant);
     }
 
-    private Task<IReadOnlyList<IGlyphData>> SearchMDL2Async(string query, CMFontFace variant)
+    private Task<IReadOnlyList<IGlyphData>> SearchMDL2Async(string query, IFaceSearchSource variant)
     {
         return InternalSearchAsync(MDL2_SEARCH_TABLE, nameof(MDL2Glyph), query, variant);
     }
 
-    private Task<IReadOnlyList<IGlyphData>> InternalSearchAsync(string ftsTable, string table, string query, CMFontFace variant)
+    private Task<IReadOnlyList<IGlyphData>> InternalSearchAsync(string ftsTable, string table, string query, IFaceSearchSource variant)
     {
         return Task.Run<IReadOnlyList<IGlyphData>>(() =>
         {
@@ -157,12 +164,12 @@ public partial class SQLiteGlyphProvider : IGlyphDataProvider
             if (query.Length == 1)
                 query = ((uint)query[0]).ToString("x4");
 
-            bool ambiguous = !variant.DirectWriteProperties.IsSymbolFont && IsAmbiguousQuery(query);
+            bool ambiguous = !variant.Face.DirectWriteProperties.IsSymbolFont && IsAmbiguousQuery(query);
             if (hexResult == null && Utils.TryParseHexString(query, out int hex))
             {
                 // 1.2. To be more efficient, first check if the font actually contains the UnicodeIndex.
                 //      If it does then we ask the database, otherwise we can return without query.
-                foreach (var range in variant.UnicodeRanges)
+                foreach (var range in variant.Face.UnicodeRanges)
                 {
                     if (hex >= range.First && hex <= range.Last)
                     {
@@ -212,7 +219,7 @@ public partial class SQLiteGlyphProvider : IGlyphDataProvider
             /// any useful search results. MS Office Symbol is an example of such a font (with no useful search
             /// results anyway). Certain complex Asian script fonts **may** theoretically hit this limit.
             /// We don't want to throw an exception if we ever hit this case, we'll just do our best.
-            foreach (var range in variant.UnicodeRanges.Take(995))
+            foreach (var range in variant.Face.UnicodeRanges.Take(990))
             {
                 if (next)
                     sb.AppendFormat(range.First != range.Last
@@ -305,7 +312,7 @@ public partial class SQLiteGlyphProvider : IGlyphDataProvider
                 goto End;
 
             // 7. Check Unihan data
-            if (variant.CouldContainUnihan())
+            if (variant.Face.CouldContainUnihan())
             {
                 string sql3 = $"SELECT * FROM {nameof(UnihanReading)} {sb.ToString()} AND Type == {(int)UnihanFieldType.Definition} AND Description LIKE ? LIMIT {limit}";
                 var results3 = _connection.GetUnihanReadingsByDescription(sql3, $"%{query}%");

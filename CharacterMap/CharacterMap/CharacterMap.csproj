@@ -171,6 +171,7 @@
     <Compile Include="Controls\CategoryFlyout.cs" />
     <Compile Include="Controls\CharacterGridView.cs" />
     <Compile Include="Controls\CharacterPicker.cs" />
+    <Compile Include="Controls\FontGlyph.cs" />
     <Compile Include="Controls\ContentGroup.cs" />
     <Compile Include="Controls\ControlBase.cs" />
     <Compile Include="Controls\CreateCollectionDialog.xaml.cs">
@@ -240,8 +241,11 @@
     <Compile Include="Core\Properties.cs" />
     <Compile Include="Core\SVGPathReciever.cs" />
     <Compile Include="Core\TypographyFeatureInfo.cs" />
+    <Compile Include="Models\FontCharacterList.cs" />
     <Compile Include="Models\GlyphCharacter.cs" />
     <Compile Include="Models\GlyphCollection.cs" />
+    <Compile Include="Models\ItemsSelectionModel.cs" />
+    <Compile Include="Models\NamedTag.cs" />
     <Compile Include="Models\Records.cs" />
     <Compile Include="Models\NamedUnicodeRange.cs" />
     <Compile Include="Models\SearchResultsGroup.cs" />
@@ -338,6 +342,7 @@
     <Compile Include="ViewModels\CollectionManagementViewModel.cs" />
     <Compile Include="ViewModels\ExportViewModel.cs" />
     <Compile Include="Models\FontItem.cs" />
+    <Compile Include="Models\Ligature.cs" />
     <Compile Include="ViewModels\FontMapViewModel.cs" />
     <Compile Include="Models\GlyphAnnotation.cs" />
     <Compile Include="Models\PrintLayout.cs" />

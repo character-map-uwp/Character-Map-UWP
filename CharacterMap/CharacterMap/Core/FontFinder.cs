@@ -39,23 +39,18 @@ public class FontFinder
         NativeInterop interop = Utils.GetInterop();
         DWriteFontSet systemFonts = interop.GetSystemFonts();
 
-        Parallel.ForEach(systemFonts.Families, new ParallelOptions { MaxDegreeOfParallelism = 50 }, l =>
-        {
-            l.Inflate();
-        });
-        systemFonts.Update();
-
         try
         {
-            if (DefaultFont == null)
+            if (DefaultFont is null)
             {
-                DWriteFontFace segoe = systemFonts.Fonts.FirstOrDefault(
-                       f => f.Properties.FamilyName == "Segoe UI"
-                            && f.Properties.Weight.Weight == FontWeights.Normal.Weight
+                DWriteFontFamily segoeFamily = systemFonts.Families.FirstOrDefault(f => f.Name == "Segoe UI");
+                segoeFamily?.Inflate();
+                DWriteFontFace segoe = segoeFamily?.Fonts?.FirstOrDefault(
+                       f => f.Properties.Weight.Weight == FontWeights.Normal.Weight
                             && f.Properties.Stretch == FontStretch.Normal
                             && f.Properties.Style == FontStyle.Normal);
 
-                if (segoe != null)
+                if (segoe is not null)
                     DefaultFont = CMFontFamily.CreateDefault(segoe);
             }
         }
@@ -101,10 +96,26 @@ public class FontFinder
                 return sets;
             });
 
-            // 1.2. Perform cleanup
+            // 1.2. Perform cleanup 
             Task delete = DefaultFont == null ? Task.WhenAll(
-                    FontImporter.CleanUpTempFolderAsync(),
-                    FontImporter.CleanUpPendingDeletesAsync()) : Task.CompletedTask;
+                  FontImporter.CleanUpTempFolderAsync(),
+                  FontImporter.CleanUpPendingDeletesAsync()) : Task.CompletedTask;
+
+
+            /* in background without blocking startup */
+            //if (DefaultFont is null)
+            //{
+            //    _ = Task.Run(async () =>
+            //    {
+            //        try
+            //        {
+            //            await Task.WhenAll(
+            //                FontImporter.CleanUpTempFolderAsync(),
+            //                FontImporter.CleanUpPendingDeletesAsync());
+            //        }
+            //        catch { }
+            //    });
+            //}
 
             // 1.3. Load installed fonts
             Task<DWriteFontSet> init = InitialiseAsync();
@@ -113,7 +124,7 @@ public class FontFinder
 
             // Load in System Fonts
             DWriteFontSet systemFonts = init.Result;
-            Dictionary<string, CMFontFamily> resultList = new(systemFonts.Fonts.Count);
+            Dictionary<string, CMFontFamily> resultList = new(systemFonts.Families.Count + 16);
             UpdateMeta(systemFonts);
 
             /* Add imported fonts */
@@ -126,13 +137,17 @@ public class FontFinder
                     continue;
 
                 DWriteFontSet importedFonts = sets[i];
+                if (importedFonts == null)
+                    continue;
+
                 UpdateMeta(importedFonts);
                 ImportedFaceCount += importedFonts.FaceCount;
                 ImportedFamilyCount += importedFonts.Families.Count;
 
-                foreach (DWriteFontFace font in importedFonts.Fonts)
+                if (importedFonts.Fonts is not null)
                 {
-                    AddFont(resultList, font, file);
+                    foreach (DWriteFontFace font in importedFonts.Fonts)
+                        AddFont(resultList, font, file);
                 }
             }
 
@@ -142,8 +157,25 @@ public class FontFinder
             SystemFamilyCount = systemFonts.Families.Count;
             SystemFaceCount = systemFonts.FaceCount;
 
-            foreach (var font in systemFonts.Fonts)
-                AddFont(resultList, font);
+            bool hideSimulated = ResourceHelper.AppSettings.HideSimulatedFontFaces;
+            foreach (DWriteFontFamily family in systemFonts.Families)
+            {
+                string familyName = family.Name;
+                if (string.IsNullOrEmpty(familyName))
+                    continue;
+
+                if (resultList.TryGetValue(familyName, out CMFontFamily existingFamily))
+                {
+                    foreach (DWriteFontFace font in family.Fonts)
+                    {
+                        if (font.Properties.IsSimulated && hideSimulated)
+                            continue;
+                        existingFamily.AddVariant(font);
+                    }
+                }
+                else
+                    resultList[familyName] = new(familyName, family);
+            }
 
             /* Order everything appropriately */
             Fonts = CreateFontList(resultList);
@@ -166,11 +198,12 @@ public class FontFinder
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static List<CMFontFamily> CreateFontList(Dictionary<string, CMFontFamily> fonts)
     {
-        return fonts.OrderBy(f => f.Key).Select(f =>
-        {
-            f.Value.SortVariants();
-            return f.Value;
-        }).ToList();
+        List<CMFontFamily> list = [.. fonts.Values];
+        foreach (CMFontFamily family in list)
+            family.SortVariants();
+
+        list.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.CurrentCulture));
+        return list;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -208,26 +241,33 @@ public class FontFinder
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void AddFont(
         IDictionary<string, CMFontFamily> fontList,
+        DWriteFontFace font) => AddFont(fontList, font, (string)null);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void AddFont(
+        IDictionary<string, CMFontFamily> fontList,
         DWriteFontFace font,
-        StorageFile file = null)
+        StorageFile file) => AddFont(fontList, font, file?.Path);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void AddFont(
+        IDictionary<string, CMFontFamily> fontList,
+        DWriteFontFace font,
+        string filePath)
     {
         try
         {
             if (font.Properties.IsSimulated && ResourceHelper.AppSettings.HideSimulatedFontFaces)
                 return;
 
-            var familyName = font.Properties.FamilyName;
+            string familyName = font.Properties.FamilyName;
             if (!string.IsNullOrEmpty(familyName))
             {
                 /* Check if we already have a listing for this fontFamily */
-                if (fontList.TryGetValue(familyName, out var fontFamily))
-                {
-                    fontFamily.AddVariant(font, file);
-                }
+                if (fontList.TryGetValue(familyName, out CMFontFamily fontFamily))
+                    fontFamily.AddVariant(font, filePath);
                 else
-                {
-                    fontList[familyName] = new CMFontFamily(familyName, font, file);
-                }
+                    fontList[familyName] = new(familyName, font, filePath);
             }
         }
         catch (Exception)

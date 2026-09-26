@@ -59,7 +59,7 @@ public partial class FileNameWriter
         Example = "Latin Capital Letter A",
         Func = a => a.Character is GlyphCharacter gc
             ? $"Glyph {gc.GlyphIndex}"
-            : (a.Options?.Options?.Variant?.GetDescription(a.Character) ?? a.Character.UnicodeString)
+            : (a.Options?.Options?.FaceAnalysis?.GetDescription(a.Character) ?? a.Character.UnicodeString)
     };
 
     public static FileNameWriter UnicodeHex { get; } = new()
