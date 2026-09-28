@@ -6,6 +6,7 @@ using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
@@ -249,6 +250,11 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
         if (LayoutRoot != null)
             LayoutRoot.Children.Clear();
+
+        if (Window.Current?.Compositor is Windows.UI.Composition.Compositor compositor)
+            CharacterMapCX.Controls.FontGlyphs.ReleaseGraphicsDevice(compositor);
+
+        CharacterMapCX.Controls.FontGlyphs.Trim();
     }
 
 

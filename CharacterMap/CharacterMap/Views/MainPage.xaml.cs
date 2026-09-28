@@ -270,7 +270,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         });
     }
 
-    void UpdateLoadingStates()
+    async void UpdateLoadingStates()
     {
         TitleBar.TryUpdateMetrics();
 
@@ -282,7 +282,6 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         {
             GoToState(nameof(FontsLoadedState), false);
             FontListFontSize = ResourceHelper.GetFontListFontSize();
-            
             if (ResourceHelper.AllowAnimation)
             {
                 CompositionFactory.PlayStartUpAnimation(
@@ -305,6 +304,19 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
                         FontMap.PreviewGrid
                     });
             }
+
+            // Allow initial layout, animations, and first frame to settle
+            // then run some post-launch memory cleanup
+            await Task.Delay(3000);
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            {
+                // 1. Reclaim managed startup garbage
+                GC.Collect(2, GCCollectionMode.Forced, true, true);
+                GC.WaitForPendingFinalizers();
+                GC.Collect(2, GCCollectionMode.Forced, true, true);
+                // 2. Trim DirectX driver buffers and working set
+                CharacterMapCX.CompositionDeviceManager.Trim();
+            });
         }
     }
 
