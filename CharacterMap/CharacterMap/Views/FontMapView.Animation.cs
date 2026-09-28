@@ -1,3 +1,4 @@
+using CharacterMapCX.Controls;
 using System.Transactions;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -97,12 +98,12 @@ public partial class FontMapView
         source ??= GlyphRepeater;
         if (ResourceHelper.AllowAnimation
             && source.ContainerFromItem(source.SelectedItem) is FrameworkElement container
-            && container.GetFirstDescendantOfType<Glyphs>() is Glyphs t)
+            && container.GetFirstDescendantOfType<FontGlyphs>() is FontGlyphs t)
         {
             t.Measure(container.DesiredSize);
             if (t.DesiredSize.Height != 0 && t.DesiredSize.Width != 0)
             {
-                var ani = source.PrepareConnectedAnimation("PP", source.SelectedItem, "Text");
+                var ani = source.PrepareConnectedAnimation("PP", source.SelectedItem, "Target");
                 ani.TryStart(TxtPreview);
             }
         }

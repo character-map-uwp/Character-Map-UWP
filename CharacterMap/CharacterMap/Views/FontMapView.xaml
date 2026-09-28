@@ -2092,7 +2092,8 @@
                                     </Grid.ColumnDefinitions>
 
                                     <!--  Left: Square Glyph Preview Box  -->
-                                    <Border
+                                    <Grid
+                                        x:Name="Target"
                                         Width="84"
                                         Height="84"
                                         VerticalAlignment="Top"
@@ -2100,19 +2101,16 @@
                                         BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                         BorderThickness="1"
                                         CornerRadius="{ThemeResource ControlCornerRadius}">
-                                        <Grid x:Name="Text">
-                                            <!--  Center: Ligature Glyph  -->
-                                            <cxc:FontGlyphs
-                                                FontFace="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Footer)}"
-                                                FontSize="44"
-                                                Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
-                                                Indices="{x:Bind LigatureGlyph}"
-                                                IsColorFontEnabled="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Boolean)}"
-                                                StyleSimulations="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Tag)}" />
-
-
-                                            <!--  Bottom-Left: 0 (left bearing indicator)  -->
-                                            <!--<TextBlock
+                                        <!--  Center: Ligature Glyph  -->
+                                        <cxc:FontGlyphs
+                                            FontFace="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Footer)}"
+                                            FontSize="44"
+                                            Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                            Indices="{x:Bind LigatureGlyph}"
+                                            IsColorFontEnabled="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Boolean)}"
+                                            StyleSimulations="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Tag)}" />
+                                        <!--  Bottom-Left: 0 (left bearing indicator)  -->
+                                        <!--<TextBlock
                                                 Margin="4 0 0 2"
                                                 HorizontalAlignment="Left"
                                                 VerticalAlignment="Bottom"
@@ -2121,20 +2119,19 @@
                                                 Opacity="0.45"
                                                 Text="0" />-->
 
-                                            <!--  Bottom-Right: Glyph Index  -->
-                                            <TextBlock
-                                                Margin="0 0 4 2"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Bottom"
-                                                FontFamily="Consolas"
-                                                FontSize="9.5"
-                                                FontStretch="Normal"
-                                                FontStyle="Normal"
-                                                FontWeight="Normal"
-                                                Opacity="0.45"
-                                                Text="{x:Bind LigatureGlyph}" />
-                                        </Grid>
-                                    </Border>
+                                        <!--  Bottom-Right: Glyph Index  -->
+                                        <TextBlock
+                                            Margin="0 0 4 2"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Bottom"
+                                            FontFamily="Consolas"
+                                            FontSize="9.5"
+                                            FontStretch="Normal"
+                                            FontStyle="Normal"
+                                            FontWeight="Normal"
+                                            Opacity="0.45"
+                                            Text="{x:Bind LigatureGlyph}" />
+                                    </Grid>
 
                                     <!--  Right: Details (Name & Component Badges)  -->
                                     <Grid Grid.Column="1" VerticalAlignment="Stretch">

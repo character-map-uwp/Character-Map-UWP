@@ -47,14 +47,6 @@ FontGlyphs::FontGlyphs()
 {
     m_unloadedToken.Value = 0;
     EnsureDependencyProperties();
-
-    Platform::WeakReference weakThis(this);
-    m_unloadedToken = this->Unloaded += ref new RoutedEventHandler([weakThis](Platform::Object^ sender, RoutedEventArgs^ e)
-    {
-        auto strongThis = weakThis.Resolve<FontGlyphs>();
-        if (strongThis != nullptr)
-            strongThis->OnUnloaded(sender, e);
-    });
 }
 
 /*
@@ -64,52 +56,71 @@ FontGlyphs::FontGlyphs()
  */
 void FontGlyphs::ReleaseDrawingSurface()
 {
-    if (m_drawingSurface != nullptr)
+    try
     {
-        if (m_surfaceBrush != nullptr)
-            m_surfaceBrush->Surface = nullptr;
+        if (m_drawingSurface != nullptr)
+        {
+            if (Dispatcher != nullptr && Dispatcher->HasThreadAccess)
+            {
+                if (m_surfaceBrush != nullptr)
+                    m_surfaceBrush->Surface = nullptr;
 
-        delete m_drawingSurface;
-        m_drawingSurface = nullptr;
+                delete m_drawingSurface;
+            }
+        }
     }
+    catch (...)
+    {
+    }
+
+    m_drawingSurface = nullptr;
     m_renderedWidth = 0;
     m_renderedHeight = 0;
 }
 
 FontGlyphs::~FontGlyphs()
 {
-    if (m_unloadedToken.Value != 0)
+    try
     {
-        this->Unloaded -= m_unloadedToken;
-        m_unloadedToken.Value = 0;
+        if (Dispatcher != nullptr && Dispatcher->HasThreadAccess)
+        {
+            if (m_unloadedToken.Value != 0)
+            {
+                this->Unloaded -= m_unloadedToken;
+                m_unloadedToken.Value = 0;
+            }
+
+            ReleaseDrawingSurface();
+
+            if (m_spriteVisual != nullptr)
+            {
+                m_spriteVisual->Brush = nullptr;
+                ElementCompositionPreview::SetElementChildVisual(this, nullptr);
+                delete m_spriteVisual;
+            }
+
+            if (m_maskBrush != nullptr)
+            {
+                m_maskBrush->Mask = nullptr;
+                m_maskBrush->Source = nullptr;
+                delete m_maskBrush;
+            }
+
+            if (m_surfaceBrush != nullptr)
+            {
+                delete m_surfaceBrush;
+            }
+        }
+    }
+    catch (...)
+    {
     }
 
-    // Explicitly close all WinRT composition objects so the compositor
-    // frees underlying native resources immediately rather than waiting on GC.
-    ReleaseDrawingSurface();
-
-    if (m_spriteVisual != nullptr)
-    {
-        m_spriteVisual->Brush = nullptr;
-        ElementCompositionPreview::SetElementChildVisual(this, nullptr);
-        delete m_spriteVisual;
-        m_spriteVisual = nullptr;
-    }
-
-    if (m_maskBrush != nullptr)
-    {
-        m_maskBrush->Mask = nullptr;
-        m_maskBrush->Source = nullptr;
-        delete m_maskBrush;
-        m_maskBrush = nullptr;
-    }
-
-    if (m_surfaceBrush != nullptr)
-    {
-        delete m_surfaceBrush;
-        m_surfaceBrush = nullptr;
-    }
-
+    m_unloadedToken.Value = 0;
+    m_drawingSurface = nullptr;
+    m_spriteVisual = nullptr;
+    m_maskBrush = nullptr;
+    m_surfaceBrush = nullptr;
     m_colorBrush = nullptr;
 }
 
