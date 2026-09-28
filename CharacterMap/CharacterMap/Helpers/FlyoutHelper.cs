@@ -525,6 +525,15 @@ public static class FlyoutHelper
         T Child<T>(string name) where T : MenuFlyoutItemBase => menu.Items.OfType<T>().FirstOrDefault(c => c.Name == name);
         context ??= target.Tag;
 
+        if (context is uint or int)
+            context = new GlyphCharacter(Convert.ToUInt16(context));
+
+        if (context is GlyphCharacter gc && !gc.IsValidUnicode && viewmodel.SelectedFace is not null && viewmodel.SelectedFace.TryGetCharacterForGlyph(gc.GlyphIndex, out Character mapped))
+        {
+            gc = new(gc.GlyphIndex, gc.PaletteIndex, gc.Color, mapped.UnicodeIndex);
+            context = gc;
+        }
+
         if (context is Character c)
         {
             Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
@@ -657,7 +666,8 @@ public static class FlyoutHelper
             Child<MenuFlyoutItem>("CalligraphyButton")?.SetVisible(context is not GlyphCharacter);
 
             // 6.3.
-            Child<MenuFlyoutItem>("CopyItem")?.SetVisible(context is not GlyphCharacter);
+            bool canCopyText = context is not GlyphCharacter || (context is GlyphCharacter { IsValidUnicode: true });
+            Child<MenuFlyoutItem>("CopyItem")?.SetVisible(canCopyText);
 
             // 7. Set item context
             menu.SetItemsDataContext(context, subStyle);

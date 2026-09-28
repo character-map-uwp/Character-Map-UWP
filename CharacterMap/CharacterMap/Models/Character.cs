@@ -2,9 +2,11 @@
 
 public partial class Character : IEquatable<Character>
 {
-    public uint UnicodeIndex { get; }
+    public uint UnicodeIndex { get; } = uint.MaxValue;
 
     public Character(uint unicodeIndex) => UnicodeIndex = unicodeIndex;
+
+    public bool IsValidUnicode => UnicodeIndex != uint.MaxValue;
 
     public string Char => Unicode.GetChar(UnicodeIndex);
 
@@ -68,4 +70,6 @@ public class SpecialCharacters
     public static Character ZeroWidthSpace => field ??= new(0x200B);
     public static Character ZeroWidthNonJoiner => field ??= new(0x200C);
     public static Character ZeroWidthJoiner => field ??= new(0x200D);
+
+    public static Character INVALID => field ??= new(uint.MaxValue);
 }

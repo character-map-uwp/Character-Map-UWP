@@ -711,22 +711,33 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private async void TryCopyInternal()
     {
-        if (CharGrid.SelectedItem is not Character character)
-            return;
-
-        Character charToCopy = character;
+        Character charToCopy = null;
         bool isVariantCopied = false;
 
-        if (PreviewTypographySelector.SelectedItem
-            is TypographyVariation { IsNone: false, IsVariationMapped: true } variation)
+        if (CharGrid.SelectedItem is Character character)
         {
-            if (ViewModel.SelectedFace?.TryGetCharacter(variation.FaceCharacterMapping, out Character mappedChar) is true)
-                charToCopy = mappedChar;
-            else
-                charToCopy = new((uint)variation.FaceCharacterMapping);
+            charToCopy = character;
 
-            isVariantCopied = true;
+            if (PreviewTypographySelector.SelectedItem
+                is TypographyVariation { IsNone: false, IsVariationMapped: true } variation)
+            {
+                if (ViewModel.SelectedFace?.TryGetCharacter(variation.FaceCharacterMapping, out Character mappedChar) is true)
+                    charToCopy = mappedChar;
+                else
+                    charToCopy = new((uint)variation.FaceCharacterMapping);
+
+                isVariantCopied = true;
+            }
         }
+        else if (GlyphRepeater.SelectedItem is uint glyphIndex
+            && ViewModel.SelectedFace is not null
+            && ViewModel.SelectedFace.TryGetCharacterForGlyph((int)glyphIndex, out Character mapped))
+        {
+            charToCopy = mapped;
+        }
+
+        if (charToCopy is null)
+            return;
 
         if (await Utils.TryCopyToClipboardAsync(charToCopy, ViewModel))
         {
@@ -978,12 +989,15 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             /* Context menu for character grid or glyph grid */
             args.Handled = true;
             if (grid.Tag is Character c)
-            {
                 FlyoutHelper.ShowCharacterGridContext(GridContextFlyout, grid, ViewModel, IsStandalone);
-            }
-            else if (grid.Tag is int glyphIndex)
+            else if (grid.Tag is uint or int)
             {
-                FlyoutHelper.ShowCharacterGridContext(GridContextFlyout, grid, ViewModel, IsStandalone, new GlyphCharacter((ushort)glyphIndex));
+                ushort glyphIndex = Convert.ToUInt16(grid.Tag);
+                GlyphCharacter gc = ViewModel.SelectedFace is not null && ViewModel.SelectedFace.TryGetCharacterForGlyph(glyphIndex, out Character mapped)
+                    ? new(glyphIndex, mapped.UnicodeIndex)
+                    : new(glyphIndex);
+
+                FlyoutHelper.ShowCharacterGridContext(GridContextFlyout, grid, ViewModel, IsStandalone, gc);
             }
         }
     }

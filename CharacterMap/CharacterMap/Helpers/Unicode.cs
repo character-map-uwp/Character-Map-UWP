@@ -15,7 +15,7 @@ public static class Unicode
     public static bool CouldBeUnihan(uint index) => index >= UNIHAN_IDX;
 
     private static readonly string[] _latinCache = [.. Enumerable.Range(0, 256).Select(i => GetHexValue((uint)i))];
-    public static string GetChar(uint i) => i < 256 ? _latinCache[i] : GetHexValue(i);
+    public static string GetChar(uint i) => i < 256 ? _latinCache[i] : i != uint.MaxValue ? GetHexValue(i) : string.Empty;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string GetHexValue(uint i) => (i <= 0x10FFFF && (i < 0xD800 || i > 0xDFFF)) ? char.ConvertFromUtf32((int)i) : new string((char)i, 1);
