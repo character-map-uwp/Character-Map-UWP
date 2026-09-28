@@ -983,7 +983,9 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void Grid_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
     {
-        if (sender is FrameworkElement f
+        args.Handled = true;
+
+        if (sender is SelectorItem f
             && f.GetDescendantsOfType<Grid>().FirstOrDefault(g => g.Tag is Character || g.Name == "Target") is Grid grid)
         {
             /* Context menu for character grid or glyph grid */
