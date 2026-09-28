@@ -173,23 +173,23 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
     //
     //------------------------------------------------------
 
-    [RelayCommand]
-    public Task<Uri> LoadGlyphFontAsync()
-    {
-        if (Glyphs.FontUri is not null)
-            return Task.FromResult(Glyphs.FontUri);
+    //[RelayCommand]
+    //public Task<Uri> LoadGlyphFontAsync()
+    //{
+    //    if (Glyphs.FontUri is not null)
+    //        return Task.FromResult(Glyphs.FontUri);
 
-        if (Face is null)
-            return Task.FromResult<Uri>(null);
+    //    if (Face is null)
+    //        return Task.FromResult<Uri>(null);
 
-        return _loadingTask ??= LoadGlyphFontInternalAsync();
-    }
+    //    return _loadingTask ??= LoadGlyphFontInternalAsync();
+    //}
 
-    private async Task<Uri> LoadGlyphFontInternalAsync()
-    {
-        await Glyphs.LoadMoreItemsAsync(10).AsTask();
-        return Glyphs.FontUri;
-    }
+    //private async Task<Uri> LoadGlyphFontInternalAsync()
+    //{
+    //    await Glyphs.LoadMoreItemsAsync(10).AsTask();
+    //    return Glyphs.FontUri;
+    //}
 }
 
 

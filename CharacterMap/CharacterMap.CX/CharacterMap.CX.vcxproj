@@ -252,6 +252,7 @@
     <ClInclude Include="ColrTableReader.h" />
     <ClInclude Include="CpalTableReader.h" />
     <ClInclude Include="CustomFontManager.h" />
+    <ClInclude Include="CompositionDeviceManager.h" />
     <ClInclude Include="DirectText.h" />
     <ClInclude Include="DirectWrite.h" />
     <ClInclude Include="DWHelpers.h" />
@@ -270,6 +271,7 @@
     <ClInclude Include="DWriteProperties.h" />
     <ClInclude Include="ErrorHandling.h" />
     <ClInclude Include="FontAnalysis.h" />
+    <ClInclude Include="FontGlyphs.h" />
     <ClInclude Include="FontPalette.h" />
     <ClInclude Include="GlyphImageFormat.h" />
     <ClInclude Include="GridViewHelper.h" />
@@ -296,10 +298,12 @@
   <ItemGroup>
     <ClCompile Include="CanvasTextLayoutAnalysis.cpp" />
     <ClCompile Include="ColorTextAnalyzer.cpp" />
+    <ClCompile Include="CompositionDeviceManager.cpp" />
     <ClCompile Include="CustomFontManager.cpp" />
     <ClCompile Include="DirectText.cpp" />
     <ClCompile Include="DirectWrite.cpp" />
     <ClCompile Include="DWriteFontFamily.cpp" />
+    <ClCompile Include="FontGlyphs.cpp" />
     <ClCompile Include="NativeInterop.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

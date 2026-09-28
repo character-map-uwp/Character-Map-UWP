@@ -18,8 +18,6 @@
     xmlns:views="using:CharacterMap.Views"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
     x:Name="ViewRoot"
-    views:FontMapView.GlyphsLoaded="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs.IsLoaded, Mode=OneWay, FallbackValue=False}"
-    views:FontMapView.GlyphsLoading="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs.IsLoading, Mode=OneWay, FallbackValue=False}"
     BorderThickness="0"
     FontFamily="{ThemeResource ContentControlThemeFontFamily}"
     SizeChanged="UserControl_SizeChanged"
@@ -1678,12 +1676,10 @@
                     core:Properties.Boolean="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
                     core:Properties.Double="{x:Bind ViewModel.Settings.GridSize, Mode=OneWay}"
                     core:Properties.FontSize="{x:Bind core:Converters.GetFontSize(ViewModel.Settings.GridSize), Mode=OneWay}"
-                    core:Properties.FontUri="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs.FontUri, TargetNullValue={x:Null}, FallbackValue={x:Null}, Mode=OneWay}"
                     core:Properties.Footer="{x:Bind ViewModel.SelectedFaceAnalysis.Face.Face, Mode=OneWay}"
                     core:Properties.Tag="{x:Bind ViewModel.SelectedFaceAnalysis.StyleSimulation, Mode=OneWay}"
                     ContainerContentChanging="CharGrid_ContainerContentChanging"
                     ContextRequested="Grid_ContextRequested"
-                    DataFetchSize="1000"
                     ItemsSource="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs, Mode=OneWay}"
                     SelectionChanged="GlyphRepeater_SelectionChanged"
                     SelectionMode="Single"
@@ -1697,7 +1693,7 @@
                         </Style>
                     </ListViewBase.ItemContainerStyle>
                     <ListViewBase.Header>
-                        <StackPanel Padding="24 4 12 8" Spacing="4">
+                        <StackPanel Padding="12 4 12 16" Spacing="4">
                             <TextBlock
                                 FontSize="16"
                                 FontStretch="Normal"
@@ -1719,14 +1715,11 @@
                                 Height="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Double)}"
                                 Padding="4"
                                 Tag="{Binding}">
-                                <controls:FontGlyph
+                                <cxc:FontGlyphs
                                     x:Name="Text"
                                     x:Phase="2"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
                                     FontFace="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Footer)}"
                                     FontSize="{Binding ElementName=GlyphRepeater, Path=(core:Properties.FontSize)}"
-                                    FontUri="{Binding ElementName=GlyphRepeater, Path=(core:Properties.FontUri)}"
                                     Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                                     Indices="{x:Bind}"
                                     IsColorFontEnabled="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Boolean)}"
@@ -1737,14 +1730,6 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </controls:ExtendedGridView>
-
-                <ProgressRing
-                    x:Name="GlyphRing"
-                    Width="100"
-                    Height="100"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    IsActive="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs.IsLoading, Mode=OneWay, FallbackValue=False}" />
             </Grid>
 
 
@@ -2009,7 +1994,6 @@
                     core:Properties.Boolean="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
                     core:Properties.Double="{x:Bind ViewModel.Settings.GridSize, Mode=OneWay}"
                     core:Properties.FontSize="{x:Bind core:Converters.GetFontSize(ViewModel.Settings.GridSize), Mode=OneWay}"
-                    core:Properties.FontUri="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs.FontUri, TargetNullValue={x:Null}, FallbackValue={x:Null}, Mode=OneWay}"
                     core:Properties.Footer="{x:Bind ViewModel.SelectedFaceAnalysis.Face.Face, Mode=OneWay}"
                     core:Properties.Tag="{x:Bind ViewModel.SelectedFaceAnalysis.StyleSimulation, Mode=OneWay}"
                     FontFamily="{x:Bind ViewModel.SelectedFaceAnalysis.FontFamily, Mode=OneWay}"
@@ -2018,7 +2002,6 @@
                     FontWeight="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Weight, Mode=OneWay}"
                     ItemContainerStyle="{StaticResource SmallCardGridViewItem}"
                     ItemsSource="{Binding Source={StaticResource LigaturesSource}}"
-                    Loaded="LigaturesRepeater_Loaded"
                     SelectionChanged="LigaturesRepeater_SelectionChanged"
                     SelectionMode="Single"
                     Transform3D="{StaticResource Perspective}">
@@ -2117,13 +2100,11 @@
                                         BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                         BorderThickness="1"
                                         CornerRadius="{ThemeResource ControlCornerRadius}">
-                                        <Grid>
+                                        <Grid x:Name="Text">
                                             <!--  Center: Ligature Glyph  -->
-                                            <controls:FontGlyph
-                                                x:Name="Text"
+                                            <cxc:FontGlyphs
                                                 FontFace="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Footer)}"
                                                 FontSize="44"
-                                                FontUri="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.FontUri)}"
                                                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                                                 Indices="{x:Bind LigatureGlyph}"
                                                 IsColorFontEnabled="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Boolean)}"
@@ -2205,15 +2186,6 @@
                         </DataTemplate>
                     </controls:ExtendedGridView.ItemTemplate>
                 </controls:ExtendedGridView>
-
-                <ProgressRing
-                    x:Name="LigaturesRing"
-                    Width="60"
-                    Height="60"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    IsActive="{x:Bind ViewRoot.(views:FontMapView.GlyphsLoading), Mode=OneWay}"
-                    Visibility="{x:Bind core:Converters.TrueToVis(ViewRoot.(views:FontMapView.GlyphsLoading)), Mode=OneWay}" />
             </Grid>
 
 
@@ -3288,27 +3260,6 @@
                         <Setter Target="TogglePaneButton.IsHitTestVisible" Value="False" />
                         <Setter Target="TogglePaneButton.Opacity" Value="0.4" />
                         <Setter Target="TogglePaneButton.IsTabStop" Value="False" />
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-            <VisualStateGroup x:Name="GlyphMapStates">
-                <VisualStateGroup.Transitions>
-                    <VisualTransition
-                        x:Name="GlyphsLoadedTransition"
-                        GeneratedDuration="0:0:0.2"
-                        From="GlyphMapLoadingState"
-                        To="GlyphMapLoadedState" />
-                </VisualStateGroup.Transitions>
-                <VisualState x:Name="DefaultGlyphMapState" />
-                <VisualState x:Name="GlyphMapLoadingState">
-                    <VisualState.Setters>
-                        <Setter Target="GlyphsRoot.IsHitTestVisible" Value="True" />
-                        <!--<Setter Target="GlyphRing.IsActive" Value="True" />-->
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="GlyphMapLoadedState">
-                    <VisualState.Setters>
-                        <Setter Target="GlyphRepeater.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

@@ -37,8 +37,6 @@ public class VariantTemplateSelector : DataTemplateSelector
 [DependencyProperty<FontMapViewModel>("ViewModel")]
 [DependencyProperty<bool>("HideTitle")]
 [DependencyProperty<FontItem>("Font")]
-[AttachedProperty<bool>("GlyphsLoading")]
-[AttachedProperty<bool>("GlyphsLoaded")]
 [DependencyProperty<GridLength>("BottomHeight")]
 public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter, IPopoverPresenter, IWindowContent
 {
@@ -87,8 +85,6 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     {
         PaneHideTransition.Storyboard = CreateHidePreview(false, false);
         PaneShowTransition.Storyboard = CreateShowPreview(0, false);
-
-        GoToState(nameof(DefaultGlyphMapState), false);
 
         if (IsStandalone)
         {
@@ -307,10 +303,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             case nameof(ViewModel.SelectedProvider):
                 UpdateDevUtils();
                 break;
-            case nameof(ViewModel.SelectedFaceAnalysis):
-                if (MapDisplayStates.CurrentState == LigatureMapState)
-                    _ = ViewModel?.SelectedFaceAnalysis?.LoadGlyphFontAsync() ?? Task.CompletedTask;
-                break;
+           
         }
     }
 
@@ -530,9 +523,6 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                     UpdateRepeaterToXTransition(LigaturesRepeater, GlyphRepeater, LigatureToGlyphTransition);
             }
 
-            if (ViewModel.SelectedFaceAnalysis?.Glyphs?.IsLoaded ?? false)
-                GoToState(nameof(GlyphMapLoadedState));
-
             GoToState(GlyphMapState.Name, animate);
         }
         else if (ViewModel.DisplayMode == FontDisplayMode.LigaturesState)
@@ -548,7 +538,6 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                     UpdateRampToGridTransition(LigaturesRepeater, RampToLigaturesTransition, true);
             }
 
-            _ = ViewModel?.SelectedFaceAnalysis?.LoadGlyphFontAsync();
             GoToState(LigatureMapState.Name, animate);
         }
 
@@ -1191,7 +1180,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void ToolTip_Opened(object sender, RoutedEventArgs e)
     {
-        _ = ViewModel?.SelectedFaceAnalysis?.LoadGlyphFontAsync();
+        //_ = ViewModel?.SelectedFaceAnalysis?.LoadGlyphFontAsync();
     }
 
 
@@ -1359,29 +1348,6 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     //
     //------------------------------------------------------
 
-    static partial void OnGlyphsLoadingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is FontMapView view && e.NewValue is bool b && b)
-            view.GoToState(nameof(view.GlyphMapLoadingState));
-    }
-
-    static partial void OnGlyphsLoadedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is FontMapView view && e.NewValue is bool b && b)
-        {
-            if (view.MapDisplayStates.CurrentState != view.GlyphMapState)
-                return;
-
-            view.Enqueue(() =>
-            {
-                if (view.GlyphMapStates.CurrentState == view.GlyphMapLoadingState)
-                    view.UpdateGlyphLoadedTransition();
-
-                view.GoToState(nameof(view.GlyphMapLoadedState));
-            });
-        }
-    }
-
     private int ToInt(FontDisplayMode mode) => (int)mode;
 
     Debouncer _resizerBouncer = new(250);
@@ -1418,12 +1384,6 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     //  Ligatures Map
     //
     //------------------------------------------------------
-
-    private void LigaturesRepeater_Loaded(object sender, RoutedEventArgs e)
-    {
-        //LigaturesRepeater.ItemsSource = LigaturesSource;
-        _ = ViewModel?.SelectedFaceAnalysis?.LoadGlyphFontAsync();
-    }
 
     private void LigaturesRepeater_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {

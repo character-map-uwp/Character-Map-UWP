@@ -120,7 +120,7 @@ public partial  class ExtendedListView : ListView
 
         if (e is ISupportIncrementalLoading inc && inc.HasMoreItems && inc is IList list && list.Count == 0)
         {
-            _ = inc.LoadMoreItemsAsync((uint)(DataFetchSize <= 0 ? 500 : DataFetchSize));
+            _ = inc.LoadMoreItemsAsync((uint)(DataFetchSize <= 0 ? 2 : DataFetchSize));
         }
     }
 

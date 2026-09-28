@@ -14,11 +14,11 @@ public class GlyphCollection : ObservableCollection<uint>, ISupportIncrementalLo
 {
     private static PropertyChangedEventArgs _hasMoreItemsHandler = new(nameof(HasMoreItems));
 
-    public Uri FontUri { get; private set; }
+    //public Uri FontUri { get; private set; }
 
-    public bool IsLoading { get; private set; } = true;
+    public bool IsLoading { get; private set; } = false;
 
-    public bool IsLoaded { get; private set; } = false;
+    public bool IsLoaded { get; private set; } = true;
 
     private uint currentOffset = 0;
     private readonly CMFontFace _fontFace;
@@ -29,83 +29,44 @@ public class GlyphCollection : ObservableCollection<uint>, ISupportIncrementalLo
         _fontFace = fontFace;
         _context = SynchronizationContext.Current;
 
-        // If we're a local font file we can optimise the UI
-        // by skipping asynchronous loading later and pre-populating
-        // some basic glyph
-        var path = DirectWrite.GetFileName(_fontFace.Face);
-        if (StorageHelper.IsAppPath(path))
-        {
-            FontUri = new Uri(StorageHelper.GetAppPath(path));
-            _loadingTask = Task.FromResult(true);
-            IsLoading = false;
-            IsLoaded = true;
+        // Prepare some glyph
+        var size = Math.Min(MaxCount - currentOffset, 256);
+        var items = Enumerable.Range((int)currentOffset, (int)size).ToList();
 
-            // Prepare some glyph
-            var size = Math.Min(MaxCount - currentOffset, 256);
-            var items = Enumerable.Range((int)currentOffset, (int)size).ToList();
+        foreach (var item in items)
+            base.Items.Add((uint)item);
 
-            foreach (var item in items)
-                base.Items.Add((uint)item);
-
-            currentOffset = (uint)this.Count;
-        }
+        currentOffset = (uint)this.Count;
     }
 
     public uint MaxCount => _fontFace.Face.GlyphCount;
 
-    protected override void OnPropertyChanged(PropertyChangedEventArgs e)
-    {
-        _context.Post(
-            (s) =>
-            {
-                base.OnPropertyChanged(e);
-            },
-            null);
-    }
-
-    private Task _loadingTask = null;
-
-    private async Task LoadFontAsync()
-    {
-        FontUri = await StorageHelper.GetTempGlyphsLocalCopyAsync(_fontFace);
-
-        OnPropertyChanged(new(nameof(FontUri)));
-
-        IsLoading = false;
-        OnPropertyChanged(new(nameof(IsLoading)));
-    }
+    //protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+    //{
+    //    _context.Post((s) => { base.OnPropertyChanged(e); }, null);
+    //}
 
     public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
     {
-        return Task.Run(async () =>
-        {
-            // 1. Ensure font is loaded
-            _loadingTask ??= LoadFontAsync();
-            if (_loadingTask.IsCompleted is false)
-                await _loadingTask.ConfigureAwait(false);
+        return Task.FromResult(LoadMoreInternal(count)).AsAsyncOperation();
+    }
 
-            // 2. Give us some things
-            var size = Math.Min(MaxCount - currentOffset, count);
-            var items = Enumerable.Range((int)currentOffset, (int)size).ToList();
+    private LoadMoreItemsResult LoadMoreInternal(uint count)
+    {
+        var size = Math.Min(MaxCount - currentOffset, count);
+        var items = Enumerable.Range((int)currentOffset, (int)size).ToList();
 
-            foreach (var item in items)
-                base.Items.Add((uint)item);
+        foreach (var item in items)
+            base.Items.Add((uint)item);
 
-            currentOffset = (uint)this.Count;
+        currentOffset = (uint)this.Count;
 
-            _context.Post(s =>
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset)),
-                null);
+        //_context.Post(s =>
+        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+        //    null);
 
-            if (IsLoaded is false)
-            {
-                IsLoaded = true;
-                OnPropertyChanged(new(nameof(IsLoaded)));
-            }
-            OnPropertyChanged(_hasMoreItemsHandler);
-            return new LoadMoreItemsResult { Count = (uint)items.Count };
-        }).AsAsyncOperation();
-        
+        OnPropertyChanged(_hasMoreItemsHandler);
+        return new LoadMoreItemsResult { Count = (uint)items.Count };
     }
 
     public async Task EnsureLoadedUpToAsync(uint index)
@@ -114,7 +75,7 @@ public class GlyphCollection : ObservableCollection<uint>, ISupportIncrementalLo
         {
             uint needed = (index + 1) - (uint)Count;
             uint batch = Math.Max(needed, 1000);
-            await LoadMoreItemsAsync(batch);
+            LoadMoreInternal(batch);
         }
     }
 

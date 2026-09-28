@@ -77,7 +77,6 @@ public partial class FontMapView
             {
                 if (LigaturesRoot != null)
                 {
-                    _ = ViewModel?.SelectedFaceAnalysis?.LoadGlyphFontAsync();
                     CompositionFactory.PlayEntrance(LigaturesRoot, offset * 2);
                 }
             }
@@ -171,7 +170,7 @@ public partial class FontMapView
             return control.ItemsPanelRoot.Children
                     .OfType<FrameworkElement>()
                     .Where(c => c.IsInViewport(viewport))
-                    .Select(c => c is GridViewHeaderItem hi ? (FrameworkElement)hi.ContentTemplateRoot : c)
+                    .Select(c => c is ListViewBaseHeaderItem hi ? (FrameworkElement)hi.ContentTemplateRoot : c)
                     .Concat(control.Header is Panel p ? p.Children.OfType<FrameworkElement>() : new List<FrameworkElement>())
                     .Where(c => c is not null)
                     .OrderBy(c => Guid.NewGuid())
@@ -342,14 +341,6 @@ public partial class FontMapView
         CreateRampIn(args, reverse ? 400 : -400);
     }
 
-    public void UpdateGridToGlyphTransition()
-    {
-        // 0. Realize items
-        this.FindName(nameof(GlyphsRoot));
-        UpdateGridToXTransition(GlyphRepeater, GridToGlyphTransition);
-        return;
-    }
-
     void UpdateGridToXTransition(ListViewBase repeater, VisualTransition transition)
     {
         UpdateXToXTransition(CharGrid, repeater, transition);
@@ -373,49 +364,6 @@ public partial class FontMapView
         return;
     }
 
-    public void UpdateGridToLigatureTransition()
-    {
-        // 0. Realise items
-        this.FindName(nameof(LigaturesRoot));
-
-        if (LigaturesRepeater.ItemsPanelRoot is null)
-        {
-            LigaturesRepeater.Measure(CharGrid.DesiredSize);
-            if (GlyphRepeater.ItemsPanelRoot is null)
-                return;
-        }
-
-        StoryboardBuilderArgs args = new();
-        GridToGlyphTransition.Storyboard = args.Storyboard;
-
-        CreateGridOut(args, CharGrid, false);
-        CreateGridIn(args, LigaturesRepeater, false);
-
-        return;
-    }
-
-    private void UpdateGlyphLoadedTransition()
-    {
-        if (GlyphRepeater == null)
-            this.FindName(nameof(GlyphsRoot));
-
-        if (GlyphRepeater.ItemsPanelRoot is null)
-        {
-            GlyphRepeater.Measure(CharGrid.DesiredSize);
-            if (GlyphRepeater.ItemsPanelRoot is null)
-                return;
-        }
-        else
-        {
-            // Force the items to be realised
-            GlyphRepeater.Measure(this.DesiredSize);
-        }
-
-        StoryboardBuilderArgs args = new();
-        GlyphsLoadedTransition.Storyboard = args.Storyboard;
-        CreateGridIn(args, GlyphRepeater, false, true);
-    }
-
     public void UpdateRampToGridTransition(ListViewBase grid, VisualTransition t, bool forward = false)
     {
         if (TypeRampList == null || grid == null)
@@ -426,11 +374,6 @@ public partial class FontMapView
 
         CreateRampOut(args, args.FromDepth * -1);
         CreateGridIn(args, grid, true);
-    }
-
-    public void UpdateRepeaterToGridTransition(ListViewBase repeater, VisualTransition transition)
-    {
-        UpdateRepeaterToXTransition(repeater, CharGrid, transition);
     }
 
     public void UpdateRepeaterToXTransition(ListViewBase repeater, ListViewBase to, VisualTransition transition)
