@@ -145,7 +145,7 @@
             <Setter Property="CornerRadius" Value="{ThemeResource CardCornerRadius}" />
             <Setter Property="Margin" Value="4" />
             <Setter Property="Padding" Value="8" />
-            <Setter Property="MinWidth" Value="328" />
+            <!--<Setter Property="MinWidth" Value="328" />-->
             <Setter Property="MinHeight" Value="100" />
             <Setter Property="Background" Value="{ThemeResource ControlFillColorDefaultBrush}" />
             <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
@@ -1680,6 +1680,7 @@
                     core:Properties.Tag="{x:Bind ViewModel.SelectedFaceAnalysis.StyleSimulation, Mode=OneWay}"
                     ContainerContentChanging="CharGrid_ContainerContentChanging"
                     ContextRequested="Grid_ContextRequested"
+                    EnableRepositionAnimations="{x:Bind ViewModel.AllowExpensiveAnimation, Mode=OneWay}"
                     ItemsSource="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs, Mode=OneWay}"
                     SelectionChanged="GlyphRepeater_SelectionChanged"
                     SelectionMode="Single"
@@ -1996,14 +1997,17 @@
                     core:Properties.FontSize="{x:Bind core:Converters.GetFontSize(ViewModel.Settings.GridSize), Mode=OneWay}"
                     core:Properties.Footer="{x:Bind ViewModel.SelectedFaceAnalysis.Face.Face, Mode=OneWay}"
                     core:Properties.Tag="{x:Bind ViewModel.SelectedFaceAnalysis.StyleSimulation, Mode=OneWay}"
-                    FontFamily="{x:Bind ViewModel.SelectedFaceAnalysis.FontFamily, Mode=OneWay}"
-                    FontStretch="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Stretch, Mode=OneWay}"
-                    FontStyle="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Style, Mode=OneWay}"
+                    DesiredItemWidth="340"
+                    EnableRepositionAnimations="{x:Bind ViewModel.AllowExpensiveAnimation, Mode=OneWay}"
+                    FontFamily="{x:Bind ViewModel.SelectedFaceAnalysis.FontFamily, Mode=OneWay, FallbackValue='Segoe UI'}"
+                    FontStretch="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Stretch, Mode=OneWay, FallbackValue=Normal}"
+                    FontStyle="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Style, Mode=OneWay, FallbackValue=Normal}"
                     FontWeight="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Weight, Mode=OneWay}"
                     ItemContainerStyle="{StaticResource SmallCardGridViewItem}"
                     ItemsSource="{Binding Source={StaticResource LigaturesSource}}"
                     SelectionChanged="LigaturesRepeater_SelectionChanged"
                     SelectionMode="Single"
+                    StretchContainersForSingleRowEnabled="True"
                     Transform3D="{StaticResource Perspective}">
 
                     <controls:ExtendedGridView.Header>
@@ -2041,10 +2045,7 @@
 
                     <controls:ExtendedGridView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <ItemsWrapGrid
-                                AreStickyGroupHeadersEnabled="True"
-                                ItemWidth="340"
-                                Orientation="Horizontal" />
+                            <ItemsWrapGrid AreStickyGroupHeadersEnabled="True" Orientation="Horizontal" />
                         </ItemsPanelTemplate>
                     </controls:ExtendedGridView.ItemsPanel>
 

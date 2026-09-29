@@ -1,11 +1,17 @@
-﻿using System.Collections;
+﻿using Microsoft.Toolkit.Uwp.UI.Controls;
+using System.Collections;
 using System.Collections.Specialized;
+using System.Windows.Input;
+using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace CharacterMap.Controls;
 
@@ -17,6 +23,8 @@ public interface IExtendedListViewBaseItem
 public class ExtendedListViewItem : ListViewItem, IExtendedListViewBaseItem//, IThemeableControl
 {
     //public ThemeHelper _themer;
+
+    public bool IsInRecycleQueue { get; set; }
 
     public ExtendedListView Owner { get; set; }
 
@@ -74,20 +82,32 @@ public class ExtendedGridViewItem : GridViewItem, IExtendedListViewBaseItem
 [DependencyProperty<DataTemplate>("SelectorTemplate")]
 [AttachedProperty<SelectorVisualElement>("SelectorVisual")]
 [DependencyProperty<DataTemplate>("ItemToolTipTemplate")]
+[DependencyProperty<bool>("EnableRepositionAnimations")]
+[DependencyProperty<ICommand>("ItemClickCommand")]
 public partial  class ExtendedListView : ListView
 {
     long token = 0;
 
     protected virtual Type GetStyleKey() => typeof(ExtendedListView);
 
+    protected XamlDirect _xamlDirect => field ??= XamlDirect.GetDefault();
+
     public ExtendedListView()
     {
         this.DefaultStyleKey = GetStyleKey();
-        this.Loaded += ExtendedListView_Loaded;
+        this.Loaded += OnLoaded;
         this.Unloaded += ExtendedListView_Unloaded;
+
+        if (EnableRepositionAnimations)
+        {
+            this.ContainerContentChanging -= ExtendedListView_ContainerContentChanging;
+            this.ContainerContentChanging += ExtendedListView_ContainerContentChanging;
+        }
+
+        this.ItemClick += OnItemClick;
     }
 
-    private void ExtendedListView_Loaded(object sender, RoutedEventArgs e)
+    protected virtual void OnLoaded(object sender, RoutedEventArgs e)
     {
         CheckSource(ItemsSource);
 
@@ -111,6 +131,13 @@ public partial  class ExtendedListView : ListView
         CheckSource(e);
     }
 
+    protected virtual void OnItemClick(object sender, ItemClickEventArgs e)
+    {
+        if (ItemClickCommand is { } cmd
+            && cmd.CanExecute(e.ClickedItem))
+            cmd.Execute(e.ClickedItem);
+    }
+
     private void CheckSource(object e)
     {
         if (this.IsLoaded is false)
@@ -119,9 +146,7 @@ public partial  class ExtendedListView : ListView
         e ??= ItemsSource;
 
         if (e is ISupportIncrementalLoading inc && inc.HasMoreItems && inc is IList list && list.Count == 0)
-        {
             _ = inc.LoadMoreItemsAsync((uint)(DataFetchSize <= 0 ? 2 : DataFetchSize));
-        }
     }
 
     protected virtual SelectorItem CreateContainer() => new ExtendedListViewItem();
@@ -143,6 +168,52 @@ public partial  class ExtendedListView : ListView
 
         return item;
     }
+
+
+
+
+    //------------------------------------------------------
+    //
+    // Reposition Animation Support
+    //
+    //------------------------------------------------------
+
+    partial void OnEnableRepositionAnimationsChanged(bool o, bool n)
+    {
+        this.ContainerContentChanging -= ExtendedListView_ContainerContentChanging;
+        CompositionFactory.EnableContainerReposition(this, n);
+
+        if (n)
+            this.ContainerContentChanging += ExtendedListView_ContainerContentChanging;
+    }
+
+    private void ExtendedListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+    {
+        if (args.ItemContainer is ExtendedListViewItem i)
+            i.IsInRecycleQueue = args.InRecycleQueue;
+
+        if (EnableRepositionAnimations)
+        {
+            if (args.InRecycleQueue)
+            {
+                CompositionFactory.PokeUIElementZIndex(args.ItemContainer, _xamlDirect);
+            }
+            else
+            {
+                var v = ElementCompositionPreview.GetElementVisual(args.ItemContainer);
+                v.ImplicitAnimations = CompositionFactory.GetRepositionCollection(v.Compositor);
+            }
+        }
+    }
+
+
+
+
+    //------------------------------------------------------
+    //
+    // ToolTip
+    //
+    //------------------------------------------------------
 
     private void Item_PointerEntered(object sender, PointerRoutedEventArgs e)
     {
@@ -224,9 +295,7 @@ public partial  class ExtendedListView : ListView
         else if (BindableSelectedItems is IEnumerable<object> list)
         {
             foreach (var item in list.ToList())
-            {
                 SelectedItems.Add(item);
-            }
         }
 
         token = RegisterPropertyChangedCallback(ListViewBase.ItemsSourceProperty, ItemsSourceChanged);
@@ -348,14 +417,165 @@ public partial  class ExtendedListView : ListView
 //
 //------------------------------------------------------
 
-public class ExtendedGridView : ExtendedListView
+[DependencyProperty<bool>("StretchContainersForSingleRowEnabled")] // When in adaptive mode, whether to stretch containers to fit if there is only a single row of content
+[DependencyProperty<double>("DesiredItemWidth")] // Enables adaptive layout mode
+[DependencyProperty<double>("RenderedItemWidth")] 
+public partial class ExtendedGridView : ExtendedListView
 {
     protected override Type GetStyleKey() => typeof(ExtendedGridView);
 
     protected override SelectorItem CreateContainer() => new ExtendedGridViewItem();
 
-    protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
+
+
+
+    //------------------------------------------------------
+    //
+    // Adaptive Mode Support
+    //
+    //------------------------------------------------------
+
+    protected override DependencyObject GetContainerForItemOverride()
     {
-        base.PrepareContainerForItemOverride(element, item);
+        FrameworkElement f = (FrameworkElement)base.GetContainerForItemOverride();
+
+        if (_isAdaptive && this.ItemsPanelRoot is not ItemsWrapGrid)
+            f.Width = RenderedItemWidth;
+
+        return f;
+    }
+
+    bool _isAdaptive;
+
+    Storyboard _disableLayoutRoundingStoryboard => field ??= (new Storyboard()).With(sb =>
+    {
+        // We use a storyboard so we can retain the original DependencyProperty value
+        sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(this, nameof(this.UseLayoutRounding))
+           .AddKeyFrame(0, false);
+    });
+
+
+    partial void OnDesiredItemWidthChanged(double o, double n)
+    {
+        Items.VectorChanged -= ItemsOnVectorChanged;
+        this.SizeChanged -= OnSizeChanged;
+
+        _isAdaptive = !(double.IsNaN(DesiredItemWidth) || double.IsInfinity(DesiredItemWidth) || DesiredItemWidth == 0);
+
+        if (!_isAdaptive)
+        {
+            // Disable our UseLayoutRounding override and return to the user-chosen value
+            _disableLayoutRoundingStoryboard.Stop();
+
+            if (this.ItemsPanelRoot is { } root)
+                if (root is ItemsWrapGrid g)
+                    g.ClearValue(ItemsWrapGrid.ItemWidthProperty);
+                else
+                    foreach (var container in root.Children)
+                        container.ClearValue(FrameworkElement.WidthProperty);
+        }
+        else
+        {
+            // We will need to disable layout rounding to prevent crashing
+            _disableLayoutRoundingStoryboard.Begin();
+            RecalculateLayout(ActualWidth);
+
+            Items.VectorChanged += ItemsOnVectorChanged;
+            SizeChanged += OnSizeChanged;
+        }
+    }
+
+    protected virtual void OnSizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        // If we are in center alignment, we only care about relayout if the number of columns we can display changes
+        // Fixes #1737
+        if (HorizontalAlignment != HorizontalAlignment.Stretch)
+        {
+            var prevColumns = CalculateColumns(e.PreviousSize.Width, DesiredItemWidth);
+            var newColumns = CalculateColumns(e.NewSize.Width, DesiredItemWidth);
+
+            // If the width of the internal list view changes, check if more or less columns needs to be rendered.
+            if (prevColumns != newColumns)
+                RecalculateLayout(e.NewSize.Width);
+        }
+        else if (e.PreviousSize.Width != e.NewSize.Width)
+        {
+            // We need to recalculate width as our size changes to adjust internal items.
+            RecalculateLayout(e.NewSize.Width);
+        }
+    }
+
+    private void ItemsOnVectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)
+    {
+        RecalculateLayout(ActualWidth);
+    }
+
+    bool _needContainerMarginForLayout = false;
+
+    private void RecalculateLayout(double containerWidth)
+    {
+        if (double.IsNaN(containerWidth) || containerWidth == 0 || double.IsInfinity(containerWidth))
+            return;
+
+        var itemsPanel = ItemsPanelRoot as Panel;
+        var panelMargin = itemsPanel != null ?
+                          itemsPanel.Margin.Left + itemsPanel.Margin.Right :
+                          0;
+        var padding = Padding.Left + Padding.Right;
+        var border = BorderThickness.Left + BorderThickness.Right;
+
+        // width should be the displayable width
+        containerWidth = containerWidth - padding - panelMargin - border;
+        if (containerWidth > 0)
+        {
+            var newWidth = CalculateItemWidth(containerWidth);
+            RenderedItemWidth = Math.Floor(newWidth);
+            UpdateWidths();
+        }
+    }
+
+    Thickness _itemMargin = default;
+
+    /// <summary>
+    /// Calculates the width of the grid items.
+    /// </summary>
+    /// <param name="containerWidth">The width of the container control.</param>
+    /// <returns>The calculated item width.</returns>
+    protected virtual double CalculateItemWidth(double containerWidth)
+    {
+        if (double.IsNaN(DesiredItemWidth) && DesiredItemWidth > 0)
+            return DesiredItemWidth;
+
+        var columns = CalculateColumns(containerWidth, DesiredItemWidth);
+
+        // If we want to stretch containers and there are less items than there are columns, reduce the column count
+        if (Items != null && Items.Count > 0 && Items.Count < columns && StretchContainersForSingleRowEnabled)
+            columns = Items.Count;
+
+        // Subtract the margin from the width so we place the correct width for placement
+        var fallbackThickness = default(Thickness);
+        var itemMargin = _itemMargin = AdaptiveHeightValueConverter.GetItemMargin(this, fallbackThickness);
+        
+        // No style explicitly defined, or no items or no container for the items
+        // We need to get an actual margin for proper layout
+        _needContainerMarginForLayout = itemMargin == fallbackThickness;
+
+        return (containerWidth / columns) - itemMargin.Left - itemMargin.Right;
+    }
+
+    private static int CalculateColumns(double containerWidth, double itemWidth)
+        => Math.Max(1, (int)Math.Floor(containerWidth / itemWidth));
+
+    void UpdateWidths()
+    {
+        if (this.ItemsPanelRoot is null)
+            return;
+
+        var w = RenderedItemWidth;
+        if (this.ItemsPanelRoot is ItemsWrapGrid g)
+            g.ItemWidth = w + _itemMargin.Left + _itemMargin.Right;
+        else
+            foreach (var item in this.ItemsPanelRoot.Children.OfType<SelectorItem>())
+                _xamlDirect.SetDoubleProperty(_xamlDirect.GetXamlDirectObject(item), XamlPropertyIndex.FrameworkElement_Width, w);
     }
 }

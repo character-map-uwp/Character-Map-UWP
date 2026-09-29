@@ -695,7 +695,7 @@ public static class Animation
             .AddKeyFrame(keyTime, visibility);
     }
 
-    public static Storyboard Build(this Storyboard storyboard, Action<Storyboard> action)
+    public static Storyboard With(this Storyboard storyboard, Action<Storyboard> action)
     {
         action(storyboard);
         return storyboard;

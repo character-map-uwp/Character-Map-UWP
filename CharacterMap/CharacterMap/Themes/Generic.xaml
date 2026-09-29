@@ -415,7 +415,10 @@
                                     TextAlignment="Left" />
                             </StackPanel>
 
-                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <StackPanel
+                                x:Name="CloseContainer"
+                                Grid.Column="1"
+                                Orientation="Horizontal">
                                 <ContentPresenter x:Name="TitleRightContentPresenter" Content="{x:Null}" />
                                 <controls:UXButton
                                     x:Name="BtnClose"
@@ -456,8 +459,9 @@
                                 <VisualState x:Name="RightAligned" />
                                 <VisualState x:Name="LeftAligned">
                                     <VisualState.Setters>
-                                        <Setter Target="BtnClose.Margin" Value="4 0 0 0" />
-                                        <Setter Target="BtnClose.(Grid.Column)" Value="0" />
+                                        <Setter Target="CloseContainer.Margin" Value="4 0 0 0" />
+                                        <Setter Target="CloseContainer.(Grid.Column)" Value="0" />
+                                        <Setter Target="TitleContainer.(Grid.Column)" Value="1" />
                                         <Setter Target="TitleHeader.(Grid.Column)" Value="1" />
                                         <Setter Target="HeaderGrid.(core:Properties.GridDefinitions)" Value="cAuto c* cs0" />
                                     </VisualState.Setters>
