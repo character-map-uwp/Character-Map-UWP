@@ -1,4 +1,4 @@
-﻿using SQLite;
+using SQLite;
 using Windows.UI.Xaml;
 
 namespace CharacterMap.Services;
@@ -24,7 +24,7 @@ public class GlyphDescription : IGlyphData
     public int UnicodeIndex { get; set; }
 
 #if DEBUG
-    [Indexed, MaxLength(5), Column("Hx")]
+    [MaxLength(5), Column("Hx")]
 #endif
     public string UnicodeHex { get; set; }
 

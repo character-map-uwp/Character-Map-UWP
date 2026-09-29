@@ -1,4 +1,4 @@
-﻿using Microsoft.Graphics.Canvas.Text;
+using Microsoft.Graphics.Canvas.Text;
 using SQLite;
 using System.Globalization;
 using Windows.ApplicationModel;
@@ -29,8 +29,10 @@ public partial class SQLiteGlyphProvider : IGlyphDataProvider
 
     public void Initialise()
     {
-        var path = Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Data", "GlyphData.db");
-        _connection = new SQLiteConnection(new SQLiteConnectionString(path, SQLiteOpenFlags.ReadOnly, true));
+        string path = Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Data", "GlyphData.db");
+        _connection = new(new SQLiteConnectionString(path, SQLiteOpenFlags.ReadOnly, true));
+        _connection.ExecuteScalarStr("PRAGMA mmap_size = 8388608;");
+        _connection.Execute("PRAGMA query_only = 1;");
     }
 
 #if DEBUG && GENERATE_DATABASE
@@ -314,18 +316,8 @@ public partial class SQLiteGlyphProvider : IGlyphDataProvider
             // 7. Check Unihan data
             if (variant.Face.CouldContainUnihan())
             {
-                string sql3 = $"SELECT * FROM {nameof(UnihanReading)} {sb.ToString()} AND Type == {(int)UnihanFieldType.Definition} AND Description LIKE ? LIMIT {limit}";
-                var results3 = _connection.GetUnihanReadingsByDescription(sql3, $"%{query}%");
-
-                results.AddRange(results3.Select(u =>
-                {
-                    return new GlyphDescription
-                    {
-                        Description = u.Description,
-                        UnicodeIndex = u.Index,
-                        UnicodeHex = u.Index.ToString("X")
-                    };
-                }));
+                string sql3 = $"SELECT Ix, Definition FROM {nameof(UnihanReading)} {sb} AND Definition LIKE ? LIMIT {limit}";
+                results.AddRange(_connection.GetUnihanDefinitionsByDescription(sql3, $"%{query}%"));
             }
 
         End:

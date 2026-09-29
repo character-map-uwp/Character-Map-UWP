@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.ObjectModel;
 
 namespace CharacterMap.Models;
@@ -37,6 +37,7 @@ public class UnicodeRangeGroup : IReadOnlyList<Character>, IList, IGrouping<Name
             return [];
 
         ObservableCollection<UnicodeRangeGroup> groups = [];
+        List<(int Start, int Count)> unassignedSlices = null;
 
         int start = 0;
         int total = items.Count;
@@ -46,12 +47,28 @@ public class UnicodeRangeGroup : IReadOnlyList<Character>, IList, IGrouping<Name
             NamedUnicodeRange range = GetRange(items[start], mdl2);
             int end = start + 1;
 
-            while (end < total && range.Contains(items[end].UnicodeIndex))
-                end++;
+            if (range == UnicodeRanges.Unassigned)
+            {
+                while (end < total && GetRange(items[end], mdl2) == UnicodeRanges.Unassigned)
+                    end++;
 
-            groups.Add(new(range, items, start, end - start));
+                unassignedSlices ??= [];
+                unassignedSlices.Add((start, end - start));
+            }
+            else
+            {
+                while (end < total && range.Contains(items[end].UnicodeIndex))
+                    end++;
+
+                groups.Add(new(range, items, start, end - start));
+            }
+
             start = end;
         }
+
+        if (unassignedSlices != null)
+            foreach ((int uStart, int uCount) in unassignedSlices)
+                groups.Add(new(UnicodeRanges.Unassigned, items, uStart, uCount));
 
         return groups;
     }

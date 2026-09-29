@@ -1,4 +1,4 @@
-﻿namespace CharacterMap.Models;
+namespace CharacterMap.Models;
 
 public class MakeBasicFilterAttribute : Attribute
 {
@@ -221,6 +221,7 @@ public static partial class UnicodeRanges
     [MakeBasicFilter] public static NamedUnicodeRange Elbasan = new(0x10500, 0x1052F, "Elbasan");
     [MakeBasicFilter] public static NamedUnicodeRange CaucasianAlbanian = new(0x10530, 0x1056F, "Caucasian Albanian");
     [MakeBasicFilter] public static NamedUnicodeRange Vithkuqi = new(0x10570, 0x105BF, "Vithkuqi");
+    [MakeBasicFilter] public static NamedUnicodeRange Todhri = new(0x105C0, 0x105FF, "Todhri");
     [MakeBasicFilter] public static NamedUnicodeRange LinearA = new(0x10600, 0x1077F, "Linear A");
     [MakeBasicFilter] public static NamedUnicodeRange LatinExtendedF = new(0x10780, 0x107BF, "Latin Extended-F");
     [MakeBasicFilter] public static NamedUnicodeRange CypriotSyllabary = new(0x10800, 0x1083F, "Cypriot Syllabary");
@@ -230,6 +231,7 @@ public static partial class UnicodeRanges
     [MakeBasicFilter] public static NamedUnicodeRange Hatran = new(0x108E0, 0x108FF, "Hatran");
     [MakeBasicFilter] public static NamedUnicodeRange Phoenician = new(0x10900, 0x1091F, "Phoenician");
     [MakeBasicFilter] public static NamedUnicodeRange Lydian = new(0x10920, 0x1093F, "Lydian");
+    [MakeBasicFilter] public static NamedUnicodeRange Sidetic = new(0x10940, 0x1095F, "Sidetic");
     [MakeBasicFilter] public static NamedUnicodeRange MeroiticHieroglyphs = new(0x10980, 0x1099F, "Meroitic Hieroglyphs");
     [MakeBasicFilter] public static NamedUnicodeRange MeroiticCursive = new(0x109A0, 0x109FF, "Meroitic Cursive");
     [MakeBasicFilter] public static NamedUnicodeRange Kharoshthi = new(0x10A00, 0x10A5F, "Kharoshthi");
@@ -243,6 +245,7 @@ public static partial class UnicodeRanges
     [MakeBasicFilter] public static NamedUnicodeRange OldTurkic = new(0x10C00, 0x10C4F, "Old Turkic");
     [MakeBasicFilter] public static NamedUnicodeRange OldHungarian = new(0x10C80, 0x10CFF, "Old Hungarian");
     [MakeBasicFilter] public static NamedUnicodeRange HanifiRohingya = new(0x10D00, 0x10D3F, "Hanifi Rohingya");
+    [MakeBasicFilter] public static NamedUnicodeRange Garay = new(0x10D40, 0x10D8F, "Garay");
     [MakeBasicFilter] public static NamedUnicodeRange RumiNumeralSymbols = new(0x10E60, 0x10E7F, "Rumi Numeral Symbols");
     [MakeBasicFilter] public static NamedUnicodeRange Yezidi = new(0x10E80, 0x10EBF, "Yezidi");
     [MakeBasicFilter] public static NamedUnicodeRange ArabicExtendedC = new(0x10EC0, 0x10EFF, "Arabic Extended-C");
@@ -262,12 +265,14 @@ public static partial class UnicodeRanges
     [MakeBasicFilter] public static NamedUnicodeRange Multani = new(0x11280, 0x112AF, "Multani");
     [MakeBasicFilter] public static NamedUnicodeRange Khudawadi = new(0x112B0, 0x112FF, "Khudawadi");
     [MakeBasicFilter] public static NamedUnicodeRange Grantha = new(0x11300, 0x1137F, "Grantha");
+    [MakeBasicFilter] public static NamedUnicodeRange TuluTigalari = new(0x11380, 0x113FF, "Tulu-Tigalari");
     [MakeBasicFilter] public static NamedUnicodeRange Newa = new(0x11400, 0x1147F, "Newa");
     [MakeBasicFilter] public static NamedUnicodeRange Tirhuta = new(0x11480, 0x114DF, "Tirhuta");
     [MakeBasicFilter] public static NamedUnicodeRange Siddham = new(0x11580, 0x115FF, "Siddham");
     [MakeBasicFilter] public static NamedUnicodeRange Modi = new(0x11600, 0x1165F, "Modi");
     [MakeBasicFilter] public static NamedUnicodeRange MongolianSupplement = new(0x11660, 0x1167F, "Mongolian Supplement");
     [MakeBasicFilter] public static NamedUnicodeRange Takri = new(0x11680, 0x116CF, "Takri");
+    [MakeBasicFilter] public static NamedUnicodeRange MyanmarExtendedC = new(0x116D0, 0x116FF, "Myanmar Extended-C");
     [MakeBasicFilter] public static NamedUnicodeRange Ahom = new(0x11700, 0x1174F, "Ahom");
     [MakeBasicFilter] public static NamedUnicodeRange Dogra = new(0x11800, 0x1184F, "Dogra");
     [MakeBasicFilter] public static NamedUnicodeRange WarangCiti = new(0x118A0, 0x118FF, "Warang Citi");
@@ -278,10 +283,14 @@ public static partial class UnicodeRanges
     [MakeBasicFilter] public static NamedUnicodeRange UnifiedCanadianAboriginalSyllabicsExtendedA = new(0x11AB0, 0x11ABF, "Unified Canadian Aboriginal Syllabics Extended-A");
     [MakeBasicFilter] public static NamedUnicodeRange PauCinHau = new(0x11AC0, 0x11AFF, "Pau Cin Hau");
     [MakeBasicFilter] public static NamedUnicodeRange DevanagariExtendedA = new(0x11B00, 0x11B5F, "Devanagari Extended-A");
+    [MakeBasicFilter] public static NamedUnicodeRange SharadaSupplement = new(0x11B60, 0x11B7F, "Sharada Supplement");
+    [MakeBasicFilter] public static NamedUnicodeRange Sunuwar = new(0x11BC0, 0x11BFF, "Sunuwar");
     [MakeBasicFilter] public static NamedUnicodeRange Bhaiksuki = new(0x11C00, 0x11C6F, "Bhaiksuki");
     [MakeBasicFilter] public static NamedUnicodeRange Marchen = new(0x11C70, 0x11CBF, "Marchen");
     [MakeBasicFilter] public static NamedUnicodeRange MasaramGondi = new(0x11D00, 0x11D5F, "Masaram Gondi");
     [MakeBasicFilter] public static NamedUnicodeRange GunjalaGondi = new(0x11D60, 0x11DAF, "Gunjala Gondi");
+    [MakeBasicFilter] public static NamedUnicodeRange TolongSiki = new(0x11DB0, 0x11DEF, "Tolong Siki");
+    [MakeBasicFilter] public static NamedUnicodeRange BengaliSupplement = new(0x11DF0, 0x11DFF, "Bengali Supplement");
     [MakeBasicFilter] public static NamedUnicodeRange Makasar = new(0x11EE0, 0x11EFF, "Makasar");
     [MakeBasicFilter] public static NamedUnicodeRange Kawi = new(0x11F00, 0x11F5F, "Kawi");
     [MakeBasicFilter] public static NamedUnicodeRange LisuSupplement = new(0x11FB0, 0x11FBF, "Lisu Supplement");
@@ -289,22 +298,30 @@ public static partial class UnicodeRanges
     [MakeBasicFilter] public static NamedUnicodeRange Cuneiform = new(0x12000, 0x123FF, "Cuneiform");
     [MakeBasicFilter] public static NamedUnicodeRange CuneiformNumbersAndPunctuation = new(0x12400, 0x1247F, "Cuneiform Numbers and Punctuation");
     [MakeBasicFilter] public static NamedUnicodeRange EarlyDynasticCuneiform = new(0x12480, 0x1254F, "Early Dynastic Cuneiform");
+    [MakeBasicFilter] public static NamedUnicodeRange ArchaicCuneiformNumerals = new(0x12550, 0x1268F, "Archaic Cuneiform Numerals");
     [MakeBasicFilter] public static NamedUnicodeRange CyproMinoan = new(0x12F90, 0x12FFF, "Cypro-Minoan");
     [MakeBasicFilter] public static NamedUnicodeRange EgyptianHieroglyphs = new(0x13000, 0x1342F, "Egyptian Hieroglyphs");
     [MakeBasicFilter] public static NamedUnicodeRange EgyptianHieroglyphFormatControls = new(0x13430, 0x1345F, "Egyptian Hieroglyph Format Controls");
+    [MakeBasicFilter] public static NamedUnicodeRange EgyptianHieroglyphsExtendedA = new(0x13460, 0x143FF, "Egyptian Hieroglyphs Extended-A");
     [MakeBasicFilter] public static NamedUnicodeRange AnatolianHieroglyphs = new(0x14400, 0x1467F, "Anatolian Hieroglyphs");
+    [MakeBasicFilter] public static NamedUnicodeRange GurungKhema = new(0x16100, 0x1613F, "Gurung Khema");
     [MakeBasicFilter] public static NamedUnicodeRange BamumSupplement = new(0x16800, 0x16A3F, "Bamum Supplement");
     [MakeBasicFilter] public static NamedUnicodeRange Mro = new(0x16A40, 0x16A6F, "Mro");
     [MakeBasicFilter] public static NamedUnicodeRange Tangsa = new(0x16A70, 0x16ACF, "Tangsa");
     [MakeBasicFilter] public static NamedUnicodeRange BassaVah = new(0x16AD0, 0x16AFF, "Bassa Vah");
     [MakeBasicFilter] public static NamedUnicodeRange PahawhHmong = new(0x16B00, 0x16B8F, "Pahawh Hmong");
+    [MakeBasicFilter] public static NamedUnicodeRange KiratRai = new(0x16D40, 0x16D7F, "Kirat Rai");
     [MakeBasicFilter] public static NamedUnicodeRange Medefaidrin = new(0x16E40, 0x16E9F, "Medefaidrin");
+    [MakeBasicFilter] public static NamedUnicodeRange BeriaErfe = new(0x16EA0, 0x16EDF, "Beria Erfe");
     [MakeBasicFilter] public static NamedUnicodeRange Miao = new(0x16F00, 0x16F9F, "Miao");
     [MakeBasicFilter] public static NamedUnicodeRange IdeographicSymbolsAndPunctuation = new(0x16FE0, 0x16FFF, "Ideographic Symbols and Punctuation");
     [MakeBasicFilter] public static NamedUnicodeRange Tangut = new(0x17000, 0x187FF, "Tangut");
     [MakeBasicFilter] public static NamedUnicodeRange TangutComponents = new(0x18800, 0x18AFF, "Tangut Components");
     [MakeBasicFilter] public static NamedUnicodeRange KhitanSmallScript = new(0x18B00, 0x18CFF, "Khitan Small Script");
     [MakeBasicFilter] public static NamedUnicodeRange TangutSupplement = new(0x18D00, 0x18D7F, "Tangut Supplement");
+    [MakeBasicFilter] public static NamedUnicodeRange TangutComponentsSupplement = new(0x18D80, 0x18DFF, "Tangut Components Supplement");
+    [MakeBasicFilter] public static NamedUnicodeRange Jurchen = new(0x18E00, 0x1919F, "Jurchen");
+    [MakeBasicFilter] public static NamedUnicodeRange JurchenRadicals = new(0x191A0, 0x191DF, "Jurchen Radicals");
     [MakeBasicFilter] public static NamedUnicodeRange KanaExtendedB = new(0x1AFF0, 0x1AFFF, "Kana Extended-B");
     [MakeBasicFilter] public static NamedUnicodeRange KanaSupplement = new(0x1B000, 0x1B0FF, "Kana Supplement");
     [MakeBasicFilter] public static NamedUnicodeRange KanaExtendedA = new(0x1B100, 0x1B12F, "Kana Extended-A");
@@ -312,16 +329,20 @@ public static partial class UnicodeRanges
     [MakeBasicFilter] public static NamedUnicodeRange Nushu = new(0x1B170, 0x1B2FF, "Nushu");
     [MakeBasicFilter] public static NamedUnicodeRange Duployan = new(0x1BC00, 0x1BC9F, "Duployan");
     [MakeBasicFilter] public static NamedUnicodeRange ShorthAndFormatControls = new(0x1BCA0, 0x1BCAF, "Shorthand Format Controls");
+    [MakeBasicFilter] public static NamedUnicodeRange SymbolsForLegacyComputingSupplement = new(0x1CC00, 0x1CEBF, "Symbols for Legacy Computing Supplement");
+    [MakeBasicFilter] public static NamedUnicodeRange MiscellaneousSymbolsSupplement = new(0x1CEC0, 0x1CEFF, "Miscellaneous Symbols Supplement");
     [MakeBasicFilter] public static NamedUnicodeRange ZnamennyMusicalNotation = new(0x1CF00, 0x1CFCF, "Znamenny Musical Notation");
     [MakeBasicFilter] public static NamedUnicodeRange ByzantineMusicalSymbols = new(0x1D000, 0x1D0FF, "Byzantine Musical Symbols");
     [MakeBasicFilter] public static NamedUnicodeRange MusicalSymbols = new(0x1D100, 0x1D1FF, "Musical Symbols");
     [MakeBasicFilter] public static NamedUnicodeRange AncientGreekMusicalNotation = new(0x1D200, 0x1D24F, "Ancient Greek Musical Notation");
+    [MakeBasicFilter] public static NamedUnicodeRange MusicalSymbolsSupplement = new(0x1D250, 0x1D28F, "Musical Symbols Supplement");
     [MakeBasicFilter] public static NamedUnicodeRange KaktovikNumerals = new(0x1D2C0, 0x1D2DF, "Kaktovik Numerals");
     [MakeBasicFilter] public static NamedUnicodeRange MayanNumerals = new(0x1D2E0, 0x1D2FF, "Mayan Numerals");
     [MakeBasicFilter] public static NamedUnicodeRange TaiXuanJingSymbols = new(0x1D300, 0x1D35F, "Tai Xuan Jing Symbols");
     [MakeBasicFilter] public static NamedUnicodeRange CountingRodNumerals = new(0x1D360, 0x1D37F, "Counting Rod Numerals");
     [MakeBasicFilter] public static NamedUnicodeRange MathematicalAlphanumericSymbols = new(0x1D400, 0x1D7FF, "Mathematical Alphanumeric Symbols");
     [MakeBasicFilter] public static NamedUnicodeRange SuttonSignWriting = new(0x1D800, 0x1DAAF, "Sutton SignWriting");
+    [MakeBasicFilter] public static NamedUnicodeRange MiscellaneousSymbolsAndArrowsExtended = new(0x1DB00, 0x1DBFF, "Miscellaneous Symbols and Arrows Extended");
     [MakeBasicFilter] public static NamedUnicodeRange LatinExtendedG = new(0x1DF00, 0x1DFFF, "Latin Extended-G");
     [MakeBasicFilter] public static NamedUnicodeRange GlagoliticSupplement = new(0x1E000, 0x1E02F, "Glagolitic Supplement");
     [MakeBasicFilter] public static NamedUnicodeRange CyrillicExtendedD = new(0x1E030, 0x1E08F, "Cyrillic Extended-D");
@@ -329,6 +350,8 @@ public static partial class UnicodeRanges
     [MakeBasicFilter] public static NamedUnicodeRange Toto = new(0x1E290, 0x1E2BF, "Toto");
     [MakeBasicFilter] public static NamedUnicodeRange Wancho = new(0x1E2C0, 0x1E2FF, "Wancho");
     [MakeBasicFilter] public static NamedUnicodeRange NagMundari = new(0x1E4D0, 0x1E4FF, "Nag Mundari");
+    [MakeBasicFilter] public static NamedUnicodeRange OlOnal = new(0x1E5D0, 0x1E5FF, "Ol Onal");
+    [MakeBasicFilter] public static NamedUnicodeRange TaiYo = new(0x1E6C0, 0x1E6FF, "Tai Yo");
     [MakeBasicFilter] public static NamedUnicodeRange EthiopicExtendedB = new(0x1E7E0, 0x1E7FF, "Ethiopic Extended-B");
     [MakeBasicFilter] public static NamedUnicodeRange MendeKikakui = new(0x1E800, 0x1E8DF, "Mende Kikakui");
     [MakeBasicFilter] public static NamedUnicodeRange Adlam = new(0x1E900, 0x1E95F, "Adlam");
@@ -360,6 +383,8 @@ public static partial class UnicodeRanges
     [MakeBasicFilter] public static NamedUnicodeRange CJKCompatibilityIdeographsSupplement = new(0x2F800, 0x2FA1F, "CJK Compatibility Ideographs Supplement");
     [MakeBasicFilter] public static NamedUnicodeRange CJKUnifiedIdeographsExtensionG = new(0x30000, 0x3134F, "CJK Unified Ideographs Extension G");
     [MakeBasicFilter] public static NamedUnicodeRange CJKUnifiedIdeographsExtensionH = new(0x31350, 0x323AF, "CJK Unified Ideographs Extension H");
+    [MakeBasicFilter] public static NamedUnicodeRange CJKUnifiedIdeographsExtensionJ = new(0x323B0, 0x3347F, "CJK Unified Ideographs Extension J");
+    [MakeBasicFilter] public static NamedUnicodeRange Seal = new(0x3D000, 0x3FC3F, "Seal");
     [MakeBasicFilter] public static NamedUnicodeRange Tags = new(0xE0000, 0xE007F, "Tags");
     [MakeBasicFilter] public static NamedUnicodeRange VariationSelectorsSupplement = new(0xE0100, 0xE01EF, "Variation Selectors Supplement");
     [MakeBasicFilter] public static NamedUnicodeRange SupplementaryPrivateUseAreaA = new(0xF0000, 0xFFFFF, "Supplementary Private Use Area-A");
@@ -372,3 +397,4 @@ public static partial class UnicodeRanges
     public static NamedUnicodeRange MDL2Deprecated = new("Deprecated", 0xE000, 0xE5FF - 0xE000 + 1);
     public static NamedUnicodeRange PrivateUseAreaMDL2 = new("Private Use Area", 58880, 4864);
 }
+

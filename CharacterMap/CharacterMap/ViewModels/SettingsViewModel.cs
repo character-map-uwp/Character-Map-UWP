@@ -131,6 +131,7 @@ public partial class SettingsViewModel : ViewModelBase
                 - Glyph indexes for Characters are now shown in Unicode tools
                 - For Characters formed of multiple glyphs, each glyph component is now listed below the character preview pane
                 - Added ability to switch between ColrV0 and ColrV1 glyphs in the Preview Pane
+                - Updated to Unicode 18.0 dataset
                 """),
             new("2026.5.1.0 (September 2026)", // September 2026
                 """
@@ -148,7 +149,7 @@ public partial class SettingsViewModel : ViewModelBase
             new("2026.2.0.0 (February 2026)", // February 2026
                 "- Added additional filters for Font Embedding types & Color Font types\n" +
                 "- Added Material Theme (WIP)\n" +
-                "- Updated to Unicode 17 dataset"),
+                "- Updated to Unicode 17.0 dataset"),
              new("2025.3.0.0 (June 2025)", // June 2025
                 "- Added ability to use Ctrl + ScrollWheel to change font size in Font List Pane, Character Map and Quick Compare\n" +
                 "- Whole Font Families can now be added to Quick Compare\n" +
