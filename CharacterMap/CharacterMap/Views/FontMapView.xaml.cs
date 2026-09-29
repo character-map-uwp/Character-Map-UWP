@@ -1421,51 +1421,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void LigatureCard_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
     {
-        if (sender is ContentPresenter { Content: LigatureModel target }
-            && args.TryGetPosition(sender, out Point p))
-        {
-            MenuFlyout menu = new();
-
-            if (!string.IsNullOrEmpty(target.CombinedString))
-            {
-                MenuFlyoutItem copyItem = new()
-                {
-                    Text = Localization.Get("CopySequenceMessage", target.CombinedString),
-                    Icon = ThemeIconGlyph.CreateIcon(ThemeIcon.Copy)
-                };
-                copyItem.Click += (_, _) =>
-                {
-                    Utils.CopyToClipBoard(target.CombinedString);
-                    GetNotifier().Show(Localization.Get("NotificationCopied"), 2000);
-                };
-                menu.Items.Add(copyItem);
-            }
-
-            //MenuFlyoutItem copyGlyphItem = new()
-            //{
-            //    Text = $"Copy Glyph Index (#{target.LigatureGlyph})",
-            //    Icon = new FontIcon { Glyph = "\uE8C8" }
-            //};
-            //copyGlyphItem.Click += (_, _) =>
-            //{
-            //    Utils.CopyToClipBoard(target.LigatureGlyph.ToString());
-            //    GetNotifier().Show($"Copied Glyph #{target.LigatureGlyph} to clipboard", 2000);
-            //};
-            //menu.Items.Add(copyGlyphItem);
-
-            menu.AddSeparator();
-
-            MenuFlyoutItem viewGlyphItem = new()
-            {
-                Text = Localization.Get("ViewInGlyphMapMessage", target.LigatureGlyph),
-                Icon = ThemeIconGlyph.CreateIcon(ThemeIcon.GlyphMapView)
-            };
-            viewGlyphItem.Click += (_, _) => NavigateToGlyph((ushort)target.LigatureGlyph);
-            menu.Items.Add(viewGlyphItem);
-
-            menu.ShowAt(sender, p);
-            args.Handled = true;
-        }
+        FlyoutHelper.ShowLigatureFlyout(sender, args, this);
     }
 }
 

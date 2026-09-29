@@ -1,10 +1,13 @@
 using CharacterMap.Controls;
 using CharacterMap.Views;
+using System.Reflection;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Helpers;
 
@@ -789,4 +792,167 @@ public static class FlyoutHelper
         return formats.Count > 0 ? string.Join(", ", formats) : string.Empty;
     }
 
+
+
+    public static void ShowLigatureFlyout(UIElement sender, ContextRequestedEventArgs args, FontMapView view)
+    {
+        if (sender is ContentPresenter { Content: LigatureModel target } && args.TryGetPosition(sender, out Point p))
+        {
+            var viewModel = view.ViewModel;
+            MenuFlyout menu = new()
+            {
+                AreOpenCloseAnimationsEnabled = view.ViewModel.AllowAnimation
+            };
+
+            if (ResourceHelper.Get<Style>("DefaultFlyoutStyle") is Style defaultFlyoutStyle)
+                menu.MenuFlyoutPresenterStyle = defaultFlyoutStyle;
+
+            Style itemStyle = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
+            Style subStyle = ResourceHelper.Get<Style>("ThemeMenuFlyoutSubItemStyle");
+            Style headerStyle = ResourceHelper.Get<Style>("MenuFlyoutItemReadOnlyHeaderStyle");
+
+            if (!string.IsNullOrEmpty(target.CombinedString))
+            {
+                MenuFlyoutItem copyItem = CreateItem(ThemeIcon.Copy, "CopySequenceMessage", target.CombinedString);
+                copyItem.Click += (_, _) =>
+                {
+                    Utils.CopyToClipBoard(target.CombinedString);
+                    view.GetNotifier().Show(Localization.Get("NotificationCopied"), 2000);
+                };
+                menu.Items.Add(copyItem);
+                menu.AddSeparator();
+            }
+
+            ushort glyphIndex = (ushort)target.LigatureGlyph;
+            GlyphCharacter gc = viewModel.SelectedFace is not null && viewModel.SelectedFace.TryGetCharacterForGlyph(glyphIndex, out Character mapped)
+                ? new(glyphIndex, mapped.UnicodeIndex)
+                : new(glyphIndex);
+
+            CanvasTextLayoutAnalysis analysis = viewModel.SelectedChar.Analysis;
+            bool svgChar = analysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
+
+            static IconElement CreateColourIcon() => new BitmapIcon
+            {
+                ShowAsMonochrome = false,
+                UriSource = new("ms-appx:///Assets/ColourIcon.png")
+            };
+
+            static FontIcon CreateFillIcon(Windows.UI.Color color)
+            {
+                FontIcon icon = ThemeIconGlyph.CreateIcon(ThemeIcon.FilledSquare);
+                icon.Foreground = new SolidColorBrush(color);
+                return icon;
+            }
+
+            void AddColorOptions(IList<MenuFlyoutItemBase> items, bool isSvg, Action<ExportStyle> onExecute)
+            {
+                if (isSvg)
+                {
+                    if (svgChar || analysis.HasColorGlyphs)
+                    {
+                        MenuFlyoutItem item = CreateItem1(CreateColourIcon(), svgChar ? "ExportSVGGlyphLabel/Text" : "ColoredGlyphLabel/Text");
+                        item.Click += (_, _) => onExecute(viewModel.GlyphColor);
+                        items.Add(item);
+                    }
+
+                    if (!svgChar)
+                    {
+                        MenuFlyoutItem black = CreateItem1(CreateFillIcon(Windows.UI.Colors.Black), "BlackFill/Text");
+                        black.Click += (_, _) => onExecute(viewModel.BlackColor);
+                        items.Add(black);
+
+                        MenuFlyoutItem white = CreateItem1(CreateFillIcon(Windows.UI.Colors.White), "WhiteFill/Text");
+                        white.Click += (_, _) => onExecute(viewModel.WhiteColor);
+                        items.Add(white);
+                    }
+                }
+                else
+                {
+                    if (analysis.HasColorGlyphs)
+                    {
+                        MenuFlyoutItem item = CreateItem1(CreateColourIcon(), "ColoredGlyphLabel/Text");
+                        item.Click += (_, _) => onExecute(viewModel.GlyphColor);
+                        items.Add(item);
+                    }
+
+                    if (!analysis.ContainsBitmapGlyphs)
+                    {
+                        MenuFlyoutItem black = CreateItem1(CreateFillIcon(Windows.UI.Colors.Black), "BlackFill/Text");
+                        black.Click += (_, _) => onExecute(viewModel.BlackColor);
+                        items.Add(black);
+
+                        MenuFlyoutItem white = CreateItem1(CreateFillIcon(Windows.UI.Colors.White), "WhiteFill/Text");
+                        white.Click += (_, _) => onExecute(viewModel.WhiteColor);
+                        items.Add(white);
+                    }
+                }
+            }
+
+            MenuFlyoutSubItem copyAsImage = CreateSubItem(ThemeIcon.Copy, "CopyAsImageItem/Text");
+            copyAsImage.Items.Add(new MenuFlyoutItem
+            {
+                Text = Localization.Get("CopyAsPngItem/Text"),
+                Style = headerStyle,
+                KeyboardAcceleratorTextOverride = "Ctrl+Alt+C"
+            });
+            AddColorOptions(copyAsImage.Items, false, style =>
+                _ = viewModel.RequestCopyToClipboardAsync(new(DevValueType.Char, gc, analysis, CopyDataType.PNG) { Style = style }));
+
+            if (analysis.IsFullVectorBased)
+            {
+                copyAsImage.Items.Add(CreateItem(ThemeIcon.None, "CopyAsSvgItem/Text", kaco: "Ctrl+Shift+C", style: headerStyle));
+                AddColorOptions(copyAsImage.Items, true, style =>
+                    _ = viewModel.RequestCopyToClipboardAsync(new(DevValueType.Char, gc, analysis, CopyDataType.SVG) { Style = style }));
+            }
+            menu.Items.Add(copyAsImage);
+
+            MenuFlyoutSubItem savePng = CreateSubItem(ThemeIcon.Save, "ExportPNGLabel/Text");
+            AddColorOptions(savePng.Items, false, style =>
+                _ = viewModel.SavePngAsync(new() { Style = style, Typography = new(target.Feature), Character = gc }));
+            menu.Items.Add(savePng);
+
+            if (analysis.IsFullVectorBased)
+            {
+                MenuFlyoutSubItem saveSvg = CreateSubItem(ThemeIcon.Save, "ExportSVGLabel/Text");
+                AddColorOptions(saveSvg.Items, true, style =>
+                    _ = viewModel.SaveSvgAsync(new() { Style = style, Typography = new(target.Feature), Character = gc }));
+                menu.Items.Add(saveSvg);
+            }
+
+            menu.AddSeparator();
+
+            MenuFlyoutItem viewGlyphItem = CreateItem(ThemeIcon.GlyphMapView, "ViewInGlyphMapMessage", target.LigatureGlyph);
+            viewGlyphItem.Click += (_, _) => view.NavigateToGlyph((ushort)target.LigatureGlyph);
+            menu.Items.Add(viewGlyphItem);
+
+            menu.ShowAt(sender, p);
+            args.Handled = true;
+
+            MenuFlyoutItem CreateItem(ThemeIcon icon, string key, object arg = null, string kaco = null, Style style = null)
+                => CreateItem1(ThemeIconGlyph.CreateIcon(icon), key, arg, kaco, style);
+
+            MenuFlyoutItem CreateItem1(IconElement icon, string key, object arg = null, string kaco = null, Style style = null)
+            {
+                MenuFlyoutItem item = new()
+                {
+                    Text = Localization.Get(key, arg),
+                    Icon = icon,
+                    Style = style ??= itemStyle,
+                };
+                if (kaco != null)
+                    item.KeyboardAcceleratorTextOverride = kaco;
+                return item;
+            }
+
+            MenuFlyoutSubItem CreateSubItem(ThemeIcon icon, string key, object arg = null)
+            {
+                return new()
+                {
+                    Text = Localization.Get(key, arg),
+                    Icon = ThemeIconGlyph.CreateIcon(icon),
+                    Style = subStyle
+                };
+            }
+        }
+    }
 }

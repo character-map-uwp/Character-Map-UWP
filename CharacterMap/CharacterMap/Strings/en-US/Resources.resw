@@ -2920,7 +2920,7 @@ Not all fonts present typographic variants as mapped characters.</value>
     <value>Contains {0} ligatures across {1} OpenType features</value>
   </data>
   <data name="CopySequenceMessage" xml:space="preserve">
-    <value>Copy sequence</value>
+    <value>Copy text sequence</value>
   </data>
   <data name="ViewInGlyphMapMessage" xml:space="preserve">
     <value>View {0} in Glyph Map</value>
