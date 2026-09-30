@@ -66,7 +66,7 @@ public static class Unicode
     public static List<UnicodeRangeModel> CreateRangesList(IList<UnicodeRangeModel> source = null)
     {
         List<UnicodeRangeModel> list = source is null
-            ? UnicodeRanges.All.Select(e => new UnicodeRangeModel(e)).ToList()
+            ? UnicodeRanges.All.Where(e => e != UnicodeRanges.Unassigned).Select(e => new UnicodeRangeModel(e)).ToList()
             : source.Select(s => s.Clone()).ToList();
 
         return list;

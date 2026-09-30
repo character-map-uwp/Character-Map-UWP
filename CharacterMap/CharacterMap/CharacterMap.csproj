@@ -249,6 +249,7 @@
     <Compile Include="Models\Records.cs" />
     <Compile Include="Models\NamedUnicodeRange.cs" />
     <Compile Include="Models\SearchResultsGroup.cs" />
+    <Compile Include="Models\GroupedCharacterSource.cs" />
     <Compile Include="Models\UnicodeRangeGroup.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helpers\Animation\Animation.cs" />

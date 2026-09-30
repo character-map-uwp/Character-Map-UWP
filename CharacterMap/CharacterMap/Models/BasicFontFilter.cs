@@ -1,4 +1,4 @@
-﻿using Microsoft.Graphics.Canvas.Text;
+using Microsoft.Graphics.Canvas.Text;
 
 namespace CharacterMap.Models;
 
@@ -26,7 +26,13 @@ public partial class BasicFontFilter
 
     public static BasicFontFilter ForNamedRange(NamedUnicodeRange range)
     {
-        return new BasicFontFilter(
+        if (range == UnicodeRanges.Unassigned)
+            return new(
+                (f, c) => f.Where(i => i.Variants.Any(v => v.GetRanges().Contains(UnicodeRanges.Unassigned))),
+                range.Name,
+                true);
+
+        return new(
             (f, c) => f.Where(i => i.Variants.Any(v => Unicode.ContainsRange(v, range.Range))),
             range.Name,
             true);

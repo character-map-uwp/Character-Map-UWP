@@ -240,11 +240,8 @@
             Mode="OneWay"
             Path="ViewModel.Chars" />
 
-        <CollectionViewSource
-            x:Key="CharacterSource"
-            x:Name="CharacterSource"
-            IsSourceGrouped="True"
-            Source="{Binding ViewModel.GroupedChars, ElementName=ViewRoot, Mode=OneWay}" />
+
+
 
         <CollectionViewSource
             x:Key="SearchResultsSource"
@@ -1430,7 +1427,7 @@
                     ItemFontFamily="{x:Bind ViewModel.SelectedFaceAnalysis.FontFamily, Mode=OneWay, FallbackValue={x:Null}}"
                     ItemFontVariant="{x:Bind ViewModel.SelectedFace, Mode=OneWay}"
                     ItemTypography="{x:Bind ViewModel.SelectedTypography.Feature, Mode=OneWay}"
-                    ItemsSource="{Binding Source={StaticResource CharacterSource}}"
+                    ItemsSource="{x:Bind ViewModel.GroupedChars, Mode=OneWay}"
                     SelectedItem="{x:Bind GetChar(ViewModel.SelectedChar), BindBack=ToModel, Mode=TwoWay}"
                     SelectionMode="Single"
                     ShowColorGlyphs="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"

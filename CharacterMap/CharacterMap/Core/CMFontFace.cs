@@ -133,24 +133,40 @@ public partial class CMFontFace : IDisposable
         IReadOnlyList<NamedUnicodeRange> allRanges = CharacterMap.Models.UnicodeRanges.All;
         List<NamedUnicodeRange> ranges = [];
         int namedIndex = 0;
+        bool hasUnassigned = false;
 
         for (int i = 0; i < fontRanges.Length; i++)
         {
             CanvasUnicodeRange cur = fontRanges[i];
+            uint coveredUntil = cur.First;
 
-            while (namedIndex < allRanges.Count && allRanges[namedIndex].End < cur.First)
+            while (namedIndex < allRanges.Count && allRanges[namedIndex] != Models.UnicodeRanges.Unassigned && allRanges[namedIndex].End < cur.First)
                 namedIndex++;
 
             for (int j = namedIndex; j < allRanges.Count; j++)
             {
                 NamedUnicodeRange named = allRanges[j];
+                if (named == Models.UnicodeRanges.Unassigned)
+                    break;
+
                 if (named.Start > cur.Last)
                     break;
+
+                if (named.Start > coveredUntil)
+                    hasUnassigned = true;
+
+                coveredUntil = Math.Max(coveredUntil, named.End + 1);
 
                 if (ranges.Count == 0 || ranges[^1] != named)
                     ranges.Add(named);
             }
+
+            if (coveredUntil <= cur.Last)
+                hasUnassigned = true;
         }
+
+        if (hasUnassigned)
+            ranges.Add(Models.UnicodeRanges.Unassigned);
 
         return _ranges = ranges;
     }
@@ -223,7 +239,7 @@ public partial class CMFontFace : IDisposable
             int cp = _glyphToCodepointMap[glyphIndex];
             if (cp >= 0)
             {
-                character = GetCachedCharacter(cp);
+                character = Character.Get(cp);
                 return true;
             }
         }
@@ -236,14 +252,8 @@ public partial class CMFontFace : IDisposable
     public bool TryGetCharacter(int unicodeIndex, out Character character)
     {
         GetCharacters();
-        if ((uint)unicodeIndex < 65536)
-        {
-            character = _bmpCharacters[unicodeIndex];
-            return character != null;
-        }
-
-        lock (_supplementaryCharacters)
-            return _supplementaryCharacters.TryGetValue(unicodeIndex, out character);
+        character = Character.Get(unicodeIndex);
+        return true;
     }
 
     public string QuickFilePath => GetAnalysisInternal().FilePath;
@@ -433,7 +443,7 @@ public partial class CMFontFace
             PreferredName = face.Properties.FaceName,
 
             // These default characters are used by Subsetter.cs
-            Characters = new ([SpecialCharacters.Null, SpecialCharacters.CarriageReturn, SpecialCharacters.Space])
+            Characters = FontCharacterList.CreateDefault([SpecialCharacters.Null, SpecialCharacters.CarriageReturn, SpecialCharacters.Space])
         };
     }
 
@@ -453,26 +463,5 @@ public partial class CMFontFace
         CanvasFontInformation.LicenseDescription,
     };
 
-    /* Using a tiered character cache avoids a lot of unnecessary allocations */
-    private static Character[] _bmpCharacters { get; } = new Character[65536];
-    private static Dictionary<int, Character> _supplementaryCharacters { get; } = [];
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static Character GetCachedCharacter(int i)
-    {
-        if ((uint)i < 65536)
-        {
-            Character c = _bmpCharacters[i];
-            if (c is null)
-                _bmpCharacters[i] = c = new((uint)i);
-            return c;
-        }
-
-        lock (_supplementaryCharacters)
-        {
-            if (!_supplementaryCharacters.TryGetValue(i, out Character c))
-                _supplementaryCharacters[i] = c = new((uint)i);
-            return c;
-        }
-    }
+    
 }

@@ -336,7 +336,7 @@ public class FontFinder
 
                     Character c = ch.Length switch
                     {
-                        1 => new((uint)ch[0]),
+                        1 => Character.Get(ch[0]),
                         2 => new((uint)char.ConvertToUtf32(ch[0], ch[1])),
                         _ => null
                     };

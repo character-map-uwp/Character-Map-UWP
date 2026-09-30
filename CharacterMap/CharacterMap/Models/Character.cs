@@ -45,6 +45,46 @@ public partial class Character : IEquatable<Character>
 
 
 
+
+
+    /* Using a tiered character cache avoids a lot of unnecessary allocations */
+    private static Character[] _bmpCharacters { get; } = new Character[65536];
+
+    /* For large fonts we use a small rotating cache, to prevent caching potentially MILLIONS of glyph */
+    private static readonly Character[] _supplementaryCache = new Character[2048];
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static Character Get(int i)
+    {
+        if ((uint)i < 65536)
+        {
+            Character c = _bmpCharacters[i];
+            if (c is null)
+                _bmpCharacters[i] = c = new((uint)i);
+            return c;
+        }
+
+        //lock (_supplementaryCharacters)
+        //{
+        /* 
+           This rotating cache MIGHT generate a lot of collisions in rare circumstances because it assumes in-order
+           display of contiguous ranges in a single view, which will not always be the case.
+           If it fails, nothing explodes but we will be constantly allocating new objects.
+           Oh well.
+        */
+
+        int slot = (int)((uint)i & 2047);
+        Character cached = _supplementaryCache[slot];
+        if (cached is not null && cached.UnicodeIndex == (uint)i)
+            return cached;
+
+        Character created = new((uint)i);
+        _supplementaryCache[slot] = created;
+        return created;
+        //}
+    }
+
+
     #region Equality
 
     public override bool Equals(object obj) => Equals(obj as Character);
@@ -62,14 +102,14 @@ public partial class Character : IEquatable<Character>
 
 public class SpecialCharacters
 {
-    public static Character Null => field ??= new(0);
-    public static Character CarriageReturn => field ??= new(13);
-    public static Character Space => field ??= new(0x0020);
+    public static Character Null => field ??= Character.Get(0);
+    public static Character CarriageReturn => field ??= Character.Get(13);
+    public static Character Space => field ??= Character.Get(0x0020);
 
-    public static Character NonBreakingSpace => field ??= new(0x00A0);
-    public static Character ZeroWidthSpace => field ??= new(0x200B);
-    public static Character ZeroWidthNonJoiner => field ??= new(0x200C);
-    public static Character ZeroWidthJoiner => field ??= new(0x200D);
+    public static Character NonBreakingSpace => field ??= Character.Get(0x00A0);
+    public static Character ZeroWidthSpace => field ??= Character.Get(0x200B);
+    public static Character ZeroWidthNonJoiner => field ??= Character.Get(0x200C);
+    public static Character ZeroWidthJoiner => field ??= Character.Get(0x200D);
 
     public static Character INVALID => field ??= new(uint.MaxValue);
 }

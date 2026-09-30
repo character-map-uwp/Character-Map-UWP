@@ -64,7 +64,7 @@ public partial class FontMapViewModel : ViewModelBase
     [ObservableProperty] IReadOnlyList<Character> _chars;
     [ObservableProperty] IReadOnlyList<DevProviderBase> _providers;
     [ObservableProperty] IReadOnlyList<TypographyVariation> _typographyFeatures;
-    [ObservableProperty] ObservableCollection<UnicodeRangeGroup> _groupedChars;
+    [ObservableProperty] GroupedCharacterSource _groupedChars;
 
     [ObservableProperty] bool _showColorGlyphs = true;
     [ObservableProperty] bool _importButtonEnabled = true;
@@ -151,7 +151,7 @@ public partial class FontMapViewModel : ViewModelBase
         {
             if (field == value || _blockChar) return;
             field = value;
-            if (value is not null)
+            if (value is { Char: not null })
                 Settings.LastSelectedCharIndex = (int)value.Char.UnicodeIndex;
             OnPropertyChanged();
             UpdateDevValues();
@@ -238,7 +238,7 @@ public partial class FontMapViewModel : ViewModelBase
         {
             // Fast path : all characters;
             Chars = SelectedFace?.GetCharacters();
-            GroupedChars = UnicodeRangeGroup.CreateGroups(Chars, SelectedFaceAnalysis.IsMDL2Font);
+            GroupedChars = UnicodeRangeGroup.CreateGroups(SelectedFace);
             IsFiltered = false;
         }
         else
@@ -250,7 +250,7 @@ public partial class FontMapViewModel : ViewModelBase
             if (Chars is null || items.Count != Chars.Count)
             {
                 Chars = items;
-                GroupedChars = UnicodeRangeGroup.CreateGroups(items, SelectedFaceAnalysis.IsMDL2Font);
+                GroupedChars = GroupedCharacterSource.Create(items, SelectedFaceAnalysis.IsMDL2Font);
             }
             else
             {
@@ -258,7 +258,7 @@ public partial class FontMapViewModel : ViewModelBase
                     if (items[i] != Chars[i])
                     {
                         Chars = items;
-                        GroupedChars = UnicodeRangeGroup.CreateGroups(items, SelectedFaceAnalysis.IsMDL2Font);
+                        GroupedChars = GroupedCharacterSource.Create(items, SelectedFaceAnalysis.IsMDL2Font);
                         break;
                     }
             }
@@ -269,7 +269,7 @@ public partial class FontMapViewModel : ViewModelBase
         SetDefaultChar(last);
     }
 
-    private void LoadVariant(CMFontFace variant)
+    private void LoadVariant(CMFontFace variant, bool allowRetry = true)
     {
         try
         {
@@ -311,12 +311,14 @@ public partial class FontMapViewModel : ViewModelBase
              * If we get caught in a never ending loop here, something horrible has occurred.
              */
             IsLoadingCharacters = false;
-            Window.Current.Dispatcher.Enqueue(async () =>
-            {
-                await Task.Delay(100);
-                if (variant == SelectedFace)
-                    LoadVariant(variant);
-            }, Windows.UI.Core.CoreDispatcherPriority.Low);
+
+            if (allowRetry)
+                Window.Current.Dispatcher.Enqueue(async () =>
+                {
+                    await Task.Delay(100);
+                    if (variant == SelectedFace)
+                        LoadVariant(variant, false);
+                }, Windows.UI.Core.CoreDispatcherPriority.Low);
         }
     }
  
@@ -620,7 +622,7 @@ public partial class FontMapViewModel : ViewModelBase
             && typography != TypographyVariation.None 
             && c.Variations.FirstOrDefault(v => v.Feature == typography.Feature) 
                 is TypographyVariation { IsVariationMapped: true } variation)
-            character = (new Character((uint)variation.FaceCharacterMapping)).Char;
+            character = (Character.Get(variation.FaceCharacterMapping)).Char;
         
         Sequence = s.Insert(start, character);
     }

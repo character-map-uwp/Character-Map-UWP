@@ -28,14 +28,18 @@ public class FontCharacterList : IReadOnlyList<Character>, IList
         _count = total;
     }
 
+    private FontCharacterList(IReadOnlyList<Character> characters)
+    {
+        IReadOnlyList<Character> chars = characters ?? [];
+        _explicitList = chars;
+        characters = chars;
+        _count = chars.Count;
+    }
+
     /// <summary>
     /// Constructs from an explicit list of characters (e.g. for CMFontFace.CreateDefault).
     /// </summary>
-    public FontCharacterList(IReadOnlyList<Character> characters)
-    {
-        _explicitList = characters ?? [];
-        _count = _explicitList.Count;
-    }
+    public static FontCharacterList CreateDefault(IReadOnlyList<Character> characters) => new(characters);
 
     public int Count => _count;
 
@@ -54,7 +58,7 @@ public class FontCharacterList : IReadOnlyList<Character>, IList
             int offsetInRange = index - _prefixOffsets[rangeIndex];
             uint codepoint = range.First + (uint)offsetInRange;
 
-            return CMFontFace.GetCachedCharacter((int)codepoint);
+            return Character.Get((int)codepoint);
         }
     }
     private int FindRangeIndex(int index)
@@ -132,7 +136,7 @@ public class FontCharacterList : IReadOnlyList<Character>, IList
         {
             CanvasUnicodeRange r = _ranges[i];
             for (uint cp = r.First; cp <= r.Last; cp++)
-                yield return CMFontFace.GetCachedCharacter((int)cp);
+                yield return Character.Get((int)cp);
         }
     }
 

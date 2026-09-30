@@ -12,6 +12,9 @@ public class MakeBasicFilterAttribute : Attribute
 public static partial class UnicodeRanges
 {
     public static NamedUnicodeRange GetRange(uint index)
+        => GetRange(index, out _);
+
+    public static NamedUnicodeRange GetRange(uint index, out uint rangeEnd)
     {
         int low = 0;
         int high = All.Count - 1;
@@ -24,8 +27,17 @@ public static partial class UnicodeRanges
             else if (index > range.End)
                 low = mid + 1;
             else
+            {
+                rangeEnd = range.End;
                 return range;
+            }
         }
+
+        if (low < All.Count && All[low] != Unassigned)
+            rangeEnd = All[low].Start - 1;
+        else
+            rangeEnd = 0x10FFFF;
+
         return Unassigned;
     }
 }
@@ -391,7 +403,7 @@ public static partial class UnicodeRanges
     [MakeBasicFilter] public static NamedUnicodeRange SupplementaryPrivateUseAreaB = new(0x100000, 0x10FFFF, "Supplementary Private Use Area-B");
 
     /* Manually added */
-    [MakeBasicFilter] public static NamedUnicodeRange Unassigned = new("Unassigned", 0x110000, 200000);
+    [MakeBasicFilter] public static NamedUnicodeRange Unassigned = new UnassignedUnicodeRange();
 
     /* These are special cases for MDL2 and are not included in All */
     public static NamedUnicodeRange MDL2Deprecated = new("Deprecated", 0xE000, 0xE5FF - 0xE000 + 1);

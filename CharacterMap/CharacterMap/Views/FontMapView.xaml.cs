@@ -444,10 +444,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
         if (ViewModel.Settings.GroupCharacters)
         {
-            CharGrid.SetBinding(GridView.ItemsSourceProperty, new Binding()
-            {
-                Source = CharacterSource
-            });
+            CharGrid.ItemsSource = ViewModel.GroupedChars;
             VisualStateManager.GoToState(this, nameof(GroupListState), false);
         }
         else
@@ -730,7 +727,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 if (ViewModel.SelectedFace?.TryGetCharacter(variation.FaceCharacterMapping, out Character mappedChar) is true)
                     charToCopy = mappedChar;
                 else
-                    charToCopy = new((uint)variation.FaceCharacterMapping);
+                    charToCopy = Character.Get(variation.FaceCharacterMapping);
 
                 isVariantCopied = true;
             }
@@ -1308,7 +1305,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 CharGrid.ItemsSource = null;
                 CharGrid.ItemSize = ViewModel.Settings.GridSize;
                 await Task.Yield();
-                CharGrid.SetBinding(GridView.ItemsSourceProperty, new Binding() { Source = CharacterSource });
+                CharGrid.ItemsSource = ViewModel.GroupedChars;
                 ViewModel.SetDefaultChar();
                 _ = SetCharacterSelectionAsync();
             }

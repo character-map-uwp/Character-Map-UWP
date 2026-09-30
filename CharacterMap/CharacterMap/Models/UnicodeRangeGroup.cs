@@ -31,59 +31,15 @@ public class UnicodeRangeGroup : IReadOnlyList<Character>, IList, IGrouping<Name
         }
     }
 
-    public static ObservableCollection<UnicodeRangeGroup> CreateGroups(IReadOnlyList<Character> items, bool mdl2 = false)
-    {
-        if (items == null || items.Count == 0)
-            return [];
+    /// <summary>
+    /// Creates a <see cref="GroupedCharacterSource"/> from a <paramref name="face"/>.
+    /// The returned object implements <see cref="Windows.UI.Xaml.Data.ICollectionView"/>
+    /// (group headers) and <see cref="Windows.UI.Xaml.Data.IItemsRangeInfo"/>
+    /// (virtualisation) and can be set directly as <c>GridView.ItemsSource</c>.
+    /// </summary>
+    public static GroupedCharacterSource CreateGroups(CMFontFace face)
+        => GroupedCharacterSource.Create(face);
 
-        ObservableCollection<UnicodeRangeGroup> groups = [];
-        List<(int Start, int Count)> unassignedSlices = null;
-
-        int start = 0;
-        int total = items.Count;
-
-        while (start < total)
-        {
-            NamedUnicodeRange range = GetRange(items[start], mdl2);
-            int end = start + 1;
-
-            if (range == UnicodeRanges.Unassigned)
-            {
-                while (end < total && GetRange(items[end], mdl2) == UnicodeRanges.Unassigned)
-                    end++;
-
-                unassignedSlices ??= [];
-                unassignedSlices.Add((start, end - start));
-            }
-            else
-            {
-                while (end < total && range.Contains(items[end].UnicodeIndex))
-                    end++;
-
-                groups.Add(new(range, items, start, end - start));
-            }
-
-            start = end;
-        }
-
-        if (unassignedSlices != null)
-            foreach ((int uStart, int uCount) in unassignedSlices)
-                groups.Add(new(UnicodeRanges.Unassigned, items, uStart, uCount));
-
-        return groups;
-    }
-
-    private static NamedUnicodeRange GetRange(Character c, bool mdl2)
-    {
-        if (mdl2)
-        {
-            if (UnicodeRanges.MDL2Deprecated.Contains(c.UnicodeIndex))
-                return UnicodeRanges.MDL2Deprecated;
-            if (UnicodeRanges.PrivateUseAreaMDL2.Contains(c.UnicodeIndex))
-                return UnicodeRanges.PrivateUseAreaMDL2;
-        }
-        return c.Range;
-    }
 
     public override string ToString() => Key.Name;
 
