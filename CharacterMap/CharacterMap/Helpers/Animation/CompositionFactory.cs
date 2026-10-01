@@ -1021,11 +1021,13 @@ public class ResizeHelper : IDisposable
     private FrameworkElement _target;
     Debouncer _debouncer = new(250);
 
+    public WeakReferenceMessenger Messenger => field ??= Window.Current.GetMessenger();
+
     public ResizeHelper(FrameworkElement target)
     {
         CompositionFactory.SetUseSynchronisedReposition(target, true);
 
-        WeakReferenceMessenger.Default.Register<WindowResizingMessage>(this, (o, m) =>
+        Messenger.Register<WindowResizingMessage>(this, (o, m) =>
             {
                 if (m.Dispatcher != target.Dispatcher)
                     return;
@@ -1042,7 +1044,7 @@ public class ResizeHelper : IDisposable
     public void Dispose()
     {
         _debouncer.Cancel();
-        WeakReferenceMessenger.Default.UnregisterAll(this);
+        Messenger.UnregisterAll(this);
         CompositionFactory.SetUseSynchronisedReposition(_target, false);
         _target = null;
     }

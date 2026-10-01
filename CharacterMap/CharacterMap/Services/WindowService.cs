@@ -177,6 +177,7 @@ public static class WindowService
             await Task.Run(() =>
             {
                 GC.Collect();
+                info.CoreView.CoreWindow.CustomProperties.Clear();
                 GC.WaitForPendingFinalizers();
                 GC.Collect();
             });
@@ -190,7 +191,8 @@ public static class WindowService
 
     private static void Current_SizeChanged(object sender, WindowSizeChangedEventArgs e)
     {
-        WeakReferenceMessenger.Default.Send(new WindowResizingMessage(((CoreWindow)sender).Dispatcher));
+        if (sender is CoreWindow window)
+            window.GetMessenger().Send(new WindowResizingMessage(window.Dispatcher));
     }
 
     public static async Task ReactivateMainAsync()

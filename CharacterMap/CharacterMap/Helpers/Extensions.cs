@@ -17,7 +17,21 @@ namespace CharacterMap.Helpers;
 
 public static class Extensions
 {
-    public static FontIcon WithThemeIcon(this FontIcon f, ThemeIcon icon)
+    public static WeakReferenceMessenger GetMessenger(this Window window)
+    {
+        return GetMessenger(window.CoreWindow);
+    }
+
+    public static WeakReferenceMessenger GetMessenger(this CoreWindow window)
+    {
+        if ((window.CustomProperties.TryGetValue("Messenger", out object value) && value is WeakReferenceMessenger messenger) is false)
+        {
+            messenger = new WeakReferenceMessenger();
+            window.CustomProperties["Messenger"] = messenger;
+        }
+
+        return messenger;
+    }
 
     public static IconElement WithThemeIcon(this IconElement f, ThemeIcon icon)
     {
