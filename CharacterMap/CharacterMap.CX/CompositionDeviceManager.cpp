@@ -151,7 +151,8 @@ void CompositionDeviceManager::DrawGlyphRunWithColorSupport(
     D2D1_POINT_2F baselineOrigin,
     const DWRITE_GLYPH_RUN* glyphRun,
     ID2D1Brush* defaultBrush,
-    GlyphImageFormat preferredFormat)
+    GlyphImageFormat preferredFormat,
+    DWRITE_MEASURING_MODE measuringMode)
 {
     if (!context || !glyphRun)
         return;
@@ -171,7 +172,7 @@ void CompositionDeviceManager::DrawGlyphRunWithColorSupport(
                 defaultBrush,
                 nullptr,
                 0,
-                DWRITE_MEASURING_MODE_NATURAL,
+                measuringMode,
                 D2D1_COLOR_BITMAP_GLYPH_SNAP_OPTION_DEFAULT);
             drewColor = true;
         }
@@ -184,19 +185,24 @@ void CompositionDeviceManager::DrawGlyphRunWithColorSupport(
                 DWRITE_GLYPH_IMAGE_FORMATS glyphFormats =
                     DWRITE_GLYPH_IMAGE_FORMATS_TRUETYPE |
                     DWRITE_GLYPH_IMAGE_FORMATS_CFF |
-                    DWRITE_GLYPH_IMAGE_FORMATS_COLR |
-                    DWRITE_GLYPH_IMAGE_FORMATS_SVG |
-                    DWRITE_GLYPH_IMAGE_FORMATS_PNG |
-                    DWRITE_GLYPH_IMAGE_FORMATS_JPEG |
-                    DWRITE_GLYPH_IMAGE_FORMATS_TIFF |
-                    DWRITE_GLYPH_IMAGE_FORMATS_PREMULTIPLIED_B8G8R8A8;
+                    DWRITE_GLYPH_IMAGE_FORMATS_COLR;
+
+                if (preferredFormat != GlyphImageFormat::Colr)
+                {
+                    glyphFormats |=
+                        DWRITE_GLYPH_IMAGE_FORMATS_SVG |
+                        DWRITE_GLYPH_IMAGE_FORMATS_PNG |
+                        DWRITE_GLYPH_IMAGE_FORMATS_JPEG |
+                        DWRITE_GLYPH_IMAGE_FORMATS_TIFF |
+                        DWRITE_GLYPH_IMAGE_FORMATS_PREMULTIPLIED_B8G8R8A8;
+                }
 
                 HRESULT hr = factory4->TranslateColorGlyphRun(
                     baselineOrigin,
                     glyphRun,
                     nullptr,
                     glyphFormats,
-                    DWRITE_MEASURING_MODE_NATURAL,
+                    measuringMode,
                     nullptr,
                     0,
                     &colorLayers);
@@ -276,7 +282,7 @@ void CompositionDeviceManager::DrawGlyphRunWithColorSupport(
 
     if (!drewColor)
     {
-        context->DrawGlyphRun(baselineOrigin, glyphRun, defaultBrush, DWRITE_MEASURING_MODE_NATURAL);
+        context->DrawGlyphRun(baselineOrigin, glyphRun, defaultBrush, measuringMode);
     }
 }
 

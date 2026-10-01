@@ -52,7 +52,7 @@ namespace CharacterMapCX
 		static IBuffer^ GetGlyphImageDataBuffer(DWriteFontFace^ fontFace, UINT32 pixelsPerEm, UINT16 glyphIndex, GlyphImageFormat format);
 		[Windows::Foundation::Metadata::DefaultOverload]
 		static IRandomAccessStream^ GetGlyphPNGStream(DWriteFontFace^ fontFace, UINT16 glyphIndex, float size, Windows::UI::Color defaultColor, GlyphImageFormat preferredFormat);
-		static IRandomAccessStream^ GetTextPNGStream(DWriteFontFace^ fontFace, Platform::String^ text, float size, Windows::UI::Color defaultColor, bool isColor, Windows::Foundation::Collections::IVectorView<UINT32>^ typographyFeatures);
+		static IRandomAccessStream^ GetCharacterPNGStream(DWriteFontFace^ fontFace, Platform::String^ text, float size, Windows::UI::Color defaultColor, GlyphImageFormat preferredFormat, Windows::Foundation::Collections::IVectorView<UINT32>^ typographyFeatures);
 		static DWriteGlyphOutline^ GetGlyphOutline(DWriteFontFace^ fontFace, UINT16 glyphIndex, float unitsPerEm);
 
 		/// <summary>

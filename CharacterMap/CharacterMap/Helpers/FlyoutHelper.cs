@@ -195,8 +195,31 @@ public class MenuFlyoutFactory
         return item;
     }
 
-    public void AddColorOptions(MenuFlyoutSubItem parent, CanvasTextLayoutAnalysis analysis, RoutedEventHandler handler, FlyoutContextArg arg)
+
+
+    public void AddColorOptions(MenuFlyoutSubItem parent, CanvasTextLayoutAnalysis analysis, bool isCopy, FlyoutContextArg arg)
     {
+        static void RequestCopy(object s, RoutedEventArgs e)
+        {
+            if (s is FrameworkElement { Tag: FlyoutContextArg ctx })
+                _ = ctx.ParentView.ViewModel.RequestCopyToClipboardAsync(
+                    new(DevValueType.Char, ctx.Character, ctx.Analysis, ctx.CopyType) { Style = ctx.ExportStyle, PreferredColorType = ctx.PreferredExportType });
+        }
+
+        static void SaveHandler(object s, RoutedEventArgs e)
+        {
+            if (s is FrameworkElement { Tag: FlyoutContextArg ctx })
+            {
+                ExportParameters p = new() { Style = ctx.ExportStyle, Typography = new(ctx.Ligature.Feature), Character = ctx.Character };
+                if (ctx.CopyType == CopyDataType.PNG)
+                    _ = ctx.ParentView.ViewModel.SavePngAsync(p);
+                else if (ctx.CopyType == CopyDataType.SVG)
+                    _ = ctx.ParentView.ViewModel.SaveSvgAsync(p);
+            }
+        }
+
+        RoutedEventHandler handler = isCopy ? RequestCopy : SaveHandler;
+
         FlyoutContextArg W(ExportStyle style) => arg with { ExportStyle = style };
         bool svgChar = analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
 
@@ -240,6 +263,15 @@ public class MenuFlyoutFactory
             return true;
         }
         return false;
+    }
+
+    public static void CopyHandler(object s, RoutedEventArgs e)
+    {
+        if (s is FrameworkElement f && f.Tag is LigatureModel lig && Properties.GetTag(f) is FontMapView view)
+        {
+            Utils.CopyToClipBoard(lig.CombinedString);
+            view.GetNotifier().Show(Localization.Get("NotificationCopied"), 2000);
+        }
     }
 
 
@@ -697,10 +729,12 @@ public static class FlyoutHelper
     /// <param name="menu"></param>
     /// <param name="target"></param>
     /// <param name="viewmodel"></param>
-    public static void ShowCharacterGridContext(MenuFlyout menu, FrameworkElement target, FontMapViewModel viewmodel, bool isStandalone, object context = null)
+    public static void ShowCharacterGridContext(MenuFlyout menu, FrameworkElement target, FontMapView view, bool isStandalone, object context = null)
     {
         T Child<T>(string name) where T : MenuFlyoutItemBase => menu.Items.OfType<T>().FirstOrDefault(c => c.Name == name);
         context ??= target.Tag;
+
+        var viewmodel = view.ViewModel;
 
         if (context is uint or int)
             context = new GlyphCharacter(Convert.ToUInt16(context));
@@ -713,6 +747,8 @@ public static class FlyoutHelper
 
         if (context is Character c)
         {
+            
+
             Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
             Style subStyle = ResourceHelper.Get<Style>("ThemeMenuFlyoutSubItemStyle");
 
@@ -720,52 +756,75 @@ public static class FlyoutHelper
             FlyoutBase.SetAttachedFlyout(target, menu);
 
             // 2. Analyse the character to know which options we should show in the menu
-            var analysis = viewmodel.SelectedChar.GetCharAnalysis(c, viewmodel.SelectedFace);
+            CanvasTextLayoutAnalysis analysis = c is GlyphCharacter gc1
+                ? Utils.GetInterop().AnalyzeGlyphLayout(viewmodel.SelectedFace.Face, gc1.GlyphIndex)
+                : viewmodel.SelectedChar.GetCharAnalysis(c, viewmodel.SelectedFace);
 
-            // 3. Handle PNG options
-            var pngRoot = Child<MenuFlyoutSubItem>("PngRoot");
-            foreach (var child in pngRoot.Items.OfType<MenuFlyoutItem>())
-            {
-                if (child.CommandParameter is ExportStyle s && s == ExportStyle.ColorGlyph)
-                    child.SetVisible(analysis.HasColorGlyphs);
-                else
-                    child.SetVisible(!analysis.ContainsBitmapGlyphs); // Bitmap glyphs must *always* be saved as colour version
-            }
+            MenuFlyoutFactory factory = new(menu, new FlyoutArgs { Standalone = isStandalone });
+            FlyoutContextArg arg = new() { ParentView = view, Character = c, Analysis = analysis };
 
-            // 4. Handle SVG options
-            var svgRoot = Child<MenuFlyoutSubItem>("SvgRoot");
+            // 3. Handle copy options
+            // 3.1. Remove existing
+            while (menu.Items[0] is not MenuFlyoutSeparator)
+                menu.Items.RemoveAt(0);
 
-            // 4.1. We can only save as SVG if all layers of the glyph are created with vectors
-            svgRoot.SetVisible(analysis.IsFullVectorBased);
+            menu.Items.Insert(0, factory.Create("BtnCopy/Text", ThemeIcon.Copy, MenuFlyoutFactory.CopyHandler, new() { Tag = arg, Add = false }));
+
+            // 3.2. Use the factory to rebuild the menu
+            MenuFlyoutSubItem copyAsImage = factory.CreateSubItem(ThemeIcon.Copy, "CopyAsImageItem/Text", add: false);
+            menu.Items.Insert(1, copyAsImage);
+            factory.AddHeader("CopyAsPngItem/Text", "Ctrl+Alt+C", copyAsImage.Items);
+            factory.AddColorOptions(copyAsImage, analysis, true, arg with { CopyType = CopyDataType.PNG });
             if (analysis.IsFullVectorBased)
             {
-                // Glyphs that are actually stored as individual SVG files inside a font, and not
-                // typical font vector data, must always be saved as colourised / raw SVG.
-                bool svgChar = analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
-
-                foreach (var child in svgRoot.Items.OfType<MenuFlyoutItem>())
-                {
-                    if (child.CommandParameter is ExportStyle s && s == ExportStyle.ColorGlyph)
-                    {
-                        child.Text = svgChar ? Localization.Get("ExportSVGGlyphLabel/Text") : Localization.Get("ColoredGlyphLabel/Text");
-                        child.SetVisible(svgChar || (analysis.IsFullVectorBased && analysis.HasColorGlyphs));
-                    }
-                    else
-                    {
-                        child.SetVisible(!svgChar);
-                    }
-                }
+                factory.AddHeader("CopyAsSvgItem/Text", "Ctrl+Shift+C", copyAsImage.Items);
+                factory.AddColorOptions(copyAsImage, analysis, true, arg with { CopyType = CopyDataType.SVG });
             }
 
-            // 4.2. Relabel the "Copy as SVG" coloured item for SVG-based chars (e.g. Noto Color Emoji)
-            //      to say "SVG Glyph" instead of "Coloured", matching the Save SVG submenu behaviour.
-            if (Child<MenuFlyoutItem>("CopySvgColouredItem") is { } copySvgItem)
-            {
-                bool svgChar = analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
-                copySvgItem.Text = svgChar
-                    ? Localization.Get("ExportSVGGlyphLabel/Text")
-                    : Localization.Get("ColoredGlyphLabel/Text");
-            }
+            //// 3. Handle PNG options
+            //var pngRoot = Child<MenuFlyoutSubItem>("PngRoot");
+            //foreach (var child in pngRoot.Items.OfType<MenuFlyoutItem>())
+            //{
+            //    if (child.CommandParameter is ExportStyle s && s == ExportStyle.ColorGlyph)
+            //        child.SetVisible(analysis.HasColorGlyphs);
+            //    else
+            //        child.SetVisible(!analysis.ContainsBitmapGlyphs); // Bitmap glyphs must *always* be saved as colour version
+            //}
+
+            //// 4. Handle SVG options
+            //var svgRoot = Child<MenuFlyoutSubItem>("SvgRoot");
+
+            //// 4.1. We can only save as SVG if all layers of the glyph are created with vectors
+            //svgRoot.SetVisible(analysis.IsFullVectorBased);
+            //if (analysis.IsFullVectorBased)
+            //{
+            //    // Glyphs that are actually stored as individual SVG files inside a font, and not
+            //    // typical font vector data, must always be saved as colourised / raw SVG.
+            //    bool svgChar = analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
+
+            //    foreach (var child in svgRoot.Items.OfType<MenuFlyoutItem>())
+            //    {
+            //        if (child.CommandParameter is ExportStyle s && s == ExportStyle.ColorGlyph)
+            //        {
+            //            child.Text = svgChar ? Localization.Get("ExportSVGGlyphLabel/Text") : Localization.Get("ColoredGlyphLabel/Text");
+            //            child.SetVisible(svgChar || (analysis.IsFullVectorBased && analysis.HasColorGlyphs));
+            //        }
+            //        else
+            //        {
+            //            child.SetVisible(!svgChar);
+            //        }
+            //    }
+            //}
+
+            //// 4.2. Relabel the "Copy as SVG" coloured item for SVG-based chars (e.g. Noto Color Emoji)
+            ////      to say "SVG Glyph" instead of "Coloured", matching the Save SVG submenu behaviour.
+            //if (Child<MenuFlyoutItem>("CopySvgColouredItem") is { } copySvgItem)
+            //{
+            //    bool svgChar = analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
+            //    copySvgItem.Text = svgChar
+            //        ? Localization.Get("ExportSVGGlyphLabel/Text")
+            //        : Localization.Get("ColoredGlyphLabel/Text");
+            //}
 
             // 4.3. Find in other fonts is only supported in MainView right now
             Child<MenuFlyoutItem>("FindCharButton")?.SetVisible(!isStandalone && context is not GlyphCharacter);
@@ -983,10 +1042,18 @@ public static class FlyoutHelper
         {
             #region handlers
 
-            void CopyHandler(object s, RoutedEventArgs e)
+            static void CopyHandler(object s, RoutedEventArgs e)
             {
-                Utils.CopyToClipBoard(target.CombinedString);
-                view.GetNotifier().Show(Localization.Get("NotificationCopied"), 2000);
+                if (s is FrameworkElement f && Properties.GetTag(f) is FontMapView view)
+                {
+                    if (f.Tag is LigatureModel lig)
+                        Utils.CopyToClipBoard(lig.CombinedString);
+                    else if (f.Tag is FlyoutContextArg arg)
+                        Utils.CopyToClipBoard(arg.Character.Char);
+                    else return;
+                        
+                    view.GetNotifier().Show(Localization.Get("NotificationCopied"), 2000);
+                }
             }
 
             static void NavigateToGlyphHandler(object s, RoutedEventArgs e)
@@ -995,24 +1062,8 @@ public static class FlyoutHelper
                     view.NavigateToGlyph((ushort)lig.LigatureGlyph);
             }
 
-            static void SaveHandler(object s, RoutedEventArgs e)
-            {
-                if (s is FrameworkElement { Tag: FlyoutContextArg ctx })
-                {
-                    ExportParameters p = new() { Style = ctx.ExportStyle, Typography = new(ctx.Ligature.Feature), Character = ctx.Character };
-                    if (ctx.CopyType == CopyDataType.PNG)
-                        _ = ctx.ParentView.ViewModel.SavePngAsync(p);
-                    else if (ctx.CopyType == CopyDataType.SVG)
-                        _ = ctx.ParentView.ViewModel.SaveSvgAsync(p);
-                }
-            }
 
-            static void RequestCopy(object s, RoutedEventArgs e)
-            {
-                if (s is FrameworkElement { Tag: FlyoutContextArg ctx })
-                    _ = ctx.ParentView.ViewModel.RequestCopyToClipboardAsync(
-                        new(DevValueType.Char, ctx.Character, ctx.Analysis, ctx.CopyType) { Style = ctx.ExportStyle, PreferredColorType = ctx.PreferredExportType });
-            }
+            
 
             #endregion
 
@@ -1037,21 +1088,21 @@ public static class FlyoutHelper
 
             MenuFlyoutSubItem copyAsImage = factory.CreateSubItem(ThemeIcon.Copy, "CopyAsImageItem/Text");
             factory.AddHeader("CopyAsPngItem/Text", "Ctrl+Alt+C", copyAsImage.Items);
-            factory.AddColorOptions(copyAsImage, analysis, RequestCopy, arg with { CopyType = CopyDataType.PNG });
+            factory.AddColorOptions(copyAsImage, analysis, true, arg with { CopyType = CopyDataType.PNG });
 
             if (analysis.IsFullVectorBased)
             {
                 factory.AddHeader("CopyAsSvgItem/Text", "Ctrl+Shift+C", copyAsImage.Items);
-                factory.AddColorOptions(copyAsImage, analysis, RequestCopy, arg with { CopyType = CopyDataType.SVG });
+                factory.AddColorOptions(copyAsImage, analysis, true, arg with { CopyType = CopyDataType.SVG });
             }
 
             MenuFlyoutSubItem savePng = factory.CreateSubItem(ThemeIcon.Save, "ExportPNGLabel/Text");
-            factory.AddColorOptions(savePng, analysis, SaveHandler, arg with { CopyType = CopyDataType.PNG });
+            factory.AddColorOptions(savePng, analysis, false, arg with { CopyType = CopyDataType.PNG });
 
             if (analysis.IsFullVectorBased)
             {
                 MenuFlyoutSubItem saveSvg = factory.CreateSubItem(ThemeIcon.Save, "ExportSVGLabel/Text");
-                factory.AddColorOptions(saveSvg, analysis, SaveHandler, arg with { CopyType = CopyDataType.SVG });
+                factory.AddColorOptions(saveSvg, analysis, false, arg with { CopyType = CopyDataType.SVG });
             }
 
             factory

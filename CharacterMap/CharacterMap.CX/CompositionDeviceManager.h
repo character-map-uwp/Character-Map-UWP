@@ -61,7 +61,8 @@ namespace CharacterMapCX
             D2D1_POINT_2F baselineOrigin,
             const DWRITE_GLYPH_RUN* glyphRun,
             ID2D1Brush* defaultBrush,
-            GlyphImageFormat preferredFormat);
+            GlyphImageFormat preferredFormat = GlyphImageFormat::None,
+            DWRITE_MEASURING_MODE measuringMode = DWRITE_MEASURING_MODE_NATURAL);
         static bool RenderGlyphToSurface(
             Windows::UI::Composition::CompositionDrawingSurface^ surface,
             GlyphImageFormat preferredFormat,

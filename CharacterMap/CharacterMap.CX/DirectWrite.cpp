@@ -883,12 +883,12 @@ IRandomAccessStream^ DirectWrite::GetGlyphPNGStream(DWriteFontFace^ fontFace, UI
 	return RasterizeCommandListToPNG(recorder.Context.Get(), recorder.CommandList.Get(), inkBounds, targetWidth, targetHeight, true);
 }
 
-IRandomAccessStream^ DirectWrite::GetTextPNGStream(
+IRandomAccessStream^ DirectWrite::GetCharacterPNGStream(
 	DWriteFontFace^ fontFace,
 	Platform::String^ text,
 	float size,
 	Windows::UI::Color defaultColor,
-	bool isColor,
+	GlyphImageFormat preferredColorFormat,
 	IVectorView<UINT32>^ typographyFeatures)
 {
 	if (fontFace == nullptr || text == nullptr || text->Length() == 0 || size <= 0.0f)
@@ -914,8 +914,20 @@ IRandomAccessStream^ DirectWrite::GetTextPNGStream(
 	if (FAILED(hr))
 		return nullptr;
 
-	D2D1_DRAW_TEXT_OPTIONS drawOptions = isColor ? D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT : D2D1_DRAW_TEXT_OPTIONS_NONE;
-	recorder.Context->DrawTextLayout(D2D1::Point2F(0, 0), textLayout.Get(), defaultBrush.Get(), drawOptions);
+	if (preferredColorFormat == GlyphImageFormat::Colr)
+	{
+		auto renderer = Make<CustomColorTextRenderer>(
+			recorder.Context.Get(),
+			dwriteFactory.Get(),
+			defaultBrush.Get(),
+			GlyphImageFormat::Colr);
+		textLayout->Draw(nullptr, renderer.Get(), 0.0f, 0.0f);
+	}
+	else
+	{
+		D2D1_DRAW_TEXT_OPTIONS drawOptions = preferredColorFormat != GlyphImageFormat::TrueType ? D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT : D2D1_DRAW_TEXT_OPTIONS_NONE;
+		recorder.Context->DrawTextLayout(D2D1::Point2F(0, 0), textLayout.Get(), defaultBrush.Get(), drawOptions);
+	}
 
 	if (FAILED(recorder.Finish()))
 		return nullptr;

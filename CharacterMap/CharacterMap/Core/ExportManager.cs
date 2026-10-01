@@ -308,7 +308,7 @@ public static partial class ExportManager
             return DirectWrite.GetGlyphPNGStream(e.Options.Variant.Face, (ushort)gc.GlyphIndex, size, textColor, e.PreferredColorType);
 
         IReadOnlyList<uint> typographyTags = e.Options.Typography?.Select(t => (uint)t.Feature).ToList() ?? [];
-        return DirectWrite.GetTextPNGStream(e.Options.Variant.Face, selectedChar.Char, size, textColor, isColor, typographyTags);
+        return DirectWrite.GetCharacterPNGStream(e.Options.Variant.Face, selectedChar.Char, size, textColor, e.PreferredColorType, typographyTags);
     }
 
     private static IBuffer GetCharacterBuffer(DWriteFontFace fontface, Character c, GlyphImageFormat format)

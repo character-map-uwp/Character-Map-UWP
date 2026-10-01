@@ -13,6 +13,7 @@
 #include "DWHelpers.h"
 #include "DWriteFontFace.h"
 #include "DirectWrite.h"
+#include "CompositionDeviceManager.h"
 
 using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
@@ -262,4 +263,140 @@ namespace CharacterMapCX
 
 		return textLayout;
 	}
+
+	class CustomColorTextRenderer : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDWriteTextRenderer, IDWritePixelSnapping>
+	{
+	private:
+		ComPtr<ID2D1DeviceContext> m_context;
+		ComPtr<IDWriteFactory> m_factory;
+		ComPtr<ID2D1Brush> m_defaultBrush;
+		GlyphImageFormat m_preferredFormat;
+
+	public:
+		CustomColorTextRenderer(
+			ID2D1DeviceContext* context,
+			IDWriteFactory* factory,
+			ID2D1Brush* defaultBrush,
+			GlyphImageFormat preferredFormat)
+			: m_context(context), m_factory(factory), m_defaultBrush(defaultBrush), m_preferredFormat(preferredFormat)
+		{
+		}
+
+		IFACEMETHOD(IsPixelSnappingDisabled)(_In_opt_ void*, _Out_ BOOL* isDisabled) override
+		{
+			*isDisabled = FALSE;
+			return S_OK;
+		}
+
+		IFACEMETHOD(GetCurrentTransform)(_In_opt_ void*, _Out_ DWRITE_MATRIX* transform) override
+		{
+			D2D1_MATRIX_3X2_F m;
+			m_context->GetTransform(&m);
+			transform->m11 = m._11; transform->m12 = m._12;
+			transform->m21 = m._21; transform->m22 = m._22;
+			transform->dx = m._31;  transform->dy = m._32;
+			return S_OK;
+		}
+
+		IFACEMETHOD(GetPixelsPerDip)(_In_opt_ void*, _Out_ FLOAT* pixelsPerDip) override
+		{
+			FLOAT dpiX, dpiY;
+			m_context->GetDpi(&dpiX, &dpiY);
+			*pixelsPerDip = dpiX / 96.0f;
+			return S_OK;
+		}
+
+		IFACEMETHOD(DrawGlyphRun)(
+			_In_opt_ void* clientDrawingContext,
+			FLOAT baselineOriginX,
+			FLOAT baselineOriginY,
+			DWRITE_MEASURING_MODE measuringMode,
+			_In_ const DWRITE_GLYPH_RUN* glyphRun,
+			_In_ const DWRITE_GLYPH_RUN_DESCRIPTION* glyphRunDescription,
+			IUnknown* clientDrawingEffect) override
+		{
+			ComPtr<ID2D1Brush> brush = m_defaultBrush;
+			if (clientDrawingEffect != nullptr)
+			{
+				ComPtr<ID2D1Brush> effectBrush;
+				if (SUCCEEDED(clientDrawingEffect->QueryInterface(IID_PPV_ARGS(&effectBrush))))
+					brush = effectBrush;
+			}
+
+			CompositionDeviceManager::DrawGlyphRunWithColorSupport(
+				m_context.Get(),
+				m_factory.Get(),
+				D2D1::Point2F(baselineOriginX, baselineOriginY),
+				glyphRun,
+				brush.Get(),
+				m_preferredFormat,
+				measuringMode);
+
+			return S_OK;
+		}
+
+		IFACEMETHOD(DrawUnderline)(
+			_In_opt_ void* clientDrawingContext,
+			FLOAT baselineOriginX,
+			FLOAT baselineOriginY,
+			_In_ const DWRITE_UNDERLINE* underline,
+			IUnknown* clientDrawingEffect) override
+		{
+			ComPtr<ID2D1Brush> brush = m_defaultBrush;
+			if (clientDrawingEffect != nullptr)
+			{
+				ComPtr<ID2D1Brush> effectBrush;
+				if (SUCCEEDED(clientDrawingEffect->QueryInterface(IID_PPV_ARGS(&effectBrush))))
+					brush = effectBrush;
+			}
+
+			D2D1_RECT_F rect = {
+				baselineOriginX,
+				baselineOriginY + underline->offset,
+				baselineOriginX + underline->width,
+				baselineOriginY + underline->offset + underline->thickness
+			};
+			m_context->FillRectangle(&rect, brush.Get());
+			return S_OK;
+		}
+
+		IFACEMETHOD(DrawStrikethrough)(
+			_In_opt_ void* clientDrawingContext,
+			FLOAT baselineOriginX,
+			FLOAT baselineOriginY,
+			_In_ const DWRITE_STRIKETHROUGH* strikethrough,
+			IUnknown* clientDrawingEffect) override
+		{
+			ComPtr<ID2D1Brush> brush = m_defaultBrush;
+			if (clientDrawingEffect != nullptr)
+			{
+				ComPtr<ID2D1Brush> effectBrush;
+				if (SUCCEEDED(clientDrawingEffect->QueryInterface(IID_PPV_ARGS(&effectBrush))))
+					brush = effectBrush;
+			}
+
+			D2D1_RECT_F rect = {
+				baselineOriginX,
+				baselineOriginY + strikethrough->offset,
+				baselineOriginX + strikethrough->width,
+				baselineOriginY + strikethrough->offset + strikethrough->thickness
+			};
+			m_context->FillRectangle(&rect, brush.Get());
+			return S_OK;
+		}
+
+		IFACEMETHOD(DrawInlineObject)(
+			_In_opt_ void* clientDrawingContext,
+			FLOAT originX,
+			FLOAT originY,
+			IDWriteInlineObject* inlineObject,
+			BOOL isSideways,
+			BOOL isRightToLeft,
+			IUnknown* clientDrawingEffect) override
+		{
+			if (inlineObject != nullptr)
+				return inlineObject->Draw(clientDrawingContext, this, originX, originY, isSideways, isRightToLeft, clientDrawingEffect);
+			return S_OK;
+		}
+	};
 }

@@ -994,7 +994,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             /* Context menu for character grid or glyph grid */
             args.Handled = true;
             if (grid.Tag is Character c)
-                FlyoutHelper.ShowCharacterGridContext(GridContextFlyout, grid, ViewModel, IsStandalone);
+                FlyoutHelper.ShowCharacterGridContext(GridContextFlyout, grid, this, IsStandalone);
             else if (grid.Tag is uint or int)
             {
                 ushort glyphIndex = Convert.ToUInt16(grid.Tag);
@@ -1002,7 +1002,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                     ? new(glyphIndex, mapped.UnicodeIndex)
                     : new(glyphIndex);
 
-                FlyoutHelper.ShowCharacterGridContext(GridContextFlyout, grid, ViewModel, IsStandalone, gc);
+                FlyoutHelper.ShowCharacterGridContext(GridContextFlyout, grid, this, IsStandalone, gc);
             }
         }
     }
