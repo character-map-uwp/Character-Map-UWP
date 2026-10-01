@@ -1,5 +1,8 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Markup;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Core;
 
@@ -47,6 +50,9 @@ public enum ThemeIcon
 
     ViewClose,
     FilledSquare,
+    FilledSquareWhite,
+    FilledSquareBlack,
+    ColorGlyph,
     Hidden,
 
     // TODO
@@ -282,6 +288,9 @@ public class ThemeIconGlyph : MarkupExtension
 
     public static (string glyph, bool isFallback) GetWithFallback(ThemeIcon key)
     {
+        if (key is ThemeIcon.FilledSquareBlack or ThemeIcon.FilledSquareWhite)
+            key = ThemeIcon.FilledSquare;
+
         string val = Get(key);
 
         // If a secondary icon source failed, try to get MDL2 icon
@@ -295,8 +304,60 @@ public class ThemeIconGlyph : MarkupExtension
 
     protected override object ProvideValue() => Get(Icon);
 
-    public static FontIcon CreateIcon(ThemeIcon icon)
+    public static IconElement CreateIcon(ThemeIcon icon)
     {
+        if (icon is ThemeIcon.ColorGlyph)
+            return (new BitmapIcon()).WithThemeIcon(icon);
+
         return (new FontIcon()).WithThemeIcon(icon);
+    }
+
+    public static IconElement MakeBitmap(ThemeIcon ti, BitmapIcon source)
+    {
+        source ??= new BitmapIcon();
+        if (ti is ThemeIcon.ColorGlyph)
+        {
+            source.ShowAsMonochrome = false;
+            source.UriSource = new("ms-appx:///Assets/ColourIcon.png");
+        }
+
+        return source;
+    }
+
+    public static IconElement Make(ThemeIcon ti, FontIcon source = null)
+    {
+        if (ti is ThemeIcon.ColorGlyph)
+            return MakeBitmap(ti, null);
+
+        FontIcon f = source ?? new();
+
+        if (ThemeIconGlyph.GetWithFallback(ti) is { } result)
+        {
+            if (result.isFallback is false)
+                f.Style ??= ResourceHelper.GetThemeFontIconStyle();
+            else
+                f.FontFamily = ResourceHelper.Get<FontFamily>("FallbackSymbolThemeFontFamily");
+
+            if (ti == ThemeIcon.LigatureMapView)
+            {
+                f.FontFamily = ResourceHelper.Get<FontFamily>("ContentControlThemeFontFamily");
+                if (f.ReadLocalValue(FontIcon.FontSizeProperty) == DependencyProperty.UnsetValue)
+                    f.FontSize = 20;
+                Typography.SetContextualLigatures(f, true);
+                Typography.SetDiscretionaryLigatures(f, true);
+            }
+            else if (ti == ThemeIcon.FilledSquareWhite)
+            {
+                f.Foreground = ResourceHelper.Get<Brush>("WhiteBrush");
+            }
+            else if (ti == ThemeIcon.FilledSquareBlack)
+            {
+                f.Foreground = ResourceHelper.Get<Brush>("BlackBrush");
+            }
+
+            f.Glyph = result.glyph;
+        }
+
+        return f;
     }
 }

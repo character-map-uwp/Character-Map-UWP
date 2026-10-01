@@ -1802,44 +1802,22 @@ public partial class Properties : DependencyObject
         if (e.NewValue is ThemeIcon i)
         {
             if (d is FontIcon f)
-                Make(i, f);
+                ThemeIconGlyph.Make(i, f);
+            else if(d is BitmapIcon bmp)
+                ThemeIconGlyph.MakeBitmap(i, bmp);
             else if (d is AppBarToggleButton atb)
-                atb.Icon = Make(i);
+                atb.Icon = ThemeIconGlyph.Make(i);
             else if (d is AppBarButton abb)
-                abb.Icon = Make(i);
+                abb.Icon = ThemeIconGlyph.Make(i);
             else if (d is MenuButton mb)
-                mb.Icon = Make(i);
+                mb.Icon = ThemeIconGlyph.Make(i);
             else if (d is MenuFlyoutItem mfi)
-                mfi.Icon = Make(i);
+                mfi.Icon = ThemeIconGlyph.Make(i);
             else if (d is MenuFlyoutSubItem mfsi)
-                mfsi.Icon = Make(i);
+                mfsi.Icon = ThemeIconGlyph.Make(i);
         }
 
-        static FontIcon Make(ThemeIcon ti, FontIcon source = null)
-        {
-            FontIcon f = source ?? new();
-
-            if (ThemeIconGlyph.GetWithFallback(ti) is { } result)
-            {
-                if (result.isFallback is false)
-                    f.Style ??= ResourceHelper.GetThemeFontIconStyle();
-                else
-                    f.FontFamily = ResourceHelper.Get<FontFamily>("FallbackSymbolThemeFontFamily");
-
-                if (ti == ThemeIcon.LigatureMapView)
-                {
-                    f.FontFamily = ResourceHelper.Get<FontFamily>("ContentControlThemeFontFamily");
-                    if (f.ReadLocalValue(FontIcon.FontSizeProperty) == DependencyProperty.UnsetValue)
-                        f.FontSize = 20;
-                    Typography.SetContextualLigatures(f, true);
-                    Typography.SetDiscretionaryLigatures(f, true);
-                }
-
-                f.Glyph = result.glyph;
-            }
-
-            return f;
-        }
+        
     }
 
     #endregion

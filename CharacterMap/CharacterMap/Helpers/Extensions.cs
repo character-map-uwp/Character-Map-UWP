@@ -18,6 +18,8 @@ namespace CharacterMap.Helpers;
 public static class Extensions
 {
     public static FontIcon WithThemeIcon(this FontIcon f, ThemeIcon icon)
+
+    public static IconElement WithThemeIcon(this IconElement f, ThemeIcon icon)
     {
         Core.Properties.SetThemeIcon(f, icon);
         return f;
