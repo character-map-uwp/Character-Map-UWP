@@ -198,7 +198,7 @@ public class MenuFlyoutFactory
     public void AddColorOptions(MenuFlyoutSubItem parent, CanvasTextLayoutAnalysis analysis, RoutedEventHandler handler, FlyoutContextArg arg)
     {
         FlyoutContextArg W(ExportStyle style) => arg with { ExportStyle = style };
-        bool svgChar = analysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
+        bool svgChar = analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
 
         if (arg.CopyType == CopyDataType.SVG && analysis.IsFullVectorBased)
         {
@@ -731,7 +731,7 @@ public static class FlyoutHelper
             {
                 // Glyphs that are actually stored as individual SVG files inside a font, and not
                 // typical font vector data, must always be saved as colourised / raw SVG.
-                bool svgChar = analysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
+                bool svgChar = analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
 
                 foreach (var child in svgRoot.Items.OfType<MenuFlyoutItem>())
                 {
@@ -751,7 +751,7 @@ public static class FlyoutHelper
             //      to say "SVG Glyph" instead of "Coloured", matching the Save SVG submenu behaviour.
             if (Child<MenuFlyoutItem>("CopySvgColouredItem") is { } copySvgItem)
             {
-                bool svgChar = analysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
+                bool svgChar = analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
                 copySvgItem.Text = svgChar
                     ? Localization.Get("ExportSVGGlyphLabel/Text")
                     : Localization.Get("ColoredGlyphLabel/Text");

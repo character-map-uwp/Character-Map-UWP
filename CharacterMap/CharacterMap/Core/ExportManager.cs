@@ -97,7 +97,7 @@ public static partial class ExportManager
         // This path does not require UI thread.
         if (e.PreferredStyle == ExportStyle.ColorGlyph
             && options.Analysis.HasColorGlyphs
-            && !options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Svg))
+            && !options.Analysis.GlyphFormats.Has(GlyphImageFormat.Svg))
         {
             NativeInterop interop = Utils.GetInterop();
             List<string> paths = new();
@@ -142,7 +142,7 @@ public static partial class ExportManager
 
         // If the font uses SVG glyphs, we can extract the raw SVG from the font file.
         // This path requires access to the UI thread.
-        if (options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Svg))
+        if (options.Analysis.GlyphFormats.Has(GlyphImageFormat.Svg))
         {
             // Infer a glyph index.
             int targetGlyphIndex = -1;
@@ -303,6 +303,14 @@ public static partial class ExportManager
 
         var textColor = e.PreferredColor;
 
+        var formats = e.Options.Analysis.GlyphFormats.ToList();
+        var list = new List<GlyphImageFormat>();
+        list.Add(GlyphImageFormat.Colr);
+        list.Add(GlyphImageFormat.Png);
+        list.Add(GlyphImageFormat.Png | GlyphImageFormat.TrueType);
+        bool c = list.Has(GlyphImageFormat.Colr);
+        bool t = list.Has(GlyphImageFormat.TrueType);
+
         if (selectedChar is GlyphCharacter gc)
         {
             var options = e.Options with { FontSize = size };
@@ -311,13 +319,13 @@ public static partial class ExportManager
             IRandomAccessStream stream = null;
 
             // Path 1: glyph is an embedded PNG bitmap inside the font
-            if (e.Options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Png))
+            if (e.Options.Analysis.GlyphFormats.Has(GlyphImageFormat.Png))
             {
                 IBuffer buffer = GetCharacterBuffer(e.Options.Variant.Face, gc, GlyphImageFormat.Png);
                 stream = buffer.AsStream().AsRandomAccessStream();
             }
             // Path 2: glyph is stored as SVG inside the font (e.g. Noto Color Emoji)
-            else if (e.Options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Svg))
+            else if (e.Options.Analysis.GlyphFormats.Has(GlyphImageFormat.Svg))
             {
                 try
                 {
@@ -367,38 +375,12 @@ public static partial class ExportManager
                 }
             }
             // Path 3: glyph uses COLR colour layers
-            else if (e.Options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Colr)
+            else if ((e.Options.Analysis.SupportsColrV0 || e.Options.Analysis.SupportsColrV1)
                      && e.PreferredStyle == ExportStyle.ColorGlyph)
             {
-                // Render via a glyph run — measure bounds using a CanvasCommandList first
-                CanvasGlyph[] glyphs = [new() { Index = gc.GlyphIndex }];
-                using CanvasCommandList cl = new(device);
-                using (CanvasDrawingSession cds = cl.CreateDrawingSession())
-                    cds.DrawGlyphRun(Vector2.Zero, e.Options.Variant.FontFace, size, glyphs, false, 0,
-                        new CanvasSolidColorBrush(device, textColor));
-                Rect colrBounds = cl.GetBounds(device);
-
-                if (e.SkipEmptyGlyphs && !colrBounds.HasDimensions())
+                stream = DirectWrite.GetColorGlyphPNGStream(e.Options.Variant.Face, gc.GlyphIndex, size, textColor);
+                if (e.SkipEmptyGlyphs && stream is null)
                     return null;
-
-                if (colrBounds.HasDimensions() is false)
-                    colrBounds = new Rect(0, 0, size, size);
-
-                using var rt = new CanvasRenderTarget(device, size, size, localDpi);
-                using (var ds = rt.CreateDrawingSession())
-                {
-                    ds.Clear(Colors.Transparent);
-                    double scale = Math.Min(size / colrBounds.Width, size / colrBounds.Height);
-                    float x = (float)((size - colrBounds.Width * scale) / 2d - colrBounds.Left * scale);
-                    float y = (float)((size - colrBounds.Height * scale) / 2d - colrBounds.Top * scale);
-                    ds.Transform =
-                        Matrix3x2.CreateScale((float)scale)
-                        * Matrix3x2.CreateTranslation(x, y);
-                    ds.DrawGlyphRun(Vector2.Zero, e.Options.Variant.FontFace, size, glyphs, false, 0,
-                        new CanvasSolidColorBrush(device, textColor));
-                }
-                stream = new InMemoryRandomAccessStream();
-                await rt.SaveAsync(stream, CanvasBitmapFileFormat.Png);
             }
 
             // Path 4: monochrome geometry (TTF/CFF outlines)
@@ -466,7 +448,7 @@ public static partial class ExportManager
         // If the glyph is actually a PNG file inside the font we should export it directly.
         // TODO : We're not actually exporting with typography options here.
         //        Find a test PNG font with typography
-        if (e.Options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Png))
+        if (e.Options.Analysis.GlyphFormats.Has(GlyphImageFormat.Png))
         {
             IBuffer buffer = GetCharacterBuffer(e.Options.Variant.Face, selectedChar, GlyphImageFormat.Png);
             stream_layout = buffer.AsStream().AsRandomAccessStream();
@@ -591,7 +573,7 @@ public static partial class ExportManager
         }
 
         using var layout = CreateLayout(options, selectedChar, ExportStyle.ColorGlyph, options.FontSize);
-        layout.Options = options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Svg)
+        layout.Options = options.Analysis.GlyphFormats.Has(GlyphImageFormat.Svg)
             ? CanvasDrawTextOptions.EnableColorFont
             : CanvasDrawTextOptions.Default;
 

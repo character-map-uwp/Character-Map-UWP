@@ -33,6 +33,10 @@ public static class Extensions
         return messenger;
     }
 
+    public static bool Has(this IEnumerable<GlyphImageFormat> formats, GlyphImageFormat format) =>
+        formats?.Any(f => f== format || (f & format) == format) ?? false;
+
+
     public static IconElement WithThemeIcon(this IconElement f, ThemeIcon icon)
     {
         Core.Properties.SetThemeIcon(f, icon);

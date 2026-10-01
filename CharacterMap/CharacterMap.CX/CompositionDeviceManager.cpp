@@ -352,92 +352,109 @@ bool CompositionDeviceManager::RenderGlyphToSurface(
                 d2dContext->CreateSolidColorBrush(brushColor, &d2dBrush);
 
                 bool drewColor = false;
-                ComPtr<IDWriteFactory4> dwriteFactory4;
-                if (SUCCEEDED(GetDWriteFactory().As(&dwriteFactory4)))
+                ComPtr<ID2D1DeviceContext7> d2dContext7;
+                if (SUCCEEDED(d2dContext.As(&d2dContext7)))
                 {
-                    ComPtr<IDWriteColorGlyphRunEnumerator1> colorLayers;
-                    DWRITE_GLYPH_IMAGE_FORMATS glyphFormats =
-                        DWRITE_GLYPH_IMAGE_FORMATS_TRUETYPE |
-                        DWRITE_GLYPH_IMAGE_FORMATS_CFF |
-                        DWRITE_GLYPH_IMAGE_FORMATS_COLR |
-                        DWRITE_GLYPH_IMAGE_FORMATS_SVG |
-                        DWRITE_GLYPH_IMAGE_FORMATS_PNG |
-                        DWRITE_GLYPH_IMAGE_FORMATS_JPEG |
-                        DWRITE_GLYPH_IMAGE_FORMATS_TIFF |
-                        DWRITE_GLYPH_IMAGE_FORMATS_PREMULTIPLIED_B8G8R8A8;
-
-                    HRESULT colorHr = dwriteFactory4->TranslateColorGlyphRun(
+                    d2dContext7->DrawGlyphRunWithColorSupport(
                         baselineOrigin,
                         &glyphRun,
                         nullptr,
-                        glyphFormats,
-                        DWRITE_MEASURING_MODE_NATURAL,
+                        d2dBrush.Get(),
                         nullptr,
                         0,
-                        &colorLayers);
-
-                    if (SUCCEEDED(colorHr))
+                        DWRITE_MEASURING_MODE_NATURAL,
+                        D2D1_COLOR_BITMAP_GLYPH_SNAP_OPTION_DEFAULT);
+                    drewColor = true;
+                }
+                else
+                {
+                    ComPtr<IDWriteFactory4> dwriteFactory4;
+                    if (SUCCEEDED(GetDWriteFactory().As(&dwriteFactory4)))
                     {
-                        drewColor = true;
-                        while (true)
+                        ComPtr<IDWriteColorGlyphRunEnumerator1> colorLayers;
+                        DWRITE_GLYPH_IMAGE_FORMATS glyphFormats =
+                            DWRITE_GLYPH_IMAGE_FORMATS_TRUETYPE |
+                            DWRITE_GLYPH_IMAGE_FORMATS_CFF |
+                            DWRITE_GLYPH_IMAGE_FORMATS_COLR |
+                            DWRITE_GLYPH_IMAGE_FORMATS_SVG |
+                            DWRITE_GLYPH_IMAGE_FORMATS_PNG |
+                            DWRITE_GLYPH_IMAGE_FORMATS_JPEG |
+                            DWRITE_GLYPH_IMAGE_FORMATS_TIFF |
+                            DWRITE_GLYPH_IMAGE_FORMATS_PREMULTIPLIED_B8G8R8A8;
+
+                        HRESULT colorHr = dwriteFactory4->TranslateColorGlyphRun(
+                            baselineOrigin,
+                            &glyphRun,
+                            nullptr,
+                            glyphFormats,
+                            DWRITE_MEASURING_MODE_NATURAL,
+                            nullptr,
+                            0,
+                            &colorLayers);
+
+                        if (SUCCEEDED(colorHr))
                         {
-                            BOOL hasRun = FALSE;
-                            if (FAILED(colorLayers->MoveNext(&hasRun)) || !hasRun)
-                                break;
-
-                            const DWRITE_COLOR_GLYPH_RUN1* colorRun = nullptr;
-                            if (FAILED(colorLayers->GetCurrentRun(&colorRun)) || !colorRun)
-                                break;
-
-                            D2D1_POINT_2F runOrigin = D2D1::Point2F(colorRun->baselineOriginX, colorRun->baselineOriginY);
-
-                            ComPtr<ID2D1SolidColorBrush> layerBrush = d2dBrush;
-                            if (colorRun->paletteIndex != 0xFFFF)
-                                d2dContext->CreateSolidColorBrush(colorRun->runColor, &layerBrush);
-
-                            switch (colorRun->glyphImageFormat)
+                            drewColor = true;
+                            while (true)
                             {
-                            case DWRITE_GLYPH_IMAGE_FORMATS_PNG:
-                            case DWRITE_GLYPH_IMAGE_FORMATS_JPEG:
-                            case DWRITE_GLYPH_IMAGE_FORMATS_TIFF:
-                            case DWRITE_GLYPH_IMAGE_FORMATS_PREMULTIPLIED_B8G8R8A8:
-                            {
-                                ComPtr<ID2D1DeviceContext4> d2dContext4;
-                                if (SUCCEEDED(d2dContext.As(&d2dContext4)))
+                                BOOL hasRun = FALSE;
+                                if (FAILED(colorLayers->MoveNext(&hasRun)) || !hasRun)
+                                    break;
+
+                                const DWRITE_COLOR_GLYPH_RUN1* colorRun = nullptr;
+                                if (FAILED(colorLayers->GetCurrentRun(&colorRun)) || !colorRun)
+                                    break;
+
+                                D2D1_POINT_2F runOrigin = D2D1::Point2F(colorRun->baselineOriginX, colorRun->baselineOriginY);
+
+                                ComPtr<ID2D1SolidColorBrush> layerBrush = d2dBrush;
+                                if (colorRun->paletteIndex != 0xFFFF)
+                                    d2dContext->CreateSolidColorBrush(colorRun->runColor, &layerBrush);
+
+                                switch (colorRun->glyphImageFormat)
                                 {
-                                    d2dContext4->DrawColorBitmapGlyphRun(
-                                        colorRun->glyphImageFormat,
-                                        runOrigin,
-                                        &colorRun->glyphRun,
-                                        colorRun->measuringMode);
+                                case DWRITE_GLYPH_IMAGE_FORMATS_PNG:
+                                case DWRITE_GLYPH_IMAGE_FORMATS_JPEG:
+                                case DWRITE_GLYPH_IMAGE_FORMATS_TIFF:
+                                case DWRITE_GLYPH_IMAGE_FORMATS_PREMULTIPLIED_B8G8R8A8:
+                                {
+                                    ComPtr<ID2D1DeviceContext4> d2dContext4;
+                                    if (SUCCEEDED(d2dContext.As(&d2dContext4)))
+                                    {
+                                        d2dContext4->DrawColorBitmapGlyphRun(
+                                            colorRun->glyphImageFormat,
+                                            runOrigin,
+                                            &colorRun->glyphRun,
+                                            colorRun->measuringMode);
+                                    }
+                                    break;
                                 }
-                                break;
-                            }
-                            case DWRITE_GLYPH_IMAGE_FORMATS_SVG:
-                            {
-                                ComPtr<ID2D1DeviceContext4> d2dContext4;
-                                if (SUCCEEDED(d2dContext.As(&d2dContext4)))
+                                case DWRITE_GLYPH_IMAGE_FORMATS_SVG:
                                 {
-                                    d2dContext4->DrawSvgGlyphRun(
+                                    ComPtr<ID2D1DeviceContext4> d2dContext4;
+                                    if (SUCCEEDED(d2dContext.As(&d2dContext4)))
+                                    {
+                                        d2dContext4->DrawSvgGlyphRun(
+                                            runOrigin,
+                                            &colorRun->glyphRun,
+                                            layerBrush.Get(),
+                                            nullptr,
+                                            colorRun->paletteIndex == 0xFFFF ? 0 : colorRun->paletteIndex,
+                                            colorRun->measuringMode);
+                                    }
+                                    break;
+                                }
+                                case DWRITE_GLYPH_IMAGE_FORMATS_COLR:
+                                default:
+                                {
+                                    d2dContext->DrawGlyphRun(
                                         runOrigin,
                                         &colorRun->glyphRun,
                                         layerBrush.Get(),
-                                        nullptr,
-                                        colorRun->paletteIndex == 0xFFFF ? 0 : colorRun->paletteIndex,
                                         colorRun->measuringMode);
+                                    break;
                                 }
-                                break;
-                            }
-                            case DWRITE_GLYPH_IMAGE_FORMATS_COLR:
-                            default:
-                            {
-                                d2dContext->DrawGlyphRun(
-                                    runOrigin,
-                                    &colorRun->glyphRun,
-                                    layerBrush.Get(),
-                                    colorRun->measuringMode);
-                                break;
-                            }
+                                }
                             }
                         }
                     }

@@ -247,8 +247,8 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
 
     public Character Char { get; }
 
-    public bool SupportsCOLRv1 => _analysis is not null && (_analysis.SupportsColrV1 || _analysis.GlyphFormats.Contains(GlyphImageFormat.ColrPaintTree));
-    public bool SupportsCOLRv0 => _analysis is not null && (_analysis.SupportsColrV0 || _analysis.GlyphFormats.Contains(GlyphImageFormat.Colr));
+    public bool SupportsCOLRv1 => _analysis is not null && (_analysis.SupportsColrV1 || _analysis.GlyphFormats.Has(GlyphImageFormat.ColrPaintTree));
+    public bool SupportsCOLRv0 => _analysis is not null && (_analysis.SupportsColrV0 || _analysis.GlyphFormats.Has(GlyphImageFormat.Colr));
 
     [ObservableProperty] bool _isSvgChar;
     [ObservableProperty][NotifyPropertyChangedFor(nameof(SupportsCOLRv1), nameof(SupportsCOLRv0))] CanvasTextLayoutAnalysis _analysis;
@@ -288,7 +288,7 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
         _vm = vm;
         Analysis = GetCharAnalysis(c, face);
         Variations = TypographyAnalyzer.GetCharacterVariations(face, c);
-        IsSvgChar = Analysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
+        IsSvgChar = Analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
         UnihanData = GlyphService.GetUnihanData(c.UnicodeIndex);
         UpdateGlyphIndices();
 
@@ -309,13 +309,13 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
         }
         else if (IsSvgChar)
             CreateOp(SVGRenderOption);
-        else if (Analysis.GlyphFormats.Contains(GlyphImageFormat.Png))
+        else if (Analysis.GlyphFormats.Has(GlyphImageFormat.Png))
             CreateOp(PNGRenderOption);
-        else if (Analysis.GlyphFormats.Contains(GlyphImageFormat.Jpeg))
+        else if (Analysis.GlyphFormats.Has(GlyphImageFormat.Jpeg))
             CreateOp(JPGRenderOption);
-        else if (Analysis.GlyphFormats.Contains(GlyphImageFormat.PremultipliedB8G8R8A8))
+        else if (Analysis.GlyphFormats.Has(GlyphImageFormat.PremultipliedB8G8R8A8))
             CreateOp(BMPRenderOption);
-        else if (Analysis.GlyphFormats.Contains(GlyphImageFormat.Tiff))
+        else if (Analysis.GlyphFormats.Has(GlyphImageFormat.Tiff))
             CreateOp(TIFFRenderOption);
 
         void CreateOp(NamedTag tag)
@@ -333,7 +333,7 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
     public void UpdateAnalysis(TypographyFeatureInfo typography = null)
     {
         Analysis = GetCharAnalysis(Char, face, typography);
-        IsSvgChar = Analysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
+        IsSvgChar = Analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
         UpdateGlyphIndices();
     }
 

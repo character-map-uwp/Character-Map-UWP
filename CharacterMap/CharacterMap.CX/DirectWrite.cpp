@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "CanvasTextLayoutAnalysis.h"
 #include "GsubTableReader.h"
+#include "CompositionDeviceManager.h"
 
 
 #include "DWriteNamedFontAxisValue.h"
@@ -780,3 +781,318 @@ IBuffer^ DirectWrite::GetGlyphImageDataBuffer(DWriteFontFace^ fontFace, UINT32 p
 
 	return buffer;
 }
+
+IRandomAccessStream^ DirectWrite::GetColorGlyphPNGStream(DWriteFontFace^ fontFace, UINT16 glyphIndex, float size, Windows::UI::Color defaultColor)
+{
+	if (fontFace == nullptr || size <= 0.0f)
+		return nullptr;
+
+	auto rawFace = fontFace->GetFontFace();
+	if (rawFace == nullptr)
+		return nullptr;
+
+	std::lock_guard<std::mutex> lock(CompositionDeviceManager::GetRenderMutex());
+
+	ComPtr<ID2D1Device> d2dDevice = CompositionDeviceManager::GetD2DDevice();
+	if (d2dDevice == nullptr)
+		return nullptr;
+
+	ComPtr<IDWriteFactory7> dwriteFactory = CompositionDeviceManager::GetDWriteFactory();
+	if (dwriteFactory == nullptr)
+		return nullptr;
+
+	ComPtr<ID2D1DeviceContext> d2dContext;
+	HRESULT hr = d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &d2dContext);
+	if (FAILED(hr))
+		return nullptr;
+
+	DWRITE_FONT_METRICS fontMetrics{};
+	rawFace->GetMetrics(&fontMetrics);
+	FLOAT designUnitsPerEm = fontMetrics.designUnitsPerEm > 0 ? static_cast<FLOAT>(fontMetrics.designUnitsPerEm) : 2048.0f;
+	FLOAT emScale = size / designUnitsPerEm;
+
+	INT32 designAdvance = 0;
+	rawFace->GetDesignGlyphAdvances(1, &glyphIndex, &designAdvance, FALSE);
+	FLOAT advance = designAdvance * emScale;
+
+	DWRITE_GLYPH_RUN glyphRun{};
+	glyphRun.fontFace = rawFace.Get();
+	glyphRun.fontEmSize = size;
+	glyphRun.glyphCount = 1;
+	glyphRun.glyphIndices = &glyphIndex;
+	glyphRun.glyphAdvances = &advance;
+	glyphRun.glyphOffsets = nullptr;
+	glyphRun.isSideways = FALSE;
+	glyphRun.bidiLevel = 0;
+
+	D2D1_POINT_2F baselineOrigin = D2D1::Point2F(0.0f, 0.0f);
+
+	D2D1_COLOR_F defaultBrushColor = D2D1::ColorF(
+		defaultColor.R / 255.0f,
+		defaultColor.G / 255.0f,
+		defaultColor.B / 255.0f,
+		defaultColor.A / 255.0f);
+
+	ComPtr<ID2D1SolidColorBrush> defaultBrush;
+	hr = d2dContext->CreateSolidColorBrush(defaultBrushColor, &defaultBrush);
+	if (FAILED(hr))
+		return nullptr;
+
+	// 1. Draw into a command list to measure actual rendered bounds
+	ComPtr<ID2D1CommandList> commandList;
+	hr = d2dContext->CreateCommandList(&commandList);
+	if (FAILED(hr))
+		return nullptr;
+
+	d2dContext->SetTarget(commandList.Get());
+	d2dContext->BeginDraw();
+
+	bool drewColor = false;
+	ComPtr<ID2D1DeviceContext7> d2dContext7;
+	if (SUCCEEDED(d2dContext.As(&d2dContext7)))
+	{
+		d2dContext7->DrawGlyphRunWithColorSupport(
+			baselineOrigin,
+			&glyphRun,
+			nullptr,
+			defaultBrush.Get(),
+			nullptr,
+			0,
+			DWRITE_MEASURING_MODE_NATURAL,
+			D2D1_COLOR_BITMAP_GLYPH_SNAP_OPTION_DEFAULT);
+		drewColor = true;
+	}
+	else
+	{
+		ComPtr<IDWriteFactory4> dwriteFactory4;
+		if (SUCCEEDED(dwriteFactory.As(&dwriteFactory4)))
+		{
+			ComPtr<IDWriteColorGlyphRunEnumerator1> colorLayers;
+			DWRITE_GLYPH_IMAGE_FORMATS glyphFormats =
+				DWRITE_GLYPH_IMAGE_FORMATS_TRUETYPE |
+				DWRITE_GLYPH_IMAGE_FORMATS_CFF |
+				DWRITE_GLYPH_IMAGE_FORMATS_COLR |
+				DWRITE_GLYPH_IMAGE_FORMATS_SVG |
+				DWRITE_GLYPH_IMAGE_FORMATS_PNG |
+				DWRITE_GLYPH_IMAGE_FORMATS_JPEG |
+				DWRITE_GLYPH_IMAGE_FORMATS_TIFF |
+				DWRITE_GLYPH_IMAGE_FORMATS_PREMULTIPLIED_B8G8R8A8;
+
+			HRESULT colorHr = dwriteFactory4->TranslateColorGlyphRun(
+				baselineOrigin,
+				&glyphRun,
+				nullptr,
+				glyphFormats,
+				DWRITE_MEASURING_MODE_NATURAL,
+				nullptr,
+				0,
+				&colorLayers);
+
+			if (SUCCEEDED(colorHr))
+			{
+				while (true)
+				{
+					BOOL hasRun = FALSE;
+					if (FAILED(colorLayers->MoveNext(&hasRun)) || !hasRun)
+						break;
+
+					const DWRITE_COLOR_GLYPH_RUN1* colorRun = nullptr;
+					if (FAILED(colorLayers->GetCurrentRun(&colorRun)) || !colorRun)
+						break;
+
+					drewColor = true;
+					D2D1_POINT_2F runOrigin = D2D1::Point2F(colorRun->baselineOriginX, colorRun->baselineOriginY);
+
+					ComPtr<ID2D1SolidColorBrush> layerBrush = defaultBrush;
+					if (colorRun->paletteIndex != 0xFFFF)
+						d2dContext->CreateSolidColorBrush(colorRun->runColor, &layerBrush);
+
+					switch (colorRun->glyphImageFormat)
+					{
+					case DWRITE_GLYPH_IMAGE_FORMATS_PNG:
+					case DWRITE_GLYPH_IMAGE_FORMATS_JPEG:
+					case DWRITE_GLYPH_IMAGE_FORMATS_TIFF:
+					case DWRITE_GLYPH_IMAGE_FORMATS_PREMULTIPLIED_B8G8R8A8:
+					{
+						ComPtr<ID2D1DeviceContext4> d2dContext4;
+						if (SUCCEEDED(d2dContext.As(&d2dContext4)))
+						{
+							d2dContext4->DrawColorBitmapGlyphRun(
+								colorRun->glyphImageFormat,
+								runOrigin,
+								&colorRun->glyphRun,
+								colorRun->measuringMode);
+						}
+						break;
+					}
+					case DWRITE_GLYPH_IMAGE_FORMATS_SVG:
+					{
+						ComPtr<ID2D1DeviceContext4> d2dContext4;
+						if (SUCCEEDED(d2dContext.As(&d2dContext4)))
+						{
+							d2dContext4->DrawSvgGlyphRun(
+								runOrigin,
+								&colorRun->glyphRun,
+								layerBrush.Get(),
+								nullptr,
+								colorRun->paletteIndex == 0xFFFF ? 0 : colorRun->paletteIndex,
+								colorRun->measuringMode);
+						}
+						break;
+					}
+					case DWRITE_GLYPH_IMAGE_FORMATS_COLR:
+					default:
+					{
+						d2dContext->DrawGlyphRun(
+							runOrigin,
+							&colorRun->glyphRun,
+							layerBrush.Get(),
+							colorRun->measuringMode);
+						break;
+					}
+					}
+				}
+			}
+		}
+	}
+
+	if (!drewColor)
+	{
+		d2dContext->DrawGlyphRun(baselineOrigin, &glyphRun, defaultBrush.Get(), DWRITE_MEASURING_MODE_NATURAL);
+	}
+
+	hr = d2dContext->EndDraw();
+	d2dContext->SetTarget(nullptr);
+	if (FAILED(hr))
+		return nullptr;
+
+	hr = commandList->Close();
+	if (FAILED(hr))
+		return nullptr;
+
+	D2D1_RECT_F inkBounds{};
+	hr = d2dContext->GetImageLocalBounds(commandList.Get(), &inkBounds);
+
+	float inkWidth = inkBounds.right - inkBounds.left;
+	float inkHeight = inkBounds.bottom - inkBounds.top;
+	if (FAILED(hr) || inkWidth <= 0.0f || inkHeight <= 0.0f)
+	{
+		inkBounds = D2D1::RectF(0.0f, 0.0f, size, size);
+		inkWidth = size;
+		inkHeight = size;
+	}
+
+	UINT32 targetWidth = static_cast<UINT32>(size);
+	UINT32 targetHeight = static_cast<UINT32>(size);
+	if (targetWidth == 0) targetWidth = 512;
+	if (targetHeight == 0) targetHeight = 512;
+
+	// 2. Render into an offscreen D2D target bitmap with centering and fitting
+	D2D1_BITMAP_PROPERTIES1 bp = D2D1::BitmapProperties1(
+		D2D1_BITMAP_OPTIONS_TARGET,
+		D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
+		96.0f,
+		96.0f
+	);
+
+	ComPtr<ID2D1Bitmap1> targetBitmap;
+	hr = d2dContext->CreateBitmap(
+		D2D1::SizeU(targetWidth, targetHeight),
+		nullptr,
+		0,
+		&bp,
+		&targetBitmap);
+	if (FAILED(hr))
+		return nullptr;
+
+	d2dContext->SetTarget(targetBitmap.Get());
+	d2dContext->BeginDraw();
+	d2dContext->Clear(D2D1::ColorF(0, 0, 0, 0));
+
+	float scale = (std::min)(static_cast<float>(targetWidth) / inkWidth, static_cast<float>(targetHeight) / inkHeight);
+	float x = (static_cast<float>(targetWidth) - inkWidth * scale) / 2.0f - inkBounds.left * scale;
+	float y = (static_cast<float>(targetHeight) - inkHeight * scale) / 2.0f - inkBounds.top * scale;
+
+	d2dContext->SetTransform(
+		D2D1::Matrix3x2F::Scale(scale, scale) *
+		D2D1::Matrix3x2F::Translation(x, y));
+
+	d2dContext->DrawImage(commandList.Get());
+	hr = d2dContext->EndDraw();
+	d2dContext->SetTarget(nullptr);
+	if (FAILED(hr))
+		return nullptr;
+
+	// 3. Encode to PNG using WIC into an InMemoryRandomAccessStream
+	auto memStream = ref new InMemoryRandomAccessStream();
+	ComPtr<IStream> stream;
+	hr = CreateStreamOverRandomAccessStream(reinterpret_cast<IUnknown*>(memStream), IID_PPV_ARGS(&stream));
+	if (FAILED(hr))
+		return nullptr;
+
+	ComPtr<IWICImagingFactory2> wicFactory;
+	hr = CoCreateInstance(
+		CLSID_WICImagingFactory,
+		nullptr,
+		CLSCTX_INPROC_SERVER,
+		IID_PPV_ARGS(&wicFactory));
+	if (FAILED(hr))
+		return nullptr;
+
+	ComPtr<IWICImageEncoder> imageEncoder;
+	hr = wicFactory->CreateImageEncoder(d2dDevice.Get(), &imageEncoder);
+	if (FAILED(hr))
+		return nullptr;
+
+	ComPtr<IWICBitmapEncoder> encoder;
+	hr = wicFactory->CreateEncoder(GUID_ContainerFormatPng, nullptr, &encoder);
+	if (FAILED(hr))
+		return nullptr;
+
+	hr = encoder->Initialize(stream.Get(), WICBitmapEncoderNoCache);
+	if (FAILED(hr))
+		return nullptr;
+
+	ComPtr<IWICBitmapFrameEncode> frameEncode;
+	hr = encoder->CreateNewFrame(&frameEncode, nullptr);
+	if (FAILED(hr))
+		return nullptr;
+
+	hr = frameEncode->Initialize(nullptr);
+	if (FAILED(hr))
+		return nullptr;
+
+	hr = frameEncode->SetSize(targetWidth, targetHeight);
+	if (FAILED(hr))
+		return nullptr;
+
+	WICPixelFormatGUID pixelFormat = GUID_WICPixelFormat32bppPBGRA;
+	hr = frameEncode->SetPixelFormat(&pixelFormat);
+	if (FAILED(hr))
+		return nullptr;
+
+	WICImageParameters imageParams{};
+	imageParams.PixelFormat.format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	imageParams.PixelFormat.alphaMode = D2D1_ALPHA_MODE_PREMULTIPLIED;
+	imageParams.DpiX = 96.0f;
+	imageParams.DpiY = 96.0f;
+	imageParams.Top = 0;
+	imageParams.Left = 0;
+	imageParams.PixelWidth = targetWidth;
+	imageParams.PixelHeight = targetHeight;
+
+	hr = imageEncoder->WriteFrame(targetBitmap.Get(), frameEncode.Get(), &imageParams);
+	if (FAILED(hr))
+		return nullptr;
+
+	hr = frameEncode->Commit();
+	if (FAILED(hr))
+		return nullptr;
+
+	hr = encoder->Commit();
+	if (FAILED(hr))
+		return nullptr;
+
+	memStream->Seek(0);
+	return memStream;
+}

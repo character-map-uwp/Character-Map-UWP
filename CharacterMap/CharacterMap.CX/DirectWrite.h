@@ -49,6 +49,7 @@ namespace CharacterMapCX
 		/// </summary>
 		static IBuffer^ GetImageDataBuffer(DWriteFontFace^ fontFace, UINT32 pixelsPerEm, UINT unicodeIndex, GlyphImageFormat format);
 		static IBuffer^ GetGlyphImageDataBuffer(DWriteFontFace^ fontFace, UINT32 pixelsPerEm, UINT16 glyphIndex, GlyphImageFormat format);
+		static IRandomAccessStream^ GetColorGlyphPNGStream(DWriteFontFace^ fontFace, UINT16 glyphIndex, float size, Windows::UI::Color defaultColor);
 
 		/// <summary>
 		/// Verifies if a font file actually contains a font(s) usable by the system.
