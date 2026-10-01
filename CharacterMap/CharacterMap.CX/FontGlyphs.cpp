@@ -754,7 +754,7 @@ void FontGlyphs::RenderGlyphs()
 
     bool success = CompositionDeviceManager::RenderGlyphToSurface(
         m_drawingSurface,
-        renderColor,
+        renderColor ? GlyphImageFormat::None : GlyphImageFormat::TrueType,
         m_padLeft, m_padTop, m_baseline,
         rawFace.Get(),
         static_cast<FLOAT>(FontSize),

@@ -1,6 +1,5 @@
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Geometry;
-using Microsoft.Graphics.Canvas.Text;
+using CharacterMap.Core;
+using CharacterMapCX;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -32,14 +31,14 @@ public partial class FontGlyph(
     CMFontFace fontFace, 
     Character character, 
     FontGlyphMetrics metrics = default,
-    CanvasGeometry CustomGeometry = null, 
+    DWriteGlyphOutline CustomOutline = null, 
     string CustomImagePath = null)
 {
 
     public CMFontFace FontFace { get; } = fontFace;
     public Character Character { get; set; } = character;
     public FontGlyphMetrics Metrics { get; set; } = metrics ?? new ();
-    public CanvasGeometry CustomGeometry { get; } = CustomGeometry;
+    public DWriteGlyphOutline CustomOutline { get; } = CustomOutline;
     public string CustomImagePath { get; } = CustomImagePath;
 
 
@@ -239,9 +238,9 @@ public class FontSubsetter
                             aw = (ushort)(packedMetrics & 0xFFFFFFFF);
                             lsb = (short)(packedMetrics >> 32);
                         }
-                        else if (fc != null && fc.CustomGeometry != null)
+                        else if (fc != null && fc.CustomOutline != null)
                         {
-                            var bounds = fc.CustomGeometry.ComputeBounds();
+                            var bounds = fc.CustomOutline.Bounds;
                             lsb = (short)Math.Round(bounds.X);
                             aw = (ushort)Math.Round(fc.Metrics.CustomAdvanceWidth > 0 ? fc.Metrics.CustomAdvanceWidth : bounds.Width);
                         }
@@ -268,9 +267,9 @@ public class FontSubsetter
                         {
                             ttfBytes = ExtractCffGlyphAsTtf(srcFont, unitsPerEm, srcGid, scaleVal, offsetX, offsetY, tableCache, out pts, out ctrs);
                         }
-                        else if (fc != null && fc.CustomGeometry != null)
+                        else if (fc != null && fc.CustomOutline != null)
                         {
-                            ttfBytes = ExtractGeometryAsTtf(fc.CustomGeometry, (float)finalScale, offsetX, offsetY, out pts, out ctrs);
+                            ttfBytes = ExtractOutlineAsTtf(fc.CustomOutline, (float)finalScale, offsetX, offsetY, out pts, out ctrs);
                         }
                         else
                         {
@@ -474,44 +473,51 @@ public class FontSubsetter
         return null;
     }
 
-    private static byte[] ExtractGeometryAsTtf(
-        CanvasGeometry geom,
+    private static byte[] ExtractOutlineAsTtf(
+        DWriteGlyphOutline outline,
         float customScale, 
         float offsetX, 
         float offsetY, 
         out ushort pointCount, 
         out ushort contourCount)
     {
+        if (outline == null || outline.Contours == null || outline.Contours.Count == 0)
+        {
+            pointCount = 0;
+            contourCount = 0;
+            return [];
+        }
+
         try
         {
-            TrueTypeGlyphReceiver receiver = new();
-            geom.SendPathTo(receiver);
+            List<List<Vector2>> contours = [];
+            List<bool> pointOnCurve = [.. outline.PointOnCurve];
 
-            // Apply custom scaling and offset
-            if (customScale != 1f || offsetX != 0f || offsetY != 0f)
+            foreach (var c in outline.Contours)
             {
-                foreach (List<Vector2> contour in receiver.Contours)
+                List<Vector2> contour = new(c.Count);
+                foreach (var pt in c)
                 {
-                    for (int i = 0; i < contour.Count; i++)
-                    {
-                        Vector2 pt = contour[i];
-                        contour[i] = new Vector2(pt.X * customScale + offsetX, pt.Y * customScale + offsetY);
-                    }
+                    if (customScale != 1f || offsetX != 0f || offsetY != 0f)
+                        contour.Add(new Vector2(pt.X * customScale + offsetX, pt.Y * customScale + offsetY));
+                    else
+                        contour.Add(pt);
                 }
+                contours.Add(contour);
             }
 
             int totalPoints = 0;
-            foreach (List<Vector2> c in receiver.Contours) totalPoints += c.Count;
+            foreach (var c in contours) totalPoints += c.Count;
             pointCount = (ushort)totalPoints;
-            contourCount = (ushort)receiver.Contours.Count;
+            contourCount = (ushort)contours.Count;
 
-            return SfntWriter.EncodeSimpleGlyph(receiver.Contours, receiver.PointOnCurve);
+            return SfntWriter.EncodeSimpleGlyph(contours, pointOnCurve);
         }
         catch (Exception ex)
         {
             pointCount = 0;
             contourCount = 0;
-            Utils.AppendDiagnostics("CFF_MERGE_ERROR.txt", $"Custom Geometry: {ex.Message}\r\n{ex.StackTrace}\r\n");
+            Utils.AppendDiagnostics("CFF_MERGE_ERROR.txt", $"Custom Outline: {ex.Message}\r\n{ex.StackTrace}\r\n");
             throw;
         }
     }
@@ -533,70 +539,29 @@ public class FontSubsetter
 
         try
         {
-            CanvasDevice device = CanvasDevice.GetSharedDevice();
-            CanvasGlyph[] glyphs = [
-                new() { Index = (int)gid, Advance = 0, AdvanceOffset = 0, AscenderOffset = 0 }
-            ];
-            CanvasGeometry geom = CanvasGeometry.CreateGlyphRun(
-                device,
-                new Vector2(0, 0),
-                face.FontFace,
-                unitsPerEm,
-                glyphs,
-                false,
-                0,
-                CanvasTextMeasuringMode.Natural,
-                CanvasGlyphOrientation.Upright);
-            TrueTypeGlyphReceiver receiver = new();
-            geom.SendPathTo(receiver);
-
-            // Apply custom scaling and offset
-            if (customScale != 1f || offsetX != 0f || offsetY != 0f)
-            {
-                foreach (List<Vector2> contour in receiver.Contours)
-                {
-                    for (int i = 0; i < contour.Count; i++)
-                    {
-                        Vector2 pt = contour[i];
-                        contour[i] = new Vector2(pt.X * customScale + offsetX, pt.Y * customScale + offsetY);
-                    }
-                }
-            }
-
-            int totalPoints = 0;
-            foreach (List<Vector2> c in receiver.Contours) totalPoints += c.Count;
-            pointCount = (ushort)totalPoints;
-            contourCount = (ushort)receiver.Contours.Count;
-
-            return SfntWriter.EncodeSimpleGlyph(receiver.Contours, receiver.PointOnCurve);
+            DWriteGlyphOutline outline = DirectWrite.GetGlyphOutline(face.Face, (ushort)gid, unitsPerEm);
+            return ExtractOutlineAsTtf(outline, customScale, offsetX, offsetY, out pointCount, out contourCount);
         }
         catch (Exception ex)
         {
             pointCount = 0;
             contourCount = 0;
             Utils.AppendDiagnostics("CFF_MERGE_ERROR.txt", $"GID {gid}: {ex.Message}\r\n{ex.StackTrace}\r\n");
-        
-            throw ex;
+            throw;
         }
     }
-
-
- 
-
-
 }
 
-public class TrueTypeGlyphReceiver : ICanvasPathReceiver
+public class TrueTypeGlyphReceiver : IPathReceiver
 {
-    public List<List<Vector2>> Contours { get; } = new();
-    public List<bool> PointOnCurve { get; } = new();
+    public List<List<Vector2>> Contours { get; } = [];
+    public List<bool> PointOnCurve { get; } = [];
 
     private List<Vector2> _currentContour = null;
 
-    public void BeginFigure(Vector2 startPoint, CanvasFigureFill fill)
+    public void BeginFigure(Vector2 startPoint)
     {
-        _currentContour = new List<Vector2>();
-        _currentContour.Add(startPoint);
+        _currentContour = [startPoint];
         PointOnCurve.Add(true);
     }
 
@@ -645,7 +610,12 @@ public class TrueTypeGlyphReceiver : ICanvasPathReceiver
         }
     }
 
-    public void EndFigure(CanvasFigureLoop figureLoop)
+    public void AddArc(Vector2 endPoint, float radiusX, float radiusY, float rotationAngle, bool isClockwise, bool isLargeArc)
+    {
+        AddLine(endPoint);
+    }
+
+    public void EndFigure(bool isClosed)
     {
         if (_currentContour != null && _currentContour.Count > 0)
         {
@@ -653,8 +623,4 @@ public class TrueTypeGlyphReceiver : ICanvasPathReceiver
         }
         _currentContour = null;
     }
-
-    public void AddArc(Vector2 endPoint, float radiusX, float radiusY, float rotationAngle, CanvasSweepDirection sweepDirection, CanvasArcSize arcSize) { }
-    public void SetFilledRegionDetermination(CanvasFilledRegionDetermination filledRegionDetermination) { }
-    public void SetSegmentOptions(CanvasFigureSegmentOptions figureSegmentOptions) { }
 }

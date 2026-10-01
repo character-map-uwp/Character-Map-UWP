@@ -104,10 +104,11 @@ public class CopyToClipboardMessage
 {
     public DevValueType CopyType { get; }
     public CopyDataType DataType { get; }
+    public GlyphImageFormat PreferredColorType { get; init; }
     public Character RequestedItem { get; }
     public CanvasTextLayoutAnalysis Analysis { get; }
 
-    public ExportStyle Style { get; set; }
+    public ExportStyle Style { get; init; }
 
     public CopyToClipboardMessage(Character c)
     {

@@ -200,17 +200,27 @@ public class MenuFlyoutFactory
         FlyoutContextArg W(ExportStyle style) => arg with { ExportStyle = style };
         bool svgChar = analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
 
-        if (arg.CopyType == CopyDataType.SVG && analysis.IsFullVectorBased)
+        if (arg.CopyType == CopyDataType.SVG && analysis.IsFullVectorBased && svgChar)
         {
-            if (svgChar || analysis.HasColorGlyphs)
-            {
                 Create(
                     svgChar ? "ExportSVGGlyphLabel/Text" : "ColoredGlyphLabel/Text",
                     icon: ThemeIcon.ColorGlyph, handler, new() { Tag = W(ExportStyle.ColorGlyph) }, parent);
-            }
         }
         else if (analysis.HasColorGlyphs)
-            Create("ColoredGlyphLabel/Text", ThemeIcon.ColorGlyph, handler, args: new() { Tag = W(ExportStyle.ColorGlyph) }, parent);
+        {
+            if (analysis.SupportsColrV0)
+                Create("~COLRv0 Glyph", ThemeIcon.ColorGlyph, handler, args: new() { Tag = W(ExportStyle.ColorGlyph) with { PreferredExportType = GlyphImageFormat.Colr } }, parent);
+
+            if (analysis.SupportsColrV1)
+                Create("~COLRv1 Glyph", ThemeIcon.ColorGlyph, handler, args: new() { Tag = W(ExportStyle.ColorGlyph) with { PreferredExportType = GlyphImageFormat.ColrPaintTree } }, parent);
+
+            if (analysis.SupportsColrV0 is false && analysis.SupportsColrV1 is false)
+            {
+                // Probably a bitmap
+                Create("ColoredGlyphLabel/Text", ThemeIcon.ColorGlyph, handler, args: new() { Tag = W(ExportStyle.ColorGlyph) }, parent);
+            }
+        }
+            
 
         // Glyphs that are entirely SVG backed don't have CFF outlines and can't be exported as monochrome.
         // Bitmaps have the same issue.
@@ -964,6 +974,7 @@ public static class FlyoutHelper
         public FontMapView ParentView { get; set; }
         public CopyDataType CopyType { get; set; }
         public CanvasTextLayoutAnalysis Analysis { get; set; }
+        public GlyphImageFormat PreferredExportType { get; set; } = GlyphImageFormat.None;
     }
 
     public static void ShowLigatureFlyout(UIElement sender, ContextRequestedEventArgs args, FontMapView view)
@@ -1000,7 +1011,7 @@ public static class FlyoutHelper
             {
                 if (s is FrameworkElement { Tag: FlyoutContextArg ctx })
                     _ = ctx.ParentView.ViewModel.RequestCopyToClipboardAsync(
-                        new(DevValueType.Char, ctx.Character, ctx.Analysis, ctx.CopyType) { Style = ctx.ExportStyle });
+                        new(DevValueType.Char, ctx.Character, ctx.Analysis, ctx.CopyType) { Style = ctx.ExportStyle, PreferredColorType = ctx.PreferredExportType });
             }
 
             #endregion

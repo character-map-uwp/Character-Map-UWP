@@ -1,13 +1,22 @@
-using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Globalization;
 using System.Numerics;
 
 namespace CharacterMap.Core;
 
+public interface IPathReceiver
+{
+    void BeginFigure(Vector2 startPoint);
+    void AddLine(Vector2 endPoint);
+    void AddQuadraticBezier(Vector2 controlPoint, Vector2 endPoint);
+    void AddCubicBezier(Vector2 controlPoint1, Vector2 controlPoint2, Vector2 endPoint);
+    void AddArc(Vector2 endPoint, float rx, float ry, float rotationAngle, bool isClockwise, bool isLargeArc);
+    void EndFigure(bool isClosed);
+}
+
 public static class SvgPathParser
 {
-    public static void Parse(string d, CanvasPathBuilder builder)
+    public static void Parse(string d, IPathReceiver builder)
     {
         if (string.IsNullOrWhiteSpace(d))
             return;
@@ -22,7 +31,7 @@ public static class SvgPathParser
         {
             if (!figureStarted)
             {
-                builder.BeginFigure(currentPoint, CanvasFigureFill.Default);
+                builder.BeginFigure(currentPoint);
                 figureStarted = true;
             }
         }
@@ -71,14 +80,14 @@ public static class SvgPathParser
 
                     if (figureStarted)
                     {
-                        builder.EndFigure(CanvasFigureLoop.Open);
+                        builder.EndFigure(false);
                         figureStarted = false;
                     }
 
                     currentPoint = new Vector2(x, y);
                     lastControlPoint = currentPoint;
                     
-                    builder.BeginFigure(currentPoint, CanvasFigureFill.Default);
+                    builder.BeginFigure(currentPoint);
                     figureStarted = true;
                     break;
                 }
@@ -86,7 +95,7 @@ public static class SvgPathParser
                 {
                     if (figureStarted)
                     {
-                        builder.EndFigure(CanvasFigureLoop.Closed);
+                        builder.EndFigure(true);
                         figureStarted = false;
                     }
                     break;
@@ -254,13 +263,9 @@ public static class SvgPathParser
 
                     EnsureFigureStarted();
                     Vector2 nextPoint = new Vector2(x, y);
-                    
-                    CanvasSweepDirection sweepDirection = sweep ? CanvasSweepDirection.Clockwise : CanvasSweepDirection.CounterClockwise;
-                    CanvasArcSize arcSize = largeArc ? CanvasArcSize.Large : CanvasArcSize.Small;
-                    
                     float radians = angle * (float)Math.PI / 180.0f;
 
-                    builder.AddArc(nextPoint, rx, ry, radians, sweepDirection, arcSize);
+                    builder.AddArc(nextPoint, rx, ry, radians, sweep, largeArc);
                     currentPoint = nextPoint;
                     lastControlPoint = currentPoint;
                     break;
@@ -277,7 +282,7 @@ public static class SvgPathParser
 
         if (figureStarted)
         {
-            builder.EndFigure(CanvasFigureLoop.Open);
+            builder.EndFigure(false);
         }
     }
 

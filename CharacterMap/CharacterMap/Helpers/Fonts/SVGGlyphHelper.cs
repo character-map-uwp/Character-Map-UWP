@@ -1,7 +1,5 @@
 using CharacterMap.Core;
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Geometry;
-using Microsoft.Graphics.Canvas.Svg;
+using CharacterMapCX;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -40,9 +38,6 @@ internal class SVGGlyphHelper
             if (pathDatas.Count == 0)
                 return null;
 
-            CanvasDevice device = CanvasDevice.GetSharedDevice();
-            var simplified = new CanvasSvgPathBuilder(device, pathDatas).GetGeometry(false);
-
             float viewBoxX = 0f;
             float viewBoxY = 0f;
             float viewBoxWidth = 0f;
@@ -55,14 +50,14 @@ internal class SVGGlyphHelper
                 if (svgEnd != -1)
                 {
                     string svgTag = svgText.Substring(svgIndex, svgEnd - svgIndex);
-                    
+
                     int viewBoxIdx = FindAttributeIndex(svgTag, "viewBox");
                     if (viewBoxIdx != -1)
                     {
                         string viewBoxAttr = ExtractAttributeValue(svgTag, viewBoxIdx);
                         if (!string.IsNullOrWhiteSpace(viewBoxAttr))
                         {
-                            var parts = viewBoxAttr.Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                            string[] parts = viewBoxAttr.Split(new[] { ' ', ',' }, StringSplitOptions.RemoveEmptyEntries);
                             if (parts.Length == 4)
                             {
                                 float.TryParse(parts[0], NumberStyles.Any, CultureInfo.InvariantCulture, out viewBoxX);
@@ -92,12 +87,10 @@ internal class SVGGlyphHelper
                 }
             }
 
-            SVGPathReciever pathReceiver = new();
-            simplified.SendPathTo(pathReceiver);
-            string initialPath = pathReceiver.GetPathData().Replace("F 0 ", "").Replace("F 1 ", "");
+            string initialPath = string.Join(" ", pathDatas);
 
             Windows.UI.Xaml.Media.Geometry xamlGeom = Windows.UI.Xaml.Markup.XamlBindingHelper.ConvertValue(typeof(Windows.UI.Xaml.Media.Geometry), initialPath) as Windows.UI.Xaml.Media.Geometry;
-            var exactBounds = xamlGeom.Bounds;
+            Rect exactBounds = xamlGeom?.Bounds ?? Rect.Empty;
 
             if (viewBoxWidth <= 0) viewBoxWidth = (float)exactBounds.Width;
             if (viewBoxHeight <= 0) viewBoxHeight = (float)exactBounds.Height;
@@ -106,29 +99,43 @@ internal class SVGGlyphHelper
                 ? $"{viewBoxX.ToString(CultureInfo.InvariantCulture)} {viewBoxY.ToString(CultureInfo.InvariantCulture)} {viewBoxWidth.ToString(CultureInfo.InvariantCulture)} {viewBoxHeight.ToString(CultureInfo.InvariantCulture)}"
                 : "0 0 1024 1024";
 
-            var previewGeometry = simplified;
-
-            SVGPathReciever receiver = new();
-            previewGeometry.SendPathTo(receiver);
-            string newPathData = receiver.GetPathData();
-
-            string fillRule = newPathData.Contains("F 0") ? "evenodd" : "nonzero";
-            newPathData = newPathData.Replace("F 0 ", "").Replace("F 1 ", "");
-
-            string newSvg = $"<svg viewBox=\"{viewBox}\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"{newPathData}\" fill=\"black\" fill-rule=\"{fillRule}\" /></svg>";
+            string newSvg = $"<svg viewBox=\"{viewBox}\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"{initialPath}\" fill=\"black\" /></svg>";
 
             StorageFile tempFile = await StorageHelper.CreateTempFileAsync($"SVGP\\{Guid.NewGuid()}.svg").AsTask().ConfigureAwait(false);
             await FileIO.WriteTextAsync(tempFile, newSvg).AsTask().ConfigureAwait(false);
 
-            var fontGeometry = simplified;
-            if (exactBounds.Width > 0 && exactBounds.Height > 0)
-                fontGeometry = simplified.Transform(Matrix3x2.CreateTranslation(-viewBoxX, -(viewBoxY + viewBoxHeight)));
+            TrueTypeGlyphReceiver receiver = new();
+            foreach (var d in pathDatas)
+            {
+                try
+                {
+                    SvgPathParser.Parse(d, receiver);
+                }
+                catch { }
+            }
 
-            float glyphScale = 1024f / viewBoxHeight;
+            float dx = -viewBoxX;
+            float dy = -(viewBoxY + viewBoxHeight);
+
+            List<IReadOnlyList<Vector2>> contourViews = [];
+            foreach (var c in receiver.Contours)
+            {
+                for (int i = 0; i < c.Count; i++)
+                {
+                    Vector2 pt = c[i];
+                    c[i] = new Vector2(pt.X + dx, pt.Y + dy);
+                }
+                contourViews.Add(c.AsReadOnly());
+            }
+
+            Windows.Foundation.Rect bounds = new(exactBounds.X + dx, exactBounds.Y + dy, exactBounds.Width, exactBounds.Height);
+            DWriteGlyphOutline outline = new(contourViews.AsReadOnly(), receiver.PointOnCurve.AsReadOnly(), bounds);
+
+            float glyphScale = viewBoxHeight > 0 ? 1024f / viewBoxHeight : 1f;
             float advanceWidth = viewBoxWidth; // Keep in original coordinate space!
 
             Character svgChar = new(nextPUA);
-            FontGlyph glyph = new(null, svgChar, metrics: new(Scale: glyphScale, CustomAdvanceWidth: advanceWidth), CustomGeometry: fontGeometry, CustomImagePath: tempFile.GetAppPath());
+            FontGlyph glyph = new(null, svgChar, metrics: new(Scale: glyphScale, CustomAdvanceWidth: advanceWidth), CustomOutline: outline, CustomImagePath: tempFile.GetAppPath());
             return glyph;
         }
         catch (Exception ex)
@@ -485,102 +492,9 @@ internal class SVGGlyphHelper
 
     public static string FitBounds(string svg, float emSize)
     {
-        using CanvasSvgDocument document = CanvasSvgDocument.LoadFromXml(Utils.CanvasDevice, svg);
-        return FitBounds(document, emSize);
+        return DirectWrite.FitSvgBounds(svg, emSize);
     }
-
-    /// <summary>
-    /// Adjusts the bounds of the SVG to fit its contents 
-    /// </summary>
-    /// <param name="svg"></param>
-    /// <param name="emSize"></param>
-    /// <returns></returns>
-    public static string FitBounds(CanvasSvgDocument document, float emSize)
-    {
-        using CanvasCommandList commandList = new(Utils.CanvasDevice);
-
-        using CanvasDrawingSession ds = commandList.CreateDrawingSession();
-        {
-            if (emSize <= 0) emSize = 1024;
-            ds.DrawSvg(document, new Size(emSize, emSize));
-        }
-
-        if (commandList.GetBounds(Utils.CanvasDevice) is Rect bounds &&
-            bounds.HasDimensions())
-        {
-            if (document.Root.IsAttributeSpecified("viewBox")
-                && document.Root.GetRectangleAttribute("viewBox") is Rect origViewBox
-                && origViewBox.HasDimensions())
-            {
-                if (emSize <= 0) emSize = 1024;
-                double scaleX = emSize / origViewBox.Width;
-                double scaleY = emSize / origViewBox.Height;
-                Rect mappedViewBox = new Rect(
-                    origViewBox.Left + (bounds.Left / scaleX),
-                    origViewBox.Top + (bounds.Top / scaleY),
-                    bounds.Width / scaleX,
-                    bounds.Height / scaleY);
-                document.Root.SetRectangleAttribute("viewBox", mappedViewBox);
-
-            }
-            else
-            {
-                document.Root.SetRectangleAttribute("viewBox", bounds);
-            }
-        }
-
-        return document.GetXml();
-    }
-
 
     #endregion
 
-
-
-
-}
-
-public class CanvasSvgPathBuilder
-{
-    private CanvasDevice _device;
-    private IEnumerable<string> _pathDatas;
-
-    public CanvasSvgPathBuilder(CanvasDevice device, IEnumerable<string> pathDatas)
-    {
-        _device = device;
-        _pathDatas = pathDatas;
-    }
-
-    public CanvasPathBuilder Build()
-    {
-        var builder = new CanvasPathBuilder(_device);
-
-        foreach (var d in _pathDatas)
-        {
-            try
-            {
-                SvgPathParser.Parse(d, builder);
-            }
-            catch { }
-        }
-
-        return builder;
-    }
-
-    public CanvasGeometry GetGeometry(bool simplify = false)
-    {
-        CanvasPathBuilder builder = Build();
-        try
-        {
-            var geom = CanvasGeometry.CreatePath(builder);
-            if (simplify)
-                geom = geom.Simplify(CanvasGeometrySimplification.Lines);
-
-            return geom;
-        }
-        finally
-        {
-            builder?.Dispose();
-        }
-    }
 }

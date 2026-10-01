@@ -1,4 +1,4 @@
-﻿using Microsoft.Graphics.Canvas.Text;
+using Microsoft.Graphics.Canvas.Text;
 
 namespace CharacterMap.Provider;
 
@@ -58,9 +58,7 @@ public partial class DevProviderBase
         {
             // We use a font size of 20 as this metrically maps to the size of SegoeMDL2 icons used
             // in FontIcon / SymbolIcon controls.
-            using var geom = ExportManager.CreateGeometry(c, o with { FontSize = 20 });
-            using var typo = o.CreateCanvasTypography();
-            pathIconData = Utils.GetInterop().GetPathData(geom).Path;
+            (pathIconData, _) = ExportManager.GetGeometry(c, o with { FontSize = 20 });
             _geometryCache.Add(KeyValuePair.Create(new GeometryCacheEntry(c, o), pathIconData));
 
             // Keep the cache to a certain size

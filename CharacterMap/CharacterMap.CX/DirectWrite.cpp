@@ -4,10 +4,12 @@
 #include "GsubTableReader.h"
 #include "CompositionDeviceManager.h"
 #include "ColrV1Svg.h"
-
+#include "Utils.h"
 
 #include "DWriteNamedFontAxisValue.h"
 #include "DWriteKnownFontAxisValues.h"
+#include <shlwapi.h>
+#pragma comment(lib, "shlwapi.lib")
 
 using namespace Microsoft::Graphics::Canvas;
 using namespace Microsoft::Graphics::Canvas::Text;
@@ -783,7 +785,39 @@ IBuffer^ DirectWrite::GetGlyphImageDataBuffer(DWriteFontFace^ fontFace, UINT32 p
 	return buffer;
 }
 
-IRandomAccessStream^ DirectWrite::GetColorGlyphPNGStream(DWriteFontFace^ fontFace, UINT16 glyphIndex, float size, Windows::UI::Color defaultColor)
+DWriteGlyphOutline^ DirectWrite::GetGlyphOutline(DWriteFontFace^ fontFace, UINT16 glyphIndex, float unitsPerEm)
+{
+	if (fontFace == nullptr || unitsPerEm <= 0.0f)
+		return nullptr;
+
+	auto rawFace = fontFace->GetFontFace();
+	if (rawFace == nullptr)
+		return nullptr;
+
+	auto sink = Make<OutlineGeometrySink>();
+	HRESULT hr = rawFace->GetGlyphRunOutline(
+		unitsPerEm,
+		&glyphIndex,
+		nullptr,
+		nullptr,
+		1,
+		FALSE,
+		FALSE,
+		sink.Get());
+
+	if (FAILED(hr))
+		return nullptr;
+
+	Rect bounds = Rect::Empty;
+	if (sink->MinX <= sink->MaxX && sink->MinY <= sink->MaxY)
+	{
+		bounds = Rect(sink->MinX, sink->MinY, sink->MaxX - sink->MinX, sink->MaxY - sink->MinY);
+	}
+
+	return ref new DWriteGlyphOutline(sink->Contours->GetView(), sink->PointOnCurve->GetView(), bounds);
+}
+
+IRandomAccessStream^ DirectWrite::GetGlyphPNGStream(DWriteFontFace^ fontFace, UINT16 glyphIndex, float size, Windows::UI::Color defaultColor, GlyphImageFormat preferredFormat)
 {
 	if (fontFace == nullptr || size <= 0.0f)
 		return nullptr;
@@ -795,16 +829,8 @@ IRandomAccessStream^ DirectWrite::GetColorGlyphPNGStream(DWriteFontFace^ fontFac
 	std::lock_guard<std::mutex> lock(CompositionDeviceManager::GetRenderMutex());
 
 	ComPtr<ID2D1Device> d2dDevice = CompositionDeviceManager::GetD2DDevice();
-	if (d2dDevice == nullptr)
-		return nullptr;
-
 	ComPtr<IDWriteFactory7> dwriteFactory = CompositionDeviceManager::GetDWriteFactory();
-	if (dwriteFactory == nullptr)
-		return nullptr;
-
-	ComPtr<ID2D1DeviceContext> d2dContext;
-	HRESULT hr = d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &d2dContext);
-	if (FAILED(hr))
+	if (d2dDevice == nullptr || dwriteFactory == nullptr)
 		return nullptr;
 
 	DWRITE_FONT_METRICS fontMetrics{};
@@ -826,218 +852,107 @@ IRandomAccessStream^ DirectWrite::GetColorGlyphPNGStream(DWriteFontFace^ fontFac
 	glyphRun.isSideways = FALSE;
 	glyphRun.bidiLevel = 0;
 
-	D2D1_POINT_2F baselineOrigin = D2D1::Point2F(0.0f, 0.0f);
-
-	D2D1_COLOR_F defaultBrushColor = D2D1::ColorF(
-		defaultColor.R / 255.0f,
-		defaultColor.G / 255.0f,
-		defaultColor.B / 255.0f,
-		defaultColor.A / 255.0f);
+	ScopedCommandList recorder(d2dDevice.Get());
+	if (!recorder.IsValid())
+		return nullptr;
 
 	ComPtr<ID2D1SolidColorBrush> defaultBrush;
-	hr = d2dContext->CreateSolidColorBrush(defaultBrushColor, &defaultBrush);
+	HRESULT hr = recorder.Context->CreateSolidColorBrush(ToD2DColor(defaultColor), &defaultBrush);
 	if (FAILED(hr))
 		return nullptr;
 
-	// 1. Draw into a command list to measure actual rendered bounds
-	ComPtr<ID2D1CommandList> commandList;
-	hr = d2dContext->CreateCommandList(&commandList);
-	if (FAILED(hr))
+
+	CompositionDeviceManager::DrawGlyphRunWithColorSupport(
+		recorder.Context.Get(),
+		dwriteFactory.Get(),
+		D2D1::Point2F(0.0f, 0.0f),
+		&glyphRun,
+		defaultBrush.Get(),
+		preferredFormat);
+
+	if (FAILED(recorder.Finish()))
 		return nullptr;
 
-	d2dContext->SetTarget(commandList.Get());
-	d2dContext->BeginDraw();
-
-	bool drewColor = false;
-	ComPtr<ID2D1DeviceContext7> d2dContext7;
-	if (SUCCEEDED(d2dContext.As(&d2dContext7)))
-	{
-		d2dContext7->DrawGlyphRunWithColorSupport(
-			baselineOrigin,
-			&glyphRun,
-			nullptr,
-			defaultBrush.Get(),
-			nullptr,
-			0,
-			DWRITE_MEASURING_MODE_NATURAL,
-			D2D1_COLOR_BITMAP_GLYPH_SNAP_OPTION_DEFAULT);
-		drewColor = true;
-	}
-	else
-	{
-		ComPtr<IDWriteFactory4> dwriteFactory4;
-		if (SUCCEEDED(dwriteFactory.As(&dwriteFactory4)))
-		{
-			ComPtr<IDWriteColorGlyphRunEnumerator1> colorLayers;
-			DWRITE_GLYPH_IMAGE_FORMATS glyphFormats =
-				DWRITE_GLYPH_IMAGE_FORMATS_TRUETYPE |
-				DWRITE_GLYPH_IMAGE_FORMATS_CFF |
-				DWRITE_GLYPH_IMAGE_FORMATS_COLR |
-				DWRITE_GLYPH_IMAGE_FORMATS_SVG |
-				DWRITE_GLYPH_IMAGE_FORMATS_PNG |
-				DWRITE_GLYPH_IMAGE_FORMATS_JPEG |
-				DWRITE_GLYPH_IMAGE_FORMATS_TIFF |
-				DWRITE_GLYPH_IMAGE_FORMATS_PREMULTIPLIED_B8G8R8A8;
-
-			HRESULT colorHr = dwriteFactory4->TranslateColorGlyphRun(
-				baselineOrigin,
-				&glyphRun,
-				nullptr,
-				glyphFormats,
-				DWRITE_MEASURING_MODE_NATURAL,
-				nullptr,
-				0,
-				&colorLayers);
-
-			if (SUCCEEDED(colorHr))
-			{
-				while (true)
-				{
-					BOOL hasRun = FALSE;
-					if (FAILED(colorLayers->MoveNext(&hasRun)) || !hasRun)
-						break;
-
-					const DWRITE_COLOR_GLYPH_RUN1* colorRun = nullptr;
-					if (FAILED(colorLayers->GetCurrentRun(&colorRun)) || !colorRun)
-						break;
-
-					drewColor = true;
-					D2D1_POINT_2F runOrigin = D2D1::Point2F(colorRun->baselineOriginX, colorRun->baselineOriginY);
-
-					ComPtr<ID2D1SolidColorBrush> layerBrush = defaultBrush;
-					if (colorRun->paletteIndex != 0xFFFF)
-						d2dContext->CreateSolidColorBrush(colorRun->runColor, &layerBrush);
-
-					switch (colorRun->glyphImageFormat)
-					{
-					case DWRITE_GLYPH_IMAGE_FORMATS_PNG:
-					case DWRITE_GLYPH_IMAGE_FORMATS_JPEG:
-					case DWRITE_GLYPH_IMAGE_FORMATS_TIFF:
-					case DWRITE_GLYPH_IMAGE_FORMATS_PREMULTIPLIED_B8G8R8A8:
-					{
-						ComPtr<ID2D1DeviceContext4> d2dContext4;
-						if (SUCCEEDED(d2dContext.As(&d2dContext4)))
-						{
-							d2dContext4->DrawColorBitmapGlyphRun(
-								colorRun->glyphImageFormat,
-								runOrigin,
-								&colorRun->glyphRun,
-								colorRun->measuringMode);
-						}
-						break;
-					}
-					case DWRITE_GLYPH_IMAGE_FORMATS_SVG:
-					{
-						ComPtr<ID2D1DeviceContext4> d2dContext4;
-						if (SUCCEEDED(d2dContext.As(&d2dContext4)))
-						{
-							d2dContext4->DrawSvgGlyphRun(
-								runOrigin,
-								&colorRun->glyphRun,
-								layerBrush.Get(),
-								nullptr,
-								colorRun->paletteIndex == 0xFFFF ? 0 : colorRun->paletteIndex,
-								colorRun->measuringMode);
-						}
-						break;
-					}
-					case DWRITE_GLYPH_IMAGE_FORMATS_COLR:
-					default:
-					{
-						d2dContext->DrawGlyphRun(
-							runOrigin,
-							&colorRun->glyphRun,
-							layerBrush.Get(),
-							colorRun->measuringMode);
-						break;
-					}
-					}
-				}
-			}
-		}
-	}
-
-	if (!drewColor)
-	{
-		d2dContext->DrawGlyphRun(baselineOrigin, &glyphRun, defaultBrush.Get(), DWRITE_MEASURING_MODE_NATURAL);
-	}
-
-	hr = d2dContext->EndDraw();
-	d2dContext->SetTarget(nullptr);
-	if (FAILED(hr))
-		return nullptr;
-
-	hr = commandList->Close();
-	if (FAILED(hr))
-		return nullptr;
-
-	D2D1_RECT_F inkBounds{};
-	hr = d2dContext->GetImageLocalBounds(commandList.Get(), &inkBounds);
-
-	float inkWidth = inkBounds.right - inkBounds.left;
-	float inkHeight = inkBounds.bottom - inkBounds.top;
-	if (FAILED(hr) || inkWidth <= 0.0f || inkHeight <= 0.0f)
-	{
-		inkBounds = D2D1::RectF(0.0f, 0.0f, size, size);
-		inkWidth = size;
-		inkHeight = size;
-	}
+	D2D1_RECT_F inkBounds = recorder.GetBounds(D2D1::RectF(0.0f, 0.0f, size, size));
 
 	UINT32 targetWidth = static_cast<UINT32>(size);
 	UINT32 targetHeight = static_cast<UINT32>(size);
 	if (targetWidth == 0) targetWidth = 512;
 	if (targetHeight == 0) targetHeight = 512;
 
-	// 2. Render into an offscreen D2D target bitmap with centering and fitting
-	D2D1_BITMAP_PROPERTIES1 bp = D2D1::BitmapProperties1(
-		D2D1_BITMAP_OPTIONS_TARGET,
-		D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
-		96.0f,
-		96.0f
-	);
+	return RasterizeCommandListToPNG(recorder.Context.Get(), recorder.CommandList.Get(), inkBounds, targetWidth, targetHeight, true);
+}
 
-	ComPtr<ID2D1Bitmap1> targetBitmap;
-	hr = d2dContext->CreateBitmap(
-		D2D1::SizeU(targetWidth, targetHeight),
-		nullptr,
-		0,
-		&bp,
-		&targetBitmap);
+IRandomAccessStream^ DirectWrite::GetTextPNGStream(
+	DWriteFontFace^ fontFace,
+	Platform::String^ text,
+	float size,
+	Windows::UI::Color defaultColor,
+	bool isColor,
+	IVectorView<UINT32>^ typographyFeatures)
+{
+	if (fontFace == nullptr || text == nullptr || text->Length() == 0 || size <= 0.0f)
+		return nullptr;
+
+	std::lock_guard<std::mutex> lock(CompositionDeviceManager::GetRenderMutex());
+
+	ComPtr<ID2D1Device> d2dDevice = CompositionDeviceManager::GetD2DDevice();
+	ComPtr<IDWriteFactory7> dwriteFactory = CompositionDeviceManager::GetDWriteFactory();
+	if (d2dDevice == nullptr || dwriteFactory == nullptr)
+		return nullptr;
+
+	ComPtr<IDWriteTextLayout> textLayout = CreateTextLayout(dwriteFactory.Get(), fontFace, text, size, typographyFeatures);
+	if (textLayout == nullptr)
+		return nullptr;
+
+	ScopedCommandList recorder(d2dDevice.Get());
+	if (!recorder.IsValid())
+		return nullptr;
+
+	ComPtr<ID2D1SolidColorBrush> defaultBrush;
+	HRESULT hr = recorder.Context->CreateSolidColorBrush(ToD2DColor(defaultColor), &defaultBrush);
 	if (FAILED(hr))
 		return nullptr;
 
-	d2dContext->SetTarget(targetBitmap.Get());
-	d2dContext->BeginDraw();
-	d2dContext->Clear(D2D1::ColorF(0, 0, 0, 0));
+	D2D1_DRAW_TEXT_OPTIONS drawOptions = isColor ? D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT : D2D1_DRAW_TEXT_OPTIONS_NONE;
+	recorder.Context->DrawTextLayout(D2D1::Point2F(0, 0), textLayout.Get(), defaultBrush.Get(), drawOptions);
 
-	float scale = (std::min)(static_cast<float>(targetWidth) / inkWidth, static_cast<float>(targetHeight) / inkHeight);
-	float x = (static_cast<float>(targetWidth) - inkWidth * scale) / 2.0f - inkBounds.left * scale;
-	float y = (static_cast<float>(targetHeight) - inkHeight * scale) / 2.0f - inkBounds.top * scale;
-
-	d2dContext->SetTransform(
-		D2D1::Matrix3x2F::Scale(scale, scale) *
-		D2D1::Matrix3x2F::Translation(x, y));
-
-	d2dContext->DrawImage(commandList.Get());
-	hr = d2dContext->EndDraw();
-	d2dContext->SetTarget(nullptr);
-	if (FAILED(hr))
+	if (FAILED(recorder.Finish()))
 		return nullptr;
 
-	// 3. Encode to PNG using WIC into an InMemoryRandomAccessStream
+	D2D1_RECT_F fallbackBounds = D2D1::RectF(0, 0, 0, 0);
+	DWRITE_TEXT_METRICS tm{};
+	if (SUCCEEDED(textLayout->GetMetrics(&tm)))
+	{
+		fallbackBounds = D2D1::RectF(tm.left, tm.top, tm.left + tm.width, tm.top + tm.height);
+	}
+
+	D2D1_RECT_F inkBounds = recorder.GetBounds(fallbackBounds);
+	if (inkBounds.right <= inkBounds.left || inkBounds.bottom <= inkBounds.top)
+		return nullptr;
+
+	UINT32 targetWidth = static_cast<UINT32>(size);
+	UINT32 targetHeight = static_cast<UINT32>(size);
+	if (targetWidth == 0) targetWidth = 512;
+	if (targetHeight == 0) targetHeight = 512;
+
+	return RasterizeCommandListToPNG(recorder.Context.Get(), recorder.CommandList.Get(), inkBounds, targetWidth, targetHeight, false);
+}
+
+IRandomAccessStream^ DirectWrite::GetPNGStream(ComPtr<ID2D1Bitmap1> targetBitmap, UINT targetWidth, UINT targetHeight)
+{
 	auto memStream = ref new InMemoryRandomAccessStream();
 	ComPtr<IStream> stream;
-	hr = CreateStreamOverRandomAccessStream(reinterpret_cast<IUnknown*>(memStream), IID_PPV_ARGS(&stream));
+	auto hr = CreateStreamOverRandomAccessStream(reinterpret_cast<IUnknown*>(memStream), IID_PPV_ARGS(&stream));
 	if (FAILED(hr))
 		return nullptr;
 
-	ComPtr<IWICImagingFactory2> wicFactory;
-	hr = CoCreateInstance(
-		CLSID_WICImagingFactory,
-		nullptr,
-		CLSCTX_INPROC_SERVER,
-		IID_PPV_ARGS(&wicFactory));
-	if (FAILED(hr))
+	ComPtr<IWICImagingFactory2> wicFactory = CompositionDeviceManager::GetWICFactory();
+	if (wicFactory == nullptr)
+		return nullptr;
+
+	ComPtr<ID2D1Device> d2dDevice = CompositionDeviceManager::GetD2DDevice();
+	if (d2dDevice == nullptr)
 		return nullptr;
 
 	ComPtr<IWICImageEncoder> imageEncoder;
@@ -1101,4 +1016,127 @@ IRandomAccessStream^ DirectWrite::GetColorGlyphPNGStream(DWriteFontFace^ fontFac
 Platform::String^ DirectWrite::GetColrV1Svg(DWriteFontFace^ fontFace, UINT16 glyphIndex, Windows::UI::Color defaultColor)
 {
 	return ColrV1Svg::GetSvg(fontFace, glyphIndex, defaultColor);
-}
+}
+
+Platform::String^ DirectWrite::FitSvgBounds(Platform::String^ svg, float emSize)
+{
+	if (svg == nullptr || svg->Length() == 0)
+		return svg;
+
+	std::lock_guard<std::mutex> lock(CompositionDeviceManager::GetRenderMutex());
+
+	ComPtr<ID2D1Device> d2dDevice = CompositionDeviceManager::GetD2DDevice();
+	if (d2dDevice == nullptr)
+		return svg;
+
+	std::wstring wsvg(svg->Data());
+	std::string utf8Svg;
+	int count = WideCharToMultiByte(CP_UTF8, 0, wsvg.c_str(), static_cast<int>(wsvg.length()), NULL, 0, NULL, NULL);
+	if (count > 0)
+	{
+		utf8Svg.resize(count);
+		WideCharToMultiByte(CP_UTF8, 0, wsvg.c_str(), static_cast<int>(wsvg.length()), &utf8Svg[0], count, NULL, NULL);
+	}
+
+	ComPtr<IStream> inStream;
+	HRESULT hr = CreateStreamOnHGlobal(NULL, TRUE, &inStream);
+	if (FAILED(hr))
+		return svg;
+	inStream->Write(utf8Svg.data(), static_cast<ULONG>(utf8Svg.size()), nullptr);
+	LARGE_INTEGER inSeekPos{};
+	inSeekPos.QuadPart = 0;
+	inStream->Seek(inSeekPos, STREAM_SEEK_SET, nullptr);
+
+	if (emSize <= 0.0f)
+		emSize = 1024.0f;
+
+	ScopedCommandList recorder(d2dDevice.Get());
+	if (!recorder.IsValid())
+		return svg;
+
+	ComPtr<ID2D1DeviceContext5> d2dContext5;
+	if (FAILED(recorder.Context.As(&d2dContext5)))
+		return svg;
+
+	ComPtr<ID2D1SvgDocument> svgDoc;
+	hr = d2dContext5->CreateSvgDocument(inStream.Get(), D2D1::SizeF(emSize, emSize), &svgDoc);
+	if (FAILED(hr))
+		return svg;
+
+	d2dContext5->DrawSvgDocument(svgDoc.Get());
+
+	if (FAILED(recorder.Finish()))
+		return svg;
+
+	D2D1_RECT_F bounds = recorder.GetBounds();
+	if ((bounds.right > bounds.left) && (bounds.bottom > bounds.top))
+	{
+		ComPtr<ID2D1SvgElement> root;
+		svgDoc->GetRoot(&root);
+		if (root != nullptr)
+		{
+			float vbLeft = bounds.left;
+			float vbTop = bounds.top;
+			float vbWidth = bounds.right - bounds.left;
+			float vbHeight = bounds.bottom - bounds.top;
+
+			UINT32 vbLen = 0;
+			if (SUCCEEDED(root->GetAttributeValueLength(L"viewBox", D2D1_SVG_ATTRIBUTE_STRING_TYPE_SVG, &vbLen)) && vbLen > 0)
+			{
+				std::wstring origVbStr(vbLen + 1, L'\0');
+				if (SUCCEEDED(root->GetAttributeValue(L"viewBox", D2D1_SVG_ATTRIBUTE_STRING_TYPE_SVG, &origVbStr[0], vbLen + 1)))
+				{
+					float ox = 0, oy = 0, ow = 0, oh = 0;
+					if (swscanf_s(origVbStr.c_str(), L"%f %f %f %f", &ox, &oy, &ow, &oh) == 4 && ow > 0 && oh > 0)
+					{
+						float scaleX = emSize / ow;
+						float scaleY = emSize / oh;
+						vbLeft = ox + (bounds.left / scaleX);
+						vbTop = oy + (bounds.top / scaleY);
+						vbWidth = (bounds.right - bounds.left) / scaleX;
+						vbHeight = (bounds.bottom - bounds.top) / scaleY;
+					}
+				}
+			}
+
+			wchar_t newVb[128];
+			swprintf_s(newVb, L"%g %g %g %g", vbLeft, vbTop, vbWidth, vbHeight);
+			root->SetAttributeValue(L"viewBox", D2D1_SVG_ATTRIBUTE_STRING_TYPE_SVG, newVb);
+		}
+	}
+
+	ComPtr<IStream> outStream;
+	hr = CreateStreamOnHGlobal(NULL, TRUE, &outStream);
+	if (FAILED(hr))
+		return svg;
+
+	hr = svgDoc->Serialize(outStream.Get());
+	if (FAILED(hr))
+		return svg;
+
+	STATSTG stat{};
+	outStream->Stat(&stat, STATFLAG_NONAME);
+	ULONG outSize = static_cast<ULONG>(stat.cbSize.QuadPart);
+	if (outSize == 0)
+		return svg;
+
+	LARGE_INTEGER seekPos{};
+	seekPos.QuadPart = 0;
+	outStream->Seek(seekPos, STREAM_SEEK_SET, nullptr);
+
+	std::string resultUtf8(outSize, '\0');
+	ULONG bytesRead = 0;
+	outStream->Read(&resultUtf8[0], outSize, &bytesRead);
+	resultUtf8.resize(bytesRead);
+
+	int wcount = MultiByteToWideChar(CP_UTF8, 0, resultUtf8.c_str(), static_cast<int>(resultUtf8.length()), NULL, 0);
+	if (wcount > 0)
+	{
+		std::wstring resultW(wcount, L'\0');
+		MultiByteToWideChar(CP_UTF8, 0, resultUtf8.c_str(), static_cast<int>(resultUtf8.length()), &resultW[0], wcount);
+		return ref new Platform::String(resultW.c_str());
+	}
+
+	return svg;
+}
+

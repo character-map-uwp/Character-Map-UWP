@@ -1,6 +1,5 @@
 using System.IO;
 using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Svg;
 using Microsoft.Graphics.Canvas.Text;
 using System.Globalization;
 using Windows.ApplicationModel;
@@ -152,13 +151,13 @@ public static class Utils
         
         if (msg.DataType == CopyDataType.SVG)
         {
-            ExportOptions ops = new(ExportFormat.Svg, msg.Style) { Options = renderOpts };
+            ExportOptions ops = new(ExportFormat.Svg, msg.Style) { PreferredColorType = msg.PreferredColorType, Options = renderOpts };
             var svg = ExportManager.GetSVG(ops, msg.RequestedItem);
             return await TryCopyToClipboardInternalAsync(svg, c, viewModel, msg.DataType);
         }
         else if (msg.DataType == CopyDataType.PNG)
         {
-            ExportOptions ops = new(ExportFormat.Png, msg.Style) { Options = renderOpts };
+            ExportOptions ops = new(ExportFormat.Png, msg.Style) { PreferredColorType = msg.PreferredColorType, Options = renderOpts };
             IRandomAccessStream data = await ExportManager.GetGlyphPNGStreamAsync(ops, msg.RequestedItem);
             return await TryCopyToClipboardInternalAsync(null, c, viewModel, msg.DataType, data);
         }
@@ -556,34 +555,25 @@ public static class Utils
         };
     }
 
-    public static CanvasSvgDocument GenerateSvgDocument(
-        ICanvasResourceCreator device,
+    public static string GenerateSvgString(
         Rect rect,
         string path,
         Color color)
     {
-        return GenerateSvgDocument(device, rect, [path], [color]);
+        return GenerateSvgString(rect, [path], [color]);
     }
 
     /// <summary>
-    /// Generates an SVG document for multi-layered glyphs, where each layer has separate colours.
+    /// Generates an SVG string for multi-layered glyphs, where each layer has separate colours.
     /// COLR glyphs are an example of this.
     /// </summary>
-    /// <param name="device"></param>
-    /// <param name="rect">Bounding rectangle of all glyphs</param>
-    /// <param name="paths">Geometry of each layer</param>
-    /// <param name="colors">Colour of each layer</param>
-    /// <param name="invertBounds"></param>
-    /// <returns></returns>
-    public static CanvasSvgDocument GenerateSvgDocument(
-        ICanvasResourceCreator device,
+    public static string GenerateSvgString(
         Rect rect,
         IList<string> paths,
-        IList<Color> colors,
-        bool invertBounds = true)
+        IList<Color> colors)
     {
-        var right = Math.Ceiling(rect.Width);
-        var bottom = Math.Ceiling(rect.Height);
+        double right = Math.Ceiling(rect.Width);
+        double bottom = Math.Ceiling(rect.Height);
         StringBuilder sb = BuilderPool.Request();
 
         try
@@ -593,38 +583,32 @@ public static class Utils
                 "<svg width=\"100%\" height=\"100%\" viewBox=\"{2} {3} {0} {1}\" xmlns=\"http://www.w3.org/2000/svg\">",
                 right,
                 bottom,
-                invertBounds ? -Math.Floor(rect.Left) : Math.Floor(rect.Left),
-                invertBounds ? -Math.Floor(rect.Top) : Math.Floor(rect.Top));
+                Math.Floor(rect.Left),
+                Math.Floor(rect.Top));
 
-            foreach (var path in paths)
+            for (int i = 0; i < paths.Count; i++)
             {
-                string p = path;
-                if (path.StartsWith("F1 "))
-                    p = path.Remove(0, 3);
+                string p = paths[i];
+                if (p.StartsWith("F1 "))
+                    p = p.Remove(0, 3);
 
                 if (string.IsNullOrWhiteSpace(p))
                     continue;
 
+                Color c = (colors != null && i < colors.Count) ? colors[i] : Colors.Black;
                 sb.AppendFormat("<path d=\"{0}\" style=\"fill: {1}; fill-opacity: {2}\" />",
                     p,
-                    colors[paths.IndexOf(path)].AsHex(),
-                    (double)colors[paths.IndexOf(path)].A / 255d);
+                    c.AsHex(),
+                    (double)c.A / 255d);
             }
             sb.Append("</svg>");
-
-            CanvasSvgDocument doc = CanvasSvgDocument.LoadFromXml(device, sb.ToString());
-            return doc;
+            return sb.ToString();
         }
         finally
         {
             sb.Clear();
             BuilderPool.Return(sb);
         }
-    }
-
-    public static Task WriteSvgAsync(CanvasSvgDocument document, IStorageFile file)
-    {
-        return WriteSvgAsync(document.GetXml(), file);
     }
 
     public static Task WriteSvgAsync(string xml, IStorageFile file)

@@ -275,6 +275,7 @@
     <ClInclude Include="FontGlyphs.h" />
     <ClInclude Include="FontPalette.h" />
     <ClInclude Include="GlyphImageFormat.h" />
+    <ClInclude Include="GlyphOutline.h" />
     <ClInclude Include="GridViewHelper.h" />
     <ClInclude Include="GsubTableReader.h" />
     <ClInclude Include="ITypographyInfo.h" />
@@ -295,6 +296,7 @@
     <ClInclude Include="TableReader.h" />
     <ClInclude Include="WinStringBuilder.h" />
     <ClInclude Include="WinStringWrapper.h" />
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CanvasTextLayoutAnalysis.cpp" />

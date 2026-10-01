@@ -3,6 +3,7 @@
 #include <d3d11_4.h>
 #include <d2d1_3.h>
 #include <dwrite_3.h>
+#include <wincodec.h>
 #include <wrl.h>
 #include <mutex>
 #include <map>
@@ -53,9 +54,17 @@ namespace CharacterMapCX
         static std::mutex& GetRenderMutex();
         static void HandleDeviceLost();
         static void ClearAtlases(Windows::UI::Composition::Compositor^ compositor);
+        static Microsoft::WRL::ComPtr<IWICImagingFactory2> GetWICFactory();
+        static void DrawGlyphRunWithColorSupport(
+            ID2D1DeviceContext* context,
+            IDWriteFactory* dwriteFactory,
+            D2D1_POINT_2F baselineOrigin,
+            const DWRITE_GLYPH_RUN* glyphRun,
+            ID2D1Brush* defaultBrush,
+            GlyphImageFormat preferredFormat);
         static bool RenderGlyphToSurface(
             Windows::UI::Composition::CompositionDrawingSurface^ surface,
-            bool isColor,
+            GlyphImageFormat preferredFormat,
             float padLeft, float padTop, float baseline,
             IDWriteFontFace* rawFace,
             FLOAT fontSize,
@@ -74,6 +83,7 @@ namespace CharacterMapCX
         static Microsoft::WRL::ComPtr<ID2D1Device> s_d2dDevice;
         static Microsoft::WRL::ComPtr<ID2D1Factory5> s_d2dFactory;
         static Microsoft::WRL::ComPtr<IDWriteFactory7> s_dwriteFactory;
+        static Microsoft::WRL::ComPtr<IWICImagingFactory2> s_wicFactory;
         static std::map<IUnknown*, Windows::UI::Composition::CompositionGraphicsDevice^> s_graphicsDevices;
         static std::map<std::pair<IUnknown*, UINT32>, Windows::UI::Composition::CompositionColorBrush^> s_colorBrushes;
     };
