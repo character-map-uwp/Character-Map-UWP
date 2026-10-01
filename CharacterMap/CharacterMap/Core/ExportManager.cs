@@ -99,6 +99,32 @@ public static partial class ExportManager
             && options.Analysis.HasColorGlyphs
             && !options.Analysis.GlyphFormats.Has(GlyphImageFormat.Svg))
         {
+            // COLRv1: use the native paint-reader → SVG path (richer: gradients, composites, etc.)
+            if (options.Analysis.SupportsColrV1)
+            {
+                int glyphIdx = selectedChar is GlyphCharacter gc2
+                    ? gc2.GlyphIndex
+                    : options.Variant.FontFace.GetGlyphIndices([selectedChar.UnicodeIndex])?[0] ?? 0;
+
+                if (glyphIdx > 0)
+                {
+                    try
+                    {
+                        string colrV1Svg = DirectWrite.GetColrV1Svg(
+                            options.Variant.Face,
+                            (ushort)glyphIdx,
+                            e.PreferredColor);
+                        if (!string.IsNullOrWhiteSpace(colrV1Svg))
+                            return colrV1Svg;
+                    }
+                    catch (Exception ex)
+                    {
+                        Utils.AppendDiagnostics($"ExportManager GetColrV1Svg ({e.Font.Name})", ex);
+                    }
+                }
+            }
+
+            // COLRv0: multi-layer coloured paths from the existing analysis
             NativeInterop interop = Utils.GetInterop();
             List<string> paths = new();
             Rect bounds = Rect.Empty;

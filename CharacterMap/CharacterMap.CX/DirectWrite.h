@@ -52,6 +52,12 @@ namespace CharacterMapCX
 		static IRandomAccessStream^ GetColorGlyphPNGStream(DWriteFontFace^ fontFace, UINT16 glyphIndex, float size, Windows::UI::Color defaultColor);
 
 		/// <summary>
+		/// Converts a COLRv1 glyph paint tree into a self-contained SVG document string.
+		/// Returns nullptr if the font or glyph does not support COLRv1.
+		/// </summary>
+		static Platform::String^ GetColrV1Svg(DWriteFontFace^ fontFace, UINT16 glyphIndex, Windows::UI::Color defaultColor);
+
+		/// <summary>
 		/// Verifies if a font file actually contains a font(s) usable by the system.
 		/// StorageFile needs to be in apps local storage due to permission restrictions.
 		/// </summary>

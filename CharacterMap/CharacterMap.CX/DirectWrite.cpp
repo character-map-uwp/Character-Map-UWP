@@ -3,6 +3,7 @@
 #include "CanvasTextLayoutAnalysis.h"
 #include "GsubTableReader.h"
 #include "CompositionDeviceManager.h"
+#include "ColrV1Svg.h"
 
 
 #include "DWriteNamedFontAxisValue.h"
@@ -1095,4 +1096,9 @@ IRandomAccessStream^ DirectWrite::GetColorGlyphPNGStream(DWriteFontFace^ fontFac
 
 	memStream->Seek(0);
 	return memStream;
+}
+
+Platform::String^ DirectWrite::GetColrV1Svg(DWriteFontFace^ fontFace, UINT16 glyphIndex, Windows::UI::Color defaultColor)
+{
+	return ColrV1Svg::GetSvg(fontFace, glyphIndex, defaultColor);
 }

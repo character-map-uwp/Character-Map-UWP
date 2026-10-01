@@ -250,6 +250,7 @@
     <ClInclude Include="CmapTableReader.h" />
     <ClInclude Include="ColorTextAnalyzer.h" />
     <ClInclude Include="ColrTableReader.h" />
+    <ClInclude Include="ColrV1Svg.h" />
     <ClInclude Include="CpalTableReader.h" />
     <ClInclude Include="CustomFontManager.h" />
     <ClInclude Include="CompositionDeviceManager.h" />
@@ -298,6 +299,7 @@
   <ItemGroup>
     <ClCompile Include="CanvasTextLayoutAnalysis.cpp" />
     <ClCompile Include="ColorTextAnalyzer.cpp" />
+    <ClCompile Include="ColrV1Svg.cpp" />
     <ClCompile Include="CompositionDeviceManager.cpp" />
     <ClCompile Include="CustomFontManager.cpp" />
     <ClCompile Include="DirectText.cpp" />

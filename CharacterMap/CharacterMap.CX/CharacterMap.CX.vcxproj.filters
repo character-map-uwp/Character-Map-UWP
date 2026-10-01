@@ -19,6 +19,7 @@
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="ColorTextAnalyzer.cpp" />
     <ClCompile Include="CanvasTextLayoutAnalysis.cpp" />
+    <ClCompile Include="ColrV1Svg.cpp" />
     <ClCompile Include="DirectWrite.cpp" />
     <ClCompile Include="DirectText.cpp">
       <Filter>Controls</Filter>
@@ -40,6 +41,7 @@
       <Filter>Controls</Filter>
     </ClInclude>
     <ClInclude Include="ColorTextAnalyzer.h" />
+    <ClInclude Include="ColrV1Svg.h" />
     <ClInclude Include="GlyphImageFormat.h" />
     <ClInclude Include="CanvasTextLayoutAnalysis.h" />
     <ClInclude Include="SVGGeometrySink.h" />
