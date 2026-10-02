@@ -46,13 +46,25 @@ public record LigatureComponent(uint GlyphIndex, string Character, uint? Unicode
 public record LigatureModel(uint LigatureGlyph, IReadOnlyList<LigatureComponent> Components, CanvasTypographyFeatureName Feature, string Name = null)
 {
     // PROPERTIES
-    public string CombinedString => field ??= string.Join(string.Empty, Components.Select(c => c.Character));
+    public string CombinedString => field ??= NormalizeEmojiSequence(string.Join(string.Empty, Components.Select(c => c.Character)));
     
     // ON-DEMAND PROPERTIES
     public bool ContainsZwj => Components.Any(c => c.IsZWJ);
     public string GlyphName => !string.IsNullOrWhiteSpace(Name) ? Name : $"#{LigatureGlyph}";
     public string ComponentMakeupString => string.Join(" + ", Components.Select(c => c.DisplayText));
     public string ClipboardText => !string.IsNullOrEmpty(CombinedString) ? CombinedString : $"#{LigatureGlyph}";
+
+    private static string NormalizeEmojiSequence(string s)
+    {
+        if (string.IsNullOrEmpty(s))
+            return s;
+        // Ensure gender and object symbols in ZWJ sequences have Variation Selector-16 (U+FE0F)
+        // so plain-text shapers (like Notepad) render them as emoji rather than text glyphs.
+        return System.Text.RegularExpressions.Regex.Replace(
+            s,
+            @"\u200D([\u2640\u2642\u2695\u2696\u2708])(?!\uFE0F)",
+            "\u200D$1\uFE0F");
+    }
 }
 
 [DebuggerDisplay("LigatureGroup {Title}")]

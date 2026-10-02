@@ -741,7 +741,10 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         else if (MapDisplayStates.CurrentState == LigatureMapState
             && LigaturesRepeater.SelectedItem is LigatureModel ligature)
         {
-            if (await Utils.TryCopyToClipboardInternalAsync(ligature.ClipboardText, ligature.ClipboardText, ViewModel))
+            if (await Utils.TryCopyToClipboardInternalAsync(
+                ligature.ClipboardText, 
+                Utils.ToRtfEscaped(ligature.ClipboardText), 
+                ViewModel))
             {
                 BorderFadeInStoryboard.Begin();
                 TxtCopiedVariantMessage.SetVisible(false);

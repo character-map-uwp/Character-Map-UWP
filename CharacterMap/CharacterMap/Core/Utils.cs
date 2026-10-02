@@ -186,6 +186,23 @@ public static class Utils
                 ?? variants[0];
     }
 
+    public static string ToRtfEscaped(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+            return string.Empty;
+        StringBuilder sb = new();
+        foreach (char ch in text)
+        {
+            if (ch is '\\' or '{' or '}')
+                sb.Append('\\').Append(ch);
+            else if (ch <= 0x7F)
+                sb.Append(ch);
+            else
+                sb.Append(@$"\u{(short)ch}?");
+        }
+        return sb.ToString();
+    }
+
     public static async Task<bool> TryCopyToClipboardInternalAsync(string rawString, string formattedString, FontMapViewModel viewModel, CopyDataType type = CopyDataType.Text, IRandomAccessStream data = null)
     {
         if (viewModel is null)
