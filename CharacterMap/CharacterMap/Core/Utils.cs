@@ -130,7 +130,7 @@ public static class Utils
         return new UISettings().GetColorValue(UIColorType.Accent);
     }
 
-    public static void CopyToClipBoard(string str)
+    public static void CopyToClipboard(string str)
     {
         DataPackage dp = new() { RequestedOperation = DataPackageOperation.Copy };
         dp.SetText(str);

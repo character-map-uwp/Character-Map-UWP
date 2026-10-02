@@ -375,8 +375,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                         TryCopy(CopyDataType.SVG);
                     break;
                 case VirtualKey.C:
-                    if (MapDisplayStates.CurrentState == CharacterMapState)
-                        TryCopy();
+                    TryCopy();
                     break;
                 case VirtualKey.G:
                     if (MapDisplayStates.CurrentState == CharacterMapState)
@@ -717,7 +716,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         Character charToCopy = null;
         bool isVariantCopied = false;
 
-        if (CharGrid.SelectedItem is Character character)
+        if (MapDisplayStates.CurrentState == CharacterMapState && CharGrid.SelectedItem is Character character)
         {
             charToCopy = character;
 
@@ -732,11 +731,22 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 isVariantCopied = true;
             }
         }
-        else if (GlyphRepeater.SelectedItem is uint glyphIndex
+        else if (MapDisplayStates.CurrentState == GlyphMapState 
+            && GlyphRepeater.SelectedItem is uint glyphIndex
             && ViewModel.SelectedFace is not null
             && ViewModel.SelectedFace.TryGetCharacterForGlyph((int)glyphIndex, out Character mapped))
         {
             charToCopy = mapped;
+        }
+        else if (MapDisplayStates.CurrentState == LigatureMapState
+            && LigaturesRepeater.SelectedItem is LigatureModel ligature)
+        {
+            if (await Utils.TryCopyToClipboardInternalAsync(ligature.ClipboardText, ligature.ClipboardText, ViewModel))
+            {
+                BorderFadeInStoryboard.Begin();
+                TxtCopiedVariantMessage.SetVisible(false);
+                return;
+            }
         }
 
         if (charToCopy is null)
@@ -779,7 +789,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     {
         if (sender is FrameworkElement { DataContext: DevOption o, Tag: string s })
         {
-            Utils.CopyToClipBoard(s.Trim());
+            Utils.CopyToClipboard(s.Trim());
             BorderFadeInStoryboard.Begin();
             if (!o.SupportsTypography)
                 TxtCopiedVariantMessage.SetVisible(PreviewTypographySelector.SelectedItem as TypographyFeatureInfo != TypographyFeatureInfo.None);

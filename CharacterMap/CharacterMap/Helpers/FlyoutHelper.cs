@@ -1,5 +1,6 @@
 using CharacterMap.Controls;
 using CharacterMap.Views;
+using System.Linq;
 using System.Reflection;
 using Windows.System;
 using Windows.UI.Core;
@@ -8,6 +9,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using static CharacterMap.Helpers.FlyoutHelper;
 
 namespace CharacterMap.Helpers;
@@ -54,27 +56,60 @@ public class FlyoutArgs
     public object Header { get; set; }
 }
 
+public record class FlyoutContextArg
+{
+    public Character Character { get; set; }
+    public LigatureModel Ligature { get; set; }
+    public ExportStyle ExportStyle { get; set; }
+    public FontMapView ParentView { get; set; }
+    public CopyDataType CopyType { get; set; }
+    public CanvasTextLayoutAnalysis Analysis { get; set; }
+    public GlyphImageFormat PreferredExportType { get; set; } = GlyphImageFormat.None;
+}
+
+public class MenuItemHost
+{
+    public object Host => (object)_flyout ?? _subFlyout;
+    public bool IsSubItem => _subFlyout is not null;
+    public IList<MenuFlyoutItemBase> Items => _flyout?.Items ?? _subFlyout.Items;
+
+    private MenuFlyout _flyout;
+    private MenuFlyoutSubItem _subFlyout;
+
+
+    public MenuItemHost(MenuFlyout flyout) => _flyout = flyout;
+
+    public MenuItemHost(MenuFlyoutSubItem flyout) => _subFlyout = flyout;
+}
+
 public class MenuFlyoutFactory
 {
-    public readonly MenuFlyout Menu;
+    public readonly MenuItemHost Menu;
     private readonly FlyoutArgs _args;
 
     public MenuFlyoutFactory(FlyoutArgs args)
     {
-        Menu = new()
+        MenuFlyout menu = new ()
         {
             AreOpenCloseAnimationsEnabled = ResourceHelper.AllowAnimation
         };
 
         if (ResourceHelper.Get<Style>("DefaultFlyoutStyle") is Style defaultFlyoutStyle)
-            Menu.MenuFlyoutPresenterStyle = defaultFlyoutStyle;
+            menu.MenuFlyoutPresenterStyle = defaultFlyoutStyle;
 
+        Menu = new(menu);
         _args = args;
     }
 
     public MenuFlyoutFactory(MenuFlyout menu, FlyoutArgs args)
     {
-        Menu = menu;
+        Menu = new(menu);
+        _args = args;
+    }
+
+    public MenuFlyoutFactory(MenuFlyoutSubItem menu, FlyoutArgs args)
+    {
+        Menu = new(menu);
         _args = args;
     }
 
@@ -97,7 +132,7 @@ public class MenuFlyoutFactory
         return this;
     }
 
-    public MenuFlyoutFactory AddHeader(string key, string acceleratorText, IList<MenuFlyoutItemBase> parent = null)
+    public MenuFlyoutFactory AddHeader(string key, string acceleratorText, MenuItemHost parent = null)
     {
         MenuFlyoutItem item = new ()
         {
@@ -109,7 +144,7 @@ public class MenuFlyoutFactory
         if (parent is null)
             Menu.Items.Add(item);
         else
-            parent.Add(item);
+            parent.Items.Add(item);
 
         return this;
     }
@@ -145,7 +180,7 @@ public class MenuFlyoutFactory
     public MenuFlyoutItem Create(string key, object arg, ThemeIcon icon, RoutedEventHandler handler, CreateArgs args = null)
         => Create($"~{Localization.Get(key, arg)}", icon, handler, args);
 
-    public MenuFlyoutItem Create(string key, ThemeIcon icon, RoutedEventHandler handler, CreateArgs args = null, MenuFlyoutSubItem parent = null)
+    public MenuFlyoutItem Create(string key, ThemeIcon icon, RoutedEventHandler handler, CreateArgs args = null, MenuItemHost parent = null)
     {
         args ??= CreateArgs.Default;
         MenuFlyoutItem item = new()
@@ -176,7 +211,7 @@ public class MenuFlyoutFactory
         return item.SetAnimation();
     }
 
-    public MenuFlyoutSubItem CreateSubItem(ThemeIcon icon, string key, object arg = null, bool add = true, IList<MenuFlyoutItemBase> parent = null)
+    public MenuFlyoutFactory CreateSubItem(ThemeIcon icon, string key, object arg = null, int insertIndex = -1)
     {
         MenuFlyoutSubItem item = new()
         {
@@ -185,19 +220,21 @@ public class MenuFlyoutFactory
             Style = DefaultSubItemStyle
         };
 
-        if (add)
-        {
-            if (parent is null)
-                Menu.Items.Add(item);
-            else
-                parent.Add(item);
-        }
-        return item;
+        if (insertIndex == -1)
+            Menu.Items.Add(item);
+        else if (insertIndex >= 0 && insertIndex < Menu.Items.Count)
+            Menu.Items.Insert(insertIndex, item);
+
+        return new MenuFlyoutFactory(item, _args);
     }
 
+    public MenuFlyoutFactory AddColorOptions(CanvasTextLayoutAnalysis analysis, bool isCopy, FlyoutContextArg arg)
+    {
+        AddColorOptions(Menu, analysis, isCopy, arg);
+        return this;
+    }
 
-
-    public void AddColorOptions(MenuFlyoutSubItem parent, CanvasTextLayoutAnalysis analysis, bool isCopy, FlyoutContextArg arg)
+    public void AddColorOptions(MenuItemHost parent, CanvasTextLayoutAnalysis analysis, bool isCopy, FlyoutContextArg arg)
     {
         static void RequestCopy(object s, RoutedEventArgs e)
         {
@@ -219,7 +256,6 @@ public class MenuFlyoutFactory
         }
 
         RoutedEventHandler handler = isCopy ? RequestCopy : SaveHandler;
-
         FlyoutContextArg W(ExportStyle style) => arg with { ExportStyle = style };
         bool svgChar = analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
 
@@ -256,9 +292,9 @@ public class MenuFlyoutFactory
 
     public bool Show(UIElement target, ContextRequestedEventArgs args)
     {
-        if (args.TryGetPosition(target, out Point p))
+        if (Menu.Host is MenuFlyout menu && args.TryGetPosition(target, out Point p))
         {
-            Menu.ShowAt(target, p);
+            menu.ShowAt(target, p);
             args.Handled = true;
             return true;
         }
@@ -267,9 +303,14 @@ public class MenuFlyoutFactory
 
     public static void CopyHandler(object s, RoutedEventArgs e)
     {
-        if (s is FrameworkElement f && f.Tag is LigatureModel lig && Properties.GetTag(f) is FontMapView view)
+        if (s is FrameworkElement f && Properties.GetTag(f) is FontMapView view)
         {
-            Utils.CopyToClipBoard(lig.CombinedString);
+            if (f.Tag is LigatureModel lig)
+                Utils.CopyToClipboard(lig.CombinedString);
+            else if (f.Tag is FlyoutContextArg arg)
+                Utils.CopyToClipboard(arg.Character.GetClipboardString());
+            else return;
+
             view.GetNotifier().Show(Localization.Get("NotificationCopied"), 2000);
         }
     }
@@ -286,13 +327,10 @@ public class MenuFlyoutFactory
         public string AcceleratorText { get; init; }
         public Style Style { get; init; }
 
-
         public CreateArgs() { }
         public CreateArgs(VirtualKey key) { AcceleratorKey = key; }
     }
 }
-
-
 
 public static class FlyoutHelper
 {
@@ -566,7 +604,7 @@ public static class FlyoutHelper
             MenuFlyoutItem removeItem = new()
             {
                 Text = Localization.Get("RemoveFromCollectionItem/Text"),
-                Icon = Icon(ThemeIcon.Remove),
+                Icon = ThemeIconGlyph.CreateIcon(ThemeIcon.Remove),
                 Tag = collection == null && filter == BasicFontFilter.SymbolFonts ? _collections.SymbolCollection : collection,
                 DataContext = font,
                 Style = style
@@ -588,13 +626,6 @@ public static class FlyoutHelper
                 }
             }
         }
-    }
-
-    internal static FontIcon Icon(ThemeIcon icon)
-    {
-        FontIcon f = new();
-        Properties.SetThemeIcon(f, icon);
-        return f;
     }
 
     /// <summary>
@@ -643,7 +674,7 @@ public static class FlyoutHelper
         MenuFlyoutSubItem parent = new()
         {
             Text = Localization.Get(key ?? "AddToCollectionFlyout/Text"),
-            Icon = Icon(ThemeIcon.Collections),
+            Icon = ThemeIconGlyph.CreateIcon(ThemeIcon.Collections),
             Style = substyle
         };
 
@@ -651,7 +682,7 @@ public static class FlyoutHelper
         MenuFlyoutItem newCollection = new()
         {
             Text = Localization.Get("NewCollectionItem/Text"),
-            Icon = Icon(ThemeIcon.Add),
+            Icon = ThemeIconGlyph.CreateIcon(ThemeIcon.Add),
             Style = style
         };
 
@@ -747,11 +778,6 @@ public static class FlyoutHelper
 
         if (context is Character c)
         {
-            
-
-            Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
-            Style subStyle = ResourceHelper.Get<Style>("ThemeMenuFlyoutSubItemStyle");
-
             // 1. Attach the flyout to the selected grid item and apply the correct context
             FlyoutBase.SetAttachedFlyout(target, menu);
 
@@ -763,22 +789,28 @@ public static class FlyoutHelper
             MenuFlyoutFactory factory = new(menu, new FlyoutArgs { Standalone = isStandalone });
             FlyoutContextArg arg = new() { ParentView = view, Character = c, Analysis = analysis };
 
+            MenuFlyoutItemBase rTarget = c is GlyphCharacter ? 
+                menu.Items.OfType<MenuFlyoutSeparator>().First() : 
+                menu.Items.OfType<MenuFlyoutItem>().First<MenuFlyoutItem>(i => i.Name == "AddSelectionButton");
+
             // 3. Handle copy options
             // 3.1. Remove existing
-            while (menu.Items[0] is not MenuFlyoutSeparator)
+            while (menu.Items[0] != rTarget)
                 menu.Items.RemoveAt(0);
 
             menu.Items.Insert(0, factory.Create("BtnCopy/Text", ThemeIcon.Copy, MenuFlyoutFactory.CopyHandler, new() { Tag = arg, Add = false }));
 
             // 3.2. Use the factory to rebuild the menu
-            MenuFlyoutSubItem copyAsImage = factory.CreateSubItem(ThemeIcon.Copy, "CopyAsImageItem/Text", add: false);
-            menu.Items.Insert(1, copyAsImage);
-            factory.AddHeader("CopyAsPngItem/Text", "Ctrl+Alt+C", copyAsImage.Items);
-            factory.AddColorOptions(copyAsImage, analysis, true, arg with { CopyType = CopyDataType.PNG });
+            var copyAsImage = factory
+                .CreateSubItem(ThemeIcon.Copy, "CopyAsImageItem/Text", insertIndex: 1)
+                .AddHeader("CopyAsPngItem/Text", "Ctrl+Alt+C")
+                .AddColorOptions(analysis, true, arg with { CopyType = CopyDataType.PNG });
+
             if (analysis.IsFullVectorBased)
             {
-                factory.AddHeader("CopyAsSvgItem/Text", "Ctrl+Shift+C", copyAsImage.Items);
-                factory.AddColorOptions(copyAsImage, analysis, true, arg with { CopyType = CopyDataType.SVG });
+                copyAsImage
+                    .AddHeader("CopyAsSvgItem/Text", "Ctrl+Shift+C")
+                    .AddColorOptions(analysis, true, arg with { CopyType = CopyDataType.SVG });
             }
 
             //// 3. Handle PNG options
@@ -842,7 +874,7 @@ public static class FlyoutHelper
                     if (sender is MenuFlyoutItem item
                         && Properties.GetDevOption(item) is DevOption option)
                     {
-                        Utils.CopyToClipBoard(option.Value);
+                        Utils.CopyToClipboard(option.Value);
                         WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
                     }
                 }
@@ -861,7 +893,7 @@ public static class FlyoutHelper
                         MenuFlyoutSubItem item = new() { Text = p.DisplayName };
                         foreach (var o in p.GetAllOptions())
                         {
-                            MenuFlyoutItem i = new() { Text = Localization.Get("ContextMenuDevCopyCommand", o.Name), Style = style };
+                            MenuFlyoutItem i = new() { Text = Localization.Get("ContextMenuDevCopyCommand", o.Name), Style = factory.DefaultItemStyle };
                             i.Click += CopyItemClick;
                             Properties.SetDevOption(i, o);
                             item.Items.Add(i);
@@ -906,7 +938,7 @@ public static class FlyoutHelper
             Child<MenuFlyoutItem>("CopyItem")?.SetVisible(canCopyText);
 
             // 7. Set item context
-            menu.SetItemsDataContext(context, subStyle);
+            menu.SetItemsDataContext(context, factory.DefaultSubItemStyle);
 
             // 7. Show complete flyout
             FlyoutBase.ShowAttachedFlyout(target);
@@ -957,84 +989,74 @@ public static class FlyoutHelper
         return flyout;
     }
 
-    public static string GetGlyphFormatLabel(FaceAnalysisModel model, Character c)
-    {
-        if (model == null || c == null)
-            return string.Empty;
+    //public static string GetGlyphFormatLabel(FaceAnalysisModel model, Character c)
+    //{
+    //    if (model == null || c == null)
+    //        return string.Empty;
 
-        List<string> formats = [];
+    //    List<string> formats = [];
 
-        try
-        {
-            ushort glyphIndex = c is GlyphCharacter gc
-                ? gc.GlyphIndex
-                : (ushort)model.Face.GetGlyphIndex(c);
+    //    try
+    //    {
+    //        ushort glyphIndex = c is GlyphCharacter gc
+    //            ? gc.GlyphIndex
+    //            : (ushort)model.Face.GetGlyphIndex(c);
 
-            if (model.Face != null
-                && Utils.GetInterop().AnalyzeGlyphLayout(model.Face.Face, glyphIndex) is { } analysis
-                && analysis.GlyphFormats != null
-                && analysis.GlyphFormats.Count > 0)
-            {
-                foreach (var fmt in analysis.GlyphFormats)
-                {
-                    switch (fmt)
-                    {
-                        case GlyphImageFormat.Svg:
-                            if (!formats.Contains("SVG")) formats.Add("SVG");
-                            break;
-                        case GlyphImageFormat.Colr:
-                            FontAnalysis colrFa = model.Analysis;
-                            string colrVer = colrFa != null && colrFa.COLRVersion >= 1 ? "COLRv1" : "COLRv0";
-                            if (!formats.Contains(colrVer)) formats.Add(colrVer);
-                            break;
-                        case GlyphImageFormat.Png:
-                        case GlyphImageFormat.Jpeg:
-                        case GlyphImageFormat.Tiff:
-                        case GlyphImageFormat.PremultipliedB8G8R8A8:
-                            if (!formats.Contains("Bitmap")) formats.Add("Bitmap");
-                            break;
-                        case GlyphImageFormat.TrueType:
-                            if (!formats.Contains("TTF")) formats.Add("TTF");
-                            break;
-                        case GlyphImageFormat.Cff:
-                            if (!formats.Contains("CFF")) formats.Add("CFF");
-                            break;
-                    }
-                }
-            }
-        }
-        catch { }
+    //        if (model.Face != null
+    //            && Utils.GetInterop().AnalyzeGlyphLayout(model.Face.Face, glyphIndex) is { } analysis
+    //            && analysis.GlyphFormats != null
+    //            && analysis.GlyphFormats.Count > 0)
+    //        {
+    //            foreach (var fmt in analysis.GlyphFormats)
+    //            {
+    //                switch (fmt)
+    //                {
+    //                    case GlyphImageFormat.Svg:
+    //                        if (!formats.Contains("SVG")) formats.Add("SVG");
+    //                        break;
+    //                    case GlyphImageFormat.Colr:
+    //                        FontAnalysis colrFa = model.Analysis;
+    //                        string colrVer = colrFa != null && colrFa.COLRVersion >= 1 ? "COLRv1" : "COLRv0";
+    //                        if (!formats.Contains(colrVer)) formats.Add(colrVer);
+    //                        break;
+    //                    case GlyphImageFormat.Png:
+    //                    case GlyphImageFormat.Jpeg:
+    //                    case GlyphImageFormat.Tiff:
+    //                    case GlyphImageFormat.PremultipliedB8G8R8A8:
+    //                        if (!formats.Contains("Bitmap")) formats.Add("Bitmap");
+    //                        break;
+    //                    case GlyphImageFormat.TrueType:
+    //                        if (!formats.Contains("TTF")) formats.Add("TTF");
+    //                        break;
+    //                    case GlyphImageFormat.Cff:
+    //                        if (!formats.Contains("CFF")) formats.Add("CFF");
+    //                        break;
+    //                }
+    //            }
+    //        }
+    //    }
+    //    catch { }
 
-        if (formats.Count == 0 && model.Analysis is { } fa)
-        {
-            if (fa.HasCOLRGlyphs && fa.COLRVersion >= 1) formats.Add("COLRv1");
-            else if (fa.HasSVGGlyphs) formats.Add("SVG");
-            else if (fa.HasCOLRGlyphs) formats.Add("COLRv0");
-            else if (fa.HasBitmapGlyphs) formats.Add("Bitmap");
-            else formats.Add("TTF");
-        }
+    //    if (formats.Count == 0 && model.Analysis is { } fa)
+    //    {
+    //        if (fa.HasCOLRGlyphs && fa.COLRVersion >= 1) formats.Add("COLRv1");
+    //        else if (fa.HasSVGGlyphs) formats.Add("SVG");
+    //        else if (fa.HasCOLRGlyphs) formats.Add("COLRv0");
+    //        else if (fa.HasBitmapGlyphs) formats.Add("Bitmap");
+    //        else formats.Add("TTF");
+    //    }
 
-        // DirectWrite active rendering precedence: COLRv1 > SVG > COLRv0 > Bitmap > CFF > TTF
-        if (formats.Contains("COLRv1")) return "COLRv1";
-        if (formats.Contains("SVG")) return "SVG";
-        if (formats.Contains("COLRv0")) return "COLRv0";
-        if (formats.Contains("Bitmap")) return "Bitmap";
-        if (formats.Contains("CFF")) return "CFF";
-        if (formats.Contains("TTF")) return "TTF";
+    //    // DirectWrite active rendering precedence: COLRv1 > SVG > COLRv0 > Bitmap > CFF > TTF
+    //    if (formats.Contains("COLRv1")) return "COLRv1";
+    //    if (formats.Contains("SVG")) return "SVG";
+    //    if (formats.Contains("COLRv0")) return "COLRv0";
+    //    if (formats.Contains("Bitmap")) return "Bitmap";
+    //    if (formats.Contains("CFF")) return "CFF";
+    //    if (formats.Contains("TTF")) return "TTF";
 
-        return formats.Count > 0 ? string.Join(", ", formats) : string.Empty;
-    }
+    //    return formats.Count > 0 ? string.Join(", ", formats) : string.Empty;
+    //}
 
-    public record class FlyoutContextArg
-    {
-        public Character Character { get; set; }
-        public LigatureModel Ligature { get; set; }
-        public ExportStyle ExportStyle { get; set; }
-        public FontMapView ParentView { get; set; }
-        public CopyDataType CopyType { get; set; }
-        public CanvasTextLayoutAnalysis Analysis { get; set; }
-        public GlyphImageFormat PreferredExportType { get; set; } = GlyphImageFormat.None;
-    }
 
     public static void ShowLigatureFlyout(UIElement sender, ContextRequestedEventArgs args, FontMapView view)
     {
@@ -1042,28 +1064,11 @@ public static class FlyoutHelper
         {
             #region handlers
 
-            static void CopyHandler(object s, RoutedEventArgs e)
-            {
-                if (s is FrameworkElement f && Properties.GetTag(f) is FontMapView view)
-                {
-                    if (f.Tag is LigatureModel lig)
-                        Utils.CopyToClipBoard(lig.CombinedString);
-                    else if (f.Tag is FlyoutContextArg arg)
-                        Utils.CopyToClipBoard(arg.Character.Char);
-                    else return;
-                        
-                    view.GetNotifier().Show(Localization.Get("NotificationCopied"), 2000);
-                }
-            }
-
             static void NavigateToGlyphHandler(object s, RoutedEventArgs e)
             {
                 if (s is FrameworkElement f && f.Tag is LigatureModel lig && Properties.GetTag(f) is FontMapView view)
                     view.NavigateToGlyph((ushort)lig.LigatureGlyph);
             }
-
-
-            
 
             #endregion
 
@@ -1074,7 +1079,7 @@ public static class FlyoutHelper
 
             if (!string.IsNullOrEmpty(target.CombinedString))
             {
-                MenuFlyoutItem copyItem = factory.Create("CopySequenceMessage", target.CombinedString, ThemeIcon.Copy, CopyHandler);
+                factory.Create("CopySequenceMessage", target.CombinedString, ThemeIcon.Copy, MenuFlyoutFactory.CopyHandler);
                 factory.AddSeparator(out _);
             }
 
@@ -1086,23 +1091,26 @@ public static class FlyoutHelper
             CanvasTextLayoutAnalysis analysis = Utils.GetInterop().AnalyzeGlyphLayout(viewModel.SelectedFace.Face, gc.GlyphIndex);
             FlyoutContextArg arg = new() { ParentView = view, Character = gc, Ligature = target, Analysis = analysis };
 
-            MenuFlyoutSubItem copyAsImage = factory.CreateSubItem(ThemeIcon.Copy, "CopyAsImageItem/Text");
-            factory.AddHeader("CopyAsPngItem/Text", "Ctrl+Alt+C", copyAsImage.Items);
-            factory.AddColorOptions(copyAsImage, analysis, true, arg with { CopyType = CopyDataType.PNG });
+            var copyAsImage = factory
+                .CreateSubItem(ThemeIcon.Copy, "CopyAsImageItem/Text")
+                .AddHeader("CopyAsPngItem/Text", "Ctrl+Alt+C")
+                .AddColorOptions(analysis, true, arg with { CopyType = CopyDataType.PNG });
 
             if (analysis.IsFullVectorBased)
             {
-                factory.AddHeader("CopyAsSvgItem/Text", "Ctrl+Shift+C", copyAsImage.Items);
-                factory.AddColorOptions(copyAsImage, analysis, true, arg with { CopyType = CopyDataType.SVG });
+                copyAsImage
+                    .AddHeader("CopyAsSvgItem/Text", "Ctrl+Shift+C")
+                    .AddColorOptions(analysis, true, arg with { CopyType = CopyDataType.SVG });
             }
 
-            MenuFlyoutSubItem savePng = factory.CreateSubItem(ThemeIcon.Save, "ExportPNGLabel/Text");
-            factory.AddColorOptions(savePng, analysis, false, arg with { CopyType = CopyDataType.PNG });
+            var savePng = factory
+                .CreateSubItem(ThemeIcon.Save, "ExportPNGLabel/Text")
+                .AddColorOptions(analysis, false, arg with { CopyType = CopyDataType.PNG });
 
             if (analysis.IsFullVectorBased)
             {
-                MenuFlyoutSubItem saveSvg = factory.CreateSubItem(ThemeIcon.Save, "ExportSVGLabel/Text");
-                factory.AddColorOptions(saveSvg, analysis, false, arg with { CopyType = CopyDataType.SVG });
+                factory.CreateSubItem(ThemeIcon.Save, "ExportSVGLabel/Text")
+                       .AddColorOptions(analysis, false, arg with { CopyType = CopyDataType.SVG });
             }
 
             factory

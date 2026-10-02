@@ -30,7 +30,7 @@ public partial class Character : IEquatable<Character>
         };
     }
 
-    public string GetClipboardString()
+    public virtual string GetClipboardString()
     {
         // Check if SurrogatePair
         if (UnicodeIndex >= 0x010000 && UnicodeIndex <= 0x10FFFF)

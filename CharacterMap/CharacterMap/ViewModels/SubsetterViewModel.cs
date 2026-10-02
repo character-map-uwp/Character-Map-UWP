@@ -450,7 +450,7 @@ public partial class SubsetterViewModel : ViewModelBase
 
     public void UpdateCode() => _codeDebouncer.Debounce(33, UpdateCodeInternal);
 
-    public void CopyCode() => Utils.CopyToClipBoard(GeneratedCode);
+    public void CopyCode() => Utils.CopyToClipboard(GeneratedCode);
 
     partial void OnCodeTemplateChanged(CodeTemplateOption value) => UpdateCode();
 
