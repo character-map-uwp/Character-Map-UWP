@@ -1199,12 +1199,9 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             NavigateToGlyph(g.GlyphIndex);
     }
 
-    public async void NavigateToGlyph(ushort glyphIndex)
+    public void NavigateToGlyph(ushort glyphIndex)
     {
         ViewModel.DisplayMode = FontDisplayMode.GlyphMapState;
-
-        if (ViewModel.SelectedFaceAnalysis?.Glyphs is GlyphCollection coll)
-            await coll.EnsureLoadedUpToAsync(glyphIndex);
 
         this.Enqueue(() =>
         {

@@ -1605,7 +1605,7 @@
 
                     </ListViewBase.Header>
 
-                    <ItemsControl.ItemTemplate>
+                    <ListViewBase.ItemTemplate>
                         <DataTemplate x:DataType="sys:UInt32">
                             <!--  TODO : Use ContainerContent changing or ElementPrepared to set this?  -->
                             <Grid
@@ -1627,7 +1627,7 @@
                                 <TextBlock Style="{StaticResource CharItemUnicodeStyle}" Text="{x:Bind}" />
                             </Grid>
                         </DataTemplate>
-                    </ItemsControl.ItemTemplate>
+                    </ListViewBase.ItemTemplate>
                 </controls:ExtendedGridView>
             </Grid>
 
