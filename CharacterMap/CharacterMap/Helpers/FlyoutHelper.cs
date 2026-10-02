@@ -306,7 +306,7 @@ public class MenuFlyoutFactory
         if (s is FrameworkElement f && Properties.GetTag(f) is FontMapView view)
         {
             if (f.Tag is LigatureModel lig)
-                Utils.CopyToClipboard(lig.CombinedString);
+                Utils.CopyToClipboard(lig.ClipboardText);
             else if (f.Tag is FlyoutContextArg arg)
                 Utils.CopyToClipboard(arg.Character.GetClipboardString());
             else return;
@@ -1079,7 +1079,7 @@ public static class FlyoutHelper
 
             if (!string.IsNullOrEmpty(target.CombinedString))
             {
-                factory.Create("CopySequenceMessage", target.CombinedString, ThemeIcon.Copy, MenuFlyoutFactory.CopyHandler);
+                factory.Create("CopySequenceMessage", target.CombinedString, ThemeIcon.Copy, MenuFlyoutFactory.CopyHandler, new () { PropertyTag = target });
                 factory.AddSeparator(out _);
             }
 
