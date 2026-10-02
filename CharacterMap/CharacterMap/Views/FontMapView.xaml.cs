@@ -1,4 +1,5 @@
 using CharacterMap.Controls;
+using CharacterMapCX.Controls;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System.ComponentModel;
 using Windows.System;
@@ -1484,6 +1485,17 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     private void LigatureCard_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
     {
         FlyoutHelper.ShowLigatureFlyout(sender, args, this);
+    }
+
+    private void ToolTipFontGlyphsLoading(FrameworkElement sender, object args)
+    {
+        // ElementName binding to ListView doesn't work in ToolTip, so manually set the properties
+        if (sender is FontGlyphs g)
+        {
+            g.FontFace = ViewModel.SelectedFaceAnalysis?.Face.Face;
+            g.StyleSimulations = ViewModel.SelectedFaceAnalysis?.StyleSimulation ?? StyleSimulations.None;
+            g.IsColorFontEnabled = ViewModel.ShowColorGlyphs;
+        }
     }
 }
 

@@ -1826,59 +1826,6 @@
                 Grid.ColumnSpan="1"
                 Visibility="Collapsed">
                 <Grid.Resources>
-                    <Binding
-                        x:Key="FontFaceBinding"
-                        Path="(core:Properties.Footer)"
-                        Source="{x:Bind LigaturesRepeater}" />
-
-                    <Binding
-                        x:Key="FontUriBinding"
-                        Path="(core:Properties.FontUri)"
-                        Source="{x:Bind LigaturesRepeater}" />
-
-                    <Binding
-                        x:Key="StyleSimulationsBinding"
-                        Path="(core:Properties.Tag)"
-                        Source="{x:Bind LigaturesRepeater}" />
-
-
-                    <DataTemplate x:Key="GlyphComponentToolTipTemplate" x:DataType="models:LigatureComponent">
-                        <StackPanel Orientation="Vertical" Spacing="4">
-                            <controls:FontGlyph
-                                FontFace="{StaticResource FontFaceBinding}"
-                                FontSize="44"
-                                FontUri="{StaticResource FontUriBinding}"
-                                Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
-                                Indices="{Binding GlyphIndex}"
-                                IsColorFontEnabled="False"
-                                StyleSimulations="{StaticResource StyleSimulationsBinding}" />
-                            <TextBlock
-                                FontStretch="Normal"
-                                FontStyle="Normal"
-                                FontWeight="Normal"
-                                Text="{x:Bind Tooltip}" />
-                        </StackPanel>
-                    </DataTemplate>
-
-                    <DataTemplate x:Key="GlyphComponentItemTemplate" x:DataType="models:LigatureComponent">
-                        <Border
-                            Height="32"
-                            MinWidth="32"
-                            Padding="4 1"
-                            core:Properties.LazyToolTipTemplate="{StaticResource GlyphComponentToolTipTemplate}"
-                            Background="{ThemeResource ControlFillColorSecondaryBrush}"
-                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                            BorderThickness="1"
-                            CornerRadius="4">
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                FontSize="12"
-                                FontWeight="SemiBold"
-                                Text="{x:Bind DisplayText}" />
-                        </Border>
-                    </DataTemplate>
 
                     <CollectionViewSource
                         x:Key="LigaturesSource"
@@ -1907,6 +1854,45 @@
                     SelectionMode="Single"
                     StretchContainersForSingleRowEnabled="True"
                     Transform3D="{StaticResource Perspective}">
+
+                    <ListViewBase.Resources>
+                        <DataTemplate x:Key="GlyphComponentToolTipTemplate" x:DataType="models:LigatureComponent">
+                            <StackPanel Orientation="Vertical" Spacing="4">
+                                <cxc:FontGlyphs
+                                    FontSize="44"
+                                    Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                    Indices="{x:Bind GlyphIndex}"
+                                    Loading="ToolTipFontGlyphsLoading" />
+
+                                <TextBlock
+                                    FontStretch="Normal"
+                                    FontStyle="Normal"
+                                    FontWeight="Normal"
+                                    Text="{x:Bind Tooltip}" />
+                            </StackPanel>
+                        </DataTemplate>
+
+                        <DataTemplate x:Key="GlyphComponentItemTemplate" x:DataType="models:LigatureComponent">
+                            <Border
+                                Height="32"
+                                MinWidth="32"
+                                Padding="4 1"
+                                core:Properties.LazyToolTipTemplate="{StaticResource GlyphComponentToolTipTemplate}"
+                                Background="{ThemeResource ControlFillColorSecondaryBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="4">
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                    FontSize="12"
+                                    FontWeight="SemiBold"
+                                    Text="{x:Bind DisplayText}" />
+                            </Border>
+                        </DataTemplate>
+
+                    </ListViewBase.Resources>
 
                     <controls:ExtendedGridView.Header>
                         <StackPanel Padding="12 4 12 8" Spacing="4">
