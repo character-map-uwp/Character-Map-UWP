@@ -698,6 +698,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             Character c = ViewModel.SelectedFont?.DisplayMode == FontDisplayMode.CharacterMapState
                 ? ViewModel.SelectedChar.Char
                 : new GlyphCharacter((ushort)(GlyphRepeater.SelectedItem is uint i ? i : 0));
+
             if (ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFace).HasColorGlyphs
                 && ViewModel.ShowColorGlyphs)
                 style = ExportStyle.ColorGlyph;
@@ -706,7 +707,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                     new CopyToClipboardMessage(
                         DevValueType.Char,
                         c,
-                        ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFace), type)
+                        ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFace), ViewModel.SelectedFaceAnalysis, type)
                     { Style = style });
         }
         else
@@ -737,23 +738,17 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         }
         else if (MapDisplayStates.CurrentState == GlyphMapState 
             && GlyphRepeater.SelectedItem is uint glyphIndex
-            && ViewModel.SelectedFace is not null
-            && ViewModel.SelectedFace.TryGetCharacterForGlyph((int)glyphIndex, out Character mapped))
+            && ViewModel.SelectedFace is not null)
         {
-            charToCopy = mapped;
+            if (ViewModel.SelectedFace.TryGetCharacterForGlyph((int)glyphIndex, out Character mapped))
+                charToCopy = mapped;
+            else if (ViewModel.SelectedFaceAnalysis.TryGetLigature(glyphIndex, out LigatureModel ll))
+                CopyLigature(ll);
         }
         else if (MapDisplayStates.CurrentState == LigatureMapState
             && LigaturesRepeater.SelectedItem is LigatureModel ligature)
         {
-            if (await Utils.TryCopyToClipboardInternalAsync(
-                ligature.ClipboardText, 
-                Utils.ToRtfEscaped(ligature.ClipboardText), 
-                ViewModel))
-            {
-                BorderFadeInStoryboard.Begin();
-                TxtCopiedVariantMessage.SetVisible(false);
-                return;
-            }
+            CopyLigature(ligature);
         }
 
         if (charToCopy is null)
@@ -764,6 +759,21 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             BorderFadeInStoryboard.Begin();
             bool isVariantSelected = PreviewTypographySelector.SelectedItem is TypographyVariation { IsNone: false };
             TxtCopiedVariantMessage.SetVisible(isVariantSelected && !isVariantCopied);
+        }
+
+        /* Helper */
+
+        async void CopyLigature(LigatureModel l)
+        {
+            if (await Utils.TryCopyToClipboardInternalAsync(
+               l.ClipboardText,
+               Utils.ToRtfEscaped(l.ClipboardText),
+               ViewModel))
+            {
+                BorderFadeInStoryboard.Begin();
+                TxtCopiedVariantMessage.SetVisible(false);
+                return;
+            }
         }
     }
 
@@ -1042,7 +1052,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             {
                 _ = ViewModel.RequestCopyToClipboardAsync(
                     new CopyToClipboardMessage(
-                        DevValueType.Char, c, ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFace), CopyDataType.PNG)
+                        DevValueType.Char, c, ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFace), ViewModel.SelectedFaceAnalysis, CopyDataType.PNG)
                     { Style = style });
             }
         }
@@ -1066,21 +1076,12 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             {
                 _ = ViewModel.RequestCopyToClipboardAsync(
                     new CopyToClipboardMessage(
-                        DevValueType.Char, c, ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFace), CopyDataType.SVG)
+                        DevValueType.Char, c, ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFace), ViewModel.SelectedFaceAnalysis, CopyDataType.SVG)
                     { Style = style });
             }
         }
     }
 
-    private void CopyClick(object sender, RoutedEventArgs e)
-    {
-        /* Copy from Character Grid Context Menu */
-        if (sender is MenuFlyoutItem { DataContext: Character c, CommandParameter: DevValueType type })
-        {
-            _ = ViewModel.RequestCopyToClipboardAsync(
-                    new CopyToClipboardMessage(type, c, ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFace)));
-        }
-    }
 
     private void AddClick(object sender, RoutedEventArgs e)
     {

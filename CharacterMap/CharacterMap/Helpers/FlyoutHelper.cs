@@ -242,7 +242,7 @@ public class MenuFlyoutFactory
         {
             if (s is FrameworkElement { Tag: FlyoutContextArg ctx })
                 _ = ctx.ParentView.ViewModel.RequestCopyToClipboardAsync(
-                    new(DevValueType.Char, ctx.Character, ctx.Analysis, ctx.CopyType) { Style = ctx.ExportStyle, PreferredColorType = ctx.PreferredExportType });
+                    new(DevValueType.Char, ctx.Character, ctx.Analysis, ctx.ParentView.ViewModel.SelectedFaceAnalysis, ctx.CopyType) { Style = ctx.ExportStyle, PreferredColorType = ctx.PreferredExportType });
         }
 
         static void SaveHandler(object s, RoutedEventArgs e)
@@ -309,13 +309,16 @@ public class MenuFlyoutFactory
         {
             if (f.Tag is LigatureModel lig)
                 Utils.CopyToClipboard(lig.ClipboardText);
-            else if (f.Tag is FlyoutContextArg { Character: { } c })
+            else if (f.Tag is FlyoutContextArg { Character: { } c})
             {
+                if (c is GlyphCharacter { IsValidUnicode: false } gc && view.ViewModel.SelectedFaceAnalysis.TryGetLigature(gc.GlyphIndex, out LigatureModel lig1))
+                    Utils.CopyToClipboard(lig1.ClipboardText);
+
                 if (!await Utils.TryCopyToClipboardAsync(c, view.ViewModel))
                     return;
             }
             else
-                    return;
+                return;
 
             view.GetNotifier().Show(Localization.Get("NotificationCopied"), 2000);
         }
@@ -818,8 +821,14 @@ public static class FlyoutHelper
 
             // 3.3. Add the "Copy as Text" item to the top of the menu if supported.
             //      Some glyph don't map to a Unicode character, and so can't be copied as text.
-            if (context is not GlyphCharacter gc2 || gc2.IsValidUnicode)
-                factory.Create("BtnCopy/Text", ThemeIcon.Copy, MenuFlyoutFactory.CopyHandler, new() { Index = 0, Tag = arg, PropertyTag = view });
+            LigatureModel mappedLigature = null;
+            if (context is not GlyphCharacter gc2 || (gc2.IsValidUnicode || viewmodel.SelectedFaceAnalysis.TryGetLigature(gc2.GlyphIndex, out mappedLigature)))
+            {
+                // If a glyph maps to a ligature, we copy the ligature text instead
+                object tag = (object)mappedLigature ?? arg;
+                factory.Create("BtnCopy/Text", ThemeIcon.Copy, MenuFlyoutFactory.CopyHandler, new() { Index = 0, Tag = tag, PropertyTag = view });
+
+            }
 
             //// 3. Handle PNG options
             //var pngRoot = Child<MenuFlyoutSubItem>("PngRoot");

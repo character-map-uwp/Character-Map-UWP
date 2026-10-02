@@ -173,6 +173,21 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
     //
     //------------------------------------------------------
 
+    private Dictionary<uint, LigatureModel> _ligatureMap;
+
+    public bool TryGetLigature(uint glyphIndex, out LigatureModel ligature)
+    {
+        if (_ligatureMap is null)
+        {
+            Dictionary<uint, LigatureModel> map = [];
+            foreach (LigatureGroup group in Ligatures)
+                foreach (LigatureModel lig in group.Ligatures)
+                    map.TryAdd(lig.LigatureGlyph, lig);
+            _ligatureMap = map;
+        }
+        return _ligatureMap.TryGetValue(glyphIndex, out ligature);
+    }
+
     //[RelayCommand]
     //public Task<Uri> LoadGlyphFontAsync()
     //{

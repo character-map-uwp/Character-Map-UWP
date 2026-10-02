@@ -6,7 +6,7 @@ public partial class Character : IEquatable<Character>
 
     public Character(uint unicodeIndex) => UnicodeIndex = unicodeIndex;
 
-    public bool IsValidUnicode => UnicodeIndex != uint.MaxValue;
+    public virtual bool IsValidUnicode => UnicodeIndex != uint.MaxValue;
 
     public string Char => Unicode.GetChar(UnicodeIndex);
 
@@ -30,7 +30,7 @@ public partial class Character : IEquatable<Character>
         };
     }
 
-    public virtual string GetClipboardString()
+    public virtual string GetClipboardString(FaceAnalysisModel model)
     {
         // Check if SurrogatePair
         if (UnicodeIndex >= 0x010000 && UnicodeIndex <= 0x10FFFF)

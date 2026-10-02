@@ -139,11 +139,13 @@ public static class Utils
 
     public static async Task<bool> TryCopyToClipboardAsync(CopyToClipboardMessage msg, FontMapViewModel viewModel)
     {
-        string c = msg.RequestedItem.GetClipboardString();
+        string c = msg.RequestedItem.GetClipboardString(msg.FaceAnalysis);
 
         if (msg.DataType == CopyDataType.Text)
-            return await TryCopyToClipboardInternalAsync(msg.RequestedItem.Char, c, viewModel);
-
+        {
+            var str = msg.RequestedItem is GlyphCharacter { IsValidUnicode: false } ? c : msg.RequestedItem.Char;
+            return await TryCopyToClipboardInternalAsync(str, c, viewModel);
+        }
 
         CharacterRenderingOptions renderOpts = msg.Analysis is not null
                 ? viewModel.RenderingOptions with { Analysis = msg.Analysis, Typography = [viewModel.SelectedTypography.Feature] }
@@ -167,7 +169,7 @@ public static class Utils
 
     public static Task<bool> TryCopyToClipboardAsync(Character character, FontMapViewModel viewModel)
     {
-        string c = character.GetClipboardString();
+        string c = character.GetClipboardString(viewModel.SelectedFaceAnalysis);
         return TryCopyToClipboardInternalAsync(character.Char, c, viewModel);
     }
 
