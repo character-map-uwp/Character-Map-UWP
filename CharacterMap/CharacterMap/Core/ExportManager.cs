@@ -170,9 +170,9 @@ public static partial class ExportManager
             else if (selectedChar != null)
             {
                 // SVG font glyphs are created from at most a single glyph per character.
-                int[] indices = options.Variant.FontFace.GetGlyphIndices(new[] { selectedChar.UnicodeIndex });
-                if (indices != null && indices.Length > 0 && indices[0] != 0)
-                    targetGlyphIndex = indices[0];
+                uint indice = options.Face.GetGlyphIndex(selectedChar);
+                if (indice != 0)
+                    targetGlyphIndex = (int)indice;
                 else
                     targetGlyphIndex = (int)selectedChar.UnicodeIndex;
             }

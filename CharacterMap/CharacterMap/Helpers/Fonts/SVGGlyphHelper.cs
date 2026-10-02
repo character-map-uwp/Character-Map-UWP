@@ -418,9 +418,9 @@ internal class SVGGlyphHelper
         /* 
          * Some fonts do horrible things like embed a super SVG file that contains all of the 
          * glyphs inside, split into multiple in-congruent parts.
-         * They might even, if they truly hate performance and memory efficency, compress this SVG file, 
+         * They might even, if they truly hate performance and memory efficiency, compress this SVG file, 
          * requiring the font renderer to read the entire thing into memory, decompress it, and then manually 
-         * figure out all the seperate parts of this file required to render a single glyph.
+         * figure out all the separate parts of this file required to render a single glyph.
          * We need to do all of this manually to extract the raw SVG components for our export feature.
          * Oh joy.
          */
@@ -433,7 +433,7 @@ internal class SVGGlyphHelper
             .OfType<XmlElement>()
             .FirstOrDefault(e => e.GetAttribute("id") is string s && (s == targetId || s == $"{targetId}.0"));
 
-        if (targetElement != null)
+        if (targetElement != null && targetElement != xmlDoc.DocumentElement)
         {
             XmlElement root = xmlDoc.DocumentElement;
             List<IXmlNode> otherGlyphGroups = root.ChildNodes
