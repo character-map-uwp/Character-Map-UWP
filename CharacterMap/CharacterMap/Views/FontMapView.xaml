@@ -2164,8 +2164,7 @@
                         HorizontalAlignment="Center"
                         ForceSelection="True"
                         MaxColumns="3"
-                        SelectedItemsSource="{x:Bind ViewModel.SelectedChar.ColrRenderItems, Mode=OneWay}"
-                        Visibility="{x:Bind ViewModel.SelectedChar.HasColorRenderOptions, Mode=OneWay, FallbackValue=Collapsed}">
+                        Visibility="Collapsed">
                         <Control.Resources>
                             <Style BasedOn="{StaticResource RadioButtonsButtonStyle}" TargetType="RadioButton">
                                 <Setter Property="h:FluentAnimation.PointerOverOffset" Value="-2" />

@@ -293,41 +293,61 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
         UpdateGlyphIndices();
 
         // Build Color Render Options
-        if (SupportsCOLRv0 || SupportsCOLRv1)
+        (bool hasColorOptions, ItemsSelectionModel colrItems) = CreateColorOptions(Analysis, defaultTag);
+        HasColorRenderOptions = hasColorOptions;
+        ColrRenderItems = colrItems;
+        ColorRenderOptions = (IReadOnlyList<NamedTag>)colrItems.ItemsSource;
+        DefaultTag = (NamedTag)colrItems.SelectedItem;
+    }
+
+    public static (bool HasOptions, ItemsSelectionModel ColrItems) CreateColorOptions(CanvasTextLayoutAnalysis analysis, NamedTag defaultTag = null)
+    {
+        if (analysis is null)
+            return (false, new() { ItemsSource = _emptyRenderOptions, SelectedItem = DefaultRenderOption });
+
+        bool supportsColrV1 = analysis.SupportsColrV1 || analysis.GlyphFormats.Has(GlyphImageFormat.ColrPaintTree);
+        bool supportsColrV0 = analysis.SupportsColrV0 || analysis.GlyphFormats.Has(GlyphImageFormat.Colr);
+        bool isSvg = analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
+
+        IReadOnlyList<NamedTag> colorRenderOptions = _emptyRenderOptions;
+        bool hasColorRenderOptions = false;
+
+        if (supportsColrV0 || supportsColrV1)
         {
             List<NamedTag> options = [];
-            if (SupportsCOLRv0)
+            if (supportsColrV0)
                 options.Add(ColrV0RenderOption);
-            if (SupportsCOLRv1)
+            if (supportsColrV1)
                 options.Add(ColrV1RenderOption);
 
             options.Add(MonoRenderOption);
-            ColorRenderOptions = options;
-            HasColorRenderOptions = true;
+            colorRenderOptions = options;
+            hasColorRenderOptions = true;
             if (defaultTag is null || defaultTag == DefaultRenderOption)
                 defaultTag = ColrV0RenderOption;
         }
-        else if (IsSvgChar)
+        else if (isSvg)
             CreateOp(SVGRenderOption);
-        else if (Analysis.GlyphFormats.Has(GlyphImageFormat.Png))
+        else if (analysis.GlyphFormats.Has(GlyphImageFormat.Png))
             CreateOp(PNGRenderOption);
-        else if (Analysis.GlyphFormats.Has(GlyphImageFormat.Jpeg))
+        else if (analysis.GlyphFormats.Has(GlyphImageFormat.Jpeg))
             CreateOp(JPGRenderOption);
-        else if (Analysis.GlyphFormats.Has(GlyphImageFormat.PremultipliedB8G8R8A8))
+        else if (analysis.GlyphFormats.Has(GlyphImageFormat.PremultipliedB8G8R8A8))
             CreateOp(BMPRenderOption);
-        else if (Analysis.GlyphFormats.Has(GlyphImageFormat.Tiff))
+        else if (analysis.GlyphFormats.Has(GlyphImageFormat.Tiff))
             CreateOp(TIFFRenderOption);
 
         void CreateOp(NamedTag tag)
         {
-            ColorRenderOptions = [tag, MonoRenderOption];
-            HasColorRenderOptions = true;
+            colorRenderOptions = [tag, MonoRenderOption];
+            hasColorRenderOptions = true;
             if (defaultTag is null || defaultTag == DefaultRenderOption)
                 defaultTag = tag;
         }
 
-        DefaultTag = defaultTag ?? DefaultRenderOption;
-        ColrRenderItems = new () {  ItemsSource = ColorRenderOptions, SelectedItem = DefaultTag };
+        defaultTag ??= DefaultRenderOption;
+        ItemsSelectionModel items = new() { ItemsSource = colorRenderOptions, SelectedItem = defaultTag };
+        return (hasColorRenderOptions, items);
     }
 
     public void UpdateAnalysis(TypographyFeatureInfo typography = null)

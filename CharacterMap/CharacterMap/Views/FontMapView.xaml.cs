@@ -296,6 +296,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 }
 
                 UpdateTypography(ViewModel.SelectedTypography);
+                UpdateColrSelector();
                 break;
             case nameof(ViewModel.Chars):
                 UpdateItemsSource();
@@ -548,6 +549,8 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
         //if (animate)
         PlayFontChanged(false);
+
+        UpdateColrSelector();
     }
 
     private void UpdateCharacterFit()
@@ -1285,12 +1288,62 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             return;
 
         // 1. Persist render option
-        var opt = ViewModel.ShowColorGlyphs ? CharacterAnalysisModel.DefaultRenderOption : CharacterAnalysisModel.MonoRenderOption;
+        NamedTag opt = ViewModel.ShowColorGlyphs ? CharacterAnalysisModel.DefaultRenderOption : CharacterAnalysisModel.MonoRenderOption;
         if (ViewModel.SelectedChar is { HasColorRenderOptions: true } existing
             && ColrSelector.SelectedItem is NamedTag tag)
             opt = tag;
 
         ViewModel.SelectedChar = new(ViewModel.SelectedFace, c as Character, ViewModel, opt);
+        UpdateColrSelector();
+    }
+
+    private void UpdateColrSelector()
+    {
+        if (ViewModel?.SelectedFace is null)
+        {
+            ColrSelector.Visibility = Visibility.Collapsed;
+            return;
+        }
+
+        NamedTag currentTag = ColrSelector.SelectedItem as NamedTag;
+
+        switch (ViewModel.DisplayMode)
+        {
+            case FontDisplayMode.CharacterMapState:
+                ColrSelector.SelectedItemsSource = ViewModel.SelectedChar?.ColrRenderItems;
+                ColrSelector.Visibility = ViewModel.SelectedChar is { HasColorRenderOptions: true }
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+                break;
+
+            case FontDisplayMode.GlyphMapState:
+                if (GlyphRepeater?.SelectedItem is uint glyphIndex)
+                {
+                    CanvasTextLayoutAnalysis analysis = Utils.GetInterop().AnalyzeGlyphLayout(ViewModel.SelectedFace.Face, (ushort)glyphIndex);
+                    (bool hasOptions, ItemsSelectionModel items) = CharacterAnalysisModel.CreateColorOptions(analysis, currentTag);
+                    ColrSelector.SelectedItemsSource = items;
+                    ColrSelector.Visibility = hasOptions ? Visibility.Visible : Visibility.Collapsed;
+                }
+                else
+                    ColrSelector.Visibility = Visibility.Collapsed;
+                break;
+
+            case FontDisplayMode.LigaturesState:
+                if (LigaturesRepeater?.SelectedItem is LigatureModel ligature)
+                {
+                    CanvasTextLayoutAnalysis analysis = Utils.GetInterop().AnalyzeGlyphLayout(ViewModel.SelectedFace.Face, (ushort)ligature.LigatureGlyph);
+                    (bool hasOptions, ItemsSelectionModel items) = CharacterAnalysisModel.CreateColorOptions(analysis, currentTag);
+                    ColrSelector.SelectedItemsSource = items;
+                    ColrSelector.Visibility = hasOptions ? Visibility.Visible : Visibility.Collapsed;
+                }
+                else
+                    ColrSelector.Visibility = Visibility.Collapsed;
+                break;
+
+            default:
+                ColrSelector.Visibility = Visibility.Collapsed;
+                break;
+        }
     }
 
     private void UpdateDisplay()
@@ -1393,6 +1446,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 TxtPreview.GlyphIndex = (int)i;
                 AnimateSelectionFromGlyph();
             });
+            UpdateColrSelector();
         }
     }
 
@@ -1426,6 +1480,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 TxtPreview.GlyphIndex = (int)model.LigatureGlyph;
                 AnimateSelectionFromGlyph(LigaturesRepeater);
             });
+            UpdateColrSelector();
         }
     }
 
