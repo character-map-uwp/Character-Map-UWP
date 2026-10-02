@@ -124,7 +124,7 @@ public class MenuFlyoutFactory
         return this;    
     }
 
-    T Child<T>(string name) where T : MenuFlyoutItemBase => Menu.Items.OfType<T>().FirstOrDefault(c => c.Name == name);
+    public T Child<T>(string name) where T : MenuFlyoutItemBase => Menu.Items.OfType<T>().FirstOrDefault(c => c.Name == name);
 
     public MenuFlyoutFactory Add(MenuFlyoutItemBase item)
     {
@@ -202,10 +202,12 @@ public class MenuFlyoutFactory
 
         if (args.Add)
         {
-            if (parent is not null)
-                parent.Items.Add(item);
+            var target = parent?.Items ?? Menu.Items;
+
+            if (args.Index >= 0)
+                target.Insert(args.Index, item);
             else
-                Menu.Items.Add(item);
+                target.Add(item);
         }
 
         return item.SetAnimation();
@@ -301,15 +303,19 @@ public class MenuFlyoutFactory
         return false;
     }
 
-    public static void CopyHandler(object s, RoutedEventArgs e)
+    public static async void CopyHandler(object s, RoutedEventArgs e)
     {
         if (s is FrameworkElement f && Properties.GetTag(f) is FontMapView view)
         {
             if (f.Tag is LigatureModel lig)
                 Utils.CopyToClipboard(lig.ClipboardText);
-            else if (f.Tag is FlyoutContextArg arg)
-                Utils.CopyToClipboard(arg.Character.GetClipboardString());
-            else return;
+            else if (f.Tag is FlyoutContextArg { Character: { } c })
+            {
+                if (!await Utils.TryCopyToClipboardAsync(c, view.ViewModel))
+                    return;
+            }
+            else
+                    return;
 
             view.GetNotifier().Show(Localization.Get("NotificationCopied"), 2000);
         }
@@ -321,6 +327,9 @@ public class MenuFlyoutFactory
         public static CreateArgs Default { get; } = new();
 
         public bool Add { get; init; } = true;
+        // Index to insert the child item at
+        public int Index { get; init; } = -1;
+
         public VirtualKey AcceleratorKey { get; init; } = VirtualKey.None;
         public object Tag { get; init; }
         public object PropertyTag { get; init; }
@@ -531,10 +540,7 @@ public static class FlyoutHelper
             if (showAdvanced && args.IsTabContext is false)
             {
                 if (Windows.Graphics.Printing.PrintManager.IsSupported())
-                {
-                    MenuFlyoutItem print = factory.Create("BtnPrint/Content", ThemeIcon.Print, Print_Click, new(VirtualKey.P) { Add = false });
-                    menu.Items.Insert(standalone ? 2 : 3, print);
-                }
+                    factory.Create("BtnPrint/Content", ThemeIcon.Print, Print_Click, new(VirtualKey.P) { Index = standalone ? 2 : 3 });
             }
 
             // 7. Add "Delete Font" button
@@ -789,19 +795,17 @@ public static class FlyoutHelper
             MenuFlyoutFactory factory = new(menu, new FlyoutArgs { Standalone = isStandalone });
             FlyoutContextArg arg = new() { ParentView = view, Character = c, Analysis = analysis };
 
-            MenuFlyoutItem add = menu.Items.OfType<MenuFlyoutItem>().FirstOrDefault(i => i.Name == "AddSelectionButton")
-                                     .SetVisible(c is not GlyphCharacter);
+            MenuFlyoutItem add = factory.Child<MenuFlyoutItem>("AddSelectionButton")
+                                        .SetVisible(c is not GlyphCharacter);
 
             // 3. Handle copy options
             // 3.1. Remove existing
             while (menu.Items[0] != add)
                 menu.Items.RemoveAt(0);
 
-            menu.Items.Insert(0, factory.Create("BtnCopy/Text", ThemeIcon.Copy, MenuFlyoutFactory.CopyHandler, new() { Tag = arg, Add = false }));
-
             // 3.2. Use the factory to rebuild the menu
             var copyAsImage = factory
-                .CreateSubItem(ThemeIcon.Copy, "CopyAsImageItem/Text", insertIndex: 1)
+                .CreateSubItem(ThemeIcon.Copy, "CopyAsImageItem/Text", insertIndex: 0)
                 .AddHeader("CopyAsPngItem/Text", "Ctrl+Alt+C")
                 .AddColorOptions(analysis, true, arg with { CopyType = CopyDataType.PNG });
 
@@ -811,6 +815,11 @@ public static class FlyoutHelper
                     .AddHeader("CopyAsSvgItem/Text", "Ctrl+Shift+C")
                     .AddColorOptions(analysis, true, arg with { CopyType = CopyDataType.SVG });
             }
+
+            // 3.3. Add the "Copy as Text" item to the top of the menu if supported.
+            //      Some glyph don't map to a Unicode character, and so can't be copied as text.
+            if (context is not GlyphCharacter gc2 || gc2.IsValidUnicode)
+                factory.Create("BtnCopy/Text", ThemeIcon.Copy, MenuFlyoutFactory.CopyHandler, new() { Index = 0, Tag = arg, PropertyTag = view });
 
             //// 3. Handle PNG options
             //var pngRoot = Child<MenuFlyoutSubItem>("PngRoot");
