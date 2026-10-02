@@ -789,13 +789,12 @@ public static class FlyoutHelper
             MenuFlyoutFactory factory = new(menu, new FlyoutArgs { Standalone = isStandalone });
             FlyoutContextArg arg = new() { ParentView = view, Character = c, Analysis = analysis };
 
-            MenuFlyoutItemBase rTarget = c is GlyphCharacter ? 
-                menu.Items.OfType<MenuFlyoutSeparator>().First() : 
-                menu.Items.OfType<MenuFlyoutItem>().First<MenuFlyoutItem>(i => i.Name == "AddSelectionButton");
+            MenuFlyoutItem add = menu.Items.OfType<MenuFlyoutItem>().FirstOrDefault(i => i.Name == "AddSelectionButton")
+                                     .SetVisible(c is not GlyphCharacter);
 
             // 3. Handle copy options
             // 3.1. Remove existing
-            while (menu.Items[0] != rTarget)
+            while (menu.Items[0] != add)
                 menu.Items.RemoveAt(0);
 
             menu.Items.Insert(0, factory.Create("BtnCopy/Text", ThemeIcon.Copy, MenuFlyoutFactory.CopyHandler, new() { Tag = arg, Add = false }));
@@ -1079,7 +1078,7 @@ public static class FlyoutHelper
 
             if (!string.IsNullOrEmpty(target.CombinedString))
             {
-                factory.Create("CopySequenceMessage", target.CombinedString, ThemeIcon.Copy, MenuFlyoutFactory.CopyHandler, new () { PropertyTag = target });
+                factory.Create("CopySequenceMessage", target.CombinedString, ThemeIcon.Copy, MenuFlyoutFactory.CopyHandler, new () { Tag = target, PropertyTag = view });
                 factory.AddSeparator(out _);
             }
 
