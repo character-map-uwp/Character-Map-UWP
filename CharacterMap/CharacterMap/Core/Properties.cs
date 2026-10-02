@@ -231,11 +231,11 @@ public partial class Properties : DependencyObject
             {
                 d.Axis = o.Axis;
                 d.FallbackFont = Converters.GetFontFallback();
-                d.FontFace = o.Variant.Face;
-                d.FontFamily = (FontFamily)XamlBindingHelper.ConvertValue(typeof(FontFamily), o.Variant.Source);
-                d.FontStretch = o.Variant.DirectWriteProperties.Stretch;
-                d.FontStyle = o.Variant.DirectWriteProperties.Style;
-                d.FontWeight = o.Variant.DirectWriteProperties.Weight;
+                d.FontFace = o.Face.Face;
+                d.FontFamily = (FontFamily)XamlBindingHelper.ConvertValue(typeof(FontFamily), o.Face.Source);
+                d.FontStretch = o.Face.DirectWriteProperties.Stretch;
+                d.FontStyle = o.Face.DirectWriteProperties.Style;
+                d.FontWeight = o.Face.DirectWriteProperties.Weight;
                 d.Typography = o.DXTypography;
                 d.ColorRenderOption = o.ColorRenderOption;
             }
@@ -259,10 +259,10 @@ public partial class Properties : DependencyObject
         {
             if (e.NewValue is CharacterRenderingOptions o)
             {
-                t.FontFamily = (FontFamily)XamlBindingHelper.ConvertValue(typeof(FontFamily), o.Variant.DisplaySource);
-                t.FontStretch = o.Variant.DirectWriteProperties.Stretch;
-                t.FontStyle = o.Variant.DirectWriteProperties.Style;
-                t.FontWeight = o.Variant.DirectWriteProperties.Weight;
+                t.FontFamily = (FontFamily)XamlBindingHelper.ConvertValue(typeof(FontFamily), o.Face.DisplaySource);
+                t.FontStretch = o.Face.DirectWriteProperties.Stretch;
+                t.FontStyle = o.Face.DirectWriteProperties.Style;
+                t.FontWeight = o.Face.DirectWriteProperties.Weight;
                 t.IsColorFontEnabled = o.ColorRenderOption != DWriteColorRenderOption.Monochrome;
                 SetTypography(t, o.DefaultTypography);
             }

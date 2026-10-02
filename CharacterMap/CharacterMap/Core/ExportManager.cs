@@ -97,14 +97,14 @@ public static partial class ExportManager
             {
                 int glyphIdx = selectedChar is GlyphCharacter gc2
                     ? gc2.GlyphIndex
-                    : options.Variant.FontFace.GetGlyphIndices([selectedChar.UnicodeIndex])?[0] ?? 0;
+                    : options.Face.FontFace.GetGlyphIndices([selectedChar.UnicodeIndex])?[0] ?? 0;
 
                 if (glyphIdx > 0)
                 {
                     try
                     {
                         string colrV1Svg = DirectWrite.GetColrV1Svg(
-                            options.Variant.Face,
+                            options.Face.Face,
                             (ushort)glyphIdx,
                             e.PreferredColor);
                         if (!string.IsNullOrWhiteSpace(colrV1Svg))
@@ -125,7 +125,7 @@ public static partial class ExportManager
             // Try to find the bounding box of all glyph layers combined
             foreach (var thing in options.Analysis.Indicies)
             {
-                var path = interop.GetPathDatas(options.Variant.Face, thing.ToArray()).First();
+                var path = interop.GetPathDatas(options.Face.Face, thing.ToArray()).First();
                 paths.Add(path.Path);
 
                 if (!path.Bounds.IsEmpty)
@@ -179,14 +179,14 @@ public static partial class ExportManager
 
             try
             {
-                IBuffer b = GetCharacterBuffer(options.Variant.Face, selectedChar, GlyphImageFormat.Svg);
+                IBuffer b = GetCharacterBuffer(options.Face.Face, selectedChar, GlyphImageFormat.Svg);
                 string str = null;
                 if (targetGlyphIndex >= 0)
                     str = SVGGlyphHelper.FilterSVGToGlyph(targetGlyphIndex, b);
                 else
                     str = SVGGlyphHelper.ReadSVGBuffer(b);
 
-                return SVGGlyphHelper.FitBounds(str, options.Variant.Face.DesignUnitsPerEm);
+                return SVGGlyphHelper.FitBounds(str, options.Face.Face.DesignUnitsPerEm);
             }
             catch (Exception ex)
             {
@@ -305,10 +305,10 @@ public static partial class ExportManager
         bool isColor = e.PreferredStyle == ExportStyle.ColorGlyph;
 
         if (selectedChar is GlyphCharacter gc)
-            return DirectWrite.GetGlyphPNGStream(e.Options.Variant.Face, (ushort)gc.GlyphIndex, size, textColor, e.PreferredColorType);
+            return DirectWrite.GetGlyphPNGStream(e.Options.Face.Face, (ushort)gc.GlyphIndex, size, textColor, e.PreferredColorType);
 
         IReadOnlyList<uint> typographyTags = e.Options.Typography?.Select(t => (uint)t.Feature).ToList() ?? [];
-        return DirectWrite.GetCharacterPNGStream(e.Options.Variant.Face, selectedChar.Char, size, textColor, e.PreferredColorType, typographyTags);
+        return DirectWrite.GetCharacterPNGStream(e.Options.Face.Face, selectedChar.Char, size, textColor, e.PreferredColorType, typographyTags);
     }
 
     private static IBuffer GetCharacterBuffer(DWriteFontFace fontface, Character c, GlyphImageFormat format)
@@ -336,9 +336,9 @@ public static partial class ExportManager
         float fontSize = options.FontSize > 0 ? options.FontSize : 512f;
         PathData data;
         if (selectedChar is GlyphCharacter gc)
-            data = interop.GetGlyphPath(options.Variant.Face, (ushort)gc.GlyphIndex, fontSize);
+            data = interop.GetGlyphPath(options.Face.Face, (ushort)gc.GlyphIndex, fontSize);
         else
-            data = interop.GetTextPath(options.Variant.Face, selectedChar.Char, fontSize, (options.Typography.FirstOrDefault() ?? TypographyFeatureInfo.None).Feature);
+            data = interop.GetTextPath(options.Face.Face, selectedChar.Char, fontSize, (options.Typography.FirstOrDefault() ?? TypographyFeatureInfo.None).Feature);
 
         Rect bounds = data?.Bounds ?? new Rect(0, 0, fontSize, fontSize);
         if (!bounds.HasDimensions())
@@ -372,8 +372,8 @@ public static partial class ExportManager
                 callback?.Invoke(i, characters.Count);
 
                 CanvasTextLayoutAnalysis analysis = c is GlyphCharacter gc
-                    ? interop.AnalyzeGlyphLayout(e.Options.Variant.Face, (ushort)gc.GlyphIndex)
-                    : interop.AnalyzeCharacter(e.Options.Variant.Face, c.Char, (e.Options.Typography.FirstOrDefault() ?? TypographyFeatureInfo.None).Feature);
+                    ? interop.AnalyzeGlyphLayout(e.Options.Face.Face, (ushort)gc.GlyphIndex)
+                    : interop.AnalyzeCharacter(e.Options.Face.Face, c.Char, (e.Options.Typography.FirstOrDefault() ?? TypographyFeatureInfo.None).Feature);
 
                 e = e with { 
                     Options = e.Options with { Analysis = analysis } 

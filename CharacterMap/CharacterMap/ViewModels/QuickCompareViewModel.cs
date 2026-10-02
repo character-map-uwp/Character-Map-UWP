@@ -119,7 +119,7 @@ public partial class QuickCompareViewModel : ViewModelBase
                     // Only add the font variant if it's not already in the list.
                     foreach (var f in m.Family.Variants)
                     {
-                        var ops = m with { Variant = f };
+                        var ops = m with { Face = f };
                         if (!QuickFonts.Any(q => ops.IsCompareMatch(q)))
                             QuickFonts.Add(ops);
                     }
@@ -153,7 +153,7 @@ public partial class QuickCompareViewModel : ViewModelBase
         if (IsQuickCompare && args.IsQuickCompare)
             Title = Localization.Get("QuickCompareTitle/Text");
         else if (IsQuickCompare && args.Folder.IsFamilyCompare)
-            Title = string.Format(Localization.Get("CompareFamilyTitle/Text"), QuickFonts.FirstOrDefault()?.Variant.FamilyName);
+            Title = string.Format(Localization.Get("CompareFamilyTitle/Text"), QuickFonts.FirstOrDefault()?.Face.FamilyName);
         else if (IsQuickCompare)
             Title = Localization.Get("CompareFontFaceTitle/Text");
         else if (IsFolderMode && _folder.Source is not null)

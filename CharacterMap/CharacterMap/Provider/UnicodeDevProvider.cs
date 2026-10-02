@@ -22,7 +22,7 @@ public class UnicodeDevProvider : DevProviderBase
 
     IReadOnlyList<DevOption> Inflate()
     {
-        CMFontFace v = Options.Variant;
+        CMFontFace v = Options.Face;
         Character c = Character;
 
         string hex = c.UnicodeIndex.ToString("x4").ToUpper();

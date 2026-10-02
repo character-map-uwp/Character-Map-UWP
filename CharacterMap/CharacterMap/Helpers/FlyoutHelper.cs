@@ -456,7 +456,7 @@ public static class FlyoutHelper
                 }
 
                 // 2. Add Save Font File & Export Font Glyphs options
-                if (options != null && options.Variant != null && DirectWrite.IsFontLocal(options.Variant.Face))
+                if (options != null && options.Face != null && DirectWrite.IsFontLocal(options.Face.Face))
                 {
                     factory.Create("ExportFontFileLabel/Text", ThemeIcon.Save, SaveFont_Click, new(VirtualKey.S));
                     if (showAdvanced && !args.IsTabContext)

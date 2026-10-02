@@ -70,8 +70,8 @@ public partial class SettingsViewModel : ViewModelBase
         // 1. Update "A B Y" Character grid previews
         // Note: it is legal for both "variant" and "font" to be NULL
         //       when calling, so test both cases.
-        PreviewFontSource = options.Variant != null && !isSymbol
-            ? new FontFamily(options.Variant.XamlFontSource)
+        PreviewFontSource = options.Face != null && !isSymbol
+            ? new FontFamily(options.Face.XamlFontSource)
             : FontFamily.XamlAutoFontFamily;
 
         // 2. Update FontList Previews

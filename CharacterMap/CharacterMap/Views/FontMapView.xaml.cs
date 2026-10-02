@@ -1438,7 +1438,7 @@ public partial class FontMapView
         void CreateView()
         {
             FontItem item = new FontItem(font);
-            item.Selected = options?.Variant ?? font.DefaultVariant;
+            item.Selected = options?.Face ?? font.DefaultVariant;
 
             FontMapView map = new()
             {
@@ -1447,7 +1447,7 @@ public partial class FontMapView
             };
 
             // Attempt to apply any custom rendering options from the source view
-            if (options != null && options.Variant != null && font.Variants.Contains(options.Variant))
+            if (options != null && options.Face != null && font.Variants.Contains(options.Face))
             {
                 if (options.DefaultTypography != null)
                     map.ViewModel.SelectedTypography = new(options.DefaultTypography);

@@ -9,7 +9,7 @@ public record CharacterRenderingOptions
     private static IReadOnlyList<DWriteFontAxis> _emptyAxis { get; } = new List<DWriteFontAxis>();
 
     public CMFontFamily Family { get; init; }
-    public CMFontFace Variant { get; init; }
+    public CMFontFace Face { get; init; }
     public float FontSize { get; init; }
     public CanvasTextLayoutAnalysis Analysis { get; init; }
     public IReadOnlyList<TypographyFeatureInfo> Typography { get; init; }
@@ -19,7 +19,7 @@ public record CharacterRenderingOptions
 
     public TypographyFeatureInfo DefaultTypography { get; }
 
-    public FaceAnalysisModel FaceAnalysis => field ??= new(Variant, false);
+    public FaceAnalysisModel FaceAnalysis => field ??= new(Face, false);
 
     /// <summary>
     /// Typography to pass to DirectText control
@@ -53,7 +53,7 @@ public record CharacterRenderingOptions
 
     public CharacterRenderingOptions(CMFontFace variant, List<TypographyFeatureInfo> typography, float fontSize, CanvasTextLayoutAnalysis analysis, IReadOnlyList<DWriteFontAxis> axis)
     {
-        Variant = variant;
+        Face = variant;
         Typography = typography;
         FontSize = fontSize;
         Analysis = analysis;
@@ -64,7 +64,7 @@ public record CharacterRenderingOptions
         Axis = axis?.Copy() ?? _emptyAxis;
 
         //IsVariation = Axis != null && Axis.Where(a => a.Value != a.DefaultValue).ToList() is List<DWriteFontAxis> a && a.Count > 0;
-        RequiresNativeRender = Variant.DirectWriteProperties.HasVariations || Variant.SupportsCOLRv1Rendering;
+        RequiresNativeRender = Face.DirectWriteProperties.HasVariations || Face.SupportsCOLRv1Rendering;
     }
 
 
@@ -72,7 +72,7 @@ public record CharacterRenderingOptions
     public string GetName()
     {
         // Basic Name
-        string name = $"{Variant.FamilyName} {Variant.PreferredName}";
+        string name = $"{Face.FamilyName} {Face.PreferredName}";
 
         // Add OpenType features
         if (DefaultTypography is not null)
@@ -104,7 +104,7 @@ public record CharacterRenderingOptions
     public bool IsCompareMatch(CharacterRenderingOptions o)
     {
         return object.ReferenceEquals(this, o) ||
-            (o.Variant == this.Variant
+            (o.Face == this.Face
                 && o.DefaultTypography == this.DefaultTypography
                 && AreSameAxis());
 

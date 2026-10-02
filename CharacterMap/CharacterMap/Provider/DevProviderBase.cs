@@ -54,7 +54,7 @@ public partial class DevProviderBase
 
 
         string pathIconData = null;
-        if (o.Variant != null)
+        if (o.Face != null)
         {
             // We use a font size of 20 as this metrically maps to the size of SegoeMDL2 icons used
             // in FontIcon / SymbolIcon controls.

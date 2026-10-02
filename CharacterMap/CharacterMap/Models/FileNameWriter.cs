@@ -49,7 +49,7 @@ public partial class FileNameWriter
         Match = "{face}",
         Description = Localization.Get("FileNameWriterFaceDesc"),
         Example = "Regular",
-        Func = a => a.Options?.Options?.Variant?.PreferredName
+        Func = a => a.Options?.Options?.Face?.PreferredName
     };
 
     public static FileNameWriter CharacterDescription { get; } = new()
@@ -116,7 +116,7 @@ public partial class FileNameWriter
         Example = "5.2",
         Func = a =>
         {
-            if (Utils.TryGetVersion(a.Options.Options.Variant, out double version))
+            if (Utils.TryGetVersion(a.Options.Options.Face, out double version))
                 return version.ToString();
 
             return string.Empty;
