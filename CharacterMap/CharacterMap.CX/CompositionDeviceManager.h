@@ -44,6 +44,17 @@ namespace CharacterMapCX
         static void Trim();
         static void TrimWorkingSet();
 
+        static void TrimDXGI()
+        {
+            std::lock_guard<std::mutex> lock(s_mutex);
+            if (s_d3dDevice != nullptr)
+            {
+                Microsoft::WRL::ComPtr<IDXGIDevice3> dxgiDevice;
+                if (SUCCEEDED(s_d3dDevice.As(&dxgiDevice)))
+                    dxgiDevice->Trim();
+            }
+        }
+
     internal:
         static Microsoft::WRL::ComPtr<ID2D1Factory5> GetD2DFactory();
         static Microsoft::WRL::ComPtr<IDWriteFactory7> GetDWriteFactory();
@@ -54,6 +65,7 @@ namespace CharacterMapCX
         static std::mutex& GetRenderMutex();
         static void HandleDeviceLost();
         static void ClearAtlases(Windows::UI::Composition::Compositor^ compositor);
+        static void TrimD2DResources();
         static Microsoft::WRL::ComPtr<IWICImagingFactory2> GetWICFactory();
         static void DrawGlyphRunWithColorSupport(
             ID2D1DeviceContext* context,

@@ -258,6 +258,8 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         CharacterMapCX.Controls.FontGlyphs.Trim();
     }
 
+    Debouncer _gcBouncer = new(1000);
+
 
     private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
@@ -269,6 +271,18 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 break;
             case nameof(ViewModel.SelectedFace):
                 _ = SetCharacterSelectionAsync();
+                
+                _gcBouncer.Debounce(() =>
+                {
+                    _ = Task.Run(() =>
+                    {
+                        GC.Collect(2, GCCollectionMode.Forced, blocking: true, compacting: true);
+                        GC.WaitForPendingFinalizers();
+                        GC.Collect(2, GCCollectionMode.Forced, blocking: true, compacting: true);
+
+                        CompositionDeviceManager.TrimWorkingSet();
+                    });
+                });
                 break;
             case nameof(ViewModel.SelectedTypography):
                 UpdateTypography(ViewModel.SelectedTypography);

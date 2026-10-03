@@ -694,4 +694,5 @@ public static class Utils
     /// 23H2 Windows 11 builds introduce COLRv1 font format support to DirectWrite
     /// </summary>
     public static bool Supports23H2 { get; } = ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 17);
+    public static bool SupportsColrV1 => Supports23H2;
 }

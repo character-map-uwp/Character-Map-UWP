@@ -95,9 +95,9 @@ public static partial class ExportManager
             // COLRv1: use the native paint-reader → SVG path (richer: gradients, composites, etc.)
             if (options.Analysis.SupportsColrV1 && (e.PreferredColorType is GlyphImageFormat.None or GlyphImageFormat.ColrPaintTree))
             {
-                int glyphIdx = selectedChar is GlyphCharacter gc2
+                uint glyphIdx = selectedChar is GlyphCharacter gc2
                     ? gc2.GlyphIndex
-                    : options.Face.FontFace.GetGlyphIndices([selectedChar.UnicodeIndex])?[0] ?? 0;
+                    : options.Face.GetGlyphIndex(selectedChar);
 
                 if (glyphIdx > 0)
                 {

@@ -133,8 +133,8 @@ public sealed partial class FontMapPrintPage : Page
         }
         catch { }
 
-        IXamlDirectObject o = _xamlDirect.GetXamlDirectObject(t);
-        CharacterGridView.SetGlyphProperties(_xamlDirect, o, PrintModel.GetTemplateSettings(), c);
+        XamlDirectWrapper o = _xamlDirect.GetWrapper(t);
+        CharacterGridView.SetGlyphProperties(o, PrintModel.GetTemplateSettings(), c);
 
         foreach (var r in g.GetFirstLevelDescendantsOfType<Rectangle>())
             r.SetVisible(PrintModel.ShowBorders);

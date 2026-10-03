@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "CompositionDeviceManager.h"
+#include "GlyphAtlasManager.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d2d1.lib")
@@ -343,6 +344,9 @@ CompositionColorBrush^ CompositionDeviceManager::GetColorBrush(Compositor^ compo
     if (it != s_colorBrushes.end() && it->second != nullptr)
         return it->second;
 
+    if (s_colorBrushes.size() > 64)
+        s_colorBrushes.clear();
+
     auto brush = compositor->CreateColorBrush(color);
     s_colorBrushes[brushKey] = brush;
     return brush;
@@ -387,12 +391,14 @@ void CompositionDeviceManager::ReleaseGraphicsDevice(Compositor^ compositor)
 
 void CompositionDeviceManager::ClearAtlases(Compositor^ compositor)
 {
+    GlyphAtlasManager::Clear();
     Trim();
 }
 
 void CompositionDeviceManager::HandleDeviceLost()
 {
     std::lock_guard<std::mutex> lock(s_mutex);
+    GlyphAtlasManager::Clear();
     s_colorBrushes.clear();
     s_graphicsDevices.clear();
     s_d2dDevice = nullptr;
@@ -403,12 +409,21 @@ void CompositionDeviceManager::HandleDeviceLost()
 void CompositionDeviceManager::Trim()
 {
     std::lock_guard<std::mutex> lock(s_mutex);
+    GlyphAtlasManager::Clear();
+
     if (s_d3dDevice != nullptr)
     {
         ComPtr<IDXGIDevice3> dxgiDevice;
         if (SUCCEEDED(s_d3dDevice.As(&dxgiDevice)))
             dxgiDevice->Trim();
     }
+
+    // Flush D2D's internal glyph rasterization cache. Without this, D2D accumulates
+    // per-glyph texture atlases for every unique glyph ever rendered and never evicts
+    // them. For large CJK fonts (e.g. MS PMincho ~26k glyphs) this is the primary
+    // source of unbounded memory growth.
+    if (s_d2dDevice != nullptr)
+        s_d2dDevice->ClearResources(0);
 
     for (const auto& pair : s_graphicsDevices)
     {
@@ -417,17 +432,34 @@ void CompositionDeviceManager::Trim()
     }
 }
 
+void CompositionDeviceManager::TrimD2DResources()
+{
+    // Called from the atlas eviction path to keep D2D's internal glyph cache
+    // synchronised with our own atlas eviction budget.
+    std::lock_guard<std::mutex> lock(s_mutex);
+    if (s_d2dDevice != nullptr)
+        s_d2dDevice->ClearResources(0);
+}
+
 void CompositionDeviceManager::TrimWorkingSet()
 {
     Trim(); // Trims DXGI device and graphics devices
-    typedef BOOL(WINAPI* PFN_SetProcessWorkingSetSize)(HANDLE, SIZE_T, SIZE_T);
+    /*typedef BOOL(WINAPI* PFN_SetProcessWorkingSetSize)(HANDLE, SIZE_T, SIZE_T);
     HMODULE hKernel = GetModuleHandleW(L"kernel32.dll");
     if (hKernel != nullptr)
     {
         auto pfn = reinterpret_cast<PFN_SetProcessWorkingSetSize>(GetProcAddress(hKernel, "SetProcessWorkingSetSize"));
         if (pfn != nullptr)
             pfn(GetCurrentProcess(), static_cast<SIZE_T>(-1), static_cast<SIZE_T>(-1));
-    }
+    }*/
+
+    // 2. Coalesce and decommit freed CRT heap blocks
+    HeapCompact(GetProcessHeap(), 0);
+
+
+    
+    // 3. Flush the process working set pages to the Standby list (what minimizing does)
+    //K32EmptyWorkingSet(GetCurrentProcess());
 }
 
 

@@ -296,6 +296,7 @@
     <ClInclude Include="TableReader.h" />
     <ClInclude Include="WinStringBuilder.h" />
     <ClInclude Include="WinStringWrapper.h" />
+    <ClInclude Include="GlyphAtlasManager.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
@@ -308,6 +309,7 @@
     <ClCompile Include="DirectWrite.cpp" />
     <ClCompile Include="DWriteFontFamily.cpp" />
     <ClCompile Include="FontGlyphs.cpp" />
+    <ClCompile Include="GlyphAtlasManager.cpp" />
     <ClCompile Include="NativeInterop.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

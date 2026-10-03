@@ -172,6 +172,7 @@ namespace CharacterMapCX
             Windows::UI::Composition::CompositionColorBrush^ m_colorBrush;
             Windows::UI::Composition::CompositionMaskBrush^ m_maskBrush;
             Windows::UI::Composition::CompositionDrawingSurface^ m_drawingSurface;
+            bool m_isUsingSharedAtlas;
             LONG m_renderedWidth;
             LONG m_renderedHeight;
             bool m_renderedColor;

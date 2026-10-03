@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "FontGlyphs.h"
 #include "CompositionDeviceManager.h"
+#include "GlyphAtlasManager.h"
 #include <cwctype>
 #include <algorithm>
 #include <cmath>
@@ -44,6 +45,7 @@ FontGlyphs::FontGlyphs()
     , m_renderedWidth(0)
     , m_renderedHeight(0)
     , m_renderedColor(false)
+    , m_isUsingSharedAtlas(false)
 {
     m_unloadedToken.Value = 0;
     EnsureDependencyProperties();
@@ -60,11 +62,20 @@ void FontGlyphs::ReleaseDrawingSurface()
     {
         if (m_drawingSurface != nullptr)
         {
-            if (Dispatcher != nullptr && Dispatcher->HasThreadAccess)
-            {
-                if (m_surfaceBrush != nullptr)
-                    m_surfaceBrush->Surface = nullptr;
+            // Always clear the brush's surface reference — this is the compositor-side
+            // handle that keeps the underlying DX texture alive. We can safely do this
+            // from any thread; it is a WinRT property assignment, not a destructor.
+            if (m_surfaceBrush != nullptr)
+                m_surfaceBrush->Surface = nullptr;
 
+            // Only call delete (IClosable::Close) on the UI thread, as the compositor
+            // requires it. If we're not on the UI thread the texture ref is already
+            // dropped above; the compositor will release it when the surface object
+            // is eventually GC'd or the next Trim() call fires.
+            if (!m_isUsingSharedAtlas
+                && Dispatcher != nullptr
+                && Dispatcher->HasThreadAccess)
+            {
                 delete m_drawingSurface;
             }
         }
@@ -73,6 +84,7 @@ void FontGlyphs::ReleaseDrawingSurface()
     {
     }
 
+    m_isUsingSharedAtlas = false;
     m_drawingSurface = nullptr;
     m_renderedWidth = 0;
     m_renderedHeight = 0;
@@ -268,6 +280,10 @@ void FontGlyphs::InvalidateLayoutAndRender()
 {
     m_isLayoutDirty = true;
     m_isRenderDirty = true;
+    // Release unconditionally: shared-atlas references must be dropped here so that
+    // the old m_surfaceBrush->Surface doesn't hold an atlas page alive across a
+    // virtualised-container recycling cycle.
+    ReleaseDrawingSurface();
     InvalidateMeasure();
 }
 
@@ -708,15 +724,90 @@ void FontGlyphs::RenderGlyphs()
     if (graphicsDevice == nullptr)
         return;
 
+    // Path 1: Single glyph rendering via Shared Atlas (Grid & list view optimization)
+    bool useSharedAtlas = (m_glyphIndices.size() == 1 && requiredWidth <= 512 && requiredHeight <= 512);
+    if (useSharedAtlas)
+    {
+        FLOAT adv = m_glyphAdvances.empty() ? 0.0f : m_glyphAdvances[0];
+        DWRITE_GLYPH_OFFSET off = m_glyphOffsets.empty() ? DWRITE_GLYPH_OFFSET{} : m_glyphOffsets[0];
+
+        AtlasSlot slot = GlyphAtlasManager::GetOrCreateGlyphSlot(
+            compositor,
+            rawFace.Get(),
+            m_glyphIndices[0],
+            static_cast<FLOAT>(FontSize),
+            StyleSimulations,
+            renderColor,
+            m_padLeft, m_padTop, m_baseline,
+            adv, off,
+            Foreground,
+            requiredWidth, requiredHeight);
+
+        if (slot.IsValid && slot.Surface != nullptr)
+        {
+            if (!m_isUsingSharedAtlas && m_drawingSurface != nullptr)
+                ReleaseDrawingSurface();
+
+            m_isUsingSharedAtlas = true;
+            m_drawingSurface = slot.Surface;
+            m_renderedWidth = requiredWidth;
+            m_renderedHeight = requiredHeight;
+            m_renderedColor = renderColor;
+
+            if (m_surfaceBrush == nullptr)
+            {
+                m_surfaceBrush = compositor->CreateSurfaceBrush(m_drawingSurface);
+                m_surfaceBrush->Stretch = Windows::UI::Composition::CompositionStretch::None;
+                m_surfaceBrush->HorizontalAlignmentRatio = 0.0f;
+                m_surfaceBrush->VerticalAlignmentRatio = 0.0f;
+            }
+            else if (m_surfaceBrush->Surface != m_drawingSurface)
+                m_surfaceBrush->Surface = m_drawingSurface;
+
+            // Offset the brush so the slot aligns with (0,0) of the sprite visual
+            m_surfaceBrush->Offset = float2(static_cast<float>(-slot.X), static_cast<float>(-slot.Y));
+            m_spriteVisual->Size = float2(static_cast<float>(requiredWidth), static_cast<float>(requiredHeight));
+
+            if (!renderColor)
+            {
+                Windows::UI::Color textColor = GetForegroundColor();
+                m_colorBrush = CompositionDeviceManager::GetColorBrush(compositor, textColor);
+
+                if (m_maskBrush == nullptr)
+                {
+                    m_maskBrush = compositor->CreateMaskBrush();
+                    m_maskBrush->Mask = m_surfaceBrush;
+                    m_maskBrush->Source = m_colorBrush;
+                }
+                else
+                {
+                    if (m_maskBrush->Mask != m_surfaceBrush)
+                        m_maskBrush->Mask = m_surfaceBrush;
+                    if (m_maskBrush->Source != m_colorBrush)
+                        m_maskBrush->Source = m_colorBrush;
+                }
+
+                if (m_spriteVisual->Brush != m_maskBrush)
+                    m_spriteVisual->Brush = m_maskBrush;
+            }
+            else
+            {
+                if (m_spriteVisual->Brush != m_surfaceBrush)
+                    m_spriteVisual->Brush = m_surfaceBrush;
+            }
+
+            return;
+        }
+    }
+
+    // Path 2: Dedicated surface fallback (multi-glyph sequences, ligatures, or oversized preview)
+    if (m_isUsingSharedAtlas)
+        ReleaseDrawingSurface();
+
     auto pixelFormat = renderColor
         ? Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized
         : Windows::Graphics::DirectX::DirectXPixelFormat::A8UIntNormalized;
 
-    /*
-     * Each FontGlyphs control manages a dedicated CompositionDrawingSurface sized
-     * to the exact required glyph bounds. In virtualized controls like ExtendedGridView,
-     * only visible cells are instantiated, keeping total VRAM consumption below 1 MB.
-     */
     if (m_drawingSurface == nullptr || m_renderedColor != renderColor)
     {
         ReleaseDrawingSurface();
