@@ -5,9 +5,11 @@ using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Drawing;
 using Windows.Foundation.Metadata;
 using Windows.System;
 using Windows.UI;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
@@ -17,6 +19,7 @@ using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls;
+
 
 internal class CharacterGridViewTemplateSettings
 {
@@ -36,6 +39,7 @@ internal class CharacterGridViewTemplateSettings
 [DependencyProperty<DWriteFontFace>("ItemFontFace")]
 [DependencyProperty<TypographyFeatureInfo>("ItemTypography")]
 [DependencyProperty<CMFontFace>("ItemFontVariant")]
+[DependencyProperty<FaceAnalysisModel>("ItemFaceAnalysis")]
 [DependencyProperty<GlyphAnnotation>("ItemAnnotation")]
 [AttachedProperty<ItemTooltipData>("ToolTipData")]
 [DependencyProperty<bool>("HasSelection")]
@@ -47,6 +51,8 @@ public partial class CharacterGridView : GridView
     public event EventHandler<Character> ItemDoubleTapped;
 
     public bool ShowVariationsInToolTips { get; set; }
+
+    public bool ForceFontGlyphs { get; set; } = false;
 
     #region Dependency Properties
 
@@ -92,7 +98,7 @@ public partial class CharacterGridView : GridView
     public class ItemTooltipData
     {
         public Character Char { get; set; }
-        public CMFontFace Variant { get; set; }
+        public FaceAnalysisModel FaceAnalysis { get; set; }
         public GridViewItem Container { get; set; }
     }
 
@@ -128,6 +134,25 @@ public partial class CharacterGridView : GridView
         if (!args.InRecycleQueue && args.ItemContainer is GridViewItem item)
         {
             Character c = ((Character)args.Item);
+
+            if (item.ContentTemplateRoot is Grid g)
+            {
+                bool colrv1 = ForceFontGlyphs ||( ItemFaceAnalysis.Analysis.COLRVersion == 1 && Utils.SupportsColrV1);
+
+                // 1. Unload existing presenter
+                if (!ForceFontGlyphs && g.Children.Count == 2 && g.Children[0] is FrameworkElement f)
+                {
+                    if (f is TextBlock && colrv1)
+                        XamlMarkupHelper.UnloadObject(f);
+                    else if (f is FontGlyphs && !colrv1)
+                        XamlMarkupHelper.UnloadObject(f);
+                }
+
+                // // 2. Load the appropriate if it does not exist
+                if (g.Children.Count == 1)
+                    g.FindName(colrv1 ? "Glyph" : "Block");
+            }
+
             UpdateContainer(item.ContentTemplateRoot, c);
             args.Handled = true;
 
@@ -157,8 +182,8 @@ public partial class CharacterGridView : GridView
                             // No idea why.
                              TextBlock t = new();
                              t.TextWrapping = TextWrapping.Wrap;
-                             string txt = data.Variant is not null
-                                 ? data.Variant.GetDescription(data.Char, allowUnihan: true)
+                             string txt = data?.FaceAnalysis.Face is not null
+                                 ? data.FaceAnalysis.GetDescription(data.Char, allowUnihan: true)
                                  : string.Empty;
 
                             //string formatLabel = FlyoutHelper.GetGlyphFormatLabel(data.Variant, data.Char);
@@ -168,7 +193,7 @@ public partial class CharacterGridView : GridView
                             t.Text = txt ?? data.Char.UnicodeString;
 
                             // Manually construct the variations popup
-                            if (ShowVariationsInToolTips && TypographyAnalyzer.GetCharacterVariants(data.Variant, data.Char) is { Count: > 1 } list)
+                            if (ShowVariationsInToolTips && TypographyAnalyzer.GetCharacterVariants(data.FaceAnalysis.Face, data.Char) is { Count: > 1 } list)
                             {
                                 // Store current template settings - we need to change these to render the variations
                                 var size = _templateSettings.Size;
@@ -236,7 +261,7 @@ public partial class CharacterGridView : GridView
                     ToolTipService.SetToolTip(item, t);
                 }
 
-                CharacterGridView.SetToolTipData(t, new ItemTooltipData { Char = c, Container = item, Variant = ItemFontVariant });
+                CharacterGridView.SetToolTipData(t, new ItemTooltipData { Char = c, Container = item, FaceAnalysis = ItemFaceAnalysis });
             }
         }
 
@@ -417,32 +442,32 @@ public partial class CharacterGridView : GridView
     #region Item Template Handling
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    void UpdateContainer(UIElement item, Character c)
+    void UpdateContainer(UIElement container, Character c)
     {
         // Perf considerations:
         // 1 - Batch rendering updates by suspending rendering until all properties are set
         // 2 - Use XAML direct to set new properties, rather than through DP's
         // 3 - Access any required data properties from parents through normal properties, 
         //     not DP's - DP access can be order of magnitudes slower.
-        // Note : This will be faster via C++ as it avoids all marshalling costs.
+        // Note : This will be faster via C++ as it avoids all marshaling costs.
         // Note: For more improved performance, do **not** use XAML ItemTemplate.
         //       Create entire template via XamlDirect, and never directly reference the 
         //       WinRT XAML object.
 
         // Assumed Structure:
         // -- Grid
+        //    -- FontGlyphs [---TextBlock---]
         //    -- TextBlock
-        //    -- TextBlock
 
-        XamlBindingHelper.SuspendRendering(item);
+        XamlBindingHelper.SuspendRendering(container);
 
-        IXamlDirectObject go = _xamlDirect.GetXamlDirectObject(item);
+        XamlDirectWrapper go = new(container, _xamlDirect);
 
-        _xamlDirect.SetObjectProperty(go, XamlPropertyIndex.FrameworkElement_Tag, c);
-        _xamlDirect.SetDoubleProperty(go, XamlPropertyIndex.FrameworkElement_Width, _templateSettings.Size);
-        _xamlDirect.SetDoubleProperty(go, XamlPropertyIndex.FrameworkElement_Height, _templateSettings.Size);
+        go.SetObject(XamlPropertyIndex.FrameworkElement_Tag, c)
+          .SetWidth(_templateSettings.Size)
+          .SetHeight(_templateSettings.Size);
 
-        IXamlDirectObject cld = _xamlDirect.GetXamlDirectObjectProperty(go, XamlPropertyIndex.Panel_Children);
+        IXamlDirectObject cld = _xamlDirect.GetXamlDirectObjectProperty(go.Object, XamlPropertyIndex.Panel_Children);
 #if DX
 {
         var t = (DirectText)((Grid)item.ContentTemplateRoot).Children[0]; ;
@@ -450,46 +475,58 @@ public partial class CharacterGridView : GridView
 }
 #else
         {
-            IXamlDirectObject o = _xamlDirect.GetXamlDirectObjectFromCollectionAt(cld, 0);
-            SetGlyphProperties(_xamlDirect, o, _templateSettings, c);
+            XamlDirectWrapper o = _xamlDirect.GetWrapperForChild((Panel)container, 0);
+            SetGlyphProperties(o, _templateSettings, c, this.Foreground);
         }
 #endif
 
-        IXamlDirectObject o2 = _xamlDirect.GetXamlDirectObjectFromCollectionAt(cld, 1);
-        if (o2 != null)
+        if (_xamlDirect.GetWrapperForCollectionIndex(cld, 1) is { } o2)
         {
             switch (_templateSettings.Annotation)
             {
                 case GlyphAnnotation.None:
-                    _xamlDirect.SetEnumProperty(o2, XamlPropertyIndex.UIElement_Visibility, 1);
+                    o2.SetVisibility(false);
                     break;
                 default:
-                    _xamlDirect.SetStringProperty(o2, XamlPropertyIndex.TextBlock_Text, c.GetAnnotation(_templateSettings.Annotation));
-                    _xamlDirect.SetEnumProperty(o2, XamlPropertyIndex.UIElement_Visibility, 0);
+                    o2.SetString(XamlPropertyIndex.TextBlock_Text, c.GetAnnotation(_templateSettings.Annotation))
+                      .SetVisibility(true);
                     break;
             }
         }
 
-        XamlBindingHelper.ResumeRendering(item);
+        XamlBindingHelper.ResumeRendering(container);
     }
 
+    static Brush brush => field ??= new SolidColorBrush(Colors.Red);
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static void SetGlyphProperties(XamlDirect xamlDirect, IXamlDirectObject o, CharacterGridViewTemplateSettings templateSettings, Character c)
+    internal static void SetGlyphProperties(XamlDirectWrapper o, CharacterGridViewTemplateSettings templateSettings, Character c, Brush foreground = null)
     {
         if (o == null || templateSettings.FontFace is null)
             return;
 
-        xamlDirect.SetObjectProperty(o, XamlPropertyIndex.TextBlock_FontFamily, templateSettings.FontFamily);
-        xamlDirect.SetEnumProperty(o, XamlPropertyIndex.TextBlock_FontStretch, (uint)templateSettings.FontFace.Properties.Stretch);
-        xamlDirect.SetEnumProperty(o, XamlPropertyIndex.TextBlock_FontStyle, (uint)templateSettings.FontFace.Properties.Style);
-        xamlDirect.SetObjectProperty(o, XamlPropertyIndex.TextBlock_FontWeight, templateSettings.FontFace.Properties.Weight);
-        xamlDirect.SetBooleanProperty(o, XamlPropertyIndex.TextBlock_IsColorFontEnabled, templateSettings.ShowColorGlyphs);
-        xamlDirect.SetDoubleProperty(o, XamlPropertyIndex.TextBlock_FontSize, templateSettings.Size / 2d);
+        if (o.Source is FontGlyphs g)
+        {
+            // No XAML Direct here :')
+            g.FontSize = templateSettings.Size / 2d;
+            g.FontFace = templateSettings.FontFace;
+            g.IsColorFontEnabled = templateSettings.ShowColorGlyphs;
+            g.UnicodeString = c.Char;
+            g.Foreground = foreground ?? brush; 
+        }
+        else
+        {
+            o.IsTextBlock = true; // Forces XamlDirect to use TextBlock properties, rather than generic UIElement properties
+            o.SetFontSize(templateSettings.Size / 2d)
+             .SetFontStretch(templateSettings.FontFace.Properties.Stretch)
+             .SetFontStyle(templateSettings.FontFace.Properties.Style)
+             .SetFontWeight(templateSettings.FontFace.Properties.Weight)
+             .SetFontFamily(templateSettings.FontFamily)
+             .SetBoolean(XamlPropertyIndex.TextBlock_IsColorFontEnabled, templateSettings.ShowColorGlyphs)
+             .SetString(XamlPropertyIndex.TextBlock_Text, c.Char);
 
-        UpdateColorFont(xamlDirect, null, o, templateSettings.ShowColorGlyphs);
-        UpdateTypography(xamlDirect, o, templateSettings.Typography);
-
-        xamlDirect.SetStringProperty(o, XamlPropertyIndex.TextBlock_Text, c.Char);
+            UpdateTypography(o.X, o.Object, templateSettings.Typography);
+        }
     }
 
     internal static void SetGlyphProperties(DirectText o, CharacterGridViewTemplateSettings templateSettings, Character c)
@@ -512,10 +549,10 @@ public partial class CharacterGridView : GridView
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static void UpdateColorFont(XamlDirect xamlDirect, TextBlock block, IXamlDirectObject xd, bool value)
     {
-        if (xd != null)
-            xamlDirect.SetBooleanProperty(xd, XamlPropertyIndex.TextBlock_IsColorFontEnabled, value);
-        else
-            block.IsColorFontEnabled = value;
+        //if (xd != null)
+        //    xamlDirect.SetBooleanProperty(xd, XamlPropertyIndex.TextBlock_IsColorFontEnabled, value);
+        //else
+        //    block.IsColorFontEnabled = value;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

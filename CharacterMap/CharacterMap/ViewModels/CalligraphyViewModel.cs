@@ -29,7 +29,7 @@ public partial class CalligraphyViewModel : ViewModelBase
 
     public CalligraphyViewModel(CharacterRenderingOptions options)
     {
-        Face = options.Variant;
+        Face = options.Face;
         Options = options;
     }
 

@@ -279,6 +279,9 @@ internal class UnicodeScriptTags
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static string PadTag(string tag)
     {
+        if (tag is not null && tag.StartsWith('\''))
+            tag = tag.Trim('\'');
+
         // Tags should be 4 characters long - tags that are
         // shorter should be padded with extra spaces
         if (tag is not null && tag.Length > 0 && tag.Length < 4)

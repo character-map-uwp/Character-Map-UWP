@@ -70,8 +70,8 @@ public partial class SettingsViewModel : ViewModelBase
         // 1. Update "A B Y" Character grid previews
         // Note: it is legal for both "variant" and "font" to be NULL
         //       when calling, so test both cases.
-        PreviewFontSource = options.Variant != null && !isSymbol
-            ? new FontFamily(options.Variant.XamlFontSource)
+        PreviewFontSource = options.Face != null && !isSymbol
+            ? new FontFamily(options.Face.XamlFontSource)
             : FontFamily.XamlAutoFontFamily;
 
         // 2. Update FontList Previews
@@ -125,7 +125,15 @@ public partial class SettingsViewModel : ViewModelBase
         // is to expose features people may not be aware exist inside the
         // application rather than bug-fixes or visual changes.
         return [
-            new("Latest Update (September 2026)", // September 2026
+            new("Latest Update (October 2026)", // September 2026
+                """
+                - Added Ligatures view
+                - Glyph indexes for Characters are now shown in Unicode tools
+                - For Characters formed of multiple glyphs, each glyph component is now listed below the character preview pane
+                - Added ability to switch between ColrV0 and ColrV1 glyphs in the Preview Pane
+                - Updated to Unicode 18.0 dataset
+                """),
+            new("2026.5.1.0 (September 2026)", // September 2026
                 """
                 - Added expandable tab-bar preview thumbnails for Windows 11 theme
                 - Typographic variants of a glyph will now attempt to copy as text if the glyph of the typographic variant also exists as a mapped character
@@ -141,7 +149,7 @@ public partial class SettingsViewModel : ViewModelBase
             new("2026.2.0.0 (February 2026)", // February 2026
                 "- Added additional filters for Font Embedding types & Color Font types\n" +
                 "- Added Material Theme (WIP)\n" +
-                "- Updated to Unicode 17 dataset"),
+                "- Updated to Unicode 17.0 dataset"),
              new("2025.3.0.0 (June 2025)", // June 2025
                 "- Added ability to use Ctrl + ScrollWheel to change font size in Font List Pane, Character Map and Quick Compare\n" +
                 "- Whole Font Families can now be added to Quick Compare\n" +

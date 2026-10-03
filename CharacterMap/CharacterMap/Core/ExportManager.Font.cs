@@ -12,7 +12,7 @@ public static partial class ExportManager
         if (family && ops.Family is { HasVariants: true } fam)
             _ = ExportFontsToFolderAsync(fam.Variants.ToList());
         else
-            RequestExportFontFile(ops.Variant);
+            RequestExportFontFile(ops.Face);
     }
 
     public static async void RequestExportFontFile(CMFontFace variant)

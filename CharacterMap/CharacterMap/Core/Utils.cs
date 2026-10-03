@@ -1,6 +1,5 @@
 using System.IO;
 using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Svg;
 using Microsoft.Graphics.Canvas.Text;
 using System.Globalization;
 using Windows.ApplicationModel;
@@ -131,7 +130,7 @@ public static class Utils
         return new UISettings().GetColorValue(UIColorType.Accent);
     }
 
-    public static void CopyToClipBoard(string str)
+    public static void CopyToClipboard(string str)
     {
         DataPackage dp = new() { RequestedOperation = DataPackageOperation.Copy };
         dp.SetText(str);
@@ -140,11 +139,13 @@ public static class Utils
 
     public static async Task<bool> TryCopyToClipboardAsync(CopyToClipboardMessage msg, FontMapViewModel viewModel)
     {
-        string c = msg.RequestedItem.GetClipboardString();
+        string c = msg.RequestedItem.GetClipboardString(msg.FaceAnalysis);
 
         if (msg.DataType == CopyDataType.Text)
-            return await TryCopyToClipboardInternalAsync(msg.RequestedItem.Char, c, viewModel);
-
+        {
+            var str = msg.RequestedItem is GlyphCharacter { IsValidUnicode: false } ? c : msg.RequestedItem.Char;
+            return await TryCopyToClipboardInternalAsync(str, c, viewModel);
+        }
 
         CharacterRenderingOptions renderOpts = msg.Analysis is not null
                 ? viewModel.RenderingOptions with { Analysis = msg.Analysis, Typography = [viewModel.SelectedTypography.Feature] }
@@ -152,13 +153,13 @@ public static class Utils
         
         if (msg.DataType == CopyDataType.SVG)
         {
-            ExportOptions ops = new(ExportFormat.Svg, msg.Style) { Options = renderOpts };
+            ExportOptions ops = new(ExportFormat.Svg, msg.Style) { PreferredColorType = msg.PreferredColorType, Options = renderOpts };
             var svg = ExportManager.GetSVG(ops, msg.RequestedItem);
             return await TryCopyToClipboardInternalAsync(svg, c, viewModel, msg.DataType);
         }
         else if (msg.DataType == CopyDataType.PNG)
         {
-            ExportOptions ops = new(ExportFormat.Png, msg.Style) { Options = renderOpts };
+            ExportOptions ops = new(ExportFormat.Png, msg.Style) { PreferredColorType = msg.PreferredColorType, Options = renderOpts };
             IRandomAccessStream data = await ExportManager.GetGlyphPNGStreamAsync(ops, msg.RequestedItem);
             return await TryCopyToClipboardInternalAsync(null, c, viewModel, msg.DataType, data);
         }
@@ -168,7 +169,7 @@ public static class Utils
 
     public static Task<bool> TryCopyToClipboardAsync(Character character, FontMapViewModel viewModel)
     {
-        string c = character.GetClipboardString();
+        string c = character.GetClipboardString(viewModel.SelectedFaceAnalysis);
         return TryCopyToClipboardInternalAsync(character.Char, c, viewModel);
     }
 
@@ -185,6 +186,23 @@ public static class Utils
                 ?? variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Stretch == FontStretch.Normal)
                 ?? variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight)
                 ?? variants[0];
+    }
+
+    public static string ToRtfEscaped(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+            return string.Empty;
+        StringBuilder sb = new();
+        foreach (char ch in text)
+        {
+            if (ch is '\\' or '{' or '}')
+                sb.Append('\\').Append(ch);
+            else if (ch <= 0x7F)
+                sb.Append(ch);
+            else
+                sb.Append(@$"\u{(short)ch}?");
+        }
+        return sb.ToString();
     }
 
     public static async Task<bool> TryCopyToClipboardInternalAsync(string rawString, string formattedString, FontMapViewModel viewModel, CopyDataType type = CopyDataType.Text, IRandomAccessStream data = null)
@@ -556,34 +574,25 @@ public static class Utils
         };
     }
 
-    public static CanvasSvgDocument GenerateSvgDocument(
-        ICanvasResourceCreator device,
+    public static string GenerateSvgString(
         Rect rect,
         string path,
         Color color)
     {
-        return GenerateSvgDocument(device, rect, [path], [color]);
+        return GenerateSvgString(rect, [path], [color]);
     }
 
     /// <summary>
-    /// Generates an SVG document for multi-layered glyphs, where each layer has separate colours.
+    /// Generates an SVG string for multi-layered glyphs, where each layer has separate colours.
     /// COLR glyphs are an example of this.
     /// </summary>
-    /// <param name="device"></param>
-    /// <param name="rect">Bounding rectangle of all glyphs</param>
-    /// <param name="paths">Geometry of each layer</param>
-    /// <param name="colors">Colour of each layer</param>
-    /// <param name="invertBounds"></param>
-    /// <returns></returns>
-    public static CanvasSvgDocument GenerateSvgDocument(
-        ICanvasResourceCreator device,
+    public static string GenerateSvgString(
         Rect rect,
         IList<string> paths,
-        IList<Color> colors,
-        bool invertBounds = true)
+        IList<Color> colors)
     {
-        var right = Math.Ceiling(rect.Width);
-        var bottom = Math.Ceiling(rect.Height);
+        double right = Math.Ceiling(rect.Width);
+        double bottom = Math.Ceiling(rect.Height);
         StringBuilder sb = BuilderPool.Request();
 
         try
@@ -593,38 +602,32 @@ public static class Utils
                 "<svg width=\"100%\" height=\"100%\" viewBox=\"{2} {3} {0} {1}\" xmlns=\"http://www.w3.org/2000/svg\">",
                 right,
                 bottom,
-                invertBounds ? -Math.Floor(rect.Left) : Math.Floor(rect.Left),
-                invertBounds ? -Math.Floor(rect.Top) : Math.Floor(rect.Top));
+                Math.Floor(rect.Left),
+                Math.Floor(rect.Top));
 
-            foreach (var path in paths)
+            for (int i = 0; i < paths.Count; i++)
             {
-                string p = path;
-                if (path.StartsWith("F1 "))
-                    p = path.Remove(0, 3);
+                string p = paths[i];
+                if (p.StartsWith("F1 "))
+                    p = p.Remove(0, 3);
 
                 if (string.IsNullOrWhiteSpace(p))
                     continue;
 
+                Color c = (colors != null && i < colors.Count) ? colors[i] : Colors.Black;
                 sb.AppendFormat("<path d=\"{0}\" style=\"fill: {1}; fill-opacity: {2}\" />",
                     p,
-                    colors[paths.IndexOf(path)].AsHex(),
-                    (double)colors[paths.IndexOf(path)].A / 255d);
+                    c.AsHex(),
+                    (double)c.A / 255d);
             }
             sb.Append("</svg>");
-
-            CanvasSvgDocument doc = CanvasSvgDocument.LoadFromXml(device, sb.ToString());
-            return doc;
+            return sb.ToString();
         }
         finally
         {
             sb.Clear();
             BuilderPool.Return(sb);
         }
-    }
-
-    public static Task WriteSvgAsync(CanvasSvgDocument document, IStorageFile file)
-    {
-        return WriteSvgAsync(document.GetXml(), file);
     }
 
     public static Task WriteSvgAsync(string xml, IStorageFile file)
@@ -691,4 +694,5 @@ public static class Utils
     /// 23H2 Windows 11 builds introduce COLRv1 font format support to DirectWrite
     /// </summary>
     public static bool Supports23H2 { get; } = ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 17);
+    public static bool SupportsColrV1 => Supports23H2;
 }

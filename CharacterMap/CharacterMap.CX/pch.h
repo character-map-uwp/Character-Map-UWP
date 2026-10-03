@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <collection.h>
 #include <ppltasks.h>
@@ -7,6 +7,8 @@
 #include <Microsoft.Graphics.Canvas.native.h>
 #include <d2d1_3.h>
 #include <dwrite_3.h>
+#include <wincodec.h>
+#include <shcore.h>
 #include <string>
 
 #include "WinStringWrapper.h"

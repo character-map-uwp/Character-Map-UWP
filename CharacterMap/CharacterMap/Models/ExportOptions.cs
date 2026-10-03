@@ -14,6 +14,7 @@ public record ExportOptions
     public double PreferredSize { get; init; }
     public ExportFormat PreferredFormat { get; init; }
     public ExportStyle PreferredStyle { get; init; }
+    public GlyphImageFormat PreferredColorType { get; init; }
     public Color PreferredColor { get; init; }
     public StorageFolder TargetFolder { get; init; }
     public bool SkipEmptyGlyphs { get; init; }

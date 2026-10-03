@@ -50,7 +50,7 @@ public class ExportViewModel : ViewModelBase
     {
         Font = viewModel.SelectedFont.Font;
         Categories = viewModel.SelectedGlyphCategories.ToList(); // Makes a copy of the list
-        Variant = viewModel.RenderingOptions.Variant;
+        Variant = viewModel.RenderingOptions.Face;
         Options = viewModel.RenderingOptions;
         GlyphSize = viewModel.Settings.PngSize;
         ExportColor = viewModel.ShowColorGlyphs;
@@ -101,12 +101,12 @@ public class ExportViewModel : ViewModelBase
         // Fast path : all characters;
         if (!Categories.Any(c => !c.IsSelected) && !HideWhitespace)
         {
-            Characters = Variant.Characters;
+            Characters = Variant.GetCharacters();
             return;
         }
 
         // Filter characters
-        Characters = Unicode.FilterCharacters(Variant.Characters, Categories, HideWhitespace);
+        Characters = Unicode.FilterCharacters(Variant.GetCharacters(), Categories, HideWhitespace);
     }
 
     public void UpdateCategories(IList<UnicodeRangeModel> value)

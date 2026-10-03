@@ -451,6 +451,7 @@
                             IsSelectionBindingEnabled="True"
                             ItemAnnotation="UnicodeIndex"
                             ItemContainerTransitions="{StaticResource NoTransitions}"
+                            ItemFaceAnalysis="{x:Bind ViewModel.SelectedFace.FaceAnalysis, Mode=OneWay}"
                             ItemFontFace="{x:Bind ViewModel.SelectedFace.Face.Face, Mode=OneWay}"
                             ItemFontFamily="{x:Bind ViewModel.SelectedXAMLFontFamily, Mode=OneWay}"
                             ItemFontVariant="{x:Bind ViewModel.SelectedFace.Face, Mode=OneWay}"

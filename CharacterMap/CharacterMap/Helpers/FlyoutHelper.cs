@@ -1,10 +1,16 @@
 using CharacterMap.Controls;
 using CharacterMap.Views;
+using System.Linq;
+using System.Reflection;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
+using static CharacterMap.Helpers.FlyoutHelper;
 
 namespace CharacterMap.Helpers;
 
@@ -46,8 +52,297 @@ public class FlyoutArgs
     public string PreviewText { get; set; }
 
     public Action AddToCollectionCommand { get; set; }
+
+    public object Header { get; set; }
 }
 
+public record class FlyoutContextArg
+{
+    public Character Character { get; set; }
+    public LigatureModel Ligature { get; set; }
+    public ExportStyle ExportStyle { get; set; }
+    public FontMapView ParentView { get; set; }
+    public CopyDataType CopyType { get; set; }
+    public CanvasTextLayoutAnalysis Analysis { get; set; }
+    public GlyphImageFormat PreferredExportType { get; set; } = GlyphImageFormat.None;
+}
+
+public class MenuItemHost
+{
+    public object Host => (object)_flyout ?? _subFlyout;
+    public bool IsSubItem => _subFlyout is not null;
+    public IList<MenuFlyoutItemBase> Items => _flyout?.Items ?? _subFlyout.Items;
+
+    private MenuFlyout _flyout;
+    private MenuFlyoutSubItem _subFlyout;
+
+
+    public MenuItemHost(MenuFlyout flyout) => _flyout = flyout;
+
+    public MenuItemHost(MenuFlyoutSubItem flyout) => _subFlyout = flyout;
+}
+
+public class MenuFlyoutFactory
+{
+    public readonly MenuItemHost Menu;
+    private readonly FlyoutArgs _args;
+
+    public MenuFlyoutFactory(FlyoutArgs args)
+    {
+        MenuFlyout menu = new ()
+        {
+            AreOpenCloseAnimationsEnabled = ResourceHelper.AllowAnimation
+        };
+
+        if (ResourceHelper.Get<Style>("DefaultFlyoutStyle") is Style defaultFlyoutStyle)
+            menu.MenuFlyoutPresenterStyle = defaultFlyoutStyle;
+
+        Menu = new(menu);
+        _args = args;
+    }
+
+    public MenuFlyoutFactory(MenuFlyout menu, FlyoutArgs args)
+    {
+        Menu = new(menu);
+        _args = args;
+    }
+
+    public MenuFlyoutFactory(MenuFlyoutSubItem menu, FlyoutArgs args)
+    {
+        Menu = new(menu);
+        _args = args;
+    }
+
+    public Style DefaultItemStyle => field ??= ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
+    public Style DefaultSubItemStyle => field ??= ResourceHelper.Get<Style>("ThemeMenuFlyoutSubItemStyle");
+    public Style DefaultHeaderStyle => field ??= ResourceHelper.Get<Style>("MenuFlyoutItemReadOnlyHeaderStyle");
+
+
+    public MenuFlyoutFactory Clear()
+    {
+        Menu.Items?.Clear();
+        return this;    
+    }
+
+    public T Child<T>(string name) where T : MenuFlyoutItemBase => Menu.Items.OfType<T>().FirstOrDefault(c => c.Name == name);
+
+    public MenuFlyoutFactory Add(MenuFlyoutItemBase item)
+    {
+        Menu.Items.Add(item);
+        return this;
+    }
+
+    public MenuFlyoutFactory AddHeader(string key, string acceleratorText, MenuItemHost parent = null)
+    {
+        MenuFlyoutItem item = new ()
+        {
+            Text = Localization.Get(key),
+            Style = DefaultHeaderStyle,
+            KeyboardAcceleratorTextOverride = acceleratorText
+        };
+
+        if (parent is null)
+            Menu.Items.Add(item);
+        else
+            parent.Items.Add(item);
+
+        return this;
+    }
+
+    public MenuFlyoutFactory AddHeaderObject(object headerContent, out MenuFlyoutContentHost HeaderHost)
+    {
+        HeaderHost = null;
+        headerContent ??= _args.Header;
+
+        if (headerContent is null) return this;
+
+        if (headerContent is FrameworkElement { Parent: MenuFlyoutContentHost host })
+            host.Content = null;
+
+        HeaderHost = new() { Content = headerContent };
+
+        return Add(HeaderHost).AddSeparator(out _);
+    }
+
+    public MenuFlyoutFactory AddSeparator(out MenuFlyoutSeparator separator)
+    {
+        separator = new MenuFlyoutSeparator();
+        Menu.Items.Add(separator);
+        return this;
+    }
+
+    public MenuFlyoutFactory AddSeparator()
+    {
+        Menu.Items.Add(new MenuFlyoutSeparator());
+        return this;
+    }
+
+    public MenuFlyoutItem Create(string key, object arg, ThemeIcon icon, RoutedEventHandler handler, CreateArgs args = null)
+        => Create($"~{Localization.Get(key, arg)}", icon, handler, args);
+
+    public MenuFlyoutItem Create(string key, ThemeIcon icon, RoutedEventHandler handler, CreateArgs args = null, MenuItemHost parent = null)
+    {
+        args ??= CreateArgs.Default;
+        MenuFlyoutItem item = new()
+        {
+            Text = key.StartsWith("~") ? key.Remove(0, 1) : Localization.Get(key),
+            Icon = ThemeIconGlyph.CreateIcon(icon),
+            Tag = args.Tag,
+            Style = DefaultItemStyle
+        };
+
+        Properties.SetTag(item, args.PropertyTag);
+        item.Click += handler;
+
+        if (args.AcceleratorKey != VirtualKey.None)
+            item.AddKeyboardAccelerator(args.AcceleratorKey, VirtualKeyModifiers.Control);
+
+        if (string.IsNullOrWhiteSpace(args.AcceleratorText) is false)
+            item.KeyboardAcceleratorTextOverride = args.AcceleratorText;
+
+        if (args.Add)
+        {
+            var target = parent?.Items ?? Menu.Items;
+
+            if (args.Index >= 0)
+                target.Insert(args.Index, item);
+            else
+                target.Add(item);
+        }
+
+        return item.SetAnimation();
+    }
+
+    public MenuFlyoutFactory CreateSubItem(ThemeIcon icon, string key, object arg = null, int insertIndex = -1)
+    {
+        MenuFlyoutSubItem item = new()
+        {
+            Text = Localization.Get(key, arg),
+            Icon = ThemeIconGlyph.CreateIcon(icon),
+            Style = DefaultSubItemStyle
+        };
+
+        if (insertIndex == -1)
+            Menu.Items.Add(item);
+        else if (insertIndex >= 0 && insertIndex < Menu.Items.Count)
+            Menu.Items.Insert(insertIndex, item);
+
+        return new MenuFlyoutFactory(item, _args);
+    }
+
+    public MenuFlyoutFactory AddColorOptions(CanvasTextLayoutAnalysis analysis, bool isCopy, FlyoutContextArg arg)
+    {
+        AddColorOptions(Menu, analysis, isCopy, arg);
+        return this;
+    }
+
+    public void AddColorOptions(MenuItemHost parent, CanvasTextLayoutAnalysis analysis, bool isCopy, FlyoutContextArg arg)
+    {
+        static void RequestCopy(object s, RoutedEventArgs e)
+        {
+            if (s is FrameworkElement { Tag: FlyoutContextArg ctx })
+                _ = ctx.ParentView.ViewModel.RequestCopyToClipboardAsync(
+                    new(DevValueType.Char, ctx.Character, ctx.Analysis, ctx.ParentView.ViewModel.SelectedFaceAnalysis, ctx.CopyType) { Style = ctx.ExportStyle, PreferredColorType = ctx.PreferredExportType });
+        }
+
+        static void SaveHandler(object s, RoutedEventArgs e)
+        {
+            if (s is FrameworkElement { Tag: FlyoutContextArg ctx })
+            {
+                ExportParameters p = new() { Style = ctx.ExportStyle, Typography = new(ctx.Ligature.Feature), Character = ctx.Character };
+                if (ctx.CopyType == CopyDataType.PNG)
+                    _ = ctx.ParentView.ViewModel.SavePngAsync(p);
+                else if (ctx.CopyType == CopyDataType.SVG)
+                    _ = ctx.ParentView.ViewModel.SaveSvgAsync(p);
+            }
+        }
+
+        RoutedEventHandler handler = isCopy ? RequestCopy : SaveHandler;
+        FlyoutContextArg W(ExportStyle style) => arg with { ExportStyle = style };
+        bool svgChar = analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
+
+        if (arg.CopyType == CopyDataType.SVG && analysis.IsFullVectorBased && svgChar)
+        {
+                Create(
+                    svgChar ? "ExportSVGGlyphLabel/Text" : "ColoredGlyphLabel/Text",
+                    icon: ThemeIcon.ColorGlyph, handler, new() { Tag = W(ExportStyle.ColorGlyph) }, parent);
+        }
+        else if (analysis.HasColorGlyphs)
+        {
+            if (analysis.SupportsColrV0)
+                Create("~COLRv0 Glyph", ThemeIcon.ColorGlyph, handler, args: new() { Tag = W(ExportStyle.ColorGlyph) with { PreferredExportType = GlyphImageFormat.Colr } }, parent);
+
+            if (analysis.SupportsColrV1)
+                Create("~COLRv1 Glyph", ThemeIcon.ColorGlyph, handler, args: new() { Tag = W(ExportStyle.ColorGlyph) with { PreferredExportType = GlyphImageFormat.ColrPaintTree } }, parent);
+
+            if (analysis.SupportsColrV0 is false && analysis.SupportsColrV1 is false)
+            {
+                // Probably a bitmap
+                Create("ColoredGlyphLabel/Text", ThemeIcon.ColorGlyph, handler, args: new() { Tag = W(ExportStyle.ColorGlyph) }, parent);
+            }
+        }
+            
+
+        // Glyphs that are entirely SVG backed don't have CFF outlines and can't be exported as monochrome.
+        // Bitmaps have the same issue.
+        if (!analysis.ContainsBitmapGlyphs && !svgChar)
+        {
+            Create("BlackFill/Text", ThemeIcon.FilledSquareBlack, handler, new() { Tag = W(ExportStyle.Black) }, parent);
+            Create("WhiteFill/Text", ThemeIcon.FilledSquareWhite, handler, new() { Tag = W(ExportStyle.White) }, parent);
+        }
+    }
+
+    public bool Show(UIElement target, ContextRequestedEventArgs args)
+    {
+        if (Menu.Host is MenuFlyout menu && args.TryGetPosition(target, out Point p))
+        {
+            menu.ShowAt(target, p);
+            args.Handled = true;
+            return true;
+        }
+        return false;
+    }
+
+    public static async void CopyHandler(object s, RoutedEventArgs e)
+    {
+        if (s is FrameworkElement f && Properties.GetTag(f) is FontMapView view)
+        {
+            if (f.Tag is LigatureModel lig)
+                Utils.CopyToClipboard(lig.ClipboardText);
+            else if (f.Tag is FlyoutContextArg { Character: { } c})
+            {
+                if (c is GlyphCharacter { IsValidUnicode: false } gc && view.ViewModel.SelectedFaceAnalysis.TryGetLigature(gc.GlyphIndex, out LigatureModel lig1))
+                    Utils.CopyToClipboard(lig1.ClipboardText);
+
+                if (!await Utils.TryCopyToClipboardAsync(c, view.ViewModel))
+                    return;
+            }
+            else
+                return;
+
+            view.GetNotifier().Show(Localization.Get("NotificationCopied"), 2000);
+        }
+    }
+
+
+    public class CreateArgs
+    {
+        public static CreateArgs Default { get; } = new();
+
+        public bool Add { get; init; } = true;
+        // Index to insert the child item at
+        public int Index { get; init; } = -1;
+
+        public VirtualKey AcceleratorKey { get; init; } = VirtualKey.None;
+        public object Tag { get; init; }
+        public object PropertyTag { get; init; }
+        public string AcceleratorText { get; init; }
+        public Style Style { get; init; }
+
+        public CreateArgs() { }
+        public CreateArgs(VirtualKey key) { AcceleratorKey = key; }
+    }
+}
 
 public static class FlyoutHelper
 {
@@ -96,9 +391,6 @@ public static class FlyoutHelper
         bool standalone = args.Standalone;
         bool showAdvanced = args.ShowAdvanced;
         bool isExternalFile = args.IsExternalFile;
-
-        Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
-        Style subStyle = ResourceHelper.Get<Style>("ThemeMenuFlyoutSubItemStyle");
 
         #region Handlers 
 
@@ -172,11 +464,6 @@ public static class FlyoutHelper
             }
         }
 
-        //void OpenCompare(object sender, RoutedEventArgs e)
-        //{
-        //    _ = QuickCompareView.CreateWindowAsync(new(false, args.Folder));
-        //}
-
         void OpenFaceCompare(object sender, RoutedEventArgs e)
         {
             if (sender is FrameworkElement f && f.Tag is CMFontFamily fnt)
@@ -185,34 +472,14 @@ public static class FlyoutHelper
             }
         }
 
-        MenuFlyoutItem Create(string key, ThemeIcon icon, RoutedEventHandler handler, VirtualKey accel = VirtualKey.None, bool add = true)
-        {
-            MenuFlyoutItem item = new()
-            {
-                Text = key.StartsWith("~") ? key.Remove(0, 1) : Localization.Get(key),
-                Icon = Icon(icon),
-                Tag = font,
-                Style = style
-            };
-
-            Properties.SetTag(item, options);
-
-            item.Click += handler;
-
-            if (accel != VirtualKey.None)
-                item.AddKeyboardAccelerator(accel, VirtualKeyModifiers.Control);
-
-            if (add)
-                menu.Items.Add(item);
-
-            return item.SetAnimation();
-        }
-
         #endregion
+
+        MenuFlyoutFactory factory = new (menu, args);
 
         if (menu.Items != null)
         {
-            menu.Items.Clear();
+            factory.Clear();
+
             MenuFlyoutSubItem coll;
 
             bool qc = args.IsFolderView is false && isExternalFile is false;
@@ -222,15 +489,7 @@ public static class FlyoutHelper
                 // render meaning we can't dynamically update items. Instead we need to make an entirely
                 // menu every time it opens.
 
-                if (headerContent != null && headerContent.Parent is MenuFlyoutContentHost host)
-                    host.Content = null;
-
-                menu.Items.Add(new MenuFlyoutContentHost
-                {
-                    Content = headerContent
-                });
-
-                menu.AddSeparator(headerContent != null);
+                factory.AddHeaderObject(headerContent, out _);
 
                 // 1. Add "Open in New Tab/Window" buttons
                 if (!standalone)
@@ -238,31 +497,31 @@ public static class FlyoutHelper
                     // 1.1. Only show "Open in New Tab" if this is Font List context menu
                     //      and supported by theme
                     if (showAdvanced is false && ResourceHelper.SupportsTabs)
-                        Create("OpenInNewTab/Text", ThemeIcon.NewTab, OpenInNewTab);
+                        factory.Create("OpenInNewTab/Text", ThemeIcon.NewTab, OpenInNewTab);
 
                     // 1.2. Create "Open in New Window"
-                    MenuFlyoutItem newWindow = Create("OpenInNewWindow/Text", ThemeIcon.NewWindow, OpenInNewWindow);
+                    MenuFlyoutItem newWindow = factory.Create("OpenInNewWindow/Text", ThemeIcon.NewWindow, OpenInNewWindow);
                     if (showAdvanced)
                         newWindow.AddKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control);
                 }
 
                 // 2. Add Save Font File & Export Font Glyphs options
-                if (options != null && options.Variant != null && DirectWrite.IsFontLocal(options.Variant.Face))
+                if (options != null && options.Face != null && DirectWrite.IsFontLocal(options.Face.Face))
                 {
-                    Create("ExportFontFileLabel/Text", ThemeIcon.Save, SaveFont_Click, VirtualKey.S);
+                    factory.Create("ExportFontFileLabel/Text", ThemeIcon.Save, SaveFont_Click, new(VirtualKey.S));
                     if (showAdvanced && !args.IsTabContext)
-                        Create("ExportCharactersLabel/Text", ThemeIcon.Save, Export_Click, VirtualKey.E);
+                        factory.Create("ExportCharactersLabel/Text", ThemeIcon.Save, Export_Click, new(VirtualKey.E));
                 }
 
                 // 3. Add "Add to quick compare" button if we're viewing a variant
                 if (qc)
-                    Create("AddToQuickCompare/Text", ThemeIcon.AddTo, AddToQuickCompare, VirtualKey.Q);
+                    factory.Create("AddToQuickCompare/Text", ThemeIcon.AddTo, AddToQuickCompare, new(VirtualKey.Q));
 
                 // 4. Add "Add to Collection" button
                 if (isExternalFile is false && args.IsFolderView is false)
                 {
-                    coll = AddCollectionItems(menu, font, null, args: args);
-                    coll.Style = subStyle;
+                    coll = FlyoutHelper.AddCollectionItems(menu, font, null, args: args);
+                    coll.Style = factory.DefaultSubItemStyle;
                 }
             }
 
@@ -284,10 +543,7 @@ public static class FlyoutHelper
             if (showAdvanced && args.IsTabContext is false)
             {
                 if (Windows.Graphics.Printing.PrintManager.IsSupported())
-                {
-                    MenuFlyoutItem print = Create("BtnPrint/Content", ThemeIcon.Print, Print_Click, VirtualKey.P, false);
-                    menu.Items.Insert(standalone ? 2 : 3, print);
-                }
+                    factory.Create("BtnPrint/Content", ThemeIcon.Print, Print_Click, new(VirtualKey.P) { Index = standalone ? 2 : 3 });
             }
 
             // 7. Add "Delete Font" button
@@ -297,7 +553,7 @@ public static class FlyoutHelper
                 && font.HasImportedFiles)
             {
                 menu.AddSeparator();
-                MenuFlyoutItem del = Create("RemoveFontFlyout/Text", ThemeIcon.Delete, DeleteClick);
+                MenuFlyoutItem del = factory.Create("RemoveFontFlyout/Text", ThemeIcon.Delete, DeleteClick);
                 if (showAdvanced)
                     del.AddKeyboardAccelerator(VirtualKey.Delete, VirtualKeyModifiers.Control);
             }
@@ -310,15 +566,15 @@ public static class FlyoutHelper
             {
                 // 8.1. Add "Compare Fonts button"
                 // NOTE: count is not used on updated translation, left because old translations may still use it
-                Create($"~{string.Format(Localization.Get("CompareFacesCountLabel/Text"), font.Variants.Count)}", ThemeIcon.CompareFonts, OpenFaceCompare);
-                
+                factory.Create($"~{string.Format(Localization.Get("CompareFacesCountLabel/Text"), font.Variants.Count)}", ThemeIcon.CompareFonts, OpenFaceCompare);
+
                 // 8.2. Add "Add all to quick compare" button
-                Create("AddMultiToQuickCompare/Text", ThemeIcon.Add, AddToQuickCompareMulti);
+                factory.Create("AddMultiToQuickCompare/Text", ThemeIcon.Add, AddToQuickCompareMulti);
             }
 
             // 9. Add Calligraphy button
             menu.AddSeparator();
-            Create("CalligraphyLabel/Text", ThemeIcon.Calligraphy, OpenCalligraphy, VirtualKey.I);
+            factory.Create("CalligraphyLabel/Text", ThemeIcon.Calligraphy, OpenCalligraphy, new(VirtualKey.I));
         }
     }
 
@@ -357,7 +613,7 @@ public static class FlyoutHelper
             MenuFlyoutItem removeItem = new()
             {
                 Text = Localization.Get("RemoveFromCollectionItem/Text"),
-                Icon = Icon(ThemeIcon.Remove),
+                Icon = ThemeIconGlyph.CreateIcon(ThemeIcon.Remove),
                 Tag = collection == null && filter == BasicFontFilter.SymbolFonts ? _collections.SymbolCollection : collection,
                 DataContext = font,
                 Style = style
@@ -379,13 +635,6 @@ public static class FlyoutHelper
                 }
             }
         }
-    }
-
-    static FontIcon Icon(ThemeIcon icon)
-    {
-        FontIcon f = new();
-        Properties.SetThemeIcon(f, icon);
-        return f;
     }
 
     /// <summary>
@@ -434,7 +683,7 @@ public static class FlyoutHelper
         MenuFlyoutSubItem parent = new()
         {
             Text = Localization.Get(key ?? "AddToCollectionFlyout/Text"),
-            Icon = Icon(ThemeIcon.Collections),
+            Icon = ThemeIconGlyph.CreateIcon(ThemeIcon.Collections),
             Style = substyle
         };
 
@@ -442,7 +691,7 @@ public static class FlyoutHelper
         MenuFlyoutItem newCollection = new()
         {
             Text = Localization.Get("NewCollectionItem/Text"),
-            Icon = Icon(ThemeIcon.Add),
+            Icon = ThemeIconGlyph.CreateIcon(ThemeIcon.Add),
             Style = style
         };
 
@@ -520,66 +769,111 @@ public static class FlyoutHelper
     /// <param name="menu"></param>
     /// <param name="target"></param>
     /// <param name="viewmodel"></param>
-    public static void ShowCharacterGridContext(MenuFlyout menu, FrameworkElement target, FontMapViewModel viewmodel, bool isStandalone, object context = null)
+    public static void ShowCharacterGridContext(MenuFlyout menu, FrameworkElement target, FontMapView view, bool isStandalone, object context = null)
     {
         T Child<T>(string name) where T : MenuFlyoutItemBase => menu.Items.OfType<T>().FirstOrDefault(c => c.Name == name);
         context ??= target.Tag;
 
+        var viewmodel = view.ViewModel;
+
+        if (context is uint or int)
+            context = new GlyphCharacter(Convert.ToUInt16(context));
+
+        if (context is GlyphCharacter gc && !gc.IsValidUnicode && viewmodel.SelectedFace is not null && viewmodel.SelectedFace.TryGetCharacterForGlyph(gc.GlyphIndex, out Character mapped))
+        {
+            gc = new(gc.GlyphIndex, gc.PaletteIndex, gc.Color, mapped.UnicodeIndex);
+            context = gc;
+        }
+
         if (context is Character c)
         {
-            Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
-            Style subStyle = ResourceHelper.Get<Style>("ThemeMenuFlyoutSubItemStyle");
-
             // 1. Attach the flyout to the selected grid item and apply the correct context
             FlyoutBase.SetAttachedFlyout(target, menu);
 
             // 2. Analyse the character to know which options we should show in the menu
-            var analysis = viewmodel.SelectedChar.GetCharAnalysis(c, viewmodel.SelectedFace);
+            CanvasTextLayoutAnalysis analysis = c is GlyphCharacter gc1
+                ? Utils.GetInterop().AnalyzeGlyphLayout(viewmodel.SelectedFace.Face, gc1.GlyphIndex)
+                : viewmodel.SelectedChar.GetCharAnalysis(c, viewmodel.SelectedFace);
 
-            // 3. Handle PNG options
-            var pngRoot = Child<MenuFlyoutSubItem>("PngRoot");
-            foreach (var child in pngRoot.Items.OfType<MenuFlyoutItem>())
-            {
-                if (child.CommandParameter is ExportStyle s && s == ExportStyle.ColorGlyph)
-                    child.SetVisible(analysis.HasColorGlyphs);
-                else
-                    child.SetVisible(!analysis.ContainsBitmapGlyphs); // Bitmap glyphs must *always* be saved as colour version
-            }
+            MenuFlyoutFactory factory = new(menu, new FlyoutArgs { Standalone = isStandalone });
+            FlyoutContextArg arg = new() { ParentView = view, Character = c, Analysis = analysis };
 
-            // 4. Handle SVG options
-            var svgRoot = Child<MenuFlyoutSubItem>("SvgRoot");
+            MenuFlyoutItem add = factory.Child<MenuFlyoutItem>("AddSelectionButton")
+                                        .SetVisible(c is not GlyphCharacter);
 
-            // 4.1. We can only save as SVG if all layers of the glyph are created with vectors
-            svgRoot.SetVisible(analysis.IsFullVectorBased);
+            // 3. Handle copy options
+            // 3.1. Remove existing
+            while (menu.Items[0] != add)
+                menu.Items.RemoveAt(0);
+
+            // 3.2. Use the factory to rebuild the menu
+            var copyAsImage = factory
+                .CreateSubItem(ThemeIcon.Copy, "CopyAsImageItem/Text", insertIndex: 0)
+                .AddHeader("CopyAsPngItem/Text", "Ctrl+Alt+C")
+                .AddColorOptions(analysis, true, arg with { CopyType = CopyDataType.PNG });
+
             if (analysis.IsFullVectorBased)
             {
-                // Glyphs that are actually stored as individual SVG files inside a font, and not
-                // typical font vector data, must always be saved as colourised / raw SVG.
-                bool svgChar = analysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
-
-                foreach (var child in svgRoot.Items.OfType<MenuFlyoutItem>())
-                {
-                    if (child.CommandParameter is ExportStyle s && s == ExportStyle.ColorGlyph)
-                    {
-                        child.Text = svgChar ? Localization.Get("ExportSVGGlyphLabel/Text") : Localization.Get("ColoredGlyphLabel/Text");
-                        child.SetVisible(svgChar || (analysis.IsFullVectorBased && analysis.HasColorGlyphs));
-                    }
-                    else
-                    {
-                        child.SetVisible(!svgChar);
-                    }
-                }
+                copyAsImage
+                    .AddHeader("CopyAsSvgItem/Text", "Ctrl+Shift+C")
+                    .AddColorOptions(analysis, true, arg with { CopyType = CopyDataType.SVG });
             }
 
-            // 4.2. Relabel the "Copy as SVG" coloured item for SVG-based chars (e.g. Noto Color Emoji)
-            //      to say "SVG Glyph" instead of "Coloured", matching the Save SVG submenu behaviour.
-            if (Child<MenuFlyoutItem>("CopySvgColouredItem") is { } copySvgItem)
+            // 3.3. Add the "Copy as Text" item to the top of the menu if supported.
+            //      Some glyph don't map to a Unicode character, and so can't be copied as text.
+            LigatureModel mappedLigature = null;
+            if (context is not GlyphCharacter gc2 || (gc2.IsValidUnicode || viewmodel.SelectedFaceAnalysis.TryGetLigature(gc2.GlyphIndex, out mappedLigature)))
             {
-                bool svgChar = analysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
-                copySvgItem.Text = svgChar
-                    ? Localization.Get("ExportSVGGlyphLabel/Text")
-                    : Localization.Get("ColoredGlyphLabel/Text");
+                // If a glyph maps to a ligature, we copy the ligature text instead
+                object tag = (object)mappedLigature ?? arg;
+                factory.Create("BtnCopy/Text", ThemeIcon.Copy, MenuFlyoutFactory.CopyHandler, new() { Index = 0, Tag = tag, PropertyTag = view });
+
             }
+
+            //// 3. Handle PNG options
+            //var pngRoot = Child<MenuFlyoutSubItem>("PngRoot");
+            //foreach (var child in pngRoot.Items.OfType<MenuFlyoutItem>())
+            //{
+            //    if (child.CommandParameter is ExportStyle s && s == ExportStyle.ColorGlyph)
+            //        child.SetVisible(analysis.HasColorGlyphs);
+            //    else
+            //        child.SetVisible(!analysis.ContainsBitmapGlyphs); // Bitmap glyphs must *always* be saved as colour version
+            //}
+
+            //// 4. Handle SVG options
+            //var svgRoot = Child<MenuFlyoutSubItem>("SvgRoot");
+
+            //// 4.1. We can only save as SVG if all layers of the glyph are created with vectors
+            //svgRoot.SetVisible(analysis.IsFullVectorBased);
+            //if (analysis.IsFullVectorBased)
+            //{
+            //    // Glyphs that are actually stored as individual SVG files inside a font, and not
+            //    // typical font vector data, must always be saved as colourised / raw SVG.
+            //    bool svgChar = analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
+
+            //    foreach (var child in svgRoot.Items.OfType<MenuFlyoutItem>())
+            //    {
+            //        if (child.CommandParameter is ExportStyle s && s == ExportStyle.ColorGlyph)
+            //        {
+            //            child.Text = svgChar ? Localization.Get("ExportSVGGlyphLabel/Text") : Localization.Get("ColoredGlyphLabel/Text");
+            //            child.SetVisible(svgChar || (analysis.IsFullVectorBased && analysis.HasColorGlyphs));
+            //        }
+            //        else
+            //        {
+            //            child.SetVisible(!svgChar);
+            //        }
+            //    }
+            //}
+
+            //// 4.2. Relabel the "Copy as SVG" coloured item for SVG-based chars (e.g. Noto Color Emoji)
+            ////      to say "SVG Glyph" instead of "Coloured", matching the Save SVG submenu behaviour.
+            //if (Child<MenuFlyoutItem>("CopySvgColouredItem") is { } copySvgItem)
+            //{
+            //    bool svgChar = analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
+            //    copySvgItem.Text = svgChar
+            //        ? Localization.Get("ExportSVGGlyphLabel/Text")
+            //        : Localization.Get("ColoredGlyphLabel/Text");
+            //}
 
             // 4.3. Find in other fonts is only supported in MainView right now
             Child<MenuFlyoutItem>("FindCharButton")?.SetVisible(!isStandalone && context is not GlyphCharacter);
@@ -597,7 +891,7 @@ public static class FlyoutHelper
                     if (sender is MenuFlyoutItem item
                         && Properties.GetDevOption(item) is DevOption option)
                     {
-                        Utils.CopyToClipBoard(option.Value);
+                        Utils.CopyToClipboard(option.Value);
                         WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
                     }
                 }
@@ -616,7 +910,7 @@ public static class FlyoutHelper
                         MenuFlyoutSubItem item = new() { Text = p.DisplayName };
                         foreach (var o in p.GetAllOptions())
                         {
-                            MenuFlyoutItem i = new() { Text = Localization.Get("ContextMenuDevCopyCommand", o.Name), Style = style };
+                            MenuFlyoutItem i = new() { Text = Localization.Get("ContextMenuDevCopyCommand", o.Name), Style = factory.DefaultItemStyle };
                             i.Click += CopyItemClick;
                             Properties.SetDevOption(i, o);
                             item.Items.Add(i);
@@ -657,10 +951,11 @@ public static class FlyoutHelper
             Child<MenuFlyoutItem>("CalligraphyButton")?.SetVisible(context is not GlyphCharacter);
 
             // 6.3.
-            Child<MenuFlyoutItem>("CopyItem")?.SetVisible(context is not GlyphCharacter);
+            bool canCopyText = context is not GlyphCharacter || (context is GlyphCharacter { IsValidUnicode: true });
+            Child<MenuFlyoutItem>("CopyItem")?.SetVisible(canCopyText);
 
             // 7. Set item context
-            menu.SetItemsDataContext(context, subStyle);
+            menu.SetItemsDataContext(context, factory.DefaultSubItemStyle);
 
             // 7. Show complete flyout
             FlyoutBase.ShowAttachedFlyout(target);
@@ -711,72 +1006,135 @@ public static class FlyoutHelper
         return flyout;
     }
 
-    public static string GetGlyphFormatLabel(CMFontFace variant, Character c)
+    //public static string GetGlyphFormatLabel(FaceAnalysisModel model, Character c)
+    //{
+    //    if (model == null || c == null)
+    //        return string.Empty;
+
+    //    List<string> formats = [];
+
+    //    try
+    //    {
+    //        ushort glyphIndex = c is GlyphCharacter gc
+    //            ? gc.GlyphIndex
+    //            : (ushort)model.Face.GetGlyphIndex(c);
+
+    //        if (model.Face != null
+    //            && Utils.GetInterop().AnalyzeGlyphLayout(model.Face.Face, glyphIndex) is { } analysis
+    //            && analysis.GlyphFormats != null
+    //            && analysis.GlyphFormats.Count > 0)
+    //        {
+    //            foreach (var fmt in analysis.GlyphFormats)
+    //            {
+    //                switch (fmt)
+    //                {
+    //                    case GlyphImageFormat.Svg:
+    //                        if (!formats.Contains("SVG")) formats.Add("SVG");
+    //                        break;
+    //                    case GlyphImageFormat.Colr:
+    //                        FontAnalysis colrFa = model.Analysis;
+    //                        string colrVer = colrFa != null && colrFa.COLRVersion >= 1 ? "COLRv1" : "COLRv0";
+    //                        if (!formats.Contains(colrVer)) formats.Add(colrVer);
+    //                        break;
+    //                    case GlyphImageFormat.Png:
+    //                    case GlyphImageFormat.Jpeg:
+    //                    case GlyphImageFormat.Tiff:
+    //                    case GlyphImageFormat.PremultipliedB8G8R8A8:
+    //                        if (!formats.Contains("Bitmap")) formats.Add("Bitmap");
+    //                        break;
+    //                    case GlyphImageFormat.TrueType:
+    //                        if (!formats.Contains("TTF")) formats.Add("TTF");
+    //                        break;
+    //                    case GlyphImageFormat.Cff:
+    //                        if (!formats.Contains("CFF")) formats.Add("CFF");
+    //                        break;
+    //                }
+    //            }
+    //        }
+    //    }
+    //    catch { }
+
+    //    if (formats.Count == 0 && model.Analysis is { } fa)
+    //    {
+    //        if (fa.HasCOLRGlyphs && fa.COLRVersion >= 1) formats.Add("COLRv1");
+    //        else if (fa.HasSVGGlyphs) formats.Add("SVG");
+    //        else if (fa.HasCOLRGlyphs) formats.Add("COLRv0");
+    //        else if (fa.HasBitmapGlyphs) formats.Add("Bitmap");
+    //        else formats.Add("TTF");
+    //    }
+
+    //    // DirectWrite active rendering precedence: COLRv1 > SVG > COLRv0 > Bitmap > CFF > TTF
+    //    if (formats.Contains("COLRv1")) return "COLRv1";
+    //    if (formats.Contains("SVG")) return "SVG";
+    //    if (formats.Contains("COLRv0")) return "COLRv0";
+    //    if (formats.Contains("Bitmap")) return "Bitmap";
+    //    if (formats.Contains("CFF")) return "CFF";
+    //    if (formats.Contains("TTF")) return "TTF";
+
+    //    return formats.Count > 0 ? string.Join(", ", formats) : string.Empty;
+    //}
+
+
+    public static void ShowLigatureFlyout(UIElement sender, ContextRequestedEventArgs args, FontMapView view)
     {
-        if (variant == null || c == null)
-            return string.Empty;
-
-        List<string> formats = [];
-
-        try
+        if (sender is ContentPresenter { Content: LigatureModel target })
         {
-            ushort glyphIndex = c is GlyphCharacter gc
-                ? gc.GlyphIndex
-                : (ushort)variant.GetGlyphIndex(c);
+            #region handlers
 
-            if (variant.Face != null
-                && Utils.GetInterop().AnalyzeGlyphLayout(variant.Face, glyphIndex) is { } analysis
-                && analysis.GlyphFormats != null
-                && analysis.GlyphFormats.Count > 0)
+            static void NavigateToGlyphHandler(object s, RoutedEventArgs e)
             {
-                foreach (var fmt in analysis.GlyphFormats)
-                {
-                    switch (fmt)
-                    {
-                        case GlyphImageFormat.Svg:
-                            if (!formats.Contains("SVG")) formats.Add("SVG");
-                            break;
-                        case GlyphImageFormat.Colr:
-                            FontAnalysis colrFa = variant.GetAnalysis();
-                            string colrVer = colrFa != null && colrFa.COLRVersion >= 1 ? "COLRv1" : "COLRv0";
-                            if (!formats.Contains(colrVer)) formats.Add(colrVer);
-                            break;
-                        case GlyphImageFormat.Png:
-                        case GlyphImageFormat.Jpeg:
-                        case GlyphImageFormat.Tiff:
-                        case GlyphImageFormat.PremultipliedB8G8R8A8:
-                            if (!formats.Contains("Bitmap")) formats.Add("Bitmap");
-                            break;
-                        case GlyphImageFormat.TrueType:
-                            if (!formats.Contains("TTF")) formats.Add("TTF");
-                            break;
-                        case GlyphImageFormat.Cff:
-                            if (!formats.Contains("CFF")) formats.Add("CFF");
-                            break;
-                    }
-                }
+                if (s is FrameworkElement f && f.Tag is LigatureModel lig && Properties.GetTag(f) is FontMapView view)
+                    view.NavigateToGlyph((ushort)lig.LigatureGlyph);
             }
+
+            #endregion
+
+
+            var viewModel = view.ViewModel;
+
+            MenuFlyoutFactory factory = new(new FlyoutArgs { Standalone = true, ShowAdvanced = true });
+
+            if (!string.IsNullOrEmpty(target.CombinedString))
+            {
+                factory.Create("CopySequenceMessage", target.CombinedString, ThemeIcon.Copy, MenuFlyoutFactory.CopyHandler, new () { Tag = target, PropertyTag = view });
+                factory.AddSeparator(out _);
+            }
+
+            ushort glyphIndex = (ushort)target.LigatureGlyph;
+            GlyphCharacter gc = viewModel.SelectedFace is not null && viewModel.SelectedFace.TryGetCharacterForGlyph(glyphIndex, out Character mapped)
+                ? new(glyphIndex, mapped.UnicodeIndex)
+                : new(glyphIndex);
+
+            CanvasTextLayoutAnalysis analysis = Utils.GetInterop().AnalyzeGlyphLayout(viewModel.SelectedFace.Face, gc.GlyphIndex);
+            FlyoutContextArg arg = new() { ParentView = view, Character = gc, Ligature = target, Analysis = analysis };
+
+            var copyAsImage = factory
+                .CreateSubItem(ThemeIcon.Copy, "CopyAsImageItem/Text")
+                .AddHeader("CopyAsPngItem/Text", "Ctrl+Alt+C")
+                .AddColorOptions(analysis, true, arg with { CopyType = CopyDataType.PNG });
+
+            if (analysis.IsFullVectorBased)
+            {
+                copyAsImage
+                    .AddHeader("CopyAsSvgItem/Text", "Ctrl+Shift+C")
+                    .AddColorOptions(analysis, true, arg with { CopyType = CopyDataType.SVG });
+            }
+
+            var savePng = factory
+                .CreateSubItem(ThemeIcon.Save, "ExportPNGLabel/Text")
+                .AddColorOptions(analysis, false, arg with { CopyType = CopyDataType.PNG });
+
+            if (analysis.IsFullVectorBased)
+            {
+                factory.CreateSubItem(ThemeIcon.Save, "ExportSVGLabel/Text")
+                       .AddColorOptions(analysis, false, arg with { CopyType = CopyDataType.SVG });
+            }
+
+            factory
+                .AddSeparator(out _)
+                .Create("ViewInGlyphMapMessage", target.LigatureGlyph, ThemeIcon.GlyphMapView, NavigateToGlyphHandler, new() { Tag = target, PropertyTag = view });
+
+            factory.Show(sender, args);
         }
-        catch { }
-
-        if (formats.Count == 0 && variant.GetAnalysis() is { } fa)
-        {
-            if (fa.HasCOLRGlyphs && fa.COLRVersion >= 1) formats.Add("COLRv1");
-            else if (fa.HasSVGGlyphs) formats.Add("SVG");
-            else if (fa.HasCOLRGlyphs) formats.Add("COLRv0");
-            else if (fa.HasBitmapGlyphs) formats.Add("Bitmap");
-            else formats.Add("TTF");
-        }
-
-        // DirectWrite active rendering precedence: COLRv1 > SVG > COLRv0 > Bitmap > CFF > TTF
-        if (formats.Contains("COLRv1")) return "COLRv1";
-        if (formats.Contains("SVG")) return "SVG";
-        if (formats.Contains("COLRv0")) return "COLRv0";
-        if (formats.Contains("Bitmap")) return "Bitmap";
-        if (formats.Contains("CFF")) return "CFF";
-        if (formats.Contains("TTF")) return "TTF";
-
-        return formats.Count > 0 ? string.Join(", ", formats) : string.Empty;
     }
-
 }

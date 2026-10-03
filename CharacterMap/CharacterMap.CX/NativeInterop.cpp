@@ -121,11 +121,66 @@ IVectorView<DWriteFontSet^>^ NativeInterop::GetFonts(IVectorView<StorageFile^>^ 
 	return fontSets->GetView();
 }
 
+DWriteFontSet^ NativeInterop::GetFonts(Platform::String^ filePath)
+{
+	if (filePath == nullptr || filePath->IsEmpty())
+		return nullptr;
+
+	try
+	{
+		ComPtr<IDWriteFontFile> fontFile;
+		HRESULT hr = m_dwriteFactory->CreateFontFileReference(filePath->Data(), nullptr, &fontFile);
+		if (FAILED(hr))
+			return nullptr;
+
+		BOOL isSupported = FALSE;
+		DWRITE_FONT_FILE_TYPE fileType;
+		DWRITE_FONT_FACE_TYPE faceType;
+		UINT32 numberOfFaces = 0;
+		hr = fontFile->Analyze(&isSupported, &fileType, &faceType, &numberOfFaces);
+		if (FAILED(hr) || !isSupported || numberOfFaces == 0)
+			return nullptr;
+
+		ComPtr<IDWriteFontSetBuilder1> builder;
+		hr = m_dwriteFactory->CreateFontSetBuilder(&builder);
+		if (FAILED(hr))
+			return nullptr;
+
+		for (UINT32 i = 0; i < numberOfFaces; ++i)
+		{
+			ComPtr<IDWriteFontFaceReference> faceRef;
+			if (SUCCEEDED(m_dwriteFactory->CreateFontFaceReference(fontFile.Get(), i, DWRITE_FONT_SIMULATIONS_NONE, &faceRef)))
+				builder->AddFontFaceReference(faceRef.Get());
+		}
+
+		ComPtr<IDWriteFontSet> fontSet;
+		hr = builder->CreateFontSet(&fontSet);
+		if (FAILED(hr))
+			return nullptr;
+
+		ComPtr<IDWriteFontCollection1> collection1;
+		hr = m_dwriteFactory->CreateFontCollectionFromFontSet(fontSet.Get(), &collection1);
+		if (FAILED(hr))
+			return nullptr;
+
+		ComPtr<IDWriteFontCollection3> collection3;
+		if (FAILED(collection1.As<IDWriteFontCollection3>(&collection3)) || !collection3)
+			return nullptr;
+
+		return DirectWrite::GetFonts(collection3)->Inflate();
+	}
+	catch (...)
+	{
+		return nullptr;
+	}
+}
+
 DWriteFontSet^ NativeInterop::GetFonts(StorageFile^ file)
 {
-	auto collection = m_fontManager->GetFontCollection(file->Path);
-	DWriteFontSet^ set = DirectWrite::GetFonts(collection)->Inflate();
-	return set;
+	if (file == nullptr)
+		return nullptr;
+
+	return GetFonts(file->Path);
 }
 
 DWriteFallbackFont^ NativeInterop::CreateEmptyFallback()
@@ -170,6 +225,79 @@ Platform::String^ NativeInterop::GetPathData(DWriteFontFace^ fontFace, UINT16 gl
 
 	//delete[] indicies;
 	return sink->GetPathData();
+}
+
+PathData^ NativeInterop::GetGlyphPath(DWriteFontFace^ fontFace, UINT16 glyphIndex, float fontSize)
+{
+	if (fontFace == nullptr)
+		return ref new PathData(ref new String(), Rect::Empty);
+
+	ComPtr<IDWriteFontFace3> face = fontFace->GetFontFace();
+	if (face == nullptr)
+		return ref new PathData(ref new String(), Rect::Empty);
+
+	uint16 indicies[1] = { glyphIndex };
+
+	ComPtr<ID2D1PathGeometry> geom;
+	m_d2dFactory->CreatePathGeometry(&geom);
+
+	ComPtr<ID2D1GeometrySink> geometrySink;
+	geom->Open(&geometrySink);
+
+	face->GetGlyphRunOutline(
+		fontSize > 0.0f ? fontSize : 512.0f,
+		indicies,
+		nullptr,
+		nullptr,
+		1,
+		false,
+		false,
+		geometrySink.Get());
+
+	geometrySink->Close();
+
+	ComPtr<SVGGeometrySink> sink = new (std::nothrow) SVGGeometrySink();
+	geom->Stream(sink.Get());
+
+	D2D1_RECT_F bounds{};
+	geom->GetBounds(D2D1::Matrix3x2F::Identity(), &bounds);
+
+	PathData^ data = nullptr;
+	if (isinf(bounds.left) || isinf(bounds.top) || isnan(bounds.left) || isnan(bounds.top))
+	{
+		data = ref new PathData(ref new String(), Rect::Empty);
+	}
+	else
+	{
+		data = ref new PathData(sink->GetPathData(), Rect(bounds.left, bounds.top, bounds.right - bounds.left, bounds.bottom - bounds.top));
+	}
+
+	sink->Close();
+	return data;
+}
+
+PathData^ NativeInterop::GetTextPath(DWriteFontFace^ fontFace, Platform::String^ text, float fontSize, CanvasTypographyFeatureName feature)
+{
+	if (fontFace == nullptr || text == nullptr || text->Length() == 0)
+		return ref new PathData(ref new String(), Rect::Empty);
+
+	INT32 glyphIdx = -1;
+	if (feature != CanvasTypographyFeatureName::None)
+	{
+		glyphIdx = GetTypographicGlyph(fontFace, text, feature);
+	}
+
+	if (glyphIdx <= 0)
+	{
+		glyphIdx = fontFace->GetGlyphIndice(text->Data()[0]);
+	}
+
+	if (glyphIdx >= 0)
+	{
+		return GetGlyphPath(fontFace, static_cast<UINT16>(glyphIdx), fontSize);
+	}
+
+	return ref new PathData(ref new String(), Rect::Empty);
 }
 
 IVectorView<PathData^>^ NativeInterop::GetPathDatas(DWriteFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies)
@@ -336,6 +464,51 @@ CanvasTextLayoutAnalysis^ NativeInterop::AnalyzeGlyphLayout(DWriteFontFace^ font
 
 	CanvasTextLayoutAnalysis^ analysis = ref new CanvasTextLayoutAnalysis(ana, nullptr);
 
+	ana = nullptr;
+	return analysis;
+}
+
+CanvasTextLayoutAnalysis^ NativeInterop::AnalyzeCharacter(DWriteFontFace^ fontFace, Platform::String^ text, CanvasTypographyFeatureName feature)
+{
+	if (fontFace == nullptr || text == nullptr || text->Length() == 0)
+		return nullptr;
+
+	FontWeight weight;
+	weight.Weight = fontFace->Properties->Weight.Weight;
+	FontStyle style = fontFace->Properties->Style;
+	FontStretch stretch = fontFace->Properties->Stretch;
+	ComPtr<IDWriteTextFormat3> idFormat = CreateIDWriteTextFormat(fontFace, weight, style, stretch, 64.0f);
+
+	ComPtr<IDWriteTextLayout> textLayout;
+	HRESULT hr = m_dwriteFactory->CreateTextLayout(
+		text->Data(),
+		text->Length(),
+		idFormat.Get(),
+		1000.0f,
+		1000.0f,
+		&textLayout);
+
+	if (FAILED(hr))
+		return nullptr;
+
+	if (feature != CanvasTypographyFeatureName::None)
+	{
+		ComPtr<IDWriteTypography> typography;
+		if (SUCCEEDED(m_dwriteFactory->CreateTypography(&typography)))
+		{
+			DWRITE_FONT_FEATURE f;
+			f.nameTag = static_cast<DWRITE_FONT_FEATURE_TAG>(feature);
+			f.parameter = 1;
+			typography->AddFontFeature(f);
+			textLayout->SetTypography(typography.Get(), DWRITE_TEXT_RANGE{ 0, text->Length() });
+		}
+	}
+
+	ComPtr<ColorTextAnalyzer> ana = new (std::nothrow) ColorTextAnalyzer(m_d2dFactory, m_dwriteFactory, m_d2dContext);
+	ana->IsCharacterAnalysisMode = true;
+	textLayout->Draw(m_d2dContext.Get(), ana.Get(), 0, 0);
+
+	CanvasTextLayoutAnalysis^ analysis = ref new CanvasTextLayoutAnalysis(ana, nullptr);
 	ana = nullptr;
 	return analysis;
 }

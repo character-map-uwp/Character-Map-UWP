@@ -50,7 +50,7 @@ public sealed partial class UnhandledExceptionDialog : ContentDialog
         sb.AppendLine($"**App Version**: {SystemInformation.Instance.ApplicationVersion.ToFormattedString()}");
         sb.AppendLine($"**App Culture**: {SystemInformation.Instance.Culture.Name}");
 
-        Utils.CopyToClipBoard(sb.ToString());
+        Utils.CopyToClipboard(sb.ToString());
         Uri uri = new("https://github.com/character-map-uwp/Character-Map-UWP/issues/new");
         _ = Launcher.LaunchUriAsync(uri);
     }

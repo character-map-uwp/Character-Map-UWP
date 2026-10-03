@@ -15,7 +15,7 @@ namespace CharacterMap.Provider
 
         IReadOnlyList<DevOption> Inflate()
         {
-            var v = Options.Variant;
+            var v = Options.Face;
             var c = Character;
 
             bool hasSymbol = FontFinder.IsSystemSymbolFamily(v) && Enum.IsDefined(typeof(Symbol), (int)c.UnicodeIndex);

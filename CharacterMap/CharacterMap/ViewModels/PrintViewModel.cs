@@ -8,11 +8,13 @@ public partial class PrintViewModel : ViewModelBase
 {
     protected override bool TrackAnimation => true;
 
-    public CMFontFace Font { get; set; }
+    public CMFontFace Font => FaceAnalysis.Face;
 
     public TypographyFeatureInfo Typography { get; set; }
 
     public FontFamily FontFamily { get; set; }
+
+    public FaceAnalysisModel FaceAnalysis { get; set; }
 
     private bool _hideWhitespace = true;
     public bool HideWhitespace
@@ -71,12 +73,12 @@ public partial class PrintViewModel : ViewModelBase
         // Fast path : all characters;
         if (!Categories.Any(c => !c.IsSelected) && !HideWhitespace)
         {
-            Characters = Font.Characters;
+            Characters = Font.GetCharacters();
             return;
         }
 
         // Filter characters
-        Characters = Unicode.FilterCharacters(Font.Characters, Categories, HideWhitespace);
+        Characters = Unicode.FilterCharacters(Font.GetCharacters(), Categories, HideWhitespace);
     }
 
     private PrintViewModel() { }
@@ -88,7 +90,7 @@ public partial class PrintViewModel : ViewModelBase
             ShowColorGlyphs = viewModel.ShowColorGlyphs,
             Typography = viewModel.SelectedTypography.Feature,
             FontFamily = viewModel.SelectedFaceAnalysis.FontFamily,
-            Font = viewModel.SelectedFace,
+            FaceAnalysis = viewModel.SelectedFaceAnalysis,
             Annotation = viewModel.Settings.GlyphAnnotation,
             Categories = viewModel.SelectedGlyphCategories.Select(c => c.Clone()).ToList()
         };

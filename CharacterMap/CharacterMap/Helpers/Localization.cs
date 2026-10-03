@@ -29,6 +29,9 @@ public static class Localization
 
     public static string Get(string key, params object[] args)
     {
+        if (args is null || args.Length < 1)
+            return _resources.GetString(key);
+
         return string.Format(_resources.GetString(key), args);
     }
 }
