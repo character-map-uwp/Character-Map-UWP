@@ -124,6 +124,11 @@ namespace CharacterMapCX
 			DWriteProperties^ get() { return m_dwProperties; }
 		}
 
+		property bool IsVariant
+		{
+			bool get() { return m_isVariant; }
+		}
+
 		bool HasCharacter(UINT32 character)
 		{
 			if (m_face != nullptr)
@@ -344,6 +349,50 @@ namespace CharacterMapCX
 			return ref new DWriteFontTableSession(GetFontFace(), tag);
 		}
 
+
+		DWriteFontFace^ CreateVariant(IVectorView<DWriteFontAxis^>^ axis)
+		{
+			if (axis == nullptr || axis->Size == 0)
+				return this;
+
+			auto baseFace = GetFontFace();
+			if (baseFace == nullptr)
+				return nullptr;
+
+			ComPtr<IDWriteFontFace5> face5;
+			if (FAILED(baseFace.As(&face5)))
+				return nullptr;
+
+			ComPtr<IDWriteFontResource> resource;
+			if (FAILED(face5->GetFontResource(&resource)) || resource == nullptr)
+				return nullptr;
+
+			std::vector<DWRITE_FONT_AXIS_VALUE> values;
+			values.reserve(axis->Size);
+			for (unsigned int i = 0; i < axis->Size; ++i)
+				values.push_back(axis->GetAt(i)->GetDWriteValue());
+
+			ComPtr<IDWriteFontFace5> face5_var;
+			if (FAILED(resource->CreateFontFace(
+				DWRITE_FONT_SIMULATIONS_NONE,
+				values.data(),
+				static_cast<UINT32>(values.size()),
+				&face5_var)) || face5_var == nullptr)
+				return nullptr;
+
+			ComPtr<IDWriteFontFace3> f3;
+			if (FAILED(face5_var.As(&f3)))
+				return nullptr;
+
+			DWriteFontFace^ variant = ref new DWriteFontFace(f3);
+			variant->m_isVariant = true;
+			variant->m_font = m_font;
+			variant->m_dwProperties = m_dwProperties;
+
+			return variant;
+		}
+
+
 		FontEmbeddingType GetEmbeddingType()
 		{
 			if (!m_loadedEmbed)
@@ -401,7 +450,8 @@ namespace CharacterMapCX
 		void Realize()
 		{
 			GetReference();
-			m_fontFace = GetOrCreate<CanvasFontFace>(m_fontResource.Get());
+			if (m_fontFace == nullptr)
+				m_fontFace = GetOrCreate<CanvasFontFace>(m_fontResource.Get());
 		}
 
 		ComPtr<IDWriteFontFaceReference> GetReference()
@@ -535,6 +585,7 @@ namespace CharacterMapCX
 			return Platform::ArrayReference<CanvasUnicodeRange>(&s_emptyDummy, 0);
 		}
 
+		bool m_isVariant = false;
 		bool m_loadedEmbed = false;
 
 		FontEmbeddingType m_embeddingType = FontEmbeddingType::Installable;

@@ -139,6 +139,8 @@ namespace CharacterMapCX
             virtual Windows::Foundation::Size MeasureOverride(Windows::Foundation::Size availableSize) override;
             virtual Windows::Foundation::Size ArrangeOverride(Windows::Foundation::Size finalSize) override;
 
+            void InvalidateLayoutAndRender();
+
         private:
             static void EnsureDependencyProperties();
 
@@ -156,7 +158,6 @@ namespace CharacterMapCX
             static void OnFontSizeChanged(Windows::UI::Xaml::DependencyObject^ d, Windows::UI::Xaml::DependencyPropertyChangedEventArgs^ e);
             static void OnForegroundChanged(Windows::UI::Xaml::DependencyObject^ d, Windows::UI::Xaml::DependencyPropertyChangedEventArgs^ e);
 
-            void InvalidateLayoutAndRender();
             void InvalidateRenderOnly();
             void ParseAndLayoutGlyphs();
             Windows::Foundation::Size ComputeScaleFactor(Windows::Foundation::Size availableSize, Windows::Foundation::Size contentSize);

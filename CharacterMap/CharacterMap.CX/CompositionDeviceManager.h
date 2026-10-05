@@ -43,6 +43,7 @@ namespace CharacterMapCX
     public:
         static void Trim();
         static void TrimWorkingSet();
+        static void TrimD2DResources();
 
         static void TrimDXGI()
         {
@@ -65,7 +66,6 @@ namespace CharacterMapCX
         static std::mutex& GetRenderMutex();
         static void HandleDeviceLost();
         static void ClearAtlases(Windows::UI::Composition::Compositor^ compositor);
-        static void TrimD2DResources();
         static Microsoft::WRL::ComPtr<IWICImagingFactory2> GetWICFactory();
         static void DrawGlyphRunWithColorSupport(
             ID2D1DeviceContext* context,

@@ -34,8 +34,6 @@ public partial class CMFontFace : IDisposable
 
     public bool HasXamlTypographyFeatures => XamlTypographyFeatures.Count > 0;
 
-    public CanvasFontFace FontFace => Face.FontFace;
-
     public string PreferredName { get; private set; }
 
     public FontCharacterList Characters { get; private set; }
@@ -427,7 +425,6 @@ public partial class CMFontFace : IDisposable
     public void Dispose()
     {
         Trim();
-        FontFace?.Dispose();
     }
 
     public override string ToString() => PreferredName;

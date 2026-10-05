@@ -141,6 +141,63 @@
 
     <Control.Resources>
 
+        <DataTemplate x:Key="AxisItemTemplate" x:DataType="cx:DWriteFontAxis">
+            <Grid Margin="0 0 0 2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Slider
+                    x:Name="AxisSlider"
+                    Grid.Column="1"
+                    Maximum="{x:Bind Maximum}"
+                    Minimum="{x:Bind Minimum}"
+                    SmallChange="0.1"
+                    StepFrequency="0.1"
+                    Style="{StaticResource DefaultThemeSliderStyle}"
+                    ValueChanged="Slider_ValueChanged"
+                    Value="{x:Bind Value, Mode=TwoWay}">
+                    <Slider.Header>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock
+                                Margin="0 0 0 -8"
+                                FontSize="12"
+                                Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                Text="{x:Bind Label}" />
+
+                            <FontIcon
+                                x:Name="Hidden"
+                                x:Load="{x:Bind IsHidden}"
+                                Margin="0 2 0 -6"
+                                core:Properties.ThemeIcon="Hidden"
+                                FontSize="12"
+                                Opacity="0.4" />
+                        </StackPanel>
+                    </Slider.Header>
+                </Slider>
+                <!--<Button
+                    x:Name="BtnPlay"
+                    VerticalAlignment="Bottom"
+                    Click="AxisPlay_Click"
+                    Content="&gt;"
+                    FontSize="12"
+                    Style="{StaticResource ThemeTextBlockButtonStyle}"
+                    Tag="{Binding ElementName=AxisSlider}" />-->
+                <Button
+                    x:Uid="BtnReset"
+                    Grid.Column="2"
+                    Margin="0 0 0 4"
+                    VerticalAlignment="Bottom"
+                    Click="AxisReset_Click"
+                    FontSize="12"
+                    Style="{StaticResource ThemeTextBlockButtonStyle}"
+                    Tag="{Binding ElementName=AxisSlider}"
+                    d:Content="{core:Localizer Key=BtnReset/Content}" />
+            </Grid>
+        </DataTemplate>
+
+
         <Style x:Key="SmallCardGridViewItem" TargetType="controls:ExtendedGridViewItem">
             <Setter Property="CornerRadius" Value="{ThemeResource CardCornerRadius}" />
             <Setter Property="Margin" Value="4" />
@@ -831,7 +888,6 @@
                             x:Name="FontPropertiesButton"
                             VerticalAlignment="Stretch"
                             controls:PreviewTip.VerticalTranslation="2"
-                            IsHintVisible="True"
                             Style="{ThemeResource MapInfoButtonStyle}"
                             ToolTipService.ToolTip="{x:Null}"
                             d:Label="Info"
@@ -845,6 +901,7 @@
                                 VerticalAlignment="Center"
                                 core:Properties.ThemeIcon="FontInfo"
                                 FontSize="18" />
+
                             <Button.Flyout>
                                 <Flyout
                                     core:Properties.UseExpandContractAnimation="True"
@@ -873,7 +930,9 @@
                                                 <TextBlock
                                                     x:Uid="FontPropTitle"
                                                     FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                                    FontSize="14"
                                                     FontWeight="Bold"
+                                                    Opacity="1"
                                                     d:Text="{core:Localizer Key=FontPropTitle/Text}" />
                                                 <controls:AutoGrid RowSpacing="8">
                                                     <Grid.ColumnDefinitions>
@@ -1066,11 +1125,9 @@
                             VerticalAlignment="Stretch"
                             controls:PreviewTip.VerticalTranslation="2"
                             h:FluentAnimation.PointerOver="DropDownGlyph"
-                            IsHintVisible="True"
                             Style="{ThemeResource MapInfoButtonStyle}"
                             Visibility="Collapsed"
-                            d:Label="{core:Localizer Key=FontOptionsButton/Label}"
-                            d:ToolTipService.ToolTip="">
+                            d:Label="{core:Localizer Key=FontOptionsButton/Label}">
 
                             <controls:PreviewTip.DisplayContent>
                                 <views:TitledDescription x:Uid="FaceOpenTypeFeaturesDescription" Title="{core:Localizer Key=FontOptionsButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}" />
@@ -1116,8 +1173,8 @@
                                                         x:Load="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.ContainsVectorColorGlyphs, Mode=OneWay}"
                                                         x:Uid="FontDisplayHeader"
                                                         FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                                        FontSize="14"
                                                         FontWeight="Bold"
-                                                        Opacity="0.5"
                                                         d:Text="{core:Localizer Key=FontDisplayHeader/Text}" />
                                                     <ToggleSwitch
                                                         x:Name="ColorGlyphToggle"
@@ -1131,8 +1188,8 @@
                                                         x:Uid="TypographyVariantsHeader"
                                                         Margin="0,12,0,0"
                                                         FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                                        FontSize="14"
                                                         FontWeight="Bold"
-                                                        Opacity="0.5"
                                                         Visibility="{x:Bind ViewModel.SelectedFace.HasXamlTypographyFeatures, Mode=OneWay}"
                                                         d:Text="{core:Localizer Key=TypographyVariantsHeader/Text}" />
                                                 </StackPanel>
@@ -1152,42 +1209,55 @@
                         </controls:UXButton>
 
                         <controls:UXButton
-                            x:Name="ViewToggleButton"
+                            x:Name="VariationsButton"
+                            x:Load="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.HasVariationAxis, Mode=OneWay, FallbackValue=False, TargetNullValue=False}"
+                            controls:PreviewTip.RegisterWith="{x:Bind PreviewTip}"
                             h:FluentAnimation.PointerOver="FluentContentPresenter"
                             h:FluentAnimation.PointerOverOffset="-2"
-                            Click="{x:Bind ViewModel.ChangeDisplayMode}"
-                            Style="{ThemeResource MapInfoButtonStyle}"
-                            ToolTipService.ToolTip="{core:Localizer Key=LblSwitchToTypeRamp/Text}"
-                            Visibility="Collapsed"
-                            d:Label="{core:Localizer Key=ViewToggleButton/Label}">
-                            <Button.Resources>
-                                <Storyboard x:Key="Released">
-                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Icon" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)">
-                                        <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="540">
-                                            <EasingDoubleKeyFrame.EasingFunction>
-                                                <CircleEase EasingMode="EaseOut" />
-                                            </EasingDoubleKeyFrame.EasingFunction>
-                                        </EasingDoubleKeyFrame>
-                                    </DoubleAnimationUsingKeyFrames>
-                                </Storyboard>
-                                <Storyboard x:Key="Pressed">
-                                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Icon" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)">
-                                        <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                                        <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="-20" />
-                                    </DoubleAnimationUsingKeyFrames>
-                                </Storyboard>
-                            </Button.Resources>
+                            Style="{ThemeResource MapInfoButtonStyle}">
+                            <controls:PreviewTip.DisplayContent>
+                                <views:TitledDescription x:Uid="FaceVariationsDescription" />
+                            </controls:PreviewTip.DisplayContent>
+
                             <FontIcon
-                                x:Name="Icon"
                                 Margin="0,0,-2,0"
+                                core:Properties.ThemeIcon="VariableAxis"
                                 FontSize="18"
-                                Glyph="{core:ThemeIconGlyph Icon=ViewSwitch}"
-                                RenderTransformOrigin="0.5 0.5"
-                                Style="{StaticResource ThemeFontIconStyle}">
-                                <FontIcon.RenderTransform>
-                                    <CompositeTransform />
-                                </FontIcon.RenderTransform>
-                            </FontIcon>
+                                Style="{StaticResource ThemeFontIconStyle}" />
+
+                            <Button.Flyout>
+                                <Flyout
+                                    core:Properties.UseExpandContractAnimation="True"
+                                    win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
+                                    Opened="InfoFlyout_Opened"
+                                    Opening="InfoFlyout_Opening"
+                                    Placement="Bottom">
+                                    <ScrollViewer
+                                        x:Name="VariationScrollerPopup"
+                                        MinWidth="400"
+                                        MaxWidth="440">
+                                        <StackPanel Padding="8 16 8 8" Spacing="12">
+                                            <TextBlock
+                                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                                FontWeight="Bold"
+                                                Text="Variable Font Axis" />
+
+                                            <ItemsControl
+                                                x:Name="VariableAxisPopup"
+                                                Padding="12"
+                                                Background="LightGray"
+                                                ItemTemplate="{StaticResource AxisItemTemplate}"
+                                                ItemsSource="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.VariableAxis, Mode=OneWay}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <StackPanel Spacing="8" />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                            </ItemsControl>
+                                        </StackPanel>
+                                    </ScrollViewer>
+                                </Flyout>
+                            </Button.Flyout>
                         </controls:UXButton>
 
                         <controls:UXButton
@@ -1195,7 +1265,6 @@
                             VerticalAlignment="Stretch"
                             controls:PreviewTip.VerticalTranslation="2"
                             IsActive="{x:Bind ViewModel.IsFiltered, Mode=OneWay}"
-                            IsHintVisible="True"
                             Loaded="{x:Bind h:CompositionFactory.SetStandardFadeInOut}"
                             Style="{ThemeResource MapInfoButtonStyle}"
                             d:Label="{core:Localizer Key=CharacterFilterButton/Label}"
@@ -1324,9 +1393,8 @@
                     ItemContainerTransitions="{StaticResource NoTransitions}"
                     ItemDoubleTapped="CharGrid_ItemDoubleTapped"
                     ItemFaceAnalysis="{x:Bind ViewModel.SelectedFaceAnalysis, Mode=OneWay, FallbackValue={x:Null}}"
-                    ItemFontFace="{x:Bind ViewModel.SelectedFace.Face, Mode=OneWay}"
+                    ItemFontFace="{x:Bind ViewModel.SelectedFaceAnalysis.ActiveFace, Mode=OneWay, FallbackValue={x:Null}}"
                     ItemFontFamily="{x:Bind ViewModel.SelectedFaceAnalysis.FontFamily, Mode=OneWay, FallbackValue={x:Null}}"
-                    ItemFontVariant="{x:Bind ViewModel.SelectedFace, Mode=OneWay}"
                     ItemTypography="{x:Bind ViewModel.SelectedTypography.Feature, Mode=OneWay}"
                     ItemsSource="{x:Bind ViewModel.GroupedChars, Mode=OneWay}"
                     SelectedItem="{x:Bind GetChar(ViewModel.SelectedChar), BindBack=ToModel, Mode=TwoWay}"
@@ -1705,55 +1773,8 @@
                         Margin="24 0 24 0"
                         Padding="12"
                         Background="LightGray"
-                        ItemsSource="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.VariableAxis, Mode=OneWay}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate x:DataType="cx:DWriteFontAxis">
-                                <Grid Margin="0 0 0 2">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <Slider
-                                        x:Name="AxisSlider"
-                                        Maximum="{x:Bind Maximum}"
-                                        Minimum="{x:Bind Minimum}"
-                                        SmallChange="0.1"
-                                        StepFrequency="0.1"
-                                        Style="{StaticResource DefaultThemeSliderStyle}"
-                                        ValueChanged="Slider_ValueChanged"
-                                        Value="{x:Bind Value, Mode=TwoWay}">
-                                        <Slider.Header>
-                                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <TextBlock
-                                                    Margin="0 0 0 -8"
-                                                    FontSize="12"
-                                                    Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                                    Text="{x:Bind Label}" />
-
-                                                <FontIcon
-                                                    x:Name="Hidden"
-                                                    x:Load="{x:Bind IsHidden}"
-                                                    Margin="0 2 0 -6"
-                                                    core:Properties.ThemeIcon="Hidden"
-                                                    FontSize="12"
-                                                    Opacity="0.4" />
-                                            </StackPanel>
-                                        </Slider.Header>
-                                    </Slider>
-                                    <Button
-                                        x:Uid="BtnReset"
-                                        Grid.Column="1"
-                                        Margin="0 0 0 4"
-                                        VerticalAlignment="Bottom"
-                                        Click="AxisReset_Click"
-                                        FontSize="12"
-                                        Style="{StaticResource ThemeTextBlockButtonStyle}"
-                                        Tag="{Binding ElementName=AxisSlider}"
-                                        d:Content="{core:Localizer Key=BtnReset/Content}" />
-                                </Grid>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                        ItemTemplate="{StaticResource AxisItemTemplate}"
+                        ItemsSource="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.VariableAxis, Mode=OneWay}" />
                 </ScrollViewer>
 
                 <ScrollViewer
@@ -3072,12 +3093,7 @@
                         From="LigatureMapState"
                         To="TypeRampState" />
                 </VisualStateGroup.Transitions>
-                <VisualState x:Name="CharacterMapState">
-                    <VisualState.Setters>
-                        <!--<Setter Target="SwitchToTypeRampButton.Visibility" Value="Visible" />-->
-                        <Setter Target="ViewToggleButton.(core:Properties.ToolTip)" Value="{core:Localizer Key='LblSwitchToTypeRamp/Text'}" />
-                    </VisualState.Setters>
-                </VisualState>
+                <VisualState x:Name="CharacterMapState" />
                 <VisualState x:Name="GlyphMapState">
                     <VisualState.Setters>
                         <!--<Setter Target="SelectorLabel.Visibility" Value="Collapsed" />
@@ -3125,7 +3141,6 @@
                         <Setter Target="CharGridHeader.ColumnSpan" Value="3" />
                         <!--<Setter Target="SwitchToCharacterMapButton.Visibility" Value="Visible" />
                         <Setter Target="SwitchToTypeRampButton.Visibility" Value="Collapsed" />-->
-                        <Setter Target="ViewToggleButton.(core:Properties.ToolTip)" Value="{core:Localizer Key='LblSwitchToCharMap/Text'}" />
                         <Setter Target="TypeRampHints.Visibility" Value="Collapsed" />
                         <!--  Popup menu options  -->
                         <Setter Target="IncreaseSizeButton.IsEnabled" Value="False" />
@@ -3286,7 +3301,6 @@
                         <Setter Target="CopySequenceRoot.Margin" Value="8 0 8 8" />
                         <Setter Target="CopySequenceRoot.Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />-->
                         <!--<Setter Target="MoreSwitchView.(core:Properties.UseAttachedStates)" Value="True" />-->
-                        <Setter Target="ViewToggleButton.(core:Properties.UseAttachedStates)" Value="True" />
                         <Setter Target="ViewRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
                         <!--<Setter Target="BackgroundBorder.Visibility" Value="Collapsed" />-->
                         <Setter Target="CopyTopBorder.Visibility" Value="Collapsed" />
@@ -3321,7 +3335,6 @@
           <Setter Target="CopySequenceRoot.Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />-->
                         <!--<Setter Target="MoreSwitchView.(core:Properties.UseAttachedStates)" Value="True" />-->
                         <Setter Target="CharGrid.ItemContainerStyle" Value="{core:OptionalResource Key='MaterialGridViewItemStyle'}" />
-                        <Setter Target="ViewToggleButton.(core:Properties.UseAttachedStates)" Value="True" />
                         <Setter Target="ViewRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="False" />
                         <!--<Setter Target="BackgroundBorder.Visibility" Value="Collapsed" />-->
                         <Setter Target="CopyTopBorder.Visibility" Value="Collapsed" />

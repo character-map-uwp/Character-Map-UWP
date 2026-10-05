@@ -444,22 +444,7 @@ void CompositionDeviceManager::TrimD2DResources()
 void CompositionDeviceManager::TrimWorkingSet()
 {
     Trim(); // Trims DXGI device and graphics devices
-    /*typedef BOOL(WINAPI* PFN_SetProcessWorkingSetSize)(HANDLE, SIZE_T, SIZE_T);
-    HMODULE hKernel = GetModuleHandleW(L"kernel32.dll");
-    if (hKernel != nullptr)
-    {
-        auto pfn = reinterpret_cast<PFN_SetProcessWorkingSetSize>(GetProcAddress(hKernel, "SetProcessWorkingSetSize"));
-        if (pfn != nullptr)
-            pfn(GetCurrentProcess(), static_cast<SIZE_T>(-1), static_cast<SIZE_T>(-1));
-    }*/
-
-    // 2. Coalesce and decommit freed CRT heap blocks
     HeapCompact(GetProcessHeap(), 0);
-
-
-    
-    // 3. Flush the process working set pages to the Standby list (what minimizing does)
-    //K32EmptyWorkingSet(GetCurrentProcess());
 }
 
 

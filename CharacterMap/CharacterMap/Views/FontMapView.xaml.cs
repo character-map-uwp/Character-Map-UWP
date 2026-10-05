@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace CharacterMap.Views;
 
@@ -527,6 +528,8 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 CharGrid.Measure(CharGrid.DesiredSize);
 
             GoToState(CharacterMapState.Name, animate);
+
+            this.Enqueue(() => HandleStale(CharacterMapState));
         }
         else if (ViewModel.DisplayMode == FontDisplayMode.GlyphMapState)
         {
@@ -1003,6 +1006,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     private void Slider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
     {
         ViewModel.UpdateVariations();
+        MarkStale();
     }
 
     private void AxisReset_Click(object sender, RoutedEventArgs e)
@@ -1295,9 +1299,34 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     Character GetChar(CharacterAnalysisModel c) => c?.Char;
 
+
+    // Is variable axis rendering stale?
+    // We don't want to bother updating CharMap if it's not the active view, 
+    // so we mark the rendering as stale and handle it we it's active again.
+    bool m_stale = false;
+
+    Debouncer _staleDeboucner = new(8);
+
+    void MarkStale()
+    {
+        m_stale = true;
+        _staleDeboucner.Debounce(() =>
+        {
+            HandleStale();
+        });
+    }
+
+    void HandleStale(VisualState state = null)
+    {
+        _staleDeboucner.Cancel();
+
+        if (m_stale && (state ?? MapDisplayStates.CurrentState) == CharacterMapState)
+            CharGrid.UpdateFontFace();
+    }
+
     void ToModel(object c)
     {
-        if (ViewModel.SelectedChar?.Char == c)
+        if (ViewModel.SelectedChar?.Char == c as Character)
             return;
 
         // 1. Persist render option
@@ -1306,8 +1335,11 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             && ColrSelector.SelectedItem is NamedTag tag)
             opt = tag;
 
-        ViewModel.SelectedChar = new(ViewModel.SelectedFace, c as Character, ViewModel, opt);
-        UpdateColrSelector();
+        if (ViewModel.SelectedFace is not null && c is not null)
+        {
+            ViewModel.SelectedChar = new(ViewModel.SelectedFace, c as Character, ViewModel, opt);
+            UpdateColrSelector();
+        }
     }
 
     private void UpdateColrSelector()
@@ -1512,6 +1544,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             g.IsColorFontEnabled = ViewModel.ShowColorGlyphs;
         }
     }
+
 }
 
 

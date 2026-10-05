@@ -912,7 +912,6 @@
                             ItemContainerTransitions="{StaticResource NoTransitions}"
                             ItemFontFace="{Binding Options.Variant.Face, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                             ItemFontFamily="{Binding Options.Variant.Source, RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                            ItemFontVariant="{Binding Options.Variant, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                             ItemSize="40"
                             ItemTypography="{Binding Options.DXTypography, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                             ItemsSource="{Binding Options.Variant.Characters, RelativeSource={RelativeSource Mode=TemplatedParent}}"

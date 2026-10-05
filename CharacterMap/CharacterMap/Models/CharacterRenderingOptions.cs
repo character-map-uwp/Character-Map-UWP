@@ -10,6 +10,8 @@ public record CharacterRenderingOptions
 
     public CMFontFamily Family { get; init; }
     public CMFontFace Face { get; init; }
+    public DWriteFontFace FontFace => ActiveFontFace ?? Face.Face;
+    public DWriteFontFace ActiveFontFace { get; init; }
     public float FontSize { get; init; }
     public CanvasTextLayoutAnalysis Analysis { get; init; }
     public IReadOnlyList<TypographyFeatureInfo> Typography { get; init; }

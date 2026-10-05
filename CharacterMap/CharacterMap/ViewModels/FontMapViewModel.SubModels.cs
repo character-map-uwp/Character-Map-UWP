@@ -16,6 +16,8 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
 
     [ObservableProperty] IReadOnlyList<Suggestion> _rampOptions;
 
+    [ObservableProperty] DWriteFontFace _activeFace;
+
     public bool HasFontOptions { get; }
 
     public bool ShowColorGlyphs => Face.DirectWriteProperties.IsColorFont;
@@ -55,11 +57,13 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
             return;
 
         Face = face;
-
         Analysis = TypographyAnalyzer.Analyze(this);
 
         if (loadFull is false)
+        {
+            ActiveFace = face.Face;
             return;
+        }
 
         IsMDL2Font = FontFinder.IsMDL2(face);
         FontFamily = new(face.Source);
@@ -90,6 +94,17 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
         VariationAxis =
             Analysis?.Axis?.Where(a => (a.Attribute & DWriteFontAxisAttribute.Variable) != 0).ToList()
             ?? [];
+
+        if (VariationAxis is not null && VariationAxis.Count > 0)
+        {
+            var old = ActiveFace;
+            ActiveFace = Face.Face.CreateVariant(VariationAxis);
+
+            if (old is { IsVariant: true})
+                old.ReleaseResources();
+        }
+        else
+        ActiveFace = Face.Face;
     }
 
     public void UpdateRampOptions()

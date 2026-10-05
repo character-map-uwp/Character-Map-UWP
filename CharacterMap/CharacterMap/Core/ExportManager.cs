@@ -78,6 +78,29 @@ public class ExportFontFileResult
 
 public static partial class ExportManager
 {
+    public static Task<ExportResult> ExportGlyphAsync(
+        ExportOptions e,
+        Character selectedChar)
+    {
+        // To export a glyph as an SVG, it must be fully vector based.
+        // If it is not, we force export as PNG regardless of choice.
+        if (e.PreferredFormat == ExportFormat.Png || e.Options.Analysis.IsFullVectorBased is false)
+            return ExportPngAsync(e, selectedChar);
+        else
+            // NOTE: SVG Export may require UI thread
+            return ExportSvgAsync(e, selectedChar);
+    }
+
+
+
+
+
+    //------------------------------------------------------
+    //
+    //  SVG
+    //
+    //------------------------------------------------------
+
     public static string GetSVG(
         ExportOptions e,
         Character selectedChar,
@@ -104,7 +127,7 @@ public static partial class ExportManager
                     try
                     {
                         string colrV1Svg = DirectWrite.GetColrV1Svg(
-                            options.Face.Face,
+                            options.ActiveFontFace,
                             (ushort)glyphIdx,
                             e.PreferredColor);
                         if (!string.IsNullOrWhiteSpace(colrV1Svg))
@@ -125,7 +148,7 @@ public static partial class ExportManager
             // Try to find the bounding box of all glyph layers combined
             foreach (var thing in options.Analysis.Indicies)
             {
-                var path = interop.GetPathDatas(options.Face.Face, thing.ToArray()).First();
+                var path = interop.GetPathDatas(options.ActiveFontFace, thing.ToArray()).First();
                 paths.Add(path.Path);
 
                 if (!path.Bounds.IsEmpty)
@@ -179,14 +202,14 @@ public static partial class ExportManager
 
             try
             {
-                IBuffer b = GetCharacterBuffer(options.Face.Face, selectedChar, GlyphImageFormat.Svg);
+                IBuffer b = GetCharacterBuffer(options.ActiveFontFace, selectedChar, GlyphImageFormat.Svg);
                 string str = null;
                 if (targetGlyphIndex >= 0)
                     str = SVGGlyphHelper.FilterSVGToGlyph(targetGlyphIndex, b);
                 else
                     str = SVGGlyphHelper.ReadSVGBuffer(b);
 
-                return SVGGlyphHelper.FitBounds(str, options.Face.Face.DesignUnitsPerEm);
+                return SVGGlyphHelper.FitBounds(str, options.ActiveFontFace.DesignUnitsPerEm);
             }
             catch (Exception ex)
             {
@@ -200,29 +223,6 @@ public static partial class ExportManager
         {
             return GetMonochrome();
         }
-    }
-
-
-    public static Task<ExportResult> ExportGlyphAsync(
-        ExportOptions e,
-        Character selectedChar)
-    {
-        // To export a glyph as an SVG, it must be fully vector based.
-        // If it is not, we force export as PNG regardless of choice.
-        if (e.PreferredFormat == ExportFormat.Png || e.Options.Analysis.IsFullVectorBased is false)
-            return ExportPngAsync(e, selectedChar);
-        else
-            // NOTE: SVG Export may require UI thread
-            return ExportSvgAsync(e, selectedChar);
-    }
-
-    public static Task<StorageFile> GetTargetFileAsync(ExportOptions e, Character c, string format, StorageFolder targetFolder)
-    {
-        string name = GetFileName(e, c, format);
-        if (targetFolder != null) 
-            return targetFolder.CreateFileAsync(name, CreationCollisionOption.ReplaceExisting).AsTask();
-        else
-            return PickFileAsync(name, format.ToUpper(), new[] { $".{format}" });
     }
 
     public static async Task<ExportResult> ExportSvgAsync(
@@ -255,6 +255,24 @@ public static partial class ExportManager
 
         return new ExportResult(ExportState.Failed, null);
     }
+
+    private static IBuffer GetCharacterBuffer(DWriteFontFace fontface, Character c, GlyphImageFormat format)
+    {
+        if (c is GlyphCharacter gc)
+            return DirectWrite.GetGlyphImageDataBuffer(fontface, 1024, gc.GlyphIndex, format);
+
+        return DirectWrite.GetImageDataBuffer(fontface, 1024, c.UnicodeIndex, format);
+    }
+
+
+
+
+
+    //------------------------------------------------------
+    //
+    //  PNG
+    //
+    //------------------------------------------------------
 
     public static async Task<ExportResult> ExportPngAsync(
         ExportOptions e,
@@ -305,25 +323,37 @@ public static partial class ExportManager
         bool isColor = e.PreferredStyle == ExportStyle.ColorGlyph;
 
         if (selectedChar is GlyphCharacter gc)
-            return DirectWrite.GetGlyphPNGStream(e.Options.Face.Face, (ushort)gc.GlyphIndex, size, textColor, e.PreferredColorType);
+            return DirectWrite.GetGlyphPNGStream(e.Options.ActiveFontFace, (ushort)gc.GlyphIndex, size, textColor, e.PreferredColorType);
 
         IReadOnlyList<uint> typographyTags = e.Options.Typography?.Select(t => (uint)t.Feature).ToList() ?? [];
-        return DirectWrite.GetCharacterPNGStream(e.Options.Face.Face, selectedChar.Char, size, textColor, e.PreferredColorType, typographyTags);
+        return DirectWrite.GetCharacterPNGStream(e.Options.ActiveFontFace, selectedChar.Char, size, textColor, e.PreferredColorType, typographyTags);
     }
 
-    private static IBuffer GetCharacterBuffer(DWriteFontFace fontface, Character c, GlyphImageFormat format)
-    {
-        if (c is GlyphCharacter gc)
-            return DirectWrite.GetGlyphImageDataBuffer(fontface, 1024, gc.GlyphIndex, format);
 
-        return DirectWrite.GetImageDataBuffer(fontface, 1024, c.UnicodeIndex, format);
-    }
+
+
+
+
+    //------------------------------------------------------
+    //
+    //  Helpers
+    //
+    //------------------------------------------------------
 
     internal static string GetFileName(
         ExportOptions e,
         Character c,
         string ext) 
         => e.GetFileName(c, ext);
+
+    public static Task<StorageFile> GetTargetFileAsync(ExportOptions e, Character c, string format, StorageFolder targetFolder)
+    {
+        string name = GetFileName(e, c, format);
+        if (targetFolder != null)
+            return targetFolder.CreateFileAsync(name, CreationCollisionOption.ReplaceExisting).AsTask();
+        else
+            return PickFileAsync(name, format.ToUpper(), new[] { $".{format}" });
+    }
 
     private static Task<StorageFile> PickFileAsync(string fileName, string key, IList<string> values, PickerLocationId suggestedLocation = PickerLocationId.PicturesLibrary)
         => StorageHelper.PickSaveFileAsync(fileName, key, values, suggestedLocation);
@@ -336,9 +366,9 @@ public static partial class ExportManager
         float fontSize = options.FontSize > 0 ? options.FontSize : 512f;
         PathData data;
         if (selectedChar is GlyphCharacter gc)
-            data = interop.GetGlyphPath(options.Face.Face, (ushort)gc.GlyphIndex, fontSize);
+            data = interop.GetGlyphPath(options.ActiveFontFace, (ushort)gc.GlyphIndex, fontSize);
         else
-            data = interop.GetTextPath(options.Face.Face, selectedChar.Char, fontSize, (options.Typography.FirstOrDefault() ?? TypographyFeatureInfo.None).Feature);
+            data = interop.GetTextPath(options.ActiveFontFace, selectedChar.Char, fontSize, (options.Typography.FirstOrDefault() ?? TypographyFeatureInfo.None).Feature);
 
         Rect bounds = data?.Bounds ?? new Rect(0, 0, fontSize, fontSize);
         if (!bounds.HasDimensions())
@@ -372,8 +402,8 @@ public static partial class ExportManager
                 callback?.Invoke(i, characters.Count);
 
                 CanvasTextLayoutAnalysis analysis = c is GlyphCharacter gc
-                    ? interop.AnalyzeGlyphLayout(e.Options.Face.Face, (ushort)gc.GlyphIndex)
-                    : interop.AnalyzeCharacter(e.Options.Face.Face, c.Char, (e.Options.Typography.FirstOrDefault() ?? TypographyFeatureInfo.None).Feature);
+                    ? interop.AnalyzeGlyphLayout(e.Options.ActiveFontFace, (ushort)gc.GlyphIndex)
+                    : interop.AnalyzeCharacter(e.Options.ActiveFontFace, c.Char, (e.Options.Typography.FirstOrDefault() ?? TypographyFeatureInfo.None).Feature);
 
                 e = e with { 
                     Options = e.Options with { Analysis = analysis } 

@@ -38,7 +38,6 @@ internal class CharacterGridViewTemplateSettings
 [DependencyProperty<FontFamily>("ItemFontFamily")]
 [DependencyProperty<DWriteFontFace>("ItemFontFace")]
 [DependencyProperty<TypographyFeatureInfo>("ItemTypography")]
-[DependencyProperty<CMFontFace>("ItemFontVariant")]
 [DependencyProperty<FaceAnalysisModel>("ItemFaceAnalysis")]
 [DependencyProperty<GlyphAnnotation>("ItemAnnotation")]
 [AttachedProperty<ItemTooltipData>("ToolTipData")]
@@ -52,7 +51,7 @@ public partial class CharacterGridView : GridView
 
     public bool ShowVariationsInToolTips { get; set; }
 
-    public bool ForceFontGlyphs { get; set; } = false;
+    public bool ForceFontGlyphs { get; set; }
 
     #region Dependency Properties
 
@@ -137,20 +136,35 @@ public partial class CharacterGridView : GridView
 
             if (item.ContentTemplateRoot is Grid g)
             {
-                bool colrv1 = ForceFontGlyphs ||( ItemFaceAnalysis.Analysis.COLRVersion == 1 && Utils.SupportsColrV1);
+                // We need to decide whether to render with XAML TextBlock or our FontGlyphs
+                // control. There are some memory issues with FontGlyphs I haven't been able
+                // to figure out yet, so we prefer TextBlock where we can for now.
+                //
+                // We need to use FontGlyphs if the font face:
+                //   - uses ColrV1 glyphs
+                //   - has variable axis
+                //
+                // XAML TextBlock supports neither of these currently, and FontGlyphs has better
+                // variable axis support than the DirectText control for some reason, even though
+                // they're built on the same axis creation techniques.
 
-                // 1. Unload existing presenter
+                bool needsGlyphs =
+                    ForceFontGlyphs
+                    || (ItemFaceAnalysis.Analysis.COLRVersion == 1 && Utils.SupportsColrV1)
+                    || ItemFaceAnalysis.Analysis.HasVariationAxis;
+
+                // 1. Unload existing presenter if necessary
                 if (!ForceFontGlyphs && g.Children.Count == 2 && g.Children[0] is FrameworkElement f)
                 {
-                    if (f is TextBlock && colrv1)
+                    if (f is TextBlock && needsGlyphs)
                         XamlMarkupHelper.UnloadObject(f);
-                    else if (f is FontGlyphs && !colrv1)
+                    else if (f is FontGlyphs && !needsGlyphs)
                         XamlMarkupHelper.UnloadObject(f);
                 }
 
                 // // 2. Load the appropriate if it does not exist
                 if (g.Children.Count == 1)
-                    g.FindName(colrv1 ? "Glyph" : "Block");
+                    g.FindName(needsGlyphs ? "Glyph" : "Block");
             }
 
             UpdateContainer(item.ContentTemplateRoot, c);
@@ -161,7 +175,7 @@ public partial class CharacterGridView : GridView
             item.DoubleTapped += Item_DoubleTapped;
 
             // Set ToolTip
-            if (ItemFontVariant is not null)
+            if (ItemFontFace is not null)
             {
                 if ((ToolTipService.GetToolTip(item) is ToolTip t) is false)
                 {
@@ -285,6 +299,12 @@ public partial class CharacterGridView : GridView
         {
             ItemDoubleTapped?.Invoke(sender, item.DataContext as Character);
         }
+    }
+
+    private IEnumerable<GridViewItem> GetActiveContainers()
+    {
+        // Recycled containers are at -10000 usually
+        return this.ItemsPanelRoot?.Children.OfType<GridViewItem>();//.Where(c => c.ActualOffset.X >= -1000);
     }
 
 
@@ -440,6 +460,19 @@ public partial class CharacterGridView : GridView
 
 
     #region Item Template Handling
+
+    public void UpdateFontFace()
+    {
+        if (Utils.SupportsColrV1 is false || this.GetActiveContainers() is not { } containers)
+            return;
+
+        foreach (var c in containers)
+        {
+            if (c.ContentTemplateRoot is Grid g && g.Children[0] is FontGlyphs f)
+                f.FontFace = _templateSettings.FontFace;
+        }
+
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void UpdateContainer(UIElement container, Character c)

@@ -285,6 +285,7 @@ void FontGlyphs::InvalidateLayoutAndRender()
     // virtualised-container recycling cycle.
     ReleaseDrawingSurface();
     InvalidateMeasure();
+    InvalidateArrange();
 }
 
 void FontGlyphs::InvalidateRenderOnly()

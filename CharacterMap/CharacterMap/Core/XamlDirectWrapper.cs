@@ -26,7 +26,9 @@ public static class XamlDirectExtensions
 
         public XamlDirectWrapper GetWrapperForCollectionIndex(IXamlDirectObject collection, uint index, UIElement source = null)
         {
-            return new XamlDirectWrapper(d.GetXamlDirectObjectFromCollectionAt(collection, index), d) { Source = source };
+            if (d.GetXamlDirectObjectFromCollectionAt(collection, index) is { } x)
+                return new XamlDirectWrapper(x, d) { Source = source };
+            return null;
         }
     }
 }

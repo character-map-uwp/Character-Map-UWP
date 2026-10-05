@@ -65,6 +65,7 @@ public enum ThemeIcon
     RenderingOptions,
     CompareFonts,
     Collections,
+    VariableAxis,
 
     EnableGrouping,
     IncreaseFontSize,
@@ -159,6 +160,7 @@ public class ThemeIconGlyph : MarkupExtension
         [ThemeIcon.LigatureMapView] = "ffi",
         [ThemeIcon.About] = V(0xE946),
         [ThemeIcon.Back] = V(0xE72B),
+        [ThemeIcon.VariableAxis] = V(0xE9E9),
 
         [ThemeIcon.Fullscreen] = V(0xE740),
         [ThemeIcon.ExitFullscreen] = V(0xE73F),

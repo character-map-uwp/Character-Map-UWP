@@ -362,7 +362,10 @@ public partial class FontMapViewModel : ViewModelBase
                 new() { SelectedCharTypography },
                 64,
                 SelectedChar.Analysis,
-                SelectedFaceAnalysis.VariationAxis);
+                SelectedFaceAnalysis.VariationAxis)
+            {
+                ActiveFontFace = SelectedFaceAnalysis.ActiveFace
+            };
 
             UpdateRampOptions();
 
