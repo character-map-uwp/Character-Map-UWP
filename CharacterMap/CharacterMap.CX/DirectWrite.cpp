@@ -373,15 +373,15 @@ IVectorView<DWriteLigatureFeature^>^ DirectWrite::GetLigatures(ComPtr<IDWriteFon
 bool DirectWrite::CheckTypographicFeature(
 	DWriteFontFace^ fontFace,
 	Platform::String^ text,
-	CanvasTypographyFeatureName feature)
+	DWriteTypographyFeatureName feature)
 {
 	return TypographyAnalyzer::CheckTypographicFeature(fontFace, text, feature);
 }
 
-IVectorView<CanvasTypographyFeatureName>^ DirectWrite::GetSupportedTypographicFeatures(
+IVectorView<DWriteTypographyFeatureName>^ DirectWrite::GetSupportedTypographicFeatures(
 	DWriteFontFace^ fontFace,
 	Platform::String^ text,
-	IVectorView<CanvasTypographyFeatureName>^ features)
+	IVectorView<DWriteTypographyFeatureName>^ features)
 {
 	return TypographyAnalyzer::GetSupportedTypographicFeatures(fontFace, text, features);
 }

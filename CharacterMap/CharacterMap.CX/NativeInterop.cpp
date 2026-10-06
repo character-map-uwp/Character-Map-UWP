@@ -276,13 +276,13 @@ PathData^ NativeInterop::GetGlyphPath(DWriteFontFace^ fontFace, UINT16 glyphInde
 	return data;
 }
 
-PathData^ NativeInterop::GetTextPath(DWriteFontFace^ fontFace, Platform::String^ text, float fontSize, CanvasTypographyFeatureName feature)
+PathData^ NativeInterop::GetTextPath(DWriteFontFace^ fontFace, Platform::String^ text, float fontSize, DWriteTypographyFeatureName feature)
 {
 	if (fontFace == nullptr || text == nullptr || text->Length() == 0)
 		return ref new PathData(ref new String(), Rect::Empty);
 
 	INT32 glyphIdx = -1;
-	if (feature != CanvasTypographyFeatureName::None)
+	if (feature != DWriteTypographyFeatureName::None)
 	{
 		glyphIdx = GetTypographicGlyph(fontFace, text, feature);
 	}
@@ -468,7 +468,7 @@ CanvasTextLayoutAnalysis^ NativeInterop::AnalyzeGlyphLayout(DWriteFontFace^ font
 	return analysis;
 }
 
-CanvasTextLayoutAnalysis^ NativeInterop::AnalyzeCharacter(DWriteFontFace^ fontFace, Platform::String^ text, CanvasTypographyFeatureName feature)
+CanvasTextLayoutAnalysis^ NativeInterop::AnalyzeCharacter(DWriteFontFace^ fontFace, Platform::String^ text, DWriteTypographyFeatureName feature)
 {
 	if (fontFace == nullptr || text == nullptr || text->Length() == 0)
 		return nullptr;
@@ -491,7 +491,7 @@ CanvasTextLayoutAnalysis^ NativeInterop::AnalyzeCharacter(DWriteFontFace^ fontFa
 	if (FAILED(hr))
 		return nullptr;
 
-	if (feature != CanvasTypographyFeatureName::None)
+	if (feature != DWriteTypographyFeatureName::None)
 	{
 		ComPtr<IDWriteTypography> typography;
 		if (SUCCEEDED(m_dwriteFactory->CreateTypography(&typography)))
@@ -622,7 +622,7 @@ public:
 INT32 CharacterMapCX::NativeInterop::GetTypographicGlyph(
 	DWriteFontFace^ fontFace,
 	Platform::String^ text,
-	CanvasTypographyFeatureName feature)
+	DWriteTypographyFeatureName feature)
 {
 	if (fontFace == nullptr || text == nullptr || text->Length() == 0)
 		return -1;
@@ -645,7 +645,7 @@ INT32 CharacterMapCX::NativeInterop::GetTypographicGlyph(
 	if (FAILED(hr))
 		return -1;
 
-	if (feature != CanvasTypographyFeatureName::None)
+	if (feature != DWriteTypographyFeatureName::None)
 	{
 		ComPtr<IDWriteTypography> typography;
 		if (SUCCEEDED(m_dwriteFactory->CreateTypography(&typography)))

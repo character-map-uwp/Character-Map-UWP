@@ -6,7 +6,7 @@ namespace CharacterMap.Core;
 
 public partial class TypographyBehavior
 {
-    public static void SetTypography(IXamlDirectObject o, CanvasTypographyFeatureName f, XamlDirect _xamlDirect)
+    public static void SetTypography(IXamlDirectObject o, DWriteTypographyFeatureName f, XamlDirect _xamlDirect)
     {
         /* XAML Direct Helpers. Using XD is faster than setting Dependency Properties */
         void Set(XamlPropertyIndex index, bool value)
@@ -26,171 +26,171 @@ public partial class TypographyBehavior
 
         /* Set CAPTIAL SPACING */
         /* As Capital Spacing affects character spacing, it has no use when displaying single glyphs */
-        //Set(XamlPropertyIndex.Typography_CapitalSpacing, f == CanvasTypographyFeatureName.CapitalSpacing);
+        //Set(XamlPropertyIndex.Typography_CapitalSpacing, f == DWriteTypographyFeatureName.CapitalSpacing);
 
         /* Set KERNING */
         /* As Kerning affects character spacing, it has no use when displaying single glyphs */
-        //Set(XamlPropertyIndex.Typography_Kerning, f == CanvasTypographyFeatureName.Kerning);
+        //Set(XamlPropertyIndex.Typography_Kerning, f == DWriteTypographyFeatureName.Kerning);
 
         /* Set SWASHES */
-        SetI(XamlPropertyIndex.Typography_StandardSwashes, f == CanvasTypographyFeatureName.Swash);
-        SetI(XamlPropertyIndex.Typography_ContextualSwashes, f == CanvasTypographyFeatureName.ContextualSwash);
+        SetI(XamlPropertyIndex.Typography_StandardSwashes, f == DWriteTypographyFeatureName.Swash);
+        SetI(XamlPropertyIndex.Typography_ContextualSwashes, f == DWriteTypographyFeatureName.ContextualSwash);
 
         /* Set ALTERNATES */
-        SetI(XamlPropertyIndex.Typography_AnnotationAlternates, f == CanvasTypographyFeatureName.AlternateAnnotationForms);
-        SetI(XamlPropertyIndex.Typography_StylisticAlternates, f == CanvasTypographyFeatureName.StylisticAlternates);
+        SetI(XamlPropertyIndex.Typography_AnnotationAlternates, f == DWriteTypographyFeatureName.AlternateAnnotationForms);
+        SetI(XamlPropertyIndex.Typography_StylisticAlternates, f == DWriteTypographyFeatureName.StylisticAlternates);
         /* Contextual Alternates applies to combinations of characters, and as such has no purpose here yet */
-        Set(XamlPropertyIndex.Typography_ContextualAlternates, f == CanvasTypographyFeatureName.ContextualAlternates);
+        Set(XamlPropertyIndex.Typography_ContextualAlternates, f == DWriteTypographyFeatureName.ContextualAlternates);
 
         /* Set MATHEMATICAL GREEK */
-        Set(XamlPropertyIndex.Typography_MathematicalGreek, f == CanvasTypographyFeatureName.MathematicalGreek);
+        Set(XamlPropertyIndex.Typography_MathematicalGreek, f == DWriteTypographyFeatureName.MathematicalGreek);
 
         /* Set FORMS */
-        Set(XamlPropertyIndex.Typography_HistoricalForms, f == CanvasTypographyFeatureName.HistoricalForms);
-        Set(XamlPropertyIndex.Typography_CaseSensitiveForms, f == CanvasTypographyFeatureName.CaseSensitiveForms);
-        Set(XamlPropertyIndex.Typography_EastAsianExpertForms, f == CanvasTypographyFeatureName.ExpertForms);
+        Set(XamlPropertyIndex.Typography_HistoricalForms, f == DWriteTypographyFeatureName.HistoricalForms);
+        Set(XamlPropertyIndex.Typography_CaseSensitiveForms, f == DWriteTypographyFeatureName.CaseSensitiveForms);
+        Set(XamlPropertyIndex.Typography_EastAsianExpertForms, f == DWriteTypographyFeatureName.ExpertForms);
 
         /* Set SLASHED ZERO */
-        Set(XamlPropertyIndex.Typography_SlashedZero, f == CanvasTypographyFeatureName.SlashedZero);
+        Set(XamlPropertyIndex.Typography_SlashedZero, f == DWriteTypographyFeatureName.SlashedZero);
 
         /* Set LIGATURES */
         /* Ligatures only apply to combinations of characters, and as such have no purpose here yet */
-        // Set(XamlPropertyIndex.Typography_StandardLigatures, f == CanvasTypographyFeatureName.StandardLigatures);
-        // Set(XamlPropertyIndex.Typography_ContextualLigatures, f == CanvasTypographyFeatureName.ContextualLigatures);
-        // Set(XamlPropertyIndex.Typography_HistoricalLigatures, f == CanvasTypographyFeatureName.HistoricalLigatures);
-        // Set(XamlPropertyIndex.Typography_DiscretionaryLigatures, f == CanvasTypographyFeatureName.DiscretionaryLigatures);
+        // Set(XamlPropertyIndex.Typography_StandardLigatures, f == DWriteTypographyFeatureName.StandardLigatures);
+        // Set(XamlPropertyIndex.Typography_ContextualLigatures, f == DWriteTypographyFeatureName.ContextualLigatures);
+        // Set(XamlPropertyIndex.Typography_HistoricalLigatures, f == DWriteTypographyFeatureName.HistoricalLigatures);
+        // Set(XamlPropertyIndex.Typography_DiscretionaryLigatures, f == DWriteTypographyFeatureName.DiscretionaryLigatures);
 
         /* Set CAPITALS */
-        if (f == CanvasTypographyFeatureName.SmallCapitals)
+        if (f == DWriteTypographyFeatureName.SmallCapitals)
             SetE(XamlPropertyIndex.Typography_Capitals, (uint)FontCapitals.SmallCaps);
-        else if (f == CanvasTypographyFeatureName.SmallCapitalsFromCapitals)
+        else if (f == DWriteTypographyFeatureName.SmallCapitalsFromCapitals)
             SetE(XamlPropertyIndex.Typography_Capitals, (uint)FontCapitals.AllSmallCaps);
-        else if (f == CanvasTypographyFeatureName.PetiteCapitals)
+        else if (f == DWriteTypographyFeatureName.PetiteCapitals)
             SetE(XamlPropertyIndex.Typography_Capitals, (uint)FontCapitals.PetiteCaps);
-        else if (f == CanvasTypographyFeatureName.PetiteCapitalsFromCapitals)
+        else if (f == DWriteTypographyFeatureName.PetiteCapitalsFromCapitals)
             SetE(XamlPropertyIndex.Typography_Capitals, (uint)FontCapitals.AllPetiteCaps);
-        else if (f == CanvasTypographyFeatureName.Titling)
+        else if (f == DWriteTypographyFeatureName.Titling)
             SetE(XamlPropertyIndex.Typography_Capitals, (uint)FontCapitals.Titling);
-        else if (f == CanvasTypographyFeatureName.Unicase)
+        else if (f == DWriteTypographyFeatureName.Unicase)
             SetE(XamlPropertyIndex.Typography_Capitals, (uint)FontCapitals.Unicase);
         else
             SetE(XamlPropertyIndex.Typography_Capitals, (uint)FontCapitals.Normal);
 
         /* Set NUMERAL ALIGNMENT */
         /* Numeral Alignment only apply to combinations of characters, and as such have no purpose here yet */
-        //if (f == CanvasTypographyFeatureName.ProportionalFigures)
+        //if (f == DWriteTypographyFeatureName.ProportionalFigures)
         //    SetE(XamlPropertyIndex.Typography_NumeralAlignment, (uint)FontNumeralAlignment.Proportional);
-        //else if (f == CanvasTypographyFeatureName.TabularFigures)
+        //else if (f == DWriteTypographyFeatureName.TabularFigures)
         //    SetE(XamlPropertyIndex.Typography_NumeralAlignment, (uint)FontNumeralAlignment.Tabular);
         //else
         SetE(XamlPropertyIndex.Typography_NumeralAlignment, (uint)FontNumeralAlignment.Normal);
 
         /* Set NUMERAL STYLE */
-        if (f == CanvasTypographyFeatureName.OldStyleFigures)
+        if (f == DWriteTypographyFeatureName.OldStyleFigures)
             SetE(XamlPropertyIndex.Typography_NumeralStyle, (uint)FontNumeralStyle.OldStyle);
-        else if (f == CanvasTypographyFeatureName.LiningFigures)
+        else if (f == DWriteTypographyFeatureName.LiningFigures)
             SetE(XamlPropertyIndex.Typography_NumeralStyle, (uint)FontNumeralStyle.Lining);
         else
             SetE(XamlPropertyIndex.Typography_NumeralStyle, (uint)FontNumeralStyle.Normal);
 
         /* Set VARIANTS */
-        if (f == CanvasTypographyFeatureName.Ordinals)
+        if (f == DWriteTypographyFeatureName.Ordinals)
             SetE(XamlPropertyIndex.Typography_Variants, (uint)FontVariants.Ordinal);
-        else if (f == CanvasTypographyFeatureName.Superscript)
+        else if (f == DWriteTypographyFeatureName.Superscript)
             SetE(XamlPropertyIndex.Typography_Variants, (uint)FontVariants.Superscript);
-        else if (f == CanvasTypographyFeatureName.Subscript)
+        else if (f == DWriteTypographyFeatureName.Subscript)
             SetE(XamlPropertyIndex.Typography_Variants, (uint)FontVariants.Subscript);
-        else if (f == CanvasTypographyFeatureName.RubyNotationForms)
+        else if (f == DWriteTypographyFeatureName.RubyNotationForms)
             SetE(XamlPropertyIndex.Typography_Variants, (uint)FontVariants.Ruby);
-        else if (f == CanvasTypographyFeatureName.ScientificInferiors)
+        else if (f == DWriteTypographyFeatureName.ScientificInferiors)
             SetE(XamlPropertyIndex.Typography_Variants, (uint)FontVariants.Inferior);
         else
             SetE(XamlPropertyIndex.Typography_Variants, (uint)FontVariants.Normal);
 
 
         /* Set STLYISTIC SETS */
-        Set(XamlPropertyIndex.Typography_StylisticSet1, f == CanvasTypographyFeatureName.StylisticSet1);
-        Set(XamlPropertyIndex.Typography_StylisticSet2, f == CanvasTypographyFeatureName.StylisticSet2);
-        Set(XamlPropertyIndex.Typography_StylisticSet3, f == CanvasTypographyFeatureName.StylisticSet3);
-        Set(XamlPropertyIndex.Typography_StylisticSet4, f == CanvasTypographyFeatureName.StylisticSet4);
-        Set(XamlPropertyIndex.Typography_StylisticSet5, f == CanvasTypographyFeatureName.StylisticSet5);
-        Set(XamlPropertyIndex.Typography_StylisticSet6, f == CanvasTypographyFeatureName.StylisticSet6);
-        Set(XamlPropertyIndex.Typography_StylisticSet7, f == CanvasTypographyFeatureName.StylisticSet7);
-        Set(XamlPropertyIndex.Typography_StylisticSet8, f == CanvasTypographyFeatureName.StylisticSet8);
-        Set(XamlPropertyIndex.Typography_StylisticSet9, f == CanvasTypographyFeatureName.StylisticSet9);
-        Set(XamlPropertyIndex.Typography_StylisticSet10, f == CanvasTypographyFeatureName.StylisticSet10);
-        Set(XamlPropertyIndex.Typography_StylisticSet11, f == CanvasTypographyFeatureName.StylisticSet11);
-        Set(XamlPropertyIndex.Typography_StylisticSet12, f == CanvasTypographyFeatureName.StylisticSet12);
-        Set(XamlPropertyIndex.Typography_StylisticSet13, f == CanvasTypographyFeatureName.StylisticSet13);
-        Set(XamlPropertyIndex.Typography_StylisticSet14, f == CanvasTypographyFeatureName.StylisticSet14);
-        Set(XamlPropertyIndex.Typography_StylisticSet15, f == CanvasTypographyFeatureName.StylisticSet15);
-        Set(XamlPropertyIndex.Typography_StylisticSet16, f == CanvasTypographyFeatureName.StylisticSet16);
-        Set(XamlPropertyIndex.Typography_StylisticSet17, f == CanvasTypographyFeatureName.StylisticSet17);
-        Set(XamlPropertyIndex.Typography_StylisticSet18, f == CanvasTypographyFeatureName.StylisticSet18);
-        Set(XamlPropertyIndex.Typography_StylisticSet19, f == CanvasTypographyFeatureName.StylisticSet19);
-        Set(XamlPropertyIndex.Typography_StylisticSet20, f == CanvasTypographyFeatureName.StylisticSet20);
+        Set(XamlPropertyIndex.Typography_StylisticSet1, f == DWriteTypographyFeatureName.StylisticSet1);
+        Set(XamlPropertyIndex.Typography_StylisticSet2, f == DWriteTypographyFeatureName.StylisticSet2);
+        Set(XamlPropertyIndex.Typography_StylisticSet3, f == DWriteTypographyFeatureName.StylisticSet3);
+        Set(XamlPropertyIndex.Typography_StylisticSet4, f == DWriteTypographyFeatureName.StylisticSet4);
+        Set(XamlPropertyIndex.Typography_StylisticSet5, f == DWriteTypographyFeatureName.StylisticSet5);
+        Set(XamlPropertyIndex.Typography_StylisticSet6, f == DWriteTypographyFeatureName.StylisticSet6);
+        Set(XamlPropertyIndex.Typography_StylisticSet7, f == DWriteTypographyFeatureName.StylisticSet7);
+        Set(XamlPropertyIndex.Typography_StylisticSet8, f == DWriteTypographyFeatureName.StylisticSet8);
+        Set(XamlPropertyIndex.Typography_StylisticSet9, f == DWriteTypographyFeatureName.StylisticSet9);
+        Set(XamlPropertyIndex.Typography_StylisticSet10, f == DWriteTypographyFeatureName.StylisticSet10);
+        Set(XamlPropertyIndex.Typography_StylisticSet11, f == DWriteTypographyFeatureName.StylisticSet11);
+        Set(XamlPropertyIndex.Typography_StylisticSet12, f == DWriteTypographyFeatureName.StylisticSet12);
+        Set(XamlPropertyIndex.Typography_StylisticSet13, f == DWriteTypographyFeatureName.StylisticSet13);
+        Set(XamlPropertyIndex.Typography_StylisticSet14, f == DWriteTypographyFeatureName.StylisticSet14);
+        Set(XamlPropertyIndex.Typography_StylisticSet15, f == DWriteTypographyFeatureName.StylisticSet15);
+        Set(XamlPropertyIndex.Typography_StylisticSet16, f == DWriteTypographyFeatureName.StylisticSet16);
+        Set(XamlPropertyIndex.Typography_StylisticSet17, f == DWriteTypographyFeatureName.StylisticSet17);
+        Set(XamlPropertyIndex.Typography_StylisticSet18, f == DWriteTypographyFeatureName.StylisticSet18);
+        Set(XamlPropertyIndex.Typography_StylisticSet19, f == DWriteTypographyFeatureName.StylisticSet19);
+        Set(XamlPropertyIndex.Typography_StylisticSet20, f == DWriteTypographyFeatureName.StylisticSet20);
     }
 }
 
 
 public partial class TypographyBehavior
 {
-    private static HashSet<CanvasTypographyFeatureName> _supportedSingleGlyphFeatures { get; } = new HashSet<CanvasTypographyFeatureName>
+    private static HashSet<DWriteTypographyFeatureName> _supportedSingleGlyphFeatures { get; } = new HashSet<DWriteTypographyFeatureName>
     {
-        CanvasTypographyFeatureName.None,
-        CanvasTypographyFeatureName.StylisticSet1,
-        CanvasTypographyFeatureName.StylisticSet2,
-        CanvasTypographyFeatureName.StylisticSet3,
-        CanvasTypographyFeatureName.StylisticSet4,
-        CanvasTypographyFeatureName.StylisticSet5,
-        CanvasTypographyFeatureName.StylisticSet6,
-        CanvasTypographyFeatureName.StylisticSet7,
-        CanvasTypographyFeatureName.StylisticSet8,
-        CanvasTypographyFeatureName.StylisticSet9,
-        CanvasTypographyFeatureName.StylisticSet10,
-        CanvasTypographyFeatureName.StylisticSet11,
-        CanvasTypographyFeatureName.StylisticSet12,
-        CanvasTypographyFeatureName.StylisticSet13,
-        CanvasTypographyFeatureName.StylisticSet14,
-        CanvasTypographyFeatureName.StylisticSet15,
-        CanvasTypographyFeatureName.StylisticSet16,
-        CanvasTypographyFeatureName.StylisticSet17,
-        CanvasTypographyFeatureName.StylisticSet18,
-        CanvasTypographyFeatureName.StylisticSet19,
-        CanvasTypographyFeatureName.StylisticSet20,
-        //CanvasTypographyFeatureName.Kerning,
-        //CanvasTypographyFeatureName.CapitalSpacing,
-        CanvasTypographyFeatureName.MathematicalGreek,
-        CanvasTypographyFeatureName.HistoricalForms,
-        CanvasTypographyFeatureName.CaseSensitiveForms,
-        CanvasTypographyFeatureName.ExpertForms,
-        CanvasTypographyFeatureName.SlashedZero,
-        //CanvasTypographyFeatureName.ContextualAlternates,
-        //CanvasTypographyFeatureName.StandardLigatures,
-        //CanvasTypographyFeatureName.ContextualLigatures,
-        //CanvasTypographyFeatureName.HistoricalLigatures,
-        //CanvasTypographyFeatureName.DiscretionaryLigatures,
-        CanvasTypographyFeatureName.SmallCapitals,
-        CanvasTypographyFeatureName.SmallCapitalsFromCapitals,
-        CanvasTypographyFeatureName.PetiteCapitals,
-        CanvasTypographyFeatureName.PetiteCapitalsFromCapitals,
-        CanvasTypographyFeatureName.Titling,
-        CanvasTypographyFeatureName.Unicase,
-        //CanvasTypographyFeatureName.ProportionalFigures,
-        //CanvasTypographyFeatureName.TabularFigures,
-        CanvasTypographyFeatureName.OldStyleFigures,
-        CanvasTypographyFeatureName.LiningFigures,
-        CanvasTypographyFeatureName.Ordinals,
-        CanvasTypographyFeatureName.Superscript,
-        CanvasTypographyFeatureName.Subscript,
-        CanvasTypographyFeatureName.RubyNotationForms,
-        CanvasTypographyFeatureName.ScientificInferiors,
-        CanvasTypographyFeatureName.Swash,
-        CanvasTypographyFeatureName.ContextualSwash,
-        CanvasTypographyFeatureName.AlternateAnnotationForms,
-        CanvasTypographyFeatureName.StylisticAlternates
+        DWriteTypographyFeatureName.None,
+        DWriteTypographyFeatureName.StylisticSet1,
+        DWriteTypographyFeatureName.StylisticSet2,
+        DWriteTypographyFeatureName.StylisticSet3,
+        DWriteTypographyFeatureName.StylisticSet4,
+        DWriteTypographyFeatureName.StylisticSet5,
+        DWriteTypographyFeatureName.StylisticSet6,
+        DWriteTypographyFeatureName.StylisticSet7,
+        DWriteTypographyFeatureName.StylisticSet8,
+        DWriteTypographyFeatureName.StylisticSet9,
+        DWriteTypographyFeatureName.StylisticSet10,
+        DWriteTypographyFeatureName.StylisticSet11,
+        DWriteTypographyFeatureName.StylisticSet12,
+        DWriteTypographyFeatureName.StylisticSet13,
+        DWriteTypographyFeatureName.StylisticSet14,
+        DWriteTypographyFeatureName.StylisticSet15,
+        DWriteTypographyFeatureName.StylisticSet16,
+        DWriteTypographyFeatureName.StylisticSet17,
+        DWriteTypographyFeatureName.StylisticSet18,
+        DWriteTypographyFeatureName.StylisticSet19,
+        DWriteTypographyFeatureName.StylisticSet20,
+        //DWriteTypographyFeatureName.Kerning,
+        //DWriteTypographyFeatureName.CapitalSpacing,
+        DWriteTypographyFeatureName.MathematicalGreek,
+        DWriteTypographyFeatureName.HistoricalForms,
+        DWriteTypographyFeatureName.CaseSensitiveForms,
+        DWriteTypographyFeatureName.ExpertForms,
+        DWriteTypographyFeatureName.SlashedZero,
+        //DWriteTypographyFeatureName.ContextualAlternates,
+        //DWriteTypographyFeatureName.StandardLigatures,
+        //DWriteTypographyFeatureName.ContextualLigatures,
+        //DWriteTypographyFeatureName.HistoricalLigatures,
+        //DWriteTypographyFeatureName.DiscretionaryLigatures,
+        DWriteTypographyFeatureName.SmallCapitals,
+        DWriteTypographyFeatureName.SmallCapitalsFromCapitals,
+        DWriteTypographyFeatureName.PetiteCapitals,
+        DWriteTypographyFeatureName.PetiteCapitalsFromCapitals,
+        DWriteTypographyFeatureName.Titling,
+        DWriteTypographyFeatureName.Unicase,
+        //DWriteTypographyFeatureName.ProportionalFigures,
+        //DWriteTypographyFeatureName.TabularFigures,
+        DWriteTypographyFeatureName.OldStyleFigures,
+        DWriteTypographyFeatureName.LiningFigures,
+        DWriteTypographyFeatureName.Ordinals,
+        DWriteTypographyFeatureName.Superscript,
+        DWriteTypographyFeatureName.Subscript,
+        DWriteTypographyFeatureName.RubyNotationForms,
+        DWriteTypographyFeatureName.ScientificInferiors,
+        DWriteTypographyFeatureName.Swash,
+        DWriteTypographyFeatureName.ContextualSwash,
+        DWriteTypographyFeatureName.AlternateAnnotationForms,
+        DWriteTypographyFeatureName.StylisticAlternates
     };
 
-    public static bool IsXamlSingleGlyphSupported(CanvasTypographyFeatureName feature)
+    public static bool IsXamlSingleGlyphSupported(DWriteTypographyFeatureName feature)
         => _supportedSingleGlyphFeatures.Contains(feature);
 }

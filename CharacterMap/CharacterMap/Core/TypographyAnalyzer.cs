@@ -13,7 +13,7 @@ public static class TypographyAnalyzer
         if (features is null)
             return [];
 
-        var list = features.Select(f => new TypographyFeatureInfo((CanvasTypographyFeatureName)f)).OrderBy(f => f.DisplayName).ToList();
+        var list = features.Select(f => new TypographyFeatureInfo((DWriteTypographyFeatureName)f)).OrderBy(f => f.DisplayName).ToList();
         return list;
     }
 
@@ -29,7 +29,7 @@ public static class TypographyAnalyzer
         {
             string tag = DirectWrite.GetFeatureTag(rawFeature.FeatureTag);
             string title = string.IsNullOrEmpty(rawFeature.FeatureName) || rawFeature.FeatureName == tag ? tag : $"{rawFeature.FeatureName} ({tag})";
-            CanvasTypographyFeatureName feature = (CanvasTypographyFeatureName)rawFeature.FeatureTag;
+            DWriteTypographyFeatureName feature = (DWriteTypographyFeatureName)rawFeature.FeatureTag;
             List<LigatureModel> ligatures = [];
 
             foreach (DWriteLigature rawLig in rawFeature.Ligatures)
@@ -87,15 +87,15 @@ public static class TypographyAnalyzer
                 : fontFace.Face.GetGlyphIndice(character.UnicodeIndex);
 
             NativeInterop interop = Utils.GetInterop();
-            List<CanvasTypographyFeatureName> featuresToCheck = fontFace.XamlTypographyFeatures
+            List<DWriteTypographyFeatureName> featuresToCheck = fontFace.XamlTypographyFeatures
                 .Where(f => f != TypographyFeatureInfo.None)
                 .Select(f => f.Feature)
                 .ToList();
 
-            IReadOnlyList<CanvasTypographyFeatureName> supportedFeatures = DirectWrite.GetSupportedTypographicFeatures(
+            IReadOnlyList<DWriteTypographyFeatureName> supportedFeatures = DirectWrite.GetSupportedTypographicFeatures(
                 fontFace.Face, character.Char, featuresToCheck);
 
-            foreach (CanvasTypographyFeatureName featureTag in supportedFeatures)
+            foreach (DWriteTypographyFeatureName featureTag in supportedFeatures)
             {
                 TypographyFeatureInfo feature = fontFace.XamlTypographyFeatures.FirstOrDefault(f => f.Feature == featureTag);
                 if (feature is null)
@@ -128,15 +128,15 @@ public static class TypographyAnalyzer
 
         if (font.HasXamlTypographyFeatures)
         {
-            List<CanvasTypographyFeatureName> featuresToCheck = font.XamlTypographyFeatures
+            List<DWriteTypographyFeatureName> featuresToCheck = font.XamlTypographyFeatures
                 .Where(f => f != TypographyFeatureInfo.None)
                 .Select(f => f.Feature)
                 .ToList();
 
-            IReadOnlyList<CanvasTypographyFeatureName> supportedFeatures = DirectWrite.GetSupportedTypographicFeatures(
+            IReadOnlyList<DWriteTypographyFeatureName> supportedFeatures = DirectWrite.GetSupportedTypographicFeatures(
                 font.Face, character.Char, featuresToCheck);
 
-            foreach (CanvasTypographyFeatureName featureTag in supportedFeatures)
+            foreach (DWriteTypographyFeatureName featureTag in supportedFeatures)
             {
                 if (font.XamlTypographyFeatures.FirstOrDefault(f => f.Feature == featureTag) is { } feature)
                     supported.Add(feature);

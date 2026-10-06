@@ -1,12 +1,12 @@
 // Ignore Spelling: cfi
 
-using Microsoft.Graphics.Canvas.Text;
+using CharacterMapCX;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 
 namespace CharacterMap.Core;
 
-public record FaceMetadataInfo(string Key, string[] Values, CanvasFontInformation Info)
+public record FaceMetadataInfo(string Key, string[] Values, DWriteFontInformation Info)
 {
     public string Value => string.Join(", ", Values);
 }
@@ -50,7 +50,7 @@ public partial class CMFontFace : IDisposable
 
     // Face.GetUnicodeRanges CAN be null, as WinRT projects empty arrays as null.
     // Who knows why. Ugh.
-    public CanvasUnicodeRange[] UnicodeRanges => field ??= Face.GetUnicodeRanges() ?? [];
+    public DWriteUnicodeRange[] UnicodeRanges => field ??= Face.GetUnicodeRanges() ?? [];
 
     public Panose Panose => field ??= PanoseParser.Parse(Face.Properties);
 
@@ -79,7 +79,7 @@ public partial class CMFontFace : IDisposable
 
     public string Key => field ??= $"{FullName}|{Version}";
 
-    public string Version => field ??= TryGetInfo(CanvasFontInformation.VersionStrings)?.Value ?? string.Empty;
+    public string Version => field ??= TryGetInfo(DWriteFontInformation.VersionStrings)?.Value ?? string.Empty;
 
 
     public CMFontFace(DWriteFontFace face) : this(face, (string)null) { }
@@ -123,7 +123,7 @@ public partial class CMFontFace : IDisposable
         if (_ranges is not null)
             return _ranges;
 
-        CanvasUnicodeRange[] fontRanges = UnicodeRanges;
+        DWriteUnicodeRange[] fontRanges = UnicodeRanges;
         if (fontRanges.Length == 0)
             return _ranges = [];
 
@@ -135,7 +135,7 @@ public partial class CMFontFace : IDisposable
 
         for (int i = 0; i < fontRanges.Length; i++)
         {
-            CanvasUnicodeRange cur = fontRanges[i];
+            DWriteUnicodeRange cur = fontRanges[i];
             uint coveredUntil = cur.First;
 
             while (namedIndex < allRanges.Count && allRanges[namedIndex] != Models.UnicodeRanges.Unassigned && allRanges[namedIndex].End < cur.First)
@@ -173,7 +173,7 @@ public partial class CMFontFace : IDisposable
     {
         if (Characters == null)
         {
-            foreach (CanvasUnicodeRange range in UnicodeRanges)
+            foreach (DWriteUnicodeRange range in UnicodeRanges)
             {
                 CharacterHash += range.First;
                 CharacterHash += range.Last;
@@ -192,7 +192,7 @@ public partial class CMFontFace : IDisposable
         if (Characters is not null)
             return Characters.Select(c => c.UnicodeIndex).ToArray();
 
-        CanvasUnicodeRange[] ranges = UnicodeRanges;
+        DWriteUnicodeRange[] ranges = UnicodeRanges;
         int count = 0;
         for (int i = 0; i < ranges.Length; i++)
             count += (int)(ranges[i].Last - ranges[i].First + 1);
@@ -201,7 +201,7 @@ public partial class CMFontFace : IDisposable
         int idx = 0;
         for (int i = 0; i < ranges.Length; i++)
         {
-            CanvasUnicodeRange r = ranges[i];
+            DWriteUnicodeRange r = ranges[i];
             for (uint cp = r.First; cp <= r.Last; cp++)
                 uni[idx++] = cp;
         }
@@ -281,18 +281,18 @@ public partial class CMFontFace : IDisposable
     /// /// </summary>
     public bool SupportsColourRendering => Utils.Supports23H2 && DirectWriteProperties.IsColorFont;
 
-    public string TryGetSampleText() => ReadInfoKey(CanvasFontInformation.SampleText)?.Value;
+    public string TryGetSampleText() => ReadInfoKey(DWriteFontInformation.SampleText)?.Value;
 
     /// <summary>
     /// Attempts to return the value of <see cref="CanvasFontInformation.FullName"/>. If it fails,
     /// <see cref="PreferredName"/> is returned instead.
     /// </summary>
     /// <returns></returns>
-    public string TryGetFullName() => TryGetInfo(CanvasFontInformation.FullName)?.Value ?? PreferredName;
+    public string TryGetFullName() => TryGetInfo(DWriteFontInformation.FullName)?.Value ?? PreferredName;
 
     public bool HasDesignScriptTag(string tag)
     {
-        TryGetInfo(CanvasFontInformation.DesignScriptLanguageTag);
+        TryGetInfo(DWriteFontInformation.DesignScriptLanguageTag);
         return _designLangRawSearch?.Values.Contains(tag, StringComparer.OrdinalIgnoreCase) ?? false;
     }
 
@@ -335,7 +335,7 @@ public partial class CMFontFace : IDisposable
     /// <param name="fontFace"></param>
     /// <param name="info"></param>
     /// <returns></returns>
-    private FaceMetadataInfo ReadInfoKey(CanvasFontInformation info)
+    private FaceMetadataInfo ReadInfoKey(DWriteFontInformation info)
     {
         var infos = Face.GetInformationalStrings(info);
         if (infos.Count == 0)
@@ -353,13 +353,13 @@ public partial class CMFontFace : IDisposable
         string[] values = null;
 
         // For design tag, cache the tag for later use in search
-        if (info is CanvasFontInformation.DesignScriptLanguageTag
+        if (info is DWriteFontInformation.DesignScriptLanguageTag
             && _designLangRawSearch is null)
         {
             _designLangRawSearch = new(name, infos.Select(i => UnicodeScriptTags.GetBaseTag(i.Value)).ToArray(), info);
         }
 
-        if (info is CanvasFontInformation.DesignScriptLanguageTag or CanvasFontInformation.SupportedScriptLanguageTag)
+        if (info is DWriteFontInformation.DesignScriptLanguageTag or DWriteFontInformation.SupportedScriptLanguageTag)
             values = infos.Select(i => UnicodeScriptTags.GetName(i.Value)).ToArray();
 
         return new(
@@ -373,7 +373,7 @@ public partial class CMFontFace : IDisposable
     /// </summary>
     /// <param name="cfi"></param>
     /// <returns></returns>
-    public FaceMetadataInfo TryGetInfo(CanvasFontInformation cfi)
+    public FaceMetadataInfo TryGetInfo(DWriteFontInformation cfi)
     {
         if (_fontInformation is not null && _fontInformation.FirstOrDefault(p => p.Info == cfi)
             is { } info)
@@ -404,7 +404,7 @@ public partial class CMFontFace : IDisposable
             return new(
                 Localization.Get("CanvasFontInformationEmbeddingRights"),
                 [sb.ToString()],
-                CanvasFontInformation.LicenseDescription);
+                DWriteFontInformation.LicenseDescription);
         }
         finally
         {
@@ -444,20 +444,20 @@ public partial class CMFontFace
         };
     }
 
-    private static CanvasFontInformation[] INFORMATIONS { get; } = {
-        CanvasFontInformation.FullName,
-        CanvasFontInformation.Description,
-        CanvasFontInformation.VersionStrings,
-        CanvasFontInformation.DesignScriptLanguageTag,
-        CanvasFontInformation.SupportedScriptLanguageTag,
-        CanvasFontInformation.Designer,
-        CanvasFontInformation.DesignerUrl,
-        CanvasFontInformation.FontVendorUrl,
-        CanvasFontInformation.Manufacturer,
-        CanvasFontInformation.Trademark,
-        CanvasFontInformation.CopyrightNotice,
-        CanvasFontInformation.LicenseInfoUrl,
-        CanvasFontInformation.LicenseDescription,
+    private static DWriteFontInformation [] INFORMATIONS { get; } = {
+        DWriteFontInformation.FullName,
+        DWriteFontInformation.Description,
+        DWriteFontInformation.VersionStrings,
+        DWriteFontInformation.DesignScriptLanguageTag,
+        DWriteFontInformation.SupportedScriptLanguageTag,
+        DWriteFontInformation.Designer,
+        DWriteFontInformation.DesignerUrl,
+        DWriteFontInformation.FontVendorUrl,
+        DWriteFontInformation.Manufacturer,
+        DWriteFontInformation.Trademark,
+        DWriteFontInformation.CopyrightNotice,
+        DWriteFontInformation.LicenseInfoUrl,
+        DWriteFontInformation.LicenseDescription,
     };
 
     

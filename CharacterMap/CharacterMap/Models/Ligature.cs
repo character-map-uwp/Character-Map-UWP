@@ -43,7 +43,7 @@ public record LigatureComponent(uint GlyphIndex, string Character, uint? Unicode
 }
 
 [DebuggerDisplay("LigatureModel Glyph: {LigatureGlyph}, {Components.Count} components")]
-public record LigatureModel(uint LigatureGlyph, IReadOnlyList<LigatureComponent> Components, CanvasTypographyFeatureName Feature, string Name = null)
+public record LigatureModel(uint LigatureGlyph, IReadOnlyList<LigatureComponent> Components, DWriteTypographyFeatureName Feature, string Name = null)
 {
     // PROPERTIES
     public string CombinedString => field ??= NormalizeEmojiSequence(string.Join(string.Empty, Components.Select(c => c.Character)));
@@ -70,14 +70,14 @@ public record LigatureModel(uint LigatureGlyph, IReadOnlyList<LigatureComponent>
 [DebuggerDisplay("LigatureGroup {Title}")]
 public class LigatureGroup : IGrouping<string, LigatureModel>
 {
-    public CanvasTypographyFeatureName Feature { get; init; }
+    public DWriteTypographyFeatureName Feature { get; init; }
     public IReadOnlyList<LigatureModel> Ligatures { get; init; }
     public int Count => Ligatures?.Count ?? 0;
     public string Tag { get; }
     public string FeatureName { get; }
     public string Key { get; }
 
-    public LigatureGroup(string title, string tag, string featureName, CanvasTypographyFeatureName feature, IReadOnlyList<LigatureModel> ligatures)
+    public LigatureGroup(string title, string tag, string featureName, DWriteTypographyFeatureName feature, IReadOnlyList<LigatureModel> ligatures)
     {
         Key = title;
         Tag = tag;

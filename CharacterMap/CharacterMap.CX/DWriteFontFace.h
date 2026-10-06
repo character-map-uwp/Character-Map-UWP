@@ -7,6 +7,7 @@
 #include "ColorTextAnalyzer.h"
 #include "DWriteProperties.h"
 #include "OS2TableReader.h"
+#include "DWriteUnicodeRange.h"
 #include <vector>
 #include <algorithm>
 
@@ -122,7 +123,13 @@ namespace CharacterMapCX
 				return m_font->HasCharacter(character);
 		}
 
+		[Windows::Foundation::Metadata::DefaultOverload]
 		IMapView<String^, String^>^ GetInformationalStrings(CanvasFontInformation fontInformation)
+		{
+			return GetInformationalStrings(static_cast<DWriteFontInformation>(fontInformation));
+		}
+
+		IMapView<String^, String^>^ GetInformationalStrings(DWriteFontInformation fontInformation)
 		{
 			auto map = ref new Map<String^, String^>();
 			ComPtr<IDWriteLocalizedStrings> localizedStrings;
@@ -164,7 +171,7 @@ namespace CharacterMapCX
 			return map->GetView();
 		}
 
-		Array<CanvasUnicodeRange>^ GetUnicodeRanges()
+		Array<DWriteUnicodeRange>^ GetUnicodeRanges()
 		{
 			try
 			{
@@ -185,7 +192,7 @@ namespace CharacterMapCX
 
 					if (actualRangeCount > 0)
 					{
-						auto result = ref new Platform::Array<CanvasUnicodeRange>(actualRangeCount);
+						auto result = ref new Platform::Array<DWriteUnicodeRange>(actualRangeCount);
 						for (uint32_t i = 0; i < actualRangeCount; ++i)
 						{
 							result[i].First = ranges[i].first;
@@ -203,8 +210,8 @@ namespace CharacterMapCX
 			{
 			}
 
-			static CanvasUnicodeRange s_emptyDummy{};
-			return Platform::ArrayReference<CanvasUnicodeRange>(&s_emptyDummy, 0);
+			static DWriteUnicodeRange s_emptyDummy{};
+			return Platform::ArrayReference<DWriteUnicodeRange>(&s_emptyDummy, 0);
 		}
 
 		Array<INT32>^ GetGlyphIndices(const Array<UINT32>^ indicies)
@@ -486,7 +493,7 @@ namespace CharacterMapCX
 	private:
 		inline DWriteFontFace() { }
 
-		Array<CanvasUnicodeRange>^ GetFallbackUnicodeRanges()
+		Array<DWriteUnicodeRange>^ GetFallbackUnicodeRanges()
 		{
 			try
 			{
@@ -495,7 +502,7 @@ namespace CharacterMapCX
 				auto fontFace = GetFontFace();
 				if (fontFace != nullptr)
 				{
-					std::vector<CanvasUnicodeRange> fallbackRanges;
+					std::vector<DWriteUnicodeRange> fallbackRanges;
 					const UINT32 maxCodePoint = 0x10FFFF;
 					const UINT32 chunkSize = 0x10000;
 
@@ -531,7 +538,7 @@ namespace CharacterMapCX
 							else if (inRange)
 							{
 								inRange = false;
-								CanvasUnicodeRange r;
+								DWriteUnicodeRange r;
 								r.First = rangeStart;
 								r.Last = lastValidCodePoint;
 								fallbackRanges.push_back(r);
@@ -541,7 +548,7 @@ namespace CharacterMapCX
 
 					if (inRange)
 					{
-						CanvasUnicodeRange r;
+						DWriteUnicodeRange r;
 						r.First = rangeStart;
 						r.Last = lastValidCodePoint;
 						fallbackRanges.push_back(r);
@@ -549,7 +556,7 @@ namespace CharacterMapCX
 
 					if (!fallbackRanges.empty())
 					{
-						auto result = ref new Platform::Array<CanvasUnicodeRange>(static_cast<uint32>(fallbackRanges.size()));
+						auto result = ref new Platform::Array<DWriteUnicodeRange>(static_cast<uint32>(fallbackRanges.size()));
 						for (size_t i = 0; i < fallbackRanges.size(); ++i)
 							result[static_cast<uint32>(i)] = fallbackRanges[i];
 						return result;
@@ -560,8 +567,8 @@ namespace CharacterMapCX
 			{
 			}
 
-			static CanvasUnicodeRange s_emptyDummy{};
-			return Platform::ArrayReference<CanvasUnicodeRange>(&s_emptyDummy, 0);
+			static DWriteUnicodeRange s_emptyDummy{};
+			return Platform::ArrayReference<DWriteUnicodeRange>(&s_emptyDummy, 0);
 		}
 
 		bool m_isVariant = false;

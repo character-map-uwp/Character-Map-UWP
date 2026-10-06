@@ -354,12 +354,12 @@ public class FontFinder
             }
             else if (IsQuery(query, Localization.Get("FoundryFilter"), "foundry:", out q))
             {
-                fontList = BasicFontFilter.ForFontInfo(q, Microsoft.Graphics.Canvas.Text.CanvasFontInformation.Manufacturer).Query(fontList, fontCollections);
+                fontList = BasicFontFilter.ForFontInfo(q, DWriteFontInformation.Manufacturer).Query(fontList, fontCollections);
                 filterTitle = $"{filter.FilterTitle} \"{q}\"";
             }
             else if (IsQuery(query, Localization.Get("DesignerFilter"), "designer:", out q))
             {
-                fontList = BasicFontFilter.ForFontInfo(q, Microsoft.Graphics.Canvas.Text.CanvasFontInformation.Designer).Query(fontList, fontCollections);
+                fontList = BasicFontFilter.ForFontInfo(q, DWriteFontInformation.Designer).Query(fontList, fontCollections);
                 filterTitle = $"{filter.FilterTitle} \"{q}\"";
             }
             else if (IsQuery(query, Localization.Get("OutlineFilter"), "outline:", out q)

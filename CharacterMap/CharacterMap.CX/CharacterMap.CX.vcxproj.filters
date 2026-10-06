@@ -115,6 +115,9 @@
     <ClInclude Include="DWriteLigature.h">
       <Filter>DWrite</Filter>
     </ClInclude>
+    <ClInclude Include="DWriteUnicodeRange.h">
+      <Filter>DWrite</Filter>
+    </ClInclude>
     <ClInclude Include="CmapTableReader.h">
       <Filter>Tables</Filter>
     </ClInclude>

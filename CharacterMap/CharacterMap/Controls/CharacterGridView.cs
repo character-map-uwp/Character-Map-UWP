@@ -591,7 +591,7 @@ public partial class CharacterGridView : GridView
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void UpdateTypography(XamlDirect xamlDirect, IXamlDirectObject o, TypographyFeatureInfo info)
     {
-        CanvasTypographyFeatureName f = info == null ? CanvasTypographyFeatureName.None : info.Feature;
+        DWriteTypographyFeatureName f = info == null ? DWriteTypographyFeatureName.None : info.Feature;
         TypographyBehavior.SetTypography(o, f, xamlDirect);
     }
 

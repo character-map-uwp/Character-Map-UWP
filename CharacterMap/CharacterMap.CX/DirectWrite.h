@@ -96,12 +96,12 @@ namespace CharacterMapCX
 		static bool CheckTypographicFeature(
 			DWriteFontFace^ fontFace,
 			Platform::String^ text,
-			CanvasTypographyFeatureName feature);
+			DWriteTypographyFeatureName feature);
 
-		static Windows::Foundation::Collections::IVectorView<CanvasTypographyFeatureName>^ GetSupportedTypographicFeatures(
+		static Windows::Foundation::Collections::IVectorView<DWriteTypographyFeatureName>^ GetSupportedTypographicFeatures(
 			DWriteFontFace^ fontFace,
 			Platform::String^ text,
-			Windows::Foundation::Collections::IVectorView<CanvasTypographyFeatureName>^ features);
+			Windows::Foundation::Collections::IVectorView<DWriteTypographyFeatureName>^ features);
 
 		static CanvasFontSet^ CreateFontSet(String^ path);
 

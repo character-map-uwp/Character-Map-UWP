@@ -465,8 +465,8 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
             typography = _vm.SelectedTypography.Feature;
 
         CanvasTypography typo = new();
-        if (typography != null && typography.Feature != CanvasTypographyFeatureName.None)
-            typo.AddFeature(typography.Feature, 1u);
+        if (typography != null && typography.Feature != DWriteTypographyFeatureName.None)
+            typo.AddFeature((CanvasTypographyFeatureName)typography.Feature, 1u);
 
         return typo;
     }

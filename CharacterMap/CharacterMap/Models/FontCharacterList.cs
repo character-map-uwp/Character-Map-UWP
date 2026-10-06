@@ -1,11 +1,11 @@
-﻿using Microsoft.Graphics.Canvas.Text;
+using CharacterMapCX;
 using System.Collections;
 
 namespace CharacterMap.Models;
 
 public class FontCharacterList : IReadOnlyList<Character>, IList
 {
-    private readonly CanvasUnicodeRange[] _ranges;
+    private readonly DWriteUnicodeRange[] _ranges;
     private readonly int[] _prefixOffsets;
     private readonly int _count;
     private readonly IReadOnlyList<Character> _explicitList;
@@ -13,7 +13,7 @@ public class FontCharacterList : IReadOnlyList<Character>, IList
     /// <summary>
     /// Constructs a virtualized character list from DirectWrite Unicode ranges with 0 item allocations.
     /// </summary>
-    public FontCharacterList(CanvasUnicodeRange[] ranges)
+    public FontCharacterList(DWriteUnicodeRange[] ranges)
     {
         _ranges = ranges ?? [];
         _prefixOffsets = new int[_ranges.Length];
@@ -54,7 +54,7 @@ public class FontCharacterList : IReadOnlyList<Character>, IList
                 return _explicitList[index];
 
             int rangeIndex = FindRangeIndex(index);
-            CanvasUnicodeRange range = _ranges[rangeIndex];
+            DWriteUnicodeRange range = _ranges[rangeIndex];
             int offsetInRange = index - _prefixOffsets[rangeIndex];
             uint codepoint = range.First + (uint)offsetInRange;
 
@@ -134,7 +134,7 @@ public class FontCharacterList : IReadOnlyList<Character>, IList
 
         for (int i = 0; i < _ranges.Length; i++)
         {
-            CanvasUnicodeRange r = _ranges[i];
+            DWriteUnicodeRange r = _ranges[i];
             for (uint cp = r.First; cp <= r.Last; cp++)
                 yield return Character.Get((int)cp);
         }

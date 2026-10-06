@@ -15,6 +15,21 @@ using namespace CharacterMapCX;
 
 namespace CharacterMapCX
 {
+	public ref class DWriteTextLayoutDefinition sealed
+	{
+	public:
+		property float EnableColorFonts;
+		property float FontSize;
+		property String^ FontFamily;
+		property Windows::UI::Text::FontStretch FontStretch;
+		property Windows::UI::Text::FontStyle FontStyle;
+		property Windows::UI::Text::FontWeight FontWeight;
+
+		property float RequestedWidth;
+		property float RequestedHeight;
+		property String^ Text;
+	};
+
 	public ref class CanvasTextLayoutAnalysis sealed
 	{
 	public:

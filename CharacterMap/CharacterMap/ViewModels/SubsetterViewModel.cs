@@ -292,7 +292,7 @@ public partial class SubsetterViewModel : ViewModelBase
                         && FamilyName == DEFAULT_FONT_NAME)
                         FamilyName = font.Name;
 
-                    string ver = font.DefaultVariant?.TryGetInfo(Microsoft.Graphics.Canvas.Text.CanvasFontInformation.VersionStrings)?.Value;
+                    string ver = font.DefaultVariant?.TryGetInfo(DWriteFontInformation.VersionStrings)?.Value;
                     if (!string.IsNullOrWhiteSpace(ver)
                         && Version == DEFAULT_VERSION)
                         Version = ver;

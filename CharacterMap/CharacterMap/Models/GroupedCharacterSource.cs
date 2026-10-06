@@ -1,4 +1,4 @@
-using Microsoft.Graphics.Canvas.Text;
+using CharacterMapCX;
 using System.Collections;
 using System.Collections.Specialized;
 using Windows.Foundation;
@@ -62,7 +62,7 @@ public sealed class GroupedCharacterSource
     /// <summary>
     /// Builds a <see cref="GroupedCharacterSource"/> from a <see cref="CMFontFace"/> without
     /// ever calling <c>GetCharacters()</c>.  Groups are derived by walking the face's raw
-    /// <see cref="Microsoft.Graphics.Canvas.Text.CanvasUnicodeRange"/> spans and mapping each
+    /// <see cref="DWriteUnicodeRange"/> spans and mapping each
     /// codepoint to its <see cref="NamedUnicodeRange"/> via a binary search.
     /// Characters are created on demand through <see cref="FontCharacterList"/>'s virtual indexer.
     /// </summary>
@@ -71,13 +71,13 @@ public sealed class GroupedCharacterSource
         if (face is null)
             return new(new FontCharacterList([]), []);
 
-        CanvasUnicodeRange[] fontRanges = face.UnicodeRanges;
+        DWriteUnicodeRange[] fontRanges = face.UnicodeRanges;
         if (fontRanges.Length == 0)
             return new(new FontCharacterList(fontRanges), []);
 
         bool mdl2 = FontFinder.IsMDL2(face);
 
-        // Build GroupMeta by walking raw CanvasUnicodeRange spans.
+        // Build GroupMeta by walking raw DWriteUnicodeRange spans.
         // Each span [First..Last] may straddle multiple NamedUnicodeRanges, so we advance
         // through All named ranges as we go.  We track the current flat index (i.e. the
         // position within the FontCharacterList that backs this source) separately.

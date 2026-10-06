@@ -101,9 +101,9 @@ namespace
 bool TypographyAnalyzer::CheckTypographicFeature(
 	DWriteFontFace^ fontFace,
 	Platform::String^ text,
-	CanvasTypographyFeatureName feature)
+	DWriteTypographyFeatureName feature)
 {
-	if (fontFace == nullptr || text == nullptr || text->Length() == 0 || feature == CanvasTypographyFeatureName::None)
+	if (fontFace == nullptr || text == nullptr || text->Length() == 0 || feature == DWriteTypographyFeatureName::None)
 		return false;
 
 	auto textAnalyzer = GetDirectWriteTextAnalyzer();
@@ -170,12 +170,12 @@ bool TypographyAnalyzer::CheckTypographicFeature(
 	return false;
 }
 
-IVectorView<CanvasTypographyFeatureName>^ TypographyAnalyzer::GetSupportedTypographicFeatures(
+IVectorView<DWriteTypographyFeatureName>^ TypographyAnalyzer::GetSupportedTypographicFeatures(
 	DWriteFontFace^ fontFace,
 	Platform::String^ text,
-	IVectorView<CanvasTypographyFeatureName>^ features)
+	IVectorView<DWriteTypographyFeatureName>^ features)
 {
-	auto result = ref new Vector<CanvasTypographyFeatureName>();
+	auto result = ref new Vector<DWriteTypographyFeatureName>();
 	if (fontFace == nullptr || text == nullptr || text->Length() == 0 || features == nullptr || features->Size == 0)
 		return result->GetView();
 
@@ -224,8 +224,8 @@ IVectorView<CanvasTypographyFeatureName>^ TypographyAnalyzer::GetSupportedTypogr
 	std::vector<UINT8> featureApplies(actualGlyphCount, 0);
 	for (unsigned int f = 0; f < features->Size; ++f)
 	{
-		CanvasTypographyFeatureName feat = features->GetAt(f);
-		if (feat == CanvasTypographyFeatureName::None)
+		DWriteTypographyFeatureName feat = features->GetAt(f);
+		if (feat == DWriteTypographyFeatureName::None)
 			continue;
 
 		std::fill(featureApplies.begin(), featureApplies.end(), 0);

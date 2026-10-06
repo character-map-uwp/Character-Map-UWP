@@ -11,11 +11,11 @@ namespace CharacterMapCX
 		static bool CheckTypographicFeature(
 			DWriteFontFace^ fontFace,
 			Platform::String^ text,
-			Microsoft::Graphics::Canvas::Text::CanvasTypographyFeatureName feature);
+			DWriteTypographyFeatureName feature);
 
-		static Windows::Foundation::Collections::IVectorView<Microsoft::Graphics::Canvas::Text::CanvasTypographyFeatureName>^ GetSupportedTypographicFeatures(
+		static Windows::Foundation::Collections::IVectorView<DWriteTypographyFeatureName>^ GetSupportedTypographicFeatures(
 			DWriteFontFace^ fontFace,
 			Platform::String^ text,
-			Windows::Foundation::Collections::IVectorView<Microsoft::Graphics::Canvas::Text::CanvasTypographyFeatureName>^ features);
+			Windows::Foundation::Collections::IVectorView<DWriteTypographyFeatureName>^ features);
 	};
 }

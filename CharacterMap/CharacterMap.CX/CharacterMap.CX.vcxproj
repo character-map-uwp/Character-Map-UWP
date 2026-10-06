@@ -270,6 +270,7 @@
     <ClInclude Include="DWriteLigature.h" />
     <ClInclude Include="DWriteNamedFontAxisValue.h" />
     <ClInclude Include="DWriteProperties.h" />
+    <ClInclude Include="DWriteUnicodeRange.h" />
     <ClInclude Include="ErrorHandling.h" />
     <ClInclude Include="FontAnalysis.h" />
     <ClInclude Include="FontGlyphs.h" />

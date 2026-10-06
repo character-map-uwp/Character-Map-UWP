@@ -1,5 +1,3 @@
-using Microsoft.Graphics.Canvas.Text;
-
 namespace CharacterMap.Models;
 
 public partial class BasicFontFilter
@@ -44,7 +42,7 @@ public partial class BasicFontFilter
             v => v.QuickFilePath.Contains(path, StringComparison.InvariantCultureIgnoreCase))), null, true);
     }
 
-    public static BasicFontFilter ForFontInfo(string query, CanvasFontInformation info)
+    public static BasicFontFilter ForFontInfo(string query, DWriteFontInformation info)
     {
         return new BasicFontFilter((f, c) => f.Where(v => v.Variants.Any(
             v => v.TryGetInfo(info)?.Value is string f
