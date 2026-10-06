@@ -214,22 +214,43 @@ namespace CharacterMapCX
 		if (!factory || !fontFace || !text || text->Length() == 0 || size <= 0.0f)
 			return nullptr;
 
-		FontWeight weight = fontFace->Properties->Weight;
-		FontStyle style = fontFace->Properties->Style;
-		FontStretch stretch = fontFace->Properties->Stretch;
-
+		const auto& axisValues = fontFace->GetAxisValues();
 		ComPtr<IDWriteTextFormat> tempFormat;
-		HRESULT hr = factory->CreateTextFormat(
-			fontFace->Properties->FamilyName->Data(),
-			fontFace->GetFontCollection().Get(),
-			static_cast<DWRITE_FONT_WEIGHT>(weight.Weight),
-			static_cast<DWRITE_FONT_STYLE>(style),
-			static_cast<DWRITE_FONT_STRETCH>(stretch),
-			size,
-			L"en-us",
-			&tempFormat);
-		if (FAILED(hr))
-			return nullptr;
+		HRESULT hr = S_OK;
+
+		if (!axisValues.empty())
+		{
+			ComPtr<IDWriteTextFormat3> format3;
+			hr = factory->CreateTextFormat(
+				fontFace->Properties->FamilyName->Data(),
+				fontFace->GetFontCollection().Get(),
+				axisValues.data(),
+				static_cast<UINT32>(axisValues.size()),
+				size,
+				L"en-us",
+				&format3);
+			if (SUCCEEDED(hr))
+				tempFormat = format3;
+		}
+
+		if (tempFormat == nullptr)
+		{
+			FontWeight weight = fontFace->Properties->Weight;
+			FontStyle style = fontFace->Properties->Style;
+			FontStretch stretch = fontFace->Properties->Stretch;
+
+			hr = factory->CreateTextFormat(
+				fontFace->Properties->FamilyName->Data(),
+				fontFace->GetFontCollection().Get(),
+				static_cast<DWRITE_FONT_WEIGHT>(weight.Weight),
+				static_cast<DWRITE_FONT_STYLE>(style),
+				static_cast<DWRITE_FONT_STRETCH>(stretch),
+				size,
+				L"en-us",
+				&tempFormat);
+			if (FAILED(hr))
+				return nullptr;
+		}
 
 		tempFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
 		tempFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
@@ -244,6 +265,18 @@ namespace CharacterMapCX
 			&textLayout);
 		if (FAILED(hr))
 			return nullptr;
+
+		if (!axisValues.empty())
+		{
+			ComPtr<IDWriteTextLayout4> layout4;
+			if (SUCCEEDED(textLayout.As(&layout4)))
+			{
+				layout4->SetFontAxisValues(
+					axisValues.data(),
+					static_cast<UINT32>(axisValues.size()),
+					DWRITE_TEXT_RANGE{ 0, text->Length() });
+			}
+		}
 
 		if (typographyFeatures != nullptr && typographyFeatures->Size > 0)
 		{
@@ -271,14 +304,16 @@ namespace CharacterMapCX
 		ComPtr<IDWriteFactory> m_factory;
 		ComPtr<ID2D1Brush> m_defaultBrush;
 		GlyphImageFormat m_preferredFormat;
+		ComPtr<IDWriteFontFace> m_overrideFontFace;
 
 	public:
 		CustomColorTextRenderer(
 			ID2D1DeviceContext* context,
 			IDWriteFactory* factory,
 			ID2D1Brush* defaultBrush,
-			GlyphImageFormat preferredFormat)
-			: m_context(context), m_factory(factory), m_defaultBrush(defaultBrush), m_preferredFormat(preferredFormat)
+			GlyphImageFormat preferredFormat,
+			IDWriteFontFace* overrideFontFace = nullptr)
+			: m_context(context), m_factory(factory), m_defaultBrush(defaultBrush), m_preferredFormat(preferredFormat), m_overrideFontFace(overrideFontFace)
 		{
 		}
 
@@ -323,11 +358,15 @@ namespace CharacterMapCX
 					brush = effectBrush;
 			}
 
+			DWRITE_GLYPH_RUN customRun = *glyphRun;
+			if (m_overrideFontFace != nullptr)
+				customRun.fontFace = m_overrideFontFace.Get();
+
 			CompositionDeviceManager::DrawGlyphRunWithColorSupport(
 				m_context.Get(),
 				m_factory.Get(),
 				D2D1::Point2F(baselineOriginX, baselineOriginY),
-				glyphRun,
+				&customRun,
 				brush.Get(),
 				m_preferredFormat,
 				measuringMode);

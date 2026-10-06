@@ -932,20 +932,13 @@ IRandomAccessStream^ DirectWrite::GetCharacterPNGStream(
 	if (FAILED(hr))
 		return nullptr;
 
-	if (preferredColorFormat == GlyphImageFormat::Colr)
-	{
-		auto renderer = Make<CustomColorTextRenderer>(
-			recorder.Context.Get(),
-			dwriteFactory.Get(),
-			defaultBrush.Get(),
-			GlyphImageFormat::Colr);
-		textLayout->Draw(nullptr, renderer.Get(), 0.0f, 0.0f);
-	}
-	else
-	{
-		D2D1_DRAW_TEXT_OPTIONS drawOptions = preferredColorFormat != GlyphImageFormat::TrueType ? D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT : D2D1_DRAW_TEXT_OPTIONS_NONE;
-		recorder.Context->DrawTextLayout(D2D1::Point2F(0, 0), textLayout.Get(), defaultBrush.Get(), drawOptions);
-	}
+	auto renderer = Make<CustomColorTextRenderer>(
+		recorder.Context.Get(),
+		dwriteFactory.Get(),
+		defaultBrush.Get(),
+		preferredColorFormat,
+		fontFace->GetFontFace().Get());
+	textLayout->Draw(nullptr, renderer.Get(), 0.0f, 0.0f);
 
 	if (FAILED(recorder.Finish()))
 		return nullptr;
