@@ -712,7 +712,7 @@ You can change the page range in the Page Setup section.</value>
     <value>Windows theme settings</value>
   </data>
   <data name="UnicodeFiltersTitle.Text" xml:space="preserve">
-    <value>UNICODE CATEGORY FILTERS</value>
+    <value>Unicode Category Filters</value>
   </data>
   <data name="PrintLayout_Grid" xml:space="preserve">
     <value>Grid</value>

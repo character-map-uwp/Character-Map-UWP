@@ -550,8 +550,8 @@
                                 x:Uid="UnicodeFiltersTitle"
                                 Margin="12 12 0 6"
                                 FontFamily="{TemplateBinding FontFamily}"
-                                FontWeight="Bold"
-                                Opacity="0.5" />
+                                FontSize="14"
+                                FontWeight="Bold" />
 
                             <Grid>
                                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">

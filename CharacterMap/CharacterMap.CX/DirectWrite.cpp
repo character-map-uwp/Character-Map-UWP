@@ -4,6 +4,7 @@
 #include "GsubTableReader.h"
 #include "CompositionDeviceManager.h"
 #include "ColrV1Svg.h"
+#include "TypographyAnalyzer.h"
 #include "Utils.h"
 
 #include "DWriteNamedFontAxisValue.h"
@@ -22,6 +23,7 @@ using namespace Platform::Collections;
 using namespace Windows::Storage;
 using namespace Windows::Storage::Streams;
 using namespace concurrency;
+
 
 CanvasFontSet^ DirectWrite::CreateFontSet(String^ path)
 {
@@ -366,6 +368,22 @@ IVectorView<DWriteLigatureFeature^>^ DirectWrite::GetLigatures(ComPtr<IDWriteFon
 	}
 
 	return list;
+}
+
+bool DirectWrite::CheckTypographicFeature(
+	DWriteFontFace^ fontFace,
+	Platform::String^ text,
+	CanvasTypographyFeatureName feature)
+{
+	return TypographyAnalyzer::CheckTypographicFeature(fontFace, text, feature);
+}
+
+IVectorView<CanvasTypographyFeatureName>^ DirectWrite::GetSupportedTypographicFeatures(
+	DWriteFontFace^ fontFace,
+	Platform::String^ text,
+	IVectorView<CanvasTypographyFeatureName>^ features)
+{
+	return TypographyAnalyzer::GetSupportedTypographicFeatures(fontFace, text, features);
 }
 
 IVectorView<DWriteFontAxis^>^ DirectWrite::GetAxis(DWriteFontFace^ canvasFontFace)

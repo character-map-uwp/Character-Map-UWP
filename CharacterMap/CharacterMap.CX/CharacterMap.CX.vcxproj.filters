@@ -30,6 +30,7 @@
     <ClCompile Include="CompositionDeviceManager.cpp" />
     <ClCompile Include="NativeInterop.cpp" />
     <ClCompile Include="CustomFontManager.cpp" />
+    <ClCompile Include="TypographyAnalyzer.cpp" />
     <ClCompile Include="DWriteFontFamily.cpp">
       <Filter>DWrite</Filter>
     </ClCompile>
@@ -41,6 +42,7 @@
       <Filter>Controls</Filter>
     </ClInclude>
     <ClInclude Include="ColorTextAnalyzer.h" />
+    <ClInclude Include="TypographyAnalyzer.h" />
     <ClInclude Include="ColrV1Svg.h" />
     <ClInclude Include="GlyphImageFormat.h" />
     <ClInclude Include="CanvasTextLayoutAnalysis.h" />

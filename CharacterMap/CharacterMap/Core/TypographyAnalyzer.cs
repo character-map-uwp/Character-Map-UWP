@@ -82,36 +82,37 @@ public static class TypographyAnalyzer
 
         if (fontFace.HasXamlTypographyFeatures)
         {
-            CanvasTextAnalyzer textAnalyzer = new(character.Char, CanvasTextDirection.TopToBottomThenLeftToRight);
-            KeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript> analyzed = textAnalyzer.GetScript().First();
-
-            CanvasGlyph[] glyphs = textAnalyzer.GetGlyphs(analyzed.Key, fontFace.FontFace, 24, false, false, analyzed.Value);
-            int baseGlyphIndex = glyphs.Length > 0 ? glyphs[0].Index : -1;
+            int baseGlyphIndex = character is GlyphCharacter gc
+                ? (int)gc.GlyphIndex
+                : fontFace.Face.GetGlyphIndice(character.UnicodeIndex);
 
             NativeInterop interop = Utils.GetInterop();
+            List<CanvasTypographyFeatureName> featuresToCheck = fontFace.XamlTypographyFeatures
+                .Where(f => f != TypographyFeatureInfo.None)
+                .Select(f => f.Feature)
+                .ToList();
 
-            foreach (TypographyFeatureInfo feature in fontFace.XamlTypographyFeatures)
+            IReadOnlyList<CanvasTypographyFeatureName> supportedFeatures = DirectWrite.GetSupportedTypographicFeatures(
+                fontFace.Face, character.Char, featuresToCheck);
+
+            foreach (CanvasTypographyFeatureName featureTag in supportedFeatures)
             {
-                if (feature == TypographyFeatureInfo.None)
+                TypographyFeatureInfo feature = fontFace.XamlTypographyFeatures.FirstOrDefault(f => f.Feature == featureTag);
+                if (feature is null)
                     continue;
 
-                bool[] results = fontFace.FontFace.GetTypographicFeatureGlyphSupport(analyzed.Value, feature.Feature, glyphs);
+                TypographyVariation variation = new() { Feature = feature };
 
-                if (results.Any(r => r))
+                int variantGlyphIndex = interop.GetTypographicGlyph(fontFace.Face, character.Char, feature.Feature);
+
+                if (variantGlyphIndex > 0 && variantGlyphIndex != baseGlyphIndex)
                 {
-                    TypographyVariation variation = new() { Feature = feature };
-
-                    int variantGlyphIndex = interop.GetTypographicGlyph(fontFace.Face, character.Char, feature.Feature);
-
-                    if (variantGlyphIndex > 0 && variantGlyphIndex != baseGlyphIndex)
-                    {
-                        if (fontFace.TryGetCharacterForGlyph(variantGlyphIndex, out Character mappedChar)
-                            && mappedChar.UnicodeIndex != character.UnicodeIndex)
-                            variation.FaceCharacterMapping = (int)mappedChar.UnicodeIndex;
-                    }
-
-                    supported.Add(variation);
+                    if (fontFace.TryGetCharacterForGlyph(variantGlyphIndex, out Character mappedChar)
+                        && mappedChar.UnicodeIndex != character.UnicodeIndex)
+                        variation.FaceCharacterMapping = (int)mappedChar.UnicodeIndex;
                 }
+
+                supported.Add(variation);
             }
         }
 
@@ -127,19 +128,17 @@ public static class TypographyAnalyzer
 
         if (font.HasXamlTypographyFeatures)
         {
-            CanvasTextAnalyzer textAnalyzer = new(character.Char, CanvasTextDirection.TopToBottomThenLeftToRight);
-            KeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript> analyzed = textAnalyzer.GetScript().First();
+            List<CanvasTypographyFeatureName> featuresToCheck = font.XamlTypographyFeatures
+                .Where(f => f != TypographyFeatureInfo.None)
+                .Select(f => f.Feature)
+                .ToList();
 
-            var glyphs = textAnalyzer.GetGlyphs(analyzed.Key, font.FontFace, 24, false, false, analyzed.Value);
+            IReadOnlyList<CanvasTypographyFeatureName> supportedFeatures = DirectWrite.GetSupportedTypographicFeatures(
+                font.Face, character.Char, featuresToCheck);
 
-            foreach (var feature in font.XamlTypographyFeatures)
+            foreach (CanvasTypographyFeatureName featureTag in supportedFeatures)
             {
-                if (feature == TypographyFeatureInfo.None)
-                    continue;
-
-                bool[] results = font.FontFace.GetTypographicFeatureGlyphSupport(analyzed.Value, feature.Feature, glyphs);
-
-                if (results.Any(r => r))
+                if (font.XamlTypographyFeatures.FirstOrDefault(f => f.Feature == featureTag) is { } feature)
                     supported.Add(feature);
             }
         }

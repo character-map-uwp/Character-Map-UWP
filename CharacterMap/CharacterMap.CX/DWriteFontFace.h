@@ -86,23 +86,8 @@ namespace CharacterMapCX
 	{
 	public:
 
-		property CanvasFontFace^ FontFace
-		{
-			CanvasFontFace^ get() { 
-				if (m_fontFace == nullptr)
-					Realize();
-				return m_fontFace; 
-			}
-		}
-
 		void ReleaseResources()
 		{
-			if (m_fontFace != nullptr)
-			{
-				delete m_fontFace;
-				m_fontFace = nullptr;
-			}
-
 			m_fontResource = nullptr;
 
 			if (m_font != nullptr)
@@ -447,12 +432,6 @@ namespace CharacterMapCX
 			return fontCollection;
 		}
 
-		void Realize()
-		{
-			GetReference();
-			if (m_fontFace == nullptr)
-				m_fontFace = GetOrCreate<CanvasFontFace>(m_fontResource.Get());
-		}
 
 		ComPtr<IDWriteFontFaceReference> GetReference()
 		{
@@ -589,7 +568,6 @@ namespace CharacterMapCX
 		bool m_loadedEmbed = false;
 
 		FontEmbeddingType m_embeddingType = FontEmbeddingType::Installable;
-		CanvasFontFace^ m_fontFace = nullptr;
 		ComPtr<IDWriteFontFaceReference> m_fontResource = nullptr;
 	};
 }
