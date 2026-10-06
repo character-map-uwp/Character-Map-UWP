@@ -414,25 +414,62 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             layoutBounds = rect;
 
             // Calculate DrawBounds
-            DWRITE_OVERHANG_METRICS overhang;
-            ThrowIfFailed(textLayout->GetOverhangMetrics(&overhang));
-
-            const float left = -overhang.left;
-            const float right = overhang.right + textLayout->GetMaxWidth();
-            const float width = right - left;
-
-            const float top = -overhang.top;
-            const float bottom = overhang.bottom + textLayout->GetMaxHeight();
-            const float height = bottom - top;
-
-            if (width <= 0 || height <= 0)
+            if (IsCharacterFitEnabled)
             {
-                drawBounds = layoutBounds;
+                DWRITE_OVERHANG_METRICS overhang;
+                ThrowIfFailed(textLayout->GetOverhangMetrics(&overhang));
+
+                const float left = -overhang.left;
+                const float right = overhang.right + textLayout->GetMaxWidth();
+                const float width = right - left;
+
+                const float top = -overhang.top;
+                const float bottom = overhang.bottom + textLayout->GetMaxHeight();
+                const float height = bottom - top;
+
+                if (width <= 0 || height <= 0)
+                    drawBounds = layoutBounds;
+                else
+                {
+                    Rect draw = { left, top, width, height };
+                    drawBounds = draw;
+                }
             }
             else
             {
-                Rect draw = { left, top, width, height };
-                drawBounds = draw;
+                // Size the text layout to its actual content bounds so overhang metrics are
+                // relative to the text content box, avoiding float cancellation with 16384.0f
+                if (!IsTextWrappingEnabled)
+                    textLayout->SetMaxWidth(dwriteMetrics.widthIncludingTrailingWhitespace);
+                textLayout->SetMaxHeight(dwriteMetrics.height);
+
+                DWRITE_OVERHANG_METRICS overhang;
+                ThrowIfFailed(textLayout->GetOverhangMetrics(&overhang));
+
+                float left, right;
+                if (IsTextWrappingEnabled)
+                {
+                    left = -overhang.left;
+                    right = lwidth + overhang.right;
+                }
+                else
+                {
+                    left = dwriteMetrics.left - overhang.left;
+                    right = dwriteMetrics.left + dwriteMetrics.widthIncludingTrailingWhitespace + overhang.right;
+                }
+
+                const float top = dwriteMetrics.top - overhang.top;
+                const float bottom = dwriteMetrics.top + dwriteMetrics.height + overhang.bottom;
+                const float width = right - left;
+                const float height = bottom - top;
+
+                if (width <= 0 || height <= 0)
+                    drawBounds = layoutBounds;
+                else
+                {
+                    Rect draw = { left, top, width, height };
+                    drawBounds = draw;
+                }
             }
 
             m_textLayout = textLayout;
@@ -456,10 +493,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
     auto targetsize = Size(min(m, ceil(w)), min(m, ceil(h)));
 
-    if (IsOverwriteCompensationEnabled && drawBounds.Left < 0)
-    {
-        targetsize = Size(targetsize.Width - drawBounds.Left, targetsize.Height);
-    }
+
 
     if (IsCharacterFitEnabled)
     {
@@ -903,17 +937,7 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
 
    
 
-    if (IsOverwriteCompensationEnabled && !IsCharacterFitEnabled && (db.Left < 0 || db.Top < 0))
-    {
-        auto b = db.Left;
-        auto t = db.Top;
-
-        m_canvas->Margin = ThicknessHelper::FromLengths(b, t, 0, 0);
-        left -= b;
-        top -= t;
-    }
-    else
-        m_canvas->Margin = ThicknessHelper::FromUniformLength(0);
+    m_canvas->Margin = ThicknessHelper::FromUniformLength(0);
 
     //if (IsOverwriteCompensationEnabled && (m_layout->DrawBounds.Left < 0 || m_layout->DrawBounds.Top < 0))
     //{
