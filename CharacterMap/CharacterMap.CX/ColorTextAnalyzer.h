@@ -25,6 +25,7 @@ namespace CharacterMapCX
 		bool HasColrV1 = false;
 
 		bool IsCharacterAnalysisMode = false;
+		bool EnableColorFonts = true;
 
 		int GlyphLayerCount = 0;
 

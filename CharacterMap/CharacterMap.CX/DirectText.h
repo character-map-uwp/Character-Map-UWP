@@ -248,6 +248,12 @@ namespace CharacterMapCX
 		// to register the properties
 		inline void DirectText::RegisterDependencyProperties()
 		{
+			static bool registered = false;
+			if (registered)
+				return;
+			
+			registered = true;
+
 			auto callback = ref new PropertyChangedCallback(&DirectText::OnRenderPropertyChanged);
 			auto meta = ref new PropertyMetadata(nullptr, callback);
 

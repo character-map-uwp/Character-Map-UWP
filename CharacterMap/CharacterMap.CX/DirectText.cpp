@@ -46,12 +46,13 @@ DependencyProperty^ DirectText::_IsCharacterFitEnabledProperty = nullptr;
 
 DirectText::DirectText()
 {
+    RegisterDependencyProperties();
+
 	DefaultStyleKey = "CharacterMapCX.Controls.DirectText";
     m_isStale = true;
 
     auto c = ref new DependencyPropertyChangedCallback(this, &DirectText::OnPropChanged);
 
-    this->RegisterPropertyChangedCallback(DirectText::FontFamilyProperty, c);
     this->RegisterPropertyChangedCallback(DirectText::FontSizeProperty, c);
     this->RegisterPropertyChangedCallback(DirectText::ForegroundProperty, c);
     this->RegisterPropertyChangedCallback(DirectText::FlowDirectionProperty, c);
@@ -111,7 +112,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
     bool hasText = GlyphIndex >= 0 || UnicodeIndex > 0 || FontFace != nullptr;
 
-    if (!hasText || Typography == nullptr || m_canvas == nullptr || FontFamily == nullptr || !m_canvas->ReadyToDraw)
+    if (!hasText || Typography == nullptr || m_canvas == nullptr || !m_canvas->ReadyToDraw)
         return Size(this->MinWidth, this->MinHeight);
 
     auto dpi = m_canvas->Dpi / 96.0f;
@@ -237,14 +238,69 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             Platform::String^ text = Text;
             textLength = text->Length();
 
+            /* Set Variable Font Axis */
+            std::vector<DWRITE_FONT_AXIS_VALUE> faceAxisValues;
+            if (Axis != nullptr && Axis->Size > 0)
+            {
+                faceAxisValues.reserve(Axis->Size);
+                for (unsigned int i = 0; i < Axis->Size; ++i)
+                {
+                    faceAxisValues.push_back(Axis->GetAt(i)->GetDWriteValue());
+                }
+            }
+            else if (fontFace != nullptr && !fontFace->GetAxisValues().empty())
+            {
+                faceAxisValues = fontFace->GetAxisValues();
+            }
+            else if (dwriteFontFace != nullptr)
+            {
+                ComPtr<IDWriteFontFace5> face5;
+                if (SUCCEEDED(dwriteFontFace.As(&face5)))
+                {
+                    UINT32 count = face5->GetFontAxisValueCount();
+                    if (count > 0)
+                    {
+                        faceAxisValues.resize(count);
+                        if (FAILED(face5->GetFontAxisValues(faceAxisValues.data(), count)))
+                            faceAxisValues.clear();
+                    }
+                }
+            }
+
             /* CREATE FORMAT */
-            ComPtr<IDWriteTextFormat3> idFormat = 
-                NativeInterop::_Current->CreateIDWriteTextFormat(
+            ComPtr<IDWriteTextFormat3> idFormat;
+            bool formatCreated = false;
+            if (!faceAxisValues.empty())
+            {
+                HRESULT hr = NativeInterop::_Current->m_dwriteFactory->CreateTextFormat(
+                    fontFace->Properties->FamilyName->Data(),
+                    fontFace->GetFontCollection().Get(),
+                    faceAxisValues.data(),
+                    static_cast<UINT32>(faceAxisValues.size()),
+                    fontSize,
+                    L"en-us",
+                    &idFormat);
+                if (SUCCEEDED(hr))
+                {
+                    formatCreated = true;
+                    idFormat->SetFlowDirection(DWRITE_FLOW_DIRECTION_TOP_TO_BOTTOM);
+                }
+            }
+
+            if (!formatCreated)
+            {
+                idFormat = NativeInterop::_Current->CreateIDWriteTextFormat(
                     fontFace,
                     FontWeight,
                     FontStyle,
                     FontStretch,
                     fontSize);
+
+                if (!faceAxisValues.empty())
+                {
+                    idFormat->SetFontAxisValues(faceAxisValues.data(), static_cast<UINT32>(faceAxisValues.size()));
+                }
+            }
 
             /* Set flow direction */
             if (this->FlowDirection == Windows::UI::Xaml::FlowDirection::RightToLeft)
@@ -256,19 +312,6 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             /* Set blank fallback font */
             if (FallbackFont != nullptr)
                 idFormat->SetFontFallback(FallbackFont->Fallback.Get());
-
-            /* Set Variable Font Axis */
-            if (Axis != nullptr && Axis->Size > 0)
-            {
-                std::vector<DWRITE_FONT_AXIS_VALUE> values;
-                values.reserve(Axis->Size);
-                for (unsigned int i = 0; i < Axis->Size; ++i)
-                {
-                    values.push_back(Axis->GetAt(i)->GetDWriteValue());
-                }
-
-                ThrowIfFailed(idFormat->SetFontAxisValues(values.data(), static_cast<UINT32>(values.size())));
-            }
 
             /* Set trimming. */
             if (IsTextWrappingEnabled)
@@ -342,18 +385,11 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
             ComPtr<IDWriteTextLayout4> idl;
             ThrowIfFailed(textLayout.As(&idl));
-            if (Axis != nullptr && Axis->Size > 0)
+            if (!faceAxisValues.empty())
             {
-                std::vector<DWRITE_FONT_AXIS_VALUE> values;
-                values.reserve(Axis->Size);
-                for (unsigned int i = 0; i < Axis->Size; ++i)
-                {
-                    values.push_back(Axis->GetAt(i)->GetDWriteValue());
-                }
-
                 ThrowIfFailed(idl->SetFontAxisValues(
-                    values.data(), 
-                    static_cast<UINT32>(values.size()),
+                    faceAxisValues.data(), 
+                    static_cast<UINT32>(faceAxisValues.size()),
                     DWRITE_TEXT_RANGE{ 0 , textLength }));
             }
 
@@ -627,19 +663,26 @@ namespace
         }
     }
 
-    class ColrV0TextRenderer : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDWriteTextRenderer, IDWritePixelSnapping>
+    class DirectTextRenderer : public RuntimeClass<RuntimeClassFlags<ClassicCom>, IDWriteTextRenderer, IDWritePixelSnapping>
     {
     private:
         ComPtr<ID2D1DeviceContext1> m_context;
         ComPtr<ID2D1Brush> m_defaultBrush;
         ComPtr<IDWriteFactory> m_factory;
+        ComPtr<IDWriteFontFace3> m_overrideFontFace;
+        bool m_color;
+        DWriteColorRenderOption m_colorOption;
 
     public:
-        ColrV0TextRenderer(
+        DirectTextRenderer(
             ComPtr<ID2D1DeviceContext1> context,
             ComPtr<ID2D1Brush> defaultBrush,
-            ComPtr<IDWriteFactory> factory)
-            : m_context(context), m_defaultBrush(defaultBrush), m_factory(factory)
+            ComPtr<IDWriteFactory> factory,
+            ComPtr<IDWriteFontFace3> overrideFontFace,
+            bool color,
+            DWriteColorRenderOption colorOption)
+            : m_context(context), m_defaultBrush(defaultBrush), m_factory(factory),
+              m_overrideFontFace(overrideFontFace), m_color(color), m_colorOption(colorOption)
         {}
 
         IFACEMETHOD(IsPixelSnappingDisabled)(_In_opt_ void*, _Out_ BOOL* isDisabled) override
@@ -683,16 +726,45 @@ namespace
                     brush = effectBrush;
             }
 
-            DrawGlyphRunColrV0(
-                m_context.Get(),
-                m_factory.Get(),
-                { baselineOriginX, baselineOriginY },
-                glyphRun,
-                glyphRunDescription,
-                brush.Get(),
-                measuringMode,
-                true
-            );
+            DWRITE_GLYPH_RUN customRun = *glyphRun;
+            if (m_overrideFontFace != nullptr)
+            {
+                customRun.fontFace = m_overrideFontFace.Get();
+            }
+
+            bool drawn = false;
+            if (m_color && (m_colorOption == DWriteColorRenderOption::ColrV1 || m_colorOption == DWriteColorRenderOption::Default))
+            {
+                ComPtr<ID2D1DeviceContext7> ctx7;
+                if (SUCCEEDED(m_context.As(&ctx7)))
+                {
+                    ctx7->DrawGlyphRunWithColorSupport(
+                        { baselineOriginX, baselineOriginY },
+                        &customRun,
+                        glyphRunDescription,
+                        brush.Get(),
+                        nullptr,
+                        0,
+                        measuringMode
+                    );
+                    drawn = true;
+                }
+            }
+
+            if (!drawn)
+            {
+                DrawGlyphRunColrV0(
+                    m_context.Get(),
+                    m_factory.Get(),
+                    { baselineOriginX, baselineOriginY },
+                    &customRun,
+                    glyphRunDescription,
+                    brush.Get(),
+                    measuringMode,
+                    m_color
+                );
+            }
+
             return S_OK;
         }
 
@@ -940,8 +1012,6 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
     }
     else
     {
-        m_textLayout->SetLocaleName(L"en-us", { 0,  textLength });
-
         // Make sure we have a colour brush
         ComPtr<ID2D1DeviceContext1> ctx = GetWrappedResource<ID2D1DeviceContext1>(args->DrawingSession);
         if (m_brush == nullptr)
@@ -953,25 +1023,14 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
             m_brush->SetColor(ToD2DColor(((SolidColorBrush^)this->Foreground)->Color));
         }
 
-        if (color && (ColorRenderOption == DWriteColorRenderOption::ColrV0))
-        {
-            auto renderer = Make<ColrV0TextRenderer>(ctx, m_brush, NativeInterop::_Current->m_dwriteFactory);
-            m_textLayout->Draw(nullptr, renderer.Get(), static_cast<FLOAT>(left), static_cast<FLOAT>(top));
-        }
-        else
-        {
-            D2D1_DRAW_TEXT_OPTIONS ops = D2D1_DRAW_TEXT_OPTIONS::D2D1_DRAW_TEXT_OPTIONS_NONE;
-            if (color)
-                ops = D2D1_DRAW_TEXT_OPTIONS::D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT;
-
-            // Draw it
-            ctx->DrawTextLayout(
-                { static_cast<float>(left), static_cast<float>(top) },
-                m_textLayout.Get(),
-                m_brush.Get(),
-                ops
-            );
-        }
+        auto renderer = Make<DirectTextRenderer>(
+            ctx,
+            m_brush,
+            NativeInterop::_Current->m_dwriteFactory,
+            m_drawFontFace,
+            color,
+            ColorRenderOption);
+        m_textLayout->Draw(nullptr, renderer.Get(), static_cast<FLOAT>(left), static_cast<FLOAT>(top));
     }
 
     m_render = false;

@@ -380,6 +380,7 @@ namespace CharacterMapCX
 			variant->m_isVariant = true;
 			variant->m_font = m_font;
 			variant->m_dwProperties = m_dwProperties;
+			variant->m_axisValues = values;
 
 			return variant;
 		}
@@ -424,6 +425,11 @@ namespace CharacterMapCX
 			m_font = font;
 			m_dwProperties = properties;
 		};
+
+		const std::vector<DWRITE_FONT_AXIS_VALUE>& GetAxisValues()
+		{
+			return m_axisValues;
+		}
 
 		ComPtr<IDWriteFontCollection3> GetFontCollection()
 		{
@@ -489,6 +495,7 @@ namespace CharacterMapCX
 		ComPtr<IDWriteFont3> m_font = nullptr;
 
 		DWriteProperties^ m_dwProperties = nullptr;
+		std::vector<DWRITE_FONT_AXIS_VALUE> m_axisValues;
 
 	private:
 		inline DWriteFontFace() { }
