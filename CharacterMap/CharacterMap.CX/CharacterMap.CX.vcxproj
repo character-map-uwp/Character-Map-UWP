@@ -270,6 +270,8 @@
     <ClInclude Include="DWriteLigature.h" />
     <ClInclude Include="DWriteNamedFontAxisValue.h" />
     <ClInclude Include="DWriteProperties.h" />
+    <ClInclude Include="DWriteTypographyCollection.h" />
+    <ClInclude Include="DWriteTypographyFeature.h" />
     <ClInclude Include="DWriteUnicodeRange.h" />
     <ClInclude Include="ErrorHandling.h" />
     <ClInclude Include="FontAnalysis.h" />
@@ -310,6 +312,7 @@
     <ClCompile Include="DirectText.cpp" />
     <ClCompile Include="DirectWrite.cpp" />
     <ClCompile Include="DWriteFontFamily.cpp" />
+    <ClCompile Include="DWriteTypographyCollection.cpp" />
     <ClCompile Include="FontGlyphs.cpp" />
     <ClCompile Include="GlyphAtlasManager.cpp" />
     <ClCompile Include="NativeInterop.cpp" />

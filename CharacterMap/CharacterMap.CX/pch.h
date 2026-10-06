@@ -18,6 +18,8 @@
 
 #include "ITypographyInfo.h"
 #include "DWriteUnicodeRange.h"
+#include "DWriteTypographyFeature.h"
+#include "DWriteTypographyCollection.h"
 #include "DirectText.h"
 #include "DirectWrite.h"
 #include "DWriteFontAxis.h"

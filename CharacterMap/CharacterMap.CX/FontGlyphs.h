@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "DWriteFontFace.h"
+#include "DWriteTypographyCollection.h"
 
 namespace CharacterMapCX
 {
@@ -74,6 +75,11 @@ namespace CharacterMapCX
                 Windows::UI::Xaml::DependencyProperty^ get() { return _StretchDirectionProperty; }
             }
 
+            static property Windows::UI::Xaml::DependencyProperty^ TypographyProperty
+            {
+                Windows::UI::Xaml::DependencyProperty^ get() { return _TypographyProperty; }
+            }
+
             #pragma endregion
 
             #pragma region Properties
@@ -134,6 +140,12 @@ namespace CharacterMapCX
                 void set(Windows::UI::Xaml::Controls::StretchDirection value) { SetValue(StretchDirectionProperty, value); }
             }
 
+            property DWriteTypographyCollection^ Typography
+            {
+                DWriteTypographyCollection^ get() { return (DWriteTypographyCollection^)GetValue(TypographyProperty); }
+                void set(DWriteTypographyCollection^ value) { SetValue(TypographyProperty, value); }
+            }
+
             #pragma endregion
 
             virtual Windows::Foundation::Size MeasureOverride(Windows::Foundation::Size availableSize) override;
@@ -153,6 +165,7 @@ namespace CharacterMapCX
             static Windows::UI::Xaml::DependencyProperty^ _StyleSimulationsProperty;
             static Windows::UI::Xaml::DependencyProperty^ _StretchProperty;
             static Windows::UI::Xaml::DependencyProperty^ _StretchDirectionProperty;
+            static Windows::UI::Xaml::DependencyProperty^ _TypographyProperty;
 
             static void OnPropertyChanged(Windows::UI::Xaml::DependencyObject^ d, Windows::UI::Xaml::DependencyPropertyChangedEventArgs^ e);
             static void OnFontSizeChanged(Windows::UI::Xaml::DependencyObject^ d, Windows::UI::Xaml::DependencyPropertyChangedEventArgs^ e);

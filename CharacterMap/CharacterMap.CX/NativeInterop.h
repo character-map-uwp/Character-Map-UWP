@@ -38,7 +38,7 @@ namespace CharacterMapCX
 
         NativeInterop(CanvasDevice^ device);
 
-		CanvasTextLayoutAnalysis^ AnalyzeCharacterLayout(CanvasTextLayout^ layout);
+		CanvasTextLayoutAnalysis^ AnalyzeCharacterLayout(DWriteTextLayoutDefinition^ layoutDef);
 		CanvasTextLayoutAnalysis^ AnalyzeGlyphLayout(DWriteFontFace^ fontFace, UINT16 glyphIndex);
 		CanvasTextLayoutAnalysis^ AnalyzeCharacter(DWriteFontFace^ fontFace, Platform::String^ text, DWriteTypographyFeatureName feature);
 

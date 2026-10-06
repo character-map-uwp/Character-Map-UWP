@@ -4,6 +4,7 @@
 #include "CanvasTextLayoutAnalysis.h"
 #include "DWriteFontSource.h"
 #include <string>
+#include <algorithm>
 #include "SVGGeometrySink.h"
 #include "PathData.h"
 #include "Windows.h"
@@ -428,16 +429,89 @@ PathData^ NativeInterop::GetPathData(CanvasGeometry^ geometry)
 	return data;
 }
 
-CanvasTextLayoutAnalysis^ NativeInterop::AnalyzeCharacterLayout(CanvasTextLayout^ layout)
+CanvasTextLayoutAnalysis^ NativeInterop::AnalyzeCharacterLayout(DWriteTextLayoutDefinition^ layoutDef)
 {
-	ComPtr<IDWriteTextLayout4> context = GetWrappedResource<IDWriteTextLayout4>(layout);
+	if (layoutDef == nullptr || layoutDef->Text == nullptr || layoutDef->Text->Length() == 0)
+		return nullptr;
+
+	float width = layoutDef->RequestedWidth > 0.0f ? layoutDef->RequestedWidth : 1000.0f;
+	float height = layoutDef->RequestedHeight > 0.0f ? layoutDef->RequestedHeight : 1000.0f;
+	float fontSize = layoutDef->FontSize > 0.0f ? layoutDef->FontSize : 64.0f;
+
+	ComPtr<IDWriteTextFormat3> textFormat;
+	ComPtr<IDWriteFontCollection> fontCollection;
+	Platform::String^ familyName = nullptr;
+
+	if (layoutDef->FontFace != nullptr)
+	{
+		familyName = layoutDef->FontFace->Properties->FamilyName;
+		auto col3 = layoutDef->FontFace->GetFontCollection();
+		if (col3 != nullptr)
+			fontCollection = col3;
+
+		textFormat = CreateIDWriteTextFormat(
+			layoutDef->FontFace,
+			layoutDef->FontFace->Properties->Weight,
+			layoutDef->FontFace->Properties->Style,
+			layoutDef->FontFace->Properties->Stretch,
+			fontSize);
+	}
+
+	//if (textFormat == nullptr)
+	//{
+	//	ComPtr<IDWriteTextFormat> tempFormat;
+	//	HRESULT hr = m_dwriteFactory->CreateTextFormat(
+	//		familyName->Data(),
+	//		fontCollection.Get(),
+	//		static_cast<DWRITE_FONT_WEIGHT>(layoutDef->FontWeight.Weight),
+	//		static_cast<DWRITE_FONT_STYLE>(layoutDef->FontStyle),
+	//		static_cast<DWRITE_FONT_STRETCH>(layoutDef->FontStretch),
+	//		fontSize,
+	//		L"en-us",
+	//		&tempFormat);
+
+	//	if (FAILED(hr))
+	//		return nullptr;
+
+	//	tempFormat.As(&textFormat);
+	//}
+
+	if (textFormat == nullptr)
+		return nullptr;
+
+	ComPtr<IDWriteTextLayout> textLayout;
+	HRESULT hr = m_dwriteFactory->CreateTextLayout(
+		layoutDef->Text->Data(),
+		layoutDef->Text->Length(),
+		textFormat.Get(),
+		width,
+		height,
+		&textLayout);
+
+	if (FAILED(hr))
+		return nullptr;
+
+	if (fontCollection != nullptr)
+	{
+		textLayout->SetFontCollection(fontCollection.Get(), DWRITE_TEXT_RANGE{ 0, layoutDef->Text->Length() });
+		textLayout->SetFontFamilyName(familyName->Data(), DWRITE_TEXT_RANGE{ 0, layoutDef->Text->Length() });
+	}
+
+	if (layoutDef->Typography != nullptr && layoutDef->Typography->FeatureCount > 0)
+	{
+		ComPtr<IDWriteTypography> typo = layoutDef->Typography->GetDWriteTypography();
+		if (typo != nullptr)
+		{
+			textLayout->SetTypography(typo.Get(), DWRITE_TEXT_RANGE{ 0, layoutDef->Text->Length() });
+		}
+	}
 
 	ComPtr<ColorTextAnalyzer> ana = new (std::nothrow) ColorTextAnalyzer(m_d2dFactory, m_dwriteFactory, m_d2dContext);
 	ana->IsCharacterAnalysisMode = true;
-	context->Draw(m_d2dContext.Get(), ana.Get(), 0, 0);
+	ana->EnableColorFonts = layoutDef->EnableColorFonts;
+	textLayout->Draw(m_d2dContext.Get(), ana.Get(), 0, 0);
 
 	CanvasTextLayoutAnalysis^ analysis = ref new CanvasTextLayoutAnalysis(ana, nullptr);
-
 	ana = nullptr;
 	return analysis;
 }

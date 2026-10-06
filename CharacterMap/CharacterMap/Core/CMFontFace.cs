@@ -311,7 +311,7 @@ public partial class CMFontFace : IDisposable
     {
         var features = TypographyAnalyzer.GetSupportedTypographyFeatures(this);
 
-        var xaml = features.Where(f => TypographyBehavior.IsXamlSingleGlyphSupported(f.Feature)).ToList();
+        var xaml = features.Where(f => TypographySetter.IsXamlSingleGlyphSupported(f.Feature)).ToList();
         if (xaml.Count > 0)
             xaml.Insert(0, TypographyFeatureInfo.None);
         var _xamlTypographyFeatures = xaml;

@@ -1,5 +1,4 @@
 using System.IO;
-using Microsoft.Graphics.Canvas;
 using System.Globalization;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
@@ -56,7 +55,7 @@ public class StringBuilderPool : Pool<StringBuilder>
 
 public static class Utils
 {
-    public static CanvasDevice CanvasDevice { get; } = CanvasDevice.GetSharedDevice();
+    public static Microsoft.Graphics.Canvas.CanvasDevice CanvasDevice { get; } = Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice();
 
     public static NativeInterop GetInterop() => Ioc.Default.GetService<NativeInterop>();
 

@@ -47,7 +47,7 @@ namespace
 
 		IFACEMETHOD(GetLocaleName)(UINT32 textPosition, _Out_ UINT32* textLength, _Outptr_result_z_ const WCHAR** localeName) override
 		{
-			*localeName = L"";
+			*localeName = L"en-us";
 			*textLength = m_length - textPosition;
 			return S_OK;
 		}
@@ -253,3 +253,149 @@ IVectorView<DWriteTypographyFeatureName>^ TypographyAnalyzer::GetSupportedTypogr
 
 	return result->GetView();
 }
+
+bool TypographyAnalyzer::ShapeGlyphs(
+	IDWriteFontFace* face,
+	const wchar_t* text,
+	UINT32 textLength,
+	FLOAT fontSize,
+	const std::vector<DWRITE_FONT_FEATURE>& features,
+	std::vector<UINT16>& glyphIndices,
+	std::vector<FLOAT>& glyphAdvances,
+	std::vector<DWRITE_GLYPH_OFFSET>& glyphOffsets)
+{
+	if (face == nullptr || text == nullptr || textLength == 0)
+		return false;
+
+	if (fontSize <= 0.0f)
+		fontSize = 24.0f;
+
+	std::vector<DWRITE_FONT_FEATURE> validFeatures;
+	for (const auto& f : features)
+	{
+		if (f.nameTag != 0)
+			validFeatures.push_back(f);
+	}
+
+	if (validFeatures.empty())
+		return false;
+
+	auto textAnalyzer = GetDirectWriteTextAnalyzer();
+	if (!textAnalyzer)
+		return false;
+
+	auto source = Microsoft::WRL::Make<TextAnalysisSource>(text, textLength);
+	auto sink = Microsoft::WRL::Make<TextAnalysisSink>();
+	if (FAILED(textAnalyzer->AnalyzeScript(source.Get(), 0, textLength, sink.Get())))
+		return false;
+
+	DWRITE_TYPOGRAPHIC_FEATURES typoFeatures{};
+	typoFeatures.features = validFeatures.data();
+	typoFeatures.featureCount = static_cast<UINT32>(validFeatures.size());
+
+	const DWRITE_TYPOGRAPHIC_FEATURES* typoList[] = { &typoFeatures };
+	UINT32 rangeLengths[] = { textLength };
+	const DWRITE_TYPOGRAPHIC_FEATURES** pTypoList = typoList;
+	const UINT32* pRangeLengths = rangeLengths;
+	UINT32 featureRangeCount = 1;
+
+	UINT32 maxGlyphs = textLength * 3 / 2 + 16;
+	glyphIndices.resize(maxGlyphs);
+	std::vector<DWRITE_SHAPING_TEXT_PROPERTIES> textProps(textLength);
+	std::vector<DWRITE_SHAPING_GLYPH_PROPERTIES> glyphProps(maxGlyphs);
+	std::vector<UINT16> clusterMap(textLength);
+	UINT32 actualGlyphCount = 0;
+
+	HRESULT hr = textAnalyzer->GetGlyphs(
+		text,
+		textLength,
+		face,
+		FALSE,
+		FALSE,
+		&sink->ScriptAnalysis,
+		nullptr,
+		nullptr,
+		pTypoList,
+		pRangeLengths,
+		featureRangeCount,
+		maxGlyphs,
+		clusterMap.data(),
+		textProps.data(),
+		glyphIndices.data(),
+		glyphProps.data(),
+		&actualGlyphCount);
+
+	while (hr == E_NOT_SUFFICIENT_BUFFER)
+	{
+		maxGlyphs *= 2;
+		glyphIndices.resize(maxGlyphs);
+		glyphProps.resize(maxGlyphs);
+		hr = textAnalyzer->GetGlyphs(
+			text,
+			textLength,
+			face,
+			FALSE,
+			FALSE,
+			&sink->ScriptAnalysis,
+			nullptr,
+			nullptr,
+			pTypoList,
+			pRangeLengths,
+			featureRangeCount,
+			maxGlyphs,
+			clusterMap.data(),
+			textProps.data(),
+			glyphIndices.data(),
+			glyphProps.data(),
+			&actualGlyphCount);
+	}
+
+	if (FAILED(hr) || actualGlyphCount == 0)
+		return false;
+
+	glyphIndices.resize(actualGlyphCount);
+	glyphProps.resize(actualGlyphCount);
+	glyphAdvances.resize(actualGlyphCount);
+	glyphOffsets.resize(actualGlyphCount);
+
+	hr = textAnalyzer->GetGlyphPlacements(
+		text,
+		clusterMap.data(),
+		textProps.data(),
+		textLength,
+		glyphIndices.data(),
+		glyphProps.data(),
+		actualGlyphCount,
+		face,
+		fontSize,
+		FALSE,
+		FALSE,
+		&sink->ScriptAnalysis,
+		nullptr,
+		pTypoList,
+		pRangeLengths,
+		featureRangeCount,
+		glyphAdvances.data(),
+		glyphOffsets.data());
+
+	if (FAILED(hr))
+	{
+		// Fallback: font might not have GPOS table; compute advances directly from font face
+		DWRITE_FONT_METRICS fontMetrics;
+		face->GetMetrics(&fontMetrics);
+		float emScale = fontSize / (fontMetrics.designUnitsPerEm > 0 ? fontMetrics.designUnitsPerEm : 2048.0f);
+
+		std::vector<DWRITE_GLYPH_METRICS> metrics(actualGlyphCount);
+		if (SUCCEEDED(face->GetDesignGlyphMetrics(glyphIndices.data(), actualGlyphCount, metrics.data(), FALSE)))
+		{
+			for (UINT32 i = 0; i < actualGlyphCount; ++i)
+			{
+				glyphAdvances[i] = metrics[i].advanceWidth * emScale;
+				glyphOffsets[i] = DWRITE_GLYPH_OFFSET{};
+			}
+		}
+	}
+
+	return true;
+}
+

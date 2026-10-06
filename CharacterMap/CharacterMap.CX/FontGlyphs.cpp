@@ -2,6 +2,7 @@
 #include "FontGlyphs.h"
 #include "CompositionDeviceManager.h"
 #include "GlyphAtlasManager.h"
+#include "TypographyAnalyzer.h"
 #include <cwctype>
 #include <algorithm>
 #include <cmath>
@@ -27,6 +28,7 @@ DependencyProperty^ FontGlyphs::_IsColorFontEnabledProperty = nullptr;
 DependencyProperty^ FontGlyphs::_StyleSimulationsProperty = nullptr;
 DependencyProperty^ FontGlyphs::_StretchProperty = nullptr;
 DependencyProperty^ FontGlyphs::_StretchDirectionProperty = nullptr;
+DependencyProperty^ FontGlyphs::_TypographyProperty = nullptr;
 
 FontGlyphs::FontGlyphs()
     : m_isLayoutDirty(true)
@@ -191,6 +193,9 @@ void FontGlyphs::RegisterDependencyProperties()
 
     if (_StretchDirectionProperty == nullptr)
         _StretchDirectionProperty = DependencyProperty::Register("StretchDirection", Windows::UI::Xaml::Controls::StretchDirection::typeid, FontGlyphs::typeid, ref new PropertyMetadata(Windows::UI::Xaml::Controls::StretchDirection::DownOnly, layoutCallback));
+
+    if (_TypographyProperty == nullptr)
+        _TypographyProperty = DependencyProperty::Register("Typography", DWriteTypographyCollection::typeid, FontGlyphs::typeid, ref new PropertyMetadata(nullptr, layoutCallback));
 }
 
 void FontGlyphs::OnUnloaded(Platform::Object^ sender, RoutedEventArgs^ e)
@@ -398,36 +403,55 @@ void FontGlyphs::ParseAndLayoutGlyphs()
     }
     else if (UnicodeString != nullptr && UnicodeString->Length() > 0)
     {
-        UINT32 len = UnicodeString->Length();
-        std::vector<UINT32> codePoints;
-        const wchar_t* strData = UnicodeString->Data();
+        auto typography = Typography;
+        bool shaped = false;
 
-        for (UINT32 i = 0; i < len; i++)
+        if (typography != nullptr && typography->FeatureCount > 0)
         {
-            wchar_t ch = strData[i];
-            if (ch >= 0xD800 && ch <= 0xDBFF && i + 1 < len && strData[i + 1] >= 0xDC00 && strData[i + 1] <= 0xDFFF)
-            {
-                UINT32 cp = 0x10000 + ((ch - 0xD800) << 10) + (strData[i + 1] - 0xDC00);
-                codePoints.push_back(cp);
-                i++;
-            }
-            else
-            {
-                codePoints.push_back(ch);
-            }
+            shaped = TypographyAnalyzer::ShapeGlyphs(
+                rawFace.Get(),
+                UnicodeString->Data(),
+                UnicodeString->Length(),
+                static_cast<FLOAT>(emSize),
+                typography->GetDWriteFontFeatures(),
+                m_glyphIndices,
+                m_glyphAdvances,
+                m_glyphOffsets);
         }
 
-        m_glyphIndices.resize(codePoints.size());
-        m_glyphAdvances.resize(codePoints.size());
-        m_glyphOffsets.resize(codePoints.size(), DWRITE_GLYPH_OFFSET{});
-
-        rawFace->GetGlyphIndices(codePoints.data(), static_cast<UINT32>(codePoints.size()), m_glyphIndices.data());
-
-        for (size_t i = 0; i < m_glyphIndices.size(); i++)
+        if (!shaped)
         {
-            INT32 designAdvance = 0;
-            rawFace->GetDesignGlyphAdvances(1, &m_glyphIndices[i], &designAdvance, FALSE);
-            m_glyphAdvances[i] = designAdvance * emScale;
+            UINT32 len = UnicodeString->Length();
+            std::vector<UINT32> codePoints;
+            const wchar_t* strData = UnicodeString->Data();
+
+            for (UINT32 i = 0; i < len; i++)
+            {
+                wchar_t ch = strData[i];
+                if (ch >= 0xD800 && ch <= 0xDBFF && i + 1 < len && strData[i + 1] >= 0xDC00 && strData[i + 1] <= 0xDFFF)
+                {
+                    UINT32 cp = 0x10000 + ((ch - 0xD800) << 10) + (strData[i + 1] - 0xDC00);
+                    codePoints.push_back(cp);
+                    i++;
+                }
+                else
+                {
+                    codePoints.push_back(ch);
+                }
+            }
+
+            m_glyphIndices.resize(codePoints.size());
+            m_glyphAdvances.resize(codePoints.size());
+            m_glyphOffsets.resize(codePoints.size(), DWRITE_GLYPH_OFFSET{});
+
+            rawFace->GetGlyphIndices(codePoints.data(), static_cast<UINT32>(codePoints.size()), m_glyphIndices.data());
+
+            for (size_t i = 0; i < m_glyphIndices.size(); i++)
+            {
+                INT32 designAdvance = 0;
+                rawFace->GetDesignGlyphAdvances(1, &m_glyphIndices[i], &designAdvance, FALSE);
+                m_glyphAdvances[i] = designAdvance * emScale;
+            }
         }
     }
 
@@ -731,6 +755,7 @@ void FontGlyphs::RenderGlyphs()
     {
         FLOAT adv = m_glyphAdvances.empty() ? 0.0f : m_glyphAdvances[0];
         DWRITE_GLYPH_OFFSET off = m_glyphOffsets.empty() ? DWRITE_GLYPH_OFFSET{} : m_glyphOffsets[0];
+        UINT32 typoKey = Typography != nullptr ? Typography->GetKey() : 0;
 
         AtlasSlot slot = GlyphAtlasManager::GetOrCreateGlyphSlot(
             compositor,
@@ -742,7 +767,8 @@ void FontGlyphs::RenderGlyphs()
             m_padLeft, m_padTop, m_baseline,
             adv, off,
             Foreground,
-            requiredWidth, requiredHeight);
+            requiredWidth, requiredHeight,
+            typoKey);
 
         if (slot.IsValid && slot.Surface != nullptr)
         {

@@ -29,6 +29,7 @@ namespace CharacterMapCX
         UINT32 FontSizeInt;      // (UINT32)(FontSize * 100) to avoid float precision issues
         UINT32 Simulations;
         bool IsColor;
+        UINT32 TypographyKey;
 
         bool operator==(const AtlasKey& other) const
         {
@@ -36,7 +37,8 @@ namespace CharacterMapCX
                 && GlyphIndex == other.GlyphIndex
                 && FontSizeInt == other.FontSizeInt
                 && Simulations == other.Simulations
-                && IsColor == other.IsColor;
+                && IsColor == other.IsColor
+                && TypographyKey == other.TypographyKey;
         }
     };
 
@@ -50,7 +52,8 @@ namespace CharacterMapCX
             std::size_t h3 = std::hash<UINT32>{}(k.FontSizeInt);
             std::size_t h4 = std::hash<UINT32>{}(k.Simulations);
             std::size_t h5 = std::hash<bool>{}(k.IsColor);
-            return h1 ^ (h2 << 1) ^ (h3 << 2) ^ (h4 << 3) ^ (h5 << 4);
+            std::size_t h6 = std::hash<UINT32>{}(k.TypographyKey);
+            return h1 ^ (h2 << 1) ^ (h3 << 2) ^ (h4 << 3) ^ (h5 << 4) ^ (h6 << 5);
         }
     };
 
@@ -89,7 +92,8 @@ namespace CharacterMapCX
             FLOAT glyphAdvance,
             DWRITE_GLYPH_OFFSET glyphOffset,
             Windows::UI::Xaml::Media::Brush^ foreground,
-            LONG requiredWidth, LONG requiredHeight);
+            LONG requiredWidth, LONG requiredHeight,
+            UINT32 typographyKey = 0);
 
         static void Clear();
 

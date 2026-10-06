@@ -1,4 +1,3 @@
-﻿using Microsoft.Graphics.Canvas.Text;
 
 
 namespace CharacterMap.Models;
@@ -60,7 +59,7 @@ public record CharacterRenderingOptions
         FontSize = fontSize;
         Analysis = analysis;
 
-        DefaultTypography = typography?.Where(t => t.Feature != CanvasTypographyFeatureName.None).FirstOrDefault();
+        DefaultTypography = typography?.Where(t => t.Feature != DWriteTypographyFeatureName.None).FirstOrDefault();
         DXTypography = typography.FirstOrDefault();
 
         Axis = axis?.Copy() ?? _emptyAxis;
@@ -92,12 +91,12 @@ public record CharacterRenderingOptions
 
     public IReadOnlyList<DevProviderBase> GetDevProviders(Models.Character c) => DevProviderBase.GetProviders(this, c);
 
-    public CanvasTypography CreateCanvasTypography()
+    public DWriteTypographyCollection GetTypographyCollection()
     {
-        CanvasTypography t = new();
+        DWriteTypographyCollection t = new();
         foreach (var f in Typography)
         {
-            if (f.Feature != CanvasTypographyFeatureName.None)
+            if (f.Feature != DWriteTypographyFeatureName.None)
                 t.AddFeature(f.Feature, 1u);
         }
         return t;

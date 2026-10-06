@@ -318,7 +318,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
            
             // Assign OpenType features
-            if (Typography->Feature != CanvasTypographyFeatureName::None)
+            if (Typography->Feature != DWriteTypographyFeatureName::None)
             {
                 // Create a typography object
                 ComPtr<IDWriteTypography> typography;

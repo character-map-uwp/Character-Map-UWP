@@ -6,6 +6,7 @@
 #include "ColorTextAnalyzer.h"
 #include "GlyphImageFormat.h"
 #include "DWriteFontAxis.h"
+#include "DWriteFontFace.h"
 #include <vector>
 
 using namespace Windows::Foundation;
@@ -18,16 +19,19 @@ namespace CharacterMapCX
 	public ref class DWriteTextLayoutDefinition sealed
 	{
 	public:
-		property float EnableColorFonts;
+		property bool EnableColorFonts;
 		property float FontSize;
-		property String^ FontFamily;
-		property Windows::UI::Text::FontStretch FontStretch;
-		property Windows::UI::Text::FontStyle FontStyle;
-		property Windows::UI::Text::FontWeight FontWeight;
+		//property String^ FontFamily;
+		//property Windows::UI::Text::FontStretch FontStretch;
+		//property Windows::UI::Text::FontStyle FontStyle;
+		//property Windows::UI::Text::FontWeight FontWeight;
+		property DWriteTypographyCollection^ Typography;
 
 		property float RequestedWidth;
 		property float RequestedHeight;
 		property String^ Text;
+
+		property DWriteFontFace^ FontFace;
 	};
 
 	public ref class CanvasTextLayoutAnalysis sealed

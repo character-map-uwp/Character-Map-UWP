@@ -1,10 +1,10 @@
 //#define DX
 
 using CharacterMapCX.Controls;
-using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System.Collections;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Drawing;
 using Windows.Foundation.Metadata;
 using Windows.System;
@@ -23,9 +23,27 @@ namespace CharacterMap.Controls;
 
 internal class CharacterGridViewTemplateSettings
 {
+    private TypographyFeatureInfo _typography;
+    public TypographyFeatureInfo Typography
+    { 
+        get => _typography; 
+        set
+        {
+            if (_typography != value)
+            {
+                _typography = value;
+                DWriteTypographyCollection col = new();
+                if (value is not null && value.Feature != DWriteTypographyFeatureName.None)
+                    col.AddFeature(value.Feature);
+                TypographyCollection = col;
+            }
+        }
+    }
+
+    public DWriteTypographyCollection TypographyCollection { get; private set; } = new();
+
     public FontFamily FontFamily { get; set; }
     public DWriteFontFace FontFace { get; set; }
-    public TypographyFeatureInfo Typography { get; set; }
     public bool ShowColorGlyphs { get; set; }
     public double Size { get; set; } = 24;
     public bool EnableReposition { get; set; }
@@ -63,11 +81,8 @@ public partial class CharacterGridView : GridView
 
     partial void OnItemTypographyChanged(TypographyFeatureInfo oldValue, TypographyFeatureInfo n)
     {
-        if (n is not null)
-        {
-            _templateSettings.Typography = n;
-            UpdateTypographies(n);
-        }
+        _templateSettings.Typography = n;
+        UpdateTypographies(_templateSettings.TypographyCollection);
     }
 
     partial void OnShowColorGlyphsChanged(bool oldValue, bool n)
@@ -545,7 +560,8 @@ public partial class CharacterGridView : GridView
             g.FontFace = templateSettings.FontFace;
             g.IsColorFontEnabled = templateSettings.ShowColorGlyphs;
             g.UnicodeString = c.Char;
-            g.Foreground = foreground ?? brush; 
+            g.Foreground = foreground ?? brush;
+            g.Typography = templateSettings.TypographyCollection;
         }
         else
         {
@@ -592,7 +608,7 @@ public partial class CharacterGridView : GridView
     public static void UpdateTypography(XamlDirect xamlDirect, IXamlDirectObject o, TypographyFeatureInfo info)
     {
         DWriteTypographyFeatureName f = info == null ? DWriteTypographyFeatureName.None : info.Feature;
-        TypographyBehavior.SetTypography(o, f, xamlDirect);
+        TypographySetter.SetTypography(o, f, xamlDirect);
     }
 
     void UpdateColorsFonts(bool value)
@@ -611,7 +627,7 @@ public partial class CharacterGridView : GridView
         }
     }
 
-    void UpdateTypographies(TypographyFeatureInfo info)
+    void UpdateTypographies(DWriteTypographyCollection info)
     {
         if (ItemsSource == null || ItemsPanelRoot == null)
             return;
@@ -628,11 +644,24 @@ public partial class CharacterGridView : GridView
 }
 #else
             {
-                if (_xamlDirect.GetXamlDirectObject(item.ContentTemplateRoot) is IXamlDirectObject root)
+                //if (_xamlDirect.GetXamlDirectObject(item.ContentTemplateRoot) is IXamlDirectObject root)
+                //{
+                //    var childs = _xamlDirect.GetXamlDirectObjectProperty(root, XamlPropertyIndex.Panel_Children);
+                //    IXamlDirectObject tb = _xamlDirect.GetXamlDirectObjectFromCollectionAt(childs, 0);
+                //    UpdateTypography(_xamlDirect, tb, info);
+                //}
+
+                if (item.ContentTemplateRoot is Panel p)
                 {
-                    var childs = _xamlDirect.GetXamlDirectObjectProperty(root, XamlPropertyIndex.Panel_Children);
-                    IXamlDirectObject tb = _xamlDirect.GetXamlDirectObjectFromCollectionAt(childs, 0);
-                    UpdateTypography(_xamlDirect, tb, info);
+                    XamlDirectWrapper o = _xamlDirect.GetWrapperForChild(p, 0);
+
+                    if (o.Source is FontGlyphs g)
+                    {
+                        g.Typography = info;
+                        g.InvalidateLayoutAndRender();
+                    }
+                    else
+                        UpdateTypography(_xamlDirect, o.Object, _templateSettings.Typography);
                 }
             }
 #endif

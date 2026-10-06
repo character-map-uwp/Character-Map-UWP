@@ -484,7 +484,7 @@ public partial class FontMapViewModel : ViewModelBase
         if (args.Character != null)
         {
             character = args.Character;
-            analysis = SelectedChar.GetCharAnalysis(args.Character, SelectedFace);
+            analysis = SelectedChar.GetCharAnalysis(args.Character, SelectedFaceAnalysis.ActiveFace);
         }
 
         ExportResult result = await ExportManager.ExportGlyphAsync(

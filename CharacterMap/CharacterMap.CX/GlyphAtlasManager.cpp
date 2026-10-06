@@ -95,7 +95,8 @@ AtlasSlot GlyphAtlasManager::GetOrCreateGlyphSlot(
     FLOAT glyphAdvance,
     DWRITE_GLYPH_OFFSET glyphOffset,
     Windows::UI::Xaml::Media::Brush^ foreground,
-    LONG requiredWidth, LONG requiredHeight)
+    LONG requiredWidth, LONG requiredHeight,
+    UINT32 typographyKey)
 {
     AtlasSlot result{};
     result.IsValid = false;
@@ -113,6 +114,7 @@ AtlasSlot GlyphAtlasManager::GetOrCreateGlyphSlot(
     key.FontSizeInt = static_cast<UINT32>(fontSize * 100.0f);
     key.Simulations = static_cast<UINT32>(simulations);
     key.IsColor = isColor;
+    key.TypographyKey = typographyKey;
 
     std::lock_guard<std::mutex> lock(s_atlasMutex);
 

@@ -288,7 +288,7 @@
     <Compile Include="Models\PanoseFamily.cs" />
     <Compile Include="Core\PanoseParser.cs" />
     <Compile Include="Core\TypographyAnalyzer.cs" />
-    <Compile Include="Core\TypographyBehavior.cs" />
+    <Compile Include="Core\TypographySetter.cs" />
     <Compile Include="Models\SupportedLanguage.cs" />
     <Compile Include="Models\UnicodeGlyphData.cs" />
     <Compile Include="Helpers\Utils\ConcurrencyToken.cs" />

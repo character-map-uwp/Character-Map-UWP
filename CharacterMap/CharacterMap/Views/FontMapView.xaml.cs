@@ -716,7 +716,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 ? ViewModel.SelectedChar.Char
                 : new GlyphCharacter((ushort)(GlyphRepeater.SelectedItem is uint i ? i : 0));
 
-            if (ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFace).HasColorGlyphs
+            if (ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFaceAnalysis.ActiveFace).HasColorGlyphs
                 && ViewModel.ShowColorGlyphs)
                 style = ExportStyle.ColorGlyph;
 
@@ -724,7 +724,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                     new CopyToClipboardMessage(
                         DevValueType.Char,
                         c,
-                        ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFace), ViewModel.SelectedFaceAnalysis, type)
+                        ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFaceAnalysis.ActiveFace), ViewModel.SelectedFaceAnalysis, type)
                     { Style = style });
         }
         else
@@ -1070,7 +1070,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             {
                 _ = ViewModel.RequestCopyToClipboardAsync(
                     new CopyToClipboardMessage(
-                        DevValueType.Char, c, ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFace), ViewModel.SelectedFaceAnalysis, CopyDataType.PNG)
+                        DevValueType.Char, c, ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFaceAnalysis.ActiveFace), ViewModel.SelectedFaceAnalysis, CopyDataType.PNG)
                     { Style = style });
             }
         }
@@ -1094,7 +1094,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             {
                 _ = ViewModel.RequestCopyToClipboardAsync(
                     new CopyToClipboardMessage(
-                        DevValueType.Char, c, ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFace), ViewModel.SelectedFaceAnalysis, CopyDataType.SVG)
+                        DevValueType.Char, c, ViewModel.SelectedChar.GetCharAnalysis(c, ViewModel.SelectedFaceAnalysis.ActiveFace), ViewModel.SelectedFaceAnalysis, CopyDataType.SVG)
                     { Style = style });
             }
         }

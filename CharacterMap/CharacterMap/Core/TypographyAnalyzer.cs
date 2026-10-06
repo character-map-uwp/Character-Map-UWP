@@ -1,6 +1,5 @@
 using CharacterMap.Models;
 using CharacterMap.ViewModels;
-using Microsoft.Graphics.Canvas.Text;
 
 namespace CharacterMap.Core;
 

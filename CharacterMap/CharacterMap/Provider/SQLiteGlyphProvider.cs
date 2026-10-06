@@ -1,4 +1,3 @@
-using Microsoft.Graphics.Canvas.Text;
 using SQLite;
 using System.Globalization;
 using Windows.ApplicationModel;

@@ -1,5 +1,4 @@
-﻿using Microsoft.Graphics.Canvas.Text;
-
+﻿
 namespace CharacterMap.Core;
 
 public class TypographyFeatureInfo : ITypographyInfo, IEquatable<TypographyFeatureInfo>

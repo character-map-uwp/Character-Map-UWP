@@ -316,7 +316,7 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
         this.face = face;
         Char = c;
         _vm = vm;
-        Analysis = GetCharAnalysis(c, face);
+        Analysis = GetCharAnalysis(c, face.Face);
         Variations = TypographyAnalyzer.GetCharacterVariations(face, c);
         IsSvgChar = Analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
         UnihanData = GlyphService.GetUnihanData(c.UnicodeIndex);
@@ -382,7 +382,7 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
 
     public void UpdateAnalysis(TypographyFeatureInfo typography = null)
     {
-        Analysis = GetCharAnalysis(Char, face, typography);
+        Analysis = GetCharAnalysis(Char, face.Face, typography);
         IsSvgChar = Analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
         UpdateGlyphIndices();
     }
@@ -430,43 +430,38 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
         }
     }
 
-    public CanvasTextLayoutAnalysis GetCharAnalysis(Character c, CMFontFace face, TypographyFeatureInfo typography = null)
+    public CanvasTextLayoutAnalysis GetCharAnalysis(Character c, DWriteFontFace face, TypographyFeatureInfo typography = null)
     {
         if (c is GlyphCharacter gc)
-            return _interop.AnalyzeGlyphLayout(face.Face, gc.GlyphIndex);
+            return _interop.AnalyzeGlyphLayout(face, gc.GlyphIndex);
 
-        using CanvasTextLayout layout = new(Utils.CanvasDevice, $"{c.Char}", new()
+        DWriteTextLayoutDefinition layoutDef = new()
         {
+            FontFace = face,
+            EnableColorFonts = true,
             FontSize = (float)Core.Converters.GetFontSize(Settings.GridSize),
-            FontFamily = face.Source,
-            FontStretch = face.DirectWriteProperties.Stretch,
-            FontWeight = face.DirectWriteProperties.Weight,
-            FontStyle = face.DirectWriteProperties.Style,
-            HorizontalAlignment = CanvasHorizontalAlignment.Left,
-        }, Settings.GridSize, Settings.GridSize);
+            //FontFamily = face.Source,
+            //FontStretch = face.DirectWriteProperties.Stretch,
+            //FontWeight = face.DirectWriteProperties.Weight,
+            //FontStyle = face.DirectWriteProperties.Style,
+            RequestedHeight = Settings.GridSize,
+            RequestedWidth = Settings.GridSize,
+            Text = c.Char,
+            Typography = GetEffectiveTypography(typography)
+        };
 
-        // This doesn't work if it's set during the property constructor.
-        // Leave it as a separate line.
-        layout.Options = CanvasDrawTextOptions.EnableColorFont;
-
-        ApplyEffectiveTypography(layout, typography);
-        return _interop.AnalyzeCharacterLayout(layout);
+        return _interop.AnalyzeCharacterLayout(layoutDef);
     }
 
-    private void ApplyEffectiveTypography(CanvasTextLayout layout, TypographyFeatureInfo typography = null)
-    {
-        using CanvasTypography type = GetEffectiveTypography(typography);
-        layout.SetTypography(0, 1, type);
-    }
 
-    private CanvasTypography GetEffectiveTypography(TypographyFeatureInfo typography = null)
+    private DWriteTypographyCollection GetEffectiveTypography(TypographyFeatureInfo typography = null)
     {
         if (typography == null)
             typography = _vm.SelectedTypography.Feature;
 
-        CanvasTypography typo = new();
+        DWriteTypographyCollection typo = new();
         if (typography != null && typography.Feature != DWriteTypographyFeatureName.None)
-            typo.AddFeature((CanvasTypographyFeatureName)typography.Feature, 1u);
+            typo.AddFeature(typography.Feature, 1u);
 
         return typo;
     }

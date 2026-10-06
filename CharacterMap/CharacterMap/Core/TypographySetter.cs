@@ -1,10 +1,9 @@
-﻿using Microsoft.Graphics.Canvas.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Core.Direct;
 
 namespace CharacterMap.Core;
 
-public partial class TypographyBehavior
+public partial class TypographySetter
 {
     public static void SetTypography(IXamlDirectObject o, DWriteTypographyFeatureName f, XamlDirect _xamlDirect)
     {
@@ -133,10 +132,10 @@ public partial class TypographyBehavior
 }
 
 
-public partial class TypographyBehavior
+public partial class TypographySetter
 {
-    private static HashSet<DWriteTypographyFeatureName> _supportedSingleGlyphFeatures { get; } = new HashSet<DWriteTypographyFeatureName>
-    {
+    private static HashSet<DWriteTypographyFeatureName> _supportedSingleGlyphFeatures { get; } =
+    [
         DWriteTypographyFeatureName.None,
         DWriteTypographyFeatureName.StylisticSet1,
         DWriteTypographyFeatureName.StylisticSet2,
@@ -189,7 +188,7 @@ public partial class TypographyBehavior
         DWriteTypographyFeatureName.ContextualSwash,
         DWriteTypographyFeatureName.AlternateAnnotationForms,
         DWriteTypographyFeatureName.StylisticAlternates
-    };
+    ];
 
     public static bool IsXamlSingleGlyphSupported(DWriteTypographyFeatureName feature)
         => _supportedSingleGlyphFeatures.Contains(feature);

@@ -34,6 +34,9 @@
     <ClCompile Include="DWriteFontFamily.cpp">
       <Filter>DWrite</Filter>
     </ClCompile>
+    <ClCompile Include="DWriteTypographyCollection.cpp">
+      <Filter>DWrite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -116,6 +119,12 @@
       <Filter>DWrite</Filter>
     </ClInclude>
     <ClInclude Include="DWriteUnicodeRange.h">
+      <Filter>DWrite</Filter>
+    </ClInclude>
+    <ClInclude Include="DWriteTypographyFeature.h">
+      <Filter>DWrite</Filter>
+    </ClInclude>
+    <ClInclude Include="DWriteTypographyCollection.h">
       <Filter>DWrite</Filter>
     </ClInclude>
     <ClInclude Include="CmapTableReader.h">

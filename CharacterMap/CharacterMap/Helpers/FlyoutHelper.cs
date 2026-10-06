@@ -791,9 +791,8 @@ public static class FlyoutHelper
             FlyoutBase.SetAttachedFlyout(target, menu);
 
             // 2. Analyse the character to know which options we should show in the menu
-            CanvasTextLayoutAnalysis analysis = c is GlyphCharacter gc1
-                ? Utils.GetInterop().AnalyzeGlyphLayout(viewmodel.SelectedFace.Face, gc1.GlyphIndex)
-                : viewmodel.SelectedChar.GetCharAnalysis(c, viewmodel.SelectedFace);
+            CanvasTextLayoutAnalysis analysis = 
+                viewmodel.SelectedChar.GetCharAnalysis(c, viewmodel.SelectedFaceAnalysis.ActiveFace);
 
             MenuFlyoutFactory factory = new(menu, new FlyoutArgs { Standalone = isStandalone });
             FlyoutContextArg arg = new() { ParentView = view, Character = c, Analysis = analysis };

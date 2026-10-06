@@ -2198,7 +2198,7 @@
                                 x:Name="TxtPreview"
                                 VerticalAlignment="Center"
                                 ColorRenderOption="{Binding ElementName=ColrSelector, Path=SelectedItem.Tag, FallbackValue=Default, TargetNullValue=Default}"
-                                FontFace="{Binding SelectedFace.Face}"
+                                FontFace="{Binding SelectedFaceAnalysis.ActiveFace}"
                                 FontFamily="{Binding SelectedFace.Source}"
                                 FontSize="24"
                                 FontStretch="{Binding SelectedFace.DirectWriteProperties.Stretch}"

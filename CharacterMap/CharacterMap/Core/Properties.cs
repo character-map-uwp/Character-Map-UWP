@@ -231,7 +231,7 @@ public partial class Properties : DependencyObject
             {
                 d.Axis = o.Axis;
                 d.FallbackFont = Converters.GetFontFallback();
-                d.FontFace = o.Face.Face;
+                d.FontFace = o.ActiveFontFace;
                 d.FontFamily = (FontFamily)XamlBindingHelper.ConvertValue(typeof(FontFamily), o.Face.Source);
                 d.FontStretch = o.Face.DirectWriteProperties.Stretch;
                 d.FontStyle = o.Face.DirectWriteProperties.Style;
