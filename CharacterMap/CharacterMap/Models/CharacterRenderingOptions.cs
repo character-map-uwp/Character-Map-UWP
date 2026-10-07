@@ -46,7 +46,8 @@ public record CharacterRenderingOptions
             null,
             _emptyAxis)
         {
-            Family = fam
+            Family = fam,
+            ActiveFontFace = variant.Face,
         };
 
         return options;
