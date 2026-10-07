@@ -3,6 +3,7 @@
 #include "CompositionDeviceManager.h"
 #include "GlyphAtlasManager.h"
 #include "TypographyAnalyzer.h"
+#include "DirectWrite.h"
 #include <cwctype>
 #include <algorithm>
 #include <cmath>
@@ -704,10 +705,11 @@ Size FontGlyphs::ArrangeOverride(Size finalSize)
 
     double originY = (finalSize.Height - m_contentSize.Height) / 2.0;
 
+    float posX = (float)(originX - m_padLeft);
+    float posY = (float)(originY - m_padTop);
+
     if (m_spriteVisual != nullptr)
     {
-        float posX = (float)(originX - m_padLeft);
-        float posY = (float)(originY - m_padTop);
         m_spriteVisual->Offset = float3(posX, posY, 0.0f);
         m_spriteVisual->CenterPoint = float3((float)(finalSize.Width / 2.0 - posX), (float)(finalSize.Height / 2.0 - posY), 0.0f);
         m_spriteVisual->Scale = float3((float)m_scale.Width, (float)m_scale.Height, 1.0f);

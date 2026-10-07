@@ -269,7 +269,7 @@ public class PrintHelper
             int currentPage = _printModel.FirstPage - 1;
             while (hasMore && printPreviewPages.Count < _printModel.PagesToPrint)
             {
-                var page = new FontMapPrintPage(_printModel, fontMap.CharGrid.ItemTemplate)
+                FontMapPrintPage page = new (_printModel, fontMap.CharGrid.ItemTemplate)
                 {
                     Width = pageWidth,
                     Height = pageHeight

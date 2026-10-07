@@ -9,6 +9,7 @@
 #include <WindowsNumerics.h>
 #include <algorithm>
 #include <float.h>
+#include <robuffer.h>
 
 #include "DWHelpers.h"
 #include "DWriteFontFace.h"
@@ -202,6 +203,100 @@ namespace CharacterMapCX
 			return nullptr;
 
 		return DirectWrite::GetPNGStream(targetBitmap, targetWidth, targetHeight);
+	}
+
+	inline Windows::UI::Xaml::Media::Imaging::WriteableBitmap^ RasterizeCommandListToWriteableBitmap(
+		ID2D1DeviceContext* context,
+		ID2D1CommandList* commandList,
+		const D2D1_RECT_F& inkBounds,
+		UINT32 targetWidth,
+		UINT32 targetHeight,
+		bool fitToTarget = true)
+	{
+		if (!context || !commandList || targetWidth == 0 || targetHeight == 0)
+			return nullptr;
+
+		float inkWidth = inkBounds.right - inkBounds.left;
+		float inkHeight = inkBounds.bottom - inkBounds.top;
+		if (inkWidth <= 0.0f || inkHeight <= 0.0f)
+			return nullptr;
+
+		D2D1_BITMAP_PROPERTIES1 bp = D2D1::BitmapProperties1(
+			D2D1_BITMAP_OPTIONS_TARGET,
+			D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
+			96.0f,
+			96.0f);
+
+		ComPtr<ID2D1Bitmap1> targetBitmap;
+		HRESULT hr = context->CreateBitmap(D2D1::SizeU(targetWidth, targetHeight), nullptr, 0, &bp, &targetBitmap);
+		if (FAILED(hr))
+			return nullptr;
+
+		context->SetTarget(targetBitmap.Get());
+		context->BeginDraw();
+		context->Clear(D2D1::ColorF(0, 0, 0, 0));
+
+		float scale = (std::min)(static_cast<float>(targetWidth) / inkWidth, static_cast<float>(targetHeight) / inkHeight);
+		if (!fitToTarget)
+			scale = (std::min)(1.0f, scale);
+
+		float x = (static_cast<float>(targetWidth) - inkWidth * scale) / 2.0f - inkBounds.left * scale;
+		float y = (static_cast<float>(targetHeight) - inkHeight * scale) / 2.0f - inkBounds.top * scale;
+
+		context->SetTransform(
+			D2D1::Matrix3x2F::Scale(scale, scale) *
+			D2D1::Matrix3x2F::Translation(x, y));
+
+		context->DrawImage(commandList);
+		hr = context->EndDraw();
+		context->SetTarget(nullptr);
+		if (FAILED(hr))
+			return nullptr;
+
+		D2D1_BITMAP_PROPERTIES1 stagingProps = D2D1::BitmapProperties1(
+			D2D1_BITMAP_OPTIONS_CANNOT_DRAW | D2D1_BITMAP_OPTIONS_CPU_READ,
+			D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
+			96.0f,
+			96.0f);
+
+		ComPtr<ID2D1Bitmap1> stagingBitmap;
+		hr = context->CreateBitmap(D2D1::SizeU(targetWidth, targetHeight), nullptr, 0, &stagingProps, &stagingBitmap);
+		if (FAILED(hr))
+			return nullptr;
+
+		hr = stagingBitmap->CopyFromBitmap(nullptr, targetBitmap.Get(), nullptr);
+		if (FAILED(hr))
+			return nullptr;
+
+		D2D1_MAPPED_RECT map;
+		hr = stagingBitmap->Map(D2D1_MAP_OPTIONS_READ, &map);
+		if (FAILED(hr))
+			return nullptr;
+
+		auto wb = ref new Windows::UI::Xaml::Media::Imaging::WriteableBitmap(targetWidth, targetHeight);
+		auto pixelBuffer = wb->PixelBuffer;
+		Microsoft::WRL::ComPtr<Windows::Storage::Streams::IBufferByteAccess> bufferByteAccess;
+		reinterpret_cast<IInspectable*>(pixelBuffer)->QueryInterface(IID_PPV_ARGS(&bufferByteAccess));
+		byte* dstPixels = nullptr;
+		if (bufferByteAccess && SUCCEEDED(bufferByteAccess->Buffer(&dstPixels)))
+		{
+			UINT rowBytes = targetWidth * 4;
+			if (map.pitch == rowBytes)
+			{
+				memcpy(dstPixels, map.bits, rowBytes * targetHeight);
+			}
+			else
+			{
+				for (UINT r = 0; r < targetHeight; ++r)
+				{
+					memcpy(dstPixels + (r * rowBytes), map.bits + (r * map.pitch), rowBytes);
+				}
+			}
+		}
+
+		stagingBitmap->Unmap();
+		wb->Invalidate();
+		return wb;
 	}
 
 	inline ComPtr<IDWriteTextLayout> CreateTextLayout(

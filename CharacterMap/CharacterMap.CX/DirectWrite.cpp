@@ -962,6 +962,133 @@ IRandomAccessStream^ DirectWrite::GetCharacterPNGStream(
 	return RasterizeCommandListToPNG(recorder.Context.Get(), recorder.CommandList.Get(), inkBounds, targetWidth, targetHeight, false);
 }
 
+Windows::UI::Xaml::Media::Imaging::WriteableBitmap^ DirectWrite::GetGlyphImage(
+	DWriteFontFace^ fontFace,
+	UINT16 glyphIndex,
+	float size,
+	Windows::UI::Color defaultColor,
+	GlyphImageFormat preferredFormat)
+{
+	if (fontFace == nullptr || size <= 0.0f)
+		return nullptr;
+
+	auto rawFace = fontFace->GetFontFace();
+	if (rawFace == nullptr)
+		return nullptr;
+
+	std::lock_guard<std::mutex> lock(CompositionDeviceManager::GetRenderMutex());
+
+	ComPtr<ID2D1Device> d2dDevice = CompositionDeviceManager::GetD2DDevice();
+	ComPtr<IDWriteFactory7> dwriteFactory = CompositionDeviceManager::GetDWriteFactory();
+	if (d2dDevice == nullptr || dwriteFactory == nullptr)
+		return nullptr;
+
+	DWRITE_FONT_METRICS fontMetrics{};
+	rawFace->GetMetrics(&fontMetrics);
+	FLOAT designUnitsPerEm = fontMetrics.designUnitsPerEm > 0 ? static_cast<FLOAT>(fontMetrics.designUnitsPerEm) : 2048.0f;
+	FLOAT emScale = size / designUnitsPerEm;
+
+	INT32 designAdvance = 0;
+	rawFace->GetDesignGlyphAdvances(1, &glyphIndex, &designAdvance, FALSE);
+	FLOAT advance = designAdvance * emScale;
+
+	DWRITE_GLYPH_RUN glyphRun{};
+	glyphRun.fontFace = rawFace.Get();
+	glyphRun.fontEmSize = size;
+	glyphRun.glyphCount = 1;
+	glyphRun.glyphIndices = &glyphIndex;
+	glyphRun.glyphAdvances = &advance;
+	glyphRun.glyphOffsets = nullptr;
+	glyphRun.isSideways = FALSE;
+	glyphRun.bidiLevel = 0;
+
+	ScopedCommandList recorder(d2dDevice.Get());
+	if (!recorder.IsValid())
+		return nullptr;
+
+	ComPtr<ID2D1SolidColorBrush> defaultBrush;
+	HRESULT hr = recorder.Context->CreateSolidColorBrush(ToD2DColor(defaultColor), &defaultBrush);
+	if (FAILED(hr))
+		return nullptr;
+
+	CompositionDeviceManager::DrawGlyphRunWithColorSupport(
+		recorder.Context.Get(),
+		dwriteFactory.Get(),
+		D2D1::Point2F(0.0f, 0.0f),
+		&glyphRun,
+		defaultBrush.Get(),
+		preferredFormat);
+
+	if (FAILED(recorder.Finish()))
+		return nullptr;
+
+	D2D1_RECT_F inkBounds = recorder.GetBounds(D2D1::RectF(0.0f, 0.0f, size, size));
+
+	UINT32 targetWidth = (std::max)(1u, static_cast<UINT32>(size * 2.0f));
+	UINT32 targetHeight = targetWidth;
+
+	return RasterizeCommandListToWriteableBitmap(recorder.Context.Get(), recorder.CommandList.Get(), inkBounds, targetWidth, targetHeight, false);
+}
+
+Windows::UI::Xaml::Media::Imaging::WriteableBitmap^ DirectWrite::GetCharacterImage(
+	DWriteFontFace^ fontFace,
+	Platform::String^ text,
+	float size,
+	Windows::UI::Color defaultColor,
+	GlyphImageFormat preferredColorFormat,
+	IVectorView<UINT32>^ typographyFeatures)
+{
+	if (fontFace == nullptr || text == nullptr || text->Length() == 0 || size <= 0.0f)
+		return nullptr;
+
+	std::lock_guard<std::mutex> lock(CompositionDeviceManager::GetRenderMutex());
+
+	ComPtr<ID2D1Device> d2dDevice = CompositionDeviceManager::GetD2DDevice();
+	ComPtr<IDWriteFactory7> dwriteFactory = CompositionDeviceManager::GetDWriteFactory();
+	if (d2dDevice == nullptr || dwriteFactory == nullptr)
+		return nullptr;
+
+	ComPtr<IDWriteTextLayout> textLayout = CreateTextLayout(dwriteFactory.Get(), fontFace, text, size, typographyFeatures);
+	if (textLayout == nullptr)
+		return nullptr;
+
+	ScopedCommandList recorder(d2dDevice.Get());
+	if (!recorder.IsValid())
+		return nullptr;
+
+	ComPtr<ID2D1SolidColorBrush> defaultBrush;
+	HRESULT hr = recorder.Context->CreateSolidColorBrush(ToD2DColor(defaultColor), &defaultBrush);
+	if (FAILED(hr))
+		return nullptr;
+
+	auto renderer = Make<CustomColorTextRenderer>(
+		recorder.Context.Get(),
+		dwriteFactory.Get(),
+		defaultBrush.Get(),
+		preferredColorFormat,
+		fontFace->GetFontFace().Get());
+	textLayout->Draw(nullptr, renderer.Get(), 0.0f, 0.0f);
+
+	if (FAILED(recorder.Finish()))
+		return nullptr;
+
+	D2D1_RECT_F fallbackBounds = D2D1::RectF(0, 0, 0, 0);
+	DWRITE_TEXT_METRICS tm{};
+	if (SUCCEEDED(textLayout->GetMetrics(&tm)))
+	{
+		fallbackBounds = D2D1::RectF(tm.left, tm.top, tm.left + tm.width, tm.top + tm.height);
+	}
+
+	D2D1_RECT_F inkBounds = recorder.GetBounds(fallbackBounds);
+	if (inkBounds.right <= inkBounds.left || inkBounds.bottom <= inkBounds.top)
+		return nullptr;
+
+	UINT32 targetWidth = (std::max)(1u, static_cast<UINT32>(size * 2.0f));
+	UINT32 targetHeight = targetWidth;
+
+	return RasterizeCommandListToWriteableBitmap(recorder.Context.Get(), recorder.CommandList.Get(), inkBounds, targetWidth, targetHeight, false);
+}
+
 IRandomAccessStream^ DirectWrite::GetPNGStream(ComPtr<ID2D1Bitmap1> targetBitmap, UINT targetWidth, UINT targetHeight)
 {
 	auto memStream = ref new InMemoryRandomAccessStream();

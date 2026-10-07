@@ -25,6 +25,7 @@ using namespace CharacterMapCX;
 
 namespace CharacterMapCX
 {
+	[Windows::Foundation::Metadata::WebHostHidden]
 	public ref class DirectWrite sealed
 	{
 	public:
@@ -53,6 +54,9 @@ namespace CharacterMapCX
 		[Windows::Foundation::Metadata::DefaultOverload]
 		static IRandomAccessStream^ GetGlyphPNGStream(DWriteFontFace^ fontFace, UINT16 glyphIndex, float size, Windows::UI::Color defaultColor, GlyphImageFormat preferredFormat);
 		static IRandomAccessStream^ GetCharacterPNGStream(DWriteFontFace^ fontFace, Platform::String^ text, float size, Windows::UI::Color defaultColor, GlyphImageFormat preferredFormat, Windows::Foundation::Collections::IVectorView<UINT32>^ typographyFeatures);
+		[Windows::Foundation::Metadata::DefaultOverload]
+		static Windows::UI::Xaml::Media::Imaging::WriteableBitmap^ GetGlyphImage(DWriteFontFace^ fontFace, UINT16 glyphIndex, float size, Windows::UI::Color defaultColor, GlyphImageFormat preferredFormat);
+		static Windows::UI::Xaml::Media::Imaging::WriteableBitmap^ GetCharacterImage(DWriteFontFace^ fontFace, Platform::String^ text, float size, Windows::UI::Color defaultColor, GlyphImageFormat preferredFormat, Windows::Foundation::Collections::IVectorView<UINT32>^ typographyFeatures);
 		static DWriteGlyphOutline^ GetGlyphOutline(DWriteFontFace^ fontFace, UINT16 glyphIndex, float unitsPerEm);
 
 		/// <summary>

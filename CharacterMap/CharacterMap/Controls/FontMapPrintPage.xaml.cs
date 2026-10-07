@@ -1,7 +1,8 @@
-﻿using System.ComponentModel;
+using CharacterMap.Core;
+using CharacterMapCX;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 
@@ -13,14 +14,9 @@ public sealed partial class FontMapPrintPage : Page
     public bool IsInAppPreview { get; }
     public ObservableCollection<Character> Items { get; } = [];
 
-
-    private DataTemplate _gridTemplate { get; } = null;
-    private XamlDirect _xamlDirect { get; } = XamlDirect.GetDefault();
-
     public FontMapPrintPage(PrintViewModel printModel, DataTemplate t, bool isAppPreview = false)
     {
         PrintModel = printModel;
-        _gridTemplate = t;
 
         this.InitializeComponent();
 
@@ -32,9 +28,10 @@ public sealed partial class FontMapPrintPage : Page
 
     public void Update()
     {
-        if (ItemsPanel != null)
+        if (ItemsPanel?.ItemsPanelRoot is ItemsWrapGrid g)
         {
-            ItemsPanel.UpdateSize(PrintModel.GlyphSize);
+            g.ItemWidth = PrintModel.GlyphSize;
+            g.ItemHeight = PrintModel.GlyphSize;
         }
     }
 
@@ -44,15 +41,15 @@ public sealed partial class FontMapPrintPage : Page
         {
             double size = viewModel.GlyphSize + 4d + 4d; // 4px is GridViewItem padding, 4px is border-thickness.
 
-            var c = (int)Math.Floor((safePrintAreaSize.Width + 6) / size);
-            var r = (int)Math.Floor((safePrintAreaSize.Height) / size);
+            int c = (int)Math.Floor((safePrintAreaSize.Width + 6) / size);
+            int r = (int)Math.Floor((safePrintAreaSize.Height) / size);
 
             return r * c;
         }
         else
         {
             double size = viewModel.GlyphSize;
-            var r = (int)Math.Floor((safePrintAreaSize.Height + 1) / size);
+            int r = (int)Math.Floor((safePrintAreaSize.Height + 1) / size);
             return r;
         }
     }
@@ -63,13 +60,6 @@ public sealed partial class FontMapPrintPage : Page
         {
             this.UnloadObject(ListLayout);
             this.FindName(nameof(GridLayout));
-            ItemsPanel.ItemTemplate = _gridTemplate;
-            ItemsPanel.EnableResizeAnimation = false;
-            ItemsPanel.ItemFontFace = PrintModel.FaceAnalysis.ActiveFace;
-            ItemsPanel.ItemFontFamily = PrintModel.FontFamily;
-            ItemsPanel.ItemTypography = PrintModel.Typography;
-            ItemsPanel.ShowColorGlyphs = PrintModel.ShowColorGlyphs;
-            ItemsPanel.ItemAnnotation = PrintModel.Annotation;
         }
         else if (PrintModel.Layout == PrintLayout.List)
         {
@@ -87,7 +77,7 @@ public sealed partial class FontMapPrintPage : Page
     {
         UpdateLazyLoad();
 
-        foreach (var c in e.Skip((page) * charsPerPage).Take(charsPerPage))
+        foreach (Character c in e.Skip((page) * charsPerPage).Take(charsPerPage))
             Items.Add(c);
 
         // Are there still more characters in the font to add?
@@ -101,14 +91,30 @@ public sealed partial class FontMapPrintPage : Page
 
     private Thickness GetMargin(double horizontal, double vertical)
     {
-        return new Thickness(horizontal, vertical, horizontal, vertical);
+        return new(horizontal, vertical, horizontal, vertical);
+    }
+
+    private void UpdateGlyphImage(Image img, Character c, float size)
+    {
+        if (PrintModel.FaceAnalysis?.ActiveFace is not { } face)
+            return;
+
+        Color textColor = Foreground is SolidColorBrush scb ? scb.Color : Colors.Black;
+        IReadOnlyList<uint> typographyTags = PrintModel.Typography is { Feature: not DWriteTypographyFeatureName.None } info
+            ? [(uint)info.Feature]
+            : [];
+
+        if (c is GlyphCharacter gc)
+            img.Source = DirectWrite.GetGlyphImage(face, (ushort)gc.GlyphIndex, size, textColor, GlyphImageFormat.None);
+        else
+            img.Source = DirectWrite.GetCharacterImage(face, c.Char, size, textColor, GlyphImageFormat.None, typographyTags);
     }
 
     private void ListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
     {
         if (!args.InRecycleQueue && args.ItemContainer is ListViewItem item)
         {
-            Character c = ((Character)args.Item);
+            Character c = (Character)args.Item;
             UpdateListContainer(item, c);
             args.Handled = true;
         }
@@ -118,22 +124,22 @@ public sealed partial class FontMapPrintPage : Page
     {
         item.Height = PrintModel.GlyphSize;
         Grid g = (Grid)item.ContentTemplateRoot;
-        g.ColumnDefinitions[0].Width = new GridLength(PrintModel.GlyphSize);
+        g.ColumnDefinitions[0].Width = new(PrintModel.GlyphSize);
 
-        // 1. Update main glyph
-        if (g.Children[0] is TextBlock t)
-            t.Height = t.Width = PrintModel.GlyphSize;
-
-        CharacterGridView.RealizeGlyphTarget(item, PrintModel.FaceAnalysis);
-        CharacterGridView.SetGlyphProperties(_xamlDirect.GetWrapperForChild(g, 0), PrintModel.GetTemplateSettings(), c, Foreground);
+        // 1. Update main glyph image
+        if (g.Children[0] is Image img)
+        {
+            img.Height = img.Width = PrintModel.GlyphSize;
+            UpdateGlyphImage(img, c, (float)(PrintModel.GlyphSize / 2d));
+        }
 
         // 2. update Unicode
-        TextBlock unicodeId = ((TextBlock)((StackPanel)g.Children[1]).Children[0]);
+        TextBlock unicodeId = (TextBlock)((StackPanel)g.Children[1]).Children[0];
         unicodeId.SetVisible(PrintModel.Annotation != GlyphAnnotation.None);
         unicodeId.Text = c.GetAnnotation(PrintModel.Annotation);
 
         // 3. update description
-        TextBlock description = ((TextBlock)((StackPanel)g.Children[1]).Children[1]);
+        TextBlock description = (TextBlock)((StackPanel)g.Children[1]).Children[1];
         try
         {
             description.Text = PrintModel.FaceAnalysis.GetDescription(c);
@@ -141,7 +147,7 @@ public sealed partial class FontMapPrintPage : Page
         catch { }
 
         // 4. handle borders
-        foreach (var r in g.GetFirstLevelDescendantsOfType<Rectangle>())
+        foreach (Rectangle r in g.GetFirstLevelDescendantsOfType<Rectangle>())
             r.SetVisible(PrintModel.ShowBorders);
     }
 
@@ -150,10 +156,25 @@ public sealed partial class FontMapPrintPage : Page
         if (!args.InRecycleQueue && args.ItemContainer is GridViewItem item)
         {
             item.IsTabStop = false;
+            item.Width = item.Height = PrintModel.GlyphSize;
             if (PrintModel.ShowBorders)
-            {
                 item.BorderBrush = ResourceHelper.Get<Brush>("PrintBorderBrush");
+
+            if (item.ContentTemplateRoot is Grid g)
+            {
+                g.Width = g.Height = PrintModel.GlyphSize;
+                Character c = (Character)args.Item;
+                if (g.Children[0] is Image img)
+                    UpdateGlyphImage(img, c, (float)(PrintModel.GlyphSize / 2d));
+
+                if (g.Children.Count > 1 && g.Children[1] is TextBlock unicodeId)
+                {
+                    unicodeId.SetVisible(PrintModel.Annotation != GlyphAnnotation.None);
+                    unicodeId.Text = c.GetAnnotation(PrintModel.Annotation);
+                }
             }
+
+            args.Handled = true;
         }
     }
 }
