@@ -63,7 +63,7 @@ public record class FlyoutContextArg
     public ExportStyle ExportStyle { get; set; }
     public FontMapView ParentView { get; set; }
     public CopyDataType CopyType { get; set; }
-    public CanvasTextLayoutAnalysis Analysis { get; set; }
+    public DWriteTextLayoutAnalysis Analysis { get; set; }
     public GlyphImageFormat PreferredExportType { get; set; } = GlyphImageFormat.None;
 }
 
@@ -230,13 +230,13 @@ public class MenuFlyoutFactory
         return new MenuFlyoutFactory(item, _args);
     }
 
-    public MenuFlyoutFactory AddColorOptions(CanvasTextLayoutAnalysis analysis, bool isCopy, FlyoutContextArg arg)
+    public MenuFlyoutFactory AddColorOptions(DWriteTextLayoutAnalysis analysis, bool isCopy, FlyoutContextArg arg)
     {
         AddColorOptions(Menu, analysis, isCopy, arg);
         return this;
     }
 
-    public void AddColorOptions(MenuItemHost parent, CanvasTextLayoutAnalysis analysis, bool isCopy, FlyoutContextArg arg)
+    public void AddColorOptions(MenuItemHost parent, DWriteTextLayoutAnalysis analysis, bool isCopy, FlyoutContextArg arg)
     {
         static void RequestCopy(object s, RoutedEventArgs e)
         {
@@ -791,7 +791,7 @@ public static class FlyoutHelper
             FlyoutBase.SetAttachedFlyout(target, menu);
 
             // 2. Analyse the character to know which options we should show in the menu
-            CanvasTextLayoutAnalysis analysis = 
+            DWriteTextLayoutAnalysis analysis = 
                 viewmodel.SelectedChar.GetCharAnalysis(c, viewmodel.SelectedFaceAnalysis.ActiveFace);
 
             MenuFlyoutFactory factory = new(menu, new FlyoutArgs { Standalone = isStandalone });
@@ -1104,7 +1104,7 @@ public static class FlyoutHelper
                 ? new(glyphIndex, mapped.UnicodeIndex)
                 : new(glyphIndex);
 
-            CanvasTextLayoutAnalysis analysis = Utils.GetInterop().AnalyzeGlyphLayout(viewModel.SelectedFace.Face, gc.GlyphIndex);
+            DWriteTextLayoutAnalysis analysis = Utils.GetInterop().AnalyzeGlyphLayout(viewModel.SelectedFace.Face, gc.GlyphIndex);
             FlyoutContextArg arg = new() { ParentView = view, Character = gc, Ligature = target, Analysis = analysis };
 
             var copyAsImage = factory

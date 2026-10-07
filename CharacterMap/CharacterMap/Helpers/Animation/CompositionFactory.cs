@@ -1,4 +1,6 @@
-﻿using Microsoft.Graphics.Canvas.Effects;
+﻿// Ignore Spelling: debouncer
+
+using Microsoft.Graphics.Canvas.Effects;
 using System.Globalization;
 using Windows.Graphics.Effects;
 using Windows.UI;
@@ -231,6 +233,16 @@ public partial class CompositionFactory : DependencyObject
             s.Add(nameof(Visual.Offset), g);
             return s;
         });
+    }
+
+    public static void SetWithoutReposition(FrameworkElement repositionTarget, Debouncer debouncer, Action action)
+    {
+        CompositionFactory.SetUseWindowAwareSynchronisedReposition(repositionTarget, false);
+
+        action?.Invoke();
+
+        debouncer.Debounce(
+            () => CompositionFactory.SetUseWindowAwareSynchronisedReposition(repositionTarget, true));
     }
 
     public static ICompositionAnimationBase CreateScaleAnimation(Compositor c)

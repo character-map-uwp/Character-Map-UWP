@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "NativeInterop.h"
-#include "CanvasTextLayoutAnalysis.h"
+#include "DWriteTextLayoutAnalysis.h"
 #include "DWriteFontSource.h"
 #include <string>
 #include <algorithm>
@@ -429,7 +429,7 @@ PathData^ NativeInterop::GetPathData(CanvasGeometry^ geometry)
 	return data;
 }
 
-CanvasTextLayoutAnalysis^ NativeInterop::AnalyzeCharacterLayout(DWriteTextLayoutDefinition^ layoutDef)
+DWriteTextLayoutAnalysis^ NativeInterop::AnalyzeCharacterLayout(DWriteTextLayoutDefinition^ layoutDef)
 {
 	if (layoutDef == nullptr || layoutDef->Text == nullptr || layoutDef->Text->Length() == 0)
 		return nullptr;
@@ -511,12 +511,12 @@ CanvasTextLayoutAnalysis^ NativeInterop::AnalyzeCharacterLayout(DWriteTextLayout
 	ana->EnableColorFonts = layoutDef->EnableColorFonts;
 	textLayout->Draw(m_d2dContext.Get(), ana.Get(), 0, 0);
 
-	CanvasTextLayoutAnalysis^ analysis = ref new CanvasTextLayoutAnalysis(ana, nullptr);
+	DWriteTextLayoutAnalysis^ analysis = ref new DWriteTextLayoutAnalysis(ana, nullptr);
 	ana = nullptr;
 	return analysis;
 }
 
-CanvasTextLayoutAnalysis^ NativeInterop::AnalyzeGlyphLayout(DWriteFontFace^ fontFace, UINT16 glyphIndex)
+DWriteTextLayoutAnalysis^ NativeInterop::AnalyzeGlyphLayout(DWriteFontFace^ fontFace, UINT16 glyphIndex)
 {
 	ComPtr<IDWriteFontFace3> face = fontFace->GetFontFace();
 
@@ -536,13 +536,13 @@ CanvasTextLayoutAnalysis^ NativeInterop::AnalyzeGlyphLayout(DWriteFontFace^ font
 
 	ana->DrawGlyphRun(nullptr, 0, 0, DWRITE_MEASURING_MODE_NATURAL, &glyphRun, nullptr, nullptr);
 
-	CanvasTextLayoutAnalysis^ analysis = ref new CanvasTextLayoutAnalysis(ana, nullptr);
+	DWriteTextLayoutAnalysis^ analysis = ref new DWriteTextLayoutAnalysis(ana, nullptr);
 
 	ana = nullptr;
 	return analysis;
 }
 
-CanvasTextLayoutAnalysis^ NativeInterop::AnalyzeCharacter(DWriteFontFace^ fontFace, Platform::String^ text, DWriteTypographyFeatureName feature)
+DWriteTextLayoutAnalysis^ NativeInterop::AnalyzeCharacter(DWriteFontFace^ fontFace, Platform::String^ text, DWriteTypographyFeatureName feature)
 {
 	if (fontFace == nullptr || text == nullptr || text->Length() == 0)
 		return nullptr;
@@ -582,7 +582,7 @@ CanvasTextLayoutAnalysis^ NativeInterop::AnalyzeCharacter(DWriteFontFace^ fontFa
 	ana->IsCharacterAnalysisMode = true;
 	textLayout->Draw(m_d2dContext.Get(), ana.Get(), 0, 0);
 
-	CanvasTextLayoutAnalysis^ analysis = ref new CanvasTextLayoutAnalysis(ana, nullptr);
+	DWriteTextLayoutAnalysis^ analysis = ref new DWriteTextLayoutAnalysis(ana, nullptr);
 	ana = nullptr;
 	return analysis;
 }

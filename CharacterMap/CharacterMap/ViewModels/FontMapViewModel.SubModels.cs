@@ -281,7 +281,7 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
     public bool SupportsCOLRv0 => _analysis is not null && (_analysis.SupportsColrV0 || _analysis.GlyphFormats.Has(GlyphImageFormat.Colr));
 
     [ObservableProperty] bool _isSvgChar;
-    [ObservableProperty][NotifyPropertyChangedFor(nameof(SupportsCOLRv1), nameof(SupportsCOLRv0))] CanvasTextLayoutAnalysis _analysis;
+    [ObservableProperty][NotifyPropertyChangedFor(nameof(SupportsCOLRv1), nameof(SupportsCOLRv0))] DWriteTextLayoutAnalysis _analysis;
     [ObservableProperty] List<TypographyVariation> _variations;
     [ObservableProperty] UnihanData _unihanData;
     [ObservableProperty] IReadOnlyList<ushort> _glyphIndices;
@@ -330,7 +330,7 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
         DefaultTag = (NamedTag)colrItems.SelectedItem;
     }
 
-    public static (bool HasOptions, ItemsSelectionModel ColrItems) CreateColorOptions(CanvasTextLayoutAnalysis analysis, NamedTag defaultTag = null)
+    public static (bool HasOptions, ItemsSelectionModel ColrItems) CreateColorOptions(DWriteTextLayoutAnalysis analysis, NamedTag defaultTag = null)
     {
         if (analysis is null)
             return (false, new() { ItemsSource = _emptyRenderOptions, SelectedItem = DefaultRenderOption });
@@ -430,7 +430,7 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
         }
     }
 
-    public CanvasTextLayoutAnalysis GetCharAnalysis(Character c, DWriteFontFace face, TypographyFeatureInfo typography = null)
+    public DWriteTextLayoutAnalysis GetCharAnalysis(Character c, DWriteFontFace face, TypographyFeatureInfo typography = null)
     {
         if (c is GlyphCharacter gc)
             return _interop.AnalyzeGlyphLayout(face, gc.GlyphIndex);

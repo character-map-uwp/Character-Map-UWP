@@ -479,7 +479,7 @@ public partial class FontMapViewModel : ViewModelBase
     internal async Task SaveGlyphAsync(ExportFormat format, ExportParameters args)
     {
         Character character = SelectedChar.Char;
-        CanvasTextLayoutAnalysis analysis = SelectedChar.Analysis;
+        DWriteTextLayoutAnalysis analysis = SelectedChar.Analysis;
 
         if (args.Character != null)
         {

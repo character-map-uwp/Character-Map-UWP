@@ -296,7 +296,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                         if (PreviewGrid.Visibility == Visibility.Collapsed || PreviewGridContent.Visibility == Visibility.Collapsed)
                             return;
 
-                        SetWithoutReposition(TxtPreview, _resizerBouncer, () =>
+                        CompositionFactory.SetWithoutReposition(TxtPreview, _resizerBouncer, () =>
                         {
                             TxtPreview.ClearValue(CharacterMapCX.Controls.DirectText.GlyphIndexProperty);
                             AnimationSelectionFromCharacter();
@@ -1364,7 +1364,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             case FontDisplayMode.GlyphMapState:
                 if (GlyphRepeater?.SelectedItem is uint glyphIndex)
                 {
-                    CanvasTextLayoutAnalysis analysis = Utils.GetInterop().AnalyzeGlyphLayout(ViewModel.SelectedFace.Face, (ushort)glyphIndex);
+                    DWriteTextLayoutAnalysis analysis = Utils.GetInterop().AnalyzeGlyphLayout(ViewModel.SelectedFace.Face, (ushort)glyphIndex);
                     (bool hasOptions, ItemsSelectionModel items) = CharacterAnalysisModel.CreateColorOptions(analysis, currentTag);
                     ColrSelector.SelectedItemsSource = items;
                     ColrSelector.Visibility = hasOptions ? Visibility.Visible : Visibility.Collapsed;
@@ -1376,7 +1376,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             case FontDisplayMode.LigaturesState:
                 if (LigaturesRepeater?.SelectedItem is LigatureModel ligature)
                 {
-                    CanvasTextLayoutAnalysis analysis = Utils.GetInterop().AnalyzeGlyphLayout(ViewModel.SelectedFace.Face, (ushort)ligature.LigatureGlyph);
+                    DWriteTextLayoutAnalysis analysis = Utils.GetInterop().AnalyzeGlyphLayout(ViewModel.SelectedFace.Face, (ushort)ligature.LigatureGlyph);
                     (bool hasOptions, ItemsSelectionModel items) = CharacterAnalysisModel.CreateColorOptions(analysis, currentTag);
                     ColrSelector.SelectedItemsSource = items;
                     ColrSelector.Visibility = hasOptions ? Visibility.Visible : Visibility.Collapsed;
@@ -1486,23 +1486,13 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     {
         if (GlyphRepeater.SelectedItem is uint i)
         {
-            SetWithoutReposition(TxtPreview, _resizerBouncer, () =>
+            CompositionFactory.SetWithoutReposition(TxtPreview, _resizerBouncer, () =>
             {
                 TxtPreview.GlyphIndex = (int)i;
                 AnimateSelectionFromGlyph();
             });
             UpdateColrSelector();
         }
-    }
-
-    static void SetWithoutReposition(FrameworkElement repositionTarget, Debouncer debouncer, Action action)
-    {
-        CompositionFactory.SetUseWindowAwareSynchronisedReposition(repositionTarget, false);
-
-        action?.Invoke();
-
-        debouncer.Debounce(
-            () => CompositionFactory.SetUseWindowAwareSynchronisedReposition(repositionTarget, true));
     }
 
 
@@ -1520,7 +1510,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     {
         if (LigaturesRepeater.SelectedItem is LigatureModel model)
         {
-            SetWithoutReposition(TxtPreview, _resizerBouncer, () =>
+            CompositionFactory.SetWithoutReposition(TxtPreview, _resizerBouncer, () =>
             {
                 TxtPreview.GlyphIndex = (int)model.LigatureGlyph;
                 AnimateSelectionFromGlyph(LigaturesRepeater);

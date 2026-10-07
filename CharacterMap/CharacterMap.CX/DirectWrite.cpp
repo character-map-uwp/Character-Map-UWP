@@ -1,6 +1,6 @@
 #pragma once
 #include "pch.h"
-#include "CanvasTextLayoutAnalysis.h"
+#include "DWriteTextLayoutAnalysis.h"
 #include "GsubTableReader.h"
 #include "CompositionDeviceManager.h"
 #include "ColrV1Svg.h"

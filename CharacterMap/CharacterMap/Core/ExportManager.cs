@@ -401,7 +401,7 @@ public static partial class ExportManager
                 i++;
                 callback?.Invoke(i, characters.Count);
 
-                CanvasTextLayoutAnalysis analysis = c is GlyphCharacter gc
+                DWriteTextLayoutAnalysis analysis = c is GlyphCharacter gc
                     ? interop.AnalyzeGlyphLayout(e.Options.ActiveFontFace, (ushort)gc.GlyphIndex)
                     : interop.AnalyzeCharacter(e.Options.ActiveFontFace, c.Char, (e.Options.Typography.FirstOrDefault() ?? TypographyFeatureInfo.None).Feature);
 

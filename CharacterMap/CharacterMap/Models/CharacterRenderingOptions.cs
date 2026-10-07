@@ -12,7 +12,7 @@ public record CharacterRenderingOptions
     public DWriteFontFace FontFace => ActiveFontFace ?? Face.Face;
     public DWriteFontFace ActiveFontFace { get; init; }
     public float FontSize { get; init; }
-    public CanvasTextLayoutAnalysis Analysis { get; init; }
+    public DWriteTextLayoutAnalysis Analysis { get; init; }
     public IReadOnlyList<TypographyFeatureInfo> Typography { get; init; }
     public DWriteColorRenderOption ColorRenderOption { get; init; } = DWriteColorRenderOption.Default;
     public IReadOnlyList<DWriteFontAxis> Axis { get; init; }
@@ -52,7 +52,7 @@ public record CharacterRenderingOptions
         return options;
     }
 
-    public CharacterRenderingOptions(CMFontFace variant, List<TypographyFeatureInfo> typography, float fontSize, CanvasTextLayoutAnalysis analysis, IReadOnlyList<DWriteFontAxis> axis)
+    public CharacterRenderingOptions(CMFontFace variant, List<TypographyFeatureInfo> typography, float fontSize, DWriteTextLayoutAnalysis analysis, IReadOnlyList<DWriteFontAxis> axis)
     {
         Face = variant;
         Typography = typography;

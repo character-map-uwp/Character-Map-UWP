@@ -34,10 +34,10 @@ namespace CharacterMapCX
 		property DWriteFontFace^ FontFace;
 	};
 
-	public ref class CanvasTextLayoutAnalysis sealed
+	public ref class DWriteTextLayoutAnalysis sealed
 	{
 	public:
-		inline CanvasTextLayoutAnalysis() { }
+		inline DWriteTextLayoutAnalysis() { }
 
 		property bool HasColorGlyphs
 		{
@@ -104,7 +104,7 @@ namespace CharacterMapCX
 		}
 
 	internal:
-		CanvasTextLayoutAnalysis(ComPtr<ColorTextAnalyzer> analyzer, ComPtr<IDWriteFontFaceReference> layout);
+		DWriteTextLayoutAnalysis(ComPtr<ColorTextAnalyzer> analyzer, ComPtr<IDWriteFontFaceReference> layout);
 
 	private:
 		bool m_colrv0 = false;

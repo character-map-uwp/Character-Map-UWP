@@ -4,7 +4,7 @@
 #include <d2d1_3.h>
 #include <dwrite_3.h>
 #include "ColorTextAnalyzer.h"
-#include "CanvasTextLayoutAnalysis.h"
+#include "DWriteTextLayoutAnalysis.h"
 #include "DWriteFontSource.h"
 #include "DWriteProperties.h"
 #include "DWriteFontFace.h"
@@ -38,9 +38,9 @@ namespace CharacterMapCX
 
         NativeInterop(CanvasDevice^ device);
 
-		CanvasTextLayoutAnalysis^ AnalyzeCharacterLayout(DWriteTextLayoutDefinition^ layoutDef);
-		CanvasTextLayoutAnalysis^ AnalyzeGlyphLayout(DWriteFontFace^ fontFace, UINT16 glyphIndex);
-		CanvasTextLayoutAnalysis^ AnalyzeCharacter(DWriteFontFace^ fontFace, Platform::String^ text, DWriteTypographyFeatureName feature);
+		DWriteTextLayoutAnalysis^ AnalyzeCharacterLayout(DWriteTextLayoutDefinition^ layoutDef);
+		DWriteTextLayoutAnalysis^ AnalyzeGlyphLayout(DWriteFontFace^ fontFace, UINT16 glyphIndex);
+		DWriteTextLayoutAnalysis^ AnalyzeCharacter(DWriteFontFace^ fontFace, Platform::String^ text, DWriteTypographyFeatureName feature);
 
 		IVectorView<PathData^>^ GetPathDatas(DWriteFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies);
 

@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "CanvasTextLayoutAnalysis.h"
+#include "DWriteTextLayoutAnalysis.h"
 #include "DirectWrite.h"
 #include "DWriteFontAxis.h"
 
@@ -9,7 +9,7 @@ using namespace Windows::Foundation::Collections;
 using namespace Windows::UI;
 using namespace CharacterMapCX;
 
-CharacterMapCX::CanvasTextLayoutAnalysis::CanvasTextLayoutAnalysis(ComPtr<ColorTextAnalyzer> analyzer, ComPtr<IDWriteFontFaceReference> fontFaceRef)
+CharacterMapCX::DWriteTextLayoutAnalysis::DWriteTextLayoutAnalysis(ComPtr<ColorTextAnalyzer> analyzer, ComPtr<IDWriteFontFaceReference> fontFaceRef)
 {
 	m_colrv0 = analyzer->HasColrV0;
 	m_colrv1 = analyzer->HasColrV1;

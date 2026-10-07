@@ -245,7 +245,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CanvasTextLayoutAnalysis.h" />
+    <ClInclude Include="DWriteTextLayoutAnalysis.h" />
     <ClInclude Include="CblcTableReader.h" />
     <ClInclude Include="CmapTableReader.h" />
     <ClInclude Include="ColorTextAnalyzer.h" />
@@ -304,7 +304,7 @@
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CanvasTextLayoutAnalysis.cpp" />
+    <ClCompile Include="DWriteTextLayoutAnalysis.cpp" />
     <ClCompile Include="ColorTextAnalyzer.cpp" />
     <ClCompile Include="ColrV1Svg.cpp" />
     <ClCompile Include="CompositionDeviceManager.cpp" />
