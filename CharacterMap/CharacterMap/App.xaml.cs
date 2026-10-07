@@ -34,12 +34,8 @@ sealed partial class App : Application
         _activationService = new Lazy<ActivationService>(CreateActivationService);
         Current = this;
 
-        DirectText.RegisterDependencyProperties();
         SQLitePCL.raw.SetProvider(SQLiteConnection.Provider);
-
         CoreApplication.Exiting += CoreApplication_Exiting;
-
-
     }
 
     private void CoreApplication_Exiting(object sender, object e)

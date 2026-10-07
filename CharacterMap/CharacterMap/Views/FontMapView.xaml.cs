@@ -500,20 +500,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     private void UpdateDisplayMode(bool animate = false)
     {
         // TODO: Could move to a custom VisualStateManager
-        if (ViewModel.DisplayMode == FontDisplayMode.TypeRampState)
-        {
-            if (animate)
-            {
-                if (MapDisplayStates.CurrentState == CharacterMapState)
-                    UpdateGridToRampTransition(GridToRampTransition, CharGrid);
-                else if (MapDisplayStates.CurrentState == GlyphMapState)
-                    UpdateGridToRampTransition(GlyphToRampTransition, GlyphRepeater);
-                else if (MapDisplayStates.CurrentState == LigatureMapState)
-                    UpdateGridToRampTransition(LigatureToRampTransition, LigaturesRepeater, true);
-            }
-            GoToState(TypeRampState.Name, animate);
-        }
-        else if (ViewModel.DisplayMode == FontDisplayMode.CharacterMapState)
+        if (ViewModel.DisplayMode == FontDisplayMode.CharacterMapState)
         {
             if (animate)
             {
@@ -556,14 +543,28 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 else if  (MapDisplayStates.CurrentState == GlyphMapState)
                     UpdateXToXTransition(GlyphRepeater, LigaturesRepeater, GlyphToLigaturesTransition);
                 else if (MapDisplayStates.CurrentState == TypeRampState)
-                    UpdateRampToGridTransition(LigaturesRepeater, RampToLigaturesTransition, true);
+                    UpdateRampToGridTransition(LigaturesRepeater, RampToLigaturesTransition);
             }
 
             GoToState(LigatureMapState.Name, animate);
         }
+        else if (ViewModel.DisplayMode == FontDisplayMode.TypeRampState)
+        {
+            if (animate)
+            {
+                if (MapDisplayStates.CurrentState == CharacterMapState)
+                    UpdateGridToRampTransition(GridToRampTransition, CharGrid);
+                else if (MapDisplayStates.CurrentState == GlyphMapState)
+                    UpdateGridToRampTransition(GlyphToRampTransition, GlyphRepeater);
+                else if (MapDisplayStates.CurrentState == LigatureMapState)
+                    UpdateGridToRampTransition(LigatureToRampTransition, LigaturesRepeater);
+            }
+            GoToState(TypeRampState.Name, animate);
+        }
+        else
 
-        // Make sure this stays in sync with programmatic changes
-        ViewSelector.SelectedIndex = (int)ViewModel.DisplayMode;
+            // Make sure this stays in sync with programmatic changes
+            ViewSelector.SelectedIndex = (int)ViewModel.DisplayMode;
 
         //if (animate)
         PlayFontChanged(false);
