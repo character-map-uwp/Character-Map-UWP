@@ -20,16 +20,12 @@ public partial class CalligraphyViewModel : ViewModelBase
 
     [ObservableProperty] InkStrokeManager _inkManager = null;
 
-    public CMFontFace Face { get; }
-
     public CharacterRenderingOptions Options { get; }
-
 
     public ObservableCollection<CalligraphyHistoryItem> Histories { get; } = new();
 
     public CalligraphyViewModel(CharacterRenderingOptions options)
     {
-        Face = options.Face;
         Options = options;
     }
 

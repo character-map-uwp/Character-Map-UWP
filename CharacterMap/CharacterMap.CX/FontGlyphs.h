@@ -211,6 +211,8 @@ namespace CharacterMapCX
             bool m_hasInkBounds;
             double m_designInkLeft;
             double m_designInkWidth;
+            double m_designInkTop;
+            double m_designInkHeight;
             double m_designUnitsPerEm;
         };
     }

@@ -42,6 +42,8 @@ FontGlyphs::FontGlyphs()
     , m_hasInkBounds(false)
     , m_designInkLeft(0)
     , m_designInkWidth(0)
+    , m_designInkTop(0)
+    , m_designInkHeight(0)
     , m_designUnitsPerEm(0)
     , m_contentSize(0, 0)
     , m_scale(1, 1)
@@ -484,103 +486,187 @@ void FontGlyphs::ParseAndLayoutGlyphs()
     }
     float totalAdvance = currentX;
 
-    Rect inkBounds = FontFace->GetDesignGlyphBounds(m_glyphIndices[0]);
-    if (inkBounds.Width > 0 && fontMetrics.designUnitsPerEm > 0)
+    struct OutlineBoundsSink : public IDWriteGeometrySink
+    {
+        float minX = 1e9f;
+        float minY = 1e9f;
+        float maxX = -1e9f;
+        float maxY = -1e9f;
+        bool hasPoints = false;
+
+        ULONG STDMETHODCALLTYPE AddRef() override { return 1; }
+        ULONG STDMETHODCALLTYPE Release() override { return 1; }
+        HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppv) override
+        {
+            if (riid == __uuidof(IDWriteGeometrySink) || riid == __uuidof(ID2D1SimplifiedGeometrySink) || riid == __uuidof(IUnknown))
+            {
+                *ppv = this;
+                return S_OK;
+            }
+            *ppv = nullptr;
+            return E_NOINTERFACE;
+        }
+
+        void Update(float x, float y)
+        {
+            if (x < minX) minX = x;
+            if (x > maxX) maxX = x;
+            if (y < minY) minY = y;
+            if (y > maxY) maxY = y;
+            hasPoints = true;
+        }
+
+        void STDMETHODCALLTYPE SetFillMode(D2D1_FILL_MODE) override {}
+        void STDMETHODCALLTYPE SetSegmentFlags(D2D1_PATH_SEGMENT) override {}
+        void STDMETHODCALLTYPE BeginFigure(D2D1_POINT_2F startPoint, D2D1_FIGURE_BEGIN) override { Update(startPoint.x, startPoint.y); }
+        void STDMETHODCALLTYPE AddLines(const D2D1_POINT_2F* points, UINT32 pointsCount) override
+        {
+            for (UINT32 i = 0; i < pointsCount; ++i) Update(points[i].x, points[i].y);
+        }
+        void STDMETHODCALLTYPE AddBeziers(const D2D1_BEZIER_SEGMENT* beziers, UINT32 beziersCount) override
+        {
+            for (UINT32 i = 0; i < beziersCount; ++i)
+            {
+                Update(beziers[i].point1.x, beziers[i].point1.y);
+                Update(beziers[i].point2.x, beziers[i].point2.y);
+                Update(beziers[i].point3.x, beziers[i].point3.y);
+            }
+        }
+        void STDMETHODCALLTYPE EndFigure(D2D1_FIGURE_END) override {}
+        HRESULT STDMETHODCALLTYPE Close() override { return S_OK; }
+    };
+
+    OutlineBoundsSink outlineSink;
+    if (rawFace != nullptr && !m_glyphIndices.empty())
+    {
+        rawFace->GetGlyphRunOutline(
+            emSize,
+            m_glyphIndices.data(),
+            m_glyphAdvances.empty() ? nullptr : m_glyphAdvances.data(),
+            m_glyphOffsets.empty() ? nullptr : m_glyphOffsets.data(),
+            static_cast<UINT32>(m_glyphIndices.size()),
+            FALSE,
+            FALSE,
+            &outlineSink
+        );
+    }
+
+    float minInkLeft = 0.0f;
+    float maxInkRight = totalAdvance;
+    float maxTopOverhang = 0.0f;
+    float maxBottomOverhang = 0.0f;
+
+    if (outlineSink.hasPoints && fontMetrics.designUnitsPerEm > 0)
     {
         m_hasInkBounds = true;
-        m_designInkLeft = inkBounds.X;
-        m_designInkWidth = inkBounds.Width;
+        m_designInkLeft = outlineSink.minX / emScale;
+        m_designInkWidth = (outlineSink.maxX - outlineSink.minX) / emScale;
+        m_designInkTop = (ascent + outlineSink.minY) / emScale;
+        m_designInkHeight = (outlineSink.maxY - outlineSink.minY) / emScale;
         m_designUnitsPerEm = fontMetrics.designUnitsPerEm;
 
         if (totalAdvance <= 0.0f)
-            totalAdvance = static_cast<float>(inkBounds.Width * emScale);
+            totalAdvance = static_cast<float>(outlineSink.maxX - outlineSink.minX);
+
+        minInkLeft = (std::min)(0.0f, outlineSink.minX);
+        maxInkRight = (std::max)(totalAdvance, outlineSink.maxX);
+        if (ascent + outlineSink.minY < 0.0f)
+            maxTopOverhang = -(ascent + outlineSink.minY);
+        if (outlineSink.maxY > descent)
+            maxBottomOverhang = outlineSink.maxY - descent;
+    }
+    else
+    {
+        Rect inkBounds = FontFace->GetDesignGlyphBounds(m_glyphIndices[0]);
+        if (inkBounds.Width > 0 && fontMetrics.designUnitsPerEm > 0)
+        {
+            m_hasInkBounds = true;
+            m_designInkLeft = inkBounds.X;
+            m_designInkWidth = inkBounds.Width;
+            m_designInkTop = inkBounds.Y;
+            m_designInkHeight = inkBounds.Height;
+            m_designUnitsPerEm = fontMetrics.designUnitsPerEm;
+
+            if (totalAdvance <= 0.0f)
+                totalAdvance = static_cast<float>(inkBounds.Width * emScale);
+
+            float inkL = static_cast<float>(inkBounds.X * emScale);
+            float inkR = static_cast<float>((inkBounds.X + inkBounds.Width) * emScale);
+            if (inkL < minInkLeft) minInkLeft = inkL;
+            if (inkR > maxInkRight) maxInkRight = inkR;
+        }
+
+        // Query design glyph metrics to determine ink overhangs for padding
+        DWRITE_GLYPH_METRICS stackMetrics[8];
+        std::vector<DWRITE_GLYPH_METRICS> heapMetrics;
+        DWRITE_GLYPH_METRICS* metrics = stackMetrics;
+        if (m_glyphIndices.size() > 8)
+        {
+            heapMetrics.resize(m_glyphIndices.size());
+            metrics = heapMetrics.data();
+        }
+        rawFace->GetDesignGlyphMetrics(m_glyphIndices.data(), static_cast<UINT32>(m_glyphIndices.size()), metrics, FALSE);
+
+        currentX = 0.0f;
+        for (size_t i = 0; i < m_glyphIndices.size(); i++)
+        {
+            float uOff = (!m_glyphOffsets.empty()) ? m_glyphOffsets[i].advanceOffset : 0.0f;
+            float vOff = (!m_glyphOffsets.empty()) ? m_glyphOffsets[i].ascenderOffset : 0.0f;
+            float glyphX = currentX + uOff;
+
+            float inkLeft = glyphX + (metrics[i].leftSideBearing * emScale);
+            float inkRight = glyphX + (static_cast<INT32>(metrics[i].advanceWidth) - metrics[i].rightSideBearing) * emScale;
+
+            if (inkLeft < minInkLeft)
+                minInkLeft = inkLeft;
+            if (inkRight > maxInkRight)
+                maxInkRight = inkRight;
+
+            if (metrics[i].advanceHeight > 0)
+            {
+                float topDesign = static_cast<float>(metrics[i].verticalOriginY - metrics[i].topSideBearing);
+                float topPixels = (topDesign * emScale) + vOff;
+                if (topPixels > ascent)
+                    maxTopOverhang = (std::max)(maxTopOverhang, topPixels - ascent);
+
+                float blackBoxHeight = static_cast<float>(static_cast<INT32>(metrics[i].advanceHeight) - metrics[i].topSideBearing - metrics[i].bottomSideBearing);
+                float bottomDesign = topDesign - blackBoxHeight;
+                float bottomPixels = (-bottomDesign * emScale) - vOff;
+                if (bottomPixels > descent)
+                    maxBottomOverhang = (std::max)(maxBottomOverhang, bottomPixels - descent);
+            }
+            else if (vOff != 0.0f)
+            {
+                if (vOff > 0.0f)
+                    maxTopOverhang = (std::max)(maxTopOverhang, vOff);
+                else
+                    maxBottomOverhang = (std::max)(maxBottomOverhang, -vOff);
+            }
+
+            currentX += m_glyphAdvances[i];
+        }
+
+        ComPtr<IDWriteFontFace1> rawFace1;
+        if (SUCCEEDED(rawFace.As(&rawFace1)))
+        {
+            DWRITE_FONT_METRICS1 fontMetrics1;
+            rawFace1->GetMetrics(&fontMetrics1);
+
+            if (fontMetrics1.glyphBoxTop > fontMetrics.ascent)
+            {
+                float topOverhang = (fontMetrics1.glyphBoxTop - fontMetrics.ascent) * emScale;
+                maxTopOverhang = (std::max)(maxTopOverhang, topOverhang);
+            }
+            if (-fontMetrics1.glyphBoxBottom > fontMetrics.descent)
+            {
+                float bottomOverhang = (-fontMetrics1.glyphBoxBottom - fontMetrics.descent) * emScale;
+                maxBottomOverhang = (std::max)(maxBottomOverhang, bottomOverhang);
+            }
+        }
     }
 
     float totalWidth = (std::max)(totalAdvance, layoutRight - layoutLeft);
     m_contentSize = Size(totalWidth, totalHeight);
-
-    // Query design glyph metrics to determine ink overhangs for padding
-    DWRITE_GLYPH_METRICS stackMetrics[8];
-    std::vector<DWRITE_GLYPH_METRICS> heapMetrics;
-    DWRITE_GLYPH_METRICS* metrics = stackMetrics;
-    if (m_glyphIndices.size() > 8)
-    {
-        heapMetrics.resize(m_glyphIndices.size());
-        metrics = heapMetrics.data();
-    }
-    rawFace->GetDesignGlyphMetrics(m_glyphIndices.data(), static_cast<UINT32>(m_glyphIndices.size()), metrics, FALSE);
-
-    float minInkLeft = 0.0f;
-    float maxInkRight = totalWidth;
-    float maxTopOverhang = 0.0f;
-    float maxBottomOverhang = 0.0f;
-
-    currentX = 0.0f;
-    for (size_t i = 0; i < m_glyphIndices.size(); i++)
-    {
-        float uOff = (!m_glyphOffsets.empty()) ? m_glyphOffsets[i].advanceOffset : 0.0f;
-        float vOff = (!m_glyphOffsets.empty()) ? m_glyphOffsets[i].ascenderOffset : 0.0f;
-        float glyphX = currentX + uOff;
-
-        float inkLeft = glyphX + (metrics[i].leftSideBearing * emScale);
-        float inkRight = glyphX + (static_cast<INT32>(metrics[i].advanceWidth) - metrics[i].rightSideBearing) * emScale;
-
-        if (inkLeft < minInkLeft)
-            minInkLeft = inkLeft;
-        if (inkRight > maxInkRight)
-            maxInkRight = inkRight;
-
-        if (metrics[i].advanceHeight > 0)
-        {
-            float topDesign = static_cast<float>(metrics[i].verticalOriginY - metrics[i].topSideBearing);
-            float topPixels = (topDesign * emScale) + vOff;
-            if (topPixels > ascent)
-                maxTopOverhang = (std::max)(maxTopOverhang, topPixels - ascent);
-
-            float blackBoxHeight = static_cast<float>(static_cast<INT32>(metrics[i].advanceHeight) - metrics[i].topSideBearing - metrics[i].bottomSideBearing);
-            float bottomDesign = topDesign - blackBoxHeight;
-            float bottomPixels = (-bottomDesign * emScale) - vOff;
-            if (bottomPixels > descent)
-                maxBottomOverhang = (std::max)(maxBottomOverhang, bottomPixels - descent);
-        }
-        else if (vOff != 0.0f)
-        {
-            if (vOff > 0.0f)
-                maxTopOverhang = (std::max)(maxTopOverhang, vOff);
-            else
-                maxBottomOverhang = (std::max)(maxBottomOverhang, -vOff);
-        }
-
-        currentX += m_glyphAdvances[i];
-    }
-
-    ComPtr<IDWriteFontFace1> rawFace1;
-    if (SUCCEEDED(rawFace.As(&rawFace1)))
-    {
-        DWRITE_FONT_METRICS1 fontMetrics1;
-        rawFace1->GetMetrics(&fontMetrics1);
-
-        if (fontMetrics1.glyphBoxTop > fontMetrics.ascent)
-        {
-            float topOverhang = (fontMetrics1.glyphBoxTop - fontMetrics.ascent) * emScale;
-            maxTopOverhang = (std::max)(maxTopOverhang, topOverhang);
-        }
-        if (-fontMetrics1.glyphBoxBottom > fontMetrics.descent)
-        {
-            float bottomOverhang = (-fontMetrics1.glyphBoxBottom - fontMetrics.descent) * emScale;
-            maxBottomOverhang = (std::max)(maxBottomOverhang, bottomOverhang);
-        }
-    }
-
-    if (m_hasInkBounds)
-    {
-        float inkLeft = static_cast<float>(m_designInkLeft * emScale);
-        float inkRight = static_cast<float>((m_designInkLeft + m_designInkWidth) * emScale);
-        if (inkLeft < minInkLeft)
-            minInkLeft = inkLeft;
-        if (inkRight > maxInkRight)
-            maxInkRight = inkRight;
-    }
 
     float extraPad = (std::max)(6.0f, emSize * 0.15f);
 
@@ -670,9 +756,21 @@ Size FontGlyphs::MeasureOverride(Size availableSize)
         ParseAndLayoutGlyphs();
     }
 
-    m_scale = ComputeScaleFactor(availableSize, m_contentSize);
+    Size fitContentSize = m_contentSize;
+    if (m_hasInkBounds)
+    {
+        double emScale = FontSize / m_designUnitsPerEm;
+        double inkW = m_designInkWidth * emScale;
+        double inkH = m_designInkHeight * emScale;
+        if (inkW > fitContentSize.Width)
+            fitContentSize.Width = static_cast<float>(inkW);
+        if (inkH > fitContentSize.Height)
+            fitContentSize.Height = static_cast<float>(inkH);
+    }
 
-    return Size(m_scale.Width * m_contentSize.Width, m_scale.Height * m_contentSize.Height);
+    m_scale = ComputeScaleFactor(availableSize, fitContentSize);
+
+    return Size(m_scale.Width * fitContentSize.Width, m_scale.Height * fitContentSize.Height);
 }
 
 Size FontGlyphs::ArrangeOverride(Size finalSize)
@@ -692,7 +790,19 @@ Size FontGlyphs::ArrangeOverride(Size finalSize)
     if (m_contentSize.Width <= 0 || m_contentSize.Height <= 0)
         return finalSize;
 
-    m_scale = ComputeScaleFactor(finalSize, m_contentSize);
+    Size fitContentSize = m_contentSize;
+    if (m_hasInkBounds)
+    {
+        double emScale = FontSize / m_designUnitsPerEm;
+        double inkW = m_designInkWidth * emScale;
+        double inkH = m_designInkHeight * emScale;
+        if (inkW > fitContentSize.Width)
+            fitContentSize.Width = static_cast<float>(inkW);
+        if (inkH > fitContentSize.Height)
+            fitContentSize.Height = static_cast<float>(inkH);
+    }
+
+    m_scale = ComputeScaleFactor(finalSize, fitContentSize);
 
     double originX = (finalSize.Width - m_contentSize.Width) / 2.0;
     if (m_hasInkBounds)
@@ -704,6 +814,13 @@ Size FontGlyphs::ArrangeOverride(Size finalSize)
     }
 
     double originY = (finalSize.Height - m_contentSize.Height) / 2.0;
+    if (m_hasInkBounds && m_designInkHeight > 0)
+    {
+        double emScale = FontSize / m_designUnitsPerEm;
+        double inkTop = m_designInkTop * emScale;
+        double inkHeight = m_designInkHeight * emScale;
+        originY = (finalSize.Height - inkHeight) / 2.0 - inkTop;
+    }
 
     float posX = (float)(originX - m_padLeft);
     float posY = (float)(originY - m_padTop);

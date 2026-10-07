@@ -276,6 +276,23 @@ public partial class Properties : DependencyObject
                 t.ClearValue(TextBlock.IsColorFontEnabledProperty);
             }
         }
+        else if (s is FontGlyphs f)
+        {
+            if (e.NewValue is CharacterRenderingOptions o)
+            {
+                f.FontFace = o.ActiveFontFace;
+                f.FontSize = o.FontSize;
+                f.IsColorFontEnabled = o.ColorRenderOption != DWriteColorRenderOption.Monochrome;
+                f.Typography = new DWriteTypographyCollection(o.DXTypography.Feature);
+            }
+            else
+            {
+                f.ClearValue(FontGlyphs.FontFaceProperty);
+                f.ClearValue(FontGlyphs.FontSizeProperty);
+                f.ClearValue(FontGlyphs.IsColorFontEnabledProperty);
+                f.ClearValue(FontGlyphs.TypographyProperty);
+            }
+        }
     }
 
     #endregion

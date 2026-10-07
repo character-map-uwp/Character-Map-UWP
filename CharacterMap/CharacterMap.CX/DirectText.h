@@ -8,6 +8,7 @@
 #include <DWriteFontAxis.h>
 #include "DWriteFallbackFont.h"
 #include "DWriteFontFace.h"
+#include <vector>
 
 
 using namespace Platform;
@@ -46,6 +47,8 @@ namespace CharacterMapCX
 				BlockUpdates = false;
 				m_isStale = true;
 				this->InvalidateMeasure();
+				if (m_canvas != nullptr)
+					m_canvas->Invalidate();
 			}
 
 			#pragma region Dependency Properties
@@ -214,6 +217,7 @@ namespace CharacterMapCX
 			ComPtr<IDWriteTextLayout> m_textLayout;
 			CanvasControl^ m_canvas;
 			bool m_isStale;
+			bool m_isAxisOnlyStale;  // only axis values changed — reuse existing IDWriteTextLayout
 			bool m_render;
 			double m_minWidth = 1.0;
 			double m_targetScale = 1.0;
@@ -221,6 +225,12 @@ namespace CharacterMapCX
 
 			Rect drawBounds;
 			Rect layoutBounds;
+
+			// Cached state for axis-only invalidation
+			std::vector<DWRITE_FONT_AXIS_VALUE> m_lastAxisValues;
+			Platform::String^ m_lastFamilyName;  // nullptr = no cached layout
+			Platform::String^ m_lastText;
+			double m_lastFontSize = 0.0;
 
 
 			void OnPropChanged(DependencyObject^ d, DependencyProperty^ p);

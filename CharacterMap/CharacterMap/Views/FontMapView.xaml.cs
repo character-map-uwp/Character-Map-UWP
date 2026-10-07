@@ -1006,7 +1006,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void Slider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
     {
-        ViewModel.UpdateVariations();
+        CompositionFactory.SetWithoutReposition(TxtPreview, _resizerBouncer, ViewModel.UpdateVariations);
         MarkStale();
     }
 
@@ -1307,7 +1307,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     // so we mark the rendering as stale and handle it we it's active again.
     bool m_stale = false;
 
-    Debouncer _staleDeboucner = new(8);
+    Debouncer _staleDeboucner = new(16);
 
     void MarkStale()
     {

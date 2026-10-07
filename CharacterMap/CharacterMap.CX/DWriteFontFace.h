@@ -90,9 +90,7 @@ namespace CharacterMapCX
 		void ReleaseResources()
 		{
 			m_fontResource = nullptr;
-
-			if (m_font != nullptr)
-				m_face = nullptr;
+			m_face = nullptr;
 		}
 
 		property UINT32 GlyphCount
@@ -251,17 +249,93 @@ namespace CharacterMapCX
 
 		Windows::Foundation::Rect GetDesignGlyphBounds(UINT16 glyphIndex)
 		{
+			auto face = GetFontFace();
+			if (face == nullptr)
+				return Windows::Foundation::Rect(0, 0, 0, 0);
+
+			DWRITE_FONT_METRICS fm{};
+			face->GetMetrics(&fm);
+			if (fm.designUnitsPerEm > 0)
+			{
+				struct DesignOutlineSink : public IDWriteGeometrySink
+				{
+					float minX = 1e9f;
+					float minY = 1e9f;
+					float maxX = -1e9f;
+					float maxY = -1e9f;
+					bool hasPoints = false;
+
+					ULONG STDMETHODCALLTYPE AddRef() override { return 1; }
+					ULONG STDMETHODCALLTYPE Release() override { return 1; }
+					HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppv) override
+					{
+						if (riid == __uuidof(IDWriteGeometrySink) || riid == __uuidof(ID2D1SimplifiedGeometrySink) || riid == __uuidof(IUnknown))
+						{
+							*ppv = this;
+							return S_OK;
+						}
+						*ppv = nullptr;
+						return E_NOINTERFACE;
+					}
+
+					void Update(float x, float y)
+					{
+						if (x < minX) minX = x;
+						if (x > maxX) maxX = x;
+						if (y < minY) minY = y;
+						if (y > maxY) maxY = y;
+						hasPoints = true;
+					}
+
+					void STDMETHODCALLTYPE SetFillMode(D2D1_FILL_MODE) override {}
+					void STDMETHODCALLTYPE SetSegmentFlags(D2D1_PATH_SEGMENT) override {}
+					void STDMETHODCALLTYPE BeginFigure(D2D1_POINT_2F startPoint, D2D1_FIGURE_BEGIN) override { Update(startPoint.x, startPoint.y); }
+					void STDMETHODCALLTYPE AddLines(const D2D1_POINT_2F* points, UINT32 pointsCount) override
+					{
+						for (UINT32 i = 0; i < pointsCount; ++i) Update(points[i].x, points[i].y);
+					}
+					void STDMETHODCALLTYPE AddBeziers(const D2D1_BEZIER_SEGMENT* beziers, UINT32 beziersCount) override
+					{
+						for (UINT32 i = 0; i < beziersCount; ++i)
+						{
+							Update(beziers[i].point1.x, beziers[i].point1.y);
+							Update(beziers[i].point2.x, beziers[i].point2.y);
+							Update(beziers[i].point3.x, beziers[i].point3.y);
+						}
+					}
+					void STDMETHODCALLTYPE EndFigure(D2D1_FIGURE_END) override {}
+					HRESULT STDMETHODCALLTYPE Close() override { return S_OK; }
+				};
+
+				DesignOutlineSink sink;
+				FLOAT adv = 0.0f;
+				if (SUCCEEDED(face->GetGlyphRunOutline(
+					static_cast<FLOAT>(fm.designUnitsPerEm),
+					&glyphIndex,
+					&adv,
+					nullptr,
+					1,
+					FALSE,
+					FALSE,
+					&sink)) && sink.hasPoints)
+				{
+					float w = sink.maxX - sink.minX;
+					float h = sink.maxY - sink.minY;
+					if (w > 0)
+						return Windows::Foundation::Rect(sink.minX, sink.minY, w, h > 0 ? h : 1.0f);
+				}
+			}
+
 			UINT16 indices[] = { glyphIndex };
 			DWRITE_GLYPH_METRICS metrics{};
-			auto face = GetFontFace();
 			if (SUCCEEDED(face->GetDesignGlyphMetrics(indices, 1, &metrics, FALSE)))
 			{
 				float left = (float)metrics.leftSideBearing;
 				float width = (float)((double)metrics.advanceWidth - metrics.leftSideBearing - metrics.rightSideBearing);
 				float top = (float)metrics.topSideBearing;
 				float height = (float)((double)metrics.advanceHeight - metrics.topSideBearing - metrics.bottomSideBearing);
-				if (width > 0 && height > 0)
-					return Windows::Foundation::Rect(left, top, width, height);
+				if (width > 0)
+					return Windows::Foundation::Rect(left, top, width, height > 0 ? height : 1.0f);
 			}
 			return Windows::Foundation::Rect(0, 0, 0, 0);
 		}

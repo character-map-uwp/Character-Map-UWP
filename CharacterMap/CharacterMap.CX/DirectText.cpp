@@ -7,6 +7,7 @@
 #include "pch.h"
 #include "DWriteFallbackFont.h"
 #include "NativeInterop.h"
+#include <cfloat>
 
 using namespace CharacterMapCX;
 using namespace CharacterMapCX::Controls;
@@ -50,6 +51,10 @@ DirectText::DirectText()
 
 	DefaultStyleKey = "CharacterMapCX.Controls.DirectText";
     m_isStale = true;
+    m_isAxisOnlyStale = false;
+    m_lastFamilyName = nullptr;
+    m_lastText = nullptr;
+    m_lastFontSize = 0.0;
 
     auto c = ref new DependencyPropertyChangedCallback(this, &DirectText::OnPropChanged);
 
@@ -105,6 +110,8 @@ void DirectText::OnApplyTemplate()
     Update();
 }
 
+
+
 Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(Windows::Foundation::Size size)
 {
     if (DesignMode::DesignModeEnabled)
@@ -120,13 +127,166 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
     m_canvas->Measure(size);
 
-    if (m_textLayout == nullptr || m_isStale)
+    bool needsRebuild = m_isStale || (GlyphIndex >= 0 ? (m_drawFontFace == nullptr) : (m_textLayout == nullptr));
+
+    // Fast path: in CharacterFit mode, if only the axis values changed (same family/text/size),
+    // reuse the existing IDWriteTextLayout rather than rebuilding from scratch.
+    // Just update axis values and recompute ink bounds.
+    if (needsRebuild && IsCharacterFitEnabled && GlyphIndex < 0 && m_textLayout != nullptr && FontFace != nullptr)
+    {
+        auto fontFace = FontFace;
+        auto fontSize = 8.0 > FontSize ? 8.0 : FontSize;
+        Platform::String^ currentFamily = fontFace->Properties != nullptr ? fontFace->Properties->FamilyName : nullptr;
+        Platform::String^ currentText = Text;
+
+        bool sameFamily = (m_lastFamilyName == currentFamily) ||
+            (m_lastFamilyName != nullptr && currentFamily != nullptr &&
+             wcscmp(m_lastFamilyName->Data(), currentFamily->Data()) == 0);
+        bool sameText = (m_lastText == currentText) ||
+            (m_lastText != nullptr && currentText != nullptr &&
+             wcscmp(m_lastText->Data(), currentText->Data()) == 0);
+        bool sameSize = (m_lastFontSize == fontSize);
+
+        if (sameFamily && sameText && sameSize)
+        {
+            // Build current axis values
+            std::vector<DWRITE_FONT_AXIS_VALUE> newAxisValues;
+            if (Axis != nullptr && Axis->Size > 0)
+            {
+                newAxisValues.reserve(Axis->Size);
+                for (unsigned int i = 0; i < Axis->Size; ++i)
+                    newAxisValues.push_back(Axis->GetAt(i)->GetDWriteValue());
+            }
+            else if (fontFace != nullptr && !fontFace->GetAxisValues().empty())
+                newAxisValues = fontFace->GetAxisValues();
+
+            // Check if axis values actually changed
+            bool axisChanged = (newAxisValues.size() != m_lastAxisValues.size());
+            if (!axisChanged)
+            {
+                for (size_t i = 0; i < newAxisValues.size() && !axisChanged; ++i)
+                {
+                    if (newAxisValues[i].axisTag != m_lastAxisValues[i].axisTag ||
+                        newAxisValues[i].value != m_lastAxisValues[i].value)
+                        axisChanged = true;
+                }
+            }
+
+            if (axisChanged && !newAxisValues.empty())
+            {
+                // The new fontFace already encapsulates the variant axis, so use its internal face for drawing
+                m_drawFontFace = fontFace->GetFontFace();
+
+                // Update axis values on the existing layout
+                ComPtr<IDWriteTextLayout4> idl4;
+                if (SUCCEEDED(m_textLayout.As(&idl4)))
+                {
+                    idl4->SetFontAxisValues(newAxisValues.data(), static_cast<UINT32>(newAxisValues.size()), DWRITE_TEXT_RANGE{ 0, textLength });
+                }
+                m_lastAxisValues = newAxisValues;
+            }
+
+            // Recompute drawBounds from outline (axis may have changed ink extent)
+            if (m_drawFontFace != nullptr && currentText != nullptr && currentText->Length() > 0)
+            {
+                DWRITE_TEXT_METRICS1 dwriteMetrics;
+                if (SUCCEEDED(m_textLayout->GetMetrics(&dwriteMetrics)))
+                {
+                    UINT32 codePoint = static_cast<UINT32>(currentText->Data()[0]);
+                    if (currentText->Length() >= 2 &&
+                        codePoint >= 0xD800 && codePoint <= 0xDBFF &&
+                        currentText->Data()[1] >= 0xDC00 && currentText->Data()[1] <= 0xDFFF)
+                    {
+                        codePoint = 0x10000 + ((codePoint - 0xD800) << 10) + (currentText->Data()[1] - 0xDC00);
+                    }
+
+                    UINT16 glyphIdx = 0;
+                    if (SUCCEEDED(m_drawFontFace->GetGlyphIndices(&codePoint, 1, &glyphIdx)) && glyphIdx != 0)
+                    {
+                        struct FastInkSink : public IDWriteGeometrySink
+                        {
+                            float minX = 1e9f, minY = 1e9f, maxX = -1e9f, maxY = -1e9f;
+                            bool hasPoints = false;
+                            ULONG STDMETHODCALLTYPE AddRef() override { return 1; }
+                            ULONG STDMETHODCALLTYPE Release() override { return 1; }
+                            HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppv) override
+                            {
+                                if (riid == __uuidof(IDWriteGeometrySink) || riid == __uuidof(ID2D1SimplifiedGeometrySink) || riid == __uuidof(IUnknown))
+                                { *ppv = this; return S_OK; }
+                                *ppv = nullptr; return E_NOINTERFACE;
+                            }
+                            void Pt(float x, float y) { if(x<minX)minX=x; if(x>maxX)maxX=x; if(y<minY)minY=y; if(y>maxY)maxY=y; hasPoints=true; }
+                            void STDMETHODCALLTYPE SetFillMode(D2D1_FILL_MODE) override {}
+                            void STDMETHODCALLTYPE SetSegmentFlags(D2D1_PATH_SEGMENT) override {}
+                            void STDMETHODCALLTYPE BeginFigure(D2D1_POINT_2F p, D2D1_FIGURE_BEGIN) override { Pt(p.x,p.y); }
+                            void STDMETHODCALLTYPE AddLines(const D2D1_POINT_2F* pts, UINT32 n) override { for(UINT32 i=0;i<n;++i)Pt(pts[i].x,pts[i].y); }
+                            void STDMETHODCALLTYPE AddBeziers(const D2D1_BEZIER_SEGMENT* b, UINT32 n) override { for(UINT32 i=0;i<n;++i){Pt(b[i].point1.x,b[i].point1.y);Pt(b[i].point2.x,b[i].point2.y);Pt(b[i].point3.x,b[i].point3.y);} }
+                            void STDMETHODCALLTYPE EndFigure(D2D1_FIGURE_END) override {}
+                            HRESULT STDMETHODCALLTYPE Close() override { return S_OK; }
+                        };
+
+                        FLOAT emSizeF = static_cast<FLOAT>(fontSize);
+                        FLOAT advF = static_cast<FLOAT>(dwriteMetrics.widthIncludingTrailingWhitespace);
+                        FastInkSink sink;
+                        if (SUCCEEDED(m_drawFontFace->GetGlyphRunOutline(emSizeF, &glyphIdx, &advF, nullptr, 1, FALSE, FALSE, &sink)) && sink.hasPoints)
+                        {
+                            DWRITE_LINE_METRICS lineMetrics;
+                            UINT32 lineCount = 1;
+                            float baseline = dwriteMetrics.top;
+                            if (SUCCEEDED(m_textLayout->GetLineMetrics(&lineMetrics, 1, &lineCount)))
+                                baseline += lineMetrics.baseline;
+
+                            float screenLeft   = sink.minX + dwriteMetrics.left;
+                            float screenRight  = sink.maxX + dwriteMetrics.left;
+                            float screenTop    = baseline + sink.minY;
+                            float screenBottom = baseline + sink.maxY;
+                            float w = screenRight - screenLeft;
+                            float h = screenBottom - screenTop;
+                            if (w > 0 && h > 0)
+                                drawBounds = Rect(screenLeft, screenTop, w, h);
+                        }
+                    }
+                }
+            }
+
+            // Skip full rebuild — just return the updated target size
+            auto db = drawBounds;
+            bool hasConstrainedW = !std::isinf(size.Width);
+            bool hasConstrainedH = !std::isinf(size.Height);
+            
+            needsRebuild = false; // Fast path successful
+            m_isStale = false; // Prevent full rebuild on next pass
+            
+            if (hasConstrainedW || hasConstrainedH)
+            {
+                m_minWidth = FontSize / 2.2;
+                auto dHeight = max(1.0, (double)db.Height);
+                auto dWidth  = max(m_minWidth, (double)db.Width);
+                double scaleW = hasConstrainedW ? (size.Width / dWidth) : 1.0;
+                double scaleH = hasConstrainedH ? (size.Height / dHeight) : 1.0;
+                auto scale = (hasConstrainedW && hasConstrainedH) ? min(scaleW, scaleH) : (hasConstrainedW ? scaleW : scaleH);
+                if (scale <= 0) scale = 1;
+                m_targetScale = scale;
+                m_render = true;
+                return Size(static_cast<float>(dWidth * scale), static_cast<float>(dHeight * scale));
+            }
+            m_render = true;
+            return Size(static_cast<float>(ceil(db.Width)), static_cast<float>(ceil(db.Height)));
+        }
+    }
+
+    if (needsRebuild)
     {
         m_isStale = false;
         m_drawFontFace = nullptr;
 
         if (m_textLayout != nullptr)
+        {
             m_textLayout = nullptr;
+            m_lastFamilyName = nullptr;  // invalidate axis-only fast path cache
+            m_lastText = nullptr;
+            m_lastAxisValues.clear();
+        }
 
         auto fontFace = FontFace;
         auto fontSize = 8.0 > FontSize ? 8.0 : FontSize;
@@ -230,7 +390,6 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             }
 
             m_render = true;
-            m_canvas->Invalidate();
         }
         else
         {
@@ -380,7 +539,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             if (IsCharacterFitEnabled)
             {
                 textLayout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-                textLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+                textLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
             }
 
             ComPtr<IDWriteTextLayout4> idl;
@@ -416,23 +575,117 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             // Calculate DrawBounds
             if (IsCharacterFitEnabled)
             {
-                DWRITE_OVERHANG_METRICS overhang;
-                ThrowIfFailed(textLayout->GetOverhangMetrics(&overhang));
+                textLayout->SetMaxWidth(dwriteMetrics.widthIncludingTrailingWhitespace);
+                textLayout->SetMaxHeight(dwriteMetrics.height);
 
-                const float left = -overhang.left;
-                const float right = overhang.right + textLayout->GetMaxWidth();
-                const float width = right - left;
-
-                const float top = -overhang.top;
-                const float bottom = overhang.bottom + textLayout->GetMaxHeight();
-                const float height = bottom - top;
-
-                if (width <= 0 || height <= 0)
-                    drawBounds = layoutBounds;
-                else
+                // For CharacterFit mode, GetOverhangMetrics() is unreliable for variable fonts
+                // at extreme axis values — glyphs can ink well outside the metric box.
+                // Use GetGlyphRunOutline on the actual (axis-resolved) font face for precise
+                // ink bounds. Fall back to overhang metrics if no outline points are found
+                // (e.g. whitespace glyphs).
+                bool usedOutline = false;
+                if (dwriteFontFace != nullptr && text != nullptr && text->Length() > 0)
                 {
-                    Rect draw = { left, top, width, height };
-                    drawBounds = draw;
+                    // Map the first character to its glyph index using the resolved face
+                    UINT32 codePoint = static_cast<UINT32>(text->Data()[0]);
+                    // Handle surrogate pairs
+                    if (text->Length() >= 2 &&
+                        codePoint >= 0xD800 && codePoint <= 0xDBFF &&
+                        text->Data()[1] >= 0xDC00 && text->Data()[1] <= 0xDFFF)
+                    {
+                        codePoint = 0x10000 + ((codePoint - 0xD800) << 10) + (text->Data()[1] - 0xDC00);
+                    }
+
+                    UINT16 glyphIdx = 0;
+                    if (SUCCEEDED(dwriteFontFace->GetGlyphIndices(&codePoint, 1, &glyphIdx)) && glyphIdx != 0)
+                    {
+                        // Lightweight geometry sink that only tracks bounding box
+                        struct InkSink : public IDWriteGeometrySink
+                        {
+                            float minX = 1e9f, minY = 1e9f, maxX = -1e9f, maxY = -1e9f;
+                            bool hasPoints = false;
+
+                            ULONG STDMETHODCALLTYPE AddRef() override { return 1; }
+                            ULONG STDMETHODCALLTYPE Release() override { return 1; }
+                            HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppv) override
+                            {
+                                if (riid == __uuidof(IDWriteGeometrySink) || riid == __uuidof(ID2D1SimplifiedGeometrySink) || riid == __uuidof(IUnknown))
+                                { *ppv = this; return S_OK; }
+                                *ppv = nullptr; return E_NOINTERFACE;
+                            }
+                            void Pt(float x, float y)
+                            {
+                                if (x < minX) minX = x; if (x > maxX) maxX = x;
+                                if (y < minY) minY = y; if (y > maxY) maxY = y;
+                                hasPoints = true;
+                            }
+                            void STDMETHODCALLTYPE SetFillMode(D2D1_FILL_MODE) override {}
+                            void STDMETHODCALLTYPE SetSegmentFlags(D2D1_PATH_SEGMENT) override {}
+                            void STDMETHODCALLTYPE BeginFigure(D2D1_POINT_2F p, D2D1_FIGURE_BEGIN) override { Pt(p.x, p.y); }
+                            void STDMETHODCALLTYPE AddLines(const D2D1_POINT_2F* pts, UINT32 n) override { for (UINT32 i = 0; i < n; ++i) Pt(pts[i].x, pts[i].y); }
+                            void STDMETHODCALLTYPE AddBeziers(const D2D1_BEZIER_SEGMENT* b, UINT32 n) override
+                            {
+                                for (UINT32 i = 0; i < n; ++i) { Pt(b[i].point1.x, b[i].point1.y); Pt(b[i].point2.x, b[i].point2.y); Pt(b[i].point3.x, b[i].point3.y); }
+                            }
+                            void STDMETHODCALLTYPE EndFigure(D2D1_FIGURE_END) override {}
+                            HRESULT STDMETHODCALLTYPE Close() override { return S_OK; }
+                        };
+
+                        FLOAT emSizeF = static_cast<FLOAT>(fontSize);
+                        FLOAT advF = static_cast<FLOAT>(dwriteMetrics.widthIncludingTrailingWhitespace);
+                        InkSink sink;
+                        if (SUCCEEDED(dwriteFontFace->GetGlyphRunOutline(emSizeF, &glyphIdx, &advF, nullptr, 1, FALSE, FALSE, &sink)) && sink.hasPoints)
+                        {
+                            // Outline coords: x is horizontal (left=positive), y is vertical
+                            // but DWrite outline y-axis is INVERTED relative to screen
+                            // (positive y is UP in design space). The text layout baseline is at
+                            // dwriteMetrics.top + lineMetrics[0].baseline.
+                            // GetGlyphRunOutline places origin at (0,0) = baseline-left.
+                            // In screen space: screenY = baseline_y - outlineY
+                            // We want bounds in screen space where (0,0) = top-left of layout.
+                            DWRITE_LINE_METRICS lineMetrics;
+                            UINT32 lineCount = 1;
+                            float baseline = dwriteMetrics.top;
+                            if (SUCCEEDED(textLayout->GetLineMetrics(&lineMetrics, 1, &lineCount)))
+                                baseline += lineMetrics.baseline;
+
+                            // screenY = baseline + outlineY (since outlineY is Y-down relative to baseline)
+                            float screenLeft   = sink.minX + dwriteMetrics.left;
+                            float screenRight  = sink.maxX + dwriteMetrics.left;
+                            float screenTop    = baseline + sink.minY;
+                            float screenBottom = baseline + sink.maxY;
+
+                            float w = screenRight - screenLeft;
+                            float h = screenBottom - screenTop;
+                            if (w > 0 && h > 0)
+                            {
+                                drawBounds = Rect(screenLeft, screenTop, w, h);
+                                usedOutline = true;
+                            }
+                        }
+                    }
+                }
+
+                if (!usedOutline)
+                {
+                    // Fallback: overhang metrics (whitespace, combining marks, etc.)
+                    DWRITE_OVERHANG_METRICS overhang;
+                    if (SUCCEEDED(textLayout->GetOverhangMetrics(&overhang)))
+                    {
+                        const float left = dwriteMetrics.left - overhang.left;
+                        const float right = dwriteMetrics.left + dwriteMetrics.widthIncludingTrailingWhitespace + overhang.right;
+                        const float width = right - left;
+                        const float top = dwriteMetrics.top - overhang.top;
+                        const float bottom = dwriteMetrics.top + dwriteMetrics.height + overhang.bottom;
+                        const float height = bottom - top;
+
+                        if (width > 0 && height > 0)
+                            drawBounds = Rect(left, top, width, height);
+                        else
+                            drawBounds = layoutBounds;
+                    }
+                    else
+                        drawBounds = layoutBounds;
                 }
             }
             else
@@ -475,7 +728,14 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             m_textLayout = textLayout;
             m_render = true;
 
-            m_canvas->Invalidate();
+            // Cache layout key so the axis-only fast path can detect future axis-only updates
+            if (IsCharacterFitEnabled)
+            {
+                m_lastFamilyName = fontFace->Properties != nullptr ? fontFace->Properties->FamilyName : nullptr;
+                m_lastText = text;
+                m_lastFontSize = fontSize;
+                m_lastAxisValues = faceAxisValues;
+            }
         }
     }
 
@@ -493,27 +753,25 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
     auto targetsize = Size(min(m, ceil(w)), min(m, ceil(h)));
 
-
-
     if (IsCharacterFitEnabled)
     {
-        if (targetsize.Width < size.Width || targetsize.Height < size.Height)
+        bool hasConstrainedW = !std::isinf(size.Width);
+        bool hasConstrainedH = !std::isinf(size.Height);
+
+        if (hasConstrainedW || hasConstrainedH)
         {
             m_minWidth = FontSize / 2.2;
-            auto dHeight = drawBounds.Height;
+            auto dHeight = max(1.0, drawBounds.Height);
             auto dWidth = max(m_minWidth, drawBounds.Width);
 
-            auto lHeight = layoutBounds.Height;
-            auto lWidth = max(m_minWidth, layoutBounds.Width);
-
-            targetsize = Size(dWidth, dHeight);
-
-            auto scale = min(size.Width / targetsize.Width, size.Height / targetsize.Height);
-            if (targetsize.Width == 0 || targetsize.Height == 0)
+            double scaleW = hasConstrainedW ? (size.Width / dWidth) : 1.0;
+            double scaleH = hasConstrainedH ? (size.Height / dHeight) : 1.0;
+            auto scale = (hasConstrainedW && hasConstrainedH) ? min(scaleW, scaleH) : (hasConstrainedW ? scaleW : scaleH);
+            if (scale <= 0)
                 scale = 1;
 
             m_targetScale = scale;
-            targetsize = Size(targetsize.Width * scale, targetsize.Height * scale);
+            targetsize = Size(static_cast<float>(dWidth * scale), static_cast<float>(dHeight * scale));
         }
     }
     else
@@ -701,6 +959,7 @@ namespace
     {
     private:
         ComPtr<ID2D1DeviceContext1> m_context;
+        ComPtr<ID2D1DeviceContext7> m_context7;
         ComPtr<ID2D1Brush> m_defaultBrush;
         ComPtr<IDWriteFactory> m_factory;
         ComPtr<IDWriteFontFace3> m_overrideFontFace;
@@ -717,11 +976,14 @@ namespace
             DWriteColorRenderOption colorOption)
             : m_context(context), m_defaultBrush(defaultBrush), m_factory(factory),
               m_overrideFontFace(overrideFontFace), m_color(color), m_colorOption(colorOption)
-        {}
+        {
+            if (m_color && (m_colorOption == DWriteColorRenderOption::ColrV1 || m_colorOption == DWriteColorRenderOption::Default))
+                m_context.As(&m_context7);
+        }
 
         IFACEMETHOD(IsPixelSnappingDisabled)(_In_opt_ void*, _Out_ BOOL* isDisabled) override
         {
-            *isDisabled = FALSE;
+            *isDisabled = TRUE;
             return S_OK;
         }
 
@@ -762,42 +1024,44 @@ namespace
 
             DWRITE_GLYPH_RUN customRun = *glyphRun;
             if (m_overrideFontFace != nullptr)
-            {
                 customRun.fontFace = m_overrideFontFace.Get();
-            }
 
-            bool drawn = false;
-            if (m_color && (m_colorOption == DWriteColorRenderOption::ColrV1 || m_colorOption == DWriteColorRenderOption::Default))
+            if (m_context7 != nullptr)
             {
-                ComPtr<ID2D1DeviceContext7> ctx7;
-                if (SUCCEEDED(m_context.As(&ctx7)))
-                {
-                    ctx7->DrawGlyphRunWithColorSupport(
-                        { baselineOriginX, baselineOriginY },
-                        &customRun,
-                        glyphRunDescription,
-                        brush.Get(),
-                        nullptr,
-                        0,
-                        measuringMode
-                    );
-                    drawn = true;
-                }
-            }
-
-            if (!drawn)
-            {
-                DrawGlyphRunColrV0(
-                    m_context.Get(),
-                    m_factory.Get(),
+                m_context7->DrawGlyphRunWithColorSupport(
                     { baselineOriginX, baselineOriginY },
                     &customRun,
                     glyphRunDescription,
                     brush.Get(),
-                    measuringMode,
-                    m_color
+                    nullptr,
+                    0,
+                    measuringMode
                 );
+                return S_OK;
             }
+
+            if (!m_color)
+            {
+                m_context->DrawGlyphRun(
+                    { baselineOriginX, baselineOriginY },
+                    &customRun,
+                    nullptr,
+                    brush.Get(),
+                    measuringMode
+                );
+                return S_OK;
+            }
+
+            DrawGlyphRunColrV0(
+                m_context.Get(),
+                m_factory.Get(),
+                { baselineOriginX, baselineOriginY },
+                &customRun,
+                glyphRunDescription,
+                brush.Get(),
+                measuringMode,
+                m_color
+            );
 
             return S_OK;
         }
@@ -886,23 +1150,26 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
 
     if (IsCharacterFitEnabled)
     {
-        auto bounds = RectHelper::FromCoordinatesAndDimensions(
-            min(db.Left, lb.Left),
-            min(db.Top, lb.Top),
-            max(db.Width, 0),
-            max(db.Height, 0));
-
-        auto ds = this->DesiredSize;
         auto rs = this->RenderSize;
-        left = -db.Left;
-        top = -db.Top;
+        if (rs.Width <= 0 || rs.Height <= 0)
+            return;
 
-        double scale = min(rs.Width / bounds.Width, rs.Height / bounds.Height);
-        args->DrawingSession->Transform = Windows::Foundation::Numerics::make_float3x2_scale(scale / 1.0);
+        double padX = max(6.0, rs.Width * 0.04);
+        double padY = max(6.0, rs.Height * 0.04);
+        double availW = max(1.0, rs.Width - padX * 2.0);
+        double availH = max(1.0, rs.Height - padY * 2.0);
 
-        // Horizontally centre glyphs
-        if (db.Width < m_minWidth)
-            left += (m_minWidth - db.Width) / 2.0; 
+        double fitWidth = max(m_minWidth, db.Width);
+        double fitHeight = max(1.0, db.Height);
+
+        double scale = min(availW / fitWidth, availH / fitHeight);
+        if (scale <= 0.0)
+            scale = 1.0;
+
+        args->DrawingSession->Transform = Windows::Foundation::Numerics::make_float3x2_scale(static_cast<float>(scale));
+
+        left = -db.Left + (rs.Width / scale - db.Width) / 2.0;
+        top = -db.Top + (rs.Height / scale - db.Height) / 2.0;
     }
 
     bool drawMetrics = false;
