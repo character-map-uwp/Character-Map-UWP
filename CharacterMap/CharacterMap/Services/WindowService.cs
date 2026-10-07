@@ -177,13 +177,16 @@ public static class WindowService
             await Task.Run(() =>
             {
                 GC.Collect();
-                info.CoreView.CoreWindow.CustomProperties.Clear();
                 GC.WaitForPendingFinalizers();
                 GC.Collect();
             });
 
+            info.CoreView.CoreWindow.CustomProperties.Clear();
+
             // Allow dispatcher to process all marshaled COM releases
             await Task.Delay(250);
+
+            GC.Collect();
 
             Window.Current.Close();
         });
