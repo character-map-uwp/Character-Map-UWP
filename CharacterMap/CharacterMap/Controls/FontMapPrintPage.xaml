@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CharacterMap.Controls"
+    xmlns:cxc="using:CharacterMapCX.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     IsTabStop="False"
@@ -28,6 +29,8 @@
                     Margin="0 0 -8 0"
                     Padding="0"
                     ContainerContentChanging="ItemsPanel_ContainerContentChanging"
+                    ItemFaceAnalysis="{x:Bind PrintModel.FaceAnalysis}"
+                    ItemFontFace="{x:Bind PrintModel.FaceAnalysis.ActiveFace}"
                     ItemContainerTransitions="{StaticResource NoTransitions}"
                     ItemsSource="{x:Bind Items}" />
             </Border>
@@ -53,7 +56,14 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock TextAlignment="Center" />
+                                <cxc:FontGlyphs
+                                    x:Name="Glyph"
+                                    x:Load="False"
+                                    VerticalAlignment="Center" />
+                                <TextBlock
+                                    x:Name="Block"
+                                    x:Load="False"
+                                    TextAlignment="Center" />
 
                                 <StackPanel
                                     Grid.Column="1"

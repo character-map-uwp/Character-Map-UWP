@@ -59,7 +59,7 @@ public sealed partial class FontGlyph : Control
         Properties.SetFontUri(_presenter, FontUri);
         _presenter.Fill = Foreground;
         _presenter.FontRenderingEmSize = FontSize;
-        _presenter.Indices = Indices;
+        _presenter.Indices = Indices ?? string.Empty;
         _presenter.IsColorFontEnabled = IsColorFontEnabled;
         _presenter.StyleSimulations = StyleSimulations;
     }

@@ -53,6 +53,14 @@ public class XamlDirectWrapper
         IsTextBlock = element is Windows.UI.Xaml.Controls.TextBlock;
     }
 
+    public XamlDirectWrapper GetChild(uint index)
+    {
+        if (Source is Windows.UI.Xaml.Controls.Panel p)
+            return X.GetWrapperForChild(p, index);
+
+        return null;
+    }
+
     public XamlDirectWrapper(IXamlDirectObject d, XamlDirect x)
     {
         X = x;

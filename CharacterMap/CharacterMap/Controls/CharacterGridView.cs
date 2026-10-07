@@ -12,6 +12,7 @@ using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
@@ -139,6 +140,40 @@ public partial class CharacterGridView : GridView
             OnDetaching();
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void RealizeGlyphTarget(SelectorItem itemContainer, FaceAnalysisModel analysis, bool force = false)
+    {
+        if (itemContainer.ContentTemplateRoot is Grid g)
+        {
+            // We need to decide whether to render with XAML TextBlock or our FontGlyphs
+            // control. There are some memory issues with FontGlyphs I haven't been able
+            // to figure out yet, so we prefer TextBlock where we can for now.
+            //
+            // We need to use FontGlyphs if the font face:
+            //   - uses ColrV1 glyphs
+            //   - has variable axis
+            //
+            // XAML TextBlock supports neither of these currently, and FontGlyphs has better
+            // variable axis support than the DirectText control for some reason, even though
+            // they're built on the same axis creation techniques.
+
+            bool needsGlyphs = force || analysis is { ShouldUseDWriteRendering: true };
+
+            // 1. Unload existing presenter if necessary
+            if (!force && g.Children[0] is FrameworkElement f)
+            {
+                if (f is TextBlock { Name: "Block" } && needsGlyphs)
+                    XamlMarkupHelper.UnloadObject(f);
+                else if (f is FontGlyphs && !needsGlyphs)
+                    XamlMarkupHelper.UnloadObject(f);
+            }
+
+            // // 2. Load the appropriate if it does not exist
+            //if (g.Children.Count == 1)
+                g.FindName(needsGlyphs ? "Glyph" : "Block");
+        }
+    }
+
     private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
     {
         /* 
@@ -148,39 +183,8 @@ public partial class CharacterGridView : GridView
         if (!args.InRecycleQueue && args.ItemContainer is GridViewItem item)
         {
             Character c = ((Character)args.Item);
-
-            if (item.ContentTemplateRoot is Grid g)
-            {
-                // We need to decide whether to render with XAML TextBlock or our FontGlyphs
-                // control. There are some memory issues with FontGlyphs I haven't been able
-                // to figure out yet, so we prefer TextBlock where we can for now.
-                //
-                // We need to use FontGlyphs if the font face:
-                //   - uses ColrV1 glyphs
-                //   - has variable axis
-                //
-                // XAML TextBlock supports neither of these currently, and FontGlyphs has better
-                // variable axis support than the DirectText control for some reason, even though
-                // they're built on the same axis creation techniques.
-
-                bool needsGlyphs =
-                    ForceFontGlyphs || (ItemFaceAnalysis is not null &&
-                        ((ItemFaceAnalysis.Analysis.COLRVersion == 1 && Utils.SupportsColrV1)
-                            || ItemFaceAnalysis.Analysis.HasVariationAxis));
-
-                // 1. Unload existing presenter if necessary
-                if (!ForceFontGlyphs && g.Children.Count == 2 && g.Children[0] is FrameworkElement f)
-                {
-                    if (f is TextBlock && needsGlyphs)
-                        XamlMarkupHelper.UnloadObject(f);
-                    else if (f is FontGlyphs && !needsGlyphs)
-                        XamlMarkupHelper.UnloadObject(f);
-                }
-
-                // // 2. Load the appropriate if it does not exist
-                if (g.Children.Count == 1)
-                    g.FindName(needsGlyphs ? "Glyph" : "Block");
-            }
+            RealizeGlyphTarget(args.ItemContainer, ItemFaceAnalysis, ForceFontGlyphs);
+            
 
             UpdateContainer(item.ContentTemplateRoot, c);
             args.Handled = true;
@@ -706,21 +710,13 @@ public partial class CharacterGridView : GridView
 
         foreach (GridViewItem item in ItemsPanelRoot.Children.OfType<GridViewItem>())
         {
-            if (_xamlDirect.GetXamlDirectObject(item.ContentTemplateRoot) is IXamlDirectObject root)
+            if (_xamlDirect.GetWrapper((Panel)item.ContentTemplateRoot) is { } wrapper)
             {
-                _xamlDirect.SetDoubleProperty(root, XamlPropertyIndex.FrameworkElement_Width, value);
-                _xamlDirect.SetDoubleProperty(root, XamlPropertyIndex.FrameworkElement_Height, value);
-                var childs = _xamlDirect.GetXamlDirectObjectProperty(root, XamlPropertyIndex.Panel_Children);
-                IXamlDirectObject tb = _xamlDirect.GetXamlDirectObjectFromCollectionAt(childs, 0);
-                _xamlDirect.SetDoubleProperty(tb, XamlPropertyIndex.Control_FontSize, value / 2d);
+                wrapper.SetWidth(value)
+                       .SetHeight(value)
+                       .GetChild(0)
+                           .SetFontSize(value / 2d);
             }
-
-            //if (item.ContentTemplateRoot is Grid g)
-            //{
-            //    g.Width = value;
-            //    g.Height = value;
-            //    ((TextBlock)g.Children[0]).FontSize = value / 2d;
-            //}
         }
     }
 

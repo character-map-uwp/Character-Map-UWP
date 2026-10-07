@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml;
+﻿using System.ComponentModel;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Media;
@@ -64,7 +65,7 @@ public sealed partial class FontMapPrintPage : Page
             this.FindName(nameof(GridLayout));
             ItemsPanel.ItemTemplate = _gridTemplate;
             ItemsPanel.EnableResizeAnimation = false;
-            ItemsPanel.ItemFontFace = PrintModel.Font.Face;
+            ItemsPanel.ItemFontFace = PrintModel.FaceAnalysis.ActiveFace;
             ItemsPanel.ItemFontFamily = PrintModel.FontFamily;
             ItemsPanel.ItemTypography = PrintModel.Typography;
             ItemsPanel.ShowColorGlyphs = PrintModel.ShowColorGlyphs;
@@ -119,13 +120,19 @@ public sealed partial class FontMapPrintPage : Page
         Grid g = (Grid)item.ContentTemplateRoot;
         g.ColumnDefinitions[0].Width = new GridLength(PrintModel.GlyphSize);
 
-        TextBlock t = (TextBlock)g.Children[0];
-        t.Height = t.Width = PrintModel.GlyphSize;
+        // 1. Update main glyph
+        if (g.Children[0] is TextBlock t)
+            t.Height = t.Width = PrintModel.GlyphSize;
 
+        CharacterGridView.RealizeGlyphTarget(item, PrintModel.FaceAnalysis);
+        CharacterGridView.SetGlyphProperties(_xamlDirect.GetWrapperForChild(g, 0), PrintModel.GetTemplateSettings(), c, Foreground);
+
+        // 2. update Unicode
         TextBlock unicodeId = ((TextBlock)((StackPanel)g.Children[1]).Children[0]);
         unicodeId.SetVisible(PrintModel.Annotation != GlyphAnnotation.None);
         unicodeId.Text = c.GetAnnotation(PrintModel.Annotation);
 
+        // 3. update description
         TextBlock description = ((TextBlock)((StackPanel)g.Children[1]).Children[1]);
         try
         {
@@ -133,9 +140,7 @@ public sealed partial class FontMapPrintPage : Page
         }
         catch { }
 
-        XamlDirectWrapper o = _xamlDirect.GetWrapper(t);
-        CharacterGridView.SetGlyphProperties(o, PrintModel.GetTemplateSettings(), c);
-
+        // 4. handle borders
         foreach (var r in g.GetFirstLevelDescendantsOfType<Rectangle>())
             r.SetVisible(PrintModel.ShowBorders);
     }

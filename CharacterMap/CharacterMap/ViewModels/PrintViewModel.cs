@@ -57,7 +57,7 @@ public partial class PrintViewModel : ViewModelBase
             Annotation = GlyphAnnotation.None,
             Typography = Typography,
             FontFamily = FontFamily,
-            FontFace = Font.Face
+            FontFace = FaceAnalysis.ActiveFace,
         };
     }
 
