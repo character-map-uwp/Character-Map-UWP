@@ -745,7 +745,7 @@
                             ItemAnnotation="None"
                             ItemContainerTransitions="{StaticResource NoTransitions}"
                             ItemFaceAnalysis="{x:Bind _fontMap.ViewModel.SelectedFaceAnalysis}"
-                            ItemFontFace="{x:Bind _fontMap.ViewModel.SelectedFace.Face}"
+                            ItemFontFace="{x:Bind _fontMap.ViewModel.SelectedFaceAnalysis.ActiveFace}"
                             ItemFontFamily="{x:Bind _fontMap.ViewModel.SelectedFaceAnalysis.FontFamily}"
                             ItemSize="{x:Bind _fontMap.CharGrid.ItemSize}"
                             ItemTemplate="{x:Bind _fontMap.CharGrid.ItemTemplate}"
