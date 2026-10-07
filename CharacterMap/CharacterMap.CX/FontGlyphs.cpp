@@ -861,8 +861,21 @@ void FontGlyphs::RenderGlyphs()
         return;
 
     bool renderColor = ShouldRenderColor();
-    LONG requiredWidth = static_cast<LONG>((std::max)(1.0f, static_cast<float>(std::ceil(m_contentSize.Width + m_padLeft + m_padRight))));
-    LONG requiredHeight = static_cast<LONG>((std::max)(1.0f, static_cast<float>(std::ceil(m_contentSize.Height + m_padTop + m_padBottom))));
+    
+    float dpiScale = 1.0f;
+    try {
+        if (this->Dispatcher != nullptr) {
+            auto displayInfo = Windows::Graphics::Display::DisplayInformation::GetForCurrentView();
+            if (displayInfo != nullptr)
+                dpiScale = displayInfo->LogicalDpi / 96.0f;
+        }
+    } catch (...) {}
+
+    LONG logicalWidth = static_cast<LONG>((std::max)(1.0f, static_cast<float>(std::ceil(m_contentSize.Width + m_padLeft + m_padRight))));
+    LONG logicalHeight = static_cast<LONG>((std::max)(1.0f, static_cast<float>(std::ceil(m_contentSize.Height + m_padTop + m_padBottom))));
+    
+    LONG requiredWidth = static_cast<LONG>(std::ceil(logicalWidth * dpiScale));
+    LONG requiredHeight = static_cast<LONG>(std::ceil(logicalHeight * dpiScale));
 
     auto graphicsDevice = CompositionDeviceManager::GetGraphicsDevice(compositor);
     if (graphicsDevice == nullptr)
@@ -880,11 +893,11 @@ void FontGlyphs::RenderGlyphs()
             compositor,
             rawFace.Get(),
             m_glyphIndices[0],
-            static_cast<FLOAT>(FontSize),
+            static_cast<FLOAT>(FontSize * dpiScale),
             StyleSimulations,
             renderColor,
-            m_padLeft, m_padTop, m_baseline,
-            adv, off,
+            m_padLeft * dpiScale, m_padTop * dpiScale, m_baseline * dpiScale,
+            adv * dpiScale, DWRITE_GLYPH_OFFSET{ off.advanceOffset * dpiScale, off.ascenderOffset * dpiScale },
             Foreground,
             requiredWidth, requiredHeight,
             typoKey);
@@ -910,9 +923,10 @@ void FontGlyphs::RenderGlyphs()
             else if (m_surfaceBrush->Surface != m_drawingSurface)
                 m_surfaceBrush->Surface = m_drawingSurface;
 
+            m_surfaceBrush->Scale = float2(1.0f / dpiScale, 1.0f / dpiScale);
             // Offset the brush so the slot aligns with (0,0) of the sprite visual
-            m_surfaceBrush->Offset = float2(static_cast<float>(-slot.X), static_cast<float>(-slot.Y));
-            m_spriteVisual->Size = float2(static_cast<float>(requiredWidth), static_cast<float>(requiredHeight));
+            m_surfaceBrush->Offset = float2(static_cast<float>(-slot.X) / dpiScale, static_cast<float>(-slot.Y) / dpiScale);
+            m_spriteVisual->Size = float2(static_cast<float>(logicalWidth), static_cast<float>(logicalHeight));
 
             if (!renderColor)
             {
@@ -989,15 +1003,26 @@ void FontGlyphs::RenderGlyphs()
     if (m_drawingSurface == nullptr)
         return;
 
+    std::vector<FLOAT> scaledAdvances;
+    std::vector<DWRITE_GLYPH_OFFSET> scaledOffsets;
+    if (dpiScale != 1.0f)
+    {
+        scaledAdvances.reserve(m_glyphAdvances.size());
+        for (float adv : m_glyphAdvances) scaledAdvances.push_back(adv * dpiScale);
+        
+        scaledOffsets.reserve(m_glyphOffsets.size());
+        for (auto off : m_glyphOffsets) scaledOffsets.push_back(DWRITE_GLYPH_OFFSET{ off.advanceOffset * dpiScale, off.ascenderOffset * dpiScale });
+    }
+
     bool success = CompositionDeviceManager::RenderGlyphToSurface(
         m_drawingSurface,
         renderColor ? GlyphImageFormat::None : GlyphImageFormat::TrueType,
-        m_padLeft, m_padTop, m_baseline,
+        m_padLeft * dpiScale, m_padTop * dpiScale, m_baseline * dpiScale,
         rawFace.Get(),
-        static_cast<FLOAT>(FontSize),
+        static_cast<FLOAT>(FontSize * dpiScale),
         m_glyphIndices,
-        m_glyphAdvances,
-        m_glyphOffsets,
+        dpiScale != 1.0f ? scaledAdvances : m_glyphAdvances,
+        dpiScale != 1.0f ? scaledOffsets : m_glyphOffsets,
         Foreground,
         requiredWidth,
         requiredHeight);
@@ -1015,8 +1040,9 @@ void FontGlyphs::RenderGlyphs()
     else if (m_surfaceBrush->Surface != m_drawingSurface)
         m_surfaceBrush->Surface = m_drawingSurface;
 
+    m_surfaceBrush->Scale = float2(1.0f / dpiScale, 1.0f / dpiScale);
     m_surfaceBrush->Offset = float2(0.0f, 0.0f);
-    m_spriteVisual->Size = float2(static_cast<float>(requiredWidth), static_cast<float>(requiredHeight));
+    m_spriteVisual->Size = float2(static_cast<float>(logicalWidth), static_cast<float>(logicalHeight));
 
     if (!renderColor)
     {
