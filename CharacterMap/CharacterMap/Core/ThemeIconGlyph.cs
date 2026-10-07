@@ -347,6 +347,7 @@ public class ThemeIconGlyph : MarkupExtension
                     f.FontSize = 20;
                 Typography.SetContextualLigatures(f, true);
                 Typography.SetDiscretionaryLigatures(f, true);
+                f.EnableCompositionTranslation(0, 1, 0);
             }
             else if (ti == ThemeIcon.FilledSquareWhite)
             {

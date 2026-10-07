@@ -14,335 +14,6 @@ using static CharacterMap.Helpers.FlyoutHelper;
 
 namespace CharacterMap.Helpers;
 
-public class FlyoutArgs
-{
-    /// <summary>
-    /// A window showing a folder of fonts
-    /// </summary>
-    public bool IsFolderView => Folder is not null;
-
-    /// <summary>
-    /// Folder of fonts associated with the view that initiates
-    /// the flyout menu
-    /// </summary>
-    public FolderContents Folder { get; set; }
-
-    /// <summary>
-    /// ... menu 
-    /// </summary>
-    public bool ShowAdvanced { get; set; }
-
-    /// <summary>
-    /// A stand-alone Window showing a single Font Family
-    /// </summary>
-    public bool Standalone { get; set; }
-
-    /// <summary>
-    /// Context menu for font tab headers
-    /// </summary>
-    public bool IsTabContext { get; set; }
-
-    /// <summary>
-    /// The font family is from file that is not installed in the system
-    /// or imported into the app. (I.e., opened via Drag & Drop or open
-    /// button)
-    /// </summary>
-    public bool IsExternalFile { get; set; }
-
-    public string PreviewText { get; set; }
-
-    public Action AddToCollectionCommand { get; set; }
-
-    public object Header { get; set; }
-}
-
-public record class FlyoutContextArg
-{
-    public Character Character { get; set; }
-    public LigatureModel Ligature { get; set; }
-    public ExportStyle ExportStyle { get; set; }
-    public FontMapView ParentView { get; set; }
-    public CopyDataType CopyType { get; set; }
-    public DWriteTextLayoutAnalysis Analysis { get; set; }
-    public GlyphImageFormat PreferredExportType { get; set; } = GlyphImageFormat.None;
-}
-
-public class MenuItemHost
-{
-    public object Host => (object)_flyout ?? _subFlyout;
-    public bool IsSubItem => _subFlyout is not null;
-    public IList<MenuFlyoutItemBase> Items => _flyout?.Items ?? _subFlyout.Items;
-
-    private MenuFlyout _flyout;
-    private MenuFlyoutSubItem _subFlyout;
-
-
-    public MenuItemHost(MenuFlyout flyout) => _flyout = flyout;
-
-    public MenuItemHost(MenuFlyoutSubItem flyout) => _subFlyout = flyout;
-}
-
-public class MenuFlyoutFactory
-{
-    public readonly MenuItemHost Menu;
-    private readonly FlyoutArgs _args;
-
-    public MenuFlyoutFactory(FlyoutArgs args)
-    {
-        MenuFlyout menu = new ()
-        {
-            AreOpenCloseAnimationsEnabled = ResourceHelper.AllowAnimation
-        };
-
-        if (ResourceHelper.Get<Style>("DefaultFlyoutStyle") is Style defaultFlyoutStyle)
-            menu.MenuFlyoutPresenterStyle = defaultFlyoutStyle;
-
-        Menu = new(menu);
-        _args = args;
-    }
-
-    public MenuFlyoutFactory(MenuFlyout menu, FlyoutArgs args)
-    {
-        Menu = new(menu);
-        _args = args;
-    }
-
-    public MenuFlyoutFactory(MenuFlyoutSubItem menu, FlyoutArgs args)
-    {
-        Menu = new(menu);
-        _args = args;
-    }
-
-    public Style DefaultItemStyle => field ??= ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
-    public Style DefaultSubItemStyle => field ??= ResourceHelper.Get<Style>("ThemeMenuFlyoutSubItemStyle");
-    public Style DefaultHeaderStyle => field ??= ResourceHelper.Get<Style>("MenuFlyoutItemReadOnlyHeaderStyle");
-
-
-    public MenuFlyoutFactory Clear()
-    {
-        Menu.Items?.Clear();
-        return this;    
-    }
-
-    public T Child<T>(string name) where T : MenuFlyoutItemBase => Menu.Items.OfType<T>().FirstOrDefault(c => c.Name == name);
-
-    public MenuFlyoutFactory Add(MenuFlyoutItemBase item)
-    {
-        Menu.Items.Add(item);
-        return this;
-    }
-
-    public MenuFlyoutFactory AddHeader(string key, string acceleratorText, MenuItemHost parent = null)
-    {
-        MenuFlyoutItem item = new ()
-        {
-            Text = Localization.Get(key),
-            Style = DefaultHeaderStyle,
-            KeyboardAcceleratorTextOverride = acceleratorText
-        };
-
-        if (parent is null)
-            Menu.Items.Add(item);
-        else
-            parent.Items.Add(item);
-
-        return this;
-    }
-
-    public MenuFlyoutFactory AddHeaderObject(object headerContent, out MenuFlyoutContentHost HeaderHost)
-    {
-        HeaderHost = null;
-        headerContent ??= _args.Header;
-
-        if (headerContent is null) return this;
-
-        if (headerContent is FrameworkElement { Parent: MenuFlyoutContentHost host })
-            host.Content = null;
-
-        HeaderHost = new() { Content = headerContent };
-
-        return Add(HeaderHost).AddSeparator(out _);
-    }
-
-    public MenuFlyoutFactory AddSeparator(out MenuFlyoutSeparator separator)
-    {
-        separator = new MenuFlyoutSeparator();
-        Menu.Items.Add(separator);
-        return this;
-    }
-
-    public MenuFlyoutFactory AddSeparator()
-    {
-        Menu.Items.Add(new MenuFlyoutSeparator());
-        return this;
-    }
-
-    public MenuFlyoutItem Create(string key, object arg, ThemeIcon icon, RoutedEventHandler handler, CreateArgs args = null)
-        => Create($"~{Localization.Get(key, arg)}", icon, handler, args);
-
-    public MenuFlyoutItem Create(string key, ThemeIcon icon, RoutedEventHandler handler, CreateArgs args = null, MenuItemHost parent = null)
-    {
-        args ??= CreateArgs.Default;
-        MenuFlyoutItem item = new()
-        {
-            Text = key.StartsWith("~") ? key.Remove(0, 1) : Localization.Get(key),
-            Icon = ThemeIconGlyph.CreateIcon(icon),
-            Tag = args.Tag,
-            Style = DefaultItemStyle
-        };
-
-        Properties.SetTag(item, args.PropertyTag);
-        item.Click += handler;
-
-        if (args.AcceleratorKey != VirtualKey.None)
-            item.AddKeyboardAccelerator(args.AcceleratorKey, VirtualKeyModifiers.Control);
-
-        if (string.IsNullOrWhiteSpace(args.AcceleratorText) is false)
-            item.KeyboardAcceleratorTextOverride = args.AcceleratorText;
-
-        if (args.Add)
-        {
-            var target = parent?.Items ?? Menu.Items;
-
-            if (args.Index >= 0)
-                target.Insert(args.Index, item);
-            else
-                target.Add(item);
-        }
-
-        return item.SetAnimation();
-    }
-
-    public MenuFlyoutFactory CreateSubItem(ThemeIcon icon, string key, object arg = null, int insertIndex = -1)
-    {
-        MenuFlyoutSubItem item = new()
-        {
-            Text = Localization.Get(key, arg),
-            Icon = ThemeIconGlyph.CreateIcon(icon),
-            Style = DefaultSubItemStyle
-        };
-
-        if (insertIndex == -1)
-            Menu.Items.Add(item);
-        else if (insertIndex >= 0 && insertIndex < Menu.Items.Count)
-            Menu.Items.Insert(insertIndex, item);
-
-        return new MenuFlyoutFactory(item, _args);
-    }
-
-    public MenuFlyoutFactory AddColorOptions(DWriteTextLayoutAnalysis analysis, bool isCopy, FlyoutContextArg arg)
-    {
-        AddColorOptions(Menu, analysis, isCopy, arg);
-        return this;
-    }
-
-    public void AddColorOptions(MenuItemHost parent, DWriteTextLayoutAnalysis analysis, bool isCopy, FlyoutContextArg arg)
-    {
-        static void RequestCopy(object s, RoutedEventArgs e)
-        {
-            if (s is FrameworkElement { Tag: FlyoutContextArg ctx })
-                _ = ctx.ParentView.ViewModel.RequestCopyToClipboardAsync(
-                    new(DevValueType.Char, ctx.Character, ctx.Analysis, ctx.ParentView.ViewModel.SelectedFaceAnalysis, ctx.CopyType) { Style = ctx.ExportStyle, PreferredColorType = ctx.PreferredExportType });
-        }
-
-        static void SaveHandler(object s, RoutedEventArgs e)
-        {
-            if (s is FrameworkElement { Tag: FlyoutContextArg ctx })
-            {
-                ExportParameters p = new() { Style = ctx.ExportStyle, Typography = new(ctx.Ligature.Feature), Character = ctx.Character };
-                if (ctx.CopyType == CopyDataType.PNG)
-                    _ = ctx.ParentView.ViewModel.SavePngAsync(p);
-                else if (ctx.CopyType == CopyDataType.SVG)
-                    _ = ctx.ParentView.ViewModel.SaveSvgAsync(p);
-            }
-        }
-
-        RoutedEventHandler handler = isCopy ? RequestCopy : SaveHandler;
-        FlyoutContextArg W(ExportStyle style) => arg with { ExportStyle = style };
-        bool svgChar = analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
-
-        if (arg.CopyType == CopyDataType.SVG && analysis.IsFullVectorBased && svgChar)
-        {
-                Create(
-                    svgChar ? "ExportSVGGlyphLabel/Text" : "ColoredGlyphLabel/Text",
-                    icon: ThemeIcon.ColorGlyph, handler, new() { Tag = W(ExportStyle.ColorGlyph) }, parent);
-        }
-        else if (analysis.HasColorGlyphs)
-        {
-            if (analysis.SupportsColrV0)
-                Create("~COLRv0 Glyph", ThemeIcon.ColorGlyph, handler, args: new() { Tag = W(ExportStyle.ColorGlyph) with { PreferredExportType = GlyphImageFormat.Colr } }, parent);
-
-            if (analysis.SupportsColrV1)
-                Create("~COLRv1 Glyph", ThemeIcon.ColorGlyph, handler, args: new() { Tag = W(ExportStyle.ColorGlyph) with { PreferredExportType = GlyphImageFormat.ColrPaintTree } }, parent);
-
-            if (analysis.SupportsColrV0 is false && analysis.SupportsColrV1 is false)
-            {
-                // Probably a bitmap
-                Create("ColoredGlyphLabel/Text", ThemeIcon.ColorGlyph, handler, args: new() { Tag = W(ExportStyle.ColorGlyph) }, parent);
-            }
-        }
-            
-
-        // Glyphs that are entirely SVG backed don't have CFF outlines and can't be exported as monochrome.
-        // Bitmaps have the same issue.
-        if (!analysis.ContainsBitmapGlyphs && !svgChar)
-        {
-            Create("BlackFill/Text", ThemeIcon.FilledSquareBlack, handler, new() { Tag = W(ExportStyle.Black) }, parent);
-            Create("WhiteFill/Text", ThemeIcon.FilledSquareWhite, handler, new() { Tag = W(ExportStyle.White) }, parent);
-        }
-    }
-
-    public bool Show(UIElement target, ContextRequestedEventArgs args)
-    {
-        if (Menu.Host is MenuFlyout menu && args.TryGetPosition(target, out Point p))
-        {
-            menu.ShowAt(target, p);
-            args.Handled = true;
-            return true;
-        }
-        return false;
-    }
-
-    public static async void CopyHandler(object s, RoutedEventArgs e)
-    {
-        if (s is FrameworkElement f && Properties.GetTag(f) is FontMapView view)
-        {
-            if (f.Tag is LigatureModel lig)
-                Utils.CopyToClipboard(lig.ClipboardText);
-            else if (f.Tag is FlyoutContextArg { Character: { } c})
-            {
-                if (c is GlyphCharacter { IsValidUnicode: false } gc && view.ViewModel.SelectedFaceAnalysis.TryGetLigature(gc.GlyphIndex, out LigatureModel lig1))
-                    Utils.CopyToClipboard(lig1.ClipboardText);
-
-                if (!await Utils.TryCopyToClipboardAsync(c, view.ViewModel))
-                    return;
-            }
-            else
-                return;
-
-            view.GetNotifier().Show(Localization.Get("NotificationCopied"), 2000);
-        }
-    }
-
-
-    public class CreateArgs
-    {
-        public static CreateArgs Default { get; } = new();
-
-        public bool Add { get; init; } = true;
-        // Index to insert the child item at
-        public int Index { get; init; } = -1;
-
-        public VirtualKey AcceleratorKey { get; init; } = VirtualKey.None;
-        public object Tag { get; init; }
-        public object PropertyTag { get; init; }
-        public string AcceleratorText { get; init; }
-        public Style Style { get; init; }
-
-        public CreateArgs() { }
-        public CreateArgs(VirtualKey key) { AcceleratorKey = key; }
-    }
-}
 
 public static class FlyoutHelper
 {
@@ -396,13 +67,14 @@ public static class FlyoutHelper
 
         static void OpenInNewWindow(object s, RoutedEventArgs args)
         {
-            if (s is FrameworkElement f && f.Tag is CMFontFamily fnt)
-                _ = FontMapView.CreateNewViewForFontAsync(fnt, null, f.DataContext as CharacterRenderingOptions);
+            if (s is FrameworkElement { Tag: CMFontFamily fnt } f
+                && Properties.GetTag(f) is CharacterRenderingOptions o)
+                _ = FontMapView.CreateNewViewForFontAsync(fnt, null, o);
         }
 
         static void OpenInNewTab(object s, RoutedEventArgs args)
         {
-            if (s is FrameworkElement f && f.Tag is CMFontFamily fnt)
+            if (s is FrameworkElement { Tag: CMFontFamily fnt })
                 WeakReferenceMessenger.Default.Send(new OpenTabMessage(fnt));
         }
 
@@ -421,8 +93,7 @@ public static class FlyoutHelper
 
         static void Export_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is FrameworkElement f &&
-                f.Tag is CMFontFamily fnt
+            if (sender is FrameworkElement { Tag: CMFontFamily fnt } f
                 && Properties.GetTag(f) is CharacterRenderingOptions o)
             {
                 WeakReferenceMessenger.Default.Send(new ExportRequestedMessage());
@@ -431,7 +102,7 @@ public static class FlyoutHelper
 
         static void DeleteClick(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuFlyoutItem item && item.Tag is CMFontFamily fnt)
+            if (sender is MenuFlyoutItem { Tag: CMFontFamily fnt })
             {
                 RequestDelete(fnt);
             }
@@ -464,9 +135,9 @@ public static class FlyoutHelper
             }
         }
 
-        void OpenFaceCompare(object sender, RoutedEventArgs e)
+        static void OpenFaceCompare(object sender, RoutedEventArgs e)
         {
-            if (sender is FrameworkElement f && f.Tag is CMFontFamily fnt)
+            if (sender is FrameworkElement { Tag: CMFontFamily fnt })
             {
                 _ = QuickCompareView.CreateWindowAsync(new(false, new(fnt.Variants.ToList()) { IsFamilyCompare = true }));
             }
@@ -478,51 +149,47 @@ public static class FlyoutHelper
 
         if (menu.Items != null)
         {
+            // HORRIBLE Hacks, because MenuFlyoutSubItem never updates it's UI tree after the first
+            // render meaning we can't dynamically update items. Instead we need to make an entirely
+            // menu every time it opens.
+
             factory.Clear();
-
             MenuFlyoutSubItem coll;
-
+            MenuFlyoutFactory.CreateArgs arg = new() { Tag = options.Family, PropertyTag = options };
             bool qc = args.IsFolderView is false && isExternalFile is false;
+            factory.AddHeaderObject(headerContent, out _);
+
+            // 1. Add "Open in New Tab/Window" buttons
+            if (!standalone)
             {
+                // 1.1. Only show "Open in New Tab" if this is Font List context menu
+                //      and supported by theme
+                if (showAdvanced is false && ResourceHelper.SupportsTabs)
+                    factory.Create("OpenInNewTab/Text", ThemeIcon.NewTab, OpenInNewTab, arg);
 
-                // HORRIBLE Hacks, because MenuFlyoutSubItem never updates it's UI tree after the first
-                // render meaning we can't dynamically update items. Instead we need to make an entirely
-                // menu every time it opens.
+                // 1.2. Create "Open in New Window"
+                MenuFlyoutItem newWindow = factory.Create("OpenInNewWindow/Text", ThemeIcon.NewWindow, OpenInNewWindow, arg);
+                if (showAdvanced)
+                    newWindow.AddKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control);
+            }
 
-                factory.AddHeaderObject(headerContent, out _);
+            // 2. Add Save Font File & Export Font Glyphs options
+            if (options != null && options.Face != null && DirectWrite.IsFontLocal(options.Face.Face))
+            {
+                factory.Create("ExportFontFileLabel/Text", ThemeIcon.Save, SaveFont_Click, arg.WithKey(VirtualKey.S));
+                if (showAdvanced && !args.IsTabContext)
+                    factory.Create("ExportCharactersLabel/Text", ThemeIcon.Save, Export_Click, arg.WithKey(VirtualKey.Q));
+            }
 
-                // 1. Add "Open in New Tab/Window" buttons
-                if (!standalone)
-                {
-                    // 1.1. Only show "Open in New Tab" if this is Font List context menu
-                    //      and supported by theme
-                    if (showAdvanced is false && ResourceHelper.SupportsTabs)
-                        factory.Create("OpenInNewTab/Text", ThemeIcon.NewTab, OpenInNewTab);
+            // 3. Add "Add to quick compare" button if we're viewing a variant
+            if (qc)
+                factory.Create("AddToQuickCompare/Text", ThemeIcon.AddTo, AddToQuickCompare, arg.WithKey(VirtualKey.E));
 
-                    // 1.2. Create "Open in New Window"
-                    MenuFlyoutItem newWindow = factory.Create("OpenInNewWindow/Text", ThemeIcon.NewWindow, OpenInNewWindow);
-                    if (showAdvanced)
-                        newWindow.AddKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control);
-                }
-
-                // 2. Add Save Font File & Export Font Glyphs options
-                if (options != null && options.Face != null && DirectWrite.IsFontLocal(options.Face.Face))
-                {
-                    factory.Create("ExportFontFileLabel/Text", ThemeIcon.Save, SaveFont_Click, new(VirtualKey.S));
-                    if (showAdvanced && !args.IsTabContext)
-                        factory.Create("ExportCharactersLabel/Text", ThemeIcon.Save, Export_Click, new(VirtualKey.E));
-                }
-
-                // 3. Add "Add to quick compare" button if we're viewing a variant
-                if (qc)
-                    factory.Create("AddToQuickCompare/Text", ThemeIcon.AddTo, AddToQuickCompare, new(VirtualKey.Q));
-
-                // 4. Add "Add to Collection" button
-                if (isExternalFile is false && args.IsFolderView is false)
-                {
-                    coll = FlyoutHelper.AddCollectionItems(menu, font, null, args: args);
-                    coll.Style = factory.DefaultSubItemStyle;
-                }
+            // 4. Add "Add to Collection" button
+            if (isExternalFile is false && args.IsFolderView is false)
+            {
+                coll = FlyoutHelper.AddCollectionItems(menu, font, null, args: args);
+                coll.Style = factory.DefaultSubItemStyle;
             }
 
             // 5. Add "Remove from Collection" item
@@ -543,7 +210,7 @@ public static class FlyoutHelper
             if (showAdvanced && args.IsTabContext is false)
             {
                 if (Windows.Graphics.Printing.PrintManager.IsSupported())
-                    factory.Create("BtnPrint/Content", ThemeIcon.Print, Print_Click, new(VirtualKey.P) { Index = standalone ? 2 : 3 });
+                    factory.Create("BtnPrint/Content", ThemeIcon.Print, Print_Click, arg with { AcceleratorKey = VirtualKey.P, Index = standalone ? 2 : 3 });
             }
 
             // 7. Add "Delete Font" button
@@ -553,7 +220,7 @@ public static class FlyoutHelper
                 && font.HasImportedFiles)
             {
                 menu.AddSeparator();
-                MenuFlyoutItem del = factory.Create("RemoveFontFlyout/Text", ThemeIcon.Delete, DeleteClick);
+                MenuFlyoutItem del = factory.Create("RemoveFontFlyout/Text", ThemeIcon.Delete, DeleteClick, arg);
                 if (showAdvanced)
                     del.AddKeyboardAccelerator(VirtualKey.Delete, VirtualKeyModifiers.Control);
             }
@@ -566,15 +233,15 @@ public static class FlyoutHelper
             {
                 // 8.1. Add "Compare Fonts button"
                 // NOTE: count is not used on updated translation, left because old translations may still use it
-                factory.Create($"~{string.Format(Localization.Get("CompareFacesCountLabel/Text"), font.Variants.Count)}", ThemeIcon.CompareFonts, OpenFaceCompare);
+                factory.Create($"~{string.Format(Localization.Get("CompareFacesCountLabel/Text"), font.Variants.Count)}", ThemeIcon.CompareFonts, OpenFaceCompare, arg);
 
                 // 8.2. Add "Add all to quick compare" button
-                factory.Create("AddMultiToQuickCompare/Text", ThemeIcon.Add, AddToQuickCompareMulti);
+                factory.Create("AddMultiToQuickCompare/Text", ThemeIcon.Add, AddToQuickCompareMulti, arg);
             }
 
             // 9. Add Calligraphy button
             menu.AddSeparator();
-            factory.Create("CalligraphyLabel/Text", ThemeIcon.Calligraphy, OpenCalligraphy, new(VirtualKey.I));
+            factory.Create("CalligraphyLabel/Text", ThemeIcon.Calligraphy, OpenCalligraphy, arg.WithKey(VirtualKey.I));
         }
     }
 
@@ -623,14 +290,12 @@ public static class FlyoutHelper
 
             async void RemoveFrom_Click(object sender, RoutedEventArgs e)
             {
-                if (sender is FrameworkElement f
-                    && f.DataContext is CMFontFamily fnt
-                    && f.Tag is UserFontCollection collection)
+                if (sender is FrameworkElement { DataContext: CMFontFamily fnt, Tag: UserFontCollection collection })
                 {
                     await _collections.RemoveFromCollectionAsync(fnt, collection);
-                    WeakReferenceMessenger.Default.Send(
-                        new AppNotificationMessage(true,
-                            new CollectionUpdatedArgs([fnt], collection, false)));
+                        WeakReferenceMessenger.Default.Send(
+                            new AppNotificationMessage(true,
+                                new CollectionUpdatedArgs([fnt], collection, false)));
                     WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage { SourceCollection = collection });
                 }
             }
@@ -1134,6 +799,347 @@ public static class FlyoutHelper
                 .Create("ViewInGlyphMapMessage", target.LigatureGlyph, ThemeIcon.GlyphMapView, NavigateToGlyphHandler, new() { Tag = target, PropertyTag = view });
 
             factory.Show(sender, args);
+        }
+    }
+}
+
+
+
+
+
+
+
+public class FlyoutArgs
+{
+    /// <summary>
+    /// A window showing a folder of fonts
+    /// </summary>
+    public bool IsFolderView => Folder is not null;
+
+    /// <summary>
+    /// Folder of fonts associated with the view that initiates
+    /// the flyout menu
+    /// </summary>
+    public FolderContents Folder { get; set; }
+
+    /// <summary>
+    /// ... menu 
+    /// </summary>
+    public bool ShowAdvanced { get; set; }
+
+    /// <summary>
+    /// A stand-alone Window showing a single Font Family
+    /// </summary>
+    public bool Standalone { get; set; }
+
+    /// <summary>
+    /// Context menu for font tab headers
+    /// </summary>
+    public bool IsTabContext { get; set; }
+
+    /// <summary>
+    /// The font family is from file that is not installed in the system
+    /// or imported into the app. (I.e., opened via Drag & Drop or open
+    /// button)
+    /// </summary>
+    public bool IsExternalFile { get; set; }
+
+    public string PreviewText { get; set; }
+
+    public Action AddToCollectionCommand { get; set; }
+
+    public object Header { get; set; }
+}
+
+public record class FlyoutContextArg
+{
+    public Character Character { get; set; }
+    public LigatureModel Ligature { get; set; }
+    public ExportStyle ExportStyle { get; set; }
+    public FontMapView ParentView { get; set; }
+    public CopyDataType CopyType { get; set; }
+    public DWriteTextLayoutAnalysis Analysis { get; set; }
+    public GlyphImageFormat PreferredExportType { get; set; } = GlyphImageFormat.None;
+}
+
+public class MenuItemHost
+{
+    public object Host => (object)_flyout ?? _subFlyout;
+    public bool IsSubItem => _subFlyout is not null;
+    public IList<MenuFlyoutItemBase> Items => _flyout?.Items ?? _subFlyout.Items;
+
+    private MenuFlyout _flyout;
+    private MenuFlyoutSubItem _subFlyout;
+
+
+    public MenuItemHost(MenuFlyout flyout) => _flyout = flyout;
+
+    public MenuItemHost(MenuFlyoutSubItem flyout) => _subFlyout = flyout;
+}
+
+public class MenuFlyoutFactory
+{
+    public readonly MenuItemHost Menu;
+    private readonly FlyoutArgs _args;
+
+    public MenuFlyoutFactory(FlyoutArgs args)
+    {
+        MenuFlyout menu = new()
+        {
+            AreOpenCloseAnimationsEnabled = ResourceHelper.AllowAnimation
+        };
+
+        if (ResourceHelper.Get<Style>("DefaultFlyoutStyle") is Style defaultFlyoutStyle)
+            menu.MenuFlyoutPresenterStyle = defaultFlyoutStyle;
+
+        Menu = new(menu);
+        _args = args;
+    }
+
+    public MenuFlyoutFactory(MenuFlyout menu, FlyoutArgs args)
+    {
+        Menu = new(menu);
+        _args = args;
+    }
+
+    public MenuFlyoutFactory(MenuFlyoutSubItem menu, FlyoutArgs args)
+    {
+        Menu = new(menu);
+        _args = args;
+    }
+
+    public Style DefaultItemStyle => field ??= ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
+    public Style DefaultSubItemStyle => field ??= ResourceHelper.Get<Style>("ThemeMenuFlyoutSubItemStyle");
+    public Style DefaultHeaderStyle => field ??= ResourceHelper.Get<Style>("MenuFlyoutItemReadOnlyHeaderStyle");
+
+
+    public MenuFlyoutFactory Clear()
+    {
+        Menu.Items?.Clear();
+        return this;
+    }
+
+    public T Child<T>(string name) where T : MenuFlyoutItemBase => Menu.Items.OfType<T>().FirstOrDefault(c => c.Name == name);
+
+    public MenuFlyoutFactory Add(MenuFlyoutItemBase item)
+    {
+        Menu.Items.Add(item);
+        return this;
+    }
+
+    public MenuFlyoutFactory AddHeader(string key, string acceleratorText, MenuItemHost parent = null)
+    {
+        MenuFlyoutItem item = new()
+        {
+            Text = Localization.Get(key),
+            Style = DefaultHeaderStyle,
+            KeyboardAcceleratorTextOverride = acceleratorText
+        };
+
+        if (parent is null)
+            Menu.Items.Add(item);
+        else
+            parent.Items.Add(item);
+
+        return this;
+    }
+
+    public MenuFlyoutFactory AddHeaderObject(object headerContent, out MenuFlyoutContentHost HeaderHost)
+    {
+        HeaderHost = null;
+        headerContent ??= _args.Header;
+
+        if (headerContent is null) return this;
+
+        if (headerContent is FrameworkElement { Parent: MenuFlyoutContentHost host })
+            host.Content = null;
+
+        HeaderHost = new() { Content = headerContent };
+
+        return Add(HeaderHost).AddSeparator(out _);
+    }
+
+    public MenuFlyoutFactory AddSeparator(out MenuFlyoutSeparator separator)
+    {
+        separator = new MenuFlyoutSeparator();
+        Menu.Items.Add(separator);
+        return this;
+    }
+
+    public MenuFlyoutFactory AddSeparator()
+    {
+        Menu.Items.Add(new MenuFlyoutSeparator());
+        return this;
+    }
+
+    public MenuFlyoutItem Create(string key, object arg, ThemeIcon icon, RoutedEventHandler handler, CreateArgs args = null)
+        => Create($"~{Localization.Get(key, arg)}", icon, handler, args);
+
+    public MenuFlyoutItem Create(string key, ThemeIcon icon, RoutedEventHandler handler, CreateArgs args = null, MenuItemHost parent = null)
+    {
+        args ??= CreateArgs.Default;
+        MenuFlyoutItem item = new()
+        {
+            Text = key.StartsWith("~") ? key.Remove(0, 1) : Localization.Get(key),
+            Icon = ThemeIconGlyph.CreateIcon(icon),
+            Tag = args.Tag,
+            Style = DefaultItemStyle
+        };
+
+        Properties.SetTag(item, args.PropertyTag);
+        item.Click += handler;
+
+        if (args.AcceleratorKey != VirtualKey.None)
+            item.AddKeyboardAccelerator(args.AcceleratorKey, VirtualKeyModifiers.Control);
+
+        if (string.IsNullOrWhiteSpace(args.AcceleratorText) is false)
+            item.KeyboardAcceleratorTextOverride = args.AcceleratorText;
+
+        if (args.Add)
+        {
+            var target = parent?.Items ?? Menu.Items;
+
+            if (args.Index >= 0)
+                target.Insert(args.Index, item);
+            else
+                target.Add(item);
+        }
+
+        return item.SetAnimation();
+    }
+
+    public MenuFlyoutFactory CreateSubItem(ThemeIcon icon, string key, object arg = null, int insertIndex = -1)
+    {
+        MenuFlyoutSubItem item = new()
+        {
+            Text = Localization.Get(key, arg),
+            Icon = ThemeIconGlyph.CreateIcon(icon),
+            Style = DefaultSubItemStyle
+        };
+
+        if (insertIndex == -1)
+            Menu.Items.Add(item);
+        else if (insertIndex >= 0 && insertIndex < Menu.Items.Count)
+            Menu.Items.Insert(insertIndex, item);
+
+        return new MenuFlyoutFactory(item, _args);
+    }
+
+    public MenuFlyoutFactory AddColorOptions(DWriteTextLayoutAnalysis analysis, bool isCopy, FlyoutContextArg arg)
+    {
+        AddColorOptions(Menu, analysis, isCopy, arg);
+        return this;
+    }
+
+    public void AddColorOptions(MenuItemHost parent, DWriteTextLayoutAnalysis analysis, bool isCopy, FlyoutContextArg arg)
+    {
+        static void RequestCopy(object s, RoutedEventArgs e)
+        {
+            if (s is FrameworkElement { Tag: FlyoutContextArg ctx })
+                _ = ctx.ParentView.ViewModel.RequestCopyToClipboardAsync(
+                    new(DevValueType.Char, ctx.Character, ctx.Analysis, ctx.ParentView.ViewModel.SelectedFaceAnalysis, ctx.CopyType) { Style = ctx.ExportStyle, PreferredColorType = ctx.PreferredExportType });
+        }
+
+        static void SaveHandler(object s, RoutedEventArgs e)
+        {
+            if (s is FrameworkElement { Tag: FlyoutContextArg ctx })
+            {
+                ExportParameters p = new() { Style = ctx.ExportStyle, Typography = new(ctx.Ligature.Feature), Character = ctx.Character };
+                if (ctx.CopyType == CopyDataType.PNG)
+                    _ = ctx.ParentView.ViewModel.SavePngAsync(p);
+                else if (ctx.CopyType == CopyDataType.SVG)
+                    _ = ctx.ParentView.ViewModel.SaveSvgAsync(p);
+            }
+        }
+
+        RoutedEventHandler handler = isCopy ? RequestCopy : SaveHandler;
+        FlyoutContextArg W(ExportStyle style) => arg with { ExportStyle = style };
+        bool svgChar = analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
+
+        if (arg.CopyType == CopyDataType.SVG && analysis.IsFullVectorBased && svgChar)
+        {
+            Create(
+                svgChar ? "ExportSVGGlyphLabel/Text" : "ColoredGlyphLabel/Text",
+                icon: ThemeIcon.ColorGlyph, handler, new() { Tag = W(ExportStyle.ColorGlyph) }, parent);
+        }
+        else if (analysis.HasColorGlyphs)
+        {
+            if (analysis.SupportsColrV0)
+                Create("~COLRv0 Glyph", ThemeIcon.ColorGlyph, handler, args: new() { Tag = W(ExportStyle.ColorGlyph) with { PreferredExportType = GlyphImageFormat.Colr } }, parent);
+
+            if (analysis.SupportsColrV1)
+                Create("~COLRv1 Glyph", ThemeIcon.ColorGlyph, handler, args: new() { Tag = W(ExportStyle.ColorGlyph) with { PreferredExportType = GlyphImageFormat.ColrPaintTree } }, parent);
+
+            if (analysis.SupportsColrV0 is false && analysis.SupportsColrV1 is false)
+            {
+                // Probably a bitmap
+                Create("ColoredGlyphLabel/Text", ThemeIcon.ColorGlyph, handler, args: new() { Tag = W(ExportStyle.ColorGlyph) }, parent);
+            }
+        }
+
+
+        // Glyphs that are entirely SVG backed don't have CFF outlines and can't be exported as monochrome.
+        // Bitmaps have the same issue.
+        if (!analysis.ContainsBitmapGlyphs && !svgChar)
+        {
+            Create("BlackFill/Text", ThemeIcon.FilledSquareBlack, handler, new() { Tag = W(ExportStyle.Black) }, parent);
+            Create("WhiteFill/Text", ThemeIcon.FilledSquareWhite, handler, new() { Tag = W(ExportStyle.White) }, parent);
+        }
+    }
+
+    public bool Show(UIElement target, ContextRequestedEventArgs args)
+    {
+        if (Menu.Host is MenuFlyout menu && args.TryGetPosition(target, out Point p))
+        {
+            menu.ShowAt(target, p);
+            args.Handled = true;
+            return true;
+        }
+        return false;
+    }
+
+    public static async void CopyHandler(object s, RoutedEventArgs e)
+    {
+        if (s is FrameworkElement f && Properties.GetTag(f) is FontMapView view)
+        {
+            if (f.Tag is LigatureModel lig)
+                Utils.CopyToClipboard(lig.ClipboardText);
+            else if (f.Tag is FlyoutContextArg { Character: { } c })
+            {
+                if (c is GlyphCharacter { IsValidUnicode: false } gc && view.ViewModel.SelectedFaceAnalysis.TryGetLigature(gc.GlyphIndex, out LigatureModel lig1))
+                    Utils.CopyToClipboard(lig1.ClipboardText);
+
+                if (!await Utils.TryCopyToClipboardAsync(c, view.ViewModel))
+                    return;
+            }
+            else
+                return;
+
+            view.GetNotifier().Show(Localization.Get("NotificationCopied"), 2000);
+        }
+    }
+
+
+    public record class CreateArgs
+    {
+        public static CreateArgs Default { get; } = new();
+
+        public bool Add { get; init; } = true;
+        // Index to insert the child item at
+        public int Index { get; init; } = -1;
+
+        public VirtualKey AcceleratorKey { get; init; } = VirtualKey.None;
+        public object Tag { get; init; }
+        public object PropertyTag { get; init; }
+        public string AcceleratorText { get; init; }
+        public Style Style { get; init; }
+
+        public CreateArgs() { }
+        public CreateArgs(VirtualKey key) { AcceleratorKey = key; }
+
+        public CreateArgs WithKey(VirtualKey key)
+        {
+            return this with { AcceleratorKey = key };
         }
     }
 }

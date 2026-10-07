@@ -164,9 +164,9 @@ public partial class CharacterGridView : GridView
                 // they're built on the same axis creation techniques.
 
                 bool needsGlyphs =
-                    ForceFontGlyphs
-                    || (ItemFaceAnalysis.Analysis.COLRVersion == 1 && Utils.SupportsColrV1)
-                    || ItemFaceAnalysis.Analysis.HasVariationAxis;
+                    ForceFontGlyphs || (ItemFaceAnalysis is not null &&
+                        ((ItemFaceAnalysis.Analysis.COLRVersion == 1 && Utils.SupportsColrV1)
+                            || ItemFaceAnalysis.Analysis.HasVariationAxis));
 
                 // 1. Unload existing presenter if necessary
                 if (!ForceFontGlyphs && g.Children.Count == 2 && g.Children[0] is FrameworkElement f)
