@@ -1422,10 +1422,7 @@
                                         Click="VariableHintClick"
                                         Style="{StaticResource ChromelessButtonStyle}"
                                         ToolTipService.ToolTip="{core:Localizer Key=LblSwitchToTypeRamp/Text}">
-                                        <FontIcon
-                                            FontSize="13.333"
-                                            Glyph="{core:ThemeIconGlyph Icon=ViewSwitch}"
-                                            Style="{StaticResource ThemeFontIconStyle}" />
+                                        <FontIcon core:Properties.ThemeIcon="VariableAxis" FontSize="13.333" />
                                     </Button>
                                 </controls:InfoBar.SecondaryContent>
                             </controls:InfoBar>

@@ -1,4 +1,4 @@
-﻿using CharacterMap.Controls;
+using CharacterMap.Controls;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
@@ -50,7 +50,7 @@ public partial class PrintViewModel : ViewModelBase
 
     internal CharacterGridViewTemplateSettings GetTemplateSettings()
     {
-        return new CharacterGridViewTemplateSettings
+        return new()
         {
             Size = GlyphSize,
             ShowColorGlyphs = ShowColorGlyphs,

@@ -47,6 +47,9 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
 
     public StyleSimulations StyleSimulation { get; }
 
+    public bool ShouldUseDWriteRendering => 
+        (Analysis.COLRVersion == 1 && Utils.SupportsColrV1) || Analysis.HasVariationAxis;
+
     private Task<Uri> _loadingTask = null;
 
 
@@ -316,7 +319,7 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
         this.face = face;
         Char = c;
         _vm = vm;
-        Analysis = GetCharAnalysis(c, face.Face);
+        Analysis = GetCharAnalysis(c, vm.SelectedFaceAnalysis?.ActiveFace ?? face.Face);
         Variations = TypographyAnalyzer.GetCharacterVariations(face, c);
         IsSvgChar = Analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
         UnihanData = GlyphService.GetUnihanData(c.UnicodeIndex);
@@ -380,9 +383,9 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
         return (hasColorRenderOptions, items);
     }
 
-    public void UpdateAnalysis(TypographyFeatureInfo typography = null)
+    public void UpdateAnalysis(TypographyFeatureInfo typography = null, DWriteFontFace fontFace = null)
     {
-        Analysis = GetCharAnalysis(Char, face.Face, typography);
+        Analysis = GetCharAnalysis(Char, fontFace ?? _vm?.SelectedFaceAnalysis?.ActiveFace ?? face.Face, typography);
         IsSvgChar = Analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
         UpdateGlyphIndices();
     }

@@ -146,8 +146,18 @@ public static class Utils
         }
 
         CharacterRenderingOptions renderOpts = msg.Analysis is not null
-                ? viewModel.RenderingOptions with { Analysis = msg.Analysis, Typography = [viewModel.SelectedTypography.Feature] }
-                : viewModel.RenderingOptions;
+            ? viewModel.RenderingOptions with
+            {
+                Analysis = msg.Analysis,
+                Typography = [viewModel.SelectedTypography.Feature],
+                ActiveFontFace = msg.FaceAnalysis?.ActiveFace ?? viewModel.SelectedFaceAnalysis?.ActiveFace ?? viewModel.RenderingOptions.ActiveFontFace,
+                Axis = msg.FaceAnalysis?.VariationAxis ?? viewModel.SelectedFaceAnalysis?.VariationAxis ?? viewModel.RenderingOptions.Axis
+            }
+            : viewModel.RenderingOptions with
+            {
+                ActiveFontFace = msg.FaceAnalysis?.ActiveFace ?? viewModel.SelectedFaceAnalysis?.ActiveFace ?? viewModel.RenderingOptions.ActiveFontFace,
+                Axis = msg.FaceAnalysis?.VariationAxis ?? viewModel.SelectedFaceAnalysis?.VariationAxis ?? viewModel.RenderingOptions.Axis
+            };
         
         if (msg.DataType == CopyDataType.SVG)
         {

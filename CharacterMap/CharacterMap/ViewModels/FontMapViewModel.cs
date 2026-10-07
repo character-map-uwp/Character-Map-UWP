@@ -12,8 +12,8 @@ public enum FontDisplayMode
 {
     CharacterMapState = 0,
     GlyphMapState = 1,
-    TypeRampState = 2,
-    LigaturesState = 3
+    LigaturesState = 2,
+    TypeRampState = 3
 }
 
 public partial class RampOption : ObservableObject
@@ -38,7 +38,7 @@ public partial class FontMapViewModel : ViewModelBase
 
     private ConcurrencyToken.ConcurrencyTokenGenerator _searchTokenFactory { get; }
 
-    private int[] _rampSizes { get; } = new[] { 12, 18, 24, 48, 72, 96, 110, 134 };
+    private int[] _rampSizes { get; } = [ 12, 18, 24, 48, 72, 96, 110, 134 ];
 
     public StorageFile SourceFile { get => Get<StorageFile>(); set { if (Set(value)) { OnPropertyChanged(nameof(IsInstallable)); } } }
 
@@ -325,7 +325,20 @@ public partial class FontMapViewModel : ViewModelBase
     internal void UpdateVariations()
     {
         SelectedFaceAnalysis?.UpdateVariations();
-        UpdateRampOptions();
+        SelectedChar?.UpdateAnalysis(SelectedCharTypography);
+        if (SelectedFace is not null && SelectedChar is not null)
+            UpdateDevValues();
+        else if (RenderingOptions is not null && SelectedFaceAnalysis is not null)
+        {
+            RenderingOptions = RenderingOptions with
+            {
+                Axis = SelectedFaceAnalysis.VariationAxis,
+                ActiveFontFace = SelectedFaceAnalysis.ActiveFace
+            };
+            UpdateRampOptions();
+        }
+        else
+            UpdateRampOptions();
     }
 
     private void UpdateTypography()
@@ -349,31 +362,27 @@ public partial class FontMapViewModel : ViewModelBase
 
     internal void UpdateDevValues()
     {
-        if (SelectedFace == null || SelectedChar == null)
+        if (SelectedFace is null || SelectedChar is null)
+            return;
+
+        DevProviderType t = SelectedProvider?.Type ?? Settings.SelectedDevProvider;
+
+        RenderingOptions = new CharacterRenderingOptions(
+            SelectedFace,
+            [SelectedCharTypography],
+            64,
+            SelectedChar.Analysis,
+            SelectedFaceAnalysis.VariationAxis)
         {
-            // Do nothing.
-        }
-        else
-        {
-            var t = SelectedProvider?.Type ?? Settings.SelectedDevProvider;
+            ActiveFontFace = SelectedFaceAnalysis.ActiveFace
+        };
 
-            RenderingOptions = new CharacterRenderingOptions(
-                SelectedFace,
-                new() { SelectedCharTypography },
-                64,
-                SelectedChar.Analysis,
-                SelectedFaceAnalysis.VariationAxis)
-            {
-                ActiveFontFace = SelectedFaceAnalysis.ActiveFace
-            };
+        UpdateRampOptions();
 
-            UpdateRampOptions();
+        Providers = RenderingOptions.GetDevProviders(SelectedChar.Char);
+        SetDev(t);
 
-            Providers = RenderingOptions.GetDevProviders(SelectedChar.Char);
-            SetDev(t);
-
-            XamlPath = $"{SelectedFace.FileName}#{SelectedFace.FamilyName}";
-        }
+        XamlPath = $"{SelectedFace.FileName}#{SelectedFace.FamilyName}";
     }
 
     public void UpdateRampOptions()
@@ -383,8 +392,12 @@ public partial class FontMapViewModel : ViewModelBase
 
         //SelectedFaceAnalysis?.UpdateRampOptions();
 
-        var ops = RenderingOptions with { Axis = SelectedFaceAnalysis.VariationAxis };
-        foreach (var ramp in Ramps)
+        CharacterRenderingOptions ops = RenderingOptions with
+        {
+            Axis = SelectedFaceAnalysis.VariationAxis,
+            ActiveFontFace = SelectedFaceAnalysis.ActiveFace
+        };
+        foreach (RampOption ramp in Ramps)
             ramp.Option = ops;
     }
 
@@ -491,7 +504,13 @@ public partial class FontMapViewModel : ViewModelBase
             new(format, args.Style)
             {
                 Font = SelectedFont.Font,
-                Options = RenderingOptions with { Analysis = analysis, Typography = new List<TypographyFeatureInfo>() { args.Typography } }
+                Options = RenderingOptions with
+                {
+                    Analysis = analysis,
+                    Typography = [args.Typography],
+                    ActiveFontFace = SelectedFaceAnalysis?.ActiveFace ?? RenderingOptions.ActiveFontFace,
+                    Axis = SelectedFaceAnalysis?.VariationAxis ?? RenderingOptions.Axis
+                }
             },
             character);
 

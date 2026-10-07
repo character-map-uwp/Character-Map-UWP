@@ -1195,7 +1195,8 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void VariableHintClick(object sender, RoutedEventArgs e)
     {
-        ViewSelector.TryFocusOn(2, FocusState.Keyboard);
+        VariationsButton.Focus(FocusState.Keyboard);
+        //ViewSelector.TryFocusOn(2, FocusState.Keyboard);
     }
 
     private void FilterHint_Click(object sender, RoutedEventArgs e)
