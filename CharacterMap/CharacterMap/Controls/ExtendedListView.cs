@@ -439,8 +439,13 @@ public partial class ExtendedGridView : ExtendedListView
     {
         FrameworkElement f = (FrameworkElement)base.GetContainerForItemOverride();
 
-        if (_isAdaptive && this.ItemsPanelRoot is not ItemsWrapGrid)
-            f.Width = RenderedItemWidth;
+        if (_isAdaptive)
+        {
+            if (ItemsPanelRoot is ItemsWrapGrid w)
+                w.ItemWidth = RenderedItemWidth + _itemMargin.Left + _itemMargin.Right;
+            else
+                f.Width = RenderedItemWidth;
+        }
 
         return f;
     }
@@ -505,9 +510,11 @@ public partial class ExtendedGridView : ExtendedListView
         }
     }
 
+    Debouncer _layoutBouncer = new(16);
+
     private void ItemsOnVectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs @event)
     {
-        RecalculateLayout(ActualWidth);
+        _layoutBouncer.Debounce(() => RecalculateLayout(ActualWidth));
     }
 
     bool _needContainerMarginForLayout = false;

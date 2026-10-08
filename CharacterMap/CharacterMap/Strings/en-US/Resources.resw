@@ -2935,7 +2935,7 @@ Not all fonts present typographic variants as mapped characters.</value>
     <value>Contains {0} glyphs mapped to {1} characters</value>
   </data>
   <data name="FaceVariationsDescription.Title" xml:space="preserve">
-    <value>OpenType Font Variation Axis</value>
+    <value>Variable Font Axis</value>
   </data>
   <data name="FaceVariationsDescription.Description" xml:space="preserve">
     <value>Adjust the OpenType Font Variation axis for a face.
