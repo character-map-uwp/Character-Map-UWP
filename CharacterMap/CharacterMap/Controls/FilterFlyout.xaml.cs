@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Collections;
+using System.Windows.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -6,10 +7,11 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls;
 
+[DependencyProperty<bool>("IsStandalone")]
 [DependencyProperty<ICommand>("FilterCommand")]
 [DependencyProperty<ICommand>("CollectionSelectedCommand")]
 [AttachedProperty<FrameworkElement>("UnicodeRangeSortHeader")]
-public sealed partial class FilterFlyout : MenuFlyout
+public sealed partial class FilterFlyout : MenuFlyout, IEnumerable<MenuFlyoutItemBase>
 {
     private int _defaultCount = 0;
 
@@ -17,6 +19,8 @@ public sealed partial class FilterFlyout : MenuFlyout
     private MenuFlyoutItemBase _remoteOption = null;
     private MenuFlyoutItemBase _appxOption = null;
     private MenuFlyoutSeparator _fontSep = null;
+    private MenuFlyoutSeparator _importSep = null;
+    private MenuFlyoutItemBase _importOption = null;
 
     private MenuFlyoutSubItem _ops = null;
 
@@ -26,6 +30,12 @@ public sealed partial class FilterFlyout : MenuFlyout
     {
         this.InitializeComponent();
         Create();
+        this.Opening += FilterFlyout_Opening;
+    }
+
+    private void FilterFlyout_Opening(object sender, object e)
+    {
+        OnOpening();
     }
 
     private void Create()
@@ -147,13 +157,15 @@ public sealed partial class FilterFlyout : MenuFlyout
         _ops.Items.Add(_appxOption);
 
         // 4. Imported fonts
-        this.AddSeparator();
-        Add(BasicFontFilter.ImportedFonts);
+        MenuItemHost menu = new MenuItemHost(this);
+        _importSep = AddSep1(menu);
+        _importOption = Create(BasicFontFilter.ImportedFonts);
+        menu.Items.Add(_importOption);
 
         _defaultCount = Items.Count;
 
         if (AllFilters is null)
-             AllFilters = AllMenuItems().Where(c => Properties.GetFilter(c) is not null)
+             AllFilters = this.Where(c => Properties.GetFilter(c) is not null)
                 .Select(c => Properties.GetFilter(c))
                 .ToList().AsReadOnly();
 
@@ -166,6 +178,13 @@ public sealed partial class FilterFlyout : MenuFlyout
         }
 
         static MenuFlyoutSeparator AddSep(MenuFlyoutSubItem menu)
+        {
+            MenuFlyoutSeparator s = new();
+            menu.Items.Add(s);
+            return s;
+        }
+
+        static MenuFlyoutSeparator AddSep1(MenuItemHost menu)
         {
             MenuFlyoutSeparator s = new();
             menu.Items.Add(s);
@@ -199,7 +218,82 @@ public sealed partial class FilterFlyout : MenuFlyout
         #endregion
     }
 
-    public IEnumerable<MenuFlyoutItemBase> AllMenuItems()
+    private void OnOpening()
+    {
+        this.AreOpenCloseAnimationsEnabled = ResourceHelper.AllowAnimation;
+        var collections = Ioc.Default.GetService<UserCollectionsService>().All;
+        Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
+
+        // Reset to default menu
+        while (Items.Count > _defaultCount)
+            Items.RemoveAt(_defaultCount);
+
+        // force menu width to match the source button
+        foreach (var sep in Items.OfType<MenuFlyoutSeparator>())
+            sep.MinWidth = this.Target.ActualWidth;
+
+        // add users collections 
+        if (IsStandalone is false && collections.Count > 0)
+        {
+            Items.Add(new MenuFlyoutSeparator());
+            foreach (var item in collections)
+            {
+                MenuFlyoutItem m = new() { DataContext = item, Text = item.Name, Style = style };
+                Properties.SetIconString(m, item.Icon);
+                m.Click += (s, a) =>
+                {
+                    if (m.DataContext is IFontCollection u)
+                        CollectionSelectedCommand?.Execute(u);
+                };
+                Items.Add(m);
+            }
+        }
+
+        // Only show variable fonts filter in applicable
+        _variableOption.SetVisible(FontFinder.HasVariableFonts);
+
+        // Only show APPX/Remote (cloud) fonts if applicable
+        if (!FontFinder.HasAppxFonts && !FontFinder.HasRemoteFonts)
+        {
+            _fontSep.Visibility = _remoteOption.Visibility = _appxOption.Visibility = Visibility.Collapsed;
+        }
+        else
+        {
+            _fontSep.Visibility = Visibility.Visible;
+            _remoteOption.SetVisible(FontFinder.HasRemoteFonts);
+            _appxOption.SetVisible(FontFinder.HasAppxFonts);
+        }
+
+        _importSep.SetVisible(IsStandalone is false);
+        _importOption.SetVisible(IsStandalone is false);
+
+        var size = ResourceHelper.Get<double>("FontListFlyoutFontSize");
+        var height = ResourceHelper.Get<double>("FontListFlyoutHeight");
+        foreach (var item in Items)
+            SetCommand(item, FilterCommand, size, height);
+
+
+        // HELPER METHODS
+        static void SetCommand(
+                MenuFlyoutItemBase b, ICommand c, double fontSize, double height)
+        {
+            b.FontSize = fontSize;
+            if (b is not MenuFlyoutSeparator && height > 0)
+                b.Height = 40;
+
+            if (b is MenuFlyoutSubItem i)
+            {
+                foreach (var child in i.Items)
+                    SetCommand(child, c, fontSize, height);
+            }
+            else if (b is MenuFlyoutItem m)
+            {
+                m.Command = c;
+            }
+        }
+    }
+
+    public IEnumerator<MenuFlyoutItemBase> GetEnumerator()
     {
         var start = this;
 
@@ -218,74 +312,8 @@ public sealed partial class FilterFlyout : MenuFlyout
         }
     }
 
-    private void MenuFlyout_Opening(object sender, object e)
+    IEnumerator IEnumerable.GetEnumerator()
     {
-        this.AreOpenCloseAnimationsEnabled = ResourceHelper.AllowAnimation;
-        var collections = Ioc.Default.GetService<UserCollectionsService>().All;
-        Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
-
-        // Reset to default menu
-        while (Items.Count > _defaultCount)
-            Items.RemoveAt(_defaultCount);
-
-        // force menu width to match the source button
-        foreach (var sep in Items.OfType<MenuFlyoutSeparator>())
-            sep.MinWidth = this.Target.ActualWidth;
-
-        // add users collections 
-        if (collections.Count > 0)
-        {
-            Items.Add(new MenuFlyoutSeparator());
-            foreach (var item in collections)
-            {
-                MenuFlyoutItem m = new() { DataContext = item, Text = item.Name, Style = style };
-                Properties.SetIconString(m, item.Icon);
-                m.Click += (s, a) =>
-                {
-                    if (m.DataContext is IFontCollection u)
-                        CollectionSelectedCommand?.Execute(u);
-                };
-                Items.Add(m);
-            }
-        }
-
-        _variableOption.SetVisible(FontFinder.HasVariableFonts);
-
-        if (!FontFinder.HasAppxFonts && !FontFinder.HasRemoteFonts)
-        {
-            _fontSep.Visibility = _remoteOption.Visibility = _appxOption.Visibility = Visibility.Collapsed;
-        }
-        else
-        {
-            _fontSep.Visibility = Visibility.Visible;
-            _remoteOption.SetVisible(FontFinder.HasRemoteFonts);
-            _appxOption.SetVisible(FontFinder.HasAppxFonts);
-        }
-
-        var size = ResourceHelper.Get<double>("FontListFlyoutFontSize");
-        var height = ResourceHelper.Get<double>("FontListFlyoutHeight");
-        foreach (var item in Items)
-            SetCommand(item, FilterCommand, size, height);
-
-
-        // HELPER METHODS
-
-        static void SetCommand(
-                MenuFlyoutItemBase b, ICommand c, double fontSize, double height)
-        {
-            b.FontSize = fontSize;
-            if (b is not MenuFlyoutSeparator && height > 0)
-                b.Height = 40;
-
-            if (b is MenuFlyoutSubItem i)
-            {
-                foreach (var child in i.Items)
-                    SetCommand(child, c, fontSize, height);
-            }
-            else if (b is MenuFlyoutItem m)
-            {
-                m.Command = c;
-            }
-        }
+        return GetEnumerator();
     }
 }

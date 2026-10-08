@@ -2926,7 +2926,7 @@ Not all fonts present typographic variants as mapped characters.</value>
     <value>View {0} in Glyph Map</value>
   </data>
   <data name="LigatureMapDescription.Title" xml:space="preserve">
-    <value>Ligatures</value>
+    <value>Ligature Map</value>
   </data>
   <data name="LigatureMapDescription.Description" xml:space="preserve">
     <value>View the ligature combinations supported by the Font Face and their component makeup </value>
@@ -2941,5 +2941,8 @@ Not all fonts present typographic variants as mapped characters.</value>
     <value>Adjust the OpenType Font Variation axis for a face.
 
 Variations cannot be copied as text, but can be exported as PNG or SVG.</value>
+  </data>
+  <data name="AllColorTitle.Text" xml:space="preserve">
+    <value>All Color Fonts</value>
   </data>
 </root>

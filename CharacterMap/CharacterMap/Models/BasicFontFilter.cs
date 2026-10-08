@@ -159,7 +159,7 @@ public partial class BasicFontFilter
 
     public static BasicFontFilter AllColor { get; }
        = new((f, c) => f.Where(v => v.DefaultVariant.DirectWriteProperties.IsColorFont),
-               Localization.Get("All/Text"));
+               Localization.Get("All/Text"), Localization.Get("AllColorTitle/Text"));
 
     public static BasicFontFilter COLRV0 { get; }
        = new((f, c) => f.Where(v => v.Variants.Any(v => v.ContainsCOLRV0Glyphs)),

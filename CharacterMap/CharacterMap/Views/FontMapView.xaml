@@ -794,7 +794,7 @@
                         <FontIcon.Tag>
                             <views:TitledDescription x:Uid="GlyphMapDescription" />
                         </FontIcon.Tag>
-                    </FontIcon> 
+                    </FontIcon>
                     <FontIcon core:Properties.ThemeIcon="LigatureMapView">
                         <FontIcon.Tag>
                             <views:TitledDescription x:Uid="LigatureMapDescription" />
@@ -805,7 +805,7 @@
                             <views:TitledDescription x:Uid="TypeRampDescription" />
                         </FontIcon.Tag>
                     </FontIcon>
-                   
+
                 </controls:UXRadioButtons>
 
                 <Border Grid.Column="1" Style="{StaticResource ControlSurfaceBorderStyle}">

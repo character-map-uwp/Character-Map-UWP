@@ -166,7 +166,7 @@ public partial class InkStrokeManager : ObservableObject
 
     private Stack<InkActionBase> _redoStack { get; } = new();
     private Stack<InkActionBase> _undoStack { get; } = new();
-    private HashSet<InkStrokeReference> _strokeSet { get; } = new HashSet<InkStrokeReference>();
+    private HashSet<InkStrokeReference> _strokeSet { get; } = new();
 
     private InkStrokeContainer _container;
 
