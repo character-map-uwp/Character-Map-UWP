@@ -326,6 +326,7 @@ public partial class FontMapViewModel : ViewModelBase
     {
         SelectedFaceAnalysis?.UpdateVariations();
         SelectedChar?.UpdateAnalysis(SelectedCharTypography);
+
         if (SelectedFace is not null && SelectedChar is not null)
             UpdateDevValues();
         else if (RenderingOptions is not null && SelectedFaceAnalysis is not null)

@@ -1006,6 +1006,11 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void Slider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
     {
+        // ValueChanged fires BEFORE the x:Bind TwoWay setter itself (it is called by ValueChanged AFTER this handler)
+        // so we need to manually push the new value to the source axis for UpdateVariations to work correctly.
+        if (sender is FrameworkElement { DataContext: DWriteFontAxis axis })
+            axis.Value = (float)e.NewValue;
+
         CompositionFactory.SetWithoutReposition(TxtPreview, _resizerBouncer, ViewModel.UpdateVariations);
         MarkStale();
     }
@@ -1323,7 +1328,12 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         _staleDeboucner.Cancel();
 
         if (m_stale && (state ?? MapDisplayStates.CurrentState) == CharacterMapState)
+        {
+            CharGrid.ItemFontFace = ViewModel?.SelectedFaceAnalysis?.ActiveFace;
             CharGrid.UpdateFontFace();
+            m_stale = false;
+        }
+
     }
 
     void ToModel(object c)

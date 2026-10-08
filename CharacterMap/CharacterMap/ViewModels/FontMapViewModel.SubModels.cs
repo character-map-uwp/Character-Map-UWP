@@ -98,16 +98,17 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
             Analysis?.Axis?.Where(a => (a.Attribute & DWriteFontAxisAttribute.Variable) != 0).ToList()
             ?? [];
 
-        if (VariationAxis is not null && VariationAxis.Count > 0)
+        if (VariationAxis is { Count: > 0 })
         {
             var old = ActiveFace;
+
             ActiveFace = Face.Face.CreateVariant(VariationAxis);
 
             if (old is { IsVariant: true})
                 old.ReleaseResources();
         }
         else
-        ActiveFace = Face.Face;
+            ActiveFace = Face.Face;
     }
 
     public void UpdateRampOptions()

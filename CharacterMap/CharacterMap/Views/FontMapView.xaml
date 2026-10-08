@@ -148,11 +148,12 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
+                <!-- x:Bind on Min & Max breaks sliders in Flyout -->
                 <Slider
                     x:Name="AxisSlider"
                     Grid.Column="1"
-                    Maximum="{x:Bind Maximum}"
-                    Minimum="{x:Bind Minimum}"
+                    Maximum="{Binding Maximum, Mode=OneTime}"
+                    Minimum="{Binding Minimum, Mode=OneTime}"
                     SmallChange="0.1"
                     StepFrequency="0.1"
                     Style="{StaticResource DefaultThemeSliderStyle}"
@@ -169,6 +170,7 @@
                             <FontIcon
                                 x:Name="Hidden"
                                 x:Load="{x:Bind IsHidden}"
+                                ToolTipService.ToolTip="Hidden Axis - not intended for end-user control"
                                 Margin="0 2 0 -6"
                                 core:Properties.ThemeIcon="Hidden"
                                 FontSize="12"
