@@ -54,45 +54,16 @@ FontGlyphs::FontGlyphs()
 {
     m_unloadedToken.Value = 0;
     EnsureDependencyProperties();
+
+    auto c = ref new DependencyPropertyChangedCallback(this, &FontGlyphs::OnInstancePropChanged);
+    this->RegisterPropertyChangedCallback(FontGlyphs::ActualThemeProperty, c);
 }
 
-/*
- * Releases the native CompositionDrawingSurface and disconnects it from
- * the surface brush before calling delete (IClosable::Close) so the DWM
- * compositor immediately reclaims the DirectX surface texture.
- */
-void FontGlyphs::ReleaseDrawingSurface()
+void FontGlyphs::OnInstancePropChanged(DependencyObject^ d, DependencyProperty^ p)
 {
-    try
-    {
-        if (m_drawingSurface != nullptr)
-        {
-            // Always clear the brush's surface reference — this is the compositor-side
-            // handle that keeps the underlying DX texture alive. We can safely do this
-            // from any thread; it is a WinRT property assignment, not a destructor.
-            if (m_surfaceBrush != nullptr)
-                m_surfaceBrush->Surface = nullptr;
-
-            // Only call delete (IClosable::Close) on the UI thread, as the compositor
-            // requires it. If we're not on the UI thread the texture ref is already
-            // dropped above; the compositor will release it when the surface object
-            // is eventually GC'd or the next Trim() call fires.
-            if (!m_isUsingSharedAtlas
-                && Dispatcher != nullptr
-                && Dispatcher->HasThreadAccess)
-            {
-                delete m_drawingSurface;
-            }
-        }
-    }
-    catch (...)
-    {
-    }
-
-    m_isUsingSharedAtlas = false;
-    m_drawingSurface = nullptr;
-    m_renderedWidth = 0;
-    m_renderedHeight = 0;
+    FontGlyphs^ glyphs = (FontGlyphs^)d;
+    glyphs->UpdateForground();
+    
 }
 
 FontGlyphs::~FontGlyphs()
@@ -141,20 +112,6 @@ FontGlyphs::~FontGlyphs()
     m_colorBrush = nullptr;
 }
 
-void FontGlyphs::Trim()
-{
-    CompositionDeviceManager::Trim();
-}
-
-void FontGlyphs::ReleaseGraphicsDevice(Compositor^ compositor)
-{
-    CompositionDeviceManager::ReleaseGraphicsDevice(compositor);
-}
-
-void FontGlyphs::ClearAtlases(Compositor^ compositor)
-{
-    CompositionDeviceManager::ClearAtlases(compositor);
-}
 
 void FontGlyphs::EnsureDependencyProperties()
 {
@@ -209,6 +166,61 @@ void FontGlyphs::OnUnloaded(Platform::Object^ sender, RoutedEventArgs^ e)
      * structure here to avoid tearing down and reallocating visuals on every scroll frame.
      * Full teardown occurs in ~FontGlyphs() when the container is truly disposed.
      */
+}
+
+
+void FontGlyphs::Trim()
+{
+    CompositionDeviceManager::Trim();
+}
+
+void FontGlyphs::ReleaseGraphicsDevice(Compositor^ compositor)
+{
+    CompositionDeviceManager::ReleaseGraphicsDevice(compositor);
+}
+
+void FontGlyphs::ClearAtlases(Compositor^ compositor)
+{
+    CompositionDeviceManager::ClearAtlases(compositor);
+}
+
+/*
+ * Releases the native CompositionDrawingSurface and disconnects it from
+ * the surface brush before calling delete (IClosable::Close) so the DWM
+ * compositor immediately reclaims the DirectX surface texture.
+ */
+void FontGlyphs::ReleaseDrawingSurface()
+{
+    try
+    {
+        if (m_drawingSurface != nullptr)
+        {
+            // Always clear the brush's surface reference — this is the compositor-side
+            // handle that keeps the underlying DX texture alive. We can safely do this
+            // from any thread; it is a WinRT property assignment, not a destructor.
+            if (m_surfaceBrush != nullptr)
+                m_surfaceBrush->Surface = nullptr;
+
+            // Only call delete (IClosable::Close) on the UI thread, as the compositor
+            // requires it. If we're not on the UI thread the texture ref is already
+            // dropped above; the compositor will release it when the surface object
+            // is eventually GC'd or the next Trim() call fires.
+            if (!m_isUsingSharedAtlas
+                && Dispatcher != nullptr
+                && Dispatcher->HasThreadAccess)
+            {
+                delete m_drawingSurface;
+            }
+        }
+    }
+    catch (...)
+    {
+    }
+
+    m_isUsingSharedAtlas = false;
+    m_drawingSurface = nullptr;
+    m_renderedWidth = 0;
+    m_renderedHeight = 0;
 }
 
 Windows::UI::Color FontGlyphs::GetForegroundColor()
@@ -269,19 +281,25 @@ void FontGlyphs::OnFontSizeChanged(DependencyObject^ d, DependencyPropertyChange
 void FontGlyphs::OnForegroundChanged(DependencyObject^ d, DependencyPropertyChangedEventArgs^ e)
 {
     auto glyphs = (FontGlyphs^)d;
+    glyphs->UpdateForground();
+}
 
-    if (glyphs->m_maskBrush != nullptr && glyphs->m_colorBrush != nullptr)
+
+
+void FontGlyphs::UpdateForground()
+{
+    if (m_maskBrush != nullptr && m_colorBrush != nullptr)
     {
-        auto visual = ElementCompositionPreview::GetElementVisual(glyphs);
+        auto visual = ElementCompositionPreview::GetElementVisual(this);
         if (visual != nullptr)
         {
-            glyphs->m_colorBrush = CompositionDeviceManager::GetColorBrush(visual->Compositor, glyphs->GetForegroundColor());
-            glyphs->m_maskBrush->Source = glyphs->m_colorBrush;
+            m_colorBrush = CompositionDeviceManager::GetColorBrush(visual->Compositor, GetForegroundColor());
+            m_maskBrush->Source = m_colorBrush;
             return;
         }
     }
 
-    glyphs->InvalidateRenderOnly();
+    InvalidateRenderOnly();
 }
 
 void FontGlyphs::InvalidateLayoutAndRender()

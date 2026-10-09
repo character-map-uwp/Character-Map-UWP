@@ -171,6 +171,9 @@ namespace CharacterMapCX
             static void OnFontSizeChanged(Windows::UI::Xaml::DependencyObject^ d, Windows::UI::Xaml::DependencyPropertyChangedEventArgs^ e);
             static void OnForegroundChanged(Windows::UI::Xaml::DependencyObject^ d, Windows::UI::Xaml::DependencyPropertyChangedEventArgs^ e);
 
+            void OnInstancePropChanged(DependencyObject^ d, DependencyProperty^ p);
+            void UpdateForground();
+
             void InvalidateRenderOnly();
             void ParseAndLayoutGlyphs();
             Windows::Foundation::Size ComputeScaleFactor(Windows::Foundation::Size availableSize, Windows::Foundation::Size contentSize);

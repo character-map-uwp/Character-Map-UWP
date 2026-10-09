@@ -126,6 +126,17 @@ public partial class CharacterGridView : GridView
         this.ChoosingItemContainer += OnChoosingItemContainer;
         this.Loaded += ExtendedListView_Loaded;
         this.Unloaded += ExtendedListView_Unloaded;
+
+        this.RegisterPropertyChangedCallback(ForegroundProperty, OnForegroundChanged);
+    }
+
+    private void OnForegroundChanged(DependencyObject sender, DP dp)
+    {
+        if (sender is CharacterGridView g)
+        {
+            if (ReadLocalValue(ForegroundProperty) is Brush b)
+                UpdateForeground(b);
+        }
     }
 
     private void ExtendedListView_Loaded(object sender, RoutedEventArgs e)
@@ -528,7 +539,10 @@ public partial class CharacterGridView : GridView
 #else
         {
             XamlDirectWrapper o = _xamlDirect.GetWrapperForChild((Panel)container, 0);
-            SetGlyphProperties(o, _templateSettings, c, this.Foreground);
+            Brush brush = null;
+            if (this.ReadLocalValue(ForegroundProperty) is Brush b)
+                brush = b;
+            SetGlyphProperties(o, _templateSettings, c, brush);
         }
 #endif
 
@@ -564,8 +578,11 @@ public partial class CharacterGridView : GridView
             g.FontFace = templateSettings.FontFace;
             g.IsColorFontEnabled = templateSettings.ShowColorGlyphs;
             g.UnicodeString = c.Char;
-            g.Foreground = foreground ?? brush;
             g.Typography = templateSettings.TypographyCollection;
+
+            if (foreground != null)
+                g.Foreground = foreground;
+            // else clear value, we don't care right now.
         }
         else
         {
@@ -613,6 +630,25 @@ public partial class CharacterGridView : GridView
     {
         DWriteTypographyFeatureName f = info == null ? DWriteTypographyFeatureName.None : info.Feature;
         TypographySetter.SetTypography(o, f, xamlDirect);
+    }
+
+
+
+    private void UpdateForeground(Brush brush)
+    {
+        if (this.GetActiveContainers() is not { } items || brush is null)
+            return;
+
+        foreach (var item in items)
+        {
+            if (item.ContentTemplateRoot is Panel p)
+            {
+                XamlDirectWrapper o = _xamlDirect.GetWrapperForChild(p, 0);
+
+                if (o.Source is FontGlyphs g)
+                    g.Foreground = brush;
+            }
+        }
     }
 
     void UpdateColorsFonts(bool value)

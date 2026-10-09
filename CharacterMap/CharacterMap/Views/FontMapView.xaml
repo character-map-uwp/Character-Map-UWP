@@ -1514,7 +1514,8 @@
                                 <cxc:FontGlyphs
                                     x:Name="Glyph"
                                     x:Load="False"
-                                    Margin="0 -2 0 8" />
+                                    Margin="0 -2 0 8"
+                                    Foreground="{ThemeResource ApplicationForegroundThemeBrush}" />
                                 <TextBlock Style="{StaticResource CharItemUnicodeStyle}" />
                             </Grid>
                         </DataTemplate>
