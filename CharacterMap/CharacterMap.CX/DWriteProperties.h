@@ -20,7 +20,7 @@ namespace CharacterMapCX
 			return ref new DWriteProperties(DWriteFontSource::PerMachine, nullptr, "Segoe UI", "Regular", false);
 		}
 
-		property DWriteFontSimulations Simulations { DWriteFontSimulations get() { return m_simulations; } }
+		property Windows::UI::Xaml::Media::StyleSimulations Simulations { Windows::UI::Xaml::Media::StyleSimulations get() { return m_simulations; } }
 
 		property bool IsSimulated { bool get() { return m_isSimulated; } }
 
@@ -122,8 +122,8 @@ namespace CharacterMapCX
 			m_familyName = familyName;
 			m_faceName = faceName;
 
-			m_simulations = static_cast<DWriteFontSimulations>(font->GetSimulations());
-			m_isSimulated = m_simulations != DWriteFontSimulations::None;
+			m_simulations = ToStyleSimulations(font->GetSimulations());
+			m_isSimulated = m_simulations != Windows::UI::Xaml::Media::StyleSimulations::None;
 		}
 
 		DWriteProperties(DWriteFontSource source, String^ remoteSource, String^ familyName, String^ faceName, bool isColor, bool hasVariations)
@@ -233,7 +233,7 @@ namespace CharacterMapCX
 		FontWeight m_weight;
 		FontStyle m_style = FontStyle::Normal;
 		FontStretch m_stretch = FontStretch::Normal;
-		DWriteFontSimulations m_simulations = DWriteFontSimulations::None;
+		Windows::UI::Xaml::Media::StyleSimulations m_simulations = Windows::UI::Xaml::Media::StyleSimulations::None;
 
 		bool m_loadedVariations = false;
 		bool m_loadedRemote = false;

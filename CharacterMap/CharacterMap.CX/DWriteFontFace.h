@@ -83,6 +83,12 @@ namespace CharacterMapCX
 		void* m_context = nullptr;
 	};
 
+
+
+
+
+
+
 	public ref class DWriteFontFace sealed
 	{
 	public:
@@ -416,7 +422,7 @@ namespace CharacterMapCX
 		}
 
 
-		DWriteFontFace^ CreateVariant(IVectorView<DWriteFontAxis^>^ axis)
+		DWriteFontFace^ CreateVariant(Windows::UI::Xaml::Media::StyleSimulations simulation, IVectorView<DWriteFontAxis^>^ axis)
 		{
 			if (axis == nullptr || axis->Size == 0)
 				return this;
@@ -440,7 +446,7 @@ namespace CharacterMapCX
 
 			ComPtr<IDWriteFontFace5> face5_var;
 			if (FAILED(resource->CreateFontFace(
-				DWRITE_FONT_SIMULATIONS_NONE,
+				ToDWriteFontSimulations(simulation),
 				values.data(),
 				static_cast<UINT32>(values.size()),
 				&face5_var)) || face5_var == nullptr)

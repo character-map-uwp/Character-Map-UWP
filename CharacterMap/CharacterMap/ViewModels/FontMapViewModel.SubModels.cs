@@ -61,10 +61,11 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
 
         Face = face;
         Analysis = TypographyAnalyzer.Analyze(this);
+        StyleSimulation = face.DirectWriteProperties.Simulations;
 
         if (loadFull is false)
         {
-            ActiveFace = face.Face;
+            UpdateActiveFace();
             return;
         }
 
@@ -73,23 +74,6 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
         HasFontOptions = Analysis.ContainsVectorColorGlyphs || face.HasXamlTypographyFeatures;
         UpdateVariations();
         UpdateRampOptions();
-
-        if (face.DirectWriteProperties.IsSimulated)
-        {
-            bool oblique = face.DirectWriteProperties.Style is Windows.UI.Text.FontStyle.Italic or Windows.UI.Text.FontStyle.Oblique;
-            bool bold = face.DirectWriteProperties.Weight.Weight > 500;
-
-            if (oblique && bold)
-                StyleSimulation = StyleSimulations.BoldItalicSimulation;
-            else if (oblique)
-                StyleSimulation = StyleSimulations.ItalicSimulation;
-            else if (bold)
-                StyleSimulation = StyleSimulations.BoldSimulation;
-            else
-                StyleSimulation = StyleSimulations.None;
-        }
-        else
-            StyleSimulation = StyleSimulations.None;
     }
 
     public void UpdateVariations()
@@ -98,13 +82,18 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
             Analysis?.Axis?.Where(a => (a.Attribute & DWriteFontAxisAttribute.Variable) != 0).ToList()
             ?? [];
 
-        if (VariationAxis is { Count: > 0 })
+        UpdateActiveFace();
+    }
+
+    public void UpdateActiveFace()
+    {
+        if (VariationAxis is { Count: > 0 } || StyleSimulation != StyleSimulations.None)
         {
             var old = ActiveFace;
 
-            ActiveFace = Face.Face.CreateVariant(VariationAxis);
+            ActiveFace = Face.Face.CreateVariant(StyleSimulation, VariationAxis);
 
-            if (old is { IsVariant: true})
+            if (old is { IsVariant: true })
                 old.ReleaseResources();
         }
         else

@@ -466,6 +466,7 @@ bool CompositionDeviceManager::RenderGlyphToSurface(
     const std::vector<FLOAT>& glyphAdvances,
     const std::vector<DWRITE_GLYPH_OFFSET>& glyphOffsets,
     Windows::UI::Xaml::Media::Brush^ foreground,
+    Windows::UI::Xaml::Media::StyleSimulations simulations,
     LONG requiredWidth, LONG requiredHeight)
 {
     if (surface == nullptr || rawFace == nullptr || glyphIndices.empty() || requiredWidth <= 0 || requiredHeight <= 0)

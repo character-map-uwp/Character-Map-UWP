@@ -85,6 +85,7 @@ namespace CharacterMapCX
             const std::vector<FLOAT>& glyphAdvances,
             const std::vector<DWRITE_GLYPH_OFFSET>& glyphOffsets,
             Windows::UI::Xaml::Media::Brush^ foreground,
+            Windows::UI::Xaml::Media::StyleSimulations simulations,
             LONG requiredWidth, LONG requiredHeight);
 
     private:

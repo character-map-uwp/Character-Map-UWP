@@ -1024,6 +1024,7 @@ void FontGlyphs::RenderGlyphs()
         dpiScale != 1.0f ? scaledAdvances : m_glyphAdvances,
         dpiScale != 1.0f ? scaledOffsets : m_glyphOffsets,
         Foreground,
+        StyleSimulations,
         requiredWidth,
         requiredHeight);
 
