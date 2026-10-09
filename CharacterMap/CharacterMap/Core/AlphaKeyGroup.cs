@@ -4,36 +4,51 @@ namespace CharacterMap.Core;
 
 public class AlphaKeyGroup<T> : ObservableCollection<T>
 {
-    public string Key { get; private set; }
+    private static readonly string[] AlphaKeys =
+        ["#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "&"];
+
+    private static CharacterGroupings s_groupings;
+    private static CharacterGroupings Groupings => s_groupings ??= new();
+
+    public string Key { get; }
 
     public AlphaKeyGroup(string key)
     {
         Key = key;
     }
 
-    // Work around for Chinese version of Windows
-    // By default, Chinese language group will create useless "拼音A-Z" groups.
-    private static List<AlphaKeyGroup<T>> CreateAZGroups()
+    public AlphaKeyGroup(string key, List<T> items) : base(items)
     {
-        char[] alpha = "#ABCDEFGHIJKLMNOPQRSTUVWXYZ&".ToCharArray();
-        var list = alpha.Select(c => new AlphaKeyGroup<T>(c.ToString())).ToList();
-        return list;
+        Key = key;
     }
 
     public static List<AlphaKeyGroup<T>> CreateGroups(IEnumerable<T> items, Func<T, string> keySelector)
     {
-        CharacterGroupings slg = new();
-        List<AlphaKeyGroup<T>> list = CreateAZGroups(); //CreateDefaultGroups(slg);
+        CharacterGroupings slg = Groupings;
+        Dictionary<string, List<T>> map = new(28, StringComparer.CurrentCulture);
+        List<T> fallback = [];
+
+        foreach (string key in AlphaKeys)
+        {
+            List<T> bucket = [];
+            map[key] = bucket;
+            if (key == "&")
+                fallback = bucket;
+        }
+
         foreach (T item in items)
         {
-            int index = 0;
             string label = slg.Lookup(keySelector(item));
-            index = list.FindIndex(alphagroupkey => (alphagroupkey.Key.Equals(label, StringComparison.CurrentCulture)));
-            if (index > -1 && index < list.Count)
-                list[index].Add(item);
+            if (map.TryGetValue(label, out List<T> bucket))
+                bucket.Add(item);
             else
-                list.Last().Add(item);
+                fallback.Add(item);
         }
-        return list;
+
+        List<AlphaKeyGroup<T>> result = new(28);
+        foreach (string key in AlphaKeys)
+            result.Add(new(key, map[key]));
+
+        return result;
     }
 }

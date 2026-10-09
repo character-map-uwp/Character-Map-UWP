@@ -20,6 +20,7 @@ public partial class FontItem : ObservableObject
     [NotifyPropertyChangedFor(nameof(IsTypeRamp))]
     [NotifyPropertyChangedFor(nameof(IsGlyphMap))]
     [NotifyPropertyChangedFor(nameof(IsCharMap))]
+    [NotifyPropertyChangedFor(nameof(IsLigatures))]
     [NotifyPropertyChangedFor(nameof(Index))]
     private FontDisplayMode _displayMode = FontDisplayMode.CharacterMapState;
 
@@ -33,6 +34,8 @@ public partial class FontItem : ObservableObject
     public bool IsTypeRamp => DisplayMode == FontDisplayMode.TypeRampState;
 
     public bool IsGlyphMap => DisplayMode == FontDisplayMode.GlyphMapState;
+
+    public bool IsLigatures => DisplayMode == FontDisplayMode.LigaturesState;
 
     public int Index => (int)_displayMode;
 

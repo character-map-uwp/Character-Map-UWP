@@ -1,6 +1,5 @@
 using CharacterMap.Helpers;
 using CommunityToolkit.Mvvm.Messaging;
-using Microsoft.Graphics.Canvas.Effects;
 using System;
 using Windows.Graphics.Effects;
 using Windows.UI;
@@ -87,16 +86,9 @@ public class MicaAltBrush : XamlCompositionBrushBase, IXamlCompositionBrush
         bool isDark = ResourceHelper.GetEffectiveTheme() == ElementTheme.Dark;
         Color initialTint = GetTintColor(isDark);
 
-        IGraphicsEffect graphicsEffect = new ArithmeticCompositeEffect
-        {
-            Name = "MicaAltBlend",
-            Source1 = new CompositionEffectSourceParameter("Backdrop"),
-            Source2 = new ColorSourceEffect { Name = "Tint", Color = initialTint },
-            MultiplyAmount = 0.0f,
-            Source1Amount = 0.20f,
-            Source2Amount = 0.80f,
-            Offset = 0.0f
-        };
+        IGraphicsEffect graphicsEffect = CharacterMapCX.MicaEffectFactory.CreateMicaEffect(
+            new CompositionEffectSourceParameter("Backdrop"), 
+            initialTint);
 
         CompositionEffectFactory factory = compositor.CreateEffectFactory(
             graphicsEffect,

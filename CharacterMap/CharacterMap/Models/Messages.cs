@@ -104,10 +104,12 @@ public class CopyToClipboardMessage
 {
     public DevValueType CopyType { get; }
     public CopyDataType DataType { get; }
+    public GlyphImageFormat PreferredColorType { get; init; }
     public Character RequestedItem { get; }
-    public CanvasTextLayoutAnalysis Analysis { get; }
+    public DWriteTextLayoutAnalysis Analysis { get; }
+    public FaceAnalysisModel FaceAnalysis { get; }
 
-    public ExportStyle Style { get; set; }
+    public ExportStyle Style { get; init; }
 
     public CopyToClipboardMessage(Character c)
     {
@@ -116,11 +118,12 @@ public class CopyToClipboardMessage
         Analysis = null;
     }
 
-    public CopyToClipboardMessage(DevValueType type, Character requested, CanvasTextLayoutAnalysis ca, CopyDataType dataType = CopyDataType.Text)
+    public CopyToClipboardMessage(DevValueType type, Character requested, DWriteTextLayoutAnalysis ca, FaceAnalysisModel faceAnalysis, CopyDataType dataType = CopyDataType.Text)
     {
         CopyType = type;
         RequestedItem = requested;
         Analysis = ca;
+        FaceAnalysis = faceAnalysis;
         DataType = dataType;
     }
 }

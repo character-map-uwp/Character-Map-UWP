@@ -21,7 +21,7 @@ public class XamarinFormsDevProvider : DevProviderBase
 
     IReadOnlyList<DevOption> Inflate()
     {
-        var v = Options.Variant;
+        var v = Options.Face;
         var c = Character;
 
         var hex = c.UnicodeIndex.ToString("x4").ToUpper();

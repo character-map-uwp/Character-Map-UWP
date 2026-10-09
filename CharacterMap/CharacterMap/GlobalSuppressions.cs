@@ -42,3 +42,8 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "<Pending>", Scope = "member", Target = "~P:CharacterMap.ViewModels.SettingsViewModel.Changelog")]
 [assembly: SuppressMessage("CommunityToolkit.Mvvm.SourceGenerators.ObservablePropertyGenerator", "MVVMTK0034:Direct field reference to [ObservableProperty] backing field", Justification = "<Pending>")]
 [assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "Correct", Scope = "type", Target = "~T:CharacterMap.Models.UnihanFieldType")]
+
+namespace System.Runtime.CompilerServices
+{
+    public class IsExternalInit { }
+}

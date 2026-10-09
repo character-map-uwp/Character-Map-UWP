@@ -908,6 +908,9 @@
   <data name="VariableFeaturesMessage.Text" xml:space="preserve">
     <value>此字体具有可变特性。请使用上面的切换按钮切换到字阶视图浏览。</value>
   </data>
+  <data name="VariableFeaturesMessage1.Text" xml:space="preserve">
+    <value>此字体具有可变特性。请使用上面的切换按钮切换到字阶视图浏览。</value>
+  </data>
   <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
     <value>显示或隐藏屏幕右侧的预览面板。若关闭，许多功能仍可通过在字符网格内右击或长按字符访问。</value>
   </data>

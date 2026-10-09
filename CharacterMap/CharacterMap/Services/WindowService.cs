@@ -1,8 +1,10 @@
-﻿using Windows.ApplicationModel.Activation;
+﻿using CharacterMap.Views;
+using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Services;
 
@@ -17,6 +19,11 @@ public class FacadeLaunchArgs : ILaunchActivatedEventArgs
     public string Arguments => string.Empty;
 
     public string TileId => string.Empty;
+}
+
+public interface IWindowContent
+{
+    void Cleanup();
 }
 
 public class WindowInformation
@@ -143,17 +150,52 @@ public static class WindowService
 
         info.CoreView.Activated -= CoreView_Activated;
 
-        info.CoreView.Dispatcher.Enqueue(() =>
+        info.CoreView.DispatcherQueue.ShutdownStarting += (s, args) =>
         {
-            Window.Current.SizeChanged -= Current_SizeChanged;
-            Window.Current.Close();
+            var deferral = args.GetDeferral();
+            var finalizer = new Thread(() =>
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+                deferral.Complete();
+            });
+            finalizer.Start();
+        };
+
+        info.CoreView.Dispatcher.ExecuteAsync(async () =>
+        {
+            if (Window.Current.Content is IWindowContent c)
+                c.Cleanup();
+
+            if (Window.Current.Content is UserControl page)
+                page.Content = null;
+
             Window.Current.Content = null;
+
+            // Await GC on background thread while UI thread message loop is alive & pumping
+            await Task.Run(() =>
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+            });
+
+            info.CoreView.CoreWindow.CustomProperties.Clear();
+
+            // Allow dispatcher to process all marshaled COM releases
+            await Task.Delay(250);
+
+            GC.Collect();
+
+            Window.Current.Close();
         });
     }
 
     private static void Current_SizeChanged(object sender, WindowSizeChangedEventArgs e)
     {
-        WeakReferenceMessenger.Default.Send(new WindowResizingMessage(((CoreWindow)sender).Dispatcher));
+        if (sender is CoreWindow window)
+            window.GetMessenger().Send(new WindowResizingMessage(window.Dispatcher));
     }
 
     public static async Task ReactivateMainAsync()

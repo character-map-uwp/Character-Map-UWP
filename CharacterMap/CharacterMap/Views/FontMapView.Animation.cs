@@ -1,4 +1,5 @@
-﻿using System.Transactions;
+using CharacterMapCX.Controls;
+using System.Transactions;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -73,6 +74,13 @@ public partial class FontMapView
             {
                 CompositionFactory.PlayEntrance(GlyphsRoot, offset * 2);
             }
+            else if (ViewModel.DisplayMode == FontDisplayMode.LigaturesState)
+            {
+                if (LigaturesRoot != null)
+                {
+                    CompositionFactory.PlayEntrance(LigaturesRoot, offset * 2);
+                }
+            }
         }
     }
 
@@ -83,18 +91,19 @@ public partial class FontMapView
     }
 
 
-    private void AnimateSelectionFromGlyph()
+    private void AnimateSelectionFromGlyph(ListViewBase source = null)
     {
         // Empty glyphs will cause the connected animation service to crash, so manually
         // check if the rendered glyph contains content
+        source ??= GlyphRepeater;
         if (ResourceHelper.AllowAnimation
-            && GlyphRepeater.ContainerFromItem(GlyphRepeater.SelectedItem) is FrameworkElement container
-            && container.GetFirstDescendantOfType<Glyphs>() is Glyphs t)
+            && source.ContainerFromItem(source.SelectedItem) is FrameworkElement container
+            && container.GetFirstDescendantOfType<FontGlyphs>() is FontGlyphs t)
         {
             t.Measure(container.DesiredSize);
             if (t.DesiredSize.Height != 0 && t.DesiredSize.Width != 0)
             {
-                var ani = GlyphRepeater.PrepareConnectedAnimation("PP", GlyphRepeater.SelectedItem, "Text");
+                var ani = source.PrepareConnectedAnimation("PP", source.SelectedItem, "Target");
                 ani.TryStart(TxtPreview);
             }
         }
@@ -140,7 +149,7 @@ public partial class FontMapView
         if (VariableAxis is not null && VariableAxis.ItemsPanelRoot is not null)
             items = items.Concat(VariableAxis.ItemsPanelRoot.Children.OfType<FrameworkElement>());
 
-        return items.Append(TypeRampInputRow).OrderBy(g => Guid.NewGuid()).ToList();
+        return items.Append(TypeRampInputRow).Where(i => i != null).OrderBy(g => Guid.NewGuid()).ToList();
     }
 
     List<FrameworkElement> GetGridAnimationTargets(ListViewBase control)
@@ -162,7 +171,7 @@ public partial class FontMapView
             return control.ItemsPanelRoot.Children
                     .OfType<FrameworkElement>()
                     .Where(c => c.IsInViewport(viewport))
-                    .Select(c => c is GridViewHeaderItem hi ? (FrameworkElement)hi.ContentTemplateRoot : c)
+                    .Select(c => c is ListViewBaseHeaderItem hi ? (FrameworkElement)hi.ContentTemplateRoot : c)
                     .Concat(control.Header is Panel p ? p.Children.OfType<FrameworkElement>() : new List<FrameworkElement>())
                     .Where(c => c is not null)
                     .OrderBy(c => Guid.NewGuid())
@@ -178,6 +187,9 @@ public partial class FontMapView
 
         FrameworkElement target = targetContent ? PreviewGridContent : PreviewGrid;
         FrameworkElement splitter = targetContent ? SplitterContainerContent : SplitterContainer;
+
+        if (target is null || splitter is null)
+            return sb;
 
         if (setSpan)
         {
@@ -206,6 +218,8 @@ public partial class FontMapView
         FrameworkElement splitter = targetContent ? SplitterContainerContent : SplitterContainer;
 
         Storyboard sb = new Storyboard();
+        if (target is null || splitter is null)
+            return sb;
 
         if (!targetContent)
         {
@@ -270,7 +284,7 @@ public partial class FontMapView
         Storyboard sb = new Storyboard();
         Core.Properties.SetTag(sb, target);
 
-        if (target != null && target.Visibility == Visibility.Visible)
+        if (target is { Visibility: Visibility.Visible })
         {
             sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, TargetProperty.CompositeTransform.TranslateY)
                 .AddKeyFrame(CompositionFactory.DefaultOffsetDuration, target.RenderSize.Height, KeySplines.CompositionDefault);
@@ -321,80 +335,62 @@ public partial class FontMapView
         return sb;
     }
 
-    public void UpdateGridToRampTransition(VisualTransition transition, ListViewBase grid)
+    public void UpdateGridToRampTransition(VisualTransition transition, ListViewBase grid, bool reverse = false)
     {
         StoryboardBuilderArgs args = new();
         transition.Storyboard = args.Storyboard;
 
+        if (reverse)
+            args.ToDepth *= -1;
+
         CreateGridOut(args, grid, true);
-        CreateRampIn(args);
+        CreateRampIn(args, reverse ? 400 : -400);
     }
 
-    public void UpdateGridToGlyphTransition()
+    void UpdateGridToXTransition(ListViewBase repeater, VisualTransition transition)
     {
-        // 0. Realise items
-        this.FindName(nameof(GlyphsRoot));
+        UpdateXToXTransition(CharGrid, repeater, transition);
+    }
 
-        if (GlyphRepeater.ItemsPanelRoot is null)
+    void UpdateXToXTransition(ListViewBase from, ListViewBase too, VisualTransition transition)
+    {
+        if (too.ItemsPanelRoot is null)
         {
-            GlyphRepeater.Measure(CharGrid.DesiredSize);
-            if (GlyphRepeater.ItemsPanelRoot is null)
+            too.Measure(CharGrid.DesiredSize);
+            if (too.ItemsPanelRoot is null)
                 return;
         }
 
         StoryboardBuilderArgs args = new();
-        GridToGlyphTransition.Storyboard = args.Storyboard;
+        transition.Storyboard = args.Storyboard;
 
-        CreateGridOut(args, CharGrid, false);
-        CreateGridIn(args, GlyphRepeater, false);
+        CreateGridOut(args, from, false);
+        CreateGridIn(args, too, false);
 
         return;
     }
 
-
-    private void UpdateGlyphLoadedTransition()
-    {
-        if (GlyphRepeater == null)
-            this.FindName(nameof(GlyphsRoot));
-
-        if (GlyphRepeater.ItemsPanelRoot is null)
-        {
-            GlyphRepeater.Measure(CharGrid.DesiredSize);
-            if (GlyphRepeater.ItemsPanelRoot is null)
-                return;
-        }
-        else
-        {
-            // Force the items to be realised
-            GlyphRepeater.Measure(this.DesiredSize);
-        }
-
-        StoryboardBuilderArgs args = new();
-        GlyphsLoadedTransition.Storyboard = args.Storyboard;
-        CreateGridIn(args, GlyphRepeater, false, true);
-    }
-
-    public void UpdateRampToGridTransition(ListViewBase grid, VisualTransition t)
+    public void UpdateRampToGridTransition(ListViewBase grid, VisualTransition t, bool forward = false)
     {
         if (TypeRampList == null || grid == null)
             return;
 
-        StoryboardBuilderArgs args = new StoryboardBuilderArgs { FromDepth = 300 };
+        StoryboardBuilderArgs args = new StoryboardBuilderArgs { FromDepth = forward ? -300 : 300 };
         t.Storyboard = args.Storyboard;
 
-        CreateRampOut(args);
+        CreateRampOut(args, args.FromDepth * -1);
         CreateGridIn(args, grid, true);
     }
 
-    public void UpdateGlyphToGridTransition()
+    public void UpdateRepeaterToXTransition(ListViewBase repeater, ListViewBase to, VisualTransition transition)
     {
-        if (GlyphRepeater == null)
+        if (repeater == null)
             return;
 
         StoryboardBuilderArgs args = new StoryboardBuilderArgs { FromDepth = 300, ToDepth = -400 };
-        GlyphToGridTransition.Storyboard = args.Storyboard;
-        CreateGridOut(args, GlyphRepeater, false);
-        CreateGridIn(args, CharGrid, false);
+        transition.Storyboard = args.Storyboard;
+        CreateGridOut(args, repeater, false);
+        CreateGridIn(args, to, false);
         return;
     }
 
@@ -403,6 +399,18 @@ public partial class FontMapView
 
 
     #region PARTS
+
+    FrameworkElement GetGridTarget(FrameworkElement f)
+    {
+        if (f == GlyphRepeater)
+            return GlyphsRoot;
+        if (f == LigaturesRepeater)
+            return LigaturesRoot;
+        if (f == CharGrid)
+            return f;
+
+        throw new Exception("Unsupported Target");
+    }
 
     void CreateGridOut(StoryboardBuilderArgs args, ListViewBase grid, bool toRamp)
     {
@@ -453,9 +461,13 @@ public partial class FontMapView
 
         if (toRamp)
         {
-            if (grid == CharGrid && GlyphsRoot != null)
+            if (grid != LigaturesRepeater && LigaturesRoot != null)
+                sb.CreateTimeline(LigaturesRoot, Visibility.Collapsed);
+
+            if (grid != GlyphRepeater && GlyphsRoot != null)
                 sb.CreateTimeline(GlyphsRoot, Visibility.Collapsed);
-            else
+
+            if (grid != CharGrid)
                 sb.CreateTimeline(CharGrid, Visibility.Collapsed);
         }
 
@@ -507,7 +519,7 @@ public partial class FontMapView
         }
 
         // 4. Adjust visibility on CharGrid/TypeRamp in the middle of the animation
-        sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(grid == GlyphRepeater ? GlyphsRoot : grid, TargetProperty.Visibility)
+        sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(GetGridTarget(grid), TargetProperty.Visibility)
             .AddKeyFrame(0, Visibility.Visible)
             .AddKeyFrame(startOffset.Add(duration.Multiply(0.8)), Visibility.Collapsed);
 
@@ -545,7 +557,13 @@ public partial class FontMapView
 
         if (args.CurrentOffset.TotalSeconds > 0)
         {
-            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(grid == GlyphRepeater ? GlyphsRoot : grid, TargetProperty.Visibility)
+            FrameworkElement vt = grid;
+            if (vt == GlyphRepeater)
+                vt = GlyphsRoot;
+            else if (vt == LigaturesRepeater)
+                vt = LigaturesRoot;
+
+            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(vt, TargetProperty.Visibility)
                .AddKeyFrame(0, Visibility.Collapsed)
                .AddKeyFrame(startOffset, Visibility.Visible);
         }
@@ -568,7 +586,7 @@ public partial class FontMapView
                 .AddKeyFrame(startOffset, -80)
                 .AddKeyFrame(startOffset.TotalSeconds + 0.4, 0, new BackEase { Amplitude = 0.8, EasingMode = EasingMode.EaseOut });
 
-            if (CopySequenceRoot != null)
+            if (CopySequenceRoot != null && CopySequenceContent != null)
                 sb.Children.Add(CreateVerticalShowPane(CopySequenceContent));
 
             if (sb.Children.OfType<Storyboard>().FirstOrDefault(s =>
@@ -604,7 +622,7 @@ public partial class FontMapView
             sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(item, TargetProperty.Opacity)
                 .AddKeyFrame(TimeSpan.Zero, 0)
                 .AddKeyFrame(startOffset, 0)
-                .AddKeyFrame(startOffset.Add(durationOpacityIn), 1, KeySplines.DepthZoomOpacity);
+                .AddKeyFrame(startOffset.Add(durationOpacityIn), (double)item.GetAnimationBaseValue(FrameworkElement.OpacityProperty), KeySplines.DepthZoomOpacity);
 
             // 3.3. Animate the 3D depth translation
             if (fromDepth != 0)
@@ -620,7 +638,7 @@ public partial class FontMapView
         }
     }
 
-    void CreateRampIn(StoryboardBuilderArgs args)
+    void CreateRampIn(StoryboardBuilderArgs args, double fromDepth = -400)
     {
         Storyboard sb = args.Storyboard;
         TimeSpan startOffset = args.CurrentOffset;
@@ -632,8 +650,6 @@ public partial class FontMapView
         List<FrameworkElement> toChilds = GetTypeRampAnimationTargets();
 
         // 1.1. Default animation configuration
-        double fromDepth = -400;
-
         sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(TypeRampRoot, TargetProperty.Visibility)
             .AddKeyFrame(0, Visibility.Collapsed)
             .AddKeyFrame(startOffset, Visibility.Visible);
@@ -667,7 +683,7 @@ public partial class FontMapView
 
     }
 
-    void CreateRampOut(StoryboardBuilderArgs args)
+    void CreateRampOut(StoryboardBuilderArgs args, double toDepth = -300)
     {
         List<FrameworkElement> toChilds = GetGridAnimationTargets(CharGrid);
         if (toChilds.Count == 0)
@@ -676,8 +692,6 @@ public partial class FontMapView
         Storyboard sb = args.Storyboard;
 
         var childs = GetTypeRampAnimationTargets();
-
-        double toDepth = -300;
 
         TimeSpan charStagger = TimeSpan.FromMilliseconds(250d / toChilds.Count);
 

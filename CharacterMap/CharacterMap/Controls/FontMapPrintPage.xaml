@@ -1,8 +1,9 @@
-﻿<Page
+<Page
     x:Class="CharacterMap.Controls.FontMapPrintPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CharacterMap.Controls"
+    xmlns:cxc="using:CharacterMapCX.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     IsTabStop="False"
@@ -23,13 +24,30 @@
 
         <Grid x:Name="PrintableArea" x:FieldModifier="public">
             <Border x:Name="GridLayout" x:Load="False">
-                <controls:CharacterGridView
+                <GridView
                     x:Name="ItemsPanel"
                     Margin="0 0 -8 0"
                     Padding="0"
                     ContainerContentChanging="ItemsPanel_ContainerContentChanging"
                     ItemContainerTransitions="{StaticResource NoTransitions}"
-                    ItemsSource="{x:Bind Items}" />
+                    ItemsSource="{x:Bind Items}">
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid HorizontalAlignment="Center" Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                    <GridView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid x:Name="Text" Padding="4">
+                                <Image
+                                    x:Name="Glyph"
+                                    Margin="0 -2 0 8"
+                                    Stretch="Uniform" />
+                                <TextBlock Style="{StaticResource CharItemUnicodeStyle}" />
+                            </Grid>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
             </Border>
 
             <Border x:Name="ListLayout" x:Load="False">
@@ -53,7 +71,10 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock TextAlignment="Center" />
+                                <Image
+                                    x:Name="Glyph"
+                                    VerticalAlignment="Center"
+                                    Stretch="Uniform" />
 
                                 <StackPanel
                                     Grid.Column="1"

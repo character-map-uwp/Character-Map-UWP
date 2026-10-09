@@ -248,7 +248,7 @@
                     <Grid>
                         <TextBlock
                             x:Name="ContentRender"
-                            x:Phase="1"
+                            x:Phase="2"
                             Margin="0 0 0 0"
                             sdk17_x:Load="{x:Bind core:Converters.False(DefaultVariant.SupportsColourRendering), FallbackValue=False, TargetNullValue=False}"
                             FontFamily="{x:Bind DefaultVariant.DisplaySource}"
@@ -262,7 +262,7 @@
                         <sdk17_cx:DirectText
                             x:Name="NativeRender"
                             x:Load="{x:Bind DefaultVariant.SupportsColourRendering, FallbackValue=False, TargetNullValue=False}"
-                            x:Phase="1"
+                            x:Phase="2"
                             Margin="0 0 0 0"
                             FallbackFont="{x:Bind core:FontFinder.Fallback}"
                             FontFace="{x:Bind DefaultVariant.Face}"

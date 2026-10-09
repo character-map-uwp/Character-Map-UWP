@@ -12,7 +12,8 @@ public enum FontDisplayMode
 {
     CharacterMapState = 0,
     GlyphMapState = 1,
-    TypeRampState = 2
+    LigaturesState = 2,
+    TypeRampState = 3
 }
 
 public partial class RampOption : ObservableObject
@@ -37,7 +38,7 @@ public partial class FontMapViewModel : ViewModelBase
 
     private ConcurrencyToken.ConcurrencyTokenGenerator _searchTokenFactory { get; }
 
-    private int[] _rampSizes { get; } = new[] { 12, 18, 24, 48, 72, 96, 110, 134 };
+    private int[] _rampSizes { get; } = [ 12, 18, 24, 48, 72, 96, 110, 134 ];
 
     public StorageFile SourceFile { get => Get<StorageFile>(); set { if (Set(value)) { OnPropertyChanged(nameof(IsInstallable)); } } }
 
@@ -63,7 +64,7 @@ public partial class FontMapViewModel : ViewModelBase
     [ObservableProperty] IReadOnlyList<Character> _chars;
     [ObservableProperty] IReadOnlyList<DevProviderBase> _providers;
     [ObservableProperty] IReadOnlyList<TypographyVariation> _typographyFeatures;
-    [ObservableProperty] ObservableCollection<UnicodeRangeGroup> _groupedChars;
+    [ObservableProperty] GroupedCharacterSource _groupedChars;
 
     [ObservableProperty] bool _showColorGlyphs = true;
     [ObservableProperty] bool _importButtonEnabled = true;
@@ -88,7 +89,7 @@ public partial class FontMapViewModel : ViewModelBase
     partial void OnShowColorGlyphsChanged(bool value)
     {
         if (RenderingOptions is not null)
-            RenderingOptions = RenderingOptions with { IsColourFontEnabled = value };
+            RenderingOptions = RenderingOptions with { ColorRenderOption = value ? DWriteColorRenderOption.Default : DWriteColorRenderOption.Monochrome };
         if (DisplayMode == FontDisplayMode.TypeRampState)
             UpdateRampOptions();
     }
@@ -136,9 +137,15 @@ public partial class FontMapViewModel : ViewModelBase
                 SetDefaultChar(idx);
                 SelectedTypography = TypographyFeatures.FirstOrDefault() ?? TypographyVariation.None;
                 UpdateDevValues();
-
+                
                 if (value is not null)
+                {
                     SelectedFont.Selected = value;
+                    RenderingOptions = RenderingOptions with
+                    {
+                        ActiveFontFace = SelectedFaceAnalysis.ActiveFace
+                    };
+                }
             }
         }
     }
@@ -150,7 +157,7 @@ public partial class FontMapViewModel : ViewModelBase
         {
             if (field == value || _blockChar) return;
             field = value;
-            if (value is not null)
+            if (value is { Char: not null })
                 Settings.LastSelectedCharIndex = (int)value.Char.UnicodeIndex;
             OnPropertyChanged();
             UpdateDevValues();
@@ -202,6 +209,7 @@ public partial class FontMapViewModel : ViewModelBase
                 SelectedCharTypography = SelectedTypography.Feature;
                 break;
             case nameof(SelectedCharTypography):
+                SelectedChar?.UpdateAnalysis(SelectedCharTypography);
                 UpdateDevValues();
                 break;
             case nameof(DisplayMode) when SelectedFont is not null:
@@ -224,7 +232,7 @@ public partial class FontMapViewModel : ViewModelBase
     public void UpdateCategories(IList<UnicodeRangeModel> value)
     {
         SelectedGlyphCategories = value.ToList();
-        Search.SetContext(SelectedFace, SelectedGlyphCategories);
+        Search.SetContext(SelectedFaceAnalysis, SelectedGlyphCategories);
         UpdateCharacters();
     }
 
@@ -236,7 +244,7 @@ public partial class FontMapViewModel : ViewModelBase
         {
             // Fast path : all characters;
             Chars = SelectedFace?.GetCharacters();
-            GroupedChars = UnicodeRangeGroup.CreateGroups(Chars, SelectedFaceAnalysis.IsMDL2Font);
+            GroupedChars = UnicodeRangeGroup.CreateGroups(SelectedFace);
             IsFiltered = false;
         }
         else
@@ -248,7 +256,7 @@ public partial class FontMapViewModel : ViewModelBase
             if (Chars is null || items.Count != Chars.Count)
             {
                 Chars = items;
-                GroupedChars = UnicodeRangeGroup.CreateGroups(items, SelectedFaceAnalysis.IsMDL2Font);
+                GroupedChars = GroupedCharacterSource.Create(items, SelectedFaceAnalysis.IsMDL2Font);
             }
             else
             {
@@ -256,7 +264,7 @@ public partial class FontMapViewModel : ViewModelBase
                     if (items[i] != Chars[i])
                     {
                         Chars = items;
-                        GroupedChars = UnicodeRangeGroup.CreateGroups(items, SelectedFaceAnalysis.IsMDL2Font);
+                        GroupedChars = GroupedCharacterSource.Create(items, SelectedFaceAnalysis.IsMDL2Font);
                         break;
                     }
             }
@@ -267,7 +275,7 @@ public partial class FontMapViewModel : ViewModelBase
         SetDefaultChar(last);
     }
 
-    private void LoadVariant(CMFontFace variant)
+    private void LoadVariant(CMFontFace variant, bool allowRetry = true)
     {
         try
         {
@@ -295,7 +303,7 @@ public partial class FontMapViewModel : ViewModelBase
             SelectedTypography = TypographyVariation.None;
 
             Search.Clear();
-            Search.SetContext(variant, SelectedGlyphCategories);
+            Search.SetContext(SelectedFaceAnalysis, SelectedGlyphCategories);
             Search.DebounceSearch(Search.Query, 100);
 
             IsLoadingCharacters = false;
@@ -309,19 +317,35 @@ public partial class FontMapViewModel : ViewModelBase
              * If we get caught in a never ending loop here, something horrible has occurred.
              */
             IsLoadingCharacters = false;
-            Window.Current.Dispatcher.Enqueue(async () =>
-            {
-                await Task.Delay(100);
-                if (variant == SelectedFace)
-                    LoadVariant(variant);
-            }, Windows.UI.Core.CoreDispatcherPriority.Low);
+
+            if (allowRetry)
+                Window.Current.Dispatcher.Enqueue(async () =>
+                {
+                    await Task.Delay(100);
+                    if (variant == SelectedFace)
+                        LoadVariant(variant, false);
+                }, Windows.UI.Core.CoreDispatcherPriority.Low);
         }
     }
  
     internal void UpdateVariations()
     {
         SelectedFaceAnalysis?.UpdateVariations();
-        UpdateRampOptions();
+        SelectedChar?.UpdateAnalysis(SelectedCharTypography);
+
+        if (SelectedFace is not null && SelectedChar is not null)
+            UpdateDevValues();
+        else if (RenderingOptions is not null && SelectedFaceAnalysis is not null)
+        {
+            RenderingOptions = RenderingOptions with
+            {
+                Axis = SelectedFaceAnalysis.VariationAxis,
+                ActiveFontFace = SelectedFaceAnalysis.ActiveFace
+            };
+            UpdateRampOptions();
+        }
+        else
+            UpdateRampOptions();
     }
 
     private void UpdateTypography()
@@ -345,28 +369,27 @@ public partial class FontMapViewModel : ViewModelBase
 
     internal void UpdateDevValues()
     {
-        if (SelectedFace == null || SelectedChar == null)
+        if (SelectedFace is null || SelectedChar is null)
+            return;
+
+        DevProviderType t = SelectedProvider?.Type ?? Settings.SelectedDevProvider;
+
+        RenderingOptions = new CharacterRenderingOptions(
+            SelectedFace,
+            [SelectedCharTypography],
+            64,
+            SelectedChar.Analysis,
+            SelectedFaceAnalysis.VariationAxis)
         {
-            // Do nothing.
-        }
-        else
-        {
-            var t = SelectedProvider?.Type ?? Settings.SelectedDevProvider;
+            ActiveFontFace = SelectedFaceAnalysis.ActiveFace
+        };
 
-            RenderingOptions = new CharacterRenderingOptions(
-                SelectedFace,
-                new() { SelectedCharTypography },
-                64,
-                SelectedChar.Analysis,
-                SelectedFaceAnalysis.VariationAxis);
+        UpdateRampOptions();
 
-            UpdateRampOptions();
+        Providers = RenderingOptions.GetDevProviders(SelectedChar.Char);
+        SetDev(t);
 
-            Providers = RenderingOptions.GetDevProviders(SelectedChar.Char);
-            SetDev(t);
-
-            XamlPath = $"{SelectedFace.FileName}#{SelectedFace.FamilyName}";
-        }
+        XamlPath = $"{SelectedFace.FileName}#{SelectedFace.FamilyName}";
     }
 
     public void UpdateRampOptions()
@@ -376,8 +399,12 @@ public partial class FontMapViewModel : ViewModelBase
 
         //SelectedFaceAnalysis?.UpdateRampOptions();
 
-        var ops = RenderingOptions with { Axis = SelectedFaceAnalysis.VariationAxis };
-        foreach (var ramp in Ramps)
+        CharacterRenderingOptions ops = RenderingOptions with
+        {
+            Axis = SelectedFaceAnalysis.VariationAxis,
+            ActiveFontFace = SelectedFaceAnalysis.ActiveFace
+        };
+        foreach (RampOption ramp in Ramps)
             ramp.Option = ops;
     }
 
@@ -398,10 +425,11 @@ public partial class FontMapViewModel : ViewModelBase
         }
         else
         {
-            SelectedChar = new(
-                SelectedFace, Chars?.FirstOrDefault(
-                c => !Windows.Data.Text.UnicodeCharacters.IsWhitespace((uint)c.UnicodeIndex)) ?? Chars.FirstOrDefault(),
-                this);
+            // Fonts with out a CMAP table will have no Characters
+            // e.g. Rohingya Gonya Leyka Noories
+            var c = Chars?.FirstOrDefault(
+                c => !Windows.Data.Text.UnicodeCharacters.IsWhitespace((uint)c.UnicodeIndex)) ?? Chars.FirstOrDefault();
+            SelectedChar = c is not null ? new(SelectedFace, c, this) : null;
         }
 
         if (set)
@@ -420,6 +448,7 @@ public partial class FontMapViewModel : ViewModelBase
         {
             FontDisplayMode.CharacterMapState => FontDisplayMode.GlyphMapState,
             FontDisplayMode.GlyphMapState => FontDisplayMode.TypeRampState,
+            FontDisplayMode.TypeRampState => FontDisplayMode.LigaturesState,
             _ => FontDisplayMode.CharacterMapState
         };
     }
@@ -429,7 +458,7 @@ public partial class FontMapViewModel : ViewModelBase
         if (SelectedFace == null || c == null)
             return null;
 
-        return SelectedFace.GetDescription(c, allowUnihan: true);
+        return SelectedFaceAnalysis.GetDescription(c, allowUnihan: true);
     }
 
     public string GetCharDescription(Character c)
@@ -470,19 +499,25 @@ public partial class FontMapViewModel : ViewModelBase
     internal async Task SaveGlyphAsync(ExportFormat format, ExportParameters args)
     {
         Character character = SelectedChar.Char;
-        CanvasTextLayoutAnalysis analysis = SelectedChar.Analysis;
+        DWriteTextLayoutAnalysis analysis = SelectedChar.Analysis;
 
         if (args.Character != null)
         {
             character = args.Character;
-            analysis = SelectedChar.GetCharAnalysis(args.Character, SelectedFace);
+            analysis = SelectedChar.GetCharAnalysis(args.Character, SelectedFaceAnalysis.ActiveFace);
         }
 
         ExportResult result = await ExportManager.ExportGlyphAsync(
             new(format, args.Style)
             {
                 Font = SelectedFont.Font,
-                Options = RenderingOptions with { Analysis = analysis, Typography = new List<TypographyFeatureInfo>() { args.Typography } }
+                Options = RenderingOptions with
+                {
+                    Analysis = analysis,
+                    Typography = [args.Typography],
+                    ActiveFontFace = SelectedFaceAnalysis?.ActiveFace ?? RenderingOptions.ActiveFontFace,
+                    Axis = SelectedFaceAnalysis?.VariationAxis ?? RenderingOptions.Axis
+                }
             },
             character);
 
@@ -616,7 +651,7 @@ public partial class FontMapViewModel : ViewModelBase
             && typography != TypographyVariation.None 
             && c.Variations.FirstOrDefault(v => v.Feature == typography.Feature) 
                 is TypographyVariation { IsVariationMapped: true } variation)
-            character = (new Character((uint)variation.FaceCharacterMapping)).Char;
+            character = (Character.Get(variation.FaceCharacterMapping)).Char;
         
         Sequence = s.Insert(start, character);
     }

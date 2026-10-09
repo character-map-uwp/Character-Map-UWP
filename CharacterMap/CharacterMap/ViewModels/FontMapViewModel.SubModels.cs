@@ -1,48 +1,77 @@
-﻿using Microsoft.Graphics.Canvas.Text;
+using CharacterMap.Models;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.Graphics.Canvas.Text;
 using System.Collections;
+using Windows.UI;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.ViewModels;
 
-public partial class FaceAnalysisModel : ViewModelBase
+public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
 {
-    private CMFontFace _face;
+    public CMFontFace Face { get; }
 
-    [ObservableProperty] IReadOnlyList<DWriteFontAxis> _variationAxis;
+    [ObservableProperty] IReadOnlyList<DWriteFontAxis> _variationAxis = [];
 
     [ObservableProperty] IReadOnlyList<Suggestion> _rampOptions;
 
+    [ObservableProperty] DWriteFontFace _activeFace;
+
     public bool HasFontOptions { get; }
 
-    public bool ShowColorGlyphs { get; }
+    public bool ShowColorGlyphs => Face.DirectWriteProperties.IsColorFont;
 
     public FontAnalysis Analysis { get; }
+
+    public IReadOnlyList<FontPalette> Palettes => Analysis.Palettes;
+
+    public bool HasPalettes => Analysis.HasPalettes;
 
     public bool IsMDL2Font { get; }
 
     public FontFamily FontFamily { get; }
 
-    public GlyphCollection Glyphs { get; }
+    public GlyphCollection Glyphs => field ??= new(Face);
 
-    public FaceAnalysisModel(CMFontFace face)
+    private IReadOnlyList<LigatureGroup> _ligatures;
+    public IReadOnlyList<LigatureGroup> Ligatures => _ligatures ??= (Face is not null ? TypographyAnalyzer.GetLigatures(Face) : []);
+
+    public int TotalLigaturesCount => Ligatures.Sum(g => g.Count);
+
+    public int LigatureFeatureCount => Ligatures.Count;
+
+    public bool HasLigatures => Ligatures.Count > 0;
+
+    public string LigaturesSummary => Localization.Get("LigaturesSummaryString", TotalLigaturesCount, LigatureFeatureCount);
+
+    public StyleSimulations StyleSimulation { get; }
+
+    public bool ShouldUseDWriteRendering => 
+        (Analysis.COLRVersion == 1 && Utils.SupportsColrV1) || Analysis.HasVariationAxis;
+
+    private Task<Uri> _loadingTask = null;
+
+
+
+    public FaceAnalysisModel(CMFontFace face, bool loadFull = true)
     {
         if (face is null)
             return;
 
-        _face = face;
+        Face = face;
+        Analysis = TypographyAnalyzer.Analyze(this);
+        StyleSimulation = face.DirectWriteProperties.Simulations;
 
-        var analysis = face.GetAnalysis();
-        TypographyAnalyzer.PrepareSearchMap(face, analysis);
-        analysis.ResetVariableAxis();
+        if (loadFull is false)
+        {
+            UpdateActiveFace();
+            return;
+        }
 
-        FontFamily = new(face.Source);
         IsMDL2Font = FontFinder.IsMDL2(face);
-        HasFontOptions = analysis.ContainsVectorColorGlyphs || face.HasXamlTypographyFeatures;
-        ShowColorGlyphs = face.DirectWriteProperties.IsColorFont;
-
-        Analysis = analysis;
-        Glyphs = new(face);
-
+        FontFamily = new(face.Source);
+        HasFontOptions = Analysis.ContainsVectorColorGlyphs || face.HasXamlTypographyFeatures;
         UpdateVariations();
         UpdateRampOptions();
     }
@@ -52,11 +81,28 @@ public partial class FaceAnalysisModel : ViewModelBase
         VariationAxis =
             Analysis?.Axis?.Where(a => (a.Attribute & DWriteFontAxisAttribute.Variable) != 0).ToList()
             ?? [];
+
+        UpdateActiveFace();
+    }
+
+    public void UpdateActiveFace()
+    {
+        if (VariationAxis is { Count: > 0 } || StyleSimulation != StyleSimulations.None)
+        {
+            var old = ActiveFace;
+
+            ActiveFace = Face.Face.CreateVariant(StyleSimulation, VariationAxis);
+
+            if (old is { IsVariant: true })
+                old.ReleaseResources();
+        }
+        else
+            ActiveFace = Face.Face;
     }
 
     public void UpdateRampOptions()
     {
-        RampOptions = GetRampOptions(_face);
+        RampOptions = GetRampOptions(Face);
     }
 
     private IReadOnlyList<Suggestion> GetRampOptions(CMFontFace variant)
@@ -79,7 +125,96 @@ public partial class FaceAnalysisModel : ViewModelBase
         return list;
     }
 
+
+
+
+    //------------------------------------------------------
+    //
+    // Searching
+    //
+    //------------------------------------------------------
+
+    public Dictionary<Character, string> SearchMap { get; set; }
+
+    /// <summary>
+    /// Attempts to return the font's own defined name for a glyph
+    /// </summary>
+    /// <param name="c"></param>
+    /// <returns></returns>
+    public string GetDefinedCharacterName(Character c)
+    {
+        if (SearchMap is null)
+            TypographyAnalyzer.PrepareSearchMap(this, Analysis);
+
+        if (SearchMap != null && SearchMap.TryGetValue(c, out string mapping) && !string.IsNullOrWhiteSpace(mapping))
+            return mapping;
+
+        return null;
+    }
+
+    public string GetDescription(Character c, bool allowUnihan = false)
+    {
+        if (SearchMap == null
+            || !SearchMap.TryGetValue(c, out string mapping)
+            || string.IsNullOrWhiteSpace(mapping))
+        {
+            string name = GlyphService.GetCharacterDescription(c.UnicodeIndex, this.Face);
+
+            if (allowUnihan
+                && string.IsNullOrWhiteSpace(name)
+                && Unicode.CouldBeUnihan(c.UnicodeIndex)
+                && GlyphService.GetUnihanData(c.UnicodeIndex)?.Definition is { } def)
+                name = def.Description;
+
+            return name;
+        }
+
+        return GlyphService.TryGetAGLFNName(mapping);
+    }
+
+
+
+
+    //------------------------------------------------------
+    //
+    // Glyphs
+    //
+    //------------------------------------------------------
+
+    private Dictionary<uint, LigatureModel> _ligatureMap;
+
+    public bool TryGetLigature(uint glyphIndex, out LigatureModel ligature)
+    {
+        if (_ligatureMap is null)
+        {
+            Dictionary<uint, LigatureModel> map = [];
+            foreach (LigatureGroup group in Ligatures)
+                foreach (LigatureModel lig in group.Ligatures)
+                    map.TryAdd(lig.LigatureGlyph, lig);
+            _ligatureMap = map;
+        }
+        return _ligatureMap.TryGetValue(glyphIndex, out ligature);
+    }
+
+    //[RelayCommand]
+    //public Task<Uri> LoadGlyphFontAsync()
+    //{
+    //    if (Glyphs.FontUri is not null)
+    //        return Task.FromResult(Glyphs.FontUri);
+
+    //    if (Face is null)
+    //        return Task.FromResult<Uri>(null);
+
+    //    return _loadingTask ??= LoadGlyphFontInternalAsync();
+    //}
+
+    //private async Task<Uri> LoadGlyphFontInternalAsync()
+    //{
+    //    await Glyphs.LoadMoreItemsAsync(10).AsTask();
+    //    return Glyphs.FontUri;
+    //}
 }
+
 
 [DebuggerDisplay("TV {DisplayName}, IsMapped: {IsVariationMapped}")]
 public class TypographyVariation
@@ -119,19 +254,54 @@ public class TypographyVariation
 
 public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<CharacterAnalysisModel>
 {
+    private static IReadOnlyList<NamedTag> _emptyRenderOptions = [ new("Default", DWriteColorRenderOption.Default)];
+
+    public static NamedTag DefaultRenderOption = new("Default", DWriteColorRenderOption.Default);
+    public static NamedTag SVGRenderOption = new("SVG", DWriteColorRenderOption.Default);
+    public static NamedTag PNGRenderOption = new("PNG", DWriteColorRenderOption.Default);
+    public static NamedTag JPGRenderOption = new("JPG", DWriteColorRenderOption.Default);
+    public static NamedTag BMPRenderOption = new("BMP", DWriteColorRenderOption.Default);
+    public static NamedTag TIFFRenderOption = new("TIFF", DWriteColorRenderOption.Default);
+    public static NamedTag ColrV0RenderOption = new("COLRv0", DWriteColorRenderOption.ColrV0);
+    public static NamedTag ColrV1RenderOption = new("COLRv1", DWriteColorRenderOption.ColrV1);
+    public static NamedTag MonoRenderOption = new("Mono", DWriteColorRenderOption.Monochrome);
+
     private NativeInterop _interop = Utils.GetInterop();
 
     public Character Char { get; }
 
+    public bool SupportsCOLRv1 => _analysis is not null && (_analysis.SupportsColrV1 || _analysis.GlyphFormats.Has(GlyphImageFormat.ColrPaintTree));
+    public bool SupportsCOLRv0 => _analysis is not null && (_analysis.SupportsColrV0 || _analysis.GlyphFormats.Has(GlyphImageFormat.Colr));
+
     [ObservableProperty] bool _isSvgChar;
-    [ObservableProperty] CanvasTextLayoutAnalysis _analysis;
+    [ObservableProperty][NotifyPropertyChangedFor(nameof(SupportsCOLRv1), nameof(SupportsCOLRv0))] DWriteTextLayoutAnalysis _analysis;
     [ObservableProperty] List<TypographyVariation> _variations;
     [ObservableProperty] UnihanData _unihanData;
+    [ObservableProperty] IReadOnlyList<ushort> _glyphIndices;
+    [ObservableProperty] IReadOnlyList<int> _paletteIndices;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasMultipleGlyphs), nameof(HasGlyphs), nameof(GlyphHeader))]
+    IReadOnlyList<GlyphCharacter> _glyphs;
+
+    public IReadOnlyList<NamedTag> ColorRenderOptions = _emptyRenderOptions;
+    public NamedTag DefaultTag { get; }
+    public bool HasColorRenderOptions { get; private set; }
+    public ItemsSelectionModel ColrRenderItems { get; }
+
+    public bool HasMultipleGlyphs => GlyphIndices is { Count: > 1 };
+    public bool HasGlyphs => GlyphIndices is { Count: > 0 };
+    public string GlyphHeader => HasMultipleGlyphs ? Localization.Get("TxtGlyphsHeader") : Localization.Get("TxtGlyphHeader");
+    //public string GlyphSummary => GlyphIndices switch
+    //{
+    //    null or { Count: 0 } => null,
+    //    [ushort single] => $"Glyph {single}",
+    //    _ => $"Glyphs: {string.Join(", ", GlyphIndices)}"
+    //};
 
     private readonly FontMapViewModel _vm;
     private readonly CMFontFace face;
 
-    public CharacterAnalysisModel(CMFontFace face, Character c, FontMapViewModel vm)
+    public CharacterAnalysisModel(CMFontFace face, Character c, FontMapViewModel vm, NamedTag defaultTag = null)
     {
         if (c is null || face is null || vm is null)
             return; // we are empty shell;
@@ -139,48 +309,153 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
         this.face = face;
         Char = c;
         _vm = vm;
-        Analysis = GetCharAnalysis(c, face);
+        Analysis = GetCharAnalysis(c, vm.SelectedFaceAnalysis?.ActiveFace ?? face.Face);
         Variations = TypographyAnalyzer.GetCharacterVariations(face, c);
-        IsSvgChar = Analysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
+        IsSvgChar = Analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
         UnihanData = GlyphService.GetUnihanData(c.UnicodeIndex);
+        UpdateGlyphIndices();
+
+        // Build Color Render Options
+        (bool hasColorOptions, ItemsSelectionModel colrItems) = CreateColorOptions(Analysis, vm.ShowColorGlyphs, defaultTag);
+        HasColorRenderOptions = hasColorOptions;
+        ColrRenderItems = colrItems;
+        ColorRenderOptions = (IReadOnlyList<NamedTag>)colrItems.ItemsSource;
+        DefaultTag = (NamedTag)colrItems.SelectedItem;
     }
 
-    public CanvasTextLayoutAnalysis GetCharAnalysis(Character c, CMFontFace face)
+    public static (bool HasOptions, ItemsSelectionModel ColrItems) CreateColorOptions(DWriteTextLayoutAnalysis analysis, bool color, NamedTag defaultTag = null)
+    {
+        if (analysis is null)
+            return (false, new() { ItemsSource = _emptyRenderOptions, SelectedItem = DefaultRenderOption });
+
+        bool supportsColrV1 = analysis.SupportsColrV1 || analysis.GlyphFormats.Has(GlyphImageFormat.ColrPaintTree);
+        bool supportsColrV0 = analysis.SupportsColrV0 || analysis.GlyphFormats.Has(GlyphImageFormat.Colr);
+        bool isSvg = analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
+
+        IReadOnlyList<NamedTag> colorRenderOptions = _emptyRenderOptions;
+        bool hasColorRenderOptions = false;
+
+        if (supportsColrV0 || supportsColrV1)
+        {
+            List<NamedTag> options = [];
+          
+            if (supportsColrV0)
+                options.Add(ColrV0RenderOption);
+
+            if (supportsColrV1)
+                options.Add(ColrV1RenderOption);
+
+            options.Add(MonoRenderOption);
+            colorRenderOptions = options;
+            hasColorRenderOptions = true;
+            if (defaultTag is null || defaultTag == DefaultRenderOption)
+                defaultTag = color ? ColrV1RenderOption : MonoRenderOption;
+        }
+        else if (isSvg)
+            CreateOp(SVGRenderOption);
+        else if (analysis.GlyphFormats.Has(GlyphImageFormat.Png))
+            CreateOp(PNGRenderOption);
+        else if (analysis.GlyphFormats.Has(GlyphImageFormat.Jpeg))
+            CreateOp(JPGRenderOption);
+        else if (analysis.GlyphFormats.Has(GlyphImageFormat.PremultipliedB8G8R8A8))
+            CreateOp(BMPRenderOption);
+        else if (analysis.GlyphFormats.Has(GlyphImageFormat.Tiff))
+            CreateOp(TIFFRenderOption);
+
+        void CreateOp(NamedTag tag)
+        {
+            colorRenderOptions = [tag, MonoRenderOption];
+            hasColorRenderOptions = true;
+            if (defaultTag is null || defaultTag == DefaultRenderOption)
+                defaultTag = color? tag : MonoRenderOption;
+        }
+
+        defaultTag ??= DefaultRenderOption;
+        ItemsSelectionModel items = new() { ItemsSource = colorRenderOptions, SelectedItem = defaultTag };
+        return (hasColorRenderOptions, items);
+    }
+
+    public void UpdateAnalysis(TypographyFeatureInfo typography = null, DWriteFontFace fontFace = null)
+    {
+        Analysis = GetCharAnalysis(Char, fontFace ?? _vm?.SelectedFaceAnalysis?.ActiveFace ?? face.Face, typography);
+        IsSvgChar = Analysis.GlyphFormats.Has(GlyphImageFormat.Svg);
+        UpdateGlyphIndices();
+    }
+
+    private void UpdateGlyphIndices()
+    {
+        // TODO: Palettes implementation is stupid and useless.
+        // Palettes should actually be a list that contains a list of glyphs for each palette.
+
+        if (Char is GlyphCharacter gc)
+        {
+            GlyphIndices = [gc.GlyphIndex];
+            //PaletteIndices = [gc.PaletteIndex];
+            Glyphs = [gc];
+        }
+        else if (Analysis?.GlyphIndices is { Count: > 0 } indices)
+        {
+            GlyphIndices = [.. indices];
+            //IReadOnlyList<int> palettes = Analysis.PaletteIndices;
+            IReadOnlyList<Color> colors = Analysis.Colors;
+            //PaletteIndices = palettes is { Count: > 0 } ? [.. palettes] : [];
+
+            List<GlyphCharacter> glyphs = new(indices.Count);
+            for (int i = 0; i < indices.Count; i++)
+            {
+                //int paletteIndex = palettes is { Count: > 0 } && i < palettes.Count ? palettes[i] : -1;
+                Color? color = colors is { Count: > 0 } && i < colors.Count ? colors[i] : null;
+                glyphs.Add(new(indices[i], -1, color));
+            }
+
+            Glyphs = glyphs;
+        }
+        else if (Analysis?.Indicies is { Length: > 0 } runIndices)
+        {
+            List<ushort> list = [.. runIndices.SelectMany(r => r)];
+            GlyphIndices = list;
+            PaletteIndices = [];
+            Glyphs = [.. list.Select(i => new GlyphCharacter(i))];
+        }
+        else
+        {
+            GlyphIndices = [];
+            PaletteIndices = [];
+            Glyphs = [];
+        }
+    }
+
+    public DWriteTextLayoutAnalysis GetCharAnalysis(Character c, DWriteFontFace face, TypographyFeatureInfo typography = null)
     {
         if (c is GlyphCharacter gc)
-            return _interop.AnalyzeGlyphLayout(face.Face, gc.GlyphIndex);
+            return _interop.AnalyzeGlyphLayout(face, gc.GlyphIndex);
 
-        using CanvasTextLayout layout = new(Utils.CanvasDevice, $"{c.Char}", new()
+        DWriteTextLayoutDefinition layoutDef = new()
         {
+            FontFace = face,
+            EnableColorFonts = true,
             FontSize = (float)Core.Converters.GetFontSize(Settings.GridSize),
-            FontFamily = face.Source,
-            FontStretch = face.DirectWriteProperties.Stretch,
-            FontWeight = face.DirectWriteProperties.Weight,
-            FontStyle = face.DirectWriteProperties.Style,
-            HorizontalAlignment = CanvasHorizontalAlignment.Left,
-        }, Settings.GridSize, Settings.GridSize);
+            //FontFamily = face.Source,
+            //FontStretch = face.DirectWriteProperties.Stretch,
+            //FontWeight = face.DirectWriteProperties.Weight,
+            //FontStyle = face.DirectWriteProperties.Style,
+            RequestedHeight = Settings.GridSize,
+            RequestedWidth = Settings.GridSize,
+            Text = c.Char,
+            Typography = GetEffectiveTypography(typography)
+        };
 
-        // This doesn't work if it's set during the property constructor.
-        // Leave it as a separate line.
-        layout.Options = CanvasDrawTextOptions.EnableColorFont;
-
-        ApplyEffectiveTypography(layout);
-        return _interop.AnalyzeCharacterLayout(layout);
+        return _interop.AnalyzeCharacterLayout(layoutDef);
     }
 
-    private void ApplyEffectiveTypography(CanvasTextLayout layout)
-    {
-        using var type = GetEffectiveTypography();
-        layout.SetTypography(0, 1, type);
-    }
 
-    private CanvasTypography GetEffectiveTypography(TypographyFeatureInfo typography = null)
+    private DWriteTypographyCollection GetEffectiveTypography(TypographyFeatureInfo typography = null)
     {
         if (typography == null)
             typography = _vm.SelectedTypography.Feature;
 
-        CanvasTypography typo = new();
-        if (typography != null && typography.Feature != CanvasTypographyFeatureName.None)
+        DWriteTypographyCollection typo = new();
+        if (typography != null && typography.Feature != DWriteTypographyFeatureName.None)
             typo.AddFeature(typography.Feature, 1u);
 
         return typo;
@@ -227,7 +502,7 @@ public partial class FontMapSearchModel : ViewModelBase
 {
     private Debouncer _debouncer { get; } = new();
     private ConcurrencyToken.ConcurrencyTokenGenerator _tokenFactory { get; } = new();
-    private CMFontFace _face;
+    private FaceAnalysisModel _face;
     private IReadOnlyList<UnicodeRangeModel> _categories;
 
     [ObservableProperty] string _query;
@@ -239,11 +514,13 @@ public partial class FontMapSearchModel : ViewModelBase
     {
         DebounceSearch(value, Settings.InstantSearchDelay, SearchSource.AutoProperty);
     }
-    public void SetContext(CMFontFace face, IReadOnlyList<UnicodeRangeModel> categories)
+
+    public void SetContext(FaceAnalysisModel face, IReadOnlyList<UnicodeRangeModel> categories)
     {
         _face = face;
         _categories = categories;
     }
+
     public void Clear()
     {
         _tokenFactory.GenerateToken(); // Invalidate inflight searches
@@ -252,6 +529,7 @@ public partial class FontMapSearchModel : ViewModelBase
         IsGrouped = false;
         IsSearching = false;
     }
+
     public void DebounceSearch(string query, int delayMilliseconds = 500, SearchSource from = SearchSource.AutoProperty)
     {
         if (from == SearchSource.AutoProperty && !Settings.UseInstantSearch)
@@ -261,6 +539,7 @@ public partial class FontMapSearchModel : ViewModelBase
         else
             _debouncer.Debounce(delayMilliseconds, () => Search(query));
     }
+
     public async void Search(string query)
     {
         if (_face is null || string.IsNullOrWhiteSpace(query))

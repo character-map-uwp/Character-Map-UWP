@@ -1,4 +1,4 @@
-﻿using Windows.Storage.Search;
+using Windows.Storage.Search;
 using WoffToOtf;
 
 namespace CharacterMap.Core;
@@ -290,9 +290,12 @@ public static class FontImporter
 
         // 3. Load fonts from file
         Dictionary<string, CMFontFamily> resultList = new();
-        DWriteFontSet fontSet = Utils.GetInterop().GetFonts(localFile).Inflate();
-        foreach (var font in fontSet.Fonts)
-            FontFinder.AddFont(resultList, font, localFile);
+        DWriteFontSet fontSet = Utils.GetInterop().GetFonts(localFile)?.Inflate();
+        if (fontSet?.Fonts is not null)
+        {
+            foreach (DWriteFontFace font in fontSet.Fonts)
+                FontFinder.AddFont(resultList, font, localFile);
+        }
 
         GC.Collect();
         return resultList.Count > 0 ? resultList.First().Value : null;
@@ -362,20 +365,32 @@ public static class FontImporter
             if (options.IsCancelled)
                 return contents;
 
-            // 3. Create font sets
-            var interop = Utils.GetInterop();
-            var results = tasks.Where(t => t.Result is not null).SelectMany(t => t.Result).ToList();
-            var dwSets = interop.GetFonts(results).ToList();
+            // 3. Create font sets & populate font cache file-by-file
+            NativeInterop interop = Utils.GetInterop();
+            List<StorageFile> results = tasks.Where(t => t.Result is not null).SelectMany(t => t.Result).ToList();
 
-            // 4. Create InstalledFonts list
-            for (int i = 0; i < dwSets.Count; i++)
+            foreach (StorageFile file in results)
             {
-                StorageFile file = results[i];
-                DWriteFontSet set = dwSets[i];
+                if (options.IsCancelled)
+                    return contents;
 
-                foreach (DWriteFontFace font in set.Inflate().Fonts)
-                    FontFinder.AddFont(contents.FontCache, font, file);
+                try
+                {
+                    DWriteFontSet set = interop.GetFonts(file);
+                    if (set?.Fonts is not null)
+                    {
+                        foreach (DWriteFontFace font in set.Fonts)
+                            FontFinder.AddFont(contents.FontCache, font, file);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                }
             }
+
+            // Prompt GC to collect native COM wrappers
+            GC.Collect();
 
             return contents;
         });

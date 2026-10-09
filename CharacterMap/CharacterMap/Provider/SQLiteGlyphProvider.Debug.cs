@@ -1,4 +1,4 @@
-﻿// Ignore Spelling: MDL
+// Ignore Spelling: MDL
 
 
 #if DEBUG && GENERATE_DATABASE
@@ -55,6 +55,17 @@ internal class FabricGlyph
     public string Unicode { get; set; }
 }
 
+[Table("UnihanReading")]
+internal class UnihanRecord
+{
+    [PrimaryKey, Column("Ix")]
+    public int Index { get; set; }
+
+    public string Definition { get; set; }
+
+    public string Readings { get; set; }
+}
+
 public partial class SQLiteGlyphProvider
 {
     public Task InitialiseDebugAsync()
@@ -68,6 +79,8 @@ public partial class SQLiteGlyphProvider
             SQLiteConnectionString connection = new (path);
             using (SQLiteConnection con = new (connection))
             {
+                con.Execute("PRAGMA synchronous = OFF;");
+                con.Execute("PRAGMA temp_store = MEMORY;");
                 PrepareDatabase(con);
             }
 
@@ -276,16 +289,37 @@ public partial class SQLiteGlyphProvider
                 }
             }
 
-            // Order everything into our desired order
-            // so when we load data we don't have to sort
-            mappings = mappings
+            // Group readings by character to compact storage
+            List<UnihanRecord> records = mappings
                 .GroupBy(m => m.Index)
                 .OrderBy(g => g.Key)
-                .SelectMany(g => g.OrderBy(r => r.Type))
+                .Select(g =>
+                {
+                    string definition = null;
+                    StringBuilder sb = new();
+                    foreach (UnihanReading item in g.OrderBy(r => r.Type))
+                    {
+                        if (item.Type is UnihanFieldType.Definition)
+                            definition = item.Description;
+                        else
+                        {
+                            if (sb.Length > 0)
+                                sb.Append('\n');
+                            sb.Append((int)item.Type).Append('\t').Append(item.Description);
+                        }
+                    }
+
+                    return new UnihanRecord
+                    {
+                        Index = g.Key,
+                        Definition = definition,
+                        Readings = sb.Length > 0 ? sb.ToString() : null
+                    };
+                })
                 .ToList();
 
-            using var c = new SQLiteConnection(connection);
-            c.RunInTransaction(() => { c.InsertAll(mappings); });
+            using SQLiteConnection c = new(connection);
+            c.RunInTransaction(() => { c.InsertAll(records); });
         });
     }
 
@@ -407,7 +441,6 @@ public partial class SQLiteGlyphProvider
                         data.Add(new UnicodeGlyphData
                         {
                             Description = desc.Transform(To.LowerCase, To.TitleCase),
-                            UnicodeGroup = parts[2],
                             UnicodeHex = hex,
                             UnicodeIndex = code
                         });
@@ -516,8 +549,22 @@ public partial class SQLiteGlyphProvider
     {
         con.CreateTable<MDL2Glyph>();
         con.CreateTable<UnicodeGlyphData>();
-        con.CreateTable<AdobeGlyphListMapping>();
-        con.CreateTable<UnihanReading>();
+        con.Execute("""
+            CREATE TABLE "AdobeGlyphListMapping" (
+                "I1" integer,
+                "I2" integer,
+                "I3" integer,
+                "I4" integer,
+                "S" varchar PRIMARY KEY NOT NULL
+            ) WITHOUT ROWID;
+            """);
+        con.Execute("""
+            CREATE TABLE "UnihanReading" (
+                "Ix" integer PRIMARY KEY NOT NULL,
+                "Definition" varchar,
+                "Readings" varchar
+            ) WITHOUT ROWID;
+            """);
 
         foreach (SearchTarget target in SearchTarget.KnownTargets)
             con.CreateTable(target.TargetType);

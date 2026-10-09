@@ -283,12 +283,10 @@ public partial class SelectorVisualElement : FrameworkElement
         this.Visibility = Visibility.Collapsed;
     }
 
-    public void MoveTo(FrameworkElement target, FrameworkElement container, bool show = true)
+    public void MoveTo(FrameworkElement target, FrameworkElement container, bool show = true, bool animate = true)
     {
         if (target is null)
             return;
-
-        bool animate = true;
 
         CreateVisual();
 

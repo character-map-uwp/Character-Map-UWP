@@ -2,6 +2,7 @@
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 
 namespace Microsoft.Toolkit.Uwp.UI.Controls;
@@ -318,7 +319,7 @@ internal class AdaptiveHeightValueConverter : IValueConverter
         throw new NotImplementedException();
     }
 
-    internal static Thickness GetItemMargin(GridView view, Thickness fallback = default(Thickness))
+    internal static Thickness GetItemMargin(ListViewBase view, Thickness fallback = default(Thickness))
     {
         var setter = view.ItemContainerStyle?.Setters.OfType<Setter>().FirstOrDefault(s => s.Property == FrameworkElement.MarginProperty);
         if (setter != null)
@@ -329,7 +330,7 @@ internal class AdaptiveHeightValueConverter : IValueConverter
         {
             if (view.Items.Count > 0)
             {
-                var container = (GridViewItem)view.ContainerFromIndex(0);
+                var container = (SelectorItem)view.ContainerFromIndex(0);
                 if (container != null)
                 {
                     return container.Margin;

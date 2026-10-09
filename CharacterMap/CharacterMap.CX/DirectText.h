@@ -8,6 +8,7 @@
 #include <DWriteFontAxis.h>
 #include "DWriteFallbackFont.h"
 #include "DWriteFontFace.h"
+#include <vector>
 
 
 using namespace Platform;
@@ -46,11 +47,18 @@ namespace CharacterMapCX
 				BlockUpdates = false;
 				m_isStale = true;
 				this->InvalidateMeasure();
+				if (m_canvas != nullptr)
+					m_canvas->Invalidate();
 			}
 
 			#pragma region Dependency Properties
 
 			static void RegisterDependencyProperties();
+
+			static property DependencyProperty^ ColorRenderOptionProperty
+			{
+				DependencyProperty^ get() { return _ColorRenderOptionProperty; }
+			}
 
 			static property DependencyProperty^ IsColorFontEnabledProperty
 			{
@@ -111,6 +119,12 @@ namespace CharacterMapCX
 			{
 				DWriteFallbackFont^ get() { return (DWriteFallbackFont^)GetValue(FallbackFontProperty); }
 				void set(DWriteFallbackFont^ value) { SetValue(FallbackFontProperty, value); }
+			}
+
+			property DWriteColorRenderOption ColorRenderOption
+			{
+				DWriteColorRenderOption get() { return (DWriteColorRenderOption)GetValue(ColorRenderOptionProperty); }
+				void set(DWriteColorRenderOption value) { SetValue(ColorRenderOptionProperty, value); }
 			}
 
 			property bool IsColorFontEnabled
@@ -182,6 +196,7 @@ namespace CharacterMapCX
 
 		private:
 			static DependencyProperty^ _FallbackFontProperty;
+			static DependencyProperty^ _ColorRenderOptionProperty;
 			static DependencyProperty^ _IsColorFontEnabledProperty;
 			static DependencyProperty^ _IsOverwriteCompensationEnabledProperty;
 			static DependencyProperty^ _UnicodeIndexProperty;
@@ -202,6 +217,7 @@ namespace CharacterMapCX
 			ComPtr<IDWriteTextLayout> m_textLayout;
 			CanvasControl^ m_canvas;
 			bool m_isStale;
+			bool m_isAxisOnlyStale;  // only axis values changed — reuse existing IDWriteTextLayout
 			bool m_render;
 			double m_minWidth = 1.0;
 			double m_targetScale = 1.0;
@@ -209,6 +225,16 @@ namespace CharacterMapCX
 
 			Rect drawBounds;
 			Rect layoutBounds;
+
+			// Cached state for axis-only invalidation
+			std::vector<DWRITE_FONT_AXIS_VALUE> m_lastAxisValues;
+			Platform::String^ m_lastFamilyName;  // nullptr = no cached layout
+			Platform::String^ m_lastFaceName;
+			Platform::String^ m_lastText;
+			double m_lastFontSize = 0.0;
+			unsigned short m_lastFontWeight = 400;
+			Windows::UI::Text::FontStyle m_lastFontStyle = Windows::UI::Text::FontStyle::Normal;
+			Windows::UI::Text::FontStretch m_lastFontStretch = Windows::UI::Text::FontStretch::Normal;
 
 
 			void OnPropChanged(DependencyObject^ d, DependencyProperty^ p);
@@ -236,6 +262,12 @@ namespace CharacterMapCX
 		// to register the properties
 		inline void DirectText::RegisterDependencyProperties()
 		{
+			static bool registered = false;
+			if (registered)
+				return;
+			
+			registered = true;
+
 			auto callback = ref new PropertyChangedCallback(&DirectText::OnRenderPropertyChanged);
 			auto meta = ref new PropertyMetadata(nullptr, callback);
 
@@ -243,6 +275,12 @@ namespace CharacterMapCX
 			{
 				_FallbackFontProperty = DependencyProperty::Register(
 					"FallbackFont", DWriteFallbackFont::typeid, DirectText::typeid, meta);
+			}
+
+			if (_ColorRenderOptionProperty == nullptr)
+			{
+				_ColorRenderOptionProperty = DependencyProperty::Register(
+					"ColorRenderOption", DWriteColorRenderOption::typeid, DirectText::typeid, ref new PropertyMetadata(DWriteColorRenderOption::Default, callback));
 			}
 
 			if (_IsCharacterFitEnabledProperty == nullptr)

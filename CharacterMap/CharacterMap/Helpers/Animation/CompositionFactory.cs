@@ -1,4 +1,6 @@
-﻿using Microsoft.Graphics.Canvas.Effects;
+﻿// Ignore Spelling: debouncer
+
+using Microsoft.Graphics.Canvas.Effects;
 using System.Globalization;
 using Windows.Graphics.Effects;
 using Windows.UI;
@@ -7,6 +9,7 @@ using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
@@ -192,6 +195,30 @@ public partial class CompositionFactory : DependencyObject
         UISettings = new UISettings();
     }
 
+    /// <summary>
+    /// Enables reposition animations on existing containers inside a ListViewBase control.
+    /// Does NOT hook into the item container generator to enable animation on new items
+    /// as they are generated.
+    /// </summary>
+    /// <param name="c"></param>
+    /// <param name="enable"></param>
+    public static void EnableContainerReposition(Selector c, bool enable = true)
+    {
+        if (c.ItemsPanelRoot is null)
+            return;
+
+        var containers = c.ItemsPanelRoot.GetFirstLevelDescendantsOfType<SelectorItem>();
+        foreach (var container in containers)
+        {
+            var v = ElementCompositionPreview.GetElementVisual(container);
+
+            if (enable)
+                v.ImplicitAnimations = CompositionFactory.GetRepositionCollection(v.Compositor);
+            else
+                v.ImplicitAnimations = null;
+        }
+    }
+
     public static ImplicitAnimationCollection GetRepositionCollection(Compositor c)
     {
         return c.GetCached("RepoColl", () =>
@@ -206,6 +233,16 @@ public partial class CompositionFactory : DependencyObject
             s.Add(nameof(Visual.Offset), g);
             return s;
         });
+    }
+
+    public static void SetWithoutReposition(FrameworkElement repositionTarget, Debouncer debouncer, Action action)
+    {
+        CompositionFactory.SetUseWindowAwareSynchronisedReposition(repositionTarget, false);
+
+        action?.Invoke();
+
+        debouncer.Debounce(
+            () => CompositionFactory.SetUseWindowAwareSynchronisedReposition(repositionTarget, true));
     }
 
     public static ICompositionAnimationBase CreateScaleAnimation(Compositor c)
@@ -996,11 +1033,13 @@ public class ResizeHelper : IDisposable
     private FrameworkElement _target;
     Debouncer _debouncer = new(250);
 
+    public WeakReferenceMessenger Messenger => field ??= Window.Current.GetMessenger();
+
     public ResizeHelper(FrameworkElement target)
     {
         CompositionFactory.SetUseSynchronisedReposition(target, true);
 
-        WeakReferenceMessenger.Default.Register<WindowResizingMessage>(this, (o, m) =>
+        Messenger.Register<WindowResizingMessage>(this, (o, m) =>
             {
                 if (m.Dispatcher != target.Dispatcher)
                     return;
@@ -1017,7 +1056,7 @@ public class ResizeHelper : IDisposable
     public void Dispose()
     {
         _debouncer.Cancel();
-        WeakReferenceMessenger.Default.UnregisterAll(this);
+        Messenger.UnregisterAll(this);
         CompositionFactory.SetUseSynchronisedReposition(_target, false);
         _target = null;
     }

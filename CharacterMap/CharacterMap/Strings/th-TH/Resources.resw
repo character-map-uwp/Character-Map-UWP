@@ -910,6 +910,9 @@
   <data name="VariableFeaturesMessage.Text" xml:space="preserve">
     <value>ฟอนต์นี้สามารถปรับแต่งตามค่าตัวแปรได้. หากต้องการดูให้สลับไปยังมุมมองแสดงตัวอย่างโดยคลิกที่ปุ่มสลับมุมมองด้านบน.</value>
   </data>
+  <data name="VariableFeaturesMessage1.Text" xml:space="preserve">
+    <value>ฟอนต์นี้สามารถปรับแต่งตามค่าตัวแปรได้. หากต้องการดูให้สลับไปยังมุมมองแสดงตัวอย่างโดยคลิกที่ปุ่มสลับมุมมองด้านบน.</value>
+  </data>
   <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
     <value>ซ่อนหรือแสดงตัวอย่างอักษรที่เลือกด้านขวา. หากปิดไป ฟังก์ชั่นต่างๆ ยังสามารถเข้าถึงได้ด้วยเมนูคลิกขวาที่ตัวอักษรในรายการผังอักษร.</value>
   </data>

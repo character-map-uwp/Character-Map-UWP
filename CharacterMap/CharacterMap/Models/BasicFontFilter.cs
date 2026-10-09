@@ -1,5 +1,3 @@
-﻿using Microsoft.Graphics.Canvas.Text;
-
 namespace CharacterMap.Models;
 
 public partial class BasicFontFilter
@@ -26,7 +24,13 @@ public partial class BasicFontFilter
 
     public static BasicFontFilter ForNamedRange(NamedUnicodeRange range)
     {
-        return new BasicFontFilter(
+        if (range == UnicodeRanges.Unassigned)
+            return new(
+                (f, c) => f.Where(i => i.Variants.Any(v => v.GetRanges().Contains(UnicodeRanges.Unassigned))),
+                range.Name,
+                true);
+
+        return new(
             (f, c) => f.Where(i => i.Variants.Any(v => Unicode.ContainsRange(v, range.Range))),
             range.Name,
             true);
@@ -38,7 +42,7 @@ public partial class BasicFontFilter
             v => v.QuickFilePath.Contains(path, StringComparison.InvariantCultureIgnoreCase))), null, true);
     }
 
-    public static BasicFontFilter ForFontInfo(string query, CanvasFontInformation info)
+    public static BasicFontFilter ForFontInfo(string query, DWriteFontInformation info)
     {
         return new BasicFontFilter((f, c) => f.Where(v => v.Variants.Any(
             v => v.TryGetInfo(info)?.Value is string f
@@ -155,7 +159,7 @@ public partial class BasicFontFilter
 
     public static BasicFontFilter AllColor { get; }
        = new((f, c) => f.Where(v => v.DefaultVariant.DirectWriteProperties.IsColorFont),
-               Localization.Get("All/Text"));
+               Localization.Get("All/Text"), Localization.Get("AllColorTitle/Text"));
 
     public static BasicFontFilter COLRV0 { get; }
        = new((f, c) => f.Where(v => v.Variants.Any(v => v.ContainsCOLRV0Glyphs)),

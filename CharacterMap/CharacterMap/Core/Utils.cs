@@ -1,7 +1,4 @@
 using System.IO;
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Svg;
-using Microsoft.Graphics.Canvas.Text;
 using System.Globalization;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
@@ -25,7 +22,14 @@ public class VSM : VisualStateManager
         if (ResourceHelper.AppSettings.UseSelectionAnimations is false)
             useTransitions = false;
 
-        return base.GoToStateCore(control, templateRoot, stateName, group, state, useTransitions);
+        try
+        {
+            return base.GoToStateCore(control, templateRoot, stateName, group, state, useTransitions);
+        }
+        catch
+        {
+            return base.GoToStateCore(control, templateRoot, stateName, group, state, false);
+        }
     }
 }
 
@@ -58,7 +62,7 @@ public class StringBuilderPool : Pool<StringBuilder>
 
 public static class Utils
 {
-    public static CanvasDevice CanvasDevice { get; } = CanvasDevice.GetSharedDevice();
+    public static Microsoft.Graphics.Canvas.CanvasDevice CanvasDevice { get; } = Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice();
 
     public static NativeInterop GetInterop() => Ioc.Default.GetService<NativeInterop>();
 
@@ -93,7 +97,7 @@ public static class Utils
     }
 
     /// <summary>
-    /// Queues a method to start asychronously on the Dependency Object's associated <see cref="DependencyObject.Dispatcher"/>
+    /// Queues a method to start asynchronously on the Dependency Object's associated <see cref="DependencyObject.Dispatcher"/>
     /// </summary>
     /// <param name="d"></param>
     /// <param name="a"></param>
@@ -131,7 +135,7 @@ public static class Utils
         return new UISettings().GetColorValue(UIColorType.Accent);
     }
 
-    public static void CopyToClipBoard(string str)
+    public static void CopyToClipboard(string str)
     {
         DataPackage dp = new() { RequestedOperation = DataPackageOperation.Copy };
         dp.SetText(str);
@@ -140,25 +144,37 @@ public static class Utils
 
     public static async Task<bool> TryCopyToClipboardAsync(CopyToClipboardMessage msg, FontMapViewModel viewModel)
     {
-        string c = msg.RequestedItem.GetClipboardString();
+        string c = msg.RequestedItem.GetClipboardString(msg.FaceAnalysis);
 
         if (msg.DataType == CopyDataType.Text)
-            return await TryCopyToClipboardInternalAsync(msg.RequestedItem.Char, c, viewModel);
-
+        {
+            var str = msg.RequestedItem is GlyphCharacter { IsValidUnicode: false } ? c : msg.RequestedItem.Char;
+            return await TryCopyToClipboardInternalAsync(str, c, viewModel);
+        }
 
         CharacterRenderingOptions renderOpts = msg.Analysis is not null
-                ? viewModel.RenderingOptions with { Analysis = msg.Analysis, Typography = [viewModel.SelectedTypography.Feature] }
-                : viewModel.RenderingOptions;
+            ? viewModel.RenderingOptions with
+            {
+                Analysis = msg.Analysis,
+                Typography = [viewModel.SelectedTypography.Feature],
+                ActiveFontFace = msg.FaceAnalysis?.ActiveFace ?? viewModel.SelectedFaceAnalysis?.ActiveFace ?? viewModel.RenderingOptions.ActiveFontFace,
+                Axis = msg.FaceAnalysis?.VariationAxis ?? viewModel.SelectedFaceAnalysis?.VariationAxis ?? viewModel.RenderingOptions.Axis
+            }
+            : viewModel.RenderingOptions with
+            {
+                ActiveFontFace = msg.FaceAnalysis?.ActiveFace ?? viewModel.SelectedFaceAnalysis?.ActiveFace ?? viewModel.RenderingOptions.ActiveFontFace,
+                Axis = msg.FaceAnalysis?.VariationAxis ?? viewModel.SelectedFaceAnalysis?.VariationAxis ?? viewModel.RenderingOptions.Axis
+            };
         
         if (msg.DataType == CopyDataType.SVG)
         {
-            ExportOptions ops = new(ExportFormat.Svg, msg.Style) { Options = renderOpts };
+            ExportOptions ops = new(ExportFormat.Svg, msg.Style) { PreferredColorType = msg.PreferredColorType, Options = renderOpts };
             var svg = ExportManager.GetSVG(ops, msg.RequestedItem);
             return await TryCopyToClipboardInternalAsync(svg, c, viewModel, msg.DataType);
         }
         else if (msg.DataType == CopyDataType.PNG)
         {
-            ExportOptions ops = new(ExportFormat.Png, msg.Style) { Options = renderOpts };
+            ExportOptions ops = new(ExportFormat.Png, msg.Style) { PreferredColorType = msg.PreferredColorType, Options = renderOpts };
             IRandomAccessStream data = await ExportManager.GetGlyphPNGStreamAsync(ops, msg.RequestedItem);
             return await TryCopyToClipboardInternalAsync(null, c, viewModel, msg.DataType, data);
         }
@@ -168,7 +184,7 @@ public static class Utils
 
     public static Task<bool> TryCopyToClipboardAsync(Character character, FontMapViewModel viewModel)
     {
-        string c = character.GetClipboardString();
+        string c = character.GetClipboardString(viewModel.SelectedFaceAnalysis);
         return TryCopyToClipboardInternalAsync(character.Char, c, viewModel);
     }
 
@@ -185,6 +201,23 @@ public static class Utils
                 ?? variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Stretch == FontStretch.Normal)
                 ?? variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight)
                 ?? variants[0];
+    }
+
+    public static string ToRtfEscaped(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+            return string.Empty;
+        StringBuilder sb = new();
+        foreach (char ch in text)
+        {
+            if (ch is '\\' or '{' or '}')
+                sb.Append('\\').Append(ch);
+            else if (ch <= 0x7F)
+                sb.Append(ch);
+            else
+                sb.Append(@$"\u{(short)ch}?");
+        }
+        return sb.ToString();
     }
 
     public static async Task<bool> TryCopyToClipboardInternalAsync(string rawString, string formattedString, FontMapViewModel viewModel, CopyDataType type = CopyDataType.Text, IRandomAccessStream data = null)
@@ -221,7 +254,7 @@ public static class Utils
                 dp.SetRtf(rtf);
 
                 var longName = src;
-                if (v.SelectedFace.TryGetInfo(CanvasFontInformation.FullName) is { } info
+                if (v.SelectedFace.TryGetInfo(DWriteFontInformation.FullName) is { } info
                     && info.Value != longName)
                 {
                     longName = $"{src}, {info.Value}";
@@ -282,53 +315,6 @@ public static class Utils
     private static string AsHex(this Color c)
     {
         return $"#{c.R:x2}{c.G:x2}{c.B:x2}";
-    }
-
-    /// <summary>
-    /// Returns a string attempting to show only characters a font supports.
-    /// Unsupported characters are replaced with the Unicode replacement character.
-    /// </summary>
-    /// <param name="s"></param>
-    /// <returns></returns>
-    public static string GetSafeString(CanvasFontFace fontFace, string s)
-    {
-        /* 
-         * Ideally we actually want to use DirectTextBlock
-         * instead of TextBlock to get correct display of 
-         * Fallback characters, but there is some bug preventing
-         * rendering I can't figure out, so this is our hack for
-         * now.
-         */
-
-        string r = string.Empty;
-        if (s != null && fontFace != null)
-        {
-            for (int i = 0; i < s.Length; i++)
-            {
-                var c = s[i];
-
-                /* Surrogate pair handling is pain */
-                if (char.IsSurrogate(c)
-                    && char.IsSurrogatePair(c, s[i + 1]))
-                {
-                    var c1 = s[i + 1];
-                    int val = char.ConvertToUtf32(c, c1);
-                    if (fontFace.HasCharacter((uint)val))
-                        r += new string(new char[] { c, c1 });
-                    else
-                        r += '\uFFFD';
-
-                    i += 1;
-                }
-                else if (fontFace.HasCharacter(c))
-                    r += c;
-                else
-                    r += '\uFFFD';
-            }
-
-        }
-
-        return r;
     }
 
     public static FrameworkElement GetPresenter(this FlyoutBase flyout)
@@ -422,7 +408,7 @@ public static class Utils
          *   actual version numbers
          */
 
-        var verStr = variant.TryGetInfo(CanvasFontInformation.VersionStrings)?.Value;
+        var verStr = variant.TryGetInfo(DWriteFontInformation.VersionStrings)?.Value;
         if (string.IsNullOrWhiteSpace(verStr) is false)
         {
             if (verStr.StartsWith("Version ", StringComparison.InvariantCultureIgnoreCase))
@@ -556,34 +542,25 @@ public static class Utils
         };
     }
 
-    public static CanvasSvgDocument GenerateSvgDocument(
-        ICanvasResourceCreator device,
+    public static string GenerateSvgString(
         Rect rect,
         string path,
         Color color)
     {
-        return GenerateSvgDocument(device, rect, [path], [color]);
+        return GenerateSvgString(rect, [path], [color]);
     }
 
     /// <summary>
-    /// Generates an SVG document for multi-layered glyphs, where each layer has separate colours.
+    /// Generates an SVG string for multi-layered glyphs, where each layer has separate colours.
     /// COLR glyphs are an example of this.
     /// </summary>
-    /// <param name="device"></param>
-    /// <param name="rect">Bounding rectangle of all glyphs</param>
-    /// <param name="paths">Geometry of each layer</param>
-    /// <param name="colors">Colour of each layer</param>
-    /// <param name="invertBounds"></param>
-    /// <returns></returns>
-    public static CanvasSvgDocument GenerateSvgDocument(
-        ICanvasResourceCreator device,
+    public static string GenerateSvgString(
         Rect rect,
         IList<string> paths,
-        IList<Color> colors,
-        bool invertBounds = true)
+        IList<Color> colors)
     {
-        var right = Math.Ceiling(rect.Width);
-        var bottom = Math.Ceiling(rect.Height);
+        double right = Math.Ceiling(rect.Width);
+        double bottom = Math.Ceiling(rect.Height);
         StringBuilder sb = BuilderPool.Request();
 
         try
@@ -593,38 +570,32 @@ public static class Utils
                 "<svg width=\"100%\" height=\"100%\" viewBox=\"{2} {3} {0} {1}\" xmlns=\"http://www.w3.org/2000/svg\">",
                 right,
                 bottom,
-                invertBounds ? -Math.Floor(rect.Left) : Math.Floor(rect.Left),
-                invertBounds ? -Math.Floor(rect.Top) : Math.Floor(rect.Top));
+                Math.Floor(rect.Left),
+                Math.Floor(rect.Top));
 
-            foreach (var path in paths)
+            for (int i = 0; i < paths.Count; i++)
             {
-                string p = path;
-                if (path.StartsWith("F1 "))
-                    p = path.Remove(0, 3);
+                string p = paths[i];
+                if (p.StartsWith("F1 "))
+                    p = p.Remove(0, 3);
 
                 if (string.IsNullOrWhiteSpace(p))
                     continue;
 
+                Color c = (colors != null && i < colors.Count) ? colors[i] : Colors.Black;
                 sb.AppendFormat("<path d=\"{0}\" style=\"fill: {1}; fill-opacity: {2}\" />",
                     p,
-                    colors[paths.IndexOf(path)].AsHex(),
-                    (double)colors[paths.IndexOf(path)].A / 255d);
+                    c.AsHex(),
+                    (double)c.A / 255d);
             }
             sb.Append("</svg>");
-
-            CanvasSvgDocument doc = CanvasSvgDocument.LoadFromXml(device, sb.ToString());
-            return doc;
+            return sb.ToString();
         }
         finally
         {
             sb.Clear();
             BuilderPool.Return(sb);
         }
-    }
-
-    public static Task WriteSvgAsync(CanvasSvgDocument document, IStorageFile file)
-    {
-        return WriteSvgAsync(document.GetXml(), file);
     }
 
     public static Task WriteSvgAsync(string xml, IStorageFile file)
@@ -691,4 +662,6 @@ public static class Utils
     /// 23H2 Windows 11 builds introduce COLRv1 font format support to DirectWrite
     /// </summary>
     public static bool Supports23H2 { get; } = ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 17);
+
+    public static bool SupportsColrV1 => Supports23H2;
 }

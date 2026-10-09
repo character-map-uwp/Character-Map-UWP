@@ -46,9 +46,7 @@ public enum MaterialCornerStyle
 [AttachedProperty<Thickness>("InsetClip")] // Applies a composition InsetClip with the given insets
 [AttachedProperty<bool>("IsMouseInputEnabled")] // Enables Mouse & Touch input on an InkCanvas
 [AttachedProperty<InkToolbarToolButton>("DefaultTool")] // Sets the default tool for an InkToolbar
-[AttachedProperty<string>("Name")]
 [AttachedProperty<string>("Uppercase", "string.Empty")] // Sets text on a TextBlock in UpperCase
-[AttachedProperty<object>("Footer")] // Generic object storage. Intended for List footers.
 [AttachedProperty<string>("StyleKey")]
 [AttachedProperty<string>("IconString")]
 [AttachedProperty<IconElement>("Icon")]
@@ -84,6 +82,7 @@ public enum MaterialCornerStyle
 [AttachedProperty<FontWeight>("FontWeight", "FontWeights.Normal")] // Sets the FontWeight on a RichEditBox
 [AttachedProperty<FontFamily>] // Sets the FontFamily on a RichEditBox
 [AttachedProperty<string>("ToolTipMemberPath")] // PropertyPath on an ItemContainer's Content to use as the ItemContainer's ToolTip
+[AttachedProperty<DataTemplate>("LazyToolTipTemplate")] // ToolTip DataTemplate for ItemsControl
 [AttachedProperty<DataTemplate>("ToolTipTemplate")] // ToolTip DataTemplate for ItemsControl
 [AttachedProperty<PlacementMode>("ToolTipPlacement", PlacementMode.Mouse)]
 [AttachedProperty<object>("ToolTip")] // Sets ToolTip with default Theme style
@@ -115,9 +114,11 @@ public enum MaterialCornerStyle
 [AttachedProperty<Color>] // Generic property store
 [AttachedProperty<Double>] // Generic property store
 [AttachedProperty<Boolean>] // Generic property store
+[AttachedProperty<string>("Name")] // Generic property store
 [AttachedProperty<object>("Tag")] // Generic property store
 [AttachedProperty<object>("Content")] // Generic property store
 [AttachedProperty<double>("FontSize")] // Generic property store
+[AttachedProperty<object>("Footer")] // Generic object storage. Intended for List footers.
 public partial class Properties : DependencyObject
 {
     #region BindingCache
@@ -230,13 +231,13 @@ public partial class Properties : DependencyObject
             {
                 d.Axis = o.Axis;
                 d.FallbackFont = Converters.GetFontFallback();
-                d.FontFace = o.Variant.Face;
-                d.FontFamily = (FontFamily)XamlBindingHelper.ConvertValue(typeof(FontFamily), o.Variant.Source);
-                d.FontStretch = o.Variant.DirectWriteProperties.Stretch;
-                d.FontStyle = o.Variant.DirectWriteProperties.Style;
-                d.FontWeight = o.Variant.DirectWriteProperties.Weight;
-                d.IsColorFontEnabled = o.IsColourFontEnabled;
+                d.FontFace = o.ActiveFontFace;
+                d.FontFamily = (FontFamily)XamlBindingHelper.ConvertValue(typeof(FontFamily), o.Face.Source);
+                d.FontStretch = o.Face.DirectWriteProperties.Stretch;
+                d.FontStyle = o.Face.DirectWriteProperties.Style;
+                d.FontWeight = o.Face.DirectWriteProperties.Weight;
                 d.Typography = o.DXTypography;
+                d.ColorRenderOption = o.ColorRenderOption;
             }
             else
             {
@@ -249,6 +250,7 @@ public partial class Properties : DependencyObject
                 d.ClearValue(DirectText.FontWeightProperty);
                 d.ClearValue(DirectText.IsColorFontEnabledProperty);
                 d.ClearValue(DirectText.TypographyProperty);
+                d.ClearValue(DirectText.ColorRenderOptionProperty);
             }
 
             d.Update();
@@ -257,11 +259,11 @@ public partial class Properties : DependencyObject
         {
             if (e.NewValue is CharacterRenderingOptions o)
             {
-                t.FontFamily = (FontFamily)XamlBindingHelper.ConvertValue(typeof(FontFamily), o.Variant.DisplaySource);
-                t.FontStretch = o.Variant.DirectWriteProperties.Stretch;
-                t.FontStyle = o.Variant.DirectWriteProperties.Style;
-                t.FontWeight = o.Variant.DirectWriteProperties.Weight;
-                t.IsColorFontEnabled = o.IsColourFontEnabled;
+                t.FontFamily = (FontFamily)XamlBindingHelper.ConvertValue(typeof(FontFamily), o.Face.DisplaySource);
+                t.FontStretch = o.Face.DirectWriteProperties.Stretch;
+                t.FontStyle = o.Face.DirectWriteProperties.Style;
+                t.FontWeight = o.Face.DirectWriteProperties.Weight;
+                t.IsColorFontEnabled = o.ColorRenderOption != DWriteColorRenderOption.Monochrome;
                 SetTypography(t, o.DefaultTypography);
             }
             else
@@ -272,6 +274,23 @@ public partial class Properties : DependencyObject
                 t.ClearValue(TextBlock.FontStyleProperty);
                 t.ClearValue(TextBlock.FontWeightProperty);
                 t.ClearValue(TextBlock.IsColorFontEnabledProperty);
+            }
+        }
+        else if (s is FontGlyphs f)
+        {
+            if (e.NewValue is CharacterRenderingOptions o)
+            {
+                f.FontFace = o.ActiveFontFace;
+                f.FontSize = o.FontSize;
+                f.IsColorFontEnabled = o.ColorRenderOption != DWriteColorRenderOption.Monochrome;
+                f.Typography = new DWriteTypographyCollection(o.DXTypography.Feature);
+            }
+            else
+            {
+                f.ClearValue(FontGlyphs.FontFaceProperty);
+                f.ClearValue(FontGlyphs.FontSizeProperty);
+                f.ClearValue(FontGlyphs.IsColorFontEnabledProperty);
+                f.ClearValue(FontGlyphs.TypographyProperty);
             }
         }
     }
@@ -1178,6 +1197,35 @@ public partial class Properties : DependencyObject
 
     #region ToolTip MemberPath, Template, StyleKey
 
+    static partial void OnLazyToolTipTemplateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not FrameworkElement element)
+            return;
+
+        if (e.NewValue is DataTemplate template)
+        {
+            ToolTip toolTip = new();
+            toolTip.ContentTemplate = template;
+
+            if (ResourceHelper.TryGet("DefaultThemeToolTipStyle", out Style style))
+                toolTip.Style = style;
+
+            toolTip.Opened += (s, args) =>
+            {
+                toolTip.ContentTemplate = template;
+                toolTip.Content = element.DataContext;
+            };
+
+            // Release the visual tree from memory as soon as it closes
+            toolTip.Closed += (s, args) => { toolTip.Content = null; };
+            ToolTipService.SetToolTip(element, toolTip);
+        }
+        else
+        {
+            ToolTipService.SetToolTip(element, null);
+        }
+    }
+
     static partial void OnToolTipMemberPathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is ListViewBase lvb)
@@ -1312,6 +1360,7 @@ public partial class Properties : DependencyObject
             // 2. Update any existing containers
             if (lvb.ItemsPanelRoot is null)
                 return;
+
             foreach (var item in lvb.ItemsPanelRoot.Children.OfType<SelectorItem>())
             {
                 var tooltip = ToolTipService.GetToolTip(item) as ToolTip;
@@ -1770,35 +1819,22 @@ public partial class Properties : DependencyObject
         if (e.NewValue is ThemeIcon i)
         {
             if (d is FontIcon f)
-                Make(i, f);
+                ThemeIconGlyph.Make(i, f);
+            else if(d is BitmapIcon bmp)
+                ThemeIconGlyph.MakeBitmap(i, bmp);
             else if (d is AppBarToggleButton atb)
-                atb.Icon = Make(i);
+                atb.Icon = ThemeIconGlyph.Make(i);
             else if (d is AppBarButton abb)
-                abb.Icon = Make(i);
+                abb.Icon = ThemeIconGlyph.Make(i);
             else if (d is MenuButton mb)
-                mb.Icon = Make(i);
+                mb.Icon = ThemeIconGlyph.Make(i);
             else if (d is MenuFlyoutItem mfi)
-                mfi.Icon = Make(i);
+                mfi.Icon = ThemeIconGlyph.Make(i);
             else if (d is MenuFlyoutSubItem mfsi)
-                mfsi.Icon = Make(i);
+                mfsi.Icon = ThemeIconGlyph.Make(i);
         }
 
-        static FontIcon Make(ThemeIcon ti, FontIcon source = null)
-        {
-            FontIcon f = source ?? new();
-
-            if (ThemeIconGlyph.GetWithFallback(ti) is { } result)
-            {
-                if (result.isFallback is false)
-                    f.Style ??= ResourceHelper.GetThemeFontIconStyle();
-                else
-                    f.FontFamily = ResourceHelper.Get<FontFamily>("FallbackSymbolThemeFontFamily");
-
-                f.Glyph = result.glyph;
-            }
-
-            return f;
-        }
+        
     }
 
     #endregion

@@ -35,7 +35,7 @@ public abstract partial class ViewBase : Page
     {
         ResourceHelper.GoToThemeState(this);
 
-        if (GetViewModel() is { } vm)
+        if (DesignMode is false && GetViewModel() is { } vm)
         {
             foreach (var state in _trackedStates)
                 GoToState(BaseNotifyingModel.GetValue<string>(vm, state));

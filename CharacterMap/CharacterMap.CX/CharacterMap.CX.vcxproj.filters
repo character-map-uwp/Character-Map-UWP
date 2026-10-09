@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Resources">
@@ -19,19 +19,34 @@
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="ColorTextAnalyzer.cpp" />
     <ClCompile Include="CanvasTextLayoutAnalysis.cpp" />
+    <ClCompile Include="ColrV1Svg.cpp" />
     <ClCompile Include="DirectWrite.cpp" />
     <ClCompile Include="DirectText.cpp">
       <Filter>Controls</Filter>
     </ClCompile>
+    <ClCompile Include="FontGlyphs.cpp">
+      <Filter>Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="CompositionDeviceManager.cpp" />
     <ClCompile Include="NativeInterop.cpp" />
     <ClCompile Include="CustomFontManager.cpp" />
+    <ClCompile Include="TypographyAnalyzer.cpp" />
     <ClCompile Include="DWriteFontFamily.cpp">
+      <Filter>DWrite</Filter>
+    </ClCompile>
+    <ClCompile Include="DWriteTypographyCollection.cpp">
       <Filter>DWrite</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
+    <ClInclude Include="CompositionDeviceManager.h" />
+    <ClInclude Include="FontGlyphs.h">
+      <Filter>Controls</Filter>
+    </ClInclude>
     <ClInclude Include="ColorTextAnalyzer.h" />
+    <ClInclude Include="TypographyAnalyzer.h" />
+    <ClInclude Include="ColrV1Svg.h" />
     <ClInclude Include="GlyphImageFormat.h" />
     <ClInclude Include="CanvasTextLayoutAnalysis.h" />
     <ClInclude Include="SVGGeometrySink.h" />
@@ -80,6 +95,9 @@
     <ClInclude Include="ColrTableReader.h">
       <Filter>Tables</Filter>
     </ClInclude>
+    <ClInclude Include="CpalTableReader.h">
+      <Filter>Tables</Filter>
+    </ClInclude>
     <ClInclude Include="SvgTableReader.h">
       <Filter>Tables</Filter>
     </ClInclude>
@@ -87,6 +105,7 @@
       <Filter>Tables</Filter>
     </ClInclude>
     <ClInclude Include="FontAnalysis.h" />
+    <ClInclude Include="FontPalette.h" />
     <ClInclude Include="DWriteFallbackFont.h">
       <Filter>DWrite</Filter>
     </ClInclude>
@@ -95,6 +114,18 @@
     </ClInclude>
     <ClInclude Include="GsubTableReader.h">
       <Filter>Tables</Filter>
+    </ClInclude>
+    <ClInclude Include="DWriteLigature.h">
+      <Filter>DWrite</Filter>
+    </ClInclude>
+    <ClInclude Include="DWriteUnicodeRange.h">
+      <Filter>DWrite</Filter>
+    </ClInclude>
+    <ClInclude Include="DWriteTypographyFeature.h">
+      <Filter>DWrite</Filter>
+    </ClInclude>
+    <ClInclude Include="DWriteTypographyCollection.h">
+      <Filter>DWrite</Filter>
     </ClInclude>
     <ClInclude Include="CmapTableReader.h">
       <Filter>Tables</Filter>
@@ -119,6 +150,7 @@
     <ClInclude Include="OS2TableReader.h">
       <Filter>Tables</Filter>
     </ClInclude>
+    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Themes\Generic.xaml" />

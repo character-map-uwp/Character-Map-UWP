@@ -5,6 +5,7 @@
 #include <d2d1_3.h>
 #include <dwrite_3.h>
 #include <WindowsNumerics.h>
+#include "DWriteFontSource.h"
 
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Numerics;
@@ -16,6 +17,6 @@ namespace CharacterMapCX
 	public interface class ITypographyInfo
 	{
 		property String^ DisplayName { String^ get(); };
-		property CanvasTypographyFeatureName Feature { CanvasTypographyFeatureName get(); };
+		property DWriteTypographyFeatureName Feature { DWriteTypographyFeatureName get(); };
 	};
 }

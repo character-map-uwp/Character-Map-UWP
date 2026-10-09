@@ -908,6 +908,9 @@ Zoptymalizowany utworzy inteligentną nazwę na podstawie rodziny czcionek i naz
   <data name="VariableFeaturesMessage.Text" xml:space="preserve">
     <value>Ta czcionka ma zmienne cechy. Aby je eksplorować, przełącz się do widoku rampy typu za pomocą przycisku przełącznika powyżej.</value>
   </data>
+  <data name="VariableFeaturesMessage1.Text" xml:space="preserve">
+    <value>Ta czcionka ma zmienne cechy. Aby je eksplorować, przełącz się do widoku rampy typu za pomocą przycisku przełącznika powyżej.</value>
+  </data>
   <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
     <value>Pokazuje lub ukrywa okienko podglądu po prawej stronie ekranu. Jeśli ta opcja jest wyłączona, dostęp do wielu funkcji można uzyskać, klikając prawym przyciskiem myszy lub dotykając, przytrzymując znak wewnątrz siatki znaków.</value>
   </data>

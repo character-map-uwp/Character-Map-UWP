@@ -744,11 +744,13 @@
                             IsItemClickEnabled="False"
                             ItemAnnotation="None"
                             ItemContainerTransitions="{StaticResource NoTransitions}"
-                            ItemFontFace="{x:Bind _fontMap.ViewModel.SelectedFace.Face}"
+                            ItemFaceAnalysis="{x:Bind _fontMap.ViewModel.SelectedFaceAnalysis}"
+                            ItemFontFace="{x:Bind _fontMap.ViewModel.SelectedFaceAnalysis.ActiveFace}"
                             ItemFontFamily="{x:Bind _fontMap.ViewModel.SelectedFaceAnalysis.FontFamily}"
                             ItemSize="{x:Bind _fontMap.CharGrid.ItemSize}"
                             ItemTemplate="{x:Bind _fontMap.CharGrid.ItemTemplate}"
                             ItemTypography="{x:Bind _fontMap.ViewModel.SelectedTypography.Feature}"
+                            Foreground="{x:Bind ViewModel.GlyphBrush, Mode=OneWay}"
                             ItemsSource="{x:Bind ViewModel.Characters, Mode=OneWay}"
                             SelectionMode="None"
                             ShowColorGlyphs="{x:Bind ViewModel.ExportColor, Mode=OneWay}">
@@ -757,9 +759,6 @@
                                     <ItemsWrapGrid HorizontalAlignment="Center" Orientation="Horizontal" />
                                 </ItemsPanelTemplate>
                             </GridView.ItemsPanel>
-                            <ItemsControl.Foreground>
-                                <SolidColorBrush Color="{x:Bind ViewModel.GlyphColor, Mode=OneWay}" />
-                            </ItemsControl.Foreground>
                         </cmControls:CharacterGridView>
                     </Grid>
                 </Grid>
