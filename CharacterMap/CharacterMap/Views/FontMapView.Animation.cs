@@ -149,7 +149,7 @@ public partial class FontMapView
         if (VariableAxis is not null && VariableAxis.ItemsPanelRoot is not null)
             items = items.Concat(VariableAxis.ItemsPanelRoot.Children.OfType<FrameworkElement>());
 
-        return items.Append(TypeRampInputRow).OrderBy(g => Guid.NewGuid()).ToList();
+        return items.Append(TypeRampInputRow).Where(i => i != null).OrderBy(g => Guid.NewGuid()).ToList();
     }
 
     List<FrameworkElement> GetGridAnimationTargets(ListViewBase control)
@@ -188,6 +188,9 @@ public partial class FontMapView
         FrameworkElement target = targetContent ? PreviewGridContent : PreviewGrid;
         FrameworkElement splitter = targetContent ? SplitterContainerContent : SplitterContainer;
 
+        if (target is null || splitter is null)
+            return sb;
+
         if (setSpan)
         {
             sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(CharGridRoot, TargetProperty.GridColumnSpan)
@@ -215,6 +218,8 @@ public partial class FontMapView
         FrameworkElement splitter = targetContent ? SplitterContainerContent : SplitterContainer;
 
         Storyboard sb = new Storyboard();
+        if (target is null || splitter is null)
+            return sb;
 
         if (!targetContent)
         {
@@ -279,7 +284,7 @@ public partial class FontMapView
         Storyboard sb = new Storyboard();
         Core.Properties.SetTag(sb, target);
 
-        if (target != null && target.Visibility == Visibility.Visible)
+        if (target is { Visibility: Visibility.Visible })
         {
             sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, TargetProperty.CompositeTransform.TranslateY)
                 .AddKeyFrame(CompositionFactory.DefaultOffsetDuration, target.RenderSize.Height, KeySplines.CompositionDefault);
@@ -581,7 +586,7 @@ public partial class FontMapView
                 .AddKeyFrame(startOffset, -80)
                 .AddKeyFrame(startOffset.TotalSeconds + 0.4, 0, new BackEase { Amplitude = 0.8, EasingMode = EasingMode.EaseOut });
 
-            if (CopySequenceRoot != null)
+            if (CopySequenceRoot != null && CopySequenceContent != null)
                 sb.Children.Add(CreateVerticalShowPane(CopySequenceContent));
 
             if (sb.Children.OfType<Storyboard>().FirstOrDefault(s =>

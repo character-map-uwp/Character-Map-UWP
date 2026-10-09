@@ -675,17 +675,11 @@ public static class Animation
         return storyboard;
     }
 
-    public static T CreateTimeline<T>(DependencyObject target, String targetProperty, Storyboard parent) where T : Timeline, new()
-    {
-        T timeline = new T();
-        parent.AddTimeline(timeline, target, targetProperty);
-        return timeline;
-    }
-
     public static T CreateTimeline<T>(this Storyboard parent, DependencyObject target, String targetProperty) where T : Timeline, new()
     {
         T timeline = new T();
-        parent.AddTimeline(timeline, target, targetProperty);
+        if (target != null && targetProperty != null) // Safety net to prevent rare runtime crashes
+            parent.AddTimeline(timeline, target, targetProperty);
         return timeline;
     }
 

@@ -22,7 +22,14 @@ public class VSM : VisualStateManager
         if (ResourceHelper.AppSettings.UseSelectionAnimations is false)
             useTransitions = false;
 
-        return base.GoToStateCore(control, templateRoot, stateName, group, state, useTransitions);
+        try
+        {
+            return base.GoToStateCore(control, templateRoot, stateName, group, state, useTransitions);
+        }
+        catch
+        {
+            return base.GoToStateCore(control, templateRoot, stateName, group, state, false);
+        }
     }
 }
 
