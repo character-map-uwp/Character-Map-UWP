@@ -229,8 +229,12 @@ namespace CharacterMapCX
 			// Cached state for axis-only invalidation
 			std::vector<DWRITE_FONT_AXIS_VALUE> m_lastAxisValues;
 			Platform::String^ m_lastFamilyName;  // nullptr = no cached layout
+			Platform::String^ m_lastFaceName;
 			Platform::String^ m_lastText;
 			double m_lastFontSize = 0.0;
+			unsigned short m_lastFontWeight = 400;
+			Windows::UI::Text::FontStyle m_lastFontStyle = Windows::UI::Text::FontStyle::Normal;
+			Windows::UI::Text::FontStretch m_lastFontStretch = Windows::UI::Text::FontStretch::Normal;
 
 
 			void OnPropChanged(DependencyObject^ d, DependencyProperty^ p);

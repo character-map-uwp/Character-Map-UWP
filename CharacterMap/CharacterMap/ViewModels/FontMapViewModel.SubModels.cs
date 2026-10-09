@@ -12,7 +12,7 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
 {
     public CMFontFace Face { get; }
 
-    [ObservableProperty] IReadOnlyList<DWriteFontAxis> _variationAxis;
+    [ObservableProperty] IReadOnlyList<DWriteFontAxis> _variationAxis = [];
 
     [ObservableProperty] IReadOnlyList<Suggestion> _rampOptions;
 

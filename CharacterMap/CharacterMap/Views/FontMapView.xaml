@@ -148,7 +148,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <!-- x:Bind on Min & Max breaks sliders in Flyout -->
+                <!--  x:Bind on Min & Max breaks sliders in Flyout  -->
                 <Slider
                     x:Name="AxisSlider"
                     Grid.Column="1"
@@ -170,11 +170,11 @@
                             <FontIcon
                                 x:Name="Hidden"
                                 x:Load="{x:Bind IsHidden}"
-                                ToolTipService.ToolTip="Hidden Axis - not intended for end-user control"
                                 Margin="0 2 0 -6"
                                 core:Properties.ThemeIcon="Hidden"
                                 FontSize="12"
-                                Opacity="0.4" />
+                                Opacity="0.4"
+                                ToolTipService.ToolTip="Hidden Axis - not intended for end-user control" />
                         </StackPanel>
                     </Slider.Header>
                 </Slider>
@@ -493,7 +493,7 @@
             <RowDefinition x:Name="TitleRow" Height="{StaticResource TitleRowGridHeight}" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="{x:Bind BottomHeight, Mode=OneWay}" />
+            <RowDefinition Height="{x:Bind BottomHeight, Mode=OneWay}" d:Height="0" />
         </Grid.RowDefinitions>
 
         <Border
@@ -2197,18 +2197,13 @@
                             <cxc:DirectText
                                 x:Name="TxtPreview"
                                 VerticalAlignment="Center"
-                                ColorRenderOption="{Binding ElementName=ColrSelector, Path=SelectedItem.Tag, FallbackValue=Default, TargetNullValue=Default}"
-                                FontFace="{Binding SelectedFaceAnalysis.ActiveFace}"
+                                core:Properties.Options="{x:Bind ViewModel.RenderingOptions, Mode=OneWay}"
                                 FontSize="48"
-                                FontStretch="{Binding SelectedFace.DirectWriteProperties.Stretch}"
-                                FontStyle="{Binding SelectedFace.DirectWriteProperties.Style}"
-                                FontWeight="{Binding SelectedFace.DirectWriteProperties.Weight}"
                                 Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                 IsCharacterFitEnabled="True"
                                 IsOverwriteCompensationEnabled="True"
                                 IsTextScaleFactorEnabled="False"
                                 Text="{Binding SelectedChar.Char}"
-                                Typography="{Binding SelectedCharTypography}"
                                 d:Text="a" />
                         </Border>
 

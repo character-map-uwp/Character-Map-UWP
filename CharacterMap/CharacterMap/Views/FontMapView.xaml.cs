@@ -1440,11 +1440,14 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         if (ViewModel.IsLoadingCharacters || ViewModel.Chars == null)
             return;
 
+        if (ViewModel.SelectedCharTypography == info.Feature)
+            return;
+
         if (CharGrid.ItemsSource != null && CharGrid.ItemsPanelRoot != null)
         {
             ViewModel.SelectedCharTypography = info.Feature;
-            IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(TxtPreview);
-            CharacterGridView.UpdateTypography(_xamlDirect, p, info.Feature);
+            //IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(TxtPreview);
+            //CharacterGridView.UpdateTypography(_xamlDirect, p, info.Feature);
         }
 
         if (CopySequenceText != null && !previewOnly)

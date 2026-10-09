@@ -137,9 +137,15 @@ public partial class FontMapViewModel : ViewModelBase
                 SetDefaultChar(idx);
                 SelectedTypography = TypographyFeatures.FirstOrDefault() ?? TypographyVariation.None;
                 UpdateDevValues();
-
+                
                 if (value is not null)
+                {
                     SelectedFont.Selected = value;
+                    RenderingOptions = RenderingOptions with
+                    {
+                        ActiveFontFace = SelectedFaceAnalysis.ActiveFace
+                    };
+                }
             }
         }
     }
