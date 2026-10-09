@@ -1426,7 +1426,7 @@
                                 </controls:InfoBar.SecondaryContent>
                             </controls:InfoBar>
 
-                            <controls:InfoBar
+                            <!--<controls:InfoBar
                                 x:Name="ColrV1SupportMessage"
                                 x:Load="{x:Bind ViewModel.SelectedFace.SupportsCOLRv1Rendering, Mode=OneWay, FallbackValue=False}"
                                 Content="{core:Localizer Key=ColrV1SupportMessage/Text}">
@@ -1441,7 +1441,7 @@
                                             Style="{StaticResource ThemeFontIconStyle}" />
                                     </Button>
                                 </controls:InfoBar.SecondaryContent>
-                            </controls:InfoBar>
+                            </controls:InfoBar>-->
 
                             <controls:InfoBar
                                 x:Name="DeprecatedIconsInfoBar"
@@ -2194,13 +2194,15 @@
                             <cxc:DirectText
                                 x:Name="TxtPreview"
                                 VerticalAlignment="Center"
-                                core:Properties.Options="{x:Bind ViewModel.RenderingOptions, Mode=OneWay}"
+                                ColorRenderOption="{Binding ElementName=ColrSelector, Path=SelectedItem.Tag, FallbackValue=Default, TargetNullValue=Default}"
+                                FontFace="{Binding SelectedFaceAnalysis.ActiveFace}"
                                 FontSize="48"
                                 Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                 IsCharacterFitEnabled="True"
                                 IsOverwriteCompensationEnabled="True"
                                 IsTextScaleFactorEnabled="False"
                                 Text="{Binding SelectedChar.Char}"
+                                Typography="{Binding SelectedCharTypography}"
                                 d:Text="a" />
                         </Border>
 

@@ -326,6 +326,17 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             case nameof(ViewModel.SelectedProvider):
                 UpdateDevUtils();
                 break;
+            case nameof(ViewModel.ShowColorGlyphs):
+                var t = ColrSelector.ItemsSource;
+
+                if (ColrSelector is { Visibility: Visibility.Visible, ItemsSource: IList<NamedTag> tags })
+                {
+                    if (ViewModel.ShowColorGlyphs)
+                        ColrSelector.SelectedItem = ViewModel.SelectedChar.DefaultTag;
+                    else
+                        ColrSelector.SelectedItem = CharacterAnalysisModel.MonoRenderOption;
+                }
+                break;
            
         }
     }
@@ -1376,7 +1387,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 if (GlyphRepeater?.SelectedItem is uint glyphIndex)
                 {
                     DWriteTextLayoutAnalysis analysis = Utils.GetInterop().AnalyzeGlyphLayout(ViewModel.SelectedFace.Face, (ushort)glyphIndex);
-                    (bool hasOptions, ItemsSelectionModel items) = CharacterAnalysisModel.CreateColorOptions(analysis, currentTag);
+                    (bool hasOptions, ItemsSelectionModel items) = CharacterAnalysisModel.CreateColorOptions(analysis, ViewModel.ShowColorGlyphs, currentTag);
                     ColrSelector.SelectedItemsSource = items;
                     ColrSelector.Visibility = hasOptions ? Visibility.Visible : Visibility.Collapsed;
                 }
@@ -1388,7 +1399,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 if (LigaturesRepeater?.SelectedItem is LigatureModel ligature)
                 {
                     DWriteTextLayoutAnalysis analysis = Utils.GetInterop().AnalyzeGlyphLayout(ViewModel.SelectedFace.Face, (ushort)ligature.LigatureGlyph);
-                    (bool hasOptions, ItemsSelectionModel items) = CharacterAnalysisModel.CreateColorOptions(analysis, currentTag);
+                    (bool hasOptions, ItemsSelectionModel items) = CharacterAnalysisModel.CreateColorOptions(analysis, ViewModel.ShowColorGlyphs, currentTag);
                     ColrSelector.SelectedItemsSource = items;
                     ColrSelector.Visibility = hasOptions ? Visibility.Visible : Visibility.Collapsed;
                 }

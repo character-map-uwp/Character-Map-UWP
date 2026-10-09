@@ -622,11 +622,17 @@ public partial class CharacterGridView : GridView
 
         foreach (GridViewItem item in ItemsPanelRoot.Children.OfType<GridViewItem>())
         {
-            if (_xamlDirect.GetXamlDirectObject(item.ContentTemplateRoot) is IXamlDirectObject root)
+            if (item.ContentTemplateRoot is Panel p)
             {
-                var childs = _xamlDirect.GetXamlDirectObjectProperty(root, XamlPropertyIndex.Panel_Children);
-                IXamlDirectObject tb = _xamlDirect.GetXamlDirectObjectFromCollectionAt(childs, 0);
-                UpdateColorFont(_xamlDirect, null, tb, value);
+                XamlDirectWrapper o = _xamlDirect.GetWrapperForChild(p, 0);
+
+                if (o.Source is FontGlyphs g)
+                {
+                    g.IsColorFontEnabled = value;
+                    //g.InvalidateLayoutAndRender();
+                }
+                else
+                    UpdateColorFont(_xamlDirect, null, o.Object, value);
             }
         }
     }

@@ -316,14 +316,14 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
         UpdateGlyphIndices();
 
         // Build Color Render Options
-        (bool hasColorOptions, ItemsSelectionModel colrItems) = CreateColorOptions(Analysis, defaultTag);
+        (bool hasColorOptions, ItemsSelectionModel colrItems) = CreateColorOptions(Analysis, vm.ShowColorGlyphs, defaultTag);
         HasColorRenderOptions = hasColorOptions;
         ColrRenderItems = colrItems;
         ColorRenderOptions = (IReadOnlyList<NamedTag>)colrItems.ItemsSource;
         DefaultTag = (NamedTag)colrItems.SelectedItem;
     }
 
-    public static (bool HasOptions, ItemsSelectionModel ColrItems) CreateColorOptions(DWriteTextLayoutAnalysis analysis, NamedTag defaultTag = null)
+    public static (bool HasOptions, ItemsSelectionModel ColrItems) CreateColorOptions(DWriteTextLayoutAnalysis analysis, bool color, NamedTag defaultTag = null)
     {
         if (analysis is null)
             return (false, new() { ItemsSource = _emptyRenderOptions, SelectedItem = DefaultRenderOption });
@@ -338,8 +338,10 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
         if (supportsColrV0 || supportsColrV1)
         {
             List<NamedTag> options = [];
+          
             if (supportsColrV0)
                 options.Add(ColrV0RenderOption);
+
             if (supportsColrV1)
                 options.Add(ColrV1RenderOption);
 
@@ -347,7 +349,7 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
             colorRenderOptions = options;
             hasColorRenderOptions = true;
             if (defaultTag is null || defaultTag == DefaultRenderOption)
-                defaultTag = ColrV0RenderOption;
+                defaultTag = color ? ColrV1RenderOption : MonoRenderOption;
         }
         else if (isSvg)
             CreateOp(SVGRenderOption);
@@ -365,7 +367,7 @@ public partial class CharacterAnalysisModel : ViewModelBase, IEquatable<Characte
             colorRenderOptions = [tag, MonoRenderOption];
             hasColorRenderOptions = true;
             if (defaultTag is null || defaultTag == DefaultRenderOption)
-                defaultTag = tag;
+                defaultTag = color? tag : MonoRenderOption;
         }
 
         defaultTag ??= DefaultRenderOption;
