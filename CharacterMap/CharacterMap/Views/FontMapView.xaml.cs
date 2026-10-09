@@ -561,10 +561,9 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             }
             GoToState(TypeRampState.Name, animate);
         }
-        else
-
-            // Make sure this stays in sync with programmatic changes
-            ViewSelector.SelectedIndex = (int)ViewModel.DisplayMode;
+        
+        // Make sure this stays in sync with programmatic changes
+        ViewSelector.SelectedIndex = (int)ViewModel.DisplayMode;
 
         //if (animate)
         PlayFontChanged(false);
