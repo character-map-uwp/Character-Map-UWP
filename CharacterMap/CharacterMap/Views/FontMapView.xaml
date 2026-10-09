@@ -1418,12 +1418,9 @@
                             <controls:InfoBar
                                 x:Name="VariableFeaturesMessage"
                                 x:Load="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.HasVariations, Mode=OneWay, FallbackValue=False}"
-                                Content="{core:Localizer Key=VariableFeaturesMessage/Text}">
+                                Content="{core:Localizer Key=VariableFeaturesMessage1/Text}">
                                 <controls:InfoBar.SecondaryContent>
-                                    <Button
-                                        Click="VariableHintClick"
-                                        Style="{StaticResource ChromelessButtonStyle}"
-                                        ToolTipService.ToolTip="{core:Localizer Key=LblSwitchToTypeRamp/Text}">
+                                    <Button Click="VariableHintClick" Style="{StaticResource ChromelessButtonStyle}">
                                         <FontIcon core:Properties.ThemeIcon="VariableAxis" FontSize="13.333" />
                                     </Button>
                                 </controls:InfoBar.SecondaryContent>

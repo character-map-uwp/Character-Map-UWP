@@ -908,6 +908,9 @@ Importierte Schriftarten werden in den privaten Anwendungsspeicher kopiert, dami
   <data name="VariableFeaturesMessage.Text" xml:space="preserve">
     <value>Diese Schriftart hat variable Funktionen. Um sie zu erforschen, nutze den obigen Schaltknopf zum Wechsel in die Rampenansicht.</value>
   </data>
+  <data name="VariableFeaturesMessage1.Text" xml:space="preserve">
+    <value>Diese Schriftart hat variable Funktionen. Um sie zu erforschen, nutze den obigen Schaltknopf zum Wechsel in die Rampenansicht.</value>
+  </data>
   <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
     <value>Zeigt oder versteckt die Vorschauleiste auf der rechten Bildschirmseite. Wenn abgeschaltet, können viele Funktionen per Rechtsklick oder Touch-Druck auf ein Zeichen im Zeichenraster trotzdem erreicht werden.</value>
   </data>

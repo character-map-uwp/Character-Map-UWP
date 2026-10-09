@@ -908,6 +908,9 @@ La funzione di ottimizzazione creerà un nome intelligente basato sulla famiglia
   <data name="VariableFeaturesMessage.Text" xml:space="preserve">
     <value>Questo carattere ha caratteristiche variabili. Per visualizzarle, passa alla modalità di visualizzazione Dettagli.</value>
   </data>
+  <data name="VariableFeaturesMessage1.Text" xml:space="preserve">
+    <value>Questo carattere ha caratteristiche variabili. Per visualizzarle, passa alla modalità di visualizzazione Dettagli.</value>
+  </data>
   <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
     <value>Mostra/nascondi riquadro anteprima. Se disattivato, potrai comunque accedere a molte funzioni tramite clic sinistro su di un caratttere nella Griglia Principale.</value>
   </data>

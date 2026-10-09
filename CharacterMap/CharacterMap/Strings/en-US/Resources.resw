@@ -910,6 +910,10 @@ Optimized will create a smart name based on Font Family and Font Name.</value>
   </data>
   <data name="VariableFeaturesMessage.Text" xml:space="preserve">
     <value>This font has variable features. To explore them, switch to Type Ramp view using the switch button above.</value>
+    <comment>Deprecated. Do not use.</comment>
+  </data>
+  <data name="VariableFeaturesMessage1.Text" xml:space="preserve">
+    <value>This font has variable features. To explore them, open the Variable Font Axis panel with the button above.</value>
   </data>
   <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
     <value>Shows or hides the preview pane on the right of the screen. If turned off, many functions can still be accessed by right clicking or touch holding on a character inside the character grid.</value>
