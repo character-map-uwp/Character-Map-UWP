@@ -1130,6 +1130,7 @@
                             h:FluentAnimation.PointerOver="DropDownGlyph"
                             Style="{ThemeResource MapInfoButtonStyle}"
                             Visibility="Collapsed"
+                            d:Visibility="Visible"
                             d:Label="{core:Localizer Key=FontOptionsButton/Label}">
 
                             <controls:PreviewTip.DisplayContent>
@@ -1213,9 +1214,10 @@
 
                         <controls:UXButton
                             x:Name="VariationsButton"
-                            x:Load="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.HasVariationAxis, Mode=OneWay, FallbackValue=False, TargetNullValue=False}"
+                            x:Load="{x:Bind core:Converters.TrueFalse(ViewModel.SelectedFaceAnalysis.Analysis.HasVariationAxis, ViewModel.SelectedFont.IsTypeRamp), Mode=OneWay, FallbackValue=False, TargetNullValue=False}"
                             controls:PreviewTip.RegisterWith="{x:Bind PreviewTip}"
                             h:FluentAnimation.PointerOver="FluentContentPresenter"
+                            Loaded="{x:Bind h:CompositionFactory.SetStandardFadeInOut}"
                             h:FluentAnimation.PointerOverOffset="-2"
                             Style="{ThemeResource MapInfoButtonStyle}">
                             <controls:PreviewTip.DisplayContent>
@@ -1268,7 +1270,6 @@
                             VerticalAlignment="Stretch"
                             controls:PreviewTip.VerticalTranslation="2"
                             IsActive="{x:Bind ViewModel.IsFiltered, Mode=OneWay}"
-                            Loaded="{x:Bind h:CompositionFactory.SetStandardFadeInOut}"
                             Style="{ThemeResource MapInfoButtonStyle}"
                             d:Label="{core:Localizer Key=CharacterFilterButton/Label}"
                             d:ToolTipService.ToolTip="{core:Localizer Key=CharacterFilterButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
