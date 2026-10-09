@@ -276,6 +276,7 @@
     <ClInclude Include="ErrorHandling.h" />
     <ClInclude Include="FontAnalysis.h" />
     <ClInclude Include="FontGlyphs.h" />
+    <ClInclude Include="MicaEffect.h" />
     <ClInclude Include="FontPalette.h" />
     <ClInclude Include="GlyphImageFormat.h" />
     <ClInclude Include="GlyphOutline.h" />
@@ -314,6 +315,7 @@
     <ClCompile Include="DWriteFontFamily.cpp" />
     <ClCompile Include="DWriteTypographyCollection.cpp" />
     <ClCompile Include="FontGlyphs.cpp" />
+    <ClCompile Include="MicaEffect.cpp" />
     <ClCompile Include="GlyphAtlasManager.cpp" />
     <ClCompile Include="NativeInterop.cpp" />
     <ClCompile Include="TypographyAnalyzer.cpp" />
