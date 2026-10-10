@@ -1,6 +1,7 @@
 ﻿using Microsoft.Toolkit.Uwp.UI.Controls;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Reflection;
 using System.Windows.Input;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -53,6 +54,42 @@ public class ExtendedListViewItem : ListViewItem, IExtendedListViewBaseItem//, I
 
         // Support SelectorVisual
         this.Owner?.SetPointerOver(this);
+
+        HandleToolTip(this, Owner);
+    }
+
+
+
+
+
+    //------------------------------------------------------
+    //
+    // ToolTip
+    //
+    //------------------------------------------------------
+
+    internal static void HandleToolTip(SelectorItem item, ExtendedListView owner)
+    {
+        if (owner?.ItemToolTipTemplate is null
+          || ToolTipService.GetToolTip(item) is ToolTip)
+            return;
+
+        ToolTip tooltip = new();
+        tooltip.Tag = item;
+        tooltip.ContentTemplate = owner.ItemToolTipTemplate;
+        tooltip.Opened += (s, e) =>
+        {
+            if (s is ToolTip tt && tt.Tag is FrameworkElement f)
+            {
+                tt.ContentTemplate = owner.ItemToolTipTemplate;
+                tt.Content = f.Tag;
+            }
+        };
+
+        if (ResourceHelper.TryGet("DefaultThemeToolTipStyle", out Style style))
+            tooltip.Style = style;
+
+        ToolTipService.SetToolTip(item, tooltip);
     }
 }
 
@@ -72,6 +109,8 @@ public class ExtendedGridViewItem : GridViewItem, IExtendedListViewBaseItem
 
         // Support SelectorVisual
         this.Owner.SetPointerOver(this);
+
+        ExtendedListViewItem.HandleToolTip(this, Owner);
     }
 }
 
@@ -164,8 +203,6 @@ public partial  class ExtendedListView : ListView
         if (item is IExtendedListViewBaseItem extendedItem)
             extendedItem.Owner = this;
 
-        item.PointerEntered += Item_PointerEntered;
-
         return item;
     }
 
@@ -206,40 +243,7 @@ public partial  class ExtendedListView : ListView
         }
     }
 
-
-
-
-    //------------------------------------------------------
-    //
-    // ToolTip
-    //
-    //------------------------------------------------------
-
-    private void Item_PointerEntered(object sender, PointerRoutedEventArgs e)
-    {
-        if (ItemToolTipTemplate is null 
-            || sender is not FrameworkElement f 
-            || ToolTipService.GetToolTip(f) is ToolTip)
-            return;
-
-        ToolTip tooltip = new();
-        tooltip.Tag = f;
-        tooltip.ContentTemplate = this.ItemToolTipTemplate;
-        tooltip.Opened += (s, e) =>
-        {
-            if (s is ToolTip tt && tt.Tag is FrameworkElement f)
-            {
-                tt.ContentTemplate = this.ItemToolTipTemplate;
-                tt.Content = f.Tag;
-            }
-        };
-        
-        if (ResourceHelper.TryGet("DefaultThemeToolTipStyle", out Style style))
-            tooltip.Style = style;
-
-        ToolTipService.SetToolTip(f, tooltip);
-    }
-
+   
 
 
 

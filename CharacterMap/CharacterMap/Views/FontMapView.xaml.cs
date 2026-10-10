@@ -1045,6 +1045,36 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         }
     }
 
+    private void GlyphGrid_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+    {
+        if (!args.InRecycleQueue && args.ItemContainer is not null)
+        {
+            CharGrid_ContainerContentChanging(sender, args);
+
+            // x:Bind & Binding were causing memory issues. Handle it manually for now.
+            if (args.ItemContainer.ContentTemplateRoot is Grid g && args.Item is UInt32 item)
+            {
+                var size = ViewModel.Settings.GridSize;
+
+                g.Height = size;
+                g.Width = size;
+                g.Tag = item;
+
+                if (g.Children[0] is FontGlyphs f)
+                {
+                    f.FontFace = ViewModel.SelectedFaceAnalysis.ActiveFace;
+                    f.FontSize = size / 2d;
+                    f.IsColorFontEnabled = ViewModel.ShowColorGlyphs;
+                    f.StyleSimulations = ViewModel.SelectedFaceAnalysis.StyleSimulation;
+                    f.Indices = item.ToString();
+                }
+
+                if (g.Children[1] is TextBlock t)
+                    t.Text = item.ToString();
+            }
+        }
+    }
+
     private void Grid_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
     {
         args.Handled = true;

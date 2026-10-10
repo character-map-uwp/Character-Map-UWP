@@ -1639,7 +1639,7 @@
                     core:Properties.FontSize="{x:Bind core:Converters.GetFontSize(ViewModel.Settings.GridSize), Mode=OneWay}"
                     core:Properties.Footer="{x:Bind ViewModel.SelectedFaceAnalysis.ActiveFace, Mode=OneWay}"
                     core:Properties.Tag="{x:Bind ViewModel.SelectedFaceAnalysis.StyleSimulation, Mode=OneWay}"
-                    ContainerContentChanging="CharGrid_ContainerContentChanging"
+                    ContainerContentChanging="GlyphGrid_ContainerContentChanging"
                     ContextRequested="Grid_ContextRequested"
                     EnableRepositionAnimations="{x:Bind ViewModel.AllowExpensiveAnimation, Mode=OneWay}"
                     ItemsSource="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs, Mode=OneWay}"
@@ -1670,24 +1670,10 @@
 
                     <ListViewBase.ItemTemplate>
                         <DataTemplate x:DataType="sys:UInt32">
-                            <!--  TODO : Use ContainerContent changing or ElementPrepared to set this?  -->
-                            <Grid
-                                x:Name="Target"
-                                Width="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Double)}"
-                                Height="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Double)}"
-                                Padding="4"
-                                Tag="{Binding}">
-                                <cxc:FontGlyphs
-                                    x:Name="Text"
-                                    x:Phase="2"
-                                    FontFace="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Footer)}"
-                                    FontSize="{Binding ElementName=GlyphRepeater, Path=(core:Properties.FontSize)}"
-                                    Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
-                                    Indices="{x:Bind}"
-                                    IsColorFontEnabled="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Boolean)}"
-                                    StyleSimulations="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Tag)}" />
-
-                                <TextBlock Style="{StaticResource CharItemUnicodeStyle}" Text="{x:Bind}" />
+                            <!--  Bindings in code due to memory leak  -->
+                            <Grid x:Name="Target" Padding="4">
+                                <cxc:FontGlyphs x:Name="Text" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" />
+                                <TextBlock Style="{StaticResource CharItemUnicodeStyle}" />
                             </Grid>
                         </DataTemplate>
                     </ListViewBase.ItemTemplate>
