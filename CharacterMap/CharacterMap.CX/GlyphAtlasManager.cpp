@@ -173,10 +173,10 @@ AtlasSlot GlyphAtlasManager::GetOrCreateGlyphSlot(
             auto oldestAtlas = std::move(atlasList.front());
             atlasList.erase(atlasList.begin());
 
-            auto* evictedSurface = reinterpret_cast<IUnknown*>(oldestAtlas->GetSurface());
+            auto evictedSurface = oldestAtlas->GetSurface();
             for (auto evictIt = s_slotCache.begin(); evictIt != s_slotCache.end(); )
             {
-                if (reinterpret_cast<IUnknown*>(evictIt->second.Surface) == evictedSurface)
+                if (evictIt->second.Surface == evictedSurface)
                     evictIt = s_slotCache.erase(evictIt);
                 else
                     ++evictIt;

@@ -55,15 +55,14 @@ FontGlyphs::FontGlyphs()
     m_unloadedToken.Value = 0;
     EnsureDependencyProperties();
 
-    auto c = ref new DependencyPropertyChangedCallback(this, &FontGlyphs::OnInstancePropChanged);
-    this->RegisterPropertyChangedCallback(FontGlyphs::ActualThemeProperty, c);
-}
-
-void FontGlyphs::OnInstancePropChanged(DependencyObject^ d, DependencyProperty^ p)
-{
-    FontGlyphs^ glyphs = (FontGlyphs^)d;
-    glyphs->UpdateForground();
-    
+    WeakReference weakThis(this);
+    m_themeChangedToken = this->ActualThemeChanged += ref new TypedEventHandler<FrameworkElement^, Platform::Object^>(
+        [weakThis](FrameworkElement^, Platform::Object^) {
+            if (auto strongThis = weakThis.Resolve<FontGlyphs>())
+            {
+                strongThis->UpdateForground();
+            }
+        });
 }
 
 FontGlyphs::~FontGlyphs()
@@ -76,6 +75,12 @@ FontGlyphs::~FontGlyphs()
             {
                 this->Unloaded -= m_unloadedToken;
                 m_unloadedToken.Value = 0;
+            }
+
+            if (m_themeChangedToken.Value != 0)
+            {
+                this->ActualThemeChanged -= m_themeChangedToken;
+                m_themeChangedToken.Value = 0;
             }
 
             ReleaseDrawingSurface();

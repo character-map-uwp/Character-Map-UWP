@@ -165,6 +165,8 @@ public static class WindowService
 
         info.CoreView.Dispatcher.ExecuteAsync(async () =>
         {
+            info.CoreView.CoreWindow.GetMessenger().Reset();
+
             if (Window.Current.Content is IWindowContent c)
                 c.Cleanup();
 
@@ -182,6 +184,7 @@ public static class WindowService
             });
 
             info.CoreView.CoreWindow.CustomProperties.Clear();
+            Composition.ReleaseCache(Window.Current.Compositor);
 
             // Allow dispatcher to process all marshaled COM releases
             await Task.Delay(250);

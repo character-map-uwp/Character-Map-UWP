@@ -57,15 +57,27 @@ DirectText::DirectText()
     m_lastText = nullptr;
     m_lastFontSize = 0.0;
 
-    auto c = ref new DependencyPropertyChangedCallback(this, &DirectText::OnPropChanged);
+    auto weakThis = Platform::WeakReference(this);
+
+    auto c = ref new DependencyPropertyChangedCallback([weakThis](DependencyObject^ d, DependencyProperty^ p) {
+        if (auto pThis = weakThis.Resolve<DirectText>())
+            pThis->OnPropChanged(d, p);
+    });
 
     this->RegisterPropertyChangedCallback(DirectText::FontSizeProperty, c);
     this->RegisterPropertyChangedCallback(DirectText::ForegroundProperty, c);
     this->RegisterPropertyChangedCallback(DirectText::FlowDirectionProperty, c);
     this->RegisterPropertyChangedCallback(DirectText::RequestedThemeProperty, c);
 
-    this->Loaded += ref new Windows::UI::Xaml::RoutedEventHandler(this, &CharacterMapCX::Controls::DirectText::OnLoaded);
-    this->Unloaded += ref new Windows::UI::Xaml::RoutedEventHandler(this, &CharacterMapCX::Controls::DirectText::OnUnloaded);
+    this->Loaded += ref new Windows::UI::Xaml::RoutedEventHandler([weakThis](Platform::Object^ sender, RoutedEventArgs^ e) {
+        if (auto pThis = weakThis.Resolve<DirectText>())
+            pThis->OnLoaded(sender, e);
+    });
+
+    this->Unloaded += ref new Windows::UI::Xaml::RoutedEventHandler([weakThis](Platform::Object^ sender, RoutedEventArgs^ e) {
+        if (auto pThis = weakThis.Resolve<DirectText>())
+            pThis->OnUnloaded(sender, e);
+    });
 }
 
 void DirectText::OnPropChanged(DependencyObject^ d, DependencyProperty^ p)
@@ -265,6 +277,8 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         bool sameFaceName = (m_lastFaceName == currentFaceName) ||
             (m_lastFaceName != nullptr && currentFaceName != nullptr &&
              wcscmp(m_lastFaceName->Data(), currentFaceName->Data()) == 0);
+        bool sameFontFace = (m_lastFontFace == fontFace);
+        bool sameTypography = (m_lastTypography == Typography);
         bool sameText = (m_lastText == currentText) ||
             (m_lastText != nullptr && currentText != nullptr &&
              wcscmp(m_lastText->Data(), currentText->Data()) == 0);
@@ -273,7 +287,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         bool sameStyle = (m_lastFontStyle == FontStyle);
         bool sameStretch = (m_lastFontStretch == FontStretch);
 
-        if (sameFamily && sameFaceName && sameText && sameSize && sameWeight && sameStyle && sameStretch)
+        if (sameFontFace && sameTypography && sameFamily && sameFaceName && sameText && sameSize && sameWeight && sameStyle && sameStretch)
         {
             // Build current axis values
             std::vector<DWRITE_FONT_AXIS_VALUE> newAxisValues;
@@ -362,6 +376,8 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             m_textLayout = nullptr;
             m_lastFamilyName = nullptr;  // invalidate axis-only fast path cache
             m_lastFaceName = nullptr;
+            m_lastFontFace = nullptr;
+            m_lastTypography = nullptr;
             m_lastText = nullptr;
             m_lastAxisValues.clear();
         }
@@ -654,7 +670,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             if (IsCharacterFitEnabled)
             {
                 bool usedOutline = false;
-                auto boundsRenderer = Make<LayoutBoundsRenderer>(dwriteFontFace);
+                auto boundsRenderer = Make<LayoutBoundsRenderer>(nullptr);
                 if (SUCCEEDED(textLayout->Draw(nullptr, boundsRenderer.Get(), 0, 0)) && boundsRenderer->hasPoints)
                 {
                     float w = boundsRenderer->maxX - boundsRenderer->minX;
@@ -737,6 +753,8 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             {
                 m_lastFamilyName = fontFace->Properties != nullptr ? fontFace->Properties->FamilyName : nullptr;
                 m_lastFaceName = fontFace->Properties != nullptr ? fontFace->Properties->FaceName : nullptr;
+                m_lastFontFace = fontFace;
+                m_lastTypography = Typography;
                 m_lastText = text;
                 m_lastFontSize = fontSize;
                 m_lastFontWeight = FontWeight.Weight;
@@ -808,10 +826,19 @@ void CharacterMapCX::Controls::DirectText::EnsureCanvas()
         m_canvas->UseSharedDevice = false;
         root->Child = m_canvas;
 
+        auto weakThis = Platform::WeakReference(this);
+
         m_drawToken = m_canvas->Draw +=
-            ref new TypedEventHandler<CanvasControl^, CanvasDrawEventArgs^>(this, &DirectText::OnDraw);
+            ref new TypedEventHandler<CanvasControl^, CanvasDrawEventArgs^>([weakThis](CanvasControl^ sender, CanvasDrawEventArgs^ args) {
+                if (auto pThis = weakThis.Resolve<DirectText>())
+                    pThis->OnDraw(sender, args);
+            });
+            
         m_createToken = m_canvas->CreateResources +=
-            ref new TypedEventHandler<CanvasControl^, CanvasCreateResourcesEventArgs^>(this, &DirectText::OnCreateResources);
+            ref new TypedEventHandler<CanvasControl^, CanvasCreateResourcesEventArgs^>([weakThis](CanvasControl^ sender, CanvasCreateResourcesEventArgs^ args) {
+                if (auto pThis = weakThis.Resolve<DirectText>())
+                    pThis->OnCreateResources(sender, args);
+            });
     }
 }
 

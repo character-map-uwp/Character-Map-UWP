@@ -170,8 +170,6 @@ namespace CharacterMapCX
             static void OnPropertyChanged(Windows::UI::Xaml::DependencyObject^ d, Windows::UI::Xaml::DependencyPropertyChangedEventArgs^ e);
             static void OnFontSizeChanged(Windows::UI::Xaml::DependencyObject^ d, Windows::UI::Xaml::DependencyPropertyChangedEventArgs^ e);
             static void OnForegroundChanged(Windows::UI::Xaml::DependencyObject^ d, Windows::UI::Xaml::DependencyPropertyChangedEventArgs^ e);
-
-            void OnInstancePropChanged(DependencyObject^ d, DependencyProperty^ p);
             void UpdateForground();
 
             void InvalidateRenderOnly();
@@ -204,6 +202,7 @@ namespace CharacterMapCX
             bool m_isLayoutDirty;
             bool m_isRenderDirty;
             Windows::Foundation::EventRegistrationToken m_unloadedToken;
+            Windows::Foundation::EventRegistrationToken m_themeChangedToken;
 
             // Parsed glyph data
             std::vector<UINT16> m_glyphIndices;

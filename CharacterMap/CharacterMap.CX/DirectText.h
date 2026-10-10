@@ -228,6 +228,8 @@ namespace CharacterMapCX
 
 			// Cached state for axis-only invalidation
 			std::vector<DWRITE_FONT_AXIS_VALUE> m_lastAxisValues;
+			DWriteFontFace^ m_lastFontFace;
+			ITypographyInfo^ m_lastTypography;
 			Platform::String^ m_lastFamilyName;  // nullptr = no cached layout
 			Platform::String^ m_lastFaceName;
 			Platform::String^ m_lastText;
