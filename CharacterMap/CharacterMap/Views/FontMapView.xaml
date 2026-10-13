@@ -174,7 +174,7 @@
                                 core:Properties.ThemeIcon="Hidden"
                                 FontSize="12"
                                 Opacity="0.4"
-                                ToolTipService.ToolTip="Hidden Axis - not intended for end-user control" />
+                                ToolTipService.ToolTip="{core:Localizer Key='HiddenAxisHintLabel'}" />
                         </StackPanel>
                     </Slider.Header>
                 </Slider>
@@ -2388,8 +2388,8 @@
                                                                         HorizontalAlignment="Center"
                                                                         VerticalAlignment="Center"
                                                                         FontFace="{Binding SelectedFaceAnalysis.ActiveFace}"
-                                                                        Foreground="{StaticResource Color}"
                                                                         FontSize="40"
+                                                                        Foreground="{StaticResource Color}"
                                                                         Indices="{x:Bind GlyphIndex}"
                                                                         IsColorFontEnabled="{Binding ShowColorGlyphs, Mode=OneWay}" />
                                                                 </Grid>

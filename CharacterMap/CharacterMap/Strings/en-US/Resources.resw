@@ -2949,4 +2949,7 @@ Variations cannot be copied as text, but can be exported as PNG or SVG.</value>
   <data name="AllColorTitle.Text" xml:space="preserve">
     <value>All Color Fonts</value>
   </data>
+  <data name="HiddenAxisHintLabel" xml:space="preserve">
+    <value>Hidden Axis - not intended for end-user control</value>
+  </data>
 </root>
