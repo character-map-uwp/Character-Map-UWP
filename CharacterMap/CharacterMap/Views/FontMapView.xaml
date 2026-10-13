@@ -1130,8 +1130,8 @@
                             h:FluentAnimation.PointerOver="DropDownGlyph"
                             Style="{ThemeResource MapInfoButtonStyle}"
                             Visibility="Collapsed"
-                            d:Visibility="Visible"
-                            d:Label="{core:Localizer Key=FontOptionsButton/Label}">
+                            d:Label="{core:Localizer Key=FontOptionsButton/Label}"
+                            d:Visibility="Visible">
 
                             <controls:PreviewTip.DisplayContent>
                                 <views:TitledDescription x:Uid="FaceOpenTypeFeaturesDescription" Title="{core:Localizer Key=FontOptionsButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}" />
@@ -1217,8 +1217,8 @@
                             x:Load="{x:Bind core:Converters.TrueFalse(ViewModel.SelectedFaceAnalysis.Analysis.HasVariationAxis, ViewModel.SelectedFont.IsTypeRamp), Mode=OneWay, FallbackValue=False, TargetNullValue=False}"
                             controls:PreviewTip.RegisterWith="{x:Bind PreviewTip}"
                             h:FluentAnimation.PointerOver="FluentContentPresenter"
-                            Loaded="{x:Bind h:CompositionFactory.SetStandardFadeInOut}"
                             h:FluentAnimation.PointerOverOffset="-2"
+                            Loaded="{x:Bind h:CompositionFactory.SetStandardFadeInOut}"
                             Style="{ThemeResource MapInfoButtonStyle}">
                             <controls:PreviewTip.DisplayContent>
                                 <views:TitledDescription x:Uid="FaceVariationsDescription" />
@@ -1391,6 +1391,7 @@
                     x:Name="CharGrid"
                     x:FieldModifier="public"
                     ContainerContentChanging="CharGrid_ContainerContentChanging"
+                    ContextRequested="Grid_ContextRequested"
                     EnableResizeAnimation="{x:Bind ViewModel.AllowExpensiveAnimation, Mode=OneWay}"
                     IsItemClickEnabled="False"
                     ItemAnnotation="{x:Bind ViewModel.Settings.GlyphAnnotation, Mode=OneTime}"
@@ -1634,11 +1635,7 @@
                 <controls:ExtendedGridView
                     x:Name="GlyphRepeater"
                     Padding="12 0 4 70"
-                    core:Properties.Boolean="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
                     core:Properties.Double="{x:Bind ViewModel.Settings.GridSize, Mode=OneWay}"
-                    core:Properties.FontSize="{x:Bind core:Converters.GetFontSize(ViewModel.Settings.GridSize), Mode=OneWay}"
-                    core:Properties.Footer="{x:Bind ViewModel.SelectedFaceAnalysis.ActiveFace, Mode=OneWay}"
-                    core:Properties.Tag="{x:Bind ViewModel.SelectedFaceAnalysis.StyleSimulation, Mode=OneWay}"
                     ContainerContentChanging="GlyphGrid_ContainerContentChanging"
                     ContextRequested="Grid_ContextRequested"
                     EnableRepositionAnimations="{x:Bind ViewModel.AllowExpensiveAnimation, Mode=OneWay}"
@@ -1665,9 +1662,7 @@
                                 Text="{x:Bind core:Converters.GetFormat2('GlyphsSummary/Text', ViewModel.SelectedFace.Face.GlyphCount, ViewModel.SelectedFace.CharacterCount), Mode=OneWay}"
                                 TextWrapping="Wrap" />
                         </StackPanel>
-
                     </ListViewBase.Header>
-
                     <ListViewBase.ItemTemplate>
                         <DataTemplate x:DataType="sys:UInt32">
                             <!--  Bindings in code due to memory leak  -->

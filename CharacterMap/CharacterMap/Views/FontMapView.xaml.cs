@@ -1035,8 +1035,8 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     {
         if (!args.InRecycleQueue && args.ItemContainer is not null)
         {
-            args.ItemContainer.ContextRequested -= Grid_ContextRequested;
-            args.ItemContainer.ContextRequested += Grid_ContextRequested;
+            //args.ItemContainer.ContextRequested -= Grid_ContextRequested;
+            //args.ItemContainer.ContextRequested += Grid_ContextRequested;
 
             var c = VisualTreeHelper.GetChild(args.ItemContainer, 0);
             var b = VisualTreeHelper.GetChild(c, 0);
@@ -1079,7 +1079,8 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     {
         args.Handled = true;
 
-        if (sender is SelectorItem f
+        if (args.OriginalSource is FrameworkElement ef 
+            && ef.GetFirstAncestorOfType<SelectorItem>() is { } f
             && f.GetDescendantsOfType<Grid>().FirstOrDefault(g => g.Tag is Character || g.Name == "Target") is Grid grid)
         {
             /* Context menu for character grid or glyph grid */
