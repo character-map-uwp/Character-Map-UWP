@@ -2384,18 +2384,12 @@
                                                                         BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                                                         BorderThickness="1"
                                                                         CornerRadius="4" />
-                                                                    <ProgressRing
-                                                                        Width="24"
-                                                                        Height="24"
+                                                                    <cxc:FontGlyphs
                                                                         HorizontalAlignment="Center"
                                                                         VerticalAlignment="Center"
-                                                                        IsActive="{Binding SelectedFaceAnalysis.Glyphs.IsLoading}" />
-                                                                    <Glyphs
-                                                                        HorizontalAlignment="Center"
-                                                                        VerticalAlignment="Center"
-                                                                        core:Properties.FontUri="{Binding SelectedFaceAnalysis.Glyphs.FontUri}"
-                                                                        Fill="{StaticResource Color}"
-                                                                        FontRenderingEmSize="40"
+                                                                        FontFace="{Binding SelectedFaceAnalysis.ActiveFace}"
+                                                                        Foreground="{StaticResource Color}"
+                                                                        FontSize="40"
                                                                         Indices="{x:Bind GlyphIndex}"
                                                                         IsColorFontEnabled="{Binding ShowColorGlyphs, Mode=OneWay}" />
                                                                 </Grid>
