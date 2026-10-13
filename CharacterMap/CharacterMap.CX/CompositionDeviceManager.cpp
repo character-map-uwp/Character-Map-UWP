@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CompositionDeviceManager.h"
 #include "GlyphAtlasManager.h"
+#include "FontGlyphs.h"
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d2d1.lib")
@@ -108,7 +109,7 @@ void CompositionDeviceManager::EnsureDevices()
     }
 
     if (s_dwriteFactory == nullptr)
-        DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory7), &s_dwriteFactory);
+        DWriteCreateFactory(DWRITE_FACTORY_TYPE_ISOLATED, __uuidof(IDWriteFactory7), &s_dwriteFactory);
 }
 
 ComPtr<ID2D1Factory5> CompositionDeviceManager::GetD2DFactory()
@@ -403,6 +404,9 @@ void CompositionDeviceManager::HandleDeviceLost()
     s_graphicsDevices.clear();
     s_d2dDevice = nullptr;
     s_d3dDevice = nullptr;
+    // Fully release the isolated factory so all internal glyph caches
+    // (outlines, decoded PNG bitmaps, shaped runs) are freed.
+    s_dwriteFactory = nullptr;
     EnsureDevices();
 }
 
@@ -418,10 +422,7 @@ void CompositionDeviceManager::Trim()
             dxgiDevice->Trim();
     }
 
-    // Flush D2D's internal glyph rasterization cache. Without this, D2D accumulates
-    // per-glyph texture atlases for every unique glyph ever rendered and never evicts
-    // them. For large CJK fonts (e.g. MS PMincho ~26k glyphs) this is the primary
-    // source of unbounded memory growth.
+    // Flush D2D's internal glyph rasterization cache.
     if (s_d2dDevice != nullptr)
         s_d2dDevice->ClearResources(0);
 
@@ -430,6 +431,14 @@ void CompositionDeviceManager::Trim()
         if (pair.second != nullptr)
             pair.second->Trim();
     }
+
+    // Release the isolated DWrite factory entirely. This is the only reliable way
+    // to free the factory's internal glyph outline cache, decoded colour bitmap cache
+    // (PNG/JPEG glyphs from emoji fonts), and shaped run cache. ClearResources(0)
+    // only clears D2D's rasterised texture atlases — it does NOT reach into DWrite.
+    // Because the factory is ISOLATED (not SHARED), releasing it here is safe and
+    // does not affect any other component. EnsureDevices() will recreate it lazily.
+    s_dwriteFactory = nullptr;
 }
 
 void CompositionDeviceManager::TrimD2DResources()
@@ -445,6 +454,34 @@ void CompositionDeviceManager::TrimWorkingSet()
 {
     Trim(); // Trims DXGI device and graphics devices
     HeapCompact(GetProcessHeap(), 0);
+}
+
+uint64 CompositionDeviceManager::GetProcessHeapUsage()
+{
+    typedef BOOL(WINAPI* PFN_HeapSummary)(HANDLE, DWORD, PHEAP_SUMMARY);
+    static PFN_HeapSummary s_pfnHeapSummary = reinterpret_cast<PFN_HeapSummary>(
+        GetProcAddress(GetModuleHandleW(L"kernel32.dll"), "HeapSummary"));
+
+    if (s_pfnHeapSummary != nullptr)
+    {
+        HEAP_SUMMARY summary{};
+        summary.cb = sizeof(HEAP_SUMMARY);
+        if (s_pfnHeapSummary(GetProcessHeap(), 0, &summary))
+        {
+            return static_cast<uint64>(summary.cbAllocated);
+        }
+    }
+    return 0;
+}
+
+int32 CompositionDeviceManager::GetActiveSurfaceCount()
+{
+    return Controls::FontGlyphs::GetActiveSurfaceCount();
+}
+
+uint64 CompositionDeviceManager::GetActiveSurfaceMemoryBytes()
+{
+    return Controls::FontGlyphs::GetActiveSurfaceBytes();
 }
 
 

@@ -741,6 +741,7 @@
                             Grid.Row="1"
                             Padding="20 20 20 40"
                             ContainerContentChanging="ItemsPanel_ContainerContentChanging"
+                            Foreground="{x:Bind ViewModel.GlyphBrush, Mode=OneWay}"
                             IsItemClickEnabled="False"
                             ItemAnnotation="None"
                             ItemContainerTransitions="{StaticResource NoTransitions}"
@@ -750,7 +751,6 @@
                             ItemSize="{x:Bind _fontMap.CharGrid.ItemSize}"
                             ItemTemplate="{x:Bind _fontMap.CharGrid.ItemTemplate}"
                             ItemTypography="{x:Bind _fontMap.ViewModel.SelectedTypography.Feature}"
-                            Foreground="{x:Bind ViewModel.GlyphBrush, Mode=OneWay}"
                             ItemsSource="{x:Bind ViewModel.Characters, Mode=OneWay}"
                             SelectionMode="None"
                             ShowColorGlyphs="{x:Bind ViewModel.ExportColor, Mode=OneWay}">

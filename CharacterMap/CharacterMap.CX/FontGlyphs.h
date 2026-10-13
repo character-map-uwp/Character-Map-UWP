@@ -24,6 +24,9 @@ namespace CharacterMapCX
             static void ReleaseGraphicsDevice(Windows::UI::Composition::Compositor^ compositor);
             static void ClearAtlases(Windows::UI::Composition::Compositor^ compositor);
 
+            static int32 GetActiveSurfaceCount();
+            static uint64 GetActiveSurfaceBytes();
+
             #pragma region Dependency Properties
 
             static void RegisterDependencyProperties();

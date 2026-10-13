@@ -229,6 +229,7 @@
     <Compile Include="Core\SvgPathParser.cs" />
     <Compile Include="Core\ThemeIconGlyph.cs" />
     <Compile Include="Core\XamlDirectWrapper.cs" />
+    <Compile Include="Helpers\Utils\MemoryTracker.cs" />
     <Compile Include="Helpers\Fonts\FontClassGenerator.cs" />
     <Compile Include="Helpers\Fonts\SfntWriter.cs" />
     <Compile Include="Helpers\StorageHelper.cs" />

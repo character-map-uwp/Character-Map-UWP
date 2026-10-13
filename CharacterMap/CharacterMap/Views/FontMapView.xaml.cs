@@ -145,9 +145,9 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 ViewModel.Settings.LastColumnWidth = PreviewColumn.Width.Value;
         });
 
-        //Visual v = PreviewGrid.EnableTranslation(true).GetElementVisual();
-        //PreviewGrid.SetHideAnimation(CompositionFactory.CreateSlideOutX(PreviewGrid));
-        //PreviewGrid.SetShowAnimation(CompositionFactory.CreateSlideIn(PreviewGrid));
+#if DIAGNOSTIC
+        _ = CharacterMap.Diagnostics.MemoryTracker.StartAsync(ViewModel.SelectedFont?.Font?.Name ?? "start");
+#endif
     }
 
     protected override void OnUnloaded(object sender, RoutedEventArgs e)
@@ -158,6 +158,10 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
         Messenger.UnregisterAll(this);
         ViewModel?.Deactivated();
+
+#if DIAGNOSTIC
+        _ = CharacterMap.Diagnostics.MemoryTracker.StopAsync();
+#endif
     }
 
     bool _cleaned = false;
@@ -253,13 +257,13 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         if (LayoutRoot != null)
             LayoutRoot.Children.Clear();
 
-        if (Window.Current?.Compositor is Windows.UI.Composition.Compositor compositor)
-            CharacterMapCX.Controls.FontGlyphs.ReleaseGraphicsDevice(compositor);
-
+        CharacterMapCX.Controls.FontGlyphs.ReleaseGraphicsDevice(Compositor);
         CharacterMapCX.Controls.FontGlyphs.Trim();
     }
 
     Debouncer _gcBouncer = new(1000);
+    DWriteFontFace _previousFace = null;
+    DWriteFontFace _previousVariantFace = null;
 
 
     private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -271,10 +275,36 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 UpdateDisplayMode();
                 break;
             case nameof(ViewModel.SelectedFace):
-                _ = SetCharacterSelectionAsync();
+            case nameof(ViewModel.RenderingOptions):
+                if (e.PropertyName == nameof(ViewModel.SelectedFace))
+                {
+                    _previousFace?.ReleaseFontFace();
+                    _previousFace = ViewModel.SelectedFace?.Face;
+                    _previousVariantFace?.ReleaseFontFace();
+                    _previousVariantFace = ViewModel.SelectedFaceAnalysis?.ActiveFace;
+                    _ = SetCharacterSelectionAsync();
+                }
                 
                 _gcBouncer.Debounce(() =>
                 {
+                    if (_previousVariantFace != ViewModel.SelectedFaceAnalysis?.ActiveFace)
+                    {
+                        _previousFace?.ReleaseFontFace();
+                        _previousVariantFace?.ReleaseFontFace();
+                    }
+
+                    // Clear the C++ glyph atlas cache for the old font. 
+                    // The atlas slot cache holds strong ComPtr<IDWriteFontFace> references
+                    // which prevents DirectWrite from dropping its massive internal bitmap caches
+                    // for the font even if the user navigates away or changes a variable axis.
+                    if (Compositor is not null)
+                        CharacterMapCX.Controls.FontGlyphs.ClearAtlases(Compositor);
+
+#if DIAGNOSTIC
+                    _ = Diagnostics.MemoryTracker.SnapshotAsync(
+                        "PRE-TRIM:" + (ViewModel.SelectedFont?.Font?.Name ?? "?"));
+#endif
+
                     _ = Task.Run(() =>
                     {
                         GC.Collect(2, GCCollectionMode.Forced, blocking: true, compacting: true);
@@ -282,6 +312,15 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                         GC.Collect(2, GCCollectionMode.Forced, blocking: true, compacting: true);
 
                         CompositionDeviceManager.TrimWorkingSet();
+
+#if DIAGNOSTIC
+                        this.Enqueue(() =>
+                        {
+                            _ = CharacterMap.Diagnostics.MemoryTracker.SnapshotAsync(
+                                "POST-TRIM:" + (ViewModel.SelectedFont?.Font?.Name ?? "?"));
+                        });
+#endif
+
                     });
                 });
                 break;

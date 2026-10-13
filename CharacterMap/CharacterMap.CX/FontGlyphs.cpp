@@ -31,6 +31,19 @@ DependencyProperty^ FontGlyphs::_StretchProperty = nullptr;
 DependencyProperty^ FontGlyphs::_StretchDirectionProperty = nullptr;
 DependencyProperty^ FontGlyphs::_TypographyProperty = nullptr;
 
+static std::atomic<int32> s_activeSurfaceCount{ 0 };
+static std::atomic<uint64> s_activeSurfaceBytes{ 0 };
+
+int32 FontGlyphs::GetActiveSurfaceCount()
+{
+    return s_activeSurfaceCount.load(std::memory_order_relaxed);
+}
+
+uint64 FontGlyphs::GetActiveSurfaceBytes()
+{
+    return s_activeSurfaceBytes.load(std::memory_order_relaxed);
+}
+
 FontGlyphs::FontGlyphs()
     : m_isLayoutDirty(true)
     , m_isRenderDirty(true)
@@ -220,6 +233,13 @@ void FontGlyphs::ReleaseDrawingSurface()
     }
     catch (...)
     {
+    }
+
+    if (!m_isUsingSharedAtlas && m_renderedWidth > 0 && m_renderedHeight > 0)
+    {
+        uint64 bytes = static_cast<uint64>(m_renderedWidth) * m_renderedHeight * 4;
+        s_activeSurfaceCount.fetch_sub(1, std::memory_order_relaxed);
+        s_activeSurfaceBytes.fetch_sub(bytes, std::memory_order_relaxed);
     }
 
     m_isUsingSharedAtlas = false;
@@ -1001,15 +1021,25 @@ void FontGlyphs::RenderGlyphs()
         m_renderedWidth = requiredWidth;
         m_renderedHeight = requiredHeight;
         m_renderedColor = renderColor;
+
+        if (m_drawingSurface != nullptr)
+        {
+            s_activeSurfaceCount.fetch_add(1, std::memory_order_relaxed);
+            s_activeSurfaceBytes.fetch_add(static_cast<uint64>(requiredWidth) * requiredHeight * 4, std::memory_order_relaxed);
+        }
     }
     else if (m_renderedWidth != requiredWidth || m_renderedHeight != requiredHeight)
     {
+        uint64 oldBytes = static_cast<uint64>(m_renderedWidth) * m_renderedHeight * 4;
         Microsoft::WRL::ComPtr<ICompositionDrawingSurfaceInterop> surfaceInterop;
         if (SUCCEEDED(reinterpret_cast<IUnknown*>(m_drawingSurface)->QueryInterface(IID_PPV_ARGS(&surfaceInterop)))
             && SUCCEEDED(surfaceInterop->Resize(SIZE{ requiredWidth, requiredHeight })))
         {
             m_renderedWidth = requiredWidth;
             m_renderedHeight = requiredHeight;
+            uint64 newBytes = static_cast<uint64>(requiredWidth) * requiredHeight * 4;
+            s_activeSurfaceBytes.fetch_sub(oldBytes, std::memory_order_relaxed);
+            s_activeSurfaceBytes.fetch_add(newBytes, std::memory_order_relaxed);
         }
         else
         {
@@ -1020,6 +1050,12 @@ void FontGlyphs::RenderGlyphs()
                 Windows::Graphics::DirectX::DirectXAlphaMode::Premultiplied);
             m_renderedWidth = requiredWidth;
             m_renderedHeight = requiredHeight;
+
+            if (m_drawingSurface != nullptr)
+            {
+                s_activeSurfaceCount.fetch_add(1, std::memory_order_relaxed);
+                s_activeSurfaceBytes.fetch_add(static_cast<uint64>(requiredWidth) * requiredHeight * 4, std::memory_order_relaxed);
+            }
         }
     }
 

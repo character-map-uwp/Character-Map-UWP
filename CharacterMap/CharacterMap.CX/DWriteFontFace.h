@@ -99,6 +99,22 @@ namespace CharacterMapCX
 			m_face = nullptr;
 		}
 
+		void ReleaseFontFace()
+		{
+			if (m_fontResource == nullptr && m_face != nullptr)
+			{
+				try
+				{
+					ComPtr<IDWriteFontFaceReference> ref;
+					if (SUCCEEDED(m_face->GetFontFaceReference(&ref)))
+						m_fontResource = ref;
+				}
+				catch (...) {}
+			}
+
+			m_face = nullptr;
+		}
+
 		property UINT32 GlyphCount
 		{
 			UINT32 get() { return GetFontFace()->GetGlyphCount(); }

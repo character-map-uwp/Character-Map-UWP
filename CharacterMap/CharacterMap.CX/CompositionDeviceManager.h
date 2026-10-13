@@ -45,6 +45,10 @@ namespace CharacterMapCX
         static void TrimWorkingSet();
         static void TrimD2DResources();
 
+        static uint64 GetProcessHeapUsage();
+        static int32 GetActiveSurfaceCount();
+        static uint64 GetActiveSurfaceMemoryBytes();
+
         static void TrimDXGI()
         {
             std::lock_guard<std::mutex> lock(s_mutex);

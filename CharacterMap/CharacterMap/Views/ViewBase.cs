@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml;
+﻿using Windows.UI.Composition;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 
@@ -17,6 +18,8 @@ public abstract partial class ViewBase : Page
     List<string> _trackedStates => field ??= [];
 
     protected virtual ViewModelBase GetViewModel() => null;
+
+    public Compositor Compositor => field ??= Window.Current.Compositor;
 
     public ViewBase()
     {

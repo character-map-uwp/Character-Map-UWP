@@ -114,7 +114,7 @@ public partial class FontMapViewModel : ViewModelBase
             TitlePrefix = value.Font.Name + " -";
             SelectedFace = value.Selected;
 
-            if (Set(SelectedFont.DisplayMode, nameof(DisplayMode), false))
+            if (Set(SelectedFont.DisplayMode, nameof(DisplayMode)))
                 UpdateTypography();
         }
         else
