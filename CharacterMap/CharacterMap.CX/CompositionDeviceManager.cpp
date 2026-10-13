@@ -46,6 +46,9 @@ std::mutex& CompositionDeviceManager::GetRenderMutex()
 
 void CompositionDeviceManager::EnsureDevices()
 {
+    if (s_dwriteFactory == nullptr)
+        DWriteCreateFactory(DWRITE_FACTORY_TYPE_ISOLATED, __uuidof(IDWriteFactory7), &s_dwriteFactory);
+
     if (s_d3dDevice != nullptr)
         return;
 

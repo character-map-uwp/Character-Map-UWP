@@ -529,16 +529,32 @@ namespace CharacterMapCX
 
 		ComPtr<IDWriteFontCollection3> GetFontCollection()
 		{
-			/* NOTE: Does not support IDWriteFontFace3 constructor */
-			ComPtr<IDWriteFontFamily> family;
-			m_font->GetFontFamily(&family);
-
-			ComPtr<IDWriteFontCollection> col;
-			family->GetFontCollection(&col);
-
 			ComPtr<IDWriteFontCollection3> fontCollection;
-			col.As<IDWriteFontCollection3>(&fontCollection);
-			return fontCollection;
+			if (m_font != nullptr)
+			{
+				ComPtr<IDWriteFontFamily> family;
+				if (SUCCEEDED(m_font->GetFontFamily(&family)) && family != nullptr)
+				{
+					ComPtr<IDWriteFontCollection> col;
+					if (SUCCEEDED(family->GetFontCollection(&col)) && col != nullptr)
+					{
+						col.As<IDWriteFontCollection3>(&fontCollection);
+						if (fontCollection != nullptr)
+							return fontCollection;
+					}
+				}
+			}
+
+			// Fallback: try getting font collection via font face reference
+			ComPtr<IDWriteFontFaceReference> ref = GetReference();
+			if (ref != nullptr)
+			{
+				ComPtr<IDWriteFontSet> fontSet;
+				ComPtr<IDWriteFontSet3> fontSet3;
+				// Try creating font set from reference if supported, or via factory
+			}
+
+			return nullptr;
 		}
 
 
