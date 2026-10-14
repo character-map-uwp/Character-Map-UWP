@@ -96,7 +96,8 @@ AtlasSlot GlyphAtlasManager::GetOrCreateGlyphSlot(
     DWRITE_GLYPH_OFFSET glyphOffset,
     Windows::UI::Xaml::Media::Brush^ foreground,
     LONG requiredWidth, LONG requiredHeight,
-    UINT32 typographyKey)
+    UINT32 typographyKey,
+    bool isRetry)
 {
     AtlasSlot result{};
     result.IsValid = false;
@@ -116,7 +117,7 @@ AtlasSlot GlyphAtlasManager::GetOrCreateGlyphSlot(
     key.IsColor = isColor;
     key.TypographyKey = typographyKey;
 
-    std::lock_guard<std::mutex> lock(s_atlasMutex);
+    std::unique_lock<std::mutex> lock(s_atlasMutex);
 
     auto it = s_slotCache.find(key);
     if (it != s_slotCache.end() && it->second.IsValid && it->second.Surface != nullptr)
@@ -214,18 +215,18 @@ AtlasSlot GlyphAtlasManager::GetOrCreateGlyphSlot(
     POINT updateOffset{};
     ComPtr<ID2D1DeviceContext> d2dContext;
 
+    bool deviceLost = false;
     {
         std::lock_guard<std::mutex> renderLock(CompositionDeviceManager::GetRenderMutex());
 
         HRESULT hr = surfaceInterop->BeginDraw(&updateRect, IID_PPV_ARGS(&d2dContext), &updateOffset);
         if (FAILED(hr))
         {
-            if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
-                CompositionDeviceManager::HandleDeviceLost();
-            return result;
+            deviceLost = CompositionDeviceManager::IsDeviceLostHResult(hr);
+            if (!deviceLost)
+                return result;
         }
-
-        if (d2dContext != nullptr)
+        else if (d2dContext != nullptr)
         {
             // Clear only the allocated slot rectangle
             d2dContext->Clear(D2D1::ColorF(0, 0, 0, 0));
@@ -271,8 +272,28 @@ AtlasSlot GlyphAtlasManager::GetOrCreateGlyphSlot(
                     GlyphImageFormat::None);
             }
 
-            surfaceInterop->EndDraw();
+            HRESULT hrEnd = surfaceInterop->EndDraw();
+            if (FAILED(hrEnd))
+            {
+                deviceLost = CompositionDeviceManager::IsDeviceLostHResult(hrEnd);
+                if (!deviceLost)
+                    return result;
+            }
         }
+    }
+
+    if (deviceLost)
+    {
+        lock.unlock();
+        CompositionDeviceManager::HandleDeviceLost();
+        if (!isRetry)
+        {
+            return GetOrCreateGlyphSlot(
+                compositor, rawFace, glyphIndex, fontSize, simulations, isColor,
+                padLeft, padTop, baseline, glyphAdvance, glyphOffset, foreground,
+                requiredWidth, requiredHeight, typographyKey, true);
+        }
+        return result;
     }
 
     // Flush D2D's internal glyph bitmap cache after an atlas page eviction.

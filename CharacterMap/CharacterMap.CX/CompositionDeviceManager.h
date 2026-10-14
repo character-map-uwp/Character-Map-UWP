@@ -36,6 +36,17 @@ public:
     virtual HRESULT STDMETHODCALLTYPE SuspendDraw() = 0;
 };
 
+MIDL_INTERFACE("A116FF71-F8BF-4C8A-9C98-70779A32A9C8")
+ICompositionGraphicsDeviceInterop : public IUnknown
+{
+public:
+    virtual HRESULT STDMETHODCALLTYPE GetRenderingDevice(
+        IUnknown** value) = 0;
+
+    virtual HRESULT STDMETHODCALLTYPE SetRenderingDevice(
+        IUnknown* value) = 0;
+};
+
 namespace CharacterMapCX
 {
     public ref class CompositionDeviceManager sealed
@@ -44,6 +55,7 @@ namespace CharacterMapCX
         static void Trim();
         static void TrimWorkingSet();
         static void TrimD2DResources();
+        static void CheckDeviceLost();
 
         static uint64 GetProcessHeapUsage();
         static int32 GetActiveSurfaceCount();
@@ -69,6 +81,7 @@ namespace CharacterMapCX
         static void ReleaseGraphicsDevice(Windows::UI::Composition::Compositor^ compositor);
         static std::mutex& GetRenderMutex();
         static void HandleDeviceLost();
+        static bool IsDeviceLostHResult(HRESULT hr);
         static void ClearAtlases(Windows::UI::Composition::Compositor^ compositor);
         static Microsoft::WRL::ComPtr<IWICImagingFactory2> GetWICFactory();
         static void DrawGlyphRunWithColorSupport(
@@ -94,6 +107,7 @@ namespace CharacterMapCX
 
     private:
         static void EnsureDevices();
+        static void HandleDeviceLostInternal();
 
         static std::mutex s_mutex;
         static std::mutex s_renderMutex;

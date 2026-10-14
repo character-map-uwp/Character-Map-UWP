@@ -478,6 +478,24 @@ namespace CharacterMapCX
 			variant->m_dwProperties = m_dwProperties;
 			variant->m_axisValues = values;
 
+			ComPtr<IDWriteFontFaceReference1> faceRef1;
+			if (SUCCEEDED(resource->CreateFontFaceReference(
+				ToDWriteFontSimulations(simulation),
+				values.data(),
+				static_cast<UINT32>(values.size()),
+				&faceRef1)) && faceRef1 != nullptr)
+			{
+				variant->m_fontResource = faceRef1;
+			}
+			else
+			{
+				ComPtr<IDWriteFontFaceReference> ref;
+				if (SUCCEEDED(f3->GetFontFaceReference(&ref)))
+					variant->m_fontResource = ref;
+				else if (m_fontResource != nullptr)
+					variant->m_fontResource = m_fontResource;
+			}
+
 			return variant;
 		}
 
@@ -581,10 +599,35 @@ namespace CharacterMapCX
 				return m_face;
 
 			ComPtr<IDWriteFontFaceReference> faceRef = GetReference();
-			ComPtr<IDWriteFontFace3> face;
-			faceRef->CreateFontFace(&face);
-			m_face = face;
-			return m_face;
+			if (faceRef != nullptr)
+			{
+				if (m_isVariant)
+				{
+					ComPtr<IDWriteFontFaceReference1> faceRef1;
+					if (SUCCEEDED(faceRef.As(&faceRef1)))
+					{
+						ComPtr<IDWriteFontFace5> face5;
+						if (SUCCEEDED(faceRef1->CreateFontFace(&face5)) && face5 != nullptr)
+						{
+							ComPtr<IDWriteFontFace3> f3;
+							if (SUCCEEDED(face5.As(&f3)))
+							{
+								m_face = f3;
+								return m_face;
+							}
+						}
+					}
+				}
+
+				ComPtr<IDWriteFontFace3> face;
+				if (SUCCEEDED(faceRef->CreateFontFace(&face)))
+				{
+					m_face = face;
+					return m_face;
+				}
+			}
+
+			return nullptr;
 		}
 
 		DWRITE_FONT_METRICS1 GetMetrics()

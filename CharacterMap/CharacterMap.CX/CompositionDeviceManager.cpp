@@ -50,7 +50,15 @@ void CompositionDeviceManager::EnsureDevices()
         DWriteCreateFactory(DWRITE_FACTORY_TYPE_ISOLATED, __uuidof(IDWriteFactory7), &s_dwriteFactory);
 
     if (s_d3dDevice != nullptr)
+    {
+        HRESULT reason = s_d3dDevice->GetDeviceRemovedReason();
+        if (FAILED(reason))
+        {
+            HandleDeviceLostInternal();
+            return;
+        }
         return;
+    }
 
     UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
@@ -399,18 +407,84 @@ void CompositionDeviceManager::ClearAtlases(Compositor^ compositor)
     Trim();
 }
 
+bool CompositionDeviceManager::IsDeviceLostHResult(HRESULT hr)
+{
+    if (s_d3dDevice != nullptr && FAILED(s_d3dDevice->GetDeviceRemovedReason()))
+        return true;
+
+    switch (hr)
+    {
+    case DXGI_ERROR_DEVICE_HUNG:
+    case DXGI_ERROR_DEVICE_REMOVED:
+    case DXGI_ERROR_DEVICE_RESET:
+    case DXGI_ERROR_DRIVER_INTERNAL_ERROR:
+    case DXGI_ERROR_INVALID_CALL:
+    case D2DERR_RECREATE_TARGET:
+        return true;
+    default:
+        return false;
+    }
+}
+
+void CompositionDeviceManager::CheckDeviceLost()
+{
+    std::lock_guard<std::mutex> lock(s_mutex);
+    if (s_d3dDevice != nullptr)
+    {
+        HRESULT reason = s_d3dDevice->GetDeviceRemovedReason();
+        if (FAILED(reason))
+        {
+            HandleDeviceLostInternal();
+            return;
+        }
+    }
+    EnsureDevices();
+}
+
 void CompositionDeviceManager::HandleDeviceLost()
 {
     std::lock_guard<std::mutex> lock(s_mutex);
+    HandleDeviceLostInternal();
+}
+
+void CompositionDeviceManager::HandleDeviceLostInternal()
+{
     GlyphAtlasManager::Clear();
     s_colorBrushes.clear();
-    s_graphicsDevices.clear();
     s_d2dDevice = nullptr;
     s_d3dDevice = nullptr;
     // Fully release the isolated factory so all internal glyph caches
     // (outlines, decoded PNG bitmaps, shaped runs) are freed.
     s_dwriteFactory = nullptr;
     EnsureDevices();
+
+    // Rebind all existing CompositionGraphicsDevice instances to the new Direct2D device!
+    for (auto it = s_graphicsDevices.begin(); it != s_graphicsDevices.end();)
+    {
+        bool updated = false;
+        if (it->second != nullptr && s_d2dDevice != nullptr)
+        {
+            ComPtr<ICompositionGraphicsDeviceInterop> interop;
+            if (SUCCEEDED(reinterpret_cast<IUnknown*>(it->second)->QueryInterface(IID_PPV_ARGS(&interop))))
+            {
+                if (SUCCEEDED(interop->SetRenderingDevice(s_d2dDevice.Get())))
+                    updated = true;
+            }
+        }
+
+        if (!updated)
+        {
+            if (it->second != nullptr)
+            {
+                try { delete it->second; } catch (...) {}
+            }
+            it = s_graphicsDevices.erase(it);
+        }
+        else
+        {
+            ++it;
+        }
+    }
 }
 
 void CompositionDeviceManager::Trim()
@@ -525,7 +599,7 @@ bool CompositionDeviceManager::RenderGlyphToSurface(
         HRESULT hr = surfaceInterop->BeginDraw(nullptr, IID_PPV_ARGS(&d2dContext), &updateOffset);
         if (FAILED(hr))
         {
-            if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
+            if (IsDeviceLostHResult(hr))
                 HandleDeviceLost();
             return false;
         }
@@ -574,7 +648,13 @@ bool CompositionDeviceManager::RenderGlyphToSurface(
                     preferredFormat);
             }
 
-            surfaceInterop->EndDraw();
+            HRESULT hrEnd = surfaceInterop->EndDraw();
+            if (FAILED(hrEnd))
+            {
+                if (IsDeviceLostHResult(hrEnd))
+                    HandleDeviceLost();
+                return false;
+            }
         }
     }
 

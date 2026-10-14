@@ -1088,7 +1088,42 @@ void FontGlyphs::RenderGlyphs()
         requiredHeight);
 
     if (!success)
-        return;
+    {
+        ReleaseDrawingSurface();
+        graphicsDevice = CompositionDeviceManager::GetGraphicsDevice(compositor);
+        if (graphicsDevice != nullptr)
+        {
+            m_drawingSurface = graphicsDevice->CreateDrawingSurface(
+                Windows::Foundation::Size(static_cast<float>(requiredWidth), static_cast<float>(requiredHeight)),
+                pixelFormat,
+                Windows::Graphics::DirectX::DirectXAlphaMode::Premultiplied);
+            if (m_drawingSurface != nullptr)
+            {
+                s_activeSurfaceCount.fetch_add(1, std::memory_order_relaxed);
+                s_activeSurfaceBytes.fetch_add(static_cast<uint64>(requiredWidth) * requiredHeight * 4, std::memory_order_relaxed);
+                m_renderedWidth = requiredWidth;
+                m_renderedHeight = requiredHeight;
+                m_renderedColor = renderColor;
+
+                success = CompositionDeviceManager::RenderGlyphToSurface(
+                    m_drawingSurface,
+                    renderColor ? GlyphImageFormat::None : GlyphImageFormat::TrueType,
+                    m_padLeft * dpiScale, m_padTop * dpiScale, m_baseline * dpiScale,
+                    rawFace.Get(),
+                    static_cast<FLOAT>(FontSize * dpiScale),
+                    m_glyphIndices,
+                    dpiScale != 1.0f ? scaledAdvances : m_glyphAdvances,
+                    dpiScale != 1.0f ? scaledOffsets : m_glyphOffsets,
+                    Foreground,
+                    StyleSimulations,
+                    requiredWidth,
+                    requiredHeight);
+            }
+        }
+
+        if (!success)
+            return;
+    }
 
     if (m_surfaceBrush == nullptr)
     {

@@ -93,7 +93,8 @@ namespace CharacterMapCX
             DWRITE_GLYPH_OFFSET glyphOffset,
             Windows::UI::Xaml::Media::Brush^ foreground,
             LONG requiredWidth, LONG requiredHeight,
-            UINT32 typographyKey = 0);
+            UINT32 typographyKey = 0,
+            bool isRetry = false);
 
         static void Clear();
 
