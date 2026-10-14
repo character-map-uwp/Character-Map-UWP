@@ -15,7 +15,7 @@ public class AppSettings : INotifyPropertyChanged
 
     public bool EnableSubsetter
     {
-        get => Get(false, "EnableSubsetter1");
+        get => Get(true, "EnableSubsetter1");
         set => Set(value, "EnableSubsetter1");
     }
 
