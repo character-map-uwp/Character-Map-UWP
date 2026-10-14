@@ -1124,8 +1124,11 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         {
             /* Context menu for character grid or glyph grid */
             args.Handled = true;
+            Point pos = new(-10000, -10000);
+            bool hasPosition = args.TryGetPosition(f, out pos);
+
             if (grid.Tag is Character c)
-                FlyoutHelper.ShowCharacterGridContext(GridContextFlyout, grid, this, IsStandalone);
+                FlyoutHelper.ShowCharacterGridContext(GridContextFlyout, grid, this, IsStandalone, hasPosition ? pos : null);
             else if (grid.Tag is uint or int)
             {
                 ushort glyphIndex = Convert.ToUInt16(grid.Tag);
@@ -1133,7 +1136,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                     ? new(glyphIndex, mapped.UnicodeIndex)
                     : new(glyphIndex);
 
-                FlyoutHelper.ShowCharacterGridContext(GridContextFlyout, grid, this, IsStandalone, gc);
+                FlyoutHelper.ShowCharacterGridContext(GridContextFlyout, grid, this, IsStandalone, hasPosition ? pos : null, gc);
             }
         }
     }

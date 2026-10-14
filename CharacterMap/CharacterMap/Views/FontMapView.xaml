@@ -199,7 +199,6 @@
             </Grid>
         </DataTemplate>
 
-
         <Style x:Key="SmallCardGridViewItem" TargetType="controls:ExtendedGridViewItem">
             <Setter Property="CornerRadius" Value="{ThemeResource CardCornerRadius}" />
             <Setter Property="Margin" Value="4" />
@@ -299,9 +298,6 @@
             Mode="OneWay"
             Path="ViewModel.Chars" />
 
-
-
-
         <CollectionViewSource
             x:Key="SearchResultsSource"
             x:Name="SearchResultsSource"
@@ -351,11 +347,6 @@
             </ObjectAnimationUsingKeyFrames>
         </Storyboard>
 
-        <BitmapIconSource
-            x:Name="ColourSource"
-            ShowAsMonochrome="False"
-            UriSource="/Assets/ColourIcon.png" />
-
         <MenuFlyout
             x:Name="GridContextFlyout"
             AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
@@ -391,81 +382,10 @@
                 d:Text="{core:Localizer Key=CalligraphyLabel/Text}" />
             <MenuFlyoutSeparator Visibility="{x:Bind CalligraphyButton.Visibility, Mode=OneWay}" />
 
-            <MenuFlyoutSubItem
-                x:Name="PngRoot"
-                x:Uid="ExportPNGLabel"
-                core:Properties.ThemeIcon="Save"
-                d:Text="{core:Localizer Key=ExportPNGLabel/Text}">
-                <MenuFlyoutItem
-                    x:Name="SavePNGColouredItem"
-                    x:Uid="ColoredGlyphLabel"
-                    Click="SavePng_Click"
-                    CommandParameter="{x:Bind ViewModel.GlyphColor}"
-                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
-                    d:Text="{core:Localizer Key=ColoredGlyphLabel/Text}">
-                    <MenuFlyoutItem.Icon>
-                        <IconSourceElement IconSource="{StaticResource ColourSource}" />
-                    </MenuFlyoutItem.Icon>
-                </MenuFlyoutItem>
-                <MenuFlyoutItem
-                    x:Uid="BlackFill"
-                    Click="SavePng_Click"
-                    CommandParameter="{x:Bind ViewModel.BlackColor}"
-                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
-                    d:Text="{core:Localizer Key=BlackFill/Text}">
-                    <MenuFlyoutItem.Icon>
-                        <FontIcon core:Properties.ThemeIcon="FilledSquare" Foreground="Black" />
-                    </MenuFlyoutItem.Icon>
-                </MenuFlyoutItem>
-                <MenuFlyoutItem
-                    x:Uid="WhiteFill"
-                    Click="SavePng_Click"
-                    CommandParameter="{x:Bind ViewModel.WhiteColor}"
-                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
-                    d:Text="{core:Localizer Key=WhiteFill/Text}">
-                    <MenuFlyoutItem.Icon>
-                        <FontIcon core:Properties.ThemeIcon="FilledSquare" Foreground="White" />
-                    </MenuFlyoutItem.Icon>
-                </MenuFlyoutItem>
-            </MenuFlyoutSubItem>
-            <MenuFlyoutSubItem
-                x:Name="SvgRoot"
-                x:Uid="ExportSVGLabel"
-                core:Properties.ThemeIcon="Save"
-                d:Text="{core:Localizer Key=ExportSVGLabel/Text}">
-                <MenuFlyoutItem
-                    x:Name="SaveSVGColouredItem"
-                    x:Uid="ColoredGlyphLabel"
-                    Click="SaveSvg_Click"
-                    CommandParameter="{x:Bind ViewModel.GlyphColor}"
-                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
-                    d:Text="{core:Localizer Key=ColoredGlyphLabel/Text}">
-                    <MenuFlyoutItem.Icon>
-                        <IconSourceElement IconSource="{StaticResource ColourSource}" />
-                    </MenuFlyoutItem.Icon>
-                </MenuFlyoutItem>
-                <MenuFlyoutItem
-                    x:Uid="BlackFill"
-                    Click="SaveSvg_Click"
-                    CommandParameter="{x:Bind ViewModel.BlackColor}"
-                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
-                    d:Text="{core:Localizer Key=BlackFill/Text}">
-                    <MenuFlyoutItem.Icon>
-                        <FontIcon core:Properties.ThemeIcon="FilledSquare" Foreground="Black" />
-                    </MenuFlyoutItem.Icon>
-                </MenuFlyoutItem>
-                <MenuFlyoutItem
-                    x:Uid="WhiteFill"
-                    Click="SaveSvg_Click"
-                    CommandParameter="{x:Bind ViewModel.WhiteColor}"
-                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
-                    d:Text="{core:Localizer Key=WhiteFill/Text}">
-                    <MenuFlyoutItem.Icon>
-                        <FontIcon core:Properties.ThemeIcon="FilledSquare" Foreground="White" />
-                    </MenuFlyoutItem.Icon>
-                </MenuFlyoutItem>
-            </MenuFlyoutSubItem>
-            <MenuFlyoutSeparator />
+            <!-- Removed by flyout handler. REQUIRED. -->
+            <MenuFlyoutItem Text="SAVE PLACEHOLDER" />
+
+            <MenuFlyoutSeparator x:Name="DevToolsSeparator" />
             <MenuFlyoutSubItem
                 x:Name="DevRoot"
                 x:Uid="SettingsDevToolsGroupHeader"

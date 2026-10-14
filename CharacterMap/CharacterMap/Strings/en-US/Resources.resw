@@ -744,10 +744,10 @@ Please consider posting details about this error to GitHub so we can help you fi
     <value>Keystroke: Alt + {0:0000}</value>
   </data>
   <data name="ExportSVGLabel.Text" xml:space="preserve">
-    <value>Save as SVG Image</value>
+    <value>Save as SVG image</value>
   </data>
   <data name="ExportPNGLabel.Text" xml:space="preserve">
-    <value>Save as PNG Image</value>
+    <value>Save as PNG image</value>
   </data>
   <data name="ExportSVGGlyphLabel.Text" xml:space="preserve">
     <value>SVG Glyph</value>
@@ -2951,5 +2951,8 @@ Variations cannot be copied as text, but can be exported as PNG or SVG.</value>
   </data>
   <data name="HiddenAxisHintLabel" xml:space="preserve">
     <value>Hidden Axis - not intended for end-user control</value>
+  </data>
+  <data name="ExportImageLabel.Text" xml:space="preserve">
+    <value>Save as image</value>
   </data>
 </root>

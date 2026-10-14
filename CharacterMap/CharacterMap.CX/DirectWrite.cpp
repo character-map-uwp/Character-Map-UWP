@@ -938,6 +938,7 @@ IRandomAccessStream^ DirectWrite::GetCharacterPNGStream(
 		defaultBrush.Get(),
 		preferredColorFormat,
 		fontFace->GetFontFace().Get());
+
 	textLayout->Draw(nullptr, renderer.Get(), 0.0f, 0.0f);
 
 	if (FAILED(recorder.Finish()))

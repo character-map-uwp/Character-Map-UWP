@@ -320,7 +320,6 @@ public static partial class ExportManager
     {
         float size = e.PreferredSize > 0 ? (float)e.PreferredSize : (float)ResourceHelper.AppSettings.PngSize;
         Color textColor = e.PreferredColor;
-        bool isColor = e.PreferredStyle == ExportStyle.ColorGlyph;
 
         if (selectedChar is GlyphCharacter gc)
             return DirectWrite.GetGlyphPNGStream(e.Options.ActiveFontFace, (ushort)gc.GlyphIndex, size, textColor, e.PreferredColorType);

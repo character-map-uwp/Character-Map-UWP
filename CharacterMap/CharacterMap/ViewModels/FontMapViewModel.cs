@@ -516,8 +516,9 @@ public partial class FontMapViewModel : ViewModelBase
                     Analysis = analysis,
                     Typography = [args.Typography],
                     ActiveFontFace = SelectedFaceAnalysis?.ActiveFace ?? RenderingOptions.ActiveFontFace,
-                    Axis = SelectedFaceAnalysis?.VariationAxis ?? RenderingOptions.Axis
-                }
+                    Axis = SelectedFaceAnalysis?.VariationAxis ?? RenderingOptions.Axis,
+                },
+                PreferredColorType = args.PreferredColorStyle
             },
             character);
 
