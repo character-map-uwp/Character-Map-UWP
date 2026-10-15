@@ -787,17 +787,19 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         if (hasConstrainedW || hasConstrainedH)
         {
             m_minWidth = FontSize / 2.2;
-            auto dHeight = max(1.0, drawBounds.Height);
-            auto dWidth = max(m_minWidth, drawBounds.Width);
+            auto totalW = (std::max)({ m_minWidth, static_cast<double>(layoutBounds.Width), static_cast<double>(drawBounds.Width), static_cast<double>(drawBounds.Right - (std::min)(0.0f, drawBounds.Left)) });
+            auto totalTop = (std::min)(static_cast<double>(layoutBounds.Top), static_cast<double>(drawBounds.Top));
+            auto totalBottom = (std::max)(static_cast<double>(layoutBounds.Bottom), static_cast<double>(drawBounds.Bottom));
+            auto totalH = (std::max)(1.0, totalBottom - totalTop);
 
-            double scaleW = hasConstrainedW ? (size.Width / dWidth) : 1.0;
-            double scaleH = hasConstrainedH ? (size.Height / dHeight) : 1.0;
-            auto scale = (hasConstrainedW && hasConstrainedH) ? min(scaleW, scaleH) : (hasConstrainedW ? scaleW : scaleH);
+            double scaleW = hasConstrainedW ? (size.Width / totalW) : 1.0;
+            double scaleH = hasConstrainedH ? (size.Height / totalH) : 1.0;
+            auto scale = (hasConstrainedW && hasConstrainedH) ? (std::min)(scaleW, scaleH) : (hasConstrainedW ? scaleW : scaleH);
             if (scale <= 0)
                 scale = 1;
 
             m_targetScale = scale;
-            targetsize = Size(static_cast<float>(dWidth * scale), static_cast<float>(dHeight * scale));
+            targetsize = Size(static_cast<float>(totalW * scale), static_cast<float>(totalH * scale));
         }
     }
     else
@@ -1189,22 +1191,54 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
         if (rs.Width <= 0 || rs.Height <= 0)
             return;
 
-        double padX = max(6.0, rs.Width * 0.04);
-        double padY = max(6.0, rs.Height * 0.04);
-        double availW = max(1.0, rs.Width - padX * 2.0);
-        double availH = max(1.0, rs.Height - padY * 2.0);
+        double padX = (std::max)(6.0, rs.Width * 0.04);
+        double padY = (std::max)(6.0, rs.Height * 0.04);
+        double availW = (std::max)(1.0, rs.Width - padX * 2.0);
+        double availH = (std::max)(1.0, rs.Height - padY * 2.0);
 
-        double fitWidth = max(m_minWidth, db.Width);
-        double fitHeight = max(1.0, db.Height);
+        double totalW = (std::max)({ m_minWidth, static_cast<double>(lb.Width), static_cast<double>(db.Width), static_cast<double>(db.Right - (std::min)(0.0f, db.Left)) });
+        double totalTop = (std::min)(static_cast<double>(lb.Top), static_cast<double>(db.Top));
+        double totalBottom = (std::max)(static_cast<double>(lb.Bottom), static_cast<double>(db.Bottom));
+        double totalH = (std::max)(1.0, totalBottom - totalTop);
 
-        double scale = min(availW / fitWidth, availH / fitHeight);
+        // Glyphs scale to fit available size (both scaling up and down) while maintaining baseline positioning
+        double scale = (std::min)(availW / totalW, availH / totalH);
         if (scale <= 0.0)
             scale = 1.0;
 
         args->DrawingSession->Transform = Windows::Foundation::Numerics::make_float3x2_scale(static_cast<float>(scale));
 
-        left = -db.Left + (rs.Width / scale - db.Width) / 2.0;
-        top = -db.Top + (rs.Height / scale - db.Height) / 2.0;
+        double boxW = rs.Width / scale;
+        double boxH = rs.Height / scale;
+
+        // Horizontal positioning:
+        // Center within advance width for regular characters.
+        // Center ink bounds for zero-advance characters (combining marks / diacritics).
+        if (lb.Width > 0)
+        {
+            left = static_cast<float>((boxW - lb.Width) / 2.0 - lb.Left);
+            if (left + db.Left < 0)
+                left = -db.Left;
+            if (left + db.Right > boxW)
+                left = static_cast<float>(boxW - db.Right);
+        }
+        else
+        {
+            left = static_cast<float>(-db.Left + (boxW - db.Width) / 2.0);
+        }
+
+        // Vertical positioning:
+        // Center the font line box so all characters share the exact same baseline.
+        // For textLayout (lb.Top == 0), top is line box top: (boxH - lb.Height) / 2.0.
+        // For GlyphRun (lb.Top == -ascent), top is baseline origin: (boxH - lb.Height) / 2.0 + ascent.
+        // Both equal (boxH - lb.Height) / 2.0 - lb.Top.
+        top = static_cast<float>((boxH - lb.Height) / 2.0 - lb.Top);
+
+        // Prevent clipping if extreme ascenders/descenders extend outside box
+        if (top + db.Top < 0)
+            top = -db.Top;
+        if (top + db.Bottom > boxH)
+            top = static_cast<float>(boxH - db.Bottom);
     }
 
     bool drawMetrics = false;
@@ -1258,7 +1292,7 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
     //else
         //m_canvas->Margin = ThicknessHelper::FromUniformLength(0);
 
-    if (this->FlowDirection == Windows::UI::Xaml::FlowDirection::RightToLeft)
+    if (!IsCharacterFitEnabled && this->FlowDirection == Windows::UI::Xaml::FlowDirection::RightToLeft)
     {
         // Note: something is wrong here causing the right hand side to clip slightly.
         //       currently we use 4 as a magic number to avoid this in 90% of cases.

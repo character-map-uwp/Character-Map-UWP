@@ -194,6 +194,8 @@ namespace CharacterMapCX
             LONG m_renderedWidth;
             LONG m_renderedHeight;
             bool m_renderedColor;
+            float m_renderedScaleX;
+            float m_renderedScaleY;
             Windows::Foundation::Size m_contentSize;
             Windows::Foundation::Size m_scale;
             float m_baseline;

@@ -30,6 +30,8 @@ namespace CharacterMapCX
         UINT32 Simulations;
         bool IsColor;
         UINT32 TypographyKey;
+        UINT32 ScaleXInt;        // (UINT32)(scaleX * 1000)
+        UINT32 ScaleYInt;        // (UINT32)(scaleY * 1000)
 
         bool operator==(const AtlasKey& other) const
         {
@@ -38,7 +40,9 @@ namespace CharacterMapCX
                 && FontSizeInt == other.FontSizeInt
                 && Simulations == other.Simulations
                 && IsColor == other.IsColor
-                && TypographyKey == other.TypographyKey;
+                && TypographyKey == other.TypographyKey
+                && ScaleXInt == other.ScaleXInt
+                && ScaleYInt == other.ScaleYInt;
         }
     };
 
@@ -53,7 +57,9 @@ namespace CharacterMapCX
             std::size_t h4 = std::hash<UINT32>{}(k.Simulations);
             std::size_t h5 = std::hash<bool>{}(k.IsColor);
             std::size_t h6 = std::hash<UINT32>{}(k.TypographyKey);
-            return h1 ^ (h2 << 1) ^ (h3 << 2) ^ (h4 << 3) ^ (h5 << 4) ^ (h6 << 5);
+            std::size_t h7 = std::hash<UINT32>{}(k.ScaleXInt);
+            std::size_t h8 = std::hash<UINT32>{}(k.ScaleYInt);
+            return h1 ^ (h2 << 1) ^ (h3 << 2) ^ (h4 << 3) ^ (h5 << 4) ^ (h6 << 5) ^ (h7 << 6) ^ (h8 << 7);
         }
     };
 
@@ -93,6 +99,7 @@ namespace CharacterMapCX
             DWRITE_GLYPH_OFFSET glyphOffset,
             Windows::UI::Xaml::Media::Brush^ foreground,
             LONG requiredWidth, LONG requiredHeight,
+            float scaleX = 1.0f, float scaleY = 1.0f,
             UINT32 typographyKey = 0,
             bool isRetry = false);
 

@@ -96,6 +96,7 @@ AtlasSlot GlyphAtlasManager::GetOrCreateGlyphSlot(
     DWRITE_GLYPH_OFFSET glyphOffset,
     Windows::UI::Xaml::Media::Brush^ foreground,
     LONG requiredWidth, LONG requiredHeight,
+    float scaleX, float scaleY,
     UINT32 typographyKey,
     bool isRetry)
 {
@@ -116,6 +117,8 @@ AtlasSlot GlyphAtlasManager::GetOrCreateGlyphSlot(
     key.Simulations = static_cast<UINT32>(simulations);
     key.IsColor = isColor;
     key.TypographyKey = typographyKey;
+    key.ScaleXInt = static_cast<UINT32>(std::round(scaleX * 1000.0f));
+    key.ScaleYInt = static_cast<UINT32>(std::round(scaleY * 1000.0f));
 
     std::unique_lock<std::mutex> lock(s_atlasMutex);
 
@@ -230,7 +233,9 @@ AtlasSlot GlyphAtlasManager::GetOrCreateGlyphSlot(
         {
             // Clear only the allocated slot rectangle
             d2dContext->Clear(D2D1::ColorF(0, 0, 0, 0));
-            d2dContext->SetTransform(D2D1::Matrix3x2F::Translation(static_cast<FLOAT>(updateOffset.x), static_cast<FLOAT>(updateOffset.y)));
+            d2dContext->SetTransform(
+                D2D1::Matrix3x2F::Scale(scaleX, scaleY) *
+                D2D1::Matrix3x2F::Translation(static_cast<FLOAT>(updateOffset.x), static_cast<FLOAT>(updateOffset.y)));
 
             DWRITE_GLYPH_RUN glyphRun{};
             glyphRun.fontFace = rawFace;
@@ -291,7 +296,7 @@ AtlasSlot GlyphAtlasManager::GetOrCreateGlyphSlot(
             return GetOrCreateGlyphSlot(
                 compositor, rawFace, glyphIndex, fontSize, simulations, isColor,
                 padLeft, padTop, baseline, glyphAdvance, glyphOffset, foreground,
-                requiredWidth, requiredHeight, typographyKey, true);
+                requiredWidth, requiredHeight, scaleX, scaleY, typographyKey, true);
         }
         return result;
     }

@@ -581,7 +581,8 @@ bool CompositionDeviceManager::RenderGlyphToSurface(
     const std::vector<DWRITE_GLYPH_OFFSET>& glyphOffsets,
     Windows::UI::Xaml::Media::Brush^ foreground,
     Windows::UI::Xaml::Media::StyleSimulations simulations,
-    LONG requiredWidth, LONG requiredHeight)
+    LONG requiredWidth, LONG requiredHeight,
+    float scaleX, float scaleY)
 {
     if (surface == nullptr || rawFace == nullptr || glyphIndices.empty() || requiredWidth <= 0 || requiredHeight <= 0)
         return false;
@@ -607,7 +608,9 @@ bool CompositionDeviceManager::RenderGlyphToSurface(
         if (d2dContext != nullptr)
         {
             d2dContext->Clear(D2D1::ColorF(0, 0, 0, 0));
-            d2dContext->SetTransform(D2D1::Matrix3x2F::Translation(static_cast<FLOAT>(updateOffset.x), static_cast<FLOAT>(updateOffset.y)));
+            d2dContext->SetTransform(
+                D2D1::Matrix3x2F::Scale(scaleX, scaleY) *
+                D2D1::Matrix3x2F::Translation(static_cast<FLOAT>(updateOffset.x), static_cast<FLOAT>(updateOffset.y)));
 
             DWRITE_GLYPH_RUN glyphRun{};
             glyphRun.fontFace = rawFace;

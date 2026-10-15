@@ -63,6 +63,8 @@ FontGlyphs::FontGlyphs()
     , m_renderedWidth(0)
     , m_renderedHeight(0)
     , m_renderedColor(false)
+    , m_renderedScaleX(0.0f)
+    , m_renderedScaleY(0.0f)
     , m_isUsingSharedAtlas(false)
 {
     m_unloadedToken.Value = 0;
@@ -782,7 +784,10 @@ Size FontGlyphs::ComputeScaleFactor(Size availableSize, Size contentSize)
         scaleX = (std::max)(1.0, scaleX);
         scaleY = (std::max)(1.0, scaleY);
         break;
+    case Windows::UI::Xaml::Controls::StretchDirection::Both:
+        break;
     case Windows::UI::Xaml::Controls::StretchDirection::DownOnly:
+    default:
         scaleX = (std::min)(1.0, scaleX);
         scaleY = (std::min)(1.0, scaleY);
         break;
@@ -799,19 +804,38 @@ Size FontGlyphs::MeasureOverride(Size availableSize)
         ParseAndLayoutGlyphs();
     }
 
-    Size fitContentSize = m_contentSize;
-    if (m_hasInkBounds)
+    Size fitContentSize;
+    if (m_hasInkBounds && m_designInkHeight > 0)
     {
         double emScale = FontSize / m_designUnitsPerEm;
-        double inkW = m_designInkWidth * emScale;
-        double inkH = m_designInkHeight * emScale;
-        if (inkW > fitContentSize.Width)
-            fitContentSize.Width = static_cast<float>(inkW);
-        if (inkH > fitContentSize.Height)
-            fitContentSize.Height = static_cast<float>(inkH);
+        double inkLeft = m_designInkLeft * emScale;
+        double inkWidth = m_designInkWidth * emScale;
+        double inkHeight = m_designInkHeight * emScale;
+
+        double visualWidth;
+        if (m_glyphAdvances.empty() || m_glyphAdvances[0] <= 0.0f)
+            visualWidth = inkWidth;
+        else
+            visualWidth = (std::max)(static_cast<double>(m_contentSize.Width), (inkLeft + inkWidth) - (std::min)(0.0, inkLeft));
+
+        // Use the glyph's actual visual height (ink height), not the entire font's theoretical line box.
+        // In script fonts like Samantha, ascent + descent can exceed 3x the EM size, which would otherwise
+        // force every single normal glyph to downscale to a tiny fraction of its intended size.
+        double visualHeight = inkHeight;
+
+        fitContentSize = Size(static_cast<float>(visualWidth), static_cast<float>(visualHeight));
+    }
+    else
+    {
+        fitContentSize = m_contentSize;
     }
 
     m_scale = ComputeScaleFactor(availableSize, fitContentSize);
+    if (StretchDirection == Windows::UI::Xaml::Controls::StretchDirection::DownOnly)
+    {
+        m_scale.Width = (std::min)(1.0f, m_scale.Width);
+        m_scale.Height = (std::min)(1.0f, m_scale.Height);
+    }
 
     return Size(m_scale.Width * fitContentSize.Width, m_scale.Height * fitContentSize.Height);
 }
@@ -824,55 +848,104 @@ Size FontGlyphs::ArrangeOverride(Size finalSize)
         ParseAndLayoutGlyphs();
     }
 
-    if (m_isRenderDirty)
+    if (m_contentSize.Width <= 0 || m_contentSize.Height <= 0)
+        return finalSize;
+
+    Size fitContentSize;
+    if (m_hasInkBounds && m_designInkHeight > 0)
+    {
+        double emScale = FontSize / m_designUnitsPerEm;
+        double inkLeft = m_designInkLeft * emScale;
+        double inkWidth = m_designInkWidth * emScale;
+        double inkHeight = m_designInkHeight * emScale;
+
+        double visualWidth;
+        if (m_glyphAdvances.empty() || m_glyphAdvances[0] <= 0.0f)
+            visualWidth = inkWidth;
+        else
+            visualWidth = (std::max)(static_cast<double>(m_contentSize.Width), (inkLeft + inkWidth) - (std::min)(0.0, inkLeft));
+
+        double visualHeight = inkHeight;
+
+        fitContentSize = Size(static_cast<float>(visualWidth), static_cast<float>(visualHeight));
+    }
+    else
+    {
+        fitContentSize = m_contentSize;
+    }
+
+    m_scale = ComputeScaleFactor(finalSize, fitContentSize);
+    if (StretchDirection == Windows::UI::Xaml::Controls::StretchDirection::DownOnly)
+    {
+        m_scale.Width = (std::min)(1.0f, m_scale.Width);
+        m_scale.Height = (std::min)(1.0f, m_scale.Height);
+    }
+
+    if (m_isRenderDirty || m_renderedScaleX != m_scale.Width || m_renderedScaleY != m_scale.Height)
     {
         m_isRenderDirty = false;
         RenderGlyphs();
     }
 
-    if (m_contentSize.Width <= 0 || m_contentSize.Height <= 0)
-        return finalSize;
+    float scaleX = m_scale.Width > 0.0f ? m_scale.Width : 1.0f;
+    float scaleY = m_scale.Height > 0.0f ? m_scale.Height : 1.0f;
 
-    Size fitContentSize = m_contentSize;
+    double scaledContentWidth = m_contentSize.Width * scaleX;
+    double scaledContentHeight = m_contentSize.Height * scaleY;
+    double scaledPadLeft = m_padLeft * scaleX;
+    double scaledPadTop = m_padTop * scaleY;
+
+    double scaledLogicalWidth = (m_contentSize.Width + m_padLeft + m_padRight) * scaleX;
+    double scaledLogicalHeight = (m_contentSize.Height + m_padTop + m_padBottom) * scaleY;
+
+    // Horizontal positioning:
+    // For normal glyphs with advance > 0, center within advance width to preserve natural bearings.
+    // For zero-advance glyphs (combining marks / diacritics), center ink bounds so they remain visible.
+    double originX = (finalSize.Width - scaledContentWidth) / 2.0;
     if (m_hasInkBounds)
     {
         double emScale = FontSize / m_designUnitsPerEm;
-        double inkW = m_designInkWidth * emScale;
-        double inkH = m_designInkHeight * emScale;
-        if (inkW > fitContentSize.Width)
-            fitContentSize.Width = static_cast<float>(inkW);
-        if (inkH > fitContentSize.Height)
-            fitContentSize.Height = static_cast<float>(inkH);
+        double inkLeft = m_designInkLeft * emScale * scaleX;
+        double inkWidth = m_designInkWidth * emScale * scaleX;
+
+        if (m_glyphAdvances.empty() || m_glyphAdvances[0] <= 0.0f)
+        {
+            originX = (finalSize.Width - inkWidth) / 2.0 - inkLeft;
+        }
+        else
+        {
+            if (originX + inkLeft < 0)
+                originX = -inkLeft;
+            if (originX + inkLeft + inkWidth > finalSize.Width)
+                originX = finalSize.Width - (inkLeft + inkWidth);
+        }
     }
 
-    m_scale = ComputeScaleFactor(finalSize, fitContentSize);
-
-    double originX = (finalSize.Width - m_contentSize.Width) / 2.0;
-    if (m_hasInkBounds)
-    {
-        double emScale = FontSize / m_designUnitsPerEm;
-        double inkLeft = m_designInkLeft * emScale;
-        double inkWidth = m_designInkWidth * emScale;
-        originX = (finalSize.Width - inkWidth) / 2.0 - inkLeft;
-    }
-
-    double originY = (finalSize.Height - m_contentSize.Height) / 2.0;
+    // Vertical positioning:
+    // Center the font's logical line box (m_contentSize.Height = ascent + descent).
+    // This ensures every glyph shares the exact same baseline (originY + ascent * scaleY),
+    // preserving superscripts, subscripts, periods, and descenders in their true typographic positions.
+    double originY = (finalSize.Height - scaledContentHeight) / 2.0;
     if (m_hasInkBounds && m_designInkHeight > 0)
     {
         double emScale = FontSize / m_designUnitsPerEm;
-        double inkTop = m_designInkTop * emScale;
-        double inkHeight = m_designInkHeight * emScale;
-        originY = (finalSize.Height - inkHeight) / 2.0 - inkTop;
+        double inkTop = m_designInkTop * emScale * scaleY;
+        double inkHeight = m_designInkHeight * emScale * scaleY;
+
+        // Only adjust if extreme ascenders/descenders would be clipped
+        if (originY + inkTop < 0)
+            originY = -inkTop;
+        if (originY + inkTop + inkHeight > finalSize.Height)
+            originY = finalSize.Height - (inkTop + inkHeight);
     }
 
-    float posX = (float)(originX - m_padLeft);
-    float posY = (float)(originY - m_padTop);
+    float posX = (float)(originX - scaledPadLeft);
+    float posY = (float)(originY - scaledPadTop);
 
     if (m_spriteVisual != nullptr)
     {
         m_spriteVisual->Offset = float3(posX, posY, 0.0f);
-        m_spriteVisual->CenterPoint = float3((float)(finalSize.Width / 2.0 - posX), (float)(finalSize.Height / 2.0 - posY), 0.0f);
-        m_spriteVisual->Scale = float3((float)m_scale.Width, (float)m_scale.Height, 1.0f);
+        m_spriteVisual->Size = float2(static_cast<float>(scaledLogicalWidth), static_cast<float>(scaledLogicalHeight));
     }
 
     return finalSize;
@@ -905,6 +978,11 @@ void FontGlyphs::RenderGlyphs()
 
     bool renderColor = ShouldRenderColor();
     
+    float scaleX = m_scale.Width > 0.0f ? m_scale.Width : 1.0f;
+    float scaleY = m_scale.Height > 0.0f ? m_scale.Height : 1.0f;
+    m_renderedScaleX = scaleX;
+    m_renderedScaleY = scaleY;
+
     float dpiScale = 1.0f;
     try {
         if (this->Dispatcher != nullptr) {
@@ -917,8 +995,11 @@ void FontGlyphs::RenderGlyphs()
     LONG logicalWidth = static_cast<LONG>((std::max)(1.0f, static_cast<float>(std::ceil(m_contentSize.Width + m_padLeft + m_padRight))));
     LONG logicalHeight = static_cast<LONG>((std::max)(1.0f, static_cast<float>(std::ceil(m_contentSize.Height + m_padTop + m_padBottom))));
     
-    LONG requiredWidth = static_cast<LONG>(std::ceil(logicalWidth * dpiScale));
-    LONG requiredHeight = static_cast<LONG>(std::ceil(logicalHeight * dpiScale));
+    LONG scaledLogicalWidth = static_cast<LONG>((std::max)(1.0f, static_cast<float>(std::ceil(logicalWidth * scaleX))));
+    LONG scaledLogicalHeight = static_cast<LONG>((std::max)(1.0f, static_cast<float>(std::ceil(logicalHeight * scaleY))));
+
+    LONG requiredWidth = static_cast<LONG>(std::ceil(scaledLogicalWidth * dpiScale));
+    LONG requiredHeight = static_cast<LONG>(std::ceil(scaledLogicalHeight * dpiScale));
 
     auto graphicsDevice = CompositionDeviceManager::GetGraphicsDevice(compositor);
     if (graphicsDevice == nullptr)
@@ -943,6 +1024,7 @@ void FontGlyphs::RenderGlyphs()
             adv * dpiScale, DWRITE_GLYPH_OFFSET{ off.advanceOffset * dpiScale, off.ascenderOffset * dpiScale },
             Foreground,
             requiredWidth, requiredHeight,
+            scaleX, scaleY,
             typoKey);
 
         if (slot.IsValid && slot.Surface != nullptr)
@@ -969,7 +1051,7 @@ void FontGlyphs::RenderGlyphs()
             m_surfaceBrush->Scale = float2(1.0f / dpiScale, 1.0f / dpiScale);
             // Offset the brush so the slot aligns with (0,0) of the sprite visual
             m_surfaceBrush->Offset = float2(static_cast<float>(-slot.X) / dpiScale, static_cast<float>(-slot.Y) / dpiScale);
-            m_spriteVisual->Size = float2(static_cast<float>(logicalWidth), static_cast<float>(logicalHeight));
+            m_spriteVisual->Size = float2(static_cast<float>(scaledLogicalWidth), static_cast<float>(scaledLogicalHeight));
 
             if (!renderColor)
             {
@@ -1085,7 +1167,8 @@ void FontGlyphs::RenderGlyphs()
         Foreground,
         StyleSimulations,
         requiredWidth,
-        requiredHeight);
+        requiredHeight,
+        scaleX, scaleY);
 
     if (!success)
     {
@@ -1117,7 +1200,8 @@ void FontGlyphs::RenderGlyphs()
                     Foreground,
                     StyleSimulations,
                     requiredWidth,
-                    requiredHeight);
+                    requiredHeight,
+                    scaleX, scaleY);
             }
         }
 
@@ -1137,7 +1221,7 @@ void FontGlyphs::RenderGlyphs()
 
     m_surfaceBrush->Scale = float2(1.0f / dpiScale, 1.0f / dpiScale);
     m_surfaceBrush->Offset = float2(0.0f, 0.0f);
-    m_spriteVisual->Size = float2(static_cast<float>(logicalWidth), static_cast<float>(logicalHeight));
+    m_spriteVisual->Size = float2(static_cast<float>(scaledLogicalWidth), static_cast<float>(scaledLogicalHeight));
 
     if (!renderColor)
     {

@@ -103,7 +103,8 @@ namespace CharacterMapCX
             const std::vector<DWRITE_GLYPH_OFFSET>& glyphOffsets,
             Windows::UI::Xaml::Media::Brush^ foreground,
             Windows::UI::Xaml::Media::StyleSimulations simulations,
-            LONG requiredWidth, LONG requiredHeight);
+            LONG requiredWidth, LONG requiredHeight,
+            float scaleX = 1.0f, float scaleY = 1.0f);
 
     private:
         static void EnsureDevices();
