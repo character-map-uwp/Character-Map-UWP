@@ -493,7 +493,7 @@ public partial class CharacterGridView : GridView
 
     public void UpdateFontFace()
     {
-        if (Utils.SupportsColrV1 is false || this.GetActiveContainers() is not { } containers)
+        if (this.GetActiveContainers() is not { } containers)
             return;
 
         foreach (var c in containers)
@@ -501,7 +501,6 @@ public partial class CharacterGridView : GridView
             if (c.ContentTemplateRoot is Grid g && g.Children[0] is FontGlyphs f)
                 f.FontFace = _templateSettings.FontFace;
         }
-
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
