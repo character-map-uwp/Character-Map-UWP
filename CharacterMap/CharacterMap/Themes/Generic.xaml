@@ -5,8 +5,7 @@
     xmlns:core="using:CharacterMap.Core"
     xmlns:h="using:CharacterMap.Helpers"
     xmlns:models="using:CharacterMap.Models"
-    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml">
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls">
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Default" />
@@ -49,27 +48,6 @@
                                 ContentTransitions="{TemplateBinding ContentTransitions}" />
                         </Grid>
                     </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style TargetType="controls:DirectTextBlock">
-        <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="MinHeight" Value="10" />
-        <Setter Property="MinWidth" Value="10" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="controls:DirectTextBlock">
-                    <win2d:CanvasControl
-                        x:Name="TextCanvas"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch" />
-                    <!--<Border
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
-                    </Border>-->
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -910,13 +888,13 @@
                             ItemAnnotation="None"
                             ItemContainerStyle="{StaticResource DefaultThemeGridViewItemStyle}"
                             ItemContainerTransitions="{StaticResource NoTransitions}"
-                            ItemFontFace="{Binding Options.Variant.Face, RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                            ItemFontFamily="{Binding Options.Variant.Source, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                            ItemFontFace="{Binding Options.ActiveFontFace, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                            ItemFontFamily="{Binding Options.Face.Source, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                             ItemSize="40"
                             ItemTypography="{Binding Options.DXTypography, RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                            ItemsSource="{Binding Options.Variant.Characters, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                            ItemsSource="{Binding Options.Face.Characters, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                             SelectionMode="Single"
-                            ShowColorGlyphs="{Binding Options.IsColourFontEnabled, RelativeSource={RelativeSource Mode=TemplatedParent}}">
+                            ShowColorGlyphs="{Binding Options.IsColorRenderingEnabled, RelativeSource={RelativeSource Mode=TemplatedParent}}">
                             <GridView.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <ItemsWrapGrid HorizontalAlignment="Center" Orientation="Horizontal" />
@@ -1519,21 +1497,4 @@
         </Setter>
     </Style>
 
-    <Style TargetType="controls:FontGlyph">
-        <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="FontSize" Value="8" />
-        <Setter Property="Foreground" Value="{ThemeResource AppBarItemForegroundThemeBrush}" />
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="VerticalAlignment" Value="Stretch" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="controls:FontGlyph">
-                    <Glyphs
-                        x:Name="Presenter"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center" />
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
 </ResourceDictionary>

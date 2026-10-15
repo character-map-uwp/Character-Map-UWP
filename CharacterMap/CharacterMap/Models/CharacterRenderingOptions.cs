@@ -18,6 +18,8 @@ public record CharacterRenderingOptions
     public IReadOnlyList<DWriteFontAxis> Axis { get; init; }
     public bool IsVariation { get; }
 
+    public bool IsColorRenderingEnabled => ColorRenderOption != DWriteColorRenderOption.Monochrome;
+
     public TypographyFeatureInfo DefaultTypography { get; }
 
     public FaceAnalysisModel FaceAnalysis => field ??= new(Face, false);

@@ -102,7 +102,6 @@
                                                             <VisualState x:Name="FocusEngagedVertical">
                                                                 <VisualState.Setters>
                                                                     <Setter Target="SliderContainer.(Control.IsTemplateFocusTarget)" Value="False" />
-                                                                    <Setter Target="VerticalThumb.(Control.IsTemplateFocusTarget)" Value="True" />
                                                                 </VisualState.Setters>
                                                             </VisualState>
                                                         </VisualStateGroup>

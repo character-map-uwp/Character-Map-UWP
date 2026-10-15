@@ -9,11 +9,8 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Core.Direct;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Animation;
 
 namespace CharacterMap.Views;
 
@@ -297,8 +294,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                     // The atlas slot cache holds strong ComPtr<IDWriteFontFace> references
                     // which prevents DirectWrite from dropping its massive internal bitmap caches
                     // for the font even if the user navigates away or changes a variable axis.
-                    if (Compositor is not null)
-                        CharacterMapCX.Controls.FontGlyphs.ClearAtlases(Compositor);
+                    FontGlyphs.ClearAtlases(Compositor);
 
 #if DIAGNOSTIC
                     _ = Diagnostics.MemoryTracker.SnapshotAsync(
@@ -337,7 +333,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
                         CompositionFactory.SetWithoutReposition(TxtPreview, _resizerBouncer, () =>
                         {
-                            TxtPreview.ClearValue(CharacterMapCX.Controls.DirectText.GlyphIndexProperty);
+                            TxtPreview.ClearValue(DirectText.GlyphIndexProperty);
                             AnimationSelectionFromCharacter();
                         });
                     }
