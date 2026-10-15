@@ -606,6 +606,16 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                     UpdateGridToRampTransition(LigatureToRampTransition, LigaturesRepeater);
             }
             GoToState(TypeRampState.Name, animate);
+
+            // Changes made in variation flyout on other views need to be manually updated as 
+            // the axis value doesn't send propertychanged notifications to automatically
+            // sync the bindings.
+            if (VariableAxis is not null)
+            {
+                foreach (Slider s in VariableAxis.GetFirstLevelDescendantsOfType<Slider>())
+                    if (s.DataContext is DWriteFontAxis axis && (float)s.Value != axis.Value)
+                        s.Value = axis.Value;
+            }
         }
         
         // Make sure this stays in sync with programmatic changes
