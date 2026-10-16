@@ -115,6 +115,17 @@ namespace CharacterMapCX
 				DependencyProperty^ get() { return _IsTextWrappingEnabledProperty; }
 			}
 
+			static property DependencyProperty^ StyleSimulationsProperty
+			{
+				DependencyProperty^ get() { return _StyleSimulationsProperty; }
+			}
+
+			property Windows::UI::Xaml::Media::StyleSimulations StyleSimulations
+			{
+				Windows::UI::Xaml::Media::StyleSimulations get() { return (Windows::UI::Xaml::Media::StyleSimulations)GetValue(StyleSimulationsProperty); }
+				void set(Windows::UI::Xaml::Media::StyleSimulations value) { SetValue(StyleSimulationsProperty, value); }
+			}
+
 			property DWriteFallbackFont^ FallbackFont
 			{
 				DWriteFallbackFont^ get() { return (DWriteFallbackFont^)GetValue(FallbackFontProperty); }
@@ -207,6 +218,7 @@ namespace CharacterMapCX
 			static DependencyProperty^ _TypographyProperty;
 			static DependencyProperty^ _IsTextWrappingEnabledProperty;
 			static DependencyProperty^ _IsCharacterFitEnabledProperty;
+			static DependencyProperty^ _StyleSimulationsProperty;
 
 			Microsoft::WRL::ComPtr<IDWriteFontFace3> m_drawFontFace;
 
@@ -237,6 +249,7 @@ namespace CharacterMapCX
 			unsigned short m_lastFontWeight = 400;
 			Windows::UI::Text::FontStyle m_lastFontStyle = Windows::UI::Text::FontStyle::Normal;
 			Windows::UI::Text::FontStretch m_lastFontStretch = Windows::UI::Text::FontStretch::Normal;
+			Windows::UI::Xaml::Media::StyleSimulations m_lastSimulations = Windows::UI::Xaml::Media::StyleSimulations::None;
 
 
 			void OnPropChanged(DependencyObject^ d, DependencyProperty^ p);
@@ -343,6 +356,12 @@ namespace CharacterMapCX
 			{
 				_GlyphIndexProperty = DependencyProperty::Register(
 					"GlyphIndex", int::typeid, DirectText::typeid, ref new PropertyMetadata(-1, callback));
+			}
+
+			if (_StyleSimulationsProperty == nullptr)
+			{
+				_StyleSimulationsProperty = DependencyProperty::Register(
+					"StyleSimulations", Windows::UI::Xaml::Media::StyleSimulations::typeid, DirectText::typeid, ref new PropertyMetadata(Windows::UI::Xaml::Media::StyleSimulations::None, callback));
 			}
 		}
 	}

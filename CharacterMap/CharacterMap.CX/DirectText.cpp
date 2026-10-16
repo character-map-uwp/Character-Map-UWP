@@ -44,6 +44,7 @@ DependencyProperty^ DirectText::_FontFaceProperty = nullptr;
 DependencyProperty^ DirectText::_TypographyProperty = nullptr;
 DependencyProperty^ DirectText::_IsTextWrappingEnabledProperty = nullptr;
 DependencyProperty^ DirectText::_IsCharacterFitEnabledProperty = nullptr;
+DependencyProperty^ DirectText::_StyleSimulationsProperty = nullptr;
 
 DirectText::DirectText()
 {
@@ -267,6 +268,12 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
     {
         auto fontFace = FontFace;
         auto fontSize = 8.0 > FontSize ? 8.0 : FontSize;
+        auto simulations = StyleSimulations;
+        if (simulations == Windows::UI::Xaml::Media::StyleSimulations::None && fontFace != nullptr && fontFace->Properties != nullptr)
+        {
+            simulations = fontFace->Properties->Simulations;
+        }
+
         Platform::String^ currentFamily = fontFace->Properties != nullptr ? fontFace->Properties->FamilyName : nullptr;
         Platform::String^ currentFaceName = fontFace->Properties != nullptr ? fontFace->Properties->FaceName : nullptr;
         Platform::String^ currentText = Text;
@@ -286,8 +293,9 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         bool sameWeight = (m_lastFontWeight == FontWeight.Weight);
         bool sameStyle = (m_lastFontStyle == FontStyle);
         bool sameStretch = (m_lastFontStretch == FontStretch);
+        bool sameSimulations = (m_lastSimulations == simulations);
 
-        if (sameFontFace && sameTypography && sameFamily && sameFaceName && sameText && sameSize && sameWeight && sameStyle && sameStretch)
+        if (sameFontFace && sameTypography && sameFamily && sameFaceName && sameText && sameSize && sameWeight && sameStyle && sameStretch && sameSimulations)
         {
             // Build current axis values
             std::vector<DWRITE_FONT_AXIS_VALUE> newAxisValues;
@@ -385,9 +393,17 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         auto fontFace = FontFace;
         auto fontSize = 8.0 > FontSize ? 8.0 : FontSize;
 
+        auto simulations = StyleSimulations;
+        if (simulations == Windows::UI::Xaml::Media::StyleSimulations::None && fontFace != nullptr && fontFace->Properties != nullptr)
+        {
+            simulations = fontFace->Properties->Simulations;
+        }
+
         // Resolve font face with axis values (for variable fonts)
         ComPtr<IDWriteFontFaceReference> faceRef = fontFace->GetReference();
         ComPtr<IDWriteFontFace3> dwriteFontFace;
+
+        DWRITE_FONT_SIMULATIONS dwriteSimulations = ToDWriteFontSimulations(simulations);
 
         if (Axis != nullptr && Axis->Size > 0)
         {
@@ -406,7 +422,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
                             values.push_back(Axis->GetAt(i)->GetDWriteValue());
 
                         ComPtr<IDWriteFontFace5> face5_var;
-                        if (SUCCEEDED(fontResource->CreateFontFace(DWRITE_FONT_SIMULATIONS_NONE, values.data(), static_cast<UINT32>(values.size()), &face5_var)))
+                        if (SUCCEEDED(fontResource->CreateFontFace(dwriteSimulations, values.data(), static_cast<UINT32>(values.size()), &face5_var)))
                         {
                             dwriteFontFace = face5_var;
                         }
@@ -415,8 +431,18 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             }
         }
 
-        if (dwriteFontFace == nullptr)
-            dwriteFontFace = fontFace->GetFontFace();
+        if (dwriteFontFace == nullptr && fontFace != nullptr)
+        {
+            if (dwriteSimulations != DWRITE_FONT_SIMULATIONS_NONE && faceRef != nullptr)
+            {
+                ComPtr<IDWriteFontFace3> simFace;
+                if (SUCCEEDED(faceRef->CreateFontFaceWithSimulations(dwriteSimulations, &simFace)))
+                    dwriteFontFace = simFace;
+            }
+
+            if (dwriteFontFace == nullptr)
+                dwriteFontFace = fontFace->GetFontFace();
+        }
 
         m_drawFontFace = dwriteFontFace;
 
@@ -542,11 +568,26 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
             if (!formatCreated)
             {
+                auto weight = FontWeight;
+                auto style = FontStyle;
+                auto stretch = FontStretch;
+
+                if (simulations == Windows::UI::Xaml::Media::StyleSimulations::BoldSimulation ||
+                    simulations == Windows::UI::Xaml::Media::StyleSimulations::BoldItalicSimulation)
+                {
+                    weight.Weight = (std::max)(weight.Weight, static_cast<unsigned short>(700));
+                }
+                if (simulations == Windows::UI::Xaml::Media::StyleSimulations::ItalicSimulation ||
+                    simulations == Windows::UI::Xaml::Media::StyleSimulations::BoldItalicSimulation)
+                {
+                    style = Windows::UI::Text::FontStyle::Italic;
+                }
+
                 idFormat = NativeInterop::_Current->CreateIDWriteTextFormat(
                     fontFace,
-                    FontWeight,
-                    FontStyle,
-                    FontStretch,
+                    weight,
+                    style,
+                    stretch,
                     fontSize);
 
                 if (!faceAxisValues.empty())
@@ -603,6 +644,17 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
                     lwidth,
                     lheight,
                     &textLayout));
+
+            if (simulations == Windows::UI::Xaml::Media::StyleSimulations::ItalicSimulation ||
+                simulations == Windows::UI::Xaml::Media::StyleSimulations::BoldItalicSimulation)
+            {
+                textLayout->SetFontStyle(DWRITE_FONT_STYLE_OBLIQUE, DWRITE_TEXT_RANGE{ 0, textLength });
+            }
+            if (simulations == Windows::UI::Xaml::Media::StyleSimulations::BoldSimulation ||
+                simulations == Windows::UI::Xaml::Media::StyleSimulations::BoldItalicSimulation)
+            {
+                textLayout->SetFontWeight(DWRITE_FONT_WEIGHT_BOLD, DWRITE_TEXT_RANGE{ 0, textLength });
+            }
 
             /*if (fontFace != nullptr)
             {
@@ -670,7 +722,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             if (IsCharacterFitEnabled)
             {
                 bool usedOutline = false;
-                auto boundsRenderer = Make<LayoutBoundsRenderer>(nullptr);
+                auto boundsRenderer = Make<LayoutBoundsRenderer>(m_drawFontFace);
                 if (SUCCEEDED(textLayout->Draw(nullptr, boundsRenderer.Get(), 0, 0)) && boundsRenderer->hasPoints)
                 {
                     float w = boundsRenderer->maxX - boundsRenderer->minX;
@@ -760,6 +812,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
                 m_lastFontWeight = FontWeight.Weight;
                 m_lastFontStyle = FontStyle;
                 m_lastFontStretch = FontStretch;
+                m_lastSimulations = simulations;
                 m_lastAxisValues = faceAxisValues;
             }
         }

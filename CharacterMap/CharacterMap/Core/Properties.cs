@@ -231,11 +231,12 @@ public partial class Properties : DependencyObject
             {
                 d.Axis = o.Axis;
                 d.FallbackFont = Converters.GetFontFallback();
-                d.FontFace = o.ActiveFontFace;
+                d.FontFace = o.FontFace;
                 d.FontFamily = (FontFamily)XamlBindingHelper.ConvertValue(typeof(FontFamily), o.Face.Source);
-                d.FontStretch = o.Face.DirectWriteProperties.Stretch;
-                d.FontStyle = o.Face.DirectWriteProperties.Style;
-                d.FontWeight = o.Face.DirectWriteProperties.Weight;
+                d.FontStretch = o.FontFace.Properties.Stretch;
+                d.FontStyle = o.FontFace.Properties.Style;
+                d.FontWeight = o.FontFace.Properties.Weight;
+                d.StyleSimulations = o.FontFace.Properties.Simulations;
                 d.Typography = o.DXTypography;
                 d.ColorRenderOption = o.ColorRenderOption;
             }
@@ -248,6 +249,7 @@ public partial class Properties : DependencyObject
                 d.ClearValue(DirectText.FontStretchProperty);
                 d.ClearValue(DirectText.FontStyleProperty);
                 d.ClearValue(DirectText.FontWeightProperty);
+                d.ClearValue(DirectText.StyleSimulationsProperty);
                 d.ClearValue(DirectText.IsColorFontEnabledProperty);
                 d.ClearValue(DirectText.TypographyProperty);
                 d.ClearValue(DirectText.ColorRenderOptionProperty);
@@ -280,15 +282,17 @@ public partial class Properties : DependencyObject
         {
             if (e.NewValue is CharacterRenderingOptions o)
             {
-                f.FontFace = o.ActiveFontFace;
+                f.FontFace = o.FontFace;
                 f.FontSize = o.FontSize;
+                f.StyleSimulations = o.FontFace.Properties.Simulations;
                 f.IsColorFontEnabled = o.ColorRenderOption != DWriteColorRenderOption.Monochrome;
-                f.Typography = new DWriteTypographyCollection(o.DXTypography.Feature);
+                f.Typography = new(o.DXTypography.Feature);
             }
             else
             {
                 f.ClearValue(FontGlyphs.FontFaceProperty);
                 f.ClearValue(FontGlyphs.FontSizeProperty);
+                f.ClearValue(FontGlyphs.StyleSimulationsProperty);
                 f.ClearValue(FontGlyphs.IsColorFontEnabledProperty);
                 f.ClearValue(FontGlyphs.TypographyProperty);
             }

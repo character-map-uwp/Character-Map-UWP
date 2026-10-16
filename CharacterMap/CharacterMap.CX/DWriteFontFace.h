@@ -455,50 +455,76 @@ namespace CharacterMapCX
 
 		DWriteFontFace^ CreateVariant(Windows::UI::Xaml::Media::StyleSimulations simulation, IVectorView<DWriteFontAxis^>^ axis)
 		{
-			if (axis == nullptr || axis->Size == 0)
+			if ((axis == nullptr || axis->Size == 0) && simulation == Windows::UI::Xaml::Media::StyleSimulations::None)
 				return this;
 
 			auto baseFace = GetFontFace();
 			if (baseFace == nullptr)
 				return nullptr;
 
-			ComPtr<IDWriteFontFace5> face5;
-			if (FAILED(baseFace.As(&face5)))
-				return nullptr;
-
-			ComPtr<IDWriteFontResource> resource;
-			if (FAILED(face5->GetFontResource(&resource)) || resource == nullptr)
-				return nullptr;
-
 			std::vector<DWRITE_FONT_AXIS_VALUE> values;
-			values.reserve(axis->Size);
-			for (unsigned int i = 0; i < axis->Size; ++i)
-				values.push_back(axis->GetAt(i)->GetDWriteValue());
-
-			ComPtr<IDWriteFontFace5> face5_var;
-			if (FAILED(resource->CreateFontFace(
-				ToDWriteFontSimulations(simulation),
-				values.data(),
-				static_cast<UINT32>(values.size()),
-				&face5_var)) || face5_var == nullptr)
-				return nullptr;
+			if (axis != nullptr && axis->Size > 0)
+			{
+				values.reserve(axis->Size);
+				for (unsigned int i = 0; i < axis->Size; ++i)
+					values.push_back(axis->GetAt(i)->GetDWriteValue());
+			}
 
 			ComPtr<IDWriteFontFace3> f3;
-			if (FAILED(face5_var.As(&f3)))
+			ComPtr<IDWriteFontFaceReference1> faceRef1;
+
+			ComPtr<IDWriteFontFace5> face5;
+			baseFace.As(&face5);
+
+			ComPtr<IDWriteFontResource> resource;
+			if (face5 != nullptr)
+			{
+				face5->GetFontResource(&resource);
+			}
+
+			if (resource != nullptr)
+			{
+				ComPtr<IDWriteFontFace5> face5_var;
+				if (SUCCEEDED(resource->CreateFontFace(
+					ToDWriteFontSimulations(simulation),
+					values.data(),
+					static_cast<UINT32>(values.size()),
+					&face5_var)) && face5_var != nullptr)
+				{
+					face5_var.As(&f3);
+				}
+
+				resource->CreateFontFaceReference(
+					ToDWriteFontSimulations(simulation),
+					values.data(),
+					static_cast<UINT32>(values.size()),
+					&faceRef1);
+			}
+
+			if (f3 == nullptr)
+			{
+				ComPtr<IDWriteFontFaceReference> faceRef = GetReference();
+				if (faceRef != nullptr)
+				{
+					faceRef->CreateFontFaceWithSimulations(ToDWriteFontSimulations(simulation), &f3);
+				}
+				else if (baseFace != nullptr)
+				{
+					f3 = baseFace;
+				}
+			}
+
+			if (f3 == nullptr)
 				return nullptr;
 
 			DWriteFontFace^ variant = ref new DWriteFontFace(f3);
 			variant->m_isVariant = true;
 			variant->m_font = m_font;
-			variant->m_dwProperties = m_dwProperties;
+			if (m_dwProperties != nullptr)
+				variant->m_dwProperties = m_dwProperties->CloneWithSimulations(simulation);
 			variant->m_axisValues = values;
 
-			ComPtr<IDWriteFontFaceReference1> faceRef1;
-			if (SUCCEEDED(resource->CreateFontFaceReference(
-				ToDWriteFontSimulations(simulation),
-				values.data(),
-				static_cast<UINT32>(values.size()),
-				&faceRef1)) && faceRef1 != nullptr)
+			if (faceRef1 != nullptr)
 			{
 				variant->m_fontResource = faceRef1;
 			}
@@ -635,6 +661,15 @@ namespace CharacterMapCX
 				}
 
 				ComPtr<IDWriteFontFace3> face;
+				if (m_dwProperties != nullptr && m_dwProperties->Simulations != Windows::UI::Xaml::Media::StyleSimulations::None)
+				{
+					if (SUCCEEDED(faceRef->CreateFontFaceWithSimulations(ToDWriteFontSimulations(m_dwProperties->Simulations), &face)))
+					{
+						m_face = face;
+						return m_face;
+					}
+				}
+
 				if (SUCCEEDED(faceRef->CreateFontFace(&face)))
 				{
 					m_face = face;
