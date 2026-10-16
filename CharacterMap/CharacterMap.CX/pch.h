@@ -21,6 +21,7 @@
 #include "DWriteTypographyFeature.h"
 #include "DWriteTypographyCollection.h"
 #include "DirectText.h"
+#include "DirectTextBox.h"
 #include "DirectWrite.h"
 #include "DWriteFontAxis.h"
 #include "DWriteFontSet.h"

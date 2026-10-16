@@ -1487,7 +1487,18 @@
                             Visibility="{x:Bind core:Converters.IsNullOrEmptyToVis(ViewModel.Sequence), Mode=OneWay}"
                             d:Text="{core:Localizer Key=CopySequencePlaceholder/Text}" />
 
-                        <RichEditBox
+                        <cxc:DirectTextBox
+                            x:Name="CopySequenceText"
+                            Margin="24"
+                            FontFace="{x:Bind ViewModel.SelectedFaceAnalysis.ActiveFace, Mode=OneWay}"
+                            FontSize="48"
+                            Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                            IsColorFontEnabled="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
+                            StyleSimulations="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Simulations, Mode=OneWay}"
+                            Text="{x:Bind ViewModel.Sequence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            Typography="{x:Bind ViewModel.RenderingOptions.TypographyCollection, Mode=OneWay}" />
+
+                        <!--<RichEditBox
                             x:Name="CopySequenceText"
                             Margin="24"
                             VerticalAlignment="Center"
@@ -1505,7 +1516,7 @@
                             IsTextPredictionEnabled="False"
                             IsTextScaleFactorEnabled="False"
                             SelectionHighlightColorWhenNotFocused="{Binding RelativeSource={RelativeSource Mode=Self}, Path=SelectionHighlightColor}"
-                            Style="{StaticResource ChromelessRichEditBoxStyle}" />
+                            Style="{StaticResource ChromelessRichEditBoxStyle}" />-->
 
                         <!--<controls:CopySequenceBox
                             x:Name="CopySequenceText"

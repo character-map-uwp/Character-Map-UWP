@@ -1250,6 +1250,15 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 ViewModel.SelectedChar);
             t.SelectionStart = selection + 1;
         }
+        else if (((object)CopySequenceText) is DirectTextBox d)
+        {
+            int selection = d.SelectionStart;
+            ViewModel.AddCharToSequence(
+                d.SelectionStart,
+                d.SelectionLength,
+                ViewModel.SelectedChar);
+            d.SelectionStart = selection + 1;
+        }
         else if (((object)CopySequenceText) is RichEditBox r)
         {
             int selection =  r.Document.Selection.StartPosition;

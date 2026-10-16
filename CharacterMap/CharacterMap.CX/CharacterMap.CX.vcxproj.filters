@@ -27,6 +27,9 @@
     <ClCompile Include="FontGlyphs.cpp">
       <Filter>Controls</Filter>
     </ClCompile>
+    <ClCompile Include="DirectTextBox.cpp">
+      <Filter>Controls</Filter>
+    </ClCompile>
     <ClCompile Include="CompositionDeviceManager.cpp" />
     <ClCompile Include="NativeInterop.cpp" />
     <ClCompile Include="CustomFontManager.cpp" />
@@ -42,6 +45,9 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="CompositionDeviceManager.h" />
     <ClInclude Include="FontGlyphs.h">
+      <Filter>Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectTextBox.h">
       <Filter>Controls</Filter>
     </ClInclude>
     <ClInclude Include="ColorTextAnalyzer.h" />
