@@ -66,9 +66,17 @@ FontGlyphs::FontGlyphs()
     , m_renderedScaleX(0.0f)
     , m_renderedScaleY(0.0f)
     , m_isUsingSharedAtlas(false)
+    , m_glyphCount(0)
+    , m_inlineIndices{}
+    , m_inlineAdvances{}
+    , m_inlineOffsets{}
 {
+    m_loadedToken.Value = 0;
     m_unloadedToken.Value = 0;
     EnsureDependencyProperties();
+
+    m_loadedToken = this->Loaded += ref new RoutedEventHandler(this, &FontGlyphs::OnLoaded);
+    m_unloadedToken = this->Unloaded += ref new RoutedEventHandler(this, &FontGlyphs::OnUnloaded);
 
     WeakReference weakThis(this);
     m_themeChangedToken = this->ActualThemeChanged += ref new TypedEventHandler<FrameworkElement^, Platform::Object^>(
@@ -84,26 +92,32 @@ FontGlyphs::~FontGlyphs()
 {
     try
     {
+        if (m_unloadedToken.Value != 0)
+        {
+            this->Unloaded -= m_unloadedToken;
+            m_unloadedToken.Value = 0;
+        }
+
+        if (m_loadedToken.Value != 0)
+        {
+            this->Loaded -= m_loadedToken;
+            m_loadedToken.Value = 0;
+        }
+
+        if (m_themeChangedToken.Value != 0)
+        {
+            this->ActualThemeChanged -= m_themeChangedToken;
+            m_themeChangedToken.Value = 0;
+        }
+
         if (Dispatcher != nullptr && Dispatcher->HasThreadAccess)
         {
-            if (m_unloadedToken.Value != 0)
-            {
-                this->Unloaded -= m_unloadedToken;
-                m_unloadedToken.Value = 0;
-            }
-
-            if (m_themeChangedToken.Value != 0)
-            {
-                this->ActualThemeChanged -= m_themeChangedToken;
-                m_themeChangedToken.Value = 0;
-            }
-
             ReleaseDrawingSurface();
 
             if (m_spriteVisual != nullptr)
             {
-                m_spriteVisual->Brush = nullptr;
                 ElementCompositionPreview::SetElementChildVisual(this, nullptr);
+                m_spriteVisual->Brush = nullptr;
                 delete m_spriteVisual;
             }
 
@@ -119,12 +133,55 @@ FontGlyphs::~FontGlyphs()
                 delete m_surfaceBrush;
             }
         }
+        else if (Dispatcher != nullptr)
+        {
+            // Non-UI thread (e.g. .NET GC finalizer thread):
+            // Dispatch teardown of composition objects and surfaces to UI thread so they are closed deterministically.
+            auto sprite = m_spriteVisual;
+            auto surfBrush = m_surfaceBrush;
+            auto maskBrush = m_maskBrush;
+            auto surface = m_drawingSurface;
+            bool isShared = m_isUsingSharedAtlas;
+            LONG rendW = m_renderedWidth;
+            LONG rendH = m_renderedHeight;
+
+            if (sprite != nullptr)
+                sprite->Brush = nullptr;
+
+            if (surfBrush != nullptr)
+            {
+                surfBrush->Surface = nullptr;
+                delete surfBrush;
+            }
+
+            if (maskBrush != nullptr)
+            {
+                maskBrush->Mask = nullptr;
+                maskBrush->Source = nullptr;
+                delete maskBrush;
+            }
+
+            if (surface != nullptr && !isShared)
+            {
+                delete surface;
+                if (rendW > 0 && rendH > 0)
+                {
+                    uint64 bytes = static_cast<uint64>(rendW) * rendH * 4;
+                    s_activeSurfaceCount.fetch_sub(1, std::memory_order_relaxed);
+                    s_activeSurfaceBytes.fetch_sub(bytes, std::memory_order_relaxed);
+                }
+            }
+
+            if (sprite != nullptr)
+                delete sprite;
+        }
     }
     catch (...)
     {
     }
 
     m_unloadedToken.Value = 0;
+    m_loadedToken.Value = 0;
     m_drawingSurface = nullptr;
     m_spriteVisual = nullptr;
     m_maskBrush = nullptr;
@@ -178,14 +235,22 @@ void FontGlyphs::RegisterDependencyProperties()
         _TypographyProperty = DependencyProperty::Register("Typography", DWriteTypographyCollection::typeid, FontGlyphs::typeid, ref new PropertyMetadata(nullptr, layoutCallback));
 }
 
+void FontGlyphs::OnLoaded(Platform::Object^ sender, RoutedEventArgs^ e)
+{
+    if (m_isRenderDirty || m_drawingSurface == nullptr)
+    {
+        m_isRenderDirty = true;
+        InvalidateArrange();
+    }
+}
+
 void FontGlyphs::OnUnloaded(Platform::Object^ sender, RoutedEventArgs^ e)
 {
-    /*
-     * When items are virtualized in a GridView/ListView, XAML recycles and pools
-     * containers without destroying them. We preserve the composition visual and surface
-     * structure here to avoid tearing down and reallocating visuals on every scroll frame.
-     * Full teardown occurs in ~FontGlyphs() when the container is truly disposed.
-     */
+    // Proactively release drawing surface so off-tree controls do not pin atlas pages or dedicated surfaces.
+    ReleaseDrawingSurface();
+
+    if (m_spriteVisual != nullptr)
+        m_spriteVisual->Brush = nullptr;
 }
 
 
@@ -349,9 +414,10 @@ void FontGlyphs::InvalidateRenderOnly()
 
 void FontGlyphs::ParseAndLayoutGlyphs()
 {
-    m_glyphIndices.clear();
-    m_glyphAdvances.clear();
-    m_glyphOffsets.clear();
+    m_glyphCount = 0;
+    if (!m_heapIndices.empty()) { m_heapIndices.clear(); m_heapIndices.shrink_to_fit(); }
+    if (!m_heapAdvances.empty()) { m_heapAdvances.clear(); m_heapAdvances.shrink_to_fit(); }
+    if (!m_heapOffsets.empty()) { m_heapOffsets.clear(); m_heapOffsets.shrink_to_fit(); }
     m_contentSize = Size(0, 0);
     m_baseline = 0;
     m_padLeft = 0;
@@ -387,6 +453,8 @@ void FontGlyphs::ParseAndLayoutGlyphs()
         const wchar_t* p = indicesStr->Data();
         const wchar_t* end = p + indicesStr->Length();
 
+        size_t count = 0;
+
         while (p < end)
         {
             while (p < end && iswspace(*p)) p++;
@@ -403,7 +471,6 @@ void FontGlyphs::ParseAndLayoutGlyphs()
             if (next == p) break;
 
             UINT16 gid = static_cast<UINT16>(val);
-            m_glyphIndices.push_back(gid);
             p = next;
 
             float adv = -1.0f;
@@ -436,7 +503,6 @@ void FontGlyphs::ParseAndLayoutGlyphs()
             DWRITE_GLYPH_OFFSET off{};
             off.advanceOffset = uOff;
             off.ascenderOffset = vOff;
-            m_glyphOffsets.push_back(off);
 
             if (adv < 0.0f)
             {
@@ -444,9 +510,36 @@ void FontGlyphs::ParseAndLayoutGlyphs()
                 rawFace->GetDesignGlyphAdvances(1, &gid, &designAdvance, FALSE);
                 adv = designAdvance * emScale;
             }
-            m_glyphAdvances.push_back(adv);
+
+            if (count < SBO_GLYPH_CAPACITY)
+            {
+                m_inlineIndices[count] = gid;
+                m_inlineAdvances[count] = adv;
+                m_inlineOffsets[count] = off;
+            }
+            else
+            {
+                if (count == SBO_GLYPH_CAPACITY)
+                {
+                    m_heapIndices.assign(m_inlineIndices, m_inlineIndices + SBO_GLYPH_CAPACITY);
+                    m_heapAdvances.assign(m_inlineAdvances, m_inlineAdvances + SBO_GLYPH_CAPACITY);
+                    m_heapOffsets.assign(m_inlineOffsets, m_inlineOffsets + SBO_GLYPH_CAPACITY);
+                }
+                m_heapIndices.push_back(gid);
+                m_heapAdvances.push_back(adv);
+                m_heapOffsets.push_back(off);
+            }
+            count++;
 
             while (p < end && (*p == L';' || iswspace(*p))) p++;
+        }
+
+        m_glyphCount = count;
+        if (m_glyphCount <= SBO_GLYPH_CAPACITY)
+        {
+            if (!m_heapIndices.empty()) { m_heapIndices.clear(); m_heapIndices.shrink_to_fit(); }
+            if (!m_heapAdvances.empty()) { m_heapAdvances.clear(); m_heapAdvances.shrink_to_fit(); }
+            if (!m_heapOffsets.empty()) { m_heapOffsets.clear(); m_heapOffsets.shrink_to_fit(); }
         }
     }
     else if (UnicodeString != nullptr && UnicodeString->Length() > 0)
@@ -462,59 +555,105 @@ void FontGlyphs::ParseAndLayoutGlyphs()
                 UnicodeString->Length(),
                 static_cast<FLOAT>(emSize),
                 typography->GetDWriteFontFeatures(),
-                m_glyphIndices,
-                m_glyphAdvances,
-                m_glyphOffsets);
+                m_heapIndices,
+                m_heapAdvances,
+                m_heapOffsets);
+
+            if (shaped)
+            {
+                m_glyphCount = m_heapIndices.size();
+                if (m_glyphCount <= SBO_GLYPH_CAPACITY)
+                {
+                    for (size_t i = 0; i < m_glyphCount; i++)
+                    {
+                        m_inlineIndices[i] = m_heapIndices[i];
+                        m_inlineAdvances[i] = m_heapAdvances[i];
+                        m_inlineOffsets[i] = m_heapOffsets[i];
+                    }
+                    m_heapIndices.clear();
+                    m_heapAdvances.clear();
+                    m_heapOffsets.clear();
+                }
+            }
         }
 
         if (!shaped)
         {
             UINT32 len = UnicodeString->Length();
-            std::vector<UINT32> codePoints;
             const wchar_t* strData = UnicodeString->Data();
 
-            for (UINT32 i = 0; i < len; i++)
+            // Fast path for single code point (single character or surrogate pair) - eliminates 4 heap allocations
+            if (len == 1 || (len == 2 && strData[0] >= 0xD800 && strData[0] <= 0xDBFF && strData[1] >= 0xDC00 && strData[1] <= 0xDFFF))
             {
-                wchar_t ch = strData[i];
-                if (ch >= 0xD800 && ch <= 0xDBFF && i + 1 < len && strData[i + 1] >= 0xDC00 && strData[i + 1] <= 0xDFFF)
+                UINT32 cp = len == 1 ? strData[0] : (0x10000 + ((strData[0] - 0xD800) << 10) + (strData[1] - 0xDC00));
+                m_glyphCount = 1;
+                rawFace->GetGlyphIndices(&cp, 1, &m_inlineIndices[0]);
+                INT32 designAdvance = 0;
+                rawFace->GetDesignGlyphAdvances(1, &m_inlineIndices[0], &designAdvance, FALSE);
+                m_inlineAdvances[0] = designAdvance * emScale;
+                m_inlineOffsets[0] = DWRITE_GLYPH_OFFSET{};
+            }
+            else
+            {
+                std::vector<UINT32> codePoints;
+                for (UINT32 i = 0; i < len; i++)
                 {
-                    UINT32 cp = 0x10000 + ((ch - 0xD800) << 10) + (strData[i + 1] - 0xDC00);
-                    codePoints.push_back(cp);
-                    i++;
+                    wchar_t ch = strData[i];
+                    if (ch >= 0xD800 && ch <= 0xDBFF && i + 1 < len && strData[i + 1] >= 0xDC00 && strData[i + 1] <= 0xDFFF)
+                    {
+                        UINT32 cp = 0x10000 + ((ch - 0xD800) << 10) + (strData[i + 1] - 0xDC00);
+                        codePoints.push_back(cp);
+                        i++;
+                    }
+                    else
+                    {
+                        codePoints.push_back(ch);
+                    }
+                }
+
+                m_glyphCount = codePoints.size();
+                if (m_glyphCount <= SBO_GLYPH_CAPACITY)
+                {
+                    rawFace->GetGlyphIndices(codePoints.data(), static_cast<UINT32>(codePoints.size()), m_inlineIndices);
+                    for (size_t i = 0; i < m_glyphCount; i++)
+                    {
+                        INT32 designAdvance = 0;
+                        rawFace->GetDesignGlyphAdvances(1, &m_inlineIndices[i], &designAdvance, FALSE);
+                        m_inlineAdvances[i] = designAdvance * emScale;
+                        m_inlineOffsets[i] = DWRITE_GLYPH_OFFSET{};
+                    }
                 }
                 else
                 {
-                    codePoints.push_back(ch);
+                    m_heapIndices.resize(codePoints.size());
+                    m_heapAdvances.resize(codePoints.size());
+                    m_heapOffsets.resize(codePoints.size(), DWRITE_GLYPH_OFFSET{});
+
+                    rawFace->GetGlyphIndices(codePoints.data(), static_cast<UINT32>(codePoints.size()), m_heapIndices.data());
+
+                    for (size_t i = 0; i < m_glyphCount; i++)
+                    {
+                        INT32 designAdvance = 0;
+                        rawFace->GetDesignGlyphAdvances(1, &m_heapIndices[i], &designAdvance, FALSE);
+                        m_heapAdvances[i] = designAdvance * emScale;
+                    }
                 }
-            }
-
-            m_glyphIndices.resize(codePoints.size());
-            m_glyphAdvances.resize(codePoints.size());
-            m_glyphOffsets.resize(codePoints.size(), DWRITE_GLYPH_OFFSET{});
-
-            rawFace->GetGlyphIndices(codePoints.data(), static_cast<UINT32>(codePoints.size()), m_glyphIndices.data());
-
-            for (size_t i = 0; i < m_glyphIndices.size(); i++)
-            {
-                INT32 designAdvance = 0;
-                rawFace->GetDesignGlyphAdvances(1, &m_glyphIndices[i], &designAdvance, FALSE);
-                m_glyphAdvances[i] = designAdvance * emScale;
             }
         }
     }
 
-    if (m_glyphIndices.empty())
+    if (m_glyphCount == 0)
         return;
 
     // Calculate logical layout bounds matching Glyphs.cpp CalculateBounds
     float layoutLeft = 0.0f;
     float layoutRight = 0.0f;
     float currentX = 0.0f;
-    for (size_t i = 0; i < m_glyphIndices.size(); i++)
+    for (size_t i = 0; i < m_glyphCount; i++)
     {
-        float uOff = (!m_glyphOffsets.empty()) ? m_glyphOffsets[i].advanceOffset : 0.0f;
+        float uOff = GetGlyphOffset(i).advanceOffset;
         float glyphX = currentX + uOff;
-        float adv = m_glyphAdvances[i];
+        float adv = GetGlyphAdvance(i);
         if (i == 0)
         {
             layoutLeft = glyphX;
@@ -582,14 +721,14 @@ void FontGlyphs::ParseAndLayoutGlyphs()
     };
 
     OutlineBoundsSink outlineSink;
-    if (rawFace != nullptr && !m_glyphIndices.empty())
+    if (rawFace != nullptr && m_glyphCount > 0)
     {
         rawFace->GetGlyphRunOutline(
             emSize,
-            m_glyphIndices.data(),
-            m_glyphAdvances.empty() ? nullptr : m_glyphAdvances.data(),
-            m_glyphOffsets.empty() ? nullptr : m_glyphOffsets.data(),
-            static_cast<UINT32>(m_glyphIndices.size()),
+            GlyphIndicesData(),
+            GlyphAdvancesData(),
+            GlyphOffsetsData(),
+            static_cast<UINT32>(m_glyphCount),
             FALSE,
             FALSE,
             &outlineSink
@@ -622,7 +761,7 @@ void FontGlyphs::ParseAndLayoutGlyphs()
     }
     else
     {
-        Rect inkBounds = FontFace->GetDesignGlyphBounds(m_glyphIndices[0]);
+        Rect inkBounds = FontFace->GetDesignGlyphBounds(GetGlyphIndex(0));
         if (inkBounds.Width > 0 && fontMetrics.designUnitsPerEm > 0)
         {
             m_hasInkBounds = true;
@@ -645,18 +784,18 @@ void FontGlyphs::ParseAndLayoutGlyphs()
         DWRITE_GLYPH_METRICS stackMetrics[8];
         std::vector<DWRITE_GLYPH_METRICS> heapMetrics;
         DWRITE_GLYPH_METRICS* metrics = stackMetrics;
-        if (m_glyphIndices.size() > 8)
+        if (m_glyphCount > 8)
         {
-            heapMetrics.resize(m_glyphIndices.size());
+            heapMetrics.resize(m_glyphCount);
             metrics = heapMetrics.data();
         }
-        rawFace->GetDesignGlyphMetrics(m_glyphIndices.data(), static_cast<UINT32>(m_glyphIndices.size()), metrics, FALSE);
+        rawFace->GetDesignGlyphMetrics(GlyphIndicesData(), static_cast<UINT32>(m_glyphCount), metrics, FALSE);
 
         currentX = 0.0f;
-        for (size_t i = 0; i < m_glyphIndices.size(); i++)
+        for (size_t i = 0; i < m_glyphCount; i++)
         {
-            float uOff = (!m_glyphOffsets.empty()) ? m_glyphOffsets[i].advanceOffset : 0.0f;
-            float vOff = (!m_glyphOffsets.empty()) ? m_glyphOffsets[i].ascenderOffset : 0.0f;
+            float uOff = GetGlyphOffset(i).advanceOffset;
+            float vOff = GetGlyphOffset(i).ascenderOffset;
             float glyphX = currentX + uOff;
 
             float inkLeft = glyphX + (metrics[i].leftSideBearing * emScale);
@@ -688,7 +827,7 @@ void FontGlyphs::ParseAndLayoutGlyphs()
                     maxBottomOverhang = (std::max)(maxBottomOverhang, -vOff);
             }
 
-            currentX += m_glyphAdvances[i];
+            currentX += GetGlyphAdvance(i);
         }
 
         ComPtr<IDWriteFontFace1> rawFace1;
@@ -813,7 +952,7 @@ Size FontGlyphs::MeasureOverride(Size availableSize)
         double inkHeight = m_designInkHeight * emScale;
 
         double visualWidth;
-        if (m_glyphAdvances.empty() || m_glyphAdvances[0] <= 0.0f)
+        if (m_glyphCount == 0 || GetGlyphAdvance(0) <= 0.0f)
             visualWidth = inkWidth;
         else
             visualWidth = (std::max)(static_cast<double>(m_contentSize.Width), (inkLeft + inkWidth) - (std::min)(0.0, inkLeft));
@@ -860,7 +999,7 @@ Size FontGlyphs::ArrangeOverride(Size finalSize)
         double inkHeight = m_designInkHeight * emScale;
 
         double visualWidth;
-        if (m_glyphAdvances.empty() || m_glyphAdvances[0] <= 0.0f)
+        if (m_glyphCount == 0 || GetGlyphAdvance(0) <= 0.0f)
             visualWidth = inkWidth;
         else
             visualWidth = (std::max)(static_cast<double>(m_contentSize.Width), (inkLeft + inkWidth) - (std::min)(0.0, inkLeft));
@@ -908,7 +1047,7 @@ Size FontGlyphs::ArrangeOverride(Size finalSize)
         double inkLeft = m_designInkLeft * emScale * scaleX;
         double inkWidth = m_designInkWidth * emScale * scaleX;
 
-        if (m_glyphAdvances.empty() || m_glyphAdvances[0] <= 0.0f)
+        if (m_glyphCount == 0 || GetGlyphAdvance(0) <= 0.0f)
         {
             originX = (finalSize.Width - inkWidth) / 2.0 - inkLeft;
         }
@@ -964,7 +1103,7 @@ void FontGlyphs::RenderGlyphs()
         ElementCompositionPreview::SetElementChildVisual(this, m_spriteVisual);
     }
 
-    if (m_glyphIndices.empty() || m_contentSize.Width <= 0 || m_contentSize.Height <= 0 || FontFace == nullptr)
+    if (m_glyphCount == 0 || m_contentSize.Width <= 0 || m_contentSize.Height <= 0 || FontFace == nullptr)
     {
         if (m_spriteVisual != nullptr)
             m_spriteVisual->Brush = nullptr;
@@ -1006,17 +1145,17 @@ void FontGlyphs::RenderGlyphs()
         return;
 
     // Path 1: Single glyph rendering via Shared Atlas (Grid & list view optimization)
-    bool useSharedAtlas = (m_glyphIndices.size() == 1 && requiredWidth <= 512 && requiredHeight <= 512);
+    bool useSharedAtlas = (m_glyphCount == 1 && requiredWidth <= 512 && requiredHeight <= 512);
     if (useSharedAtlas)
     {
-        FLOAT adv = m_glyphAdvances.empty() ? 0.0f : m_glyphAdvances[0];
-        DWRITE_GLYPH_OFFSET off = m_glyphOffsets.empty() ? DWRITE_GLYPH_OFFSET{} : m_glyphOffsets[0];
+        FLOAT adv = GetGlyphAdvance(0);
+        DWRITE_GLYPH_OFFSET off = GetGlyphOffset(0);
         UINT32 typoKey = Typography != nullptr ? Typography->GetKey() : 0;
 
         AtlasSlot slot = GlyphAtlasManager::GetOrCreateGlyphSlot(
             compositor,
             rawFace.Get(),
-            m_glyphIndices[0],
+            GetGlyphIndex(0),
             static_cast<FLOAT>(FontSize * dpiScale),
             StyleSimulations,
             renderColor,
@@ -1148,12 +1287,19 @@ void FontGlyphs::RenderGlyphs()
     std::vector<DWRITE_GLYPH_OFFSET> scaledOffsets;
     if (dpiScale != 1.0f)
     {
-        scaledAdvances.reserve(m_glyphAdvances.size());
-        for (float adv : m_glyphAdvances) scaledAdvances.push_back(adv * dpiScale);
+        scaledAdvances.reserve(m_glyphCount);
+        for (size_t i = 0; i < m_glyphCount; i++) scaledAdvances.push_back(GetGlyphAdvance(i) * dpiScale);
         
-        scaledOffsets.reserve(m_glyphOffsets.size());
-        for (auto off : m_glyphOffsets) scaledOffsets.push_back(DWRITE_GLYPH_OFFSET{ off.advanceOffset * dpiScale, off.ascenderOffset * dpiScale });
+        scaledOffsets.reserve(m_glyphCount);
+        for (size_t i = 0; i < m_glyphCount; i++)
+        {
+            auto off = GetGlyphOffset(i);
+            scaledOffsets.push_back(DWRITE_GLYPH_OFFSET{ off.advanceOffset * dpiScale, off.ascenderOffset * dpiScale });
+        }
     }
+
+    const FLOAT* pAdvances = (dpiScale != 1.0f) ? scaledAdvances.data() : GlyphAdvancesData();
+    const DWRITE_GLYPH_OFFSET* pOffsets = (dpiScale != 1.0f) ? scaledOffsets.data() : GlyphOffsetsData();
 
     bool success = CompositionDeviceManager::RenderGlyphToSurface(
         m_drawingSurface,
@@ -1161,9 +1307,10 @@ void FontGlyphs::RenderGlyphs()
         m_padLeft * dpiScale, m_padTop * dpiScale, m_baseline * dpiScale,
         rawFace.Get(),
         static_cast<FLOAT>(FontSize * dpiScale),
-        m_glyphIndices,
-        dpiScale != 1.0f ? scaledAdvances : m_glyphAdvances,
-        dpiScale != 1.0f ? scaledOffsets : m_glyphOffsets,
+        GlyphIndicesData(),
+        pAdvances,
+        pOffsets,
+        static_cast<UINT32>(m_glyphCount),
         Foreground,
         StyleSimulations,
         requiredWidth,
@@ -1194,9 +1341,10 @@ void FontGlyphs::RenderGlyphs()
                     m_padLeft * dpiScale, m_padTop * dpiScale, m_baseline * dpiScale,
                     rawFace.Get(),
                     static_cast<FLOAT>(FontSize * dpiScale),
-                    m_glyphIndices,
-                    dpiScale != 1.0f ? scaledAdvances : m_glyphAdvances,
-                    dpiScale != 1.0f ? scaledOffsets : m_glyphOffsets,
+                    GlyphIndicesData(),
+                    pAdvances,
+                    pOffsets,
+                    static_cast<UINT32>(m_glyphCount),
                     Foreground,
                     StyleSimulations,
                     requiredWidth,

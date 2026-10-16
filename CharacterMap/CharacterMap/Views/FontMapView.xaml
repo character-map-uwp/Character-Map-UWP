@@ -1398,7 +1398,10 @@
                     </GridView.Header>
                     <GridView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <ItemsWrapGrid AreStickyGroupHeadersEnabled="True" Orientation="Horizontal" />
+                            <ItemsWrapGrid
+                                AreStickyGroupHeadersEnabled="True"
+                                CacheLength="1.5"
+                                Orientation="Horizontal" />
                         </ItemsPanelTemplate>
                     </GridView.ItemsPanel>
                     <GridView.GroupStyle>
@@ -1848,7 +1851,10 @@
 
                     <controls:ExtendedGridView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <ItemsWrapGrid AreStickyGroupHeadersEnabled="True" Orientation="Horizontal" />
+                            <ItemsWrapGrid
+                                AreStickyGroupHeadersEnabled="True"
+                                CacheLength="1.5"
+                                Orientation="Horizontal" />
                         </ItemsPanelTemplate>
                     </controls:ExtendedGridView.ItemsPanel>
 

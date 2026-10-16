@@ -8,6 +8,7 @@
 #include "DWriteProperties.h"
 #include "OS2TableReader.h"
 #include "DWriteUnicodeRange.h"
+#include "GlyphAtlasManager.h"
 #include <vector>
 #include <algorithm>
 
@@ -92,15 +93,29 @@ namespace CharacterMapCX
 	public ref class DWriteFontFace sealed
 	{
 	public:
+		virtual ~DWriteFontFace()
+		{
+			ReleaseFontFace();
+			ReleaseResources();
+		}
 
 		void ReleaseResources()
 		{
+			if (m_face != nullptr)
+			{
+				GlyphAtlasManager::EvictFontFace(m_face.Get());
+			}
 			m_fontResource = nullptr;
 			m_face = nullptr;
 		}
 
 		void ReleaseFontFace()
 		{
+			if (m_face != nullptr)
+			{
+				GlyphAtlasManager::EvictFontFace(m_face.Get());
+			}
+
 			if (m_fontResource == nullptr && m_face != nullptr)
 			{
 				try

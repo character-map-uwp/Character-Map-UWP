@@ -21,10 +21,10 @@ namespace CharacterMapCX
 
     struct AtlasKey
     {
-        // ComPtr keeps the font face alive for the lifetime of this cache entry,
-        // preventing address reuse from creating ghost entries when a face is freed
-        // and a new allocation lands at the same address.
-        Microsoft::WRL::ComPtr<IDWriteFontFace> FontFace;
+        // Raw pointer avoids AddRef on IDWriteFontFace, allowing DirectWrite
+        // to immediately release its mapped tables and caches when a font is released.
+        // Ghost entries on address reuse are prevented by EvictFontFace() called during font release.
+        IDWriteFontFace* FontFace;
         UINT16 GlyphIndex;
         UINT32 FontSizeInt;      // (UINT32)(FontSize * 100) to avoid float precision issues
         UINT32 Simulations;
@@ -35,7 +35,7 @@ namespace CharacterMapCX
 
         bool operator==(const AtlasKey& other) const
         {
-            return FontFace.Get() == other.FontFace.Get()
+            return FontFace == other.FontFace
                 && GlyphIndex == other.GlyphIndex
                 && FontSizeInt == other.FontSizeInt
                 && Simulations == other.Simulations
@@ -50,8 +50,7 @@ namespace CharacterMapCX
     {
         std::size_t operator()(const AtlasKey& k) const
         {
-            // Hash the underlying pointer value, not the ComPtr wrapper
-            std::size_t h1 = std::hash<void*>{}(static_cast<void*>(k.FontFace.Get()));
+            std::size_t h1 = std::hash<void*>{}(static_cast<void*>(k.FontFace));
             std::size_t h2 = std::hash<UINT16>{}(k.GlyphIndex);
             std::size_t h3 = std::hash<UINT32>{}(k.FontSizeInt);
             std::size_t h4 = std::hash<UINT32>{}(k.Simulations);
@@ -103,6 +102,7 @@ namespace CharacterMapCX
             UINT32 typographyKey = 0,
             bool isRetry = false);
 
+        static void EvictFontFace(IDWriteFontFace* rawFace);
         static void Clear();
 
     private:

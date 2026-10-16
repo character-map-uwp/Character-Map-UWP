@@ -576,15 +576,16 @@ bool CompositionDeviceManager::RenderGlyphToSurface(
     float padLeft, float padTop, float baseline,
     IDWriteFontFace* rawFace,
     FLOAT fontSize,
-    const std::vector<UINT16>& glyphIndices,
-    const std::vector<FLOAT>& glyphAdvances,
-    const std::vector<DWRITE_GLYPH_OFFSET>& glyphOffsets,
+    const UINT16* glyphIndices,
+    const FLOAT* glyphAdvances,
+    const DWRITE_GLYPH_OFFSET* glyphOffsets,
+    UINT32 glyphCount,
     Windows::UI::Xaml::Media::Brush^ foreground,
     Windows::UI::Xaml::Media::StyleSimulations simulations,
     LONG requiredWidth, LONG requiredHeight,
     float scaleX, float scaleY)
 {
-    if (surface == nullptr || rawFace == nullptr || glyphIndices.empty() || requiredWidth <= 0 || requiredHeight <= 0)
+    if (surface == nullptr || rawFace == nullptr || glyphIndices == nullptr || glyphCount == 0 || requiredWidth <= 0 || requiredHeight <= 0)
         return false;
 
     ComPtr<ICompositionDrawingSurfaceInterop> surfaceInterop;
@@ -615,10 +616,10 @@ bool CompositionDeviceManager::RenderGlyphToSurface(
             DWRITE_GLYPH_RUN glyphRun{};
             glyphRun.fontFace = rawFace;
             glyphRun.fontEmSize = fontSize;
-            glyphRun.glyphCount = static_cast<UINT32>(glyphIndices.size());
-            glyphRun.glyphIndices = glyphIndices.data();
-            glyphRun.glyphAdvances = glyphAdvances.data();
-            glyphRun.glyphOffsets = glyphOffsets.empty() ? nullptr : glyphOffsets.data();
+            glyphRun.glyphCount = glyphCount;
+            glyphRun.glyphIndices = glyphIndices;
+            glyphRun.glyphAdvances = glyphAdvances;
+            glyphRun.glyphOffsets = glyphOffsets;
             glyphRun.isSideways = FALSE;
             glyphRun.bidiLevel = 0;
 

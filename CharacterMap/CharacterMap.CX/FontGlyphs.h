@@ -180,6 +180,7 @@ namespace CharacterMapCX
             Windows::Foundation::Size ComputeScaleFactor(Windows::Foundation::Size availableSize, Windows::Foundation::Size contentSize);
             void RenderGlyphs();
             void ReleaseDrawingSurface();
+            void OnLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
             void OnUnloaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
             Windows::UI::Color GetForegroundColor();
             UINT32 GetForegroundColorKey();
@@ -206,13 +207,30 @@ namespace CharacterMapCX
 
             bool m_isLayoutDirty;
             bool m_isRenderDirty;
+            Windows::Foundation::EventRegistrationToken m_loadedToken;
             Windows::Foundation::EventRegistrationToken m_unloadedToken;
             Windows::Foundation::EventRegistrationToken m_themeChangedToken;
 
-            // Parsed glyph data
-            std::vector<UINT16> m_glyphIndices;
-            std::vector<FLOAT> m_glyphAdvances;
-            std::vector<DWRITE_GLYPH_OFFSET> m_glyphOffsets;
+            // Parsed glyph data with Small Buffer Optimization (SBO).
+            // Up to 2 glyphs (covering single glyphs and surrogate pairs) are stored inline,
+            // eliminating 3 heap allocations per control instance for character grid items.
+            static const size_t SBO_GLYPH_CAPACITY = 2;
+            size_t m_glyphCount;
+            UINT16 m_inlineIndices[SBO_GLYPH_CAPACITY];
+            FLOAT m_inlineAdvances[SBO_GLYPH_CAPACITY];
+            DWRITE_GLYPH_OFFSET m_inlineOffsets[SBO_GLYPH_CAPACITY];
+
+            std::vector<UINT16> m_heapIndices;
+            std::vector<FLOAT> m_heapAdvances;
+            std::vector<DWRITE_GLYPH_OFFSET> m_heapOffsets;
+
+            const UINT16* GlyphIndicesData() const { return m_glyphCount <= SBO_GLYPH_CAPACITY ? m_inlineIndices : m_heapIndices.data(); }
+            const FLOAT* GlyphAdvancesData() const { return m_glyphCount <= SBO_GLYPH_CAPACITY ? m_inlineAdvances : m_heapAdvances.data(); }
+            const DWRITE_GLYPH_OFFSET* GlyphOffsetsData() const { return m_glyphCount <= SBO_GLYPH_CAPACITY ? m_inlineOffsets : m_heapOffsets.data(); }
+
+            UINT16 GetGlyphIndex(size_t i) const { return m_glyphCount <= SBO_GLYPH_CAPACITY ? m_inlineIndices[i] : m_heapIndices[i]; }
+            FLOAT GetGlyphAdvance(size_t i) const { return m_glyphCount <= SBO_GLYPH_CAPACITY ? m_inlineAdvances[i] : m_heapAdvances[i]; }
+            DWRITE_GLYPH_OFFSET GetGlyphOffset(size_t i) const { return m_glyphCount <= SBO_GLYPH_CAPACITY ? m_inlineOffsets[i] : m_heapOffsets[i]; }
 
             // Zero-advance / combining mark bounds
             bool m_hasInkBounds;

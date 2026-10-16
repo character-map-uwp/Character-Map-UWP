@@ -76,6 +76,21 @@ void GlyphAtlas::Clear()
     m_surface = nullptr;
 }
 
+void GlyphAtlasManager::EvictFontFace(IDWriteFontFace* rawFace)
+{
+    if (rawFace == nullptr)
+        return;
+
+    std::lock_guard<std::mutex> lock(s_atlasMutex);
+    for (auto it = s_slotCache.begin(); it != s_slotCache.end(); )
+    {
+        if (it->first.FontFace == rawFace)
+            it = s_slotCache.erase(it);
+        else
+            ++it;
+    }
+}
+
 void GlyphAtlasManager::Clear()
 {
     std::lock_guard<std::mutex> lock(s_atlasMutex);
@@ -111,7 +126,7 @@ AtlasSlot GlyphAtlasManager::GetOrCreateGlyphSlot(
         return result;
 
     AtlasKey key{};
-    key.FontFace = rawFace;   // ComPtr::operator= AddRefs — face stays alive
+    key.FontFace = rawFace;   // Raw pointer assignment — does not keep IDWriteFontFace pinned in memory
     key.GlyphIndex = glyphIndex;
     key.FontSizeInt = static_cast<UINT32>(fontSize * 100.0f);
     key.Simulations = static_cast<UINT32>(simulations);
