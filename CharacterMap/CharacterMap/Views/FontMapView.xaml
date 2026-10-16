@@ -3266,6 +3266,7 @@
           <Setter Target="CopySequenceRoot.Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />-->
                         <!--<Setter Target="MoreSwitchView.(core:Properties.UseAttachedStates)" Value="True" />-->
                         <Setter Target="CharGrid.ItemContainerStyle" Value="{core:OptionalResource Key='MaterialGridViewItemStyle'}" />
+                        <Setter Target="ViewRoot.RequestedTheme" Value="Light" />
                         <Setter Target="ViewRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="False" />
                         <!--<Setter Target="BackgroundBorder.Visibility" Value="Collapsed" />-->
                         <Setter Target="CopyTopBorder.Visibility" Value="Collapsed" />

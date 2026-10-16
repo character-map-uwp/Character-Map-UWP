@@ -136,6 +136,7 @@ public partial class SettingsViewModel : ViewModelBase
                 - Added ability to export ColrV1 Glyphs as SVG
                 - Added ability to filter font list in opened ZIP files
                 - Added ability to view all Glyph components that form a Character, below the Character Preview Pane
+                - Added variable axis support to the copy pane
                 - All variable font axis now render correctly
                 - Updated to Unicode 18.0 dataset
                 """),
