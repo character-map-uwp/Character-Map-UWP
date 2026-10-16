@@ -29,6 +29,8 @@ public record CharacterRenderingOptions
     /// </summary>
     public TypographyFeatureInfo DXTypography { get; }
 
+    public DWriteTypographyCollection TypographyCollection => field ??= new(DXTypography.Feature);
+
     /// <summary>
     /// If set to true, XAML rendering cannot properly display all variations of this rendering
     /// </summary>

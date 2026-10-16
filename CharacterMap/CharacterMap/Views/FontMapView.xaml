@@ -1480,13 +1480,34 @@
                             Margin="24"
                             VerticalAlignment="Center"
                             Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                            IsHitTestVisible="False"
                             IsTextScaleFactorEnabled="False"
                             Style="{StaticResource BaseTextStyle}"
                             TextAlignment="Center"
                             Visibility="{x:Bind core:Converters.IsNullOrEmptyToVis(ViewModel.Sequence), Mode=OneWay}"
                             d:Text="{core:Localizer Key=CopySequencePlaceholder/Text}" />
 
-                        <TextBox
+                        <RichEditBox
+                            x:Name="CopySequenceText"
+                            Margin="24"
+                            VerticalAlignment="Center"
+                            core:Properties.FontStretch="{Binding SelectedFace.DirectWriteProperties.Stretch}"
+                            core:Properties.FontStyle="{Binding SelectedFace.DirectWriteProperties.Style}"
+                            core:Properties.FontWeight="{Binding SelectedFace.DirectWriteProperties.Weight}"
+                            core:Properties.Text="{x:Bind ViewModel.Sequence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            FontFamily="{Binding SelectedFace.DisplaySource}"
+                            FontSize="48"
+                            Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                            InputScope="Text"
+                            IsColorFontEnabled="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
+                            IsHandwritingViewEnabled="False"
+                            IsSpellCheckEnabled="False"
+                            IsTextPredictionEnabled="False"
+                            IsTextScaleFactorEnabled="False"
+                            SelectionHighlightColorWhenNotFocused="{Binding RelativeSource={RelativeSource Mode=Self}, Path=SelectionHighlightColor}"
+                            Style="{StaticResource ChromelessRichEditBoxStyle}" />
+
+                        <!--<controls:CopySequenceBox
                             x:Name="CopySequenceText"
                             Margin="24"
                             VerticalAlignment="Center"
@@ -1503,8 +1524,8 @@
                             IsTextPredictionEnabled="False"
                             IsTextScaleFactorEnabled="False"
                             SelectionHighlightColorWhenNotFocused="{Binding RelativeSource={RelativeSource Mode=Self}, Path=SelectionHighlightColor}"
-                            Style="{StaticResource ChromelessTextBoxStyle}"
-                            Text="{x:Bind ViewModel.Sequence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            Style="{StaticResource ChromelessRichEditBoxStyle}"
+                            Text="{x:Bind ViewModel.Sequence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />-->
 
                         <Grid Grid.Column="1">
                             <Grid.Resources>

@@ -1241,12 +1241,24 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         if (CopySequenceText == null)
             return;
 
-        int selection = CopySequenceText.SelectionStart;
-        ViewModel.AddCharToSequence(
-            CopySequenceText.SelectionStart,
-            CopySequenceText.SelectionLength,
-            ViewModel.SelectedChar);
-        CopySequenceText.SelectionStart = selection + 1;
+        if (((object)CopySequenceText) is TextBox t)
+        {
+            int selection = t.SelectionStart;
+            ViewModel.AddCharToSequence(
+                t.SelectionStart,
+                t.SelectionLength,
+                ViewModel.SelectedChar);
+            t.SelectionStart = selection + 1;
+        }
+        else if (((object)CopySequenceText) is RichEditBox r)
+        {
+            int selection =  r.Document.Selection.StartPosition;
+            ViewModel.AddCharToSequence(
+              selection,
+              r.Document.Selection.Length,
+              ViewModel.SelectedChar);
+            r.Document.Selection.MoveStart(Windows.UI.Text.TextRangeUnit.Character, selection + 1);
+        }
 
         await Task.Delay(64);
         CopySequenceText.Focus(FocusState.Programmatic);

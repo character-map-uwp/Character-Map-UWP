@@ -1,4 +1,4 @@
-﻿using CharacterMap.Controls;
+using CharacterMap.Controls;
 using CharacterMap.Views;
 using CharacterMapCX.Controls;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -1121,14 +1121,14 @@ public partial class Properties : DependencyObject
         if (d is RichEditBox r)
         {
             r.TextChanged -= RichEditBox_TextChanged;
+            r.TextDocument.GetText(TextGetOptions.AdjustCrlf, out string t);
 
-            r.TextDocument.GetText(TextGetOptions.None, out string t);
-
-            if (t.Trim() == ((string)e.NewValue).Trim())
-                return;
-
-            r.TextDocument.SetText(Windows.UI.Text.TextSetOptions.None, e.NewValue as string);
-            UpdateFormat(r);
+            if (t.Trim() != ((string)e.NewValue).Trim())
+            {
+                r.TextDocument.SetText(Windows.UI.Text.TextSetOptions.None, e.NewValue as string);
+                UpdateFormat(r);
+            }
+            
             r.TextChanged += RichEditBox_TextChanged;
         }
     }
@@ -1137,7 +1137,7 @@ public partial class Properties : DependencyObject
     {
         if (sender is RichEditBox r)
         {
-            r.TextDocument.GetText(TextGetOptions.None, out string t);
+            r.TextDocument.GetText(TextGetOptions.AdjustCrlf, out string t);
             SetText(r, t.TrimEnd('\r', '\n'));
         }
     }
@@ -1170,27 +1170,33 @@ public partial class Properties : DependencyObject
 
     static void UpdateFormat(RichEditBox r)
     {
-        // This is *NOT* good for performance, but RichEditBox has a lot of problems
-        // we need to workaround. It is however the only way we can actually get proper
-        // font display on a TextBox, so we need to deal with it.
+        FontStyle style = GetFontStyle(r);
+        FontStretch stretch = GetFontStretch(r);
+        FontWeight weight = GetFontWeight(r);
 
-        r.UpdateLayout();
+        ITextDocument doc = r.Document;
+        doc.BatchDisplayUpdates();
 
-        r.TextDocument.BatchDisplayUpdates();
+        // 1. Update the document default format (for new text)
+        ITextCharacterFormat defaultFormat = doc.GetDefaultCharacterFormat();
+        defaultFormat.FontStretch = stretch;
+        defaultFormat.Weight = weight.Weight;
+        defaultFormat.FontStyle = style;
+        doc.SetDefaultCharacterFormat(defaultFormat);
 
-        r.FontFamily = ResourceHelper.Get<FontFamily>("BLANK");
+        // 2. Update all existing characters currently in the document
+        ITextRange allText = doc.GetRange(0, TextConstants.MaxUnitCount);
+        allText.CharacterFormat.FontStretch = stretch;
+        allText.CharacterFormat.Weight = weight.Weight;
+        allText.CharacterFormat.FontStyle = style;
 
-        ITextCharacterFormat format = r.TextDocument.GetDefaultCharacterFormat();
-        format.FontStyle = GetFontStyle(r);
-        format.FontStretch = GetFontStretch(r);
-        format.Weight = GetFontWeight(r).Weight;
-        r.TextDocument.SetDefaultCharacterFormat(format);
+        // 3. Update current cursor / selection point
+        ITextCharacterFormat selFormat = doc.Selection.CharacterFormat;
+        selFormat.FontStretch = stretch;
+        selFormat.Weight = weight.Weight;
+        selFormat.FontStyle = style;
 
-        r.TextDocument.ApplyDisplayUpdates();
-        r.FontFamily = GetFontFamily(r);
-
-        r.UpdateLayout();
-
+        doc.ApplyDisplayUpdates();
     }
 
     #endregion
