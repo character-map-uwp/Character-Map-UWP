@@ -105,6 +105,11 @@ namespace CharacterMapCX
                 Windows::UI::Xaml::DependencyProperty^ get() { return _AcceptsReturnProperty; }
             }
 
+            static property Windows::UI::Xaml::DependencyProperty^ IsDefaultContextMenuEnabledProperty
+            {
+                Windows::UI::Xaml::DependencyProperty^ get() { return _IsDefaultContextMenuEnabledProperty; }
+            }
+
             #pragma endregion
 
             #pragma region Properties
@@ -211,6 +216,12 @@ namespace CharacterMapCX
                 void set(bool value) { SetValue(AcceptsReturnProperty, value); }
             }
 
+            property bool IsDefaultContextMenuEnabled
+            {
+                bool get() { return (bool)GetValue(IsDefaultContextMenuEnabledProperty); }
+                void set(bool value) { SetValue(IsDefaultContextMenuEnabledProperty, value); }
+            }
+
             #pragma endregion
 
             #pragma region Methods
@@ -250,6 +261,7 @@ namespace CharacterMapCX
             virtual void OnPointerCaptureLost(Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e) override;
             virtual void OnPointerEntered(Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e) override;
             virtual void OnPointerExited(Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e) override;
+            virtual void OnRightTapped(Windows::UI::Xaml::Input::RightTappedRoutedEventArgs^ e) override;
 
         private:
             static void EnsureDependencyProperties();
@@ -270,6 +282,7 @@ namespace CharacterMapCX
             static Windows::UI::Xaml::DependencyProperty^ _SelectionHighlightColorProperty;
             static Windows::UI::Xaml::DependencyProperty^ _CursorBrushProperty;
             static Windows::UI::Xaml::DependencyProperty^ _AcceptsReturnProperty;
+            static Windows::UI::Xaml::DependencyProperty^ _IsDefaultContextMenuEnabledProperty;
 
             static void OnLayoutAffectingPropertyChanged(Windows::UI::Xaml::DependencyObject^ d, Windows::UI::Xaml::DependencyPropertyChangedEventArgs^ e);
             static void OnRenderAffectingPropertyChanged(Windows::UI::Xaml::DependencyObject^ d, Windows::UI::Xaml::DependencyPropertyChangedEventArgs^ e);
@@ -328,8 +341,33 @@ namespace CharacterMapCX
             std::vector<EditSnapshot> m_redoStack;
 
             // Context Menu
+            void EnsureContextMenu();
+            void UpdateContextMenuItems();
             void ShowContextMenu(Windows::Foundation::Point point);
+            Windows::Foundation::Point GetCaretLocalPosition();
+            bool ClipboardHasText();
+
+            void OnContextRequested(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::Input::ContextRequestedEventArgs^ args);
+            void OnContainerContextRequested(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::Input::ContextRequestedEventArgs^ args);
+            void OnContainerRightTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::RightTappedRoutedEventArgs^ e);
+
             Windows::UI::Xaml::Controls::MenuFlyout^ m_contextMenu;
+            Windows::UI::Xaml::Input::StandardUICommand^ m_cutCommand;
+            Windows::UI::Xaml::Input::StandardUICommand^ m_copyCommand;
+            Windows::UI::Xaml::Input::StandardUICommand^ m_pasteCommand;
+            Windows::UI::Xaml::Input::StandardUICommand^ m_undoCommand;
+            Windows::UI::Xaml::Input::StandardUICommand^ m_redoCommand;
+            Windows::UI::Xaml::Input::StandardUICommand^ m_selectAllCommand;
+            Windows::UI::Xaml::Controls::MenuFlyoutItem^ m_cutItem;
+            Windows::UI::Xaml::Controls::MenuFlyoutItem^ m_copyItem;
+            Windows::UI::Xaml::Controls::MenuFlyoutItem^ m_pasteItem;
+            Windows::UI::Xaml::Controls::MenuFlyoutItem^ m_undoItem;
+            Windows::UI::Xaml::Controls::MenuFlyoutItem^ m_redoItem;
+            Windows::UI::Xaml::Controls::MenuFlyoutItem^ m_selectAllItem;
+
+            Windows::Foundation::EventRegistrationToken m_contextRequestedToken;
+            Windows::Foundation::EventRegistrationToken m_containerContextRequestedToken;
+            Windows::Foundation::EventRegistrationToken m_containerRightTappedToken;
 
             // Composition and Direct2D resources
             Windows::UI::Composition::SpriteVisual^ m_spriteVisual;

@@ -46,6 +46,7 @@ DependencyProperty^ DirectTextBox::_TextWrappingProperty = nullptr;
 DependencyProperty^ DirectTextBox::_SelectionHighlightColorProperty = nullptr;
 DependencyProperty^ DirectTextBox::_CursorBrushProperty = nullptr;
 DependencyProperty^ DirectTextBox::_AcceptsReturnProperty = nullptr;
+DependencyProperty^ DirectTextBox::_IsDefaultContextMenuEnabledProperty = nullptr;
 
 void DirectTextBox::EnsureDependencyProperties()
 {
@@ -77,6 +78,7 @@ void DirectTextBox::EnsureDependencyProperties()
     _SelectionHighlightColorProperty = DependencyProperty::Register("SelectionHighlightColor", Windows::UI::Xaml::Media::SolidColorBrush::typeid, DirectTextBox::typeid, ref new PropertyMetadata(nullptr, renderCallback));
     _CursorBrushProperty = DependencyProperty::Register("CursorBrush", Windows::UI::Xaml::Media::Brush::typeid, DirectTextBox::typeid, ref new PropertyMetadata(nullptr, renderCallback));
     _AcceptsReturnProperty = DependencyProperty::Register("AcceptsReturn", bool::typeid, DirectTextBox::typeid, ref new PropertyMetadata(false));
+    _IsDefaultContextMenuEnabledProperty = DependencyProperty::Register("IsDefaultContextMenuEnabled", bool::typeid, DirectTextBox::typeid, ref new PropertyMetadata(true));
 }
 
 void DirectTextBox::RegisterDependencyProperties()
@@ -103,10 +105,26 @@ DirectTextBox::DirectTextBox()
     , m_compositionStart(0)
     , m_compositionLength(0)
     , m_clickCount(0)
+    , m_contextMenu(nullptr)
+    , m_cutCommand(nullptr)
+    , m_copyCommand(nullptr)
+    , m_pasteCommand(nullptr)
+    , m_undoCommand(nullptr)
+    , m_redoCommand(nullptr)
+    , m_selectAllCommand(nullptr)
+    , m_cutItem(nullptr)
+    , m_copyItem(nullptr)
+    , m_pasteItem(nullptr)
+    , m_undoItem(nullptr)
+    , m_redoItem(nullptr)
+    , m_selectAllItem(nullptr)
 {
     m_loadedToken.Value = 0;
     m_unloadedToken.Value = 0;
     m_themeToken.Value = 0;
+    m_contextRequestedToken.Value = 0;
+    m_containerContextRequestedToken.Value = 0;
+    m_containerRightTappedToken.Value = 0;
     m_lastPointerDownTime.UniversalTime = 0;
     m_lastPointerDownPos = Point(0, 0);
 
@@ -127,6 +145,7 @@ DirectTextBox::DirectTextBox()
 
     m_loadedToken = this->Loaded += ref new RoutedEventHandler(this, &DirectTextBox::OnLoaded);
     m_unloadedToken = this->Unloaded += ref new RoutedEventHandler(this, &DirectTextBox::OnUnloaded);
+    m_contextRequestedToken = this->ContextRequested += ref new TypedEventHandler<UIElement^, ContextRequestedEventArgs^>(this, &DirectTextBox::OnContextRequested);
 
     Platform::WeakReference weakThis(this);
     m_themeToken = this->ActualThemeChanged += ref new TypedEventHandler<FrameworkElement^, Platform::Object^>(
@@ -214,6 +233,21 @@ DirectTextBox::~DirectTextBox()
         {
             this->ActualThemeChanged -= m_themeToken;
             m_themeToken.Value = 0;
+        }
+        if (m_contextRequestedToken.Value != 0)
+        {
+            this->ContextRequested -= m_contextRequestedToken;
+            m_contextRequestedToken.Value = 0;
+        }
+        if (m_containerContextRequestedToken.Value != 0 && m_hitContainer != nullptr)
+        {
+            m_hitContainer->ContextRequested -= m_containerContextRequestedToken;
+            m_containerContextRequestedToken.Value = 0;
+        }
+        if (m_containerRightTappedToken.Value != 0 && m_hitContainer != nullptr)
+        {
+            m_hitContainer->RightTapped -= m_containerRightTappedToken;
+            m_containerRightTappedToken.Value = 0;
         }
 
         ReleaseDrawingSurface();
@@ -885,6 +919,22 @@ void DirectTextBox::OnKeyDown(KeyRoutedEventArgs^ e)
         }
         break;
 
+    case VirtualKey::Application:
+        if (IsDefaultContextMenuEnabled && ContextFlyout == nullptr)
+        {
+            ShowContextMenu(GetCaretLocalPosition());
+            e->Handled = true;
+        }
+        break;
+
+    case VirtualKey::F10:
+        if (shift && IsDefaultContextMenuEnabled && ContextFlyout == nullptr)
+        {
+            ShowContextMenu(GetCaretLocalPosition());
+            e->Handled = true;
+        }
+        break;
+
     default:
         break;
     }
@@ -940,6 +990,11 @@ void DirectTextBox::WireContainerEvents()
     m_hitContainer->PointerCaptureLost += ref new PointerEventHandler(this, &DirectTextBox::OnContainerPointerCaptureLost);
     m_hitContainer->PointerEntered += ref new PointerEventHandler(this, &DirectTextBox::OnContainerPointerEntered);
     m_hitContainer->PointerExited += ref new PointerEventHandler(this, &DirectTextBox::OnContainerPointerExited);
+
+    if (m_containerContextRequestedToken.Value == 0)
+        m_containerContextRequestedToken = m_hitContainer->ContextRequested += ref new TypedEventHandler<UIElement^, ContextRequestedEventArgs^>(this, &DirectTextBox::OnContainerContextRequested);
+    if (m_containerRightTappedToken.Value == 0)
+        m_containerRightTappedToken = m_hitContainer->RightTapped += ref new RightTappedEventHandler(this, &DirectTextBox::OnContainerRightTapped);
 }
 
 void DirectTextBox::OnContainerPointerPressed(Platform::Object^, PointerRoutedEventArgs^ e)
@@ -980,6 +1035,30 @@ void DirectTextBox::OnContainerPointerExited(Platform::Object^, PointerRoutedEve
 
 void DirectTextBox::OnPointerPressed(PointerRoutedEventArgs^ e)
 {
+    UIElement^ target = m_hitContainer != nullptr ? (UIElement^)m_hitContainer : (UIElement^)this;
+    auto ptrPt = e->GetCurrentPoint(target);
+
+    if (ptrPt->Properties->IsRightButtonPressed)
+    {
+        this->Focus(Windows::UI::Xaml::FocusState::Pointer);
+        m_isFocused = true;
+
+        int pos = HitTestPointToTextPosition(ptrPt->Position);
+        if (SelectionLength == 0 || pos < SelectionStart || pos > SelectionStart + SelectionLength)
+        {
+            m_selectionAnchor = pos;
+            SetSelectionInternal(pos, 0);
+        }
+
+        EnsureCaretVisible();
+        ResetCaretBlink();
+        UpdateVisualStates(true);
+        InvalidateRenderOnly();
+
+        Control::OnPointerPressed(e);
+        return;
+    }
+
     this->Focus(Windows::UI::Xaml::FocusState::Pointer);
     if (m_hitContainer != nullptr)
         m_hitContainer->CapturePointer(e->Pointer);
@@ -989,8 +1068,7 @@ void DirectTextBox::OnPointerPressed(PointerRoutedEventArgs^ e)
     m_isPointerPressed = true;
     m_isFocused = true;
 
-    UIElement^ target = m_hitContainer != nullptr ? (UIElement^)m_hitContainer : (UIElement^)this;
-    auto pt = e->GetCurrentPoint(target)->Position;
+    auto pt = ptrPt->Position;
     int pos = HitTestPointToTextPosition(pt);
 
     // Multi-click detection
@@ -2005,6 +2083,320 @@ void DirectTextBox::RenderToSurface()
     m_spriteVisual->Size = float2(actualW, actualH);
     if (m_spriteVisual->Brush != m_surfaceBrush)
         m_spriteVisual->Brush = m_surfaceBrush;
+}
+
+#pragma endregion
+
+#pragma region Context Menu
+
+void DirectTextBox::EnsureContextMenu()
+{
+    if (m_contextMenu != nullptr)
+        return;
+
+    m_contextMenu = ref new MenuFlyout();
+
+    Platform::WeakReference weakThis(this);
+
+    // 1. Cut
+    m_cutCommand = ref new StandardUICommand(StandardUICommandKind::Cut);
+    m_cutCommand->ExecuteRequested += ref new TypedEventHandler<XamlUICommand^, ExecuteRequestedEventArgs^>(
+        [weakThis](XamlUICommand^, ExecuteRequestedEventArgs^) {
+            if (auto strongThis = weakThis.Resolve<DirectTextBox>())
+            {
+                strongThis->Cut();
+                strongThis->Focus(Windows::UI::Xaml::FocusState::Programmatic);
+            }
+        });
+    m_cutCommand->CanExecuteRequested += ref new TypedEventHandler<XamlUICommand^, CanExecuteRequestedEventArgs^>(
+        [weakThis](XamlUICommand^, CanExecuteRequestedEventArgs^ args) {
+            if (auto strongThis = weakThis.Resolve<DirectTextBox>())
+            {
+                args->CanExecute = !strongThis->IsReadOnly && (strongThis->SelectionLength > 0);
+            }
+        });
+    m_cutItem = ref new MenuFlyoutItem();
+    m_cutItem->Command = m_cutCommand;
+    m_contextMenu->Items->Append(m_cutItem);
+
+    // 2. Copy
+    m_copyCommand = ref new StandardUICommand(StandardUICommandKind::Copy);
+    m_copyCommand->ExecuteRequested += ref new TypedEventHandler<XamlUICommand^, ExecuteRequestedEventArgs^>(
+        [weakThis](XamlUICommand^, ExecuteRequestedEventArgs^) {
+            if (auto strongThis = weakThis.Resolve<DirectTextBox>())
+            {
+                strongThis->Copy();
+                strongThis->Focus(Windows::UI::Xaml::FocusState::Programmatic);
+            }
+        });
+    m_copyCommand->CanExecuteRequested += ref new TypedEventHandler<XamlUICommand^, CanExecuteRequestedEventArgs^>(
+        [weakThis](XamlUICommand^, CanExecuteRequestedEventArgs^ args) {
+            if (auto strongThis = weakThis.Resolve<DirectTextBox>())
+            {
+                args->CanExecute = strongThis->SelectionLength > 0;
+            }
+        });
+    m_copyItem = ref new MenuFlyoutItem();
+    m_copyItem->Command = m_copyCommand;
+    m_contextMenu->Items->Append(m_copyItem);
+
+    // 3. Paste
+    m_pasteCommand = ref new StandardUICommand(StandardUICommandKind::Paste);
+    m_pasteCommand->ExecuteRequested += ref new TypedEventHandler<XamlUICommand^, ExecuteRequestedEventArgs^>(
+        [weakThis](XamlUICommand^, ExecuteRequestedEventArgs^) {
+            if (auto strongThis = weakThis.Resolve<DirectTextBox>())
+            {
+                strongThis->Paste();
+                strongThis->Focus(Windows::UI::Xaml::FocusState::Programmatic);
+            }
+        });
+    m_pasteCommand->CanExecuteRequested += ref new TypedEventHandler<XamlUICommand^, CanExecuteRequestedEventArgs^>(
+        [weakThis](XamlUICommand^, CanExecuteRequestedEventArgs^ args) {
+            if (auto strongThis = weakThis.Resolve<DirectTextBox>())
+            {
+                args->CanExecute = !strongThis->IsReadOnly && strongThis->ClipboardHasText();
+            }
+        });
+    m_pasteItem = ref new MenuFlyoutItem();
+    m_pasteItem->Command = m_pasteCommand;
+    m_contextMenu->Items->Append(m_pasteItem);
+
+    // Separator
+    m_contextMenu->Items->Append(ref new MenuFlyoutSeparator());
+
+    // 4. Undo
+    m_undoCommand = ref new StandardUICommand(StandardUICommandKind::Undo);
+    m_undoCommand->ExecuteRequested += ref new TypedEventHandler<XamlUICommand^, ExecuteRequestedEventArgs^>(
+        [weakThis](XamlUICommand^, ExecuteRequestedEventArgs^) {
+            if (auto strongThis = weakThis.Resolve<DirectTextBox>())
+            {
+                strongThis->Undo();
+                strongThis->Focus(Windows::UI::Xaml::FocusState::Programmatic);
+            }
+        });
+    m_undoCommand->CanExecuteRequested += ref new TypedEventHandler<XamlUICommand^, CanExecuteRequestedEventArgs^>(
+        [weakThis](XamlUICommand^, CanExecuteRequestedEventArgs^ args) {
+            if (auto strongThis = weakThis.Resolve<DirectTextBox>())
+            {
+                args->CanExecute = !strongThis->IsReadOnly && !strongThis->m_undoStack.empty();
+            }
+        });
+    m_undoItem = ref new MenuFlyoutItem();
+    m_undoItem->Command = m_undoCommand;
+    m_contextMenu->Items->Append(m_undoItem);
+
+    // 5. Redo
+    m_redoCommand = ref new StandardUICommand(StandardUICommandKind::Redo);
+    m_redoCommand->ExecuteRequested += ref new TypedEventHandler<XamlUICommand^, ExecuteRequestedEventArgs^>(
+        [weakThis](XamlUICommand^, ExecuteRequestedEventArgs^) {
+            if (auto strongThis = weakThis.Resolve<DirectTextBox>())
+            {
+                strongThis->Redo();
+                strongThis->Focus(Windows::UI::Xaml::FocusState::Programmatic);
+            }
+        });
+    m_redoCommand->CanExecuteRequested += ref new TypedEventHandler<XamlUICommand^, CanExecuteRequestedEventArgs^>(
+        [weakThis](XamlUICommand^, CanExecuteRequestedEventArgs^ args) {
+            if (auto strongThis = weakThis.Resolve<DirectTextBox>())
+            {
+                args->CanExecute = !strongThis->IsReadOnly && !strongThis->m_redoStack.empty();
+            }
+        });
+    m_redoItem = ref new MenuFlyoutItem();
+    m_redoItem->Command = m_redoCommand;
+    m_contextMenu->Items->Append(m_redoItem);
+
+    // Separator
+    m_contextMenu->Items->Append(ref new MenuFlyoutSeparator());
+
+    // 6. Select all
+    m_selectAllCommand = ref new StandardUICommand(StandardUICommandKind::SelectAll);
+    m_selectAllCommand->ExecuteRequested += ref new TypedEventHandler<XamlUICommand^, ExecuteRequestedEventArgs^>(
+        [weakThis](XamlUICommand^, ExecuteRequestedEventArgs^) {
+            if (auto strongThis = weakThis.Resolve<DirectTextBox>())
+            {
+                strongThis->SelectAll();
+                strongThis->Focus(Windows::UI::Xaml::FocusState::Programmatic);
+            }
+        });
+    m_selectAllCommand->CanExecuteRequested += ref new TypedEventHandler<XamlUICommand^, CanExecuteRequestedEventArgs^>(
+        [weakThis](XamlUICommand^, CanExecuteRequestedEventArgs^ args) {
+            if (auto strongThis = weakThis.Resolve<DirectTextBox>())
+            {
+                int textLen = strongThis->Text != nullptr ? strongThis->Text->Length() : 0;
+                args->CanExecute = (textLen > 0) && (strongThis->SelectionLength < textLen);
+            }
+        });
+    m_selectAllItem = ref new MenuFlyoutItem();
+    m_selectAllItem->Command = m_selectAllCommand;
+    m_contextMenu->Items->Append(m_selectAllItem);
+}
+
+bool DirectTextBox::ClipboardHasText()
+{
+    try
+    {
+        auto content = Clipboard::GetContent();
+        if (content != nullptr)
+            return content->Contains(StandardDataFormats::Text);
+    }
+    catch (...) {}
+    return false;
+}
+
+void DirectTextBox::UpdateContextMenuItems()
+{
+    if (m_contextMenu == nullptr)
+        return;
+
+    bool isReadOnly = IsReadOnly;
+    int selLen = SelectionLength;
+    int textLen = Text != nullptr ? Text->Length() : 0;
+    bool hasSelection = selLen > 0;
+    bool hasText = textLen > 0;
+    bool clipboardHasText = ClipboardHasText();
+
+    if (m_cutCommand != nullptr)
+        m_cutCommand->NotifyCanExecuteChanged();
+    if (m_cutItem != nullptr)
+        m_cutItem->IsEnabled = !isReadOnly && hasSelection;
+
+    if (m_copyCommand != nullptr)
+        m_copyCommand->NotifyCanExecuteChanged();
+    if (m_copyItem != nullptr)
+        m_copyItem->IsEnabled = hasSelection;
+
+    if (m_pasteCommand != nullptr)
+        m_pasteCommand->NotifyCanExecuteChanged();
+    if (m_pasteItem != nullptr)
+        m_pasteItem->IsEnabled = !isReadOnly && clipboardHasText;
+
+    if (m_undoCommand != nullptr)
+        m_undoCommand->NotifyCanExecuteChanged();
+    if (m_undoItem != nullptr)
+        m_undoItem->IsEnabled = !isReadOnly && !m_undoStack.empty();
+
+    if (m_redoCommand != nullptr)
+        m_redoCommand->NotifyCanExecuteChanged();
+    if (m_redoItem != nullptr)
+        m_redoItem->IsEnabled = !isReadOnly && !m_redoStack.empty();
+
+    if (m_selectAllCommand != nullptr)
+        m_selectAllCommand->NotifyCanExecuteChanged();
+    if (m_selectAllItem != nullptr)
+        m_selectAllItem->IsEnabled = hasText && (selLen < textLen);
+}
+
+Point DirectTextBox::GetCaretLocalPosition()
+{
+    auto padding = this->Padding;
+    float caretX = 0.0f;
+    float caretY = 0.0f;
+    float caretH = static_cast<float>(FontSize > 0.0 ? FontSize * 1.2 : 20.0);
+
+    if (m_textLayout != nullptr)
+    {
+        DWRITE_HIT_TEST_METRICS metrics{};
+        m_textLayout->HitTestTextPosition(SelectionStart + SelectionLength, FALSE, &caretX, &caretY, &metrics);
+        caretH = metrics.height;
+    }
+
+    float localX = static_cast<float>(padding.Left) + m_scrollOffsetX + caretX;
+    float localY = static_cast<float>(padding.Top) + m_scrollOffsetY + caretY + caretH;
+
+    float actualW = static_cast<float>(ActualWidth);
+    float actualH = static_cast<float>(ActualHeight);
+
+    if (actualW > 0.0f)
+        localX = (std::max)(0.0f, (std::min)(localX, actualW));
+    if (actualH > 0.0f)
+        localY = (std::max)(0.0f, (std::min)(localY, actualH));
+
+    return Point(localX, localY);
+}
+
+void DirectTextBox::ShowContextMenu(Windows::Foundation::Point point)
+{
+    EnsureContextMenu();
+
+    if (m_contextMenu == nullptr)
+        return;
+
+    UpdateContextMenuItems();
+
+    UIElement^ target = m_hitContainer != nullptr ? (UIElement^)m_hitContainer : (UIElement^)this;
+    m_contextMenu->ShowAt(target, point);
+}
+
+void DirectTextBox::OnContextRequested(UIElement^, ContextRequestedEventArgs^ args)
+{
+    if (args->Handled || (m_contextMenu != nullptr && m_contextMenu->IsOpen))
+        return;
+
+    if (!IsDefaultContextMenuEnabled || ContextFlyout != nullptr)
+        return;
+
+    UIElement^ target = m_hitContainer != nullptr ? (UIElement^)m_hitContainer : (UIElement^)this;
+    Point point;
+    if (args->TryGetPosition(target, &point))
+    {
+        int pos = HitTestPointToTextPosition(point);
+        if (SelectionLength == 0 || pos < SelectionStart || pos > SelectionStart + SelectionLength)
+        {
+            m_selectionAnchor = pos;
+            SetSelectionInternal(pos, 0);
+            EnsureCaretVisible();
+            ResetCaretBlink();
+            InvalidateRenderOnly();
+        }
+
+        ShowContextMenu(point);
+        args->Handled = true;
+    }
+    else
+    {
+        ShowContextMenu(GetCaretLocalPosition());
+        args->Handled = true;
+    }
+}
+
+void DirectTextBox::OnContainerContextRequested(UIElement^ sender, ContextRequestedEventArgs^ args)
+{
+    OnContextRequested(sender, args);
+}
+
+void DirectTextBox::OnRightTapped(RightTappedRoutedEventArgs^ e)
+{
+    if (e->Handled || (m_contextMenu != nullptr && m_contextMenu->IsOpen))
+        return;
+
+    if (!IsDefaultContextMenuEnabled || ContextFlyout != nullptr)
+    {
+        Control::OnRightTapped(e);
+        return;
+    }
+
+    UIElement^ target = m_hitContainer != nullptr ? (UIElement^)m_hitContainer : (UIElement^)this;
+    Point point = e->GetPosition(target);
+
+    int pos = HitTestPointToTextPosition(point);
+    if (SelectionLength == 0 || pos < SelectionStart || pos > SelectionStart + SelectionLength)
+    {
+        m_selectionAnchor = pos;
+        SetSelectionInternal(pos, 0);
+        EnsureCaretVisible();
+        ResetCaretBlink();
+        InvalidateRenderOnly();
+    }
+
+    ShowContextMenu(point);
+    e->Handled = true;
+    Control::OnRightTapped(e);
+}
+
+void DirectTextBox::OnContainerRightTapped(Platform::Object^, RightTappedRoutedEventArgs^ e)
+{
+    OnRightTapped(e);
 }
 
 #pragma endregion
