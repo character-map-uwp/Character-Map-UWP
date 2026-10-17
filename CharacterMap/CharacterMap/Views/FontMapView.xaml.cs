@@ -745,6 +745,17 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     /* Public surface-area methods */
 
+    public FrameworkElement GetActiveMapElement()
+    {
+        return ViewModel.DisplayMode switch
+        {
+            FontDisplayMode.LigaturesState => LigaturesRoot,
+            FontDisplayMode.GlyphMapState => GlyphsRoot,
+            FontDisplayMode.TypeRampState => TypeRampRoot,
+            _ => CharGrid
+        };
+    }
+
     public void OpenCalligraphy()
     {
         _ = CalligraphyView.CreateWindowAsync(

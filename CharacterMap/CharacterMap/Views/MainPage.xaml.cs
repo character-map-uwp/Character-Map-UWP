@@ -284,25 +284,34 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             FontListFontSize = ResourceHelper.GetFontListFontSize();
             if (ResourceHelper.AllowAnimation)
             {
+                List<UIElement> content = [
+                    FontListSearchBox,
+                    FontsSemanticZoom,
+                    FontMap.CharGridHeader
+                ];
+
+                if (FontMap.ViewModel.DisplayMode == FontDisplayMode.CharacterMapState)
+                {
+                    content.Add(FontMap.SplitterContainer);
+                    content.Add(FontMap.CharGrid);
+                }
+                else if (FontMap.ViewModel.DisplayMode != FontDisplayMode.TypeRampState)
+                    content.Add(FontMap.PreviewGrid);
+
+                if (FontMap.ViewModel.DisplayMode != FontDisplayMode.CharacterMapState
+                    && FontMap.GetActiveMapElement() is FrameworkElement active)
+                    content.Add(active);
+
                 CompositionFactory.PlayStartUpAnimation(
-                    new()
-                    {
+                    [
                         OpenFontPaneButton,
                         FontListFilter,
                         TitleButtonsPanel,
                         FontMap.FontTitleBlock,
                         FontMap.SearchBox,
                         BtnSettings
-                    },
-                    new()
-                    {
-                        FontListSearchBox,
-                        FontsSemanticZoom,
-                        FontMap.CharGridHeader,
-                        FontMap.SplitterContainer,
-                        FontMap.CharGrid,
-                        FontMap.PreviewGrid
-                    });
+                    ],
+                    content);
             }
 
             // Allow initial layout, animations, and first frame to settle

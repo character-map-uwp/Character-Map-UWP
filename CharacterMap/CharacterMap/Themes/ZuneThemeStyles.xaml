@@ -6223,10 +6223,10 @@
 
                         <Border
                             x:Name="BorderRoot"
-                            Canvas.ZIndex="-2"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
+                            Canvas.ZIndex="-2"
                             CornerRadius="{TemplateBinding CornerRadius}" />
 
 
