@@ -82,6 +82,19 @@ public static class Composition
 
     private static Dictionary<Compositor, Dictionary<string, object>> _objCache { get; } = new();
 
+    public static void ReleaseCache(Compositor c)
+    {
+        if (_objCache.TryGetValue(c, out var dic))
+        {
+            _objCache.Remove(c);
+            foreach (var value in dic)
+            {
+                if (value.Value is IDisposable disposable)
+                    disposable?.Dispose();
+            }
+        }
+    }
+
     public static T GetCached<T>(this Compositor c, string key, Func<T> create)
     {
 //#if DEBUG

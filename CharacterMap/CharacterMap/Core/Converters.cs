@@ -20,6 +20,7 @@ public static class Converters
     public static bool TrueTrue(bool b, bool c) => b && c;
     public static bool TrueTrueTrue(bool a, bool b, bool c) => a && b && c;
     public static bool TrueFalse(bool b, bool c) => b && !c;
+    public static bool TrueFalseFalse(bool b, bool c, bool d) => b && !c && !d;
 
     public static Visibility InvertVis(Visibility b) => b == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
     public static Visibility FalseToVis(bool b) => !b ? Visibility.Visible : Visibility.Collapsed;

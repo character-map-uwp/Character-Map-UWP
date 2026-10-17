@@ -21,8 +21,11 @@ namespace CharacterMapCX
 		~ColorTextAnalyzer();
 
 		bool HasColorGlyphs;
+		bool HasColrV0 = false;
+		bool HasColrV1 = false;
 
 		bool IsCharacterAnalysisMode = false;
+		bool EnableColorFonts = true;
 
 		int GlyphLayerCount = 0;
 
@@ -31,6 +34,8 @@ namespace CharacterMapCX
 		std::vector<std::vector<uint16>> GlyphIndicies;
 
 		std::vector<DWRITE_COLOR_F> RunColors;
+
+		std::vector<uint16> PaletteIndices;
 
 		IFACEMETHOD(IsPixelSnappingDisabled)(
 			_In_opt_ void* clientDrawingContext,

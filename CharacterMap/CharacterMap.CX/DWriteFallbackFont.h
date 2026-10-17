@@ -19,6 +19,15 @@ using namespace concurrency;
 
 namespace CharacterMapCX
 {
+	public ref class OpenTypeTag sealed
+	{
+		property UINT16 Tag;
+		property String^ Name;
+		property bool ExposeToUser;
+		property bool IsDefault;
+		property String^ Description;
+	};
+
 	public ref class DWriteFallbackFont sealed
 	{
 
@@ -31,7 +40,6 @@ namespace CharacterMapCX
 		ComPtr<IDWriteFontFallback> Fallback;
 	};
 }
-
 
 //namespace CharacterMapCX
 //{

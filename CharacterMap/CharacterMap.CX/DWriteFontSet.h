@@ -44,22 +44,33 @@ namespace CharacterMapCX
 		{
 			int appxCount = 0;
 			int cloudCount = 0;
+			int faceCount = 0;
 
 			auto fonts = ref new Vector<DWriteFontFace^>();
 
 			for each (auto family in m_families)
 			{
-				for each (auto font in family->m_fonts)
+				if (family->m_fonts != nullptr)
 				{
-					fonts->Append(font);
-					if (font->m_dwProperties->m_source == DWriteFontSource::AppxPackage)
-						m_appxCount++;
+					for each (auto font in family->m_fonts)
+					{
+						fonts->Append(font);
+						if (font->m_dwProperties->m_source == DWriteFontSource::AppxPackage)
+							appxCount++;
 
-					if (!font->m_dwProperties->m_isSimulated)
-						m_faceCount++;
+						if (!font->m_dwProperties->m_isSimulated)
+							faceCount++;
+					}
+				}
+				else
+				{
+					faceCount += family->FontCount;
 				}
 			}
 
+			m_appxCount = appxCount;
+			m_cloudCount = cloudCount;
+			m_faceCount = faceCount;
 			m_fonts = fonts->GetView();
 		}
 
@@ -67,6 +78,7 @@ namespace CharacterMapCX
 		DWriteFontSet(IVectorView<DWriteFontFamily^>^ families)
 		{
 			m_families = families;
+			Update();
 		}
 
 

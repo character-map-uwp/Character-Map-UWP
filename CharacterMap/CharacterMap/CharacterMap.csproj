@@ -32,6 +32,7 @@
     </PackageCertificateThumbprint>
     <PackageCertificateKeyFile>CharacterMap_TemporaryKey.pfx</PackageCertificateKeyFile>
     <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
+    <AppxPackageIncludePrivateSymbols>false</AppxPackageIncludePrivateSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -176,7 +177,6 @@
     <Compile Include="Controls\CreateCollectionDialog.xaml.cs">
       <DependentUpon>CreateCollectionDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\DirectTextBlock.cs" />
     <Compile Include="Controls\ExtendedSplitView.cs" />
     <Compile Include="Controls\ExtendedTabView.cs" />
     <Compile Include="Controls\FilterFlyout.xaml.cs">
@@ -227,6 +227,8 @@
     <Compile Include="Core\MultiValueDictionary.cs" />
     <Compile Include="Core\SvgPathParser.cs" />
     <Compile Include="Core\ThemeIconGlyph.cs" />
+    <Compile Include="Core\XamlDirectWrapper.cs" />
+    <Compile Include="Helpers\Utils\MemoryTracker.cs" />
     <Compile Include="Helpers\Fonts\FontClassGenerator.cs" />
     <Compile Include="Helpers\Fonts\SfntWriter.cs" />
     <Compile Include="Helpers\StorageHelper.cs" />
@@ -240,11 +242,15 @@
     <Compile Include="Core\Properties.cs" />
     <Compile Include="Core\SVGPathReciever.cs" />
     <Compile Include="Core\TypographyFeatureInfo.cs" />
+    <Compile Include="Models\FontCharacterList.cs" />
     <Compile Include="Models\GlyphCharacter.cs" />
     <Compile Include="Models\GlyphCollection.cs" />
+    <Compile Include="Models\ItemsSelectionModel.cs" />
+    <Compile Include="Models\NamedTag.cs" />
     <Compile Include="Models\Records.cs" />
     <Compile Include="Models\NamedUnicodeRange.cs" />
     <Compile Include="Models\SearchResultsGroup.cs" />
+    <Compile Include="Models\GroupedCharacterSource.cs" />
     <Compile Include="Models\UnicodeRangeGroup.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helpers\Animation\Animation.cs" />
@@ -282,7 +288,7 @@
     <Compile Include="Models\PanoseFamily.cs" />
     <Compile Include="Core\PanoseParser.cs" />
     <Compile Include="Core\TypographyAnalyzer.cs" />
-    <Compile Include="Core\TypographyBehavior.cs" />
+    <Compile Include="Core\TypographySetter.cs" />
     <Compile Include="Models\SupportedLanguage.cs" />
     <Compile Include="Models\UnicodeGlyphData.cs" />
     <Compile Include="Helpers\Utils\ConcurrencyToken.cs" />
@@ -338,6 +344,7 @@
     <Compile Include="ViewModels\CollectionManagementViewModel.cs" />
     <Compile Include="ViewModels\ExportViewModel.cs" />
     <Compile Include="Models\FontItem.cs" />
+    <Compile Include="Models\Ligature.cs" />
     <Compile Include="ViewModels\FontMapViewModel.cs" />
     <Compile Include="Models\GlyphAnnotation.cs" />
     <Compile Include="Models\PrintLayout.cs" />
@@ -402,7 +409,7 @@
     <Content Include="Assets\BadgeLogo.scale-150.png" />
     <Content Include="Assets\BadgeLogo.scale-200.png" />
     <Content Include="Assets\BadgeLogo.scale-400.png" />
-    <Content Include="Assets\new-character-map-uwp-logo.png" />
+    <!-- <Content Include="Assets\new-character-map-uwp-logo.png" /> -->
     <Content Include="Assets\NewStoreLogo.scale-100.png" />
     <Content Include="Assets\NewStoreLogo.scale-125.png" />
     <Content Include="Assets\NewStoreLogo.scale-150.png" />
@@ -461,6 +468,9 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <None Include="CharacterMap_TemporaryKey.pfx" />
+    <PRIResource Include="Strings\es-ES\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
     <PRIResource Include="Strings\en-US\Resources.resw">
       <SubType>Designer</SubType>
     </PRIResource>

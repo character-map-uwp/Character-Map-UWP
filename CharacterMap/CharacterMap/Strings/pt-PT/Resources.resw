@@ -889,6 +889,9 @@ Optimizado cria um nome inteligente baseado no nome da família e no nome do tip
   <data name="VariableFeaturesMessage.Text" xml:space="preserve">
     <value>Este tipo de letra tem características variáveis. Para explorar as características, mude para a vista Rampa utilizando o botão ativar/desativar acima.</value>
   </data>
+  <data name="VariableFeaturesMessage1.Text" xml:space="preserve">
+    <value>Este tipo de letra tem características variáveis. Para explorar as características, mude para a vista Rampa utilizando o botão ativar/desativar acima.</value>
+  </data>
   <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
     <value>Mostra ou oculta o painel de pré-visualização no lado direito do ecrã. Se oculto, ainda pode aceder a algumas das funções ao clicar com o botão direito do rato ou tocar sem soltar no carácter dentro da grelha.</value>
   </data>

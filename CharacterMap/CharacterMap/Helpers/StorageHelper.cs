@@ -157,6 +157,9 @@ internal static class StorageHelper
     public static async Task<Uri> GetTempGlyphsLocalCopyAsync(CMFontFace fontFace)
     {
         var path = DirectWrite.GetFileName(fontFace.Face);
+        if (IsAppPath(path))
+            return new Uri(GetAppPath(path));
+
         var name = Path.GetFileName(path);
 
         // Cloud provider fonts will head down this path
@@ -212,7 +215,7 @@ internal static class StorageHelper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static string GetAppPath(string path)
     {
-        if (path.StartsWith(ApplicationData.Current.TemporaryFolder.Path, StringComparison.InvariantCultureIgnoreCase))
+        if (IsAppTempPath(path))
         {
             var str = path.Replace(ApplicationData.Current.TemporaryFolder.Path, "ms-appdata:///temp", StringComparison.InvariantCultureIgnoreCase)
                 .Replace("\\", "/");
@@ -220,5 +223,20 @@ internal static class StorageHelper
         }
         var temp = Path.GetDirectoryName(path).EndsWith(FontImporter.TEMP);
         return $"ms-appdata:///local/{(temp ? $"{FontImporter.TEMP}/" : string.Empty)}{Path.GetFileName(path)}";
+    }
+
+    public static bool IsAppPath(string path)
+    {
+        return path.StartsWith(Path.GetDirectoryName(ApplicationData.Current.TemporaryFolder.Path), StringComparison.InvariantCultureIgnoreCase);
+    }
+
+    public static bool IsAppTempPath(string path)
+    {
+        return path.StartsWith(ApplicationData.Current.TemporaryFolder.Path, StringComparison.InvariantCultureIgnoreCase);
+    }
+
+    public static bool IsAppLocalPath(string path)
+    {
+        return path.StartsWith(ApplicationData.Current.LocalFolder.Path, StringComparison.InvariantCultureIgnoreCase);
     }
 }

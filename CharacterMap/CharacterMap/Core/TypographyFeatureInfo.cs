@@ -1,19 +1,18 @@
-﻿using Microsoft.Graphics.Canvas.Text;
-
+﻿
 namespace CharacterMap.Core;
 
 public class TypographyFeatureInfo : ITypographyInfo, IEquatable<TypographyFeatureInfo>
 {
-    private static HashSet<CanvasTypographyFeatureName> _allValues { get; } = new HashSet<CanvasTypographyFeatureName>(
-        Enum.GetValues(typeof(CanvasTypographyFeatureName)).Cast<CanvasTypographyFeatureName>());
+    private static HashSet<DWriteTypographyFeatureName> _allValues { get; } = new HashSet<DWriteTypographyFeatureName>(
+        Enum.GetValues(typeof(DWriteTypographyFeatureName)).Cast<DWriteTypographyFeatureName>());
 
-    public static TypographyFeatureInfo None { get; } = new TypographyFeatureInfo(CanvasTypographyFeatureName.None, "Default");
+    public static TypographyFeatureInfo None { get; } = new TypographyFeatureInfo(DWriteTypographyFeatureName.None, "Default");
 
-    public CanvasTypographyFeatureName Feature { get; }
+    public DWriteTypographyFeatureName Feature { get; }
 
     public string DisplayName { get; }
 
-    public TypographyFeatureInfo(CanvasTypographyFeatureName n, string displayName = null)
+    public TypographyFeatureInfo(DWriteTypographyFeatureName n, string displayName = null)
     {
         Feature = n;
 
@@ -41,7 +40,7 @@ public class TypographyFeatureInfo : ITypographyInfo, IEquatable<TypographyFeatu
         return DisplayName;
     }
 
-    bool IsNamedFeature(CanvasTypographyFeatureName name)
+    bool IsNamedFeature(DWriteTypographyFeatureName name)
     {
         //
         // DWrite and Win2D support a pre-defined list of typographic features.

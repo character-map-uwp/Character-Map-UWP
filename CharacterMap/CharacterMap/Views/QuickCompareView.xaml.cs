@@ -318,7 +318,7 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
         if (sender is MenuFlyoutItem item)
         {
             if (item.DataContext is CharacterRenderingOptions o
-                && FontFinder.Fonts.FirstOrDefault(f => f.Variants.Contains(o.Variant)) is CMFontFamily font)
+                && FontFinder.Fonts.FirstOrDefault(f => f.Variants.Contains(o.Face)) is CMFontFamily font)
             {
                 _ = FontMapView.CreateNewViewForFontAsync(font, null, o);
             }
@@ -335,7 +335,7 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
         if (sender is MenuFlyoutItem item)
         {
             if (item.DataContext is CharacterRenderingOptions o
-                && FontFinder.Fonts.FirstOrDefault(f => f.Variants.Contains(o.Variant)) is CMFontFamily font)
+                && FontFinder.Fonts.FirstOrDefault(f => f.Variants.Contains(o.Face)) is CMFontFamily font)
             {
                 _ = QuickCompareView.AddAsync(o, true);
             }
@@ -352,7 +352,7 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
         if (sender is MenuFlyoutItem item)
         {
             if (item.DataContext is CharacterRenderingOptions o
-                && FontFinder.Fonts.FirstOrDefault(f => f.Variants.Contains(o.Variant)) is CMFontFamily font)
+                && FontFinder.Fonts.FirstOrDefault(f => f.Variants.Contains(o.Face)) is CMFontFamily font)
             {
                 _ = QuickCompareView.AddAsync(o);
             }

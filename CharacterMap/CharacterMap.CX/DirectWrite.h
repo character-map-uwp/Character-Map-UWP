@@ -10,6 +10,9 @@
 #include "DWriteFontFace.h"
 #include "DWriteKnownFontAxisValues.h"
 
+#include "DWriteLigature.h"
+#include "GlyphOutline.h"
+
 using namespace Microsoft::Graphics::Canvas::Text;
 using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
@@ -22,6 +25,7 @@ using namespace CharacterMapCX;
 
 namespace CharacterMapCX
 {
+	[Windows::Foundation::Metadata::WebHostHidden]
 	public ref class DirectWrite sealed
 	{
 	public:
@@ -37,11 +41,34 @@ namespace CharacterMapCX
 		[Windows::Foundation::Metadata::DefaultOverload] // Avoid warnings
 		static String^ GetTagName(UINT32 tag);
 
+		static String^ GetFeatureName(String^ tag);
+
+		[Windows::Foundation::Metadata::DefaultOverload] // Avoid warnings
+		static String^ GetFeatureName(UINT32 tag);
+
 		/// <summary>
 		/// Get a buffer representing an SVG or Bitmap image glyph. SVG glyphs may be compressed.
 		/// </summary>
 		static IBuffer^ GetImageDataBuffer(DWriteFontFace^ fontFace, UINT32 pixelsPerEm, UINT unicodeIndex, GlyphImageFormat format);
 		static IBuffer^ GetGlyphImageDataBuffer(DWriteFontFace^ fontFace, UINT32 pixelsPerEm, UINT16 glyphIndex, GlyphImageFormat format);
+		[Windows::Foundation::Metadata::DefaultOverload]
+		static IRandomAccessStream^ GetGlyphPNGStream(DWriteFontFace^ fontFace, UINT16 glyphIndex, float size, Windows::UI::Color defaultColor, GlyphImageFormat preferredFormat);
+		static IRandomAccessStream^ GetCharacterPNGStream(DWriteFontFace^ fontFace, Platform::String^ text, float size, Windows::UI::Color defaultColor, GlyphImageFormat preferredFormat, Windows::Foundation::Collections::IVectorView<UINT32>^ typographyFeatures);
+		[Windows::Foundation::Metadata::DefaultOverload]
+		static Windows::UI::Xaml::Media::Imaging::WriteableBitmap^ GetGlyphImage(DWriteFontFace^ fontFace, UINT16 glyphIndex, float size, Windows::UI::Color defaultColor, GlyphImageFormat preferredFormat);
+		static Windows::UI::Xaml::Media::Imaging::WriteableBitmap^ GetCharacterImage(DWriteFontFace^ fontFace, Platform::String^ text, float size, Windows::UI::Color defaultColor, GlyphImageFormat preferredFormat, Windows::Foundation::Collections::IVectorView<UINT32>^ typographyFeatures);
+		static DWriteGlyphOutline^ GetGlyphOutline(DWriteFontFace^ fontFace, UINT16 glyphIndex, float unitsPerEm);
+
+		/// <summary>
+		/// Converts a COLRv1 glyph paint tree into a self-contained SVG document string.
+		/// Returns nullptr if the font or glyph does not support COLRv1.
+		/// </summary>
+		static Platform::String^ GetColrV1Svg(DWriteFontFace^ fontFace, UINT16 glyphIndex, Windows::UI::Color defaultColor);
+
+		/// <summary>
+		/// Adjusts the bounds of an SVG string to tightly fit its rendered content using Direct2D SVG.
+		/// </summary>
+		static Platform::String^ FitSvgBounds(Platform::String^ svg, float emSize);
 
 		/// <summary>
 		/// Verifies if a font file actually contains a font(s) usable by the system.
@@ -68,6 +95,18 @@ namespace CharacterMapCX
 
 		static IMapView<UINT32, UINT32>^ GetSupportedTypography(DWriteFontFace^ fontFace);
 
+		static IVectorView<DWriteLigatureFeature^>^ GetLigatures(DWriteFontFace^ fontFace);
+
+		static bool CheckTypographicFeature(
+			DWriteFontFace^ fontFace,
+			Platform::String^ text,
+			DWriteTypographyFeatureName feature);
+
+		static Windows::Foundation::Collections::IVectorView<DWriteTypographyFeatureName>^ GetSupportedTypographicFeatures(
+			DWriteFontFace^ fontFace,
+			Platform::String^ text,
+			Windows::Foundation::Collections::IVectorView<DWriteTypographyFeatureName>^ features);
+
 		static CanvasFontSet^ CreateFontSet(String^ path);
 
 	internal:
@@ -81,6 +120,8 @@ namespace CharacterMapCX
 
 		static IMapView<UINT32, UINT32>^ GetSupportedTypography(ComPtr<IDWriteFontFaceReference> faceRef);
 
+		static IVectorView<DWriteLigatureFeature^>^ GetLigatures(ComPtr<IDWriteFontFaceReference> faceRef);
+
 		//static __inline DWriteFontSet^ GetFonts(ComPtr<IDWriteFontSet3> fontSet);
 
 		static ComPtr<IDWriteFontSet> DirectWrite::CreateIDWriteFontSet(String^ path);
@@ -92,6 +133,8 @@ namespace CharacterMapCX
 		static IVectorView<DWriteFontSet^>^ GetFonts(IVectorView<Uri^>^ uris, ComPtr<IDWriteFactory7> fac);
 
 		static IAsyncOperation<bool>^ SaveFontStreamAsync(ComPtr<IDWriteFontFileStream> fileStream, IOutputStream^ stream);
+
+		static IRandomAccessStream^ GetPNGStream(ComPtr<ID2D1Bitmap1> targetBitmap, UINT targetWidth, UINT targetHeight);
 
 	private:
 		DirectWrite() { };

@@ -268,7 +268,7 @@
         <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
         <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled" />
         <Setter Property="CornerRadius" Value="4" />
-        <Setter Property="IsDefaultShadowEnabled" Value="False" />
+        <Setter Property="IsDefaultShadowEnabled" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="FlyoutPresenter">

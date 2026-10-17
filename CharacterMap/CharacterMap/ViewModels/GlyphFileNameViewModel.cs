@@ -2,8 +2,8 @@
 
 public partial class GlyphFileNameViewModel : ObservableObject
 {
-    private static Character _defaultChar { get; } = new(65);
-    private static Character _defaultChar2 { get; } = new(63);
+    private static Character _defaultChar { get; } = Character.Get(65);
+    private static Character _defaultChar2 { get; } = Character.Get(63);
 
     [ObservableProperty] string _template = ExportOptions.DefaultTemplate;
     [ObservableProperty] string _example;

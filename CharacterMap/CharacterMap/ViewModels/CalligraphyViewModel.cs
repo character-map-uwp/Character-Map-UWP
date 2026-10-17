@@ -20,16 +20,12 @@ public partial class CalligraphyViewModel : ViewModelBase
 
     [ObservableProperty] InkStrokeManager _inkManager = null;
 
-    public CMFontFace Face { get; }
-
     public CharacterRenderingOptions Options { get; }
-
 
     public ObservableCollection<CalligraphyHistoryItem> Histories { get; } = new();
 
     public CalligraphyViewModel(CharacterRenderingOptions options)
     {
-        Face = options.Variant;
         Options = options;
     }
 
@@ -170,7 +166,7 @@ public partial class InkStrokeManager : ObservableObject
 
     private Stack<InkActionBase> _redoStack { get; } = new();
     private Stack<InkActionBase> _undoStack { get; } = new();
-    private HashSet<InkStrokeReference> _strokeSet { get; } = new HashSet<InkStrokeReference>();
+    private HashSet<InkStrokeReference> _strokeSet { get; } = new();
 
     private InkStrokeContainer _container;
 

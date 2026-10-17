@@ -6,6 +6,7 @@
 #include "ColorTextAnalyzer.h"
 #include "GlyphImageFormat.h"
 #include "DWriteFontAxis.h"
+#include "DWriteFontFace.h"
 #include <vector>
 
 using namespace Windows::Foundation;
@@ -15,10 +16,28 @@ using namespace CharacterMapCX;
 
 namespace CharacterMapCX
 {
-	public ref class CanvasTextLayoutAnalysis sealed
+	public ref class DWriteTextLayoutDefinition sealed
 	{
 	public:
-		inline CanvasTextLayoutAnalysis() { }
+		property bool EnableColorFonts;
+		property float FontSize;
+		//property String^ FontFamily;
+		//property Windows::UI::Text::FontStretch FontStretch;
+		//property Windows::UI::Text::FontStyle FontStyle;
+		//property Windows::UI::Text::FontWeight FontWeight;
+		property DWriteTypographyCollection^ Typography;
+
+		property float RequestedWidth;
+		property float RequestedHeight;
+		property String^ Text;
+
+		property DWriteFontFace^ FontFace;
+	};
+
+	public ref class DWriteTextLayoutAnalysis sealed
+	{
+	public:
+		inline DWriteTextLayoutAnalysis() { }
 
 		property bool HasColorGlyphs
 		{
@@ -44,6 +63,9 @@ namespace CharacterMapCX
 		{
 			bool get() { return m_glyphLayerCount > 1; }
 		}
+
+		property bool SupportsColrV0 { bool get() { return m_colrv0; } }
+		property bool SupportsColrV1 { bool get() { return m_colrv1; } }
 
 		/// <summary>
 		/// The number of glyphs that make up this rendered character. For
@@ -71,10 +93,22 @@ namespace CharacterMapCX
 			Array<IVectorView<uint16>^>^ get() { return m_indicies; }
 		}
 
+		property IVectorView<uint16>^ GlyphIndices
+		{
+			IVectorView<uint16>^ get() { return m_glyphIndices; }
+		}
+
+		property IVectorView<int>^ PaletteIndices
+		{
+			IVectorView<int>^ get() { return m_paletteIndices; }
+		}
+
 	internal:
-		CanvasTextLayoutAnalysis(ComPtr<ColorTextAnalyzer> analyzer, ComPtr<IDWriteFontFaceReference> layout);
+		DWriteTextLayoutAnalysis(ComPtr<ColorTextAnalyzer> analyzer, ComPtr<IDWriteFontFaceReference> layout);
 
 	private:
+		bool m_colrv0 = false;
+		bool m_colrv1 = false;
 		bool m_hasColorGlyphs = false;
 		bool m_containsBitmapGlyphs = false;
 		bool m_containsVectorColorGlyphs = false;
@@ -83,5 +117,7 @@ namespace CharacterMapCX
 		IVectorView<GlyphImageFormat>^ m_glyphFormats;
 		Array<Windows::UI::Color>^ m_colors;
 		Array<IVectorView<uint16>^>^ m_indicies;
+		IVectorView<uint16>^ m_glyphIndices;
+		IVectorView<int>^ m_paletteIndices;
 	};
 }

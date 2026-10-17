@@ -20,7 +20,7 @@ namespace CharacterMapCX
 			return ref new DWriteProperties(DWriteFontSource::PerMachine, nullptr, "Segoe UI", "Regular", false);
 		}
 
-		property DWriteFontSimulations Simulations { DWriteFontSimulations get() { return m_simulations; } }
+		property Windows::UI::Xaml::Media::StyleSimulations Simulations { Windows::UI::Xaml::Media::StyleSimulations get() { return m_simulations; } }
 
 		property bool IsSimulated { bool get() { return m_isSimulated; } }
 
@@ -122,8 +122,8 @@ namespace CharacterMapCX
 			m_familyName = familyName;
 			m_faceName = faceName;
 
-			m_simulations = static_cast<DWriteFontSimulations>(font->GetSimulations());
-			m_isSimulated = m_simulations != DWriteFontSimulations::None;
+			m_simulations = ToStyleSimulations(font->GetSimulations());
+			m_isSimulated = m_simulations != Windows::UI::Xaml::Media::StyleSimulations::None;
 		}
 
 		DWriteProperties(DWriteFontSource source, String^ remoteSource, String^ familyName, String^ faceName, bool isColor, bool hasVariations)
@@ -134,6 +134,46 @@ namespace CharacterMapCX
 			m_familyName = familyName;
 			m_faceName = faceName;
 			m_hasVariations = hasVariations;
+		}
+
+		DWriteProperties^ CloneWithSimulations(Windows::UI::Xaml::Media::StyleSimulations sim)
+		{
+			auto p = ref new DWriteProperties();
+			p->m_weight = m_weight;
+			p->m_style = m_style;
+			p->m_stretch = m_stretch;
+			p->m_simulations = sim;
+			p->m_isSimulated = sim != Windows::UI::Xaml::Media::StyleSimulations::None;
+
+			if (sim == Windows::UI::Xaml::Media::StyleSimulations::ItalicSimulation ||
+				sim == Windows::UI::Xaml::Media::StyleSimulations::BoldItalicSimulation)
+			{
+				p->m_style = Windows::UI::Text::FontStyle::Italic;
+			}
+			if (sim == Windows::UI::Xaml::Media::StyleSimulations::BoldSimulation ||
+				sim == Windows::UI::Xaml::Media::StyleSimulations::BoldItalicSimulation)
+			{
+				p->m_weight = Windows::UI::Text::FontWeight{ (std::max)(m_weight.Weight, static_cast<uint16_t>(700)) };
+			}
+
+			p->m_loadedVariations = m_loadedVariations;
+			p->m_loadedRemote = m_loadedRemote;
+			p->m_isRemote = m_isRemote;
+			p->m_hasVariations = m_hasVariations;
+			p->m_isColorFont = m_isColorFont;
+			p->m_isSymbolFont = m_isSymbolFont;
+			p->m_remoteSource = m_remoteSource;
+			p->m_familyName = m_familyName;
+			p->m_faceName = m_faceName;
+			p->m_loadedOutlines = m_loadedOutlines;
+			p->m_hasCFF = m_hasCFF;
+			p->m_hasTTF = m_hasTTF;
+			p->m_hasSVG = m_hasSVG;
+			p->m_hasColorBitmap = m_hasColorBitmap;
+			p->m_hasMonoBitmap = m_hasMonoBitmap;
+			p->m_font = m_font;
+			p->m_source = m_source;
+			return p;
 		}
 
 		bool m_isSimulated = false;
@@ -233,7 +273,7 @@ namespace CharacterMapCX
 		FontWeight m_weight;
 		FontStyle m_style = FontStyle::Normal;
 		FontStretch m_stretch = FontStretch::Normal;
-		DWriteFontSimulations m_simulations = DWriteFontSimulations::None;
+		Windows::UI::Xaml::Media::StyleSimulations m_simulations = Windows::UI::Xaml::Media::StyleSimulations::None;
 
 		bool m_loadedVariations = false;
 		bool m_loadedRemote = false;

@@ -1,4 +1,4 @@
-﻿using SQLite;
+using SQLite;
 
 namespace CharacterMap.Services;
 
@@ -24,14 +24,63 @@ public static class SQLite3Extensions
 
     public static List<UnihanReading> GetUnihanReadings(this SQLiteConnection c, int idx)
     {
-        return c.CreateCommand("SELECT * FROM UnihanReading WHERE Ix = ?", idx)
-                .ReadAsUnihanReadings();
+        SQLiteCommand cmd = c.CreateCommand("SELECT Definition, Readings FROM UnihanReading WHERE Ix = ? LIMIT 1", idx);
+        var stmt = cmd.Prepare();
+        try
+        {
+            if (SQLite3.Step(stmt) == SQLite3.Result.Row)
+            {
+                List<UnihanReading> list = [];
+                string def = SQLite3.ColumnString(stmt, 0);
+                if (!string.IsNullOrEmpty(def))
+                    list.Add(new(idx, UnihanFieldType.Definition, def));
+
+                string readings = SQLite3.ColumnString(stmt, 1);
+                if (!string.IsNullOrEmpty(readings))
+                {
+                    string[] lines = readings.Split('\n');
+                    foreach (string line in lines)
+                    {
+                        int tabIdx = line.IndexOf('\t');
+                        if (tabIdx > 0 && int.TryParse(line.Substring(0, tabIdx), out int typeVal))
+                            list.Add(new(idx, (UnihanFieldType)typeVal, line[(tabIdx + 1)..]));
+                    }
+                }
+                return list;
+            }
+        }
+        finally
+        {
+            stmt.Dispose();
+        }
+
+        return [];
     }
 
-    public static List<UnihanReading> GetUnihanReadingsByDescription(this SQLiteConnection c, string sql, string query)
+    public static List<GlyphDescription> GetUnihanDefinitionsByDescription(this SQLiteConnection c, string sql, string query)
     {
-        return c.CreateCommand(sql, query)
-                .ReadAsUnihanReadings();
+        SQLiteCommand cmd = c.CreateCommand(sql, query);
+        var stmt = cmd.Prepare();
+        try
+        {
+            List<GlyphDescription> list = [];
+            while (SQLite3.Step(stmt) == SQLite3.Result.Row)
+            {
+                int ix = SQLite3.ColumnInt(stmt, 0);
+                string desc = SQLite3.ColumnString(stmt, 1);
+                list.Add(new()
+                {
+                    UnicodeIndex = ix,
+                    UnicodeHex = ix.ToString("X"),
+                    Description = desc
+                });
+            }
+            return list;
+        }
+        finally
+        {
+            stmt.Dispose();
+        }
     }
 
     public static AdobeGlyphListMapping GetGlyphListMapping(this SQLiteConnection c, string name)
@@ -40,22 +89,28 @@ public static class SQLite3Extensions
                 .ReadAsAdobeGlyphListMapping();
     }
 
+    private static readonly object _descLock = new();
+    private static readonly Dictionary<string, SQLitePCL.sqlite3_stmt> _descStatements = [];
+
     public static string GetUnicodeDescription(this SQLiteConnection c, int index, string table = "UnicodeGlyphData")
     {
-        var cmd = c.CreateCommand($"SELECT Description FROM \"{table}\" WHERE Ix = ?", index);
-        var stmt = cmd.Prepare();
-
-        try
+        lock (_descLock)
         {
+            if (!_descStatements.TryGetValue(table, out SQLitePCL.sqlite3_stmt stmt))
+            {
+                SQLiteCommand cmd = c.CreateCommand($"SELECT Description FROM \"{table}\" WHERE Ix = ?", 0);
+                stmt = cmd.Prepare();
+                _descStatements[table] = stmt;
+            }
+
+            SQLite3.Reset(stmt);
+            SQLite3.BindInt(stmt, 1, index);
+
             if (SQLite3.Step(stmt) == SQLite3.Result.Row)
                 return SQLite3.ColumnString(stmt, 0);
-        }
-        finally
-        {
-            stmt.Dispose();
-        }
 
-        return null;
+            return null;
+        }
     }
 
 
@@ -84,7 +139,7 @@ public static class SQLite3Extensions
     [SQLReader<GlyphDescription>("UnicodeGlyphData")]
     [SQLReaderMapping<int>(nameof(GlyphDescription.UnicodeIndex))]
     [SQLReaderMapping<string>(nameof(GlyphDescription.UnicodeHex))]
-    [SQLReaderMapping<string>(nameof(GlyphDescription.Description), typeof(string), 3)]
+    [SQLReaderMapping<string>(nameof(GlyphDescription.Description))]
     private class Shim1 : Object { }
 
     [SQLReader<GlyphDescription>(nameof(GlyphDescription))]
@@ -92,12 +147,6 @@ public static class SQLite3Extensions
     [SQLReaderMapping<string>(nameof(GlyphDescription.UnicodeHex))]
     [SQLReaderMapping<string>(nameof(GlyphDescription.Description))]
     private class Shim2 : Object { }
-
-    [SQLReader<UnihanReading>(nameof(UnihanReading))]
-    [SQLReaderMapping<int>(nameof(UnihanReading.Index))]
-    [SQLReaderMapping<UnihanFieldType>(nameof(UnihanReading.Type), typeof(int))]
-    [SQLReaderMapping<string>(nameof(UnihanReading.Description))]
-    private class Shim3 : Object { }
 
     [SQLReader<AdobeGlyphListMapping>(nameof(AdobeGlyphListMapping), true)]
     [SQLReaderMapping<int>(nameof(AdobeGlyphListMapping.UnicodeIndex))]

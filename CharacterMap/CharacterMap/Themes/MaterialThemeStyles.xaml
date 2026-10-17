@@ -43,6 +43,7 @@
                 <ResourceDictionary>
                     <Color x:Key="SolidBackgroundFillColorBase">#202020</Color>
                     <Color x:Key="MaterialSelectedColor">#c0cce3</Color>
+                    <SolidColorBrush x:Key="DefaultWindowBackgroundBrush" Color="{StaticResource SolidBackgroundFillColorBase}" />
 
                     <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="#1b1b1b" />
                     <SolidColorBrush x:Key="DefaultHostBrush" Color="#1b1b1b" />
@@ -127,7 +128,7 @@
                     <Color x:Key="SolidBackgroundFillColorBase">#f1f4f8</Color>
                     <Color x:Key="MaterialSelectedColor">#274ea2</Color>
 
-
+                    <SolidColorBrush x:Key="DefaultWindowBackgroundBrush" Color="{StaticResource SolidBackgroundFillColorBase}" />
                     <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="{StaticResource SolidBackgroundFillColorBase}" />
                     <SolidColorBrush x:Key="DefaultHostBrush" Color="{ThemeResource SolidBackgroundFillColorBase}" />
                     <StaticResource x:Key="AltHostBrush" ResourceKey="CardBackgroundFillColorDefaultBrush" />

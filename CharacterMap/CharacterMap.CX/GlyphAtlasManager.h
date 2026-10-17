@@ -1,0 +1,114 @@
+#pragma once
+
+#include "CompositionDeviceManager.h"
+#include <tuple>
+#include <unordered_map>
+#include <vector>
+#include <mutex>
+#include <wrl.h>
+
+namespace CharacterMapCX
+{
+    struct AtlasSlot
+    {
+        Windows::UI::Composition::CompositionDrawingSurface^ Surface;
+        LONG X;
+        LONG Y;
+        LONG Width;
+        LONG Height;
+        bool IsValid;
+    };
+
+    struct AtlasKey
+    {
+        // Raw pointer avoids AddRef on IDWriteFontFace, allowing DirectWrite
+        // to immediately release its mapped tables and caches when a font is released.
+        // Ghost entries on address reuse are prevented by EvictFontFace() called during font release.
+        IDWriteFontFace* FontFace;
+        UINT16 GlyphIndex;
+        UINT32 FontSizeInt;      // (UINT32)(FontSize * 100) to avoid float precision issues
+        UINT32 Simulations;
+        bool IsColor;
+        UINT32 TypographyKey;
+        UINT32 ScaleXInt;        // (UINT32)(scaleX * 1000)
+        UINT32 ScaleYInt;        // (UINT32)(scaleY * 1000)
+
+        bool operator==(const AtlasKey& other) const
+        {
+            return FontFace == other.FontFace
+                && GlyphIndex == other.GlyphIndex
+                && FontSizeInt == other.FontSizeInt
+                && Simulations == other.Simulations
+                && IsColor == other.IsColor
+                && TypographyKey == other.TypographyKey
+                && ScaleXInt == other.ScaleXInt
+                && ScaleYInt == other.ScaleYInt;
+        }
+    };
+
+    struct AtlasKeyHasher
+    {
+        std::size_t operator()(const AtlasKey& k) const
+        {
+            std::size_t h1 = std::hash<void*>{}(static_cast<void*>(k.FontFace));
+            std::size_t h2 = std::hash<UINT16>{}(k.GlyphIndex);
+            std::size_t h3 = std::hash<UINT32>{}(k.FontSizeInt);
+            std::size_t h4 = std::hash<UINT32>{}(k.Simulations);
+            std::size_t h5 = std::hash<bool>{}(k.IsColor);
+            std::size_t h6 = std::hash<UINT32>{}(k.TypographyKey);
+            std::size_t h7 = std::hash<UINT32>{}(k.ScaleXInt);
+            std::size_t h8 = std::hash<UINT32>{}(k.ScaleYInt);
+            return h1 ^ (h2 << 1) ^ (h3 << 2) ^ (h4 << 3) ^ (h5 << 4) ^ (h6 << 5) ^ (h7 << 6) ^ (h8 << 7);
+        }
+    };
+
+    class GlyphAtlas
+    {
+    public:
+        GlyphAtlas(Windows::UI::Composition::CompositionGraphicsDevice^ device,
+                   Windows::Graphics::DirectX::DirectXPixelFormat format,
+                   LONG width = 2048, LONG height = 2048);
+
+        bool AllocateSlot(LONG slotWidth, LONG slotHeight, LONG& outX, LONG& outY);
+        Windows::UI::Composition::CompositionDrawingSurface^ GetSurface() const { return m_surface; }
+        void Reset();
+        void Clear();
+
+    private:
+        Windows::UI::Composition::CompositionDrawingSurface^ m_surface;
+        LONG m_width;
+        LONG m_height;
+        LONG m_currentX;
+        LONG m_currentY;
+        LONG m_rowHeight;
+    };
+
+    class GlyphAtlasManager
+    {
+    public:
+        static AtlasSlot GetOrCreateGlyphSlot(
+            Windows::UI::Composition::Compositor^ compositor,
+            IDWriteFontFace* rawFace,
+            UINT16 glyphIndex,
+            FLOAT fontSize,
+            Windows::UI::Xaml::Media::StyleSimulations simulations,
+            bool isColor,
+            float padLeft, float padTop, float baseline,
+            FLOAT glyphAdvance,
+            DWRITE_GLYPH_OFFSET glyphOffset,
+            Windows::UI::Xaml::Media::Brush^ foreground,
+            LONG requiredWidth, LONG requiredHeight,
+            float scaleX = 1.0f, float scaleY = 1.0f,
+            UINT32 typographyKey = 0,
+            bool isRetry = false);
+
+        static void EvictFontFace(IDWriteFontFace* rawFace);
+        static void Clear();
+
+    private:
+        static std::mutex s_atlasMutex;
+        static std::unordered_map<AtlasKey, AtlasSlot, AtlasKeyHasher> s_slotCache;
+        static std::vector<std::unique_ptr<GlyphAtlas>> s_monochromeAtlases;
+        static std::vector<std::unique_ptr<GlyphAtlas>> s_colorAtlases;
+    };
+}

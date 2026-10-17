@@ -4,7 +4,7 @@
 #include <d2d1_3.h>
 #include <dwrite_3.h>
 #include "ColorTextAnalyzer.h"
-#include "CanvasTextLayoutAnalysis.h"
+#include "DWriteTextLayoutAnalysis.h"
 #include "DWriteFontSource.h"
 #include "DWriteProperties.h"
 #include "DWriteFontFace.h"
@@ -38,12 +38,16 @@ namespace CharacterMapCX
 
         NativeInterop(CanvasDevice^ device);
 
-		CanvasTextLayoutAnalysis^ AnalyzeCharacterLayout(CanvasTextLayout^ layout);
-		CanvasTextLayoutAnalysis^ AnalyzeGlyphLayout(DWriteFontFace^ fontFace, UINT16 glyphIndex);
+		DWriteTextLayoutAnalysis^ AnalyzeCharacterLayout(DWriteTextLayoutDefinition^ layoutDef);
+		DWriteTextLayoutAnalysis^ AnalyzeGlyphLayout(DWriteFontFace^ fontFace, UINT16 glyphIndex);
+		DWriteTextLayoutAnalysis^ AnalyzeCharacter(DWriteFontFace^ fontFace, Platform::String^ text, DWriteTypographyFeatureName feature);
 
 		IVectorView<PathData^>^ GetPathDatas(DWriteFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies);
 
 		Platform::String^ GetPathData(DWriteFontFace^ fontFace, UINT16 glyphIndicie);
+
+		PathData^ GetGlyphPath(DWriteFontFace^ fontFace, UINT16 glyphIndex, float fontSize);
+		PathData^ GetTextPath(DWriteFontFace^ fontFace, Platform::String^ text, float fontSize, DWriteTypographyFeatureName feature);
 
 		/// <summary>
 		/// Returns an SVG-Path syntax compatible representation of the Canvas Text Geometry.
@@ -54,7 +58,10 @@ namespace CharacterMapCX
 
 		DWriteFallbackFont^ CreateEmptyFallback();
 
-		__inline DWriteFontSet^ GetFonts(StorageFile^ files);
+		[Windows::Foundation::Metadata::DefaultOverload]
+		DWriteFontSet^ GetFonts(StorageFile^ files);
+
+		DWriteFontSet^ GetFonts(Platform::String^ filePath);
 
 		IVectorView<DWriteFontSet^>^ GetFonts(IVectorView<StorageFile^>^ files);
 
@@ -74,7 +81,7 @@ namespace CharacterMapCX
 		INT32 GetTypographicGlyph(
 			DWriteFontFace^ fontFace,
 			Platform::String^ text,
-			CanvasTypographyFeatureName feature);
+			DWriteTypographyFeatureName feature);
 
 	internal:
 
