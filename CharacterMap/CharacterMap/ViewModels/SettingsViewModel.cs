@@ -140,7 +140,7 @@ public partial class SettingsViewModel : ViewModelBase
                 - All variable font axis now render correctly
                 - Updated to Unicode 18.0 dataset
                 """),
-            new("2026.5.1.0 (September 2026)", // September 2026
+            new("2026.6.1.0 (September 2026)", // September 2026
                 """
                 - Added expandable tab-bar preview thumbnails for Windows 11 theme
                 - Typographic variants of a Glyph will now attempt to copy as text if the Glyph of the typographic variant also exists as a mapped Character

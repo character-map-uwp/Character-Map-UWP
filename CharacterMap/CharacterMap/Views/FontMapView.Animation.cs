@@ -144,7 +144,7 @@ public partial class FontMapView
         if (TypeRampList.ItemsPanelRoot is null)
             TypeRampList.Measure(MainUIGrid.DesiredSize);
 
-        var items = TypeRampList.ItemsPanelRoot.Children.OfType<FrameworkElement>();
+        var items = TypeRampList.ItemsPanelRoot?.Children.OfType<FrameworkElement>() ?? [];
 
         if (VariableAxis is not null && VariableAxis.ItemsPanelRoot is not null)
             items = items.Concat(VariableAxis.ItemsPanelRoot.Children.OfType<FrameworkElement>());

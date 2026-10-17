@@ -226,9 +226,9 @@ public partial class CharacterGridView : GridView
                             // No idea why.
                              TextBlock t = new();
                              t.TextWrapping = TextWrapping.Wrap;
-                             string txt = data?.FaceAnalysis.Face is not null
+                             string txt = data?.FaceAnalysis?.Face is not null
                                  ? data.FaceAnalysis.GetDescription(data.Char, allowUnihan: true)
-                                 : string.Empty;
+                                 : null;
 
                             //string formatLabel = FlyoutHelper.GetGlyphFormatLabel(data.Variant, data.Char);
                             //string mainText = txt ?? data.Char.UnicodeString;

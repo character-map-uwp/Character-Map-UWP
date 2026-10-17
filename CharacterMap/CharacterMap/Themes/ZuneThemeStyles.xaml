@@ -149,7 +149,6 @@
     <SolidColorBrush x:Key="SelectedPointerOverBackgroundBrush" Color="#E7E8E8" />
     <SolidColorBrush x:Key="ControlGlyphBrush" Color="#555555" />
     <SolidColorBrush x:Key="ControlContentPointerOverForeground" Color="#B1B4B6" />
-    <SolidColorBrush x:Key="InfoBarBackgroundBrush" Color="Transparent" />
 
     <LinearGradientBrush x:Key="ComboBoxBackground" StartPoint="0.5,0" EndPoint="0.5,1">
         <GradientStop Offset="1" Color="#FFD8D8D8" />
@@ -182,6 +181,7 @@
         <GradientStop Offset="1" Color="#EC1293" />
     </LinearGradientBrush>
 
+    <StaticResource x:Key="InfoBarBackgroundBrush" ResourceKey="CardBackgroundBrush" />
     <StaticResource x:Key="RepeatButtonBackgroundPointerOver" ResourceKey="ButtonPointerOverBackgroundBrush" />
     <StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="ComboBoxBorderBrush" />
     <StaticResource x:Key="AppMenuItemBackgroundBrush" ResourceKey="ButtonBackgroundBrush" />
@@ -2451,7 +2451,7 @@
         <Setter Property="ZoomMode" Value="Disabled" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="VerticalContentAlignment" Value="Top" />
-        <Setter Property="VerticalScrollBarVisibility" Value="Visible" />
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="BorderBrush" Value="Transparent" />
@@ -6203,6 +6203,7 @@
         <Setter Property="controls:UXRadioButtons.RowSpacing" Value="8" />
         <Setter Property="BorderBrush" Value="{ThemeResource SurfaceStrokeColorDefaultBrush}" />
         <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Background" Value="{ThemeResource CardBackgroundBrush}" />
         <Setter Property="CornerRadius" Value="4" />
         <Setter Property="controls:UXRadioButtons.LayoutTemplate">
             <Setter.Value>
@@ -6222,6 +6223,7 @@
 
                         <Border
                             x:Name="BorderRoot"
+                            Canvas.ZIndex="-2"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
@@ -6271,6 +6273,13 @@
         <Setter Property="Background" Value="{ThemeResource ComboBoxBackground}" />
         <Setter Property="BorderBrush" Value="{ThemeResource ComboBoxBorderBrush}" />
         <Setter Property="CornerRadius" Value="0" />
+    </Style>
+
+    <Style TargetType="controls:InfoBar">
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{ThemeResource TextForegroundBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{ThemeResource ComboBoxBorderBrush}" />
     </Style>
 
 
