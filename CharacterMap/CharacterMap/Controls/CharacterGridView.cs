@@ -47,11 +47,13 @@ internal class CharacterGridViewTemplateSettings
     public DWriteFontFace FontFace { get; set; }
     public bool ShowColorGlyphs { get; set; }
     public double Size { get; set; } = 24;
+    public double Margin { get; set; } = 0;
     public bool EnableReposition { get; set; }
     public GlyphAnnotation Annotation { get; set; }
 }
 
 [DependencyProperty<double>("ItemSize")]
+[DependencyProperty<double>("ItemMargin")]
 [DependencyProperty<bool>("ShowColorGlyphs")]
 [DependencyProperty<bool>("EnableResizeAnimation")]
 [DependencyProperty<FontFamily>("ItemFontFamily")]
@@ -74,7 +76,17 @@ public partial class CharacterGridView : GridView
 
     #region Dependency Properties
 
-    partial void OnItemSizeChanged(double oldValue, double n) => _templateSettings.Size = n;
+    partial void OnItemSizeChanged(double oldValue, double n)
+    {
+        _templateSettings.Size = n;
+        if (ItemsPanelRoot is ItemsWrapGrid g)
+        {
+            g.ItemWidth = n;
+            g.ItemHeight = n;
+        }
+    }
+
+    partial void OnItemMarginChanged(double o, double n) => _templateSettings.Margin = n;
 
     partial void OnItemFontFamilyChanged(FontFamily oldValue, FontFamily n) => _templateSettings.FontFamily = n;
 
@@ -126,7 +138,6 @@ public partial class CharacterGridView : GridView
         this.ChoosingItemContainer += OnChoosingItemContainer;
         this.Loaded += ExtendedListView_Loaded;
         this.Unloaded += ExtendedListView_Unloaded;
-
         this.RegisterPropertyChangedCallback(ForegroundProperty, OnForegroundChanged);
     }
 
@@ -143,6 +154,12 @@ public partial class CharacterGridView : GridView
     {
         if (IsSelectionBindingEnabled)
             OnAttached();
+
+        if (this.ItemsPanelRoot is ItemsWrapGrid g)
+        {
+            g.ItemHeight = ItemSize;
+            g.ItemWidth = ItemSize;
+        }
     }
 
     private void ExtendedListView_Unloaded(object sender, RoutedEventArgs e)
@@ -158,7 +175,7 @@ public partial class CharacterGridView : GridView
         {
             // We need to decide whether to render with XAML TextBlock or our FontGlyphs
             // control. There are some memory issues with FontGlyphs I haven't been able
-            // to figure out yet, so we prefer TextBlock where we can for now.
+            // to figure out, so we prefer TextBlock where we can for now.
             //
             // We need to use FontGlyphs if the font face:
             //   - uses ColrV1 glyphs
@@ -285,7 +302,7 @@ public partial class CharacterGridView : GridView
                                         Properties.SetMaterialCornerStyle(item, MaterialCornerStyle.Default);
 
                                     panel.Children.Add(item);
-                                    UpdateContainer(item, data.Char);
+                                    UpdateContainer(item, data.Char, true);
                                 }
 
                                 // Add everything to the tooltip
@@ -329,12 +346,6 @@ public partial class CharacterGridView : GridView
         {
             ItemDoubleTapped?.Invoke(sender, item.DataContext as Character);
         }
-    }
-
-    private IEnumerable<GridViewItem> GetActiveContainers()
-    {
-        // Recycled containers are at -10000 usually
-        return this.ItemsPanelRoot?.Children.OfType<GridViewItem>();//.Where(c => c.ActualOffset.X >= -1000);
     }
 
 
@@ -493,7 +504,7 @@ public partial class CharacterGridView : GridView
 
     public void UpdateFontFace()
     {
-        if (this.GetActiveContainers() is not { } containers)
+        if (this.GetActiveContainers<GridViewItem>() is not { } containers)
             return;
 
         foreach (var c in containers)
@@ -504,7 +515,7 @@ public partial class CharacterGridView : GridView
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    void UpdateContainer(UIElement container, Character c)
+    void UpdateContainer(UIElement container, Character c, bool setSize = false)
     {
         // Perf considerations:
         // 1 - Batch rendering updates by suspending rendering until all properties are set
@@ -525,9 +536,10 @@ public partial class CharacterGridView : GridView
 
         XamlDirectWrapper go = new(container, _xamlDirect);
 
-        go.SetObject(XamlPropertyIndex.FrameworkElement_Tag, c)
-          .SetWidth(_templateSettings.Size)
-          .SetHeight(_templateSettings.Size);
+        go.SetObject(XamlPropertyIndex.FrameworkElement_Tag, c);
+        if (setSize)
+          go.SetWidth(_templateSettings.Size - _templateSettings.Margin)
+            .SetHeight(_templateSettings.Size - _templateSettings.Margin);
 
         IXamlDirectObject cld = _xamlDirect.GetXamlDirectObjectProperty(go.Object, XamlPropertyIndex.Panel_Children);
 #if DX
@@ -631,11 +643,9 @@ public partial class CharacterGridView : GridView
         TypographySetter.SetTypography(o, f, xamlDirect);
     }
 
-
-
     private void UpdateForeground(Brush brush)
     {
-        if (this.GetActiveContainers() is not { } items || brush is null)
+        if (this.GetActiveContainers<GridViewItem>() is not { } items || brush is null)
             return;
 
         foreach (var item in items)
@@ -677,7 +687,7 @@ public partial class CharacterGridView : GridView
         if (ItemsSource == null || ItemsPanelRoot == null)
             return;
 
-        foreach (GridViewItem item in ItemsPanelRoot.Children.OfType<GridViewItem>())
+        foreach (GridViewItem item in this.GetActiveContainers<GridViewItem>())
         {
 #if DX
 {
@@ -718,7 +728,7 @@ public partial class CharacterGridView : GridView
         if (ItemsSource == null || ItemsPanelRoot == null)
             return;
 
-        foreach (GridViewItem item in ItemsPanelRoot.Children.OfType<GridViewItem>())
+        foreach (GridViewItem item in this.GetActiveContainers<GridViewItem>())
         {
             if (_xamlDirect.GetXamlDirectObject(item.ContentTemplateRoot) is IXamlDirectObject root)
             {
@@ -746,18 +756,14 @@ public partial class CharacterGridView : GridView
     public void UpdateSize(double value)
     {
         ItemSize = value;
+
         if (this.Items.Count == 0 || ItemsPanelRoot == null)
             return;
 
-        foreach (GridViewItem item in ItemsPanelRoot.Children.OfType<GridViewItem>())
+        foreach (GridViewItem item in this.GetActiveContainers<GridViewItem>())
         {
-            if (_xamlDirect.GetWrapper((Panel)item.ContentTemplateRoot) is { } wrapper)
-            {
-                wrapper.SetWidth(value)
-                       .SetHeight(value)
-                       .GetChild(0)
-                           .SetFontSize(value / 2d);
-            }
+            if (item.ContentTemplateRoot is Panel { Children: { Count: > 0 } c })
+                c[0].SetFontSize(value / 2d);
         }
     }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using CharacterMapCX.Controls;
+using Microsoft.UI.Xaml.Controls;
 using SQLite;
 using System.Collections;
 using System.Diagnostics.Contracts;
@@ -22,6 +23,22 @@ public static class Extensions
     {
         // Recycled containers are at -10000 usually
         return g.ItemsPanelRoot?.Children.OfType<T>().Where(c => c.ActualOffset.X >= -1000);
+    }
+
+    public static void SetFontSize(this DependencyObject f, double size)
+    {
+        if (f is TextBlock t)
+            t.FontSize = size;
+        else if (f is FontGlyphs g)
+            g.FontSize = size;
+        else if (f is Control c)
+            c.FontSize = size;
+        else if (f is RichTextBlock r)
+            r.FontSize = size;
+        else if (f is TextElement te)
+            te.FontSize = size;
+        else if (f is Glyphs x)
+            x.FontRenderingEmSize = size;
     }
 
     public static WeakReferenceMessenger GetMessenger(this Window window)

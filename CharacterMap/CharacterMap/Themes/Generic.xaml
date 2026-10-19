@@ -891,6 +891,7 @@
                             ItemFaceAnalysis="{Binding Options.FaceAnalysis, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                             ItemFontFace="{Binding Options.FontFace, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                             ItemFontFamily="{Binding Options.Face.Source, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                            ItemMargin="4"
                             ItemSize="40"
                             ItemTypography="{Binding Options.DXTypography, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                             ItemsSource="{Binding Options.Face.Characters, RelativeSource={RelativeSource Mode=TemplatedParent}}"

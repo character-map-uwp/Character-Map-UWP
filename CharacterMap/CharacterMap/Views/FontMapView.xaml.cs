@@ -302,13 +302,15 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                         "PRE-TRIM:" + (ViewModel.SelectedFont?.Font?.Name ?? "?"));
 #endif
 
-                    _ = Task.Run(() =>
+                    if (e.PropertyName == nameof(ViewModel.SelectedFace))
                     {
-                        GC.Collect(2, GCCollectionMode.Forced, blocking: true, compacting: true);
-                        GC.WaitForPendingFinalizers();
-                        GC.Collect(2, GCCollectionMode.Forced, blocking: true, compacting: true);
+                        _ = Task.Run(() =>
+                        {
+                            GC.Collect(2, GCCollectionMode.Forced, blocking: true, compacting: true);
+                            GC.WaitForPendingFinalizers();
+                            GC.Collect(2, GCCollectionMode.Forced, blocking: true, compacting: true);
 
-                        CompositionDeviceManager.TrimWorkingSet();
+                            CompositionDeviceManager.TrimWorkingSet();
 
 #if DIAGNOSTIC
                         this.Enqueue(() =>
@@ -318,7 +320,9 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                         });
 #endif
 
-                    });
+                        });
+                    }
+                        
                 });
                 break;
             case nameof(ViewModel.SelectedTypography):

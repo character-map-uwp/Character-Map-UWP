@@ -304,6 +304,8 @@
         <Setter Property="h:FluentAnimation.PointerOver" Value="TemplateContent" />
         <Setter Property="h:FluentAnimation.PointerOverOffset" Value="-3" />
         <Setter Property="FocusVisualMargin" Value="-2" />
+        <Setter Property="MinWidth" Value="12" />
+        <Setter Property="MinHeight" Value="12" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="SelectorItem">
@@ -347,11 +349,11 @@
                                 </VisualState>
 
                                 <VisualState x:Name="Selected">
-                                    <!--<VisualState.Setters>
-                                        <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource SystemControlHighlightAccentBrush}" />
                                         <Setter Target="ContentPresenter.BorderThickness" Value="1" />
                                     </VisualState.Setters>
-                                    <Storyboard>
+                                    <!--<Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
@@ -360,7 +362,7 @@
 
                                 <VisualState x:Name="PointerOverSelected">
                                     <VisualState.Setters>
-                                        <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                                        <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource SystemControlHighlightAccentBrush}" />
                                         <Setter Target="ContentPresenter.BorderThickness" Value="1" />
                                     </VisualState.Setters>
                                     <Storyboard>
@@ -372,7 +374,7 @@
 
                                 <VisualState x:Name="PressedSelected">
                                     <VisualState.Setters>
-                                        <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                                        <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource SystemControlHighlightAccentBrush}" />
                                         <Setter Target="ContentPresenter.BorderThickness" Value="1" />
                                     </VisualState.Setters>
                                     <Storyboard>
@@ -399,8 +401,8 @@
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Margin" Value="0,0,4,4" />
-        <Setter Property="MinWidth" Value="{ThemeResource GridViewItemMinWidth}" />
-        <Setter Property="MinHeight" Value="{ThemeResource GridViewItemMinHeight}" />
+        <Setter Property="MinWidth" Value="20" />
+        <Setter Property="MinHeight" Value="20" />
         <Setter Property="AllowDrop" Value="False" />
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
         <Setter Property="CornerRadius" Value="4" />
