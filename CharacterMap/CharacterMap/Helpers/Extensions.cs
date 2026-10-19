@@ -7,6 +7,7 @@ using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
@@ -17,6 +18,12 @@ namespace CharacterMap.Helpers;
 
 public static class Extensions
 {
+    public static IEnumerable<T> GetActiveContainers<T>(this ListViewBase g) where T : SelectorItem
+    {
+        // Recycled containers are at -10000 usually
+        return g.ItemsPanelRoot?.Children.OfType<T>().Where(c => c.ActualOffset.X >= -1000);
+    }
+
     public static WeakReferenceMessenger GetMessenger(this Window window)
     {
         return GetMessenger(window.CoreWindow);

@@ -367,26 +367,32 @@ public partial class FontMapViewModel : ViewModelBase
         OnPropertyChanged(nameof(SelectedTypography)); // Required.
     }
 
-    internal void UpdateDevValues()
+    public void UpdateRenderingOptions()
     {
-        if (SelectedFace is null || SelectedChar is null)
+        if (SelectedFace is null || SelectedChar is null || SelectedFaceAnalysis is null)
             return;
-
-        DevProviderType t = SelectedProvider?.Type ?? Settings.SelectedDevProvider;
 
         RenderingOptions = new CharacterRenderingOptions(
             SelectedFace,
             [SelectedCharTypography],
-            64,
+            Settings.GridSize / 2f,
             SelectedChar.Analysis,
             SelectedFaceAnalysis.VariationAxis)
         {
             ActiveFontFace = SelectedFaceAnalysis.ActiveFace
         };
+    }
 
+    internal void UpdateDevValues()
+    {
+        if (SelectedFace is null || SelectedChar is null)
+            return;
+
+        UpdateRenderingOptions();
         UpdateRampOptions();
 
-        Providers = RenderingOptions.GetDevProviders(SelectedChar.Char);
+        Providers = (RenderingOptions with { FontSize= 64 }).GetDevProviders(SelectedChar.Char);
+        DevProviderType t = SelectedProvider?.Type ?? Settings.SelectedDevProvider;
         SetDev(t);
 
         XamlPath = $"{SelectedFace.FileName}#{SelectedFace.FamilyName}";

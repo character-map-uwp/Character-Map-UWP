@@ -21,6 +21,7 @@ public static class XamlDirectExtensions
 
         public XamlDirectWrapper GetWrapperForChild(Windows.UI.Xaml.Controls.Panel element, uint index)
         {
+            Debug.Assert(element.Children.Count > index);
             return new XamlDirectWrapper(element.Children[(int)index], d);
         }
 

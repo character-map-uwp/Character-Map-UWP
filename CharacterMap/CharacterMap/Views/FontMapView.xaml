@@ -1593,6 +1593,7 @@
                     x:Name="GlyphRepeater"
                     Padding="12 0 4 70"
                     core:Properties.Double="{x:Bind ViewModel.Settings.GridSize, Mode=OneWay}"
+                    views:FontMapView.GlyphRenderingOptions="{x:Bind ViewModel.RenderingOptions, TargetNullValue={x:Null}, FallbackValue={x:Null}, Mode=OneWay}"
                     ContainerContentChanging="GlyphGrid_ContainerContentChanging"
                     ContextRequested="Grid_ContextRequested"
                     EnableRepositionAnimations="{x:Bind ViewModel.AllowExpensiveAnimation, Mode=OneWay}"
@@ -1600,6 +1601,7 @@
                     SelectionChanged="GlyphRepeater_SelectionChanged"
                     SelectionMode="Single"
                     ShowsScrollingPlaceholders="False"
+                    Tag="{x:Bind ViewRoot}"
                     Transform3D="{StaticResource Perspective}">
                     <ListViewBase.ItemContainerStyle>
                         <Style BasedOn="{StaticResource SmallCardGridViewItem}" TargetType="controls:ExtendedGridViewItem">

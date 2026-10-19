@@ -38,6 +38,7 @@ public class VariantTemplateSelector : DataTemplateSelector
 [DependencyProperty<bool>("HideTitle")]
 [DependencyProperty<FontItem>("Font")]
 [DependencyProperty<GridLength>("BottomHeight")]
+[AttachedProperty<CharacterRenderingOptions>("GlyphRenderingOptions")]
 public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter, IPopoverPresenter, IWindowContent
 {
     private BrushTransition t = new() { Duration = TimeSpan.FromSeconds(0.115) };
@@ -392,6 +393,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                     CharGrid.ItemAnnotation = ViewModel.Settings.GlyphAnnotation;
                     break;
                 case nameof(AppSettings.GridSize):
+                    ViewModel.UpdateRenderingOptions();
                     UpdateDisplay();
                     break;
                 case nameof(AppSettings.UseInstantSearch):
@@ -1101,36 +1103,6 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         }
     }
 
-    private void GlyphGrid_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-    {
-        if (!args.InRecycleQueue && args.ItemContainer is not null)
-        {
-            CharGrid_ContainerContentChanging(sender, args);
-
-            // x:Bind & Binding were causing memory issues. Handle it manually for now.
-            if (args.ItemContainer.ContentTemplateRoot is Grid g && args.Item is UInt32 item)
-            {
-                var size = ViewModel.Settings.GridSize;
-
-                g.Height = size;
-                g.Width = size;
-                g.Tag = item;
-
-                if (g.Children[0] is FontGlyphs f)
-                {
-                    f.FontFace = ViewModel.SelectedFaceAnalysis.ActiveFace;
-                    f.FontSize = size / 2d;
-                    f.IsColorFontEnabled = ViewModel.ShowColorGlyphs;
-                    f.StyleSimulations = ViewModel.SelectedFaceAnalysis.StyleSimulation;
-                    f.Indices = item.ToString();
-                }
-
-                if (g.Children[1] is TextBlock t)
-                    t.Text = item.ToString();
-            }
-        }
-    }
-
     private void Grid_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
     {
         args.Handled = true;
@@ -1607,7 +1579,6 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
 
 
-
     //------------------------------------------------------
     //
     //  Glyph Map
@@ -1628,6 +1599,61 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 AnimateSelectionFromGlyph();
             });
             UpdateColrSelector();
+        }
+    }
+
+    private void GlyphGrid_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+    {
+        if (!args.InRecycleQueue && args.ItemContainer is not null)
+        {
+            CharGrid_ContainerContentChanging(sender, args);
+
+            // x:Bind & Binding were causing memory issues. Handle it manually for now.
+            if (args.ItemContainer.ContentTemplateRoot is Grid g && args.Item is UInt32 item)
+                SetGlyphContainer(
+                    ViewModel, 
+                    g, 
+                    item, 
+                    ViewModel.RenderingOptions);
+        }
+    }
+
+    static void SetGlyphContainer(FontMapViewModel viewModel, Grid g, UInt32 item, CharacterRenderingOptions options)
+    {
+        g.Height = viewModel.Settings.GridSize;
+        g.Width = viewModel.Settings.GridSize;
+        g.Tag = item;
+
+        if (g.Children[0] is FontGlyphs f)
+        {
+            f.FontFace = options.ActiveFontFace;
+            f.FontSize = options.FontSize;
+            f.IsColorFontEnabled = options.IsColorRenderingEnabled;
+            f.StyleSimulations = options.ActiveFontFace.Properties.Simulations;
+            f.Indices = item.ToString();
+        }
+
+        if (g.Children[1] is TextBlock t)
+            t.Text = item.ToString();
+    }
+
+    Debouncer _glyphDebouncer = new (250);
+
+    static partial void OnGlyphRenderingOptionsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is ExtendedGridView gv
+            && e.NewValue is CharacterRenderingOptions o
+            && gv.Tag is FontMapView view)
+        {
+            view._glyphDebouncer.Debounce(() =>
+            {
+                if (gv.GetActiveContainers<ExtendedGridViewItem>() is { } containers)
+                {
+                    foreach (var c in containers)
+                        if (c.ContentTemplateRoot is Grid g && c.Content is UInt32 item)
+                            SetGlyphContainer(view.ViewModel, g, item, o);
+                }
+            });
         }
     }
 
