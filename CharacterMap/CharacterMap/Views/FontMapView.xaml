@@ -3055,6 +3055,10 @@
                         <Setter Target="SearchBox.Visibility" Value="Collapsed" />
                         <Setter Target="CharacterFilterButton.Visibility" Value="Collapsed" />
 
+                        <!--  Popup menu options  -->
+                        <Setter Target="IncreaseSizeButton.IsEnabled" Value="False" />
+                        <Setter Target="DecreaseSizeButton.IsEnabled" Value="False" />
+
                         <!--  Don't disable this button, breaks the binding  -->
                         <Setter Target="ToggleCopyPaneButton.IsHitTestVisible" Value="False" />
                         <Setter Target="ToggleCopyPaneButton.Opacity" Value="0.4" />

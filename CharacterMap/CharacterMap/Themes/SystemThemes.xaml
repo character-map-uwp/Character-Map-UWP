@@ -139,6 +139,8 @@
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="Margin" Value="0,0,4,4" />
         <Setter Property="AllowDrop" Value="False" />
+        <Setter Property="MinHeight" Value="12" />
+        <Setter Property="MinWidth" Value="12" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="FocusVisualMargin" Value="-2" />
         <Setter Property="Template">

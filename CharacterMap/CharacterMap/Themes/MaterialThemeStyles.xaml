@@ -1441,6 +1441,8 @@
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="Margin" Value="0,0,4,4" />
         <Setter Property="AllowDrop" Value="False" />
+        <Setter Property="MinHeight" Value="12" />
+        <Setter Property="MinWidth" Value="12" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="h:FluentAnimation.Pressed" Value="TemplateContent" />
         <Setter Property="h:FluentAnimation.PointerOver" Value="TemplateContent" />

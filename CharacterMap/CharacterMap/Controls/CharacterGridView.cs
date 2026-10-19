@@ -155,17 +155,29 @@ public partial class CharacterGridView : GridView
         if (IsSelectionBindingEnabled)
             OnAttached();
 
-        if (this.ItemsPanelRoot is ItemsWrapGrid g)
-        {
-            g.ItemHeight = ItemSize;
-            g.ItemWidth = ItemSize;
-        }
+        SetDefaultItemSize();
     }
 
     private void ExtendedListView_Unloaded(object sender, RoutedEventArgs e)
     {
         if (IsSelectionBindingEnabled)
             OnDetaching();
+    }
+
+    bool hasSetItemSize = false;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    void SetDefaultItemSize()
+    {
+        if (hasSetItemSize) 
+            return;
+
+        if (this.ItemsPanelRoot is ItemsWrapGrid g)
+        {
+            g.ItemHeight = ItemSize;
+            g.ItemWidth = ItemSize;
+            hasSetItemSize = true;
+        }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -210,6 +222,9 @@ public partial class CharacterGridView : GridView
          */
         if (!args.InRecycleQueue && args.ItemContainer is GridViewItem item)
         {
+            // Zune theme doesn't hit the loaded check
+            SetDefaultItemSize();
+
             Character c = ((Character)args.Item);
             RealizeGlyphTarget(args.ItemContainer, ItemFaceAnalysis, ForceFontGlyphs);
             
