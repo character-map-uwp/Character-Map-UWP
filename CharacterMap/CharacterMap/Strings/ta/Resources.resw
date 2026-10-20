@@ -892,6 +892,9 @@ Imported font files are copied into the app's private storage, so will still sho
   <data name="VariableFeaturesMessage.Text" xml:space="preserve">
     <value>இந்த எழுத்துருவில் மாறி அம்சங்கள் உள்ளன. அவற்றை ஆராய, மேலே உள்ள காட்சி பொத்தானை பயன்படுத்தி, வகை ராம்ப் காட்சிக்கு மாறவும்.</value>
   </data>
+  <data name="VariableFeaturesMessage1.Text" xml:space="preserve">
+    <value>இந்த எழுத்துருவில் மாறி அம்சங்கள் உள்ளன. அவற்றை ஆராய, மேலே உள்ள காட்சி பொத்தானை பயன்படுத்தி, வகை ராம்ப் காட்சிக்கு மாறவும்.</value>
+  </data>
   <data name="BtnTextClose.Content" xml:space="preserve">
     <value>மூடு</value>
   </data>

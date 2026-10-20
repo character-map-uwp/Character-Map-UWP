@@ -1,4 +1,5 @@
-﻿namespace CharacterMap.Models;
+namespace CharacterMap.Models;
+
 
 [DebuggerDisplay("{Name}, Start: {Start}, End: {End}")]
 public record class NamedUnicodeRange
@@ -26,5 +27,12 @@ public record class NamedUnicodeRange
         Range = new(Start, End);
     }
 
-    public bool Contains(uint index) => index >= Start && index <= End;
+    public virtual bool Contains(uint index) => index >= Start && index <= End;
+}
+
+public sealed record class UnassignedUnicodeRange : NamedUnicodeRange
+{
+    public UnassignedUnicodeRange() : base("Unassigned", 0x110000, 200000) { }
+
+    public override bool Contains(uint index) => UnicodeRanges.GetRange(index) == this;
 }

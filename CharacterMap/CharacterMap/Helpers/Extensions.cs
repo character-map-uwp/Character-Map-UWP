@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml.Controls;
+﻿using CharacterMapCX.Controls;
+using Microsoft.UI.Xaml.Controls;
 using SQLite;
 using System.Collections;
 using System.Diagnostics.Contracts;
@@ -7,7 +8,9 @@ using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
@@ -16,6 +19,54 @@ namespace CharacterMap.Helpers;
 
 public static class Extensions
 {
+    public static IEnumerable<T> GetActiveContainers<T>(this ListViewBase g) where T : SelectorItem
+    {
+        // Recycled containers are at -10000 usually
+        return g.ItemsPanelRoot?.Children.OfType<T>().Where(c => c.ActualOffset.X >= -1000);
+    }
+
+    public static void SetFontSize(this DependencyObject f, double size)
+    {
+        if (f is TextBlock t)
+            t.FontSize = size;
+        else if (f is FontGlyphs g)
+            g.FontSize = size;
+        else if (f is Control c)
+            c.FontSize = size;
+        else if (f is RichTextBlock r)
+            r.FontSize = size;
+        else if (f is TextElement te)
+            te.FontSize = size;
+        else if (f is Glyphs x)
+            x.FontRenderingEmSize = size;
+    }
+
+    public static WeakReferenceMessenger GetMessenger(this Window window)
+    {
+        return GetMessenger(window.CoreWindow);
+    }
+
+    public static WeakReferenceMessenger GetMessenger(this CoreWindow window)
+    {
+        if ((window.CustomProperties.TryGetValue("Messenger", out object value) && value is WeakReferenceMessenger messenger) is false)
+        {
+            messenger = new WeakReferenceMessenger();
+            window.CustomProperties["Messenger"] = messenger;
+        }
+
+        return messenger;
+    }
+
+    public static bool Has(this IEnumerable<GlyphImageFormat> formats, GlyphImageFormat format) =>
+        formats?.Any(f => f== format || (f & format) == format) ?? false;
+
+
+    public static IconElement WithThemeIcon(this IconElement f, ThemeIcon icon)
+    {
+        Core.Properties.SetThemeIcon(f, icon);
+        return f;
+    }
+
     /// <summary>
     /// Creates a copy if the axis list with "new" instances of each axis with matching values.
     /// </summary>

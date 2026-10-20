@@ -102,7 +102,6 @@
                                                             <VisualState x:Name="FocusEngagedVertical">
                                                                 <VisualState.Setters>
                                                                     <Setter Target="SliderContainer.(Control.IsTemplateFocusTarget)" Value="False" />
-                                                                    <Setter Target="VerticalThumb.(Control.IsTemplateFocusTarget)" Value="True" />
                                                                 </VisualState.Setters>
                                                             </VisualState>
                                                         </VisualStateGroup>
@@ -741,10 +740,12 @@
                             Grid.Row="1"
                             Padding="20 20 20 40"
                             ContainerContentChanging="ItemsPanel_ContainerContentChanging"
+                            Foreground="{x:Bind ViewModel.GlyphBrush, Mode=OneWay}"
                             IsItemClickEnabled="False"
                             ItemAnnotation="None"
                             ItemContainerTransitions="{StaticResource NoTransitions}"
-                            ItemFontFace="{x:Bind _fontMap.ViewModel.SelectedFace.Face}"
+                            ItemFaceAnalysis="{x:Bind _fontMap.ViewModel.SelectedFaceAnalysis}"
+                            ItemFontFace="{x:Bind _fontMap.ViewModel.SelectedFaceAnalysis.ActiveFace}"
                             ItemFontFamily="{x:Bind _fontMap.ViewModel.SelectedFaceAnalysis.FontFamily}"
                             ItemSize="{x:Bind _fontMap.CharGrid.ItemSize}"
                             ItemTemplate="{x:Bind _fontMap.CharGrid.ItemTemplate}"
@@ -757,9 +758,6 @@
                                     <ItemsWrapGrid HorizontalAlignment="Center" Orientation="Horizontal" />
                                 </ItemsPanelTemplate>
                             </GridView.ItemsPanel>
-                            <ItemsControl.Foreground>
-                                <SolidColorBrush Color="{x:Bind ViewModel.GlyphColor, Mode=OneWay}" />
-                            </ItemsControl.Foreground>
                         </cmControls:CharacterGridView>
                     </Grid>
                 </Grid>

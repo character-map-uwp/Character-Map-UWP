@@ -31,15 +31,17 @@ sealed partial class App : Application
 
         this.UnhandledException += OnUnhandledException;
         this.Suspending += App_Suspending;
+        this.Resuming += App_Resuming;
         _activationService = new Lazy<ActivationService>(CreateActivationService);
         Current = this;
 
-        DirectText.RegisterDependencyProperties();
         SQLitePCL.raw.SetProvider(SQLiteConnection.Provider);
-
         CoreApplication.Exiting += CoreApplication_Exiting;
+    }
 
-
+    private void App_Resuming(object sender, object e)
+    {
+        CharacterMapCX.CompositionDeviceManager.CheckDeviceLost();
     }
 
     private void CoreApplication_Exiting(object sender, object e)

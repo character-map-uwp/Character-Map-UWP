@@ -70,8 +70,8 @@ public partial class SettingsViewModel : ViewModelBase
         // 1. Update "A B Y" Character grid previews
         // Note: it is legal for both "variant" and "font" to be NULL
         //       when calling, so test both cases.
-        PreviewFontSource = options.Variant != null && !isSymbol
-            ? new FontFamily(options.Variant.XamlFontSource)
+        PreviewFontSource = options.Face != null && !isSymbol
+            ? new FontFamily(options.Face.XamlFontSource)
             : FontFamily.XamlAutoFontFamily;
 
         // 2. Update FontList Previews
@@ -125,15 +125,30 @@ public partial class SettingsViewModel : ViewModelBase
         // is to expose features people may not be aware exist inside the
         // application rather than bug-fixes or visual changes.
         return [
-            new("Latest Update (September 2026)", // September 2026
+            new("Latest Update (October 2026)", // October 2026
+                """
+                - Added Ligatures Map view
+                - Added ability to view variable axis in Character Map view
+                - Added ability to view ColrV1 glyphs in Character Map view on Windows 11
+                - Added ability to copy, save, print, export and draw modified variable Font Faces
+                - Added Glyph indexes for Characters in Unicode tools
+                - Added ability to switch between ColrV0 and ColrV1 glyphs in the Preview Pane
+                - Added ability to export ColrV1 Glyphs as SVG
+                - Added ability to filter font list in opened ZIP files
+                - Added ability to view all Glyph components that form a Character, below the Character Preview Pane
+                - Added variable axis support to the copy pane
+                - All variable font axis now render correctly
+                - Updated to Unicode 18.0 dataset
+                """),
+            new("2026.6.1.0 (September 2026)", // September 2026
                 """
                 - Added expandable tab-bar preview thumbnails for Windows 11 theme
-                - Typographic variants of a glyph will now attempt to copy as text if the glyph of the typographic variant also exists as a mapped character
+                - Typographic variants of a Glyph will now attempt to copy as text if the Glyph of the typographic variant also exists as a mapped Character
                 """),
              new("2026.5.1.0 (August 2026)", // August 2026
                 """
                 - Added option to filter by outline type
-                - Added option to name characters in Segoe Icon Subsetter tool during the Preview phase and generating code for various languages based on these names.
+                - Added option to name Characters in Segoe Icon Subsetter tool during the Preview phase and generating code for various languages based on these names.
                 """),
             new("2026.4.1.0 (July 2026)", // July 2026
                 "- Added simple Glyph Map" +
@@ -141,7 +156,7 @@ public partial class SettingsViewModel : ViewModelBase
             new("2026.2.0.0 (February 2026)", // February 2026
                 "- Added additional filters for Font Embedding types & Color Font types\n" +
                 "- Added Material Theme (WIP)\n" +
-                "- Updated to Unicode 17 dataset"),
+                "- Updated to Unicode 17.0 dataset"),
              new("2025.3.0.0 (June 2025)", // June 2025
                 "- Added ability to use Ctrl + ScrollWheel to change font size in Font List Pane, Character Map and Quick Compare\n" +
                 "- Whole Font Families can now be added to Quick Compare\n" +
@@ -160,7 +175,7 @@ public partial class SettingsViewModel : ViewModelBase
                 "- The Unicode character search box now supports searching Unihan descriptions\n" +
                 "- Added a link for Helps and Tips at our Wiki in Settings->About"),
              new("2024.2.0.0 (April 2024)", // April 2024
-                "- Support searching font families in Settings->Collections\n" +
+                "- Support searching Font Families in Settings->Collections\n" +
                 "- Added option to restore last selected font filter / collection on app launch in Settings->Advanced\n" +
                 "- Added option to define how exported glyph files are named by default in Settings->Export"),
              new("2024.1.1.0 (December 2023)", // Dec 2023
@@ -222,7 +237,7 @@ public partial class SettingsViewModel : ViewModelBase
                 "- Added C++/CX, C++/WinRT & Xamarin.Forms developer features\n" +
                 "- Copying Path Icon from developer code now copies the path with typography applied\n" +
                 "- Added Adobe Glyph List mapping support for a font's post table names\n" +
-                "- Added character filtering by Unicode category to main view\n" +
+                "- Added Character filtering by Unicode category to main view\n" +
                 "- Added Fullscreen keyboard shortcut (F11)\n" +
                 "- Added Compare Fonts view (Ctrl + K)"),
             new("2021.1.0.0 (Jan 2021)",

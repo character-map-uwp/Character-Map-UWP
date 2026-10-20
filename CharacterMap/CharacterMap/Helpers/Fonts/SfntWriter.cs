@@ -1,4 +1,3 @@
-using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -558,7 +557,7 @@ public static class SfntWriter
                 cmTable.FontFaces.Add(new(font.FullName, font.Version));
         }
 
-        string MergeField(CanvasFontInformation info)
+        string MergeField(DWriteFontInformation info)
         {
             List<string> distinctValues = metadataFonts
                 .Select(f => f.TryGetInfo(info)?.Value ?? string.Empty)
@@ -589,14 +588,14 @@ public static class SfntWriter
             return string.Join("\n", lines).Trim();
         }
 
-        string finalCopyright = MergeField(CanvasFontInformation.CopyrightNotice);
-        string finalTrademark = MergeField(CanvasFontInformation.Trademark);
-        string finalManufacturer = MergeField(CanvasFontInformation.Manufacturer);
-        string finalDesigner = MergeField(CanvasFontInformation.Designer);
-        string finalVendorUrl = MergeField(CanvasFontInformation.FontVendorUrl);
-        string finalDesignerUrl = MergeField(CanvasFontInformation.DesignerUrl);
-        string finalLicenseDesc = MergeField(CanvasFontInformation.LicenseDescription);
-        string finalLicenseUrl = MergeField(CanvasFontInformation.LicenseInfoUrl);
+        string finalCopyright = MergeField(DWriteFontInformation.CopyrightNotice);
+        string finalTrademark = MergeField(DWriteFontInformation.Trademark);
+        string finalManufacturer = MergeField(DWriteFontInformation.Manufacturer);
+        string finalDesigner = MergeField(DWriteFontInformation.Designer);
+        string finalVendorUrl = MergeField(DWriteFontInformation.FontVendorUrl);
+        string finalDesignerUrl = MergeField(DWriteFontInformation.DesignerUrl);
+        string finalLicenseDesc = MergeField(DWriteFontInformation.LicenseDescription);
+        string finalLicenseUrl = MergeField(DWriteFontInformation.LicenseInfoUrl);
 
         List<string> fontNames = metadataFonts.Select(f => $"{f.FullName} ({f.Version})".Trim()).ToList();
         string firstLine = "";
@@ -611,7 +610,7 @@ public static class SfntWriter
         List<string> descList = new();
         foreach (CMFontFace font in metadataFonts)
         {
-            string ds = font.TryGetInfo(CanvasFontInformation.Description)?.Value;
+            string ds = font.TryGetInfo(DWriteFontInformation.Description)?.Value;
             if (!string.IsNullOrEmpty(ds))
                 descList.Add($"{font.FamilyName} {font.PreferredName}: {ds}");
         }

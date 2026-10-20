@@ -1,233 +1,341 @@
+E080 42 Group
 F26E 500px
+E8C2 A11y Project
 F368 Accessible Icon
 F369 Accusoft
 F6AF Acquisitions Incorporated
-F641 Ad
 F2B9 Address Book
 F2BB Address Card
-F042 adjust
-F170 App.net
+F170 Adn
 F778 Adobe
 F36A Adversal
-F36B affiliatetheme
-F5D0 Air Freshener
+F36B Affiliatetheme
 F834 Airbnb
+F34E Alarm Clock
 F36C Algolia
-F037 align-center
-F039 align-justify
-F036 align-left
-F038 align-right
+F037 Align Center
+F039 Align Justify
+F036 Align Left
+F038 Align Right
 F642 Alipay
-F461 Allergies
+F381 Alternate Cloud Download
+F382 Alternate Cloud Upload
+F47D Alternate Hospital
+F970 Alternate Store Slash
+F3FD Alternate Tachometer
 F270 Amazon
 F42C Amazon Pay
-F0F9 ambulance
-F2A3 American Sign Language Interpreting
 F36D Amilia
 F13D Anchor
+E4AA Anchor Circle Check
+E4AB Anchor Circle Exclamation
+E4AC Anchor Circle Xmark
+E4AD Anchor Lock
 F17B Android
-F209 AngelList
-F103 Angle Double Down
-F100 Angle Double Left
-F101 Angle Double Right
-F102 Angle Double Up
-F107 angle-down
-F104 angle-left
-F105 angle-right
-F106 angle-up
-F556 Angry Face
-F36E Angry Creative
+F209 Angellist
+F107 Angle Down
+F104 Angle Left
+F105 Angle Right
+F106 Angle Up
+F103 Angles Down
+F100 Angles Left
+F101 Angles Right
+F102 Angles Up
+F36E Angrycreative
 F420 Angular
 F644 Ankh
 F36F App Store
-F370 iOS App Store
-F371 Apper Systems AB
+F370 App Store Ios
+F371 Apper
 F179 Apple
-F5D1 Fruit Apple
 F415 Apple Pay
-F187 Archive
+F5D1 Apple Whole
+E845 Aquarius
+E867 Arch Linux
 F557 Archway
-F358 Alternate Arrow Circle Down
-F359 Alternate Arrow Circle Left
-F35A Alternate Arrow Circle Right
-F35B Alternate Arrow Circle Up
-F0AB Arrow Circle Down
-F0A8 Arrow Circle Left
-F0A9 Arrow Circle Right
-F0AA Arrow Circle Up
-F063 arrow-down
-F060 arrow-left
-F061 arrow-right
-F062 arrow-up
-F0B2 Alternate Arrows
-F337 Alternate Arrows Horizontal
-F338 Alternate Arrows Vertical
+E846 Aries
+F063 Arrow Down
+F162 Arrow Down 1 9
+F886 Arrow Down 9 1
+F15D Arrow Down A Z
+F175 Arrow Down Long
+F884 Arrow Down Short Wide
+E4AF Arrow Down Up Across Line
+E4B0 Arrow Down Up Lock
+F160 Arrow Down Wide Short
+F881 Arrow Down Z A
+F060 Arrow Left
+F177 Arrow Left Long
+F245 Arrow Pointer
+F061 Arrow Right
+F0EC Arrow Right Arrow Left
+F08B Arrow Right From Bracket
+F178 Arrow Right Long
+F090 Arrow Right To Bracket
+E4B3 Arrow Right To City
+F0E2 Arrow Rotate Left
+F01E Arrow Rotate Right
+E097 Arrow Trend Down
+E098 Arrow Trend Up
+F149 Arrow Turn Down
+F148 Arrow Turn Up
+F062 Arrow Up
+F163 Arrow Up 1 9
+F887 Arrow Up 9 1
+F15E Arrow Up A Z
+E09A Arrow Up From Bracket
+E4B5 Arrow Up From Ground Water
+E4B6 Arrow Up From Water Pump
+F176 Arrow Up Long
+E4B7 Arrow Up Right Dots
+F08E Arrow Up Right From Square
+F885 Arrow Up Short Wide
+F161 Arrow Up Wide Short
+F882 Arrow Up Z A
+E4B8 Arrows Down To Line
+E4B9 Arrows Down To People
+F07E Arrows Left Right
+E4BA Arrows Left Right To Line
+F021 Arrows Rotate
+E4BB Arrows Spin
+E4BC Arrows Split Up And Left
+E4BD Arrows To Circle
+E4BE Arrows To Dot
+E4BF Arrows To Eye
+E4C0 Arrows Turn Right
+E4C1 Arrows Turn To Dots
+F07D Arrows Up Down
+F047 Arrows Up Down Left Right
+E4C2 Arrows Up To Line
 F77A Artstation
-F2A2 Assistive Listening Systems
 F069 asterisk
-F372 Asymmetrik Ltd.
+F372 Asymmetrik
 F1FA At
-F558 Atlas
 F77B Atlassian
 F5D2 Atom
 F373 Audible
 F29E Audio Description
+E0A9 Austral Sign
 F41C Autoprefixer
-F374 avianex
+F374 Avianex
 F421 Aviato
 F559 Award
-F375 Amazon Web Services (AWS)
+F375 Aws
 F77C Baby
 F77D Baby Carriage
-F55A Backspace
-F04A backward
+F04A Backward
+F049 Backward Fast
+F048 Backward Step
 F7E5 Bacon
-F666 Bahá'í
-F24E Balance Scale
-F515 Balance Scale (Left-Weighted)
-F516 Balance Scale (Right-Weighted)
-F05E ban
-F462 Band-Aid
+E059 Bacteria
+E05A Bacterium
+F290 Bag Shopping
+F666 Bahai
+E0AC Baht Sign
+F05E Ban
+F54D Ban Smoking
+F462 Bandage
 F2D5 Bandcamp
-F02A barcode
+E2E6 Bangladeshi Taka Sign
+F02A Barcode
 F0C9 Bars
-F433 Baseball Ball
-F434 Basketball Ball
+F828 Bars Progress
+F550 Bars Staggered
+F433 Baseball
+F432 Baseball Bat Ball
+F291 Basket Shopping
+F434 Basketball
 F2CD Bath
 F244 Battery Empty
 F240 Battery Full
-F242 Battery 1/2 Full
-F243 Battery 1/4 Full
-F241 Battery 3/4 Full
-F835 Battle.net
+F242 Battery Half
+F243 Battery Quarter
+F241 Battery Three Quarters
+F835 Battle Net
 F236 Bed
-F0FC beer
+F487 Bed Pulse
+F0FC Beer Mug Empty
 F1B4 Behance
-F1B5 Behance Square
-F0F3 bell
+F0F3 Bell
+F562 Bell Concierge
 F1F6 Bell Slash
 F55B Bezier Curve
-F647 Bible
 F206 Bicycle
-F84A Biking
-F378 BIMobject
+E3D9 Bilibili
+F378 Bimobject
 F1E5 Binoculars
 F780 Biohazard
-F1FD Birthday Cake
 F171 Bitbucket
 F379 Bitcoin
+E0B4 Bitcoin Sign
 F37A Bity
-F27E Font Awesome Black Tie
-F37B BlackBerry
+F27E Black Tie
+F37B Blackberry
 F517 Blender
 F6B6 Blender Phone
-F29D Blind
 F781 Blog
 F37C Blogger
 F37D Blogger B
+E671 Bluesky
 F293 Bluetooth
-F294 Bluetooth
-F032 bold
-F0E7 Lightning Bolt
+F294 Bluetooth B
+E855 Board Game Geek
+F032 Bold
+F0E7 Bolt
+E0B7 Bolt Lightning
 F1E2 Bomb
 F5D7 Bone
 F55C Bong
-F02D book
-F6B7 Book of the Dead
-F7E6 Medical Book
+F02D Book
+F558 Book Atlas
+F647 Book Bible
+E0BB Book Bookmark
+F66A Book Journal Whills
+F7E6 Book Medical
 F518 Book Open
-F5DA Book Reader
-F02E bookmark
+F5DA Book Open Reader
+F687 Book Quran
+F6B7 Book Skull
+F827 Book Tanakh
+F02E Bookmark
 F836 Bootstrap
 F84C Border All
 F850 Border None
-F853 Border Style
+F853 Border Top Left
+E4C3 Bore Hole
+E340 Bots
+E4C4 Bottle Droplet
+E4C5 Bottle Water
+E4C6 Bowl Food
+E2EB Bowl Rice
 F436 Bowling Ball
 F466 Box
+F187 Box Archive
 F49E Box Open
-F95B Tissue Box
-F468 Boxes
+E05B Box Tissue
+E4C7 Boxes Packing
+F468 Boxes Stacked
 F2A1 Braille
 F5DC Brain
+E63C Brave
+E63D Brave Reverse
+E46C Brazilian Real Sign
 F7EC Bread Slice
+E4C8 Bridge
+E4C9 Bridge Circle Check
+E4CA Bridge Circle Exclamation
+E4CB Bridge Circle Xmark
+E4CC Bridge Lock
+E4CE Bridge Water
 F0B1 Briefcase
-F469 Medical Briefcase
-F519 Broadcast Tower
+F469 Briefcase Medical
 F51A Broom
+F458 Broom Ball
 F55D Brush
-F15A BTC
+F15A Btc
+E4CF Bucket
 F837 Buffer
 F188 Bug
+E490 Bug Slash
+E4D0 Bugs
+E8AC Build Awesome
 F1AD Building
-F0A1 bullhorn
+E4D1 Building Circle Arrow Right
+E4D2 Building Circle Check
+E4D3 Building Circle Exclamation
+E4D4 Building Circle Xmark
+F19C Building Columns
+E4D5 Building Flag
+E4D6 Building Lock
+E4D7 Building Ngo
+E4D8 Building Shield
+E4D9 Building Un
+E4DA Building User
+E4DB Building Wheat
+F0A1 Bullhorn
 F140 Bullseye
-F46A Burn
-F37F Büromöbel-Experte GmbH & Co. KG.
+F805 Burger
+F37F Buromobelexperte
+E4DC Burst
 F207 Bus
-F55E Bus Alt
+E81D Bus Side
+F55E Bus Simple
 F64A Business Time
-F8A6 Buy n Large
-F20D BuySellAds
+F8A6 Buy N Large
+F20D Buysellads
+F7DA Cable Car
+F1FD Cake Candles
 F1EC Calculator
 F133 Calendar
-F073 Alternate Calendar
 F274 Calendar Check
-F783 Calendar with Day Focus
+F783 Calendar Day
+F073 Calendar Days
 F272 Calendar Minus
 F271 Calendar Plus
-F273 Calendar Times
-F784 Calendar with Week Focus
-F030 camera
-F083 Retro Camera
+F784 Calendar Week
+F273 Calendar Xmark
+F030 Camera
+F083 Camera Retro
+E0D8 Camera Rotate
 F6BB Campground
 F785 Canadian Maple Leaf
+E847 Cancer
 F786 Candy Cane
 F55F Cannabis
+E848 Capricorn
 F46B Capsules
 F1B9 Car
-F5DE Alternate Car
 F5DF Car Battery
-F5E1 Car Crash
+F5E1 Car Burst
+E4DD Car On
+F5DE Car Rear
 F5E4 Car Side
+E4DE Car Tunnel
 F8FF Caravan
 F0D7 Caret Down
 F0D9 Caret Left
 F0DA Caret Right
-F150 Caret Square Down
-F191 Caret Square Left
-F152 Caret Square Right
-F151 Caret Square Up
 F0D8 Caret Up
 F787 Carrot
-F218 Shopping Cart Arrow Down
-F217 Add to Shopping Cart
+F218 Cart Arrow Down
+F474 Cart Flatbed
+F59D Cart Flatbed Suitcase
+F217 Cart Plus
+F07A Cart Shopping
+E7D4 Cash App
 F788 Cash Register
 F6BE Cat
-F42D Amazon Pay Credit Card
-F1F3 American Express Credit Card
-F416 Apple Pay Credit Card
-F24C Diner's Club Credit Card
-F1F2 Discover Credit Card
-F24B JCB Credit Card
-F1F1 MasterCard Credit Card
-F1F4 Paypal Credit Card
-F1F5 Stripe Credit Card
-F1F0 Visa Credit Card
+F42D Cc Amazon Pay
+F1F3 Cc Amex
+F416 Cc Apple Pay
+F24C Cc Diners Club
+F1F2 Cc Discover
+F24B Cc Jcb
+F1F1 Cc Mastercard
+F1F4 Cc Paypal
+F1F5 Cc Stripe
+F1F0 Cc Visa
+E0DF Cedi Sign
+E3F5 Cent Sign
 F380 Centercode
 F789 Centos
-F0A3 certificate
+F0A3 Certificate
 F6C0 Chair
 F51B Chalkboard
-F51C Chalkboard Teacher
+F51C Chalkboard User
+F79F Champagne Glasses
 F5E7 Charging Station
-F1FE Area Chart
-F080 Bar Chart
-F201 Line Chart
-F200 Pie Chart
+F1FE Chart Area
+F080 Chart Bar
+E0E3 Chart Column
+E695 Chart Diagram
+E0E4 Chart Gantt
+F201 Chart Line
+F200 Chart Pie
+E473 Chart Simple
 F00C Check
-F058 Check Circle
-F560 Double Check
-F14A Check Square
+F560 Check Double
+F772 Check To Slot
 F7EF Cheese
 F439 Chess
 F43A Chess Bishop
@@ -237,120 +345,178 @@ F441 Chess Knight
 F443 Chess Pawn
 F445 Chess Queen
 F447 Chess Rook
-F13A Chevron Circle Down
-F137 Chevron Circle Left
-F138 Chevron Circle Right
-F139 Chevron Circle Up
-F078 chevron-down
-F053 chevron-left
-F054 chevron-right
-F077 chevron-up
+F078 Chevron Down
+F053 Chevron Left
+F054 Chevron Right
+F077 Chevron Up
 F1AE Child
+E4E0 Child Combatant
+E59C Child Dress
+E59D Child Reaching
+E4E1 Children
 F268 Chrome
 F838 Chromecast
 F51D Church
 F111 Circle
-F1CE Circle Notched
+F0AB Circle Arrow Down
+F0A8 Circle Arrow Left
+F0A9 Circle Arrow Right
+F0AA Circle Arrow Up
+F058 Circle Check
+F13A Circle Chevron Down
+F137 Circle Chevron Left
+F138 Circle Chevron Right
+F139 Circle Chevron Up
+F4B9 Circle Dollar To Slot
+F192 Circle Dot
+F358 Circle Down
+F06A Circle Exclamation
+F47E Circle H
+F042 Circle Half Stroke
+F05A Circle Info
+F359 Circle Left
+F056 Circle Minus
+E4E2 Circle Nodes
+F1CE Circle Notch
+F28B Circle Pause
+F144 Circle Play
+F055 Circle Plus
+F059 Circle Question
+F7BA Circle Radiation
+F35A Circle Right
+F28D Circle Stop
+F35B Circle Up
+F2BD Circle User
+F057 Circle Xmark
+E851 Circle Zulip
 F64F City
-F7F2 Medical Clinic
+E131 Clapperboard
+E861 Claude
 F328 Clipboard
-F46C Clipboard with Check
+F46C Clipboard Check
 F46D Clipboard List
+E4E3 Clipboard Question
+F7F3 Clipboard User
 F017 Clock
+F1DA Clock Rotate Left
 F24D Clone
 F20A Closed Captioning
+E135 Closed Captioning Slash
 F0C2 Cloud
-F381 Alternate Cloud Download
-F73B Cloud with (a chance of) Meatball
-F6C3 Cloud with Moon
-F73C Cloud with Moon and Rain
-F73D Cloud with Rain
-F740 Cloud with Heavy Showers
-F6C4 Cloud with Sun
-F743 Cloud with Sun and Rain
-F382 Alternate Cloud Upload
-F383 cloudscale.ch
+F0ED Cloud Arrow Down
+F0EE Cloud Arrow Up
+F76C Cloud Bolt
+F73B Cloud Meatball
+F6C3 Cloud Moon
+F73C Cloud Moon Rain
+F73D Cloud Rain
+F740 Cloud Showers Heavy
+E4E4 Cloud Showers Water
+F6C4 Cloud Sun
+F743 Cloud Sun Rain
+E07D Cloudflare
+F383 Cloudscale
 F384 Cloudsmith
-F385 cloudversify
-F561 Cocktail
+F385 Cloudversify
+E139 Clover
+E360 Cmplid
 F121 Code
 F126 Code Branch
+F386 Code Commit
+E13A Code Compare
+E13B Code Fork
+F387 Code Merge
+E13C Code Pull Request
+E8AD Codeberg
 F1CB Codepen
-F284 Codie Pie
-F0F4 Coffee
-F013 cog
-F085 cogs
+F284 Codiepie
 F51E Coins
-F0DB Columns
-F075 comment
-F27A Alternate Comment
+E140 Colon Sign
+F075 Comment
 F651 Comment Dollar
 F4AD Comment Dots
-F7F5 Alternate Medical Chat
+F7F5 Comment Medical
+E696 Comment Nodes
 F4B3 Comment Slash
-F086 comments
+F7CD Comment Sms
+F086 Comments
 F653 Comments Dollar
 F51F Compact Disc
 F14E Compass
+F568 Compass Drafting
 F066 Compress
-F422 Alternate Compress
-F78C Alternate Compress Arrows
-F562 Concierge Bell
+E4E5 Computer
+F8CC Computer Mouse
 F78D Confluence
-F20E Connect Develop
+F20E Connectdevelop
 F26D Contao
 F563 Cookie
 F564 Cookie Bite
+E8C7 Copilot
 F0C5 Copy
 F1F9 Copyright
 F89E Cotton Bureau
 F4B8 Couch
-F388 cPanel
+F6C8 Cow
+F388 Cpanel
 F25E Creative Commons
-F4E7 Creative Commons Attribution
-F4E8 Creative Commons Noncommercial
-F4E9 Creative Commons Noncommercial (Euro Sign)
-F4EA Creative Commons Noncommercial (Yen Sign)
-F4EB Creative Commons No Derivative Works
-F4EC Creative Commons Public Domain
-F4ED Alternate Creative Commons Public Domain
+F4E7 Creative Commons By
+F4E8 Creative Commons Nc
+F4E9 Creative Commons Nc Eu
+F4EA Creative Commons Nc Jp
+F4EB Creative Commons Nd
+F4EC Creative Commons Pd
+F4ED Creative Commons Pd Alt
 F4EE Creative Commons Remix
-F4EF Creative Commons Share Alike
+F4EF Creative Commons Sa
 F4F0 Creative Commons Sampling
-F4F1 Creative Commons Sampling +
+F4F1 Creative Commons Sampling Plus
 F4F2 Creative Commons Share
-F4F3 Creative Commons CC0
+F4F3 Creative Commons Zero
 F09D Credit Card
 F6C9 Critical Role
-F125 crop
-F565 Alternate Crop
+F125 Crop
+F565 Crop Simple
 F654 Cross
 F05B Crosshairs
 F520 Crow
 F521 Crown
 F7F7 Crutch
-F13C CSS 3 Logo
-F38B Alternate CSS3 Logo
+E152 Cruzeiro Sign
+E6A2 Css
+F13C Css3
+F38B Css3 Alt
 F1B2 Cube
 F1B3 Cubes
-F0C4 Cut
+E4E6 Cubes Stacked
 F38C Cuttlefish
-F38D Dungeons & Dragons
-F6CA D&D Beyond
+F38D D And D
+F6CA D And D Beyond
 F952 dailymotion
-F210 DashCube
+E052 Dailymotion
+E693 Dart Lang
+F210 Dashcube
 F1C0 Database
-F2A4 Deaf
+E60B Debian
+E077 Deezer
+F55A Delete Left
 F1A5 Delicious
 F747 Democrat
-F38E deploy.dog
+F38E Deploydog
 F38F Deskpro
+F390 Desktop
 F108 Desktop
-F6CC DEV
-F1BD deviantART
+F6CC Dev
+F1BD Deviantart
+E8AE Devpost
 F655 Dharmachakra
-F790 DHL
-F470 Diagnoses
+F790 Dhl
+E476 Diagram Next
+E477 Diagram Predecessor
+F542 Diagram Project
+E47A Diagram Successor
+F219 Diamond
+F5EB Diamond Turn Right
 F791 Diaspora
 F522 Dice
 F6CF Dice D20
@@ -361,1070 +527,1479 @@ F525 Dice One
 F526 Dice Six
 F527 Dice Three
 F528 Dice Two
-F1A6 Digg Logo
+F1A6 Digg
 F391 Digital Ocean
-F566 Digital Tachograph
-F5EB Directions
 F392 Discord
 F393 Discourse
 F7FA Disease
+E163 Display
+E7D5 Disqus
 F529 Divide
-F567 Dizzy Face
-F471 DNA
-F394 DocHub
+F471 Dna
+F394 Dochub
 F395 Docker
 F6D3 Dog
+E8BF Dolibarr
 F155 Dollar Sign
 F472 Dolly
-F474 Dolly Flatbed
-F4B9 Donate
+E169 Dong Sign
 F52A Door Closed
 F52B Door Open
-F192 Dot Circle
 F4BA Dove
+F422 Down Left And Up Right To Center
+F309 Down Long
 F019 Download
 F396 Draft2digital
-F568 Drafting Compass
 F6D5 Dragon
 F5EE Draw Polygon
 F17D Dribbble
-F397 Dribbble Square
 F16B Dropbox
+F043 Droplet
+F5C7 Droplet Slash
 F569 Drum
 F56A Drum Steelpan
-F6D7 Drumstick with Bite Taken Out
-F1A9 Drupal Logo
+F6D7 Drumstick Bite
+F1A9 Drupal
 F44B Dumbbell
 F793 Dumpster
 F794 Dumpster Fire
 F6D9 Dungeon
+E812 Duolingo
 F399 Dyalog
+F2A4 Ear Deaf
+F2A2 Ear Listen
 F39A Earlybirds
-F4F4 eBay
-F282 Edge Browser
-F044 Edit
+F57C Earth Africa
+F57D Earth Americas
+F57E Earth Asia
+F7A2 Earth Europe
+E47B Earth Oceania
+F4F4 Ebay
+F282 Edge
+E078 Edge Legacy
 F7FB Egg
-F052 eject
+F052 Eject
 F430 Elementor
-F141 Horizontal Ellipsis
-F142 Vertical Ellipsis
+E16D Elevator
+E7D6 Eleventy
+F141 Ellipsis
+F142 Ellipsis Vertical
 F5F1 Ello
 F423 Ember
-F1D1 Galactic Empire
+F1D1 Empire
 F0E0 Envelope
+E4E8 Envelope Circle Check
 F2B6 Envelope Open
-F658 Envelope Open-text
-F199 Envelope Square
-F299 Envira Gallery
+F658 Envelope Open Text
+F674 Envelopes Bulk
+F299 Envira
 F52C Equals
-F12D eraser
+F12D Eraser
 F39D Erlang
 F42E Ethereum
 F796 Ethernet
 F2D7 Etsy
 F153 Euro Sign
 F839 Evernote
-F362 Alternate Exchange
 F12A exclamation
-F06A Exclamation Circle
-F071 Exclamation Triangle
 F065 Expand
-F424 Alternate Expand
-F31E Alternate Expand Arrows
-F23E ExpeditedSSL
-F35D Alternate External Link
-F360 Alternate External Link Square
+F23E Expeditedssl
+E4E9 Explosion
 F06E Eye
 F1FB Eye Dropper
+F2A8 Eye Low Vision
 F070 Eye Slash
+F556 Face Angry
+F567 Face Dizzy
+F579 Face Flushed
+F119 Face Frown
+F57A Face Frown Open
+F57F Face Grimace
+F580 Face Grin
+F582 Face Grin Beam
+F583 Face Grin Beam Sweat
+F584 Face Grin Hearts
+F585 Face Grin Squint
+F586 Face Grin Squint Tears
+F587 Face Grin Stars
+F588 Face Grin Tears
+F589 Face Grin Tongue
+F58A Face Grin Tongue Squint
+F58B Face Grin Tongue Wink
+F581 Face Grin Wide
+F58C Face Grin Wink
+F596 Face Kiss
+F597 Face Kiss Beam
+F598 Face Kiss Wink Heart
+F599 Face Laugh
+F59A Face Laugh Beam
+F59B Face Laugh Squint
+F59C Face Laugh Wink
+F11A Face Meh
+F5A4 Face Meh Blank
+F5A5 Face Rolling Eyes
+F5B3 Face Sad Cry
+F5B4 Face Sad Tear
+F118 Face Smile
+F5B8 Face Smile Beam
+F4DA Face Smile Wink
+F5C2 Face Surprise
+F5C8 Face Tired
 F09A Facebook
 F39E Facebook F
 F39F Facebook Messenger
-F082 Facebook Square
 F863 Fan
-F6DC Fantasy Flight-games
-F049 fast-backward
-F050 fast-forward
+F6DC Fantasy Flight Games
 F905 Faucet
+E005 Faucet
+E006 Faucet Drip
 F1AC Fax
 F52D Feather
-F56B Alternate Feather
-F797 FedEx
+F56B Feather Pointed
+F797 Fedex
+E865 Fediverse
 F798 Fedora
-F182 Female
-F0FB fighter-jet
+E4EA Ferry
 F799 Figma
 F15B File
-F15C Alternate File
-F1C6 Archive File
-F1C7 Audio File
-F1C9 Code File
+F56D File Arrow Down
+F574 File Arrow Up
+F1C7 File Audio
+E5A0 File Circle Check
+E4EB File Circle Exclamation
+E4ED File Circle Minus
+E494 File Circle Plus
+E4EF File Circle Question
+E5A1 File Circle Xmark
+F1C9 File Code
 F56C File Contract
-F6DD File CSV
-F56D File Download
-F1C3 Excel File
+F6DD File Csv
+F1C3 File Excel
 F56E File Export
-F1C5 Image File
+E697 File Fragment
+E698 File Half Dashed
+F1C5 File Image
 F56F File Import
 F570 File Invoice
-F571 File Invoice with US Dollar
-F477 Medical File
-F478 Alternate Medical File
-F1C1 PDF File
-F1C4 Powerpoint File
+F571 File Invoice Dollar
+F15C File Lines
+F477 File Medical
+F1C1 File Pdf
+F31C File Pen
+F1C4 File Powerpoint
 F572 File Prescription
+E4F0 File Shield
 F573 File Signature
-F574 File Upload
-F1C8 Video File
-F1C2 Word File
+F1C8 File Video
+F478 File Waveform
+F1C2 File Word
+F1C6 File Zipper
+E69F Files Pinwheel
 F575 Fill
 F576 Fill Drip
 F008 Film
 F0B0 Filter
+F662 Filter Circle Dollar
+E17B Filter Circle Xmark
 F577 Fingerprint
-F06D fire
-F7E4 Alternate Fire
-F134 fire-extinguisher
+F06D Fire
+E4F1 Fire Burner
+F134 Fire Extinguisher
+F7E4 Fire Flame Curved
+F46A Fire Flame Simple
 F269 Firefox
 F907 Firefox Browser
-F479 First Aid
+E007 Firefox Browser
 F2B0 First Order
-F50A Alternate First Order
-F3A1 firstdraft
+F50A First Order Alt
+F3A1 Firstdraft
 F578 Fish
-F6DE Raised Fist
-F024 flag
-F11E flag-checkered
-F74D United States of America Flag
+E4F2 Fish Fins
+F024 Flag
+F11E Flag Checkered
+F74D Flag Usa
 F0C3 Flask
+E4F3 Flask Vial
 F16E Flickr
 F44D Flipboard
-F579 Flushed Face
+F0C7 Floppy Disk
+E184 Florin Sign
+E694 Flutter
 F417 Fly
 F07B Folder
+E185 Folder Closed
 F65D Folder Minus
 F07C Folder Open
 F65E Folder Plus
-F031 font
+F802 Folder Tree
+F031 Font
 F2B4 Font Awesome
-F35C Alternate Font Awesome
 F425 Font Awesome Flag
 F4E6 Font Awesome Full Logo
 F280 Fonticons
 F3A2 Fonticons Fi
-F44E Football Ball
+F44E Football
+E860 Forgejo
 F286 Fort Awesome
-F3A3 Alternate Fort Awesome
+F3A3 Fort Awesome Alt
 F211 Forumbee
-F04E forward
+F04E Forward
+F050 Forward Fast
+F051 Forward Step
 F180 Foursquare
-F2C5 freeCodeCamp
-F3A4 FreeBSD
+E18F Franc Sign
+F2C5 Free Code Camp
+F3A4 Freebsd
 F52E Frog
-F119 Frowning Face
-F57A Frowning Face With Open Mouth
 F50B Fulcrum
-F662 Funnel Dollar
 F1E3 Futbol
 F50C Galactic Republic
 F50D Galactic Senate
 F11B Gamepad
 F52F Gas Pump
+F624 Gauge
+F625 Gauge High
+F629 Gauge Simple
+F62A Gauge Simple High
 F0E3 Gavel
+F013 Gear
+F085 Gears
 F3A5 Gem
+E849 Gemini
 F22D Genderless
 F265 Get Pocket
-F260 GG Currency
-F261 GG Currency Circle
+F260 Gg
+F261 Gg Circle
 F6E2 Ghost
-F06B gift
+F06B Gift
 F79C Gifts
 F1D3 Git
 F841 Git Alt
-F1D2 Git Square
-F09B GitHub
-F113 Alternate GitHub
-F092 GitHub Square
-F3A6 GitKraken
-F296 GitLab
+E863 Gitee
+F09B Github
+F113 Github Alt
+F3A6 Gitkraken
+F296 Gitlab
 F426 Gitter
-F79F Glass Cheers
-F000 Martini Glass
-F57B Alternate Glass Martini
-F7A0 Glass Whiskey
+E4F4 Glass Water
+E4F5 Glass Water Droplet
 F530 Glasses
 F2A5 Glide
 F2A6 Glide G
+E85D Globaleaks
 F0AC Globe
-F57C Globe with Africa shown
-F57D Globe with Americas shown
-F57E Globe with Asia shown
-F7A2 Globe with Europe shown
 F3A7 Gofore
-F450 Golf Ball
+E40F Golang
+F450 Golf Ball Tee
 F3A8 Goodreads
 F3A9 Goodreads G
-F1A0 Google Logo
+F1A0 Google
 F3AA Google Drive
+E079 Google Pay
 F3AB Google Play
 F2B3 Google Plus
 F0D5 Google Plus G
-F0D4 Google Plus Square
+E63B Google Scholar
 F1EE Google Wallet
 F664 Gopuram
 F19D Graduation Cap
-F184 Gratipay (Gittip)
+F184 Gratipay
 F2D6 Grav
 F531 Greater Than
-F532 Greater Than Equal To
-F57F Grimacing Face
-F580 Grinning Face
-F581 Alternate Grinning Face
-F582 Grinning Face With Smiling Eyes
-F583 Grinning Face With Sweat
-F584 Smiling Face With Heart-Eyes
-F585 Grinning Squinting Face
-F586 Rolling on the Floor Laughing
-F587 Star-Struck
-F588 Face With Tears of Joy
-F589 Face With Tongue
-F58A Squinting Face With Tongue
-F58B Winking Face With Tongue
-F58C Grinning Winking Face
-F58D Grip Horizontal
+F532 Greater Than Equal
+F58D Grip
 F7A4 Grip Lines
 F7A5 Grip Lines Vertical
 F58E Grip Vertical
-F3AC Gripfire Inc.
+F3AC Gripfire
+E4F6 Group Arrows Rotate
 F3AD Grunt
+E19A Guarani Sign
+E07E Guilded
 F7A6 Guitar
 F3AE Gulp
-F0FD H Square
+E19B Gun
 F1D4 Hacker News
-F3AF Hacker News Square
 F5F7 Hackerrank
-F805 Hamburger
 F6E3 Hammer
 F665 Hamsa
+F256 Hand
+F255 Hand Back Fist
+F461 Hand Dots
+F6DE Hand Fist
 F4BD Hand Holding
+F4C0 Hand Holding Dollar
+F4C1 Hand Holding Droplet
+E4F7 Hand Holding Hand
 F4BE Hand Holding Heart
+E05C Hand Holding Medical
 F95C Hand Holding Medical Cross
-F4C0 Hand Holding US Dollar
-F4C1 Hand Holding Water
-F258 Lizard (Hand)
-F806 Hand with Middle Finger Raised
-F256 Paper (Hand)
-F25B Peace (Hand)
-F0A7 Hand Pointing Down
-F0A5 Hand Pointing Left
-F0A4 Hand Pointing Right
-F0A6 Hand Pointing Up
-F25A Pointer (Hand)
-F255 Rock (Hand)
-F257 Scissors (Hand)
+F258 Hand Lizard
+F806 Hand Middle Finger
+F25B Hand Peace
+F0A7 Hand Point Down
+F0A5 Hand Point Left
+F0A4 Hand Point Right
+F0A6 Hand Point Up
+F25A Hand Pointer
+F257 Hand Scissors
 F95D Hand Sparkles
-F259 Spock (Hand)
-F4C2 Hands
-F4C4 Helping Hands
+E05D Hand Sparkles
+F259 Hand Spock
+E4F8 Handcuffs
+F2A7 Hands
+F2A3 Hands Asl Interpreting
+E4F9 Hands Bound
+E05E Hands Bubbles
+E1A8 Hands Clapping
+F4C2 Hands Holding
+E4FA Hands Holding Child
+E4FB Hands Holding Circle
+F684 Hands Praying
 F95E Hands Wash
 F2B5 Handshake
 F95F Handshake Alternate Slash
+F4C4 Handshake Angle
+F4C6 Handshake Simple
+E05F Handshake Simple Slash
 F960 Handshake Slash
+E060 Handshake Slash
 F6E6 Hanukiah
-F807 Hard Hat
+F0A0 Hard Drive
+E499 Hashnode
 F292 Hashtag
-F8C0 Cowboy Hat
-F8C1 Cowboy Hat Side
-F6E8 Wizard's Hat
-F0A0 HDD
+F8C0 Hat Cowboy
+F8C1 Hat Cowboy Side
+F6E8 Hat Wizard
 F961 Head Side Cough
-F962 Head Side-cough-slash
+E061 Head Side Cough
+E062 Head Side Cough Slash
 F963 Head Side Mask
+E063 Head Side Mask
 F964 Head Side Virus
-F1DC heading
-F025 headphones
-F58F Alternate Headphones
+E064 Head Side Virus
+F962 Head Side-cough-slash
+F1DC Heading
+F025 Headphones
+F58F Headphones Simple
 F590 Headset
 F004 Heart
-F7A9 Heart Broken
-F21E Heartbeat
+E4FC Heart Circle Bolt
+E4FD Heart Circle Check
+E4FE Heart Circle Exclamation
+E4FF Heart Circle Minus
+E500 Heart Circle Plus
+E501 Heart Circle Xmark
+F7A9 Heart Crack
+F21E Heart Pulse
 F533 Helicopter
+E502 Helicopter Symbol
+F807 Helmet Safety
+E503 Helmet Un
+F312 Hexagon
+E699 Hexagon Nodes
+E69A Hexagon Nodes Bolt
 F591 Highlighter
-F6EC Hiking
+E507 Hill Avalanche
+E508 Hill Rockslide
 F6ED Hippo
 F452 Hips
-F3B0 HireAHelper
-F1DA History
+F3B0 Hire A Helper
+E07F Hive
 F453 Hockey Puck
 F7AA Holly Berry
-F015 home
 F427 Hooli
 F592 Hornbill
 F6F0 Horse
 F7AB Horse Head
-F0F8 hospital
-F47D Alternate Hospital
-F47E Hospital Symbol
-F80D Hospital with User
-F593 Hot Tub
-F80F Hot Dog
+F0F8 Hospital
+F80D Hospital User
+F593 Hot Tub Person
+F80F Hotdog
 F594 Hotel
 F3B1 Hotjar
 F254 Hourglass
 F253 Hourglass End
 F252 Hourglass Half
 F251 Hourglass Start
-F6F1 Damaged House
+F015 House
+E3AF House Chimney
+F6F1 House Chimney Crack
+F7F2 House Chimney Medical
+E065 House Chimney User
+E00D House Chimney Window
+E509 House Circle Check
+E50A House Circle Exclamation
+E50B House Circle Xmark
+E3B1 House Crack
+E50C House Fire
+E50D House Flag
+E50E House Flood Water
+E50F House Flood Water Circle Arrow Right
+E066 House Laptop
+E510 House Lock
+E3B2 House Medical
+E511 House Medical Circle Check
+E512 House Medical Circle Exclamation
+E513 House Medical Circle Xmark
+E514 House Medical Flag
+E012 House Signal
+E515 House Tsunami
 F965 House User
+E1B0 House User
 F27C Houzz
-F6F2 Hryvnia
-F13B HTML 5 Logo
-F3B2 HubSpot
-F246 I Beam Cursor
+F6F2 Hryvnia Sign
+F13B Html5
+F3B2 Hubspot
+E869 Hugging Face
+F751 Hurricane
+F246 I Cursor
 F810 Ice Cream
 F7AD Icicles
 F86D Icons
-F2C1 Identification Badge
-F2C2 Identification Card
-F47F Alternate Identification Card
+F2C1 Id Badge
+F2C2 Id Card
+F47F Id Card Clip
 F913 iDeal
+E013 Ideal
 F7AE Igloo
 F03E Image
+F3E0 Image Portrait
 F302 Images
-F2D8 IMDB
-F01C inbox
+F2D8 Imdb
+F01C Inbox
 F03C Indent
+E1BC Indian Rupee Sign
 F275 Industry
 F534 Infinity
 F129 Info
-F05A Info Circle
 F16D Instagram
 F955 Instagram Square
+E081 Instalod
 F7AF Intercom
-F26B Internet-explorer
-F7B0 InVision
-F208 ioxhost
-F033 italic
-F83A itch.io
-F3B4 iTunes
+E8B1 Internet Archive
+F26B Internet Explorer
+F7B0 Invision
+F208 Ioxhost
+F033 Italic
+F83A Itch Io
+F3B4 Itunes
 F3B5 Itunes Note
+E516 Jar
+E517 Jar Wheat
 F4E4 Java
 F669 Jedi
 F50E Jedi Order
-F3B6 Jenkis
+F3B6 Jenkins
+F0FB Jet Fighter
+E518 Jet Fighter Up
 F7B1 Jira
 F3B7 Joget
 F595 Joint
-F1AA Joomla Logo
-F66A Journal of the Whills
-F3B8 JavaScript (JS)
-F3B9 JavaScript (JS) Square
-F1CC jsFiddle
+F1AA Joomla
+F3B8 Js
+F1CC Jsfiddle
+E519 Jug Detergent
+E852 Julia
+E67B Jxl
 F66B Kaaba
 F5FA Kaggle
-F084 key
+E7D7 Kakao Talk
+F084 Key
 F4F5 Keybase
 F11C Keyboard
-F3BA KeyCDN
+F3BA Keycdn
 F66D Khanda
 F3BB Kickstarter
 F3BC Kickstarter K
-F596 Kissing Face
-F597 Kissing Face With Smiling Eyes
-F598 Face Blowing a Kiss
+E1C4 Kip Sign
+F479 Kit Medical
+E51A Kitchen Set
 F535 Kiwi Bird
-F42F KORVUE
+E856 Ko Fi
+F42F Korvue
+E857 Kubernetes
+E51B Land Mine On
 F66F Landmark
+F752 Landmark Dome
+E51C Landmark Flag
 F1AB Language
 F109 Laptop
 F5FC Laptop Code
+E51D Laptop File
 F966 Laptop House
 F812 Laptop Medical
 F3BD Laravel
-F202 last.fm
-F203 last.fm Square
-F599 Grinning Face With Big Eyes
-F59A Laugh Face with Beaming Eyes
-F59B Laughing Squinting Face
-F59C Laughing Winking Face
+E1C8 Lari Sign
+F202 Lastfm
 F5FD Layer Group
-F06C leaf
+F06C Leaf
 F212 Leanpub
+E86A Leetcode
+F30A Left Long
+F337 Left Right
 F094 Lemon
+E84A Leo
 F41D Less
 F536 Less Than
-F537 Less Than Equal To
-F3BE Alternate Level Down
-F3BF Alternate Level Up
+F537 Less Than Equal
+E8B2 Lets Encrypt
+E62D Letterboxd
+E84B Libra
 F1CD Life Ring
 F0EB Lightbulb
 F3C0 Line
+E51E Lines Leaning
 F0C1 Link
-F08C LinkedIn
-F0E1 LinkedIn In
+F127 Link Slash
+F08C Linkedin
+F0E1 Linkedin In
+E7D8 Linktree
 F2B8 Linode
 F17C Linux
-F195 Turkish Lira Sign
+F195 Lira Sign
 F03A List
-F022 Alternate List
-F0CB list-ol
-F0CA list-ul
-F124 location-arrow
-F023 lock
+F0AE List Check
+F0CB List Ol
+F0CA List Ul
+E1D3 Litecoin Sign
+F124 Location Arrow
+F601 Location Crosshairs
+F3C5 Location Dot
+F041 Location Pin
+E51F Location Pin Lock
+F023 Lock
 F3C1 Lock Open
-F309 Alternate Long Arrow Down
-F30A Alternate Long Arrow Left
-F30B Alternate Long Arrow Right
-F30C Alternate Long Arrow Up
-F2A8 Low Vision
-F59D Luggage Cart
+E520 Locust
+E7E2 Lumon
+E7E3 Lumon Drop
 F604 Lungs
 F967 Lungs Virus
-F3C3 lyft
+E067 Lungs Virus
+F3C3 Lyft
 F3C4 Magento
-F0D0 magic
-F076 magnet
-F674 Mail Bulk
+F076 Magnet
+F002 Magnifying Glass
+E521 Magnifying Glass Arrow Right
+E522 Magnifying Glass Chart
+F688 Magnifying Glass Dollar
+F689 Magnifying Glass Location
+F010 Magnifying Glass Minus
+F00E Magnifying Glass Plus
 F59E Mailchimp
-F183 Male
+E1D5 Manat Sign
 F50F Mandalorian
 F279 Map
-F59F Map Marked
-F5A0 Alternate Map Marked
-F041 map-marker
-F3C5 Alternate Map Marker
+F59F Map Location
+F5A0 Map Location Dot
 F276 Map Pin
-F277 Map Signs
 F60F Markdown
 F5A1 Marker
 F222 Mars
+F224 Mars And Venus
+E523 Mars And Venus Burst
 F227 Mars Double
 F229 Mars Stroke
-F22B Mars Stroke Horizontal
-F22A Mars Stroke Vertical
+F22B Mars Stroke Right
+F22A Mars Stroke Up
+F57B Martini Glass
+F561 Martini Glass Citrus
+F000 Martini Glass Empty
 F6FA Mask
+E1D7 Mask Face
+E524 Mask Ventilator
+F630 Masks Theater
 F4F6 Mastodon
-F136 MaxCDN
-F8CA Material Design for Bootstrap
+E8B3 Matrix
+E8B4 Mattermost
+E525 Mattress Pillow
+F136 Maxcdn
+F31E Maximize
+F8CA Mdb
 F5A2 Medal
-F3C6 MedApps
+F3C6 Medapps
 F23A Medium
 F3C7 Medium M
-F0FA medkit
-F3C8 MRT
+F3C8 Medrt
 F2E0 Meetup
 F5A3 Megaport
-F11A Neutral Face
-F5A4 Face Without Mouth
-F5A5 Face With Rolling Eyes
 F538 Memory
 F7B3 Mendeley
 F676 Menorah
 F223 Mercury
+F27A Message
+E49B Meta
 F753 Meteor
 F91A Micro.blog
+E01A Microblog
 F2DB Microchip
-F130 microphone
-F3C9 Alternate Microphone
-F539 Alternate Microphone Slash
+F130 Microphone
+F3C9 Microphone Lines
+F539 Microphone Lines Slash
 F131 Microphone Slash
 F610 Microscope
 F3CA Microsoft
-F068 minus
-F056 Minus Circle
-F146 Minus Square
+E1ED Mill Sign
+F78C Minimize
+E62F Mintbit
+F068 Minus
 F7B5 Mitten
 F3CB Mix
 F289 Mixcloud
 F956 Mixer
+E056 Mixer
 F3CC Mizuni
-F10B Mobile Phone
-F3CD Alternate Mobile
-F285 MODX
+F3CE Mobile
+F10B Mobile Button
+E527 Mobile Retro
+F3CF Mobile Screen
+F3CD Mobile Screen Button
+E816 Mobile Vibrate
+F285 Modx
 F3D0 Monero
 F0D6 Money Bill
-F3D1 Alternate Money Bill
-F53A Wavy Money Bill
-F53B Alternate Wavy Money Bill
+F3D1 Money Bill 1
+F53B Money Bill 1 Wave
+E528 Money Bill Transfer
+E529 Money Bill Trend Up
+F53A Money Bill Wave
+E52A Money Bill Wheat
+E1F3 Money Bills
 F53C Money Check
-F53D Alternate Money Check
+F53D Money Check Dollar
 F5A6 Monument
 F186 Moon
 F5A7 Mortar Pestle
 F678 Mosque
+E52B Mosquito
+E52C Mosquito Net
 F21C Motorcycle
+E52D Mound
 F6FC Mountain
-F8CC Mouse
-F245 Mouse Pointer
+E52E Mountain City
+E52F Mountain Sun
 F7B6 Mug Hot
+F0F4 Mug Saucer
 F001 Music
+E1F6 Naira Sign
 F3D2 Napster
 F612 Neos
-F6FF Wired Network
+F6FF Network Wired
 F22C Neuter
 F1EA Newspaper
+E8B5 Nextcloud
+E530 Nfc Directional
+E531 Nfc Symbol
 F5A8 Nimblr
-F419 Node.js
-F3D3 Node.js JS
+F419 Node
+F3D3 Node Js
+E807 Non Binary
 F53E Not Equal
-F481 Medical Notes
-F3D4 npm
-F3D5 NS8
+E1FE Notdef
+F249 Note Sticky
+F481 Notes Medical
+E7D9 Notion
+F3D4 Npm
+F3D5 Ns8
 F3D6 Nutritionix
 F247 Object Group
 F248 Object Ungroup
+E8C0 Obs Studio
+E879 Obsidian
+F306 Octagon
+E082 Octopus Deploy
 F263 Odnoklassniki
-F264 Odnoklassniki Square
+E5C6 Odysee
 F613 Oil Can
+E532 Oil Well
 F510 Old Republic
 F679 Om
-F23D OpenCart
-F19B OpenID
+E7CF Openai
+F23D Opencart
+F19B Openid
+E86B Openstreetmap
+E62B Opensuse
 F26A Opera
 F23C Optin Monster
-F8D2 ORCID
-F41A Open Source Initiative
+F8D2 Orcid
+F41A Osi
 F700 Otter
 F03B Outdent
-F3D7 page4 Corporation
+E4A0 Padlet
+F3D7 Page4
 F18C Pagelines
 F815 Pager
-F1FC Paint Brush
 F5AA Paint Roller
+F1FC Paintbrush
 F53F Palette
 F3D8 Palfed
 F482 Pallet
+E7DA Pandora
+E209 Panorama
 F1D8 Paper Plane
 F0C6 Paperclip
 F4CD Parachute Box
-F1DD paragraph
-F540 Parking
+F1DD Paragraph
 F5AB Passport
-F67B Pastafarianism
 F0EA Paste
 F3D9 Patreon
-F04C pause
-F28B Pause Circle
+F04C Pause
 F1B0 Paw
 F1ED Paypal
 F67C Peace
 F304 Pen
-F305 Alternate Pen
+F305 Pen Clip
 F5AC Pen Fancy
 F5AD Pen Nib
-F14B Pen Square
-F303 Alternate Pencil
-F5AE Pencil Ruler
+F5AE Pen Ruler
+F044 Pen To Square
+F303 Pencil
 F704 Penny Arcade
+E790 Pentagon
 F968 People Arrows
-F4CE People Carry
-F816 Hot Pepper
+E068 People Arrows
+F4CE People Carry Box
+E533 People Group
+E534 People Line
+E535 People Pulling
+E536 People Robbery
+E537 People Roof
+F816 Pepper Hot
+E083 Perbyte
 F295 Percent
 F541 Percentage
 F3DA Periscope
-F756 Person Entering Booth
+F183 Person
+E538 Person Arrow Down To Line
+E539 Person Arrow Up From Line
+F84A Person Biking
+F756 Person Booth
+E53A Person Breastfeeding
+E53B Person Burst
+E53C Person Cane
+E53D Person Chalkboard
+E53E Person Circle Check
+E53F Person Circle Exclamation
+E540 Person Circle Minus
+E541 Person Circle Plus
+E542 Person Circle Question
+E543 Person Circle Xmark
+F85E Person Digging
+F470 Person Dots From Line
+F182 Person Dress
+E544 Person Dress Burst
+E545 Person Drowning
+E546 Person Falling
+E547 Person Falling Burst
+E548 Person Half Dress
+E549 Person Harassing
+F6EC Person Hiking
+E54A Person Military Pointing
+E54B Person Military Rifle
+E54C Person Military To Person
+F683 Person Praying
+E31E Person Pregnant
+E54D Person Rays
+E54E Person Rifle
+F70C Person Running
+E54F Person Shelter
+F7C5 Person Skating
+F7C9 Person Skiing
+F7CA Person Skiing Nordic
+F7CE Person Snowboarding
+F5C4 Person Swimming
+E5A9 Person Through Window
+F554 Person Walking
+E551 Person Walking Arrow Loop Left
+E552 Person Walking Arrow Right
+E553 Person Walking Dashed Line Arrow Right
+E554 Person Walking Luggage
+F29D Person Walking With Cane
+E221 Peseta Sign
+E222 Peso Sign
 F3DB Phabricator
 F3DC Phoenix Framework
 F511 Phoenix Squadron
 F095 Phone
-F879 Alternate Phone
+F879 Phone Flip
 F3DD Phone Slash
-F098 Phone Square
-F87B Alternate Phone Square
 F2A0 Phone Volume
-F87C Photo Video
-F457 PHP
-F2AE Pied Piper Logo
-F1A8 Alternate Pied Piper Logo (Old)
-F4E5 Pied Piper Hat (Old)
-F1A7 Pied Piper PP Logo (Old)
+F87C Photo Film
+F457 Php
+E80B Picture In Picture
+F2AE Pied Piper
+F1A8 Pied Piper Alt
+F4E5 Pied Piper Hat
+F1A7 Pied Piper Pp
 F91E Pied Piper Square Logo (Old)
 F4D3 Piggy Bank
 F484 Pills
 F0D2 Pinterest
 F231 Pinterest P
-F0D3 Pinterest Square
+E84C Pisces
+E43A Pix
+E7DB Pixelfed
+E640 Pixiv
 F818 Pizza Slice
-F67F Place of Worship
-F072 plane
+F67F Place Of Worship
+F072 Plane
 F5AF Plane Arrival
+E555 Plane Circle Check
+E556 Plane Circle Exclamation
+E557 Plane Circle Xmark
 F5B0 Plane Departure
+E558 Plane Lock
 F969 Plane Slash
-F04B play
-F144 Play Circle
-F3DF PlayStation
+E069 Plane Slash
+E22D Plane Up
+E5AA Plant Wilt
+E55A Plate Wheat
+F04B Play
+F3DF Playstation
 F1E6 Plug
+E55B Plug Circle Bolt
+E55C Plug Circle Check
+E55D Plug Circle Exclamation
+E55E Plug Circle Minus
+E55F Plug Circle Plus
+E560 Plug Circle Xmark
 F067 plus
-F055 Plus Circle
-F0FE Plus Square
+E43C Plus Minus
 F2CE Podcast
-F681 Poll
-F682 Poll H
 F2FE Poo
 F75A Poo Storm
 F619 Poop
-F3E0 Portrait
-F154 Pound Sign
+E858 Postgresql
 F011 Power Off
-F683 Pray
-F684 Praying Hands
 F5B1 Prescription
 F485 Prescription Bottle
-F486 Alternate Prescription Bottle
-F02F print
-F487 Procedures
+F486 Prescription Bottle Medical
+F02F Print
 F288 Product Hunt
-F542 Project Diagram
 F96A Pump Medical
+E06A Pump Medical
 F96B Pump Soap
+E06B Pump Soap
 F3E1 Pushed
 F12E Puzzle Piece
 F3E2 Python
-F1D6 QQ
-F029 qrcode
+F1D6 Qq
+F029 Qrcode
 F128 Question
-F059 Question Circle
-F458 Quidditch
-F459 QuinScape
+F459 Quinscape
 F2C4 Quora
-F10D quote-left
-F10E quote-right
-F687 Quran
+F10D Quote Left
+F10E Quote Right
 F4F7 R Project
 F7B9 Radiation
-F7BA Alternate Radiation
+F8D7 Radio
 F75B Rainbow
-F074 random
+E561 Ranking Star
 F7BB Raspberry Pi
 F2D9 Ravelry
 F41B React
-F75D ReactEurope
-F4D5 ReadMe
-F1D0 Rebel Alliance
+F75D Reacteurope
+F4D5 Readme
+F1D0 Rebel
 F543 Receipt
 F8D9 Record Vinyl
+F641 Rectangle Ad
+F022 Rectangle List
+F410 Rectangle Xmark
 F1B8 Recycle
-F3E3 red river
-F1A1 reddit Logo
-F281 reddit Alien
-F1A2 reddit Square
+F3E3 Red River
+F1A1 Reddit
+F281 Reddit Alien
 F7BC Redhat
-F01E Redo
-F2F9 Alternate Redo
-F25D Registered Trademark
-F87D Remove Format
+F25D Registered
 F18B Renren
+F363 Repeat
 F3E5 Reply
-F122 reply-all
-F3E6 replyd
+F122 Reply All
+F3E6 Replyd
 F75E Republican
 F4F8 Researchgate
 F3E7 Resolving
 F7BD Restroom
 F079 Retweet
-F5B2 Rev.io
+F5B2 Rev
 F4D6 Ribbon
+F2F5 Right From Bracket
+F362 Right Left
+F30B Right Long
+F2F6 Right To Bracket
 F70B Ring
-F018 road
+F018 Road
+E562 Road Barrier
+E563 Road Bridge
+E564 Road Circle Check
+E565 Road Circle Exclamation
+E566 Road Circle Xmark
+E567 Road Lock
+E568 Road Spikes
+E8B6 Roblox Creator Studio
 F544 Robot
-F135 rocket
-F3E8 Rocket.Chat
+F135 Rocket
+F3E8 Rocketchat
 F3E9 Rockrms
+E8BD Ror
+F2F1 Rotate
+F2EA Rotate Left
+F2F9 Rotate Right
 F4D7 Route
-F09E rss
-F143 RSS Square
+F09E Rss
 F158 Ruble Sign
+E569 Rug
 F545 Ruler
 F546 Ruler Combined
 F547 Ruler Horizontal
 F548 Ruler Vertical
-F70C Running
-F156 Indian Rupee Sign
-F5B3 Crying Face
-F5B4 Loudly Crying Face
+F156 Rupee Sign
+E23D Rupiah Sign
+E07A Rust
+F81D Sack Dollar
+E56A Sack Xmark
 F267 Safari
+E84D Sagittarius
+E445 Sailboat
 F83B Salesforce
 F41E Sass
 F7BF Satellite
 F7C0 Satellite Dish
-F0C7 Save
-F3EA SCHLIX
+F24E Scale Balanced
+F515 Scale Unbalanced
+F516 Scale Unbalanced Flip
+E859 Scaleway
+F3EA Schlix
 F549 School
+E56B School Circle Check
+E56C School Circle Exclamation
+E56D School Circle Xmark
+E56E School Flag
+E56F School Lock
+F0C4 Scissors
+E84E Scorpio
+E570 Screenpal
 F54A Screwdriver
+F7D9 Screwdriver Wrench
 F28A Scribd
 F70E Scroll
+F6A0 Scroll Torah
 F7C2 Sd Card
-F002 Search
-F688 Search Dollar
-F689 Search Location
-F010 Search Minus
-F00E Search Plus
 F3EB Searchengin
+E447 Section
 F4D8 Seedling
 F2DA Sellcast
 F213 Sellsy
+E820 Septagon
 F233 Server
 F3EC Servicestack
 F61F Shapes
 F064 Share
-F1E0 Alternate Share
-F1E1 Alternate Share Square
-F14D Share Square
+F14D Share From Square
+F1E0 Share Nodes
+E571 Sheet Plastic
 F20B Shekel Sign
-F3ED Alternate Shield
+F132 Shield
+E572 Shield Cat
+E573 Shield Dog
+F3ED Shield Halved
+E574 Shield Heart
 F96C Shield Virus
+E06C Shield Virus
 F21A Ship
-F48B Shipping Fast
-F214 Shirts in Bulk
+F553 Shirt
+F214 Shirtsinbulk
 F54B Shoe Prints
+E60C Shoelace
+F54F Shop
+E4A5 Shop Lock
+E070 Shop Slash
 F957 Shopify
-F290 Shopping Bag
-F291 Shopping Basket
-F07A shopping-cart
+E057 Shopify
 F5B5 Shopware
 F2CC Shower
-F5B6 Shuttle Van
-F4D9 Sign
-F2F6 Alternate Sign In
-F2A7 Sign Language
-F2F5 Alternate Sign Out
-F012 signal
+E448 Shrimp
+F074 Shuffle
+F197 Shuttle Space
+F4D9 Sign Hanging
+F012 Signal
+E663 Signal Messenger
 F5B7 Signature
-F7C4 SIM Card
-F215 SimplyBuilt
-F3EE SISTRIX
+F277 Signs Post
+F7C4 Sim Card
+F215 Simplybuilt
+E81B Single Quote Left
+E81C Single Quote Right
+E06D Sink
+F3EE Sistrix
 F0E8 Sitemap
 F512 Sith
-F7C5 Skating
+E44A Sitrox
 F7C6 Sketch
-F7C9 Skiing
-F7CA Skiing Nordic
 F54C Skull
-F714 Skull & Crossbones
-F216 skyatlas
+F714 Skull Crossbones
+F216 Skyatlas
 F17E Skype
-F198 Slack Logo
+F198 Slack
 F3EF Slack Hashtag
 F715 Slash
 F7CC Sleigh
-F1DE Horizontal Sliders
+F1DE Sliders
 F1E7 Slideshare
-F118 Smiling Face
-F5B8 Beaming Face With Smiling Eyes
-F4DA Winking Face
 F75F Smog
 F48D Smoking
-F54D Smoking Ban
-F7CD SMS
 F2AB Snapchat
 F2AC Snapchat Ghost
-F2AD Snapchat Square
-F7CE Snowboarding
 F2DC Snowflake
 F7D0 Snowman
 F7D2 Snowplow
 F96E Soap
+E06E Soap
 F696 Socks
+E85E Solana
 F5BA Solar Panel
 F0DC Sort
-F15D Sort Alphabetical Down
-F881 Alternate Sort Alphabetical Down
-F15E Sort Alphabetical Up
-F882 Alternate Sort Alphabetical Up
-F160 Sort Amount Down
-F884 Alternate Sort Amount Down
-F161 Sort Amount Up
-F885 Alternate Sort Amount Up
-F0DD Sort Down (Descending)
-F162 Sort Numeric Down
-F886 Alternate Sort Numeric Down
-F163 Sort Numeric Up
-F887 Alternate Sort Numeric Up
-F0DE Sort Up (Ascending)
-F1BE SoundCloud
+F0DD Sort Down
+F0DE Sort Up
+F1BE Soundcloud
 F7D3 Sourcetree
 F5BB Spa
-F197 Space Shuttle
+E5AC Space Awesome
+F67B Spaghetti Monster Flying
 F3F3 Speakap
 F83C Speaker Deck
 F891 Spell Check
 F717 Spider
 F110 Spinner
+E80A Spiral
 F5BC Splotch
+F2E5 Spoon
 F1BC Spotify
 F5BD Spray Can
+F5D0 Spray Can Sparkles
 F0C8 Square
+F14C Square Arrow Up Right
+F1B5 Square Behance
+E69B Square Binary
+E6A3 Square Bluesky
+E8B7 Square Build Awesome Stroke
+F150 Square Caret Down
+F191 Square Caret Left
+F152 Square Caret Right
+F151 Square Caret Up
+F14A Square Check
+E844 Square Deskpro
+F397 Square Dribbble
+F199 Square Envelope
+F082 Square Facebook
+E7E4 Square Figma
+E5AD Square Font Awesome
+F35C Square Font Awesome Stroke
 F45C Square Full
-F698 Alternate Square Root
+F1D2 Square Git
+F092 Square Github
+E5AE Square Gitlab
+F0D4 Square Google Plus
+F0FD Square H
+F3AF Square Hacker News
+E055 Square Instagram
+F3B9 Square Js
+F203 Square Lastfm
+E62E Square Letterboxd
+E7D0 Square Linkedin
+F146 Square Minus
+E576 Square Nfi
+F264 Square Odnoklassniki
+F540 Square Parking
+F14B Square Pen
+E577 Square Person Confined
+F098 Square Phone
+F87B Square Phone Flip
+E01E Square Pied Piper
+F0D3 Square Pinterest
+F0FE Square Plus
+F682 Square Poll Horizontal
+F681 Square Poll Vertical
+F1A2 Square Reddit
+F698 Square Root Variable
+F143 Square Rss
+F1E1 Square Share Nodes
+F2AD Square Snapchat
+F1B7 Square Steam
+E619 Square Threads
+F174 Square Tumblr
+F081 Square Twitter
+F360 Square Up Right
+E67C Square Upwork
+F2AA Square Viadeo
+F194 Square Vimeo
+E578 Square Virus
+E683 Square Web Awesome
+E684 Square Web Awesome Stroke
+F40C Square Whatsapp
+E61A Square X Twitter
+F169 Square Xing
+F2D3 Square Xmark
+F431 Square Youtube
 F5BE Squarespace
 F18D Stack Exchange
 F16C Stack Overflow
 F842 Stackpath
+E579 Staff Snake
+E289 Stairs
 F5BF Stamp
+E5AF Stapler
 F005 Star
-F699 Star and Crescent
-F089 star-half
-F5C0 Alternate Star Half
-F69A Star of David
-F621 Star of Life
-F3F5 StayLinked
+F699 Star And Crescent
+F089 Star Half
+F5C0 Star Half Stroke
+F69A Star Of David
+F621 Star Of Life
+F3F5 Staylinked
 F1B6 Steam
-F1B7 Steam Square
 F3F6 Steam Symbol
-F048 step-backward
-F051 step-forward
+F154 Sterling Sign
 F0F1 Stethoscope
 F3F7 Sticker Mule
-F249 Sticky Note
-F04D stop
-F28D Stop Circle
+F04D Stop
 F2F2 Stopwatch
 F96F Stopwatch 20
+E06F Stopwatch 20
 F54E Store
-F54F Alternate Store
-F970 Alternate Store Slash
 F971 Store Slash
+E071 Store Slash
+E8C1 Storybook
 F428 Strava
-F550 Stream
 F21D Street View
 F0CC Strikethrough
 F429 Stripe
 F42A Stripe S
 F551 Stroopwafel
-F3F8 Studio Vinari
-F1A4 StumbleUpon Logo
-F1A3 StumbleUpon Circle
-F12C subscript
-F239 Subway
+E5C7 Stubber
+F3F8 Studiovinari
+F1A4 Stumbleupon
+F1A3 Stumbleupon Circle
+F12C Subscript
+E8B8 Substack
 F0F2 Suitcase
+F0FA Suitcase Medical
 F5C1 Suitcase Rolling
 F185 Sun
+E57A Sun Plant Wilt
 F2DD Superpowers
-F12B superscript
+F12B Superscript
 F3F9 Supple
-F5C2 Hushed Face
+E833 Supportnow
 F7D6 Suse
+E868 Svelte
 F5C3 Swatchbook
 F8E1 Swift
-F5C4 Swimmer
-F5C5 Swimming Pool
 F83D Symfony
+E8AB Symfonycasts
 F69B Synagogue
-F021 Sync
-F2F1 Alternate Sync
 F48E Syringe
-F0CE table
-F45D Table Tennis
-F10A tablet
-F3FA Alternate Tablet
+F0CE Table
+F00A Table Cells
+E678 Table Cells Column Lock
+F009 Table Cells Large
+E67A Table Cells Row Lock
+E691 Table Cells Row Unlock
+F0DB Table Columns
+F00B Table List
+F45D Table Tennis Paddle Ball
+F3FB Tablet
+F10A Tablet Button
+F3FA Tablet Screen Button
 F490 Tablets
-F3FD Alternate Tachometer
-F02B tag
-F02C tags
+F566 Tachograph Digital
+F02B Tag
+F02C Tags
+E866 Tailwind Css
 F4DB Tape
-F0AE Tasks
+E57B Tarp
+E57C Tarp Droplet
+E84F Taurus
 F1BA Taxi
-F4F9 TeamSpeak
+F4F9 Teamspeak
 F62E Teeth
 F62F Teeth Open
 F2C6 Telegram
 F3FE Telegram Plane
-F769 High Temperature
-F76B Low Temperature
+E03F Temperature Arrow Down
+E040 Temperature Arrow Up
+F2CB Temperature Empty
+F2C7 Temperature Full
+F2C9 Temperature Half
+F769 Temperature High
+F76B Temperature Low
+F2CA Temperature Quarter
+F2C8 Temperature Three Quarters
 F1D5 Tencent Weibo
-F7D7 Tenge
+F7D7 Tenge Sign
+E57D Tent
+E57E Tent Arrow Down To Line
+E57F Tent Arrow Left Right
+E580 Tent Arrow Turn Left
+E581 Tent Arrows Down
+E582 Tents
 F120 Terminal
-F034 text-height
+E8B9 Tesla
+E7FF Tex
+F034 Text Height
+F87D Text Slash
 F035 Text Width
-F00A th
-F009 th-large
-F00B th-list
 F69D The Red Yeti
-F630 Theater Masks
 F5C6 Themeco
-F2B2 ThemeIsle
+F2B2 Themeisle
 F491 Thermometer
-F2CB Thermometer Empty
-F2C7 Thermometer Full
-F2C9 Thermometer 1/2 Full
-F2CA Thermometer 1/4 Full
-F2C8 Thermometer 3/4 Full
 F731 Think Peaks
-F165 thumbs-down
-F164 thumbs-up
+E618 Threads
+E85F Threema
+F165 Thumbs Down
+F164 Thumbs Up
 F08D Thumbtack
-F3FF Alternate Ticket
-F00D Times
-F057 Times Circle
-F043 tint
-F5C7 Tint Slash
-F5C8 Tired Face
+E68F Thumbtack Slash
+F145 Ticket
+F3FF Ticket Simple
+E7DC Tidal
+E07B Tiktok
+E29C Timeline
+F95B Tissue Box
 F204 Toggle Off
 F205 Toggle On
 F7D8 Toilet
 F71E Toilet Paper
 F972 Toilet Paper Slash
+E072 Toilet Paper Slash
+E583 Toilet Portable
+E584 Toilets Portable
 F552 Toolbox
-F7D9 Tools
 F5C9 Tooth
-F6A0 Torah
+E838 Tor Browser
 F6A1 Torii Gate
+F76F Tornado
+F519 Tower Broadcast
+E585 Tower Cell
+E586 Tower Observation
 F722 Tractor
 F513 Trade Federation
 F25C Trademark
 F637 Traffic Light
 F941 Trailer
+E041 Trailer
 F238 Train
-F7DA Tram
-F224 Transgender
-F225 Alternate Transgender
+F239 Train Subway
+E5B4 Train Tram
+F225 Transgender
 F1F8 Trash
-F2ED Alternate Trash
-F829 Trash Restore
-F82A Alternative Trash Restore
+F829 Trash Arrow Up
+F2ED Trash Can
+F82A Trash Can Arrow Up
 F1BB Tree
+E587 Tree City
 F181 Trello
+F071 Triangle Exclamation
 F262 TripAdvisor
-F091 trophy
-F0D1 truck
-F4DE Truck Loading
+F091 Trophy
+E589 Trowel
+E58A Trowel Bricks
+F0D1 Truck
+E58B Truck Arrow Right
+E58C Truck Droplet
+F48B Truck Fast
+E58D Truck Field
+E58E Truck Field Un
+E2B7 Truck Front
+F0F9 Truck Medical
 F63B Truck Monster
 F4DF Truck Moving
-F63C Truck Side
-F553 T-Shirt
-F1E4 TTY
+F63C Truck Pickup
+E58F Truck Plane
+F4DE Truck Ramp Box
+F1E4 Tty
 F173 Tumblr
-F174 Tumblr Square
-F26C Television
+E2BB Turkish Lira Sign
+F3BE Turn Down
+F3BF Turn Up
+F26C Tv
 F1E8 Twitch
 F099 Twitter
-F081 Twitter Square
+E840 Typescript
 F42B Typo3
 F402 Uber
 F7DF Ubuntu
-F403 UIkit
+F403 Uikit
+E86D Ultralytics
+E86E Ultralytics Hub
+E86F Ultralytics Yolo
 F8E8 Umbraco
 F0E9 Umbrella
 F5CA Umbrella Beach
+E084 Uncharted
 F0CD Underline
-F0E2 Undo
-F2EA Alternate Undo
 F404 Uniregistry
+E854 Unison
+E049 Unity
 F949 Unity 3D
 F29A Universal Access
-F19C University
-F127 unlink
-F09C unlock
-F13E Alternate Unlock
+F09C Unlock
+F13E Unlock Keyhole
+E85C Unreal Engine
+E07C Unsplash
 F405 Untappd
+F338 Up Down
+F0B2 Up Down Left Right
+F30C Up Long
+F424 Up Right And Down Left From Center
+F35D Up Right From Square
 F093 Upload
-F7E0 UPS
-F287 USB
+F7E0 Ups
+E641 Upwork
+F287 Usb
 F007 User
-F406 Alternate User
-F4FA Alternate User Slash
 F4FB User Astronaut
 F4FC User Check
-F2BD User Circle
 F4FD User Clock
-F4FE User Cog
-F4FF User Edit
-F500 User Friends
+F0F0 User Doctor
+F4FE User Gear
 F501 User Graduate
+F500 User Group
 F728 User Injured
+F406 User Large
+F4FA User Large Slash
 F502 User Lock
-F0F0 Doctor
 F503 User Minus
 F504 User Ninja
-F82F Nurse
+F82F User Nurse
+F4FF User Pen
 F234 User Plus
 F21B User Secret
 F505 User Shield
 F506 User Slash
 F507 User Tag
 F508 User Tie
-F235 Remove User
+F235 User Xmark
 F0C0 Users
-F509 Users Cog
-F7E1 United States Postal Service
-F407 us-Sunnah Foundation
-F2E5 Utensil Spoon
+E591 Users Between Lines
+F509 Users Gear
+E592 Users Line
+E593 Users Rays
+E594 Users Rectangle
+E073 Users Slash
+E595 Users Viewfinder
+F7E1 Usps
+F407 Ussunnah
 F2E7 Utensils
 F408 Vaadin
+F5B6 Van Shuttle
+E2C5 Vault
 F5CB Vector Square
+E85A Venmo
+E85B Venmo V
 F221 Venus
 F226 Venus Double
 F228 Venus Mars
+E085 Vest
+E086 Vest Patches
 F237 Viacoin
-F2A9 Video
-F2AA Video Square
+F2A9 Viadeo
 F492 Vial
+E596 Vial Circle Check
+E597 Vial Virus
 F493 Vials
 F409 Viber
 F03D Video
 F4E2 Video Slash
 F6A7 Vihara
+E88A Vim
 F40A Vimeo
-F194 Vimeo Square
-F27D Vimeo
+F27D Vimeo V
 F1CA Vine
+E850 Virgo
 F974 Virus
+E074 Virus
+E4A8 Virus Covid
+E4A9 Virus Covid Slash
 F975 Virus Slash
+E075 Virus Slash
 F976 Viruses
-F189 VK
-F40B VNV
+E076 Viruses
+E8BE Visual Studio
+F189 Vk
+F40B Vnv
 F897 Voicemail
-F45F Volleyball Ball
-F027 Volume Down
-F6A9 Volume Mute
+F770 Volcano
+F45F Volleyball
+F6A8 Volume
+F028 Volume High
+F027 Volume Low
 F026 Volume Off
-F028 Volume Up
-F772 Vote Yea
-F729 Cardboard VR
-F41F Vue.js
-F554 Walking
+F6A9 Volume Xmark
+F729 Vr Cardboard
+E7DD Vsco
+F41F Vuejs
+E7DE W3c
+F8EF Walkie Talkie
 F555 Wallet
+F0D0 Wand Magic
+E2CA Wand Magic Sparkles
+F72B Wand Sparkles
 F494 Warehouse
+E087 Watchman Monitoring
 F773 Water
-F83E Square Wave
+F5C5 Water Ladder
+F83E Wave Square
 F83F Waze
+E682 Web Awesome
+E65C Webflow
 F5CC Weebly
 F18A Weibo
-F496 Weight
-F5CD Hanging Weight
-F1D7 Weixin (WeChat)
-F232 What's App
-F40C What's App Square
+F5CD Weight Hanging
+F496 Weight Scale
+F1D7 Weixin
+F232 Whatsapp
+E2CD Wheat Awn
+E598 Wheat Awn Circle Exclamation
 F193 Wheelchair
-F40D WHMCS
-F1EB WiFi
+E2CE Wheelchair Move
+F7A0 Whiskey Glass
+F40D Whmcs
+F1EB Wifi
 F266 Wikipedia W
 F72E Wind
-F410 Window Close
 F2D0 Window Maximize
 F2D1 Window Minimize
 F2D2 Window Restore
 F17A Windows
 F72F Wine Bottle
 F4E3 Wine Glass
-F5CE Alternate Wine Glas
+F5CE Wine Glass Empty
+E2D0 Wirsindhandwerk
 F5CF Wix
-F730 Wizards of the Coast
+F730 Wizards Of The Coast
+E088 Wodu
 F514 Wolf Pack Battalion
 F159 Won Sign
-F19A WordPress Logo
+F19A Wordpress
 F411 Wordpress Simple
-F297 WPBeginner
-F2DE WPExplorer
-F298 WPForms
-F3E4 wpressr
+E599 Worm
+F297 Wpbeginner
+F2DE Wpexplorer
+F298 Wpforms
+F3E4 Wpressr
 F0AD Wrench
-F497 X-Ray
+F497 X Ray
+E61B X Twitter
 F412 Xbox
 F168 Xing
-F169 Xing Square
+F00D Xmark
+E59A Xmarks Lines
+E864 Xmpp
+E8BA Xrp
+E8BB Xrpl
 F23B Y Combinator
-F19E Yahoo Logo
+F19E Yahoo
 F840 Yammer
 F413 Yandex
 F414 Yandex International
@@ -1433,6 +2008,8 @@ F1E9 Yelp
 F157 Yen Sign
 F6AD Yin Yang
 F2B1 Yoast
-F167 YouTube
-F431 YouTube Square
+F167 Youtube
+E8BC Youtube Shorts
 F63F Zhihu
+E87B Zoom
+E853 Zulip

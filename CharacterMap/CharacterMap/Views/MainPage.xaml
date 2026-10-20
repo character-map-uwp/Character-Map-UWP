@@ -15,7 +15,9 @@
     x:Name="PageRoot"
     Background="{ThemeResource DefaultPageBackgroundBrush}"
     DataContext="{x:Bind ViewModel}"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    d:DesignHeight="1080"
+    d:DesignWidth="1920">
 
     <Control.Resources>
         <!--  Ensure both of these are equal  -->
@@ -519,8 +521,7 @@
                             core:Properties.SupportAnimatedIcon="False"
                             IsEnabled="{x:Bind ViewModel.CanFilter, Mode=OneWay}"
                             Style="{StaticResource TransparentHintButton}"
-                            ToolTipService.Placement="Bottom"
-                            Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">
+                            ToolTipService.Placement="Bottom">
 
                             <StackPanel
                                 Margin="0 -4"
@@ -550,13 +551,14 @@
                                 <controls:FilterFlyout
                                     AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                                     CollectionSelectedCommand="{x:Bind CollectionSelectedCommand}"
-                                    FilterCommand="{x:Bind FilterCommand}" />
+                                    FilterCommand="{x:Bind FilterCommand}"
+                                    IsStandalone="{x:Bind ViewModel.IsSecondaryView}" />
                             </Button.Flyout>
                         </controls:UXButton>
 
                         <controls:UXButton
                             x:Name="SecondaryHeader"
-                            x:Load="{x:Bind ViewModel.IsSecondaryView}"
+                            x:Load="False"
                             Grid.Column="1"
                             MinHeight="26"
                             Margin="0,0,0,0"
@@ -813,14 +815,14 @@
                         </Grid>
 
                         <Border Grid.Row="3" Style="{StaticResource FontListStyle}">
-                            <SemanticZoom x:Name="FontsSemanticZoom">
+                            <SemanticZoom x:Name="FontsSemanticZoom" ViewChangeStarted="FontsSemanticZoom_ViewChangeStarted">
                                 <SemanticZoom.ZoomedInView>
                                     <controls:ExtendedListView
                                         x:Name="LstFontFamily"
                                         core:Properties.ItemContainerBackgroundTransition="{StaticResource BackgroundTransition}"
                                         core:Properties.ToolTipPlacement="Bottom"
                                         ContainerContentChanging="LstFontFamily_ContainerContentChanging"
-                                        FontSize="{Binding ElementName=PageRoot, Path=FontListFontSize}"
+                                        FontSize="{x:Bind FontListFontSize, Mode=OneWay}"
                                         IsItemClickEnabled="False"
                                         IsSwipeEnabled="False"
                                         ItemContainerTransitions="{StaticResource NoTransitions}"
@@ -886,6 +888,7 @@
                                 <SemanticZoom.ZoomedOutView>
                                     <controls:ExtendedGridView
                                         x:Name="ZoomGridView"
+                                        x:Load="False"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         ItemContainerStyle="{StaticResource FontListGridViewItemStyle}"
@@ -1070,6 +1073,17 @@
                                                 Margin="0 2 0 0"
                                                 core:Properties.ThemeIcon="GlyphMapView"
                                                 FontSize="11" />
+
+                                            <FontIcon
+                                                x:Name="LigatureMapIcon"
+                                                x:Load="{x:Bind IsLigatures}"
+                                                Margin="0 2 0 0"
+                                                core:Properties.ThemeIcon="GlyphMapView"
+                                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                                FontSize="11"
+                                                Glyph="ffi"
+                                                Typography.ContextualLigatures="True"
+                                                Typography.DiscretionaryLigatures="True" />
 
                                             <TextBlock
                                                 x:Name="TitleText"

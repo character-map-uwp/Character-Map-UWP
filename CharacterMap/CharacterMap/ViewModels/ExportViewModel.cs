@@ -1,6 +1,7 @@
 ﻿using Windows.System;
 using Windows.UI;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.ViewModels;
 
@@ -26,6 +27,7 @@ public class ExportViewModel : ViewModelBase
     public bool SkipBlankGlyphs { get => GetV(true); set => Set(value); }
     public double GlyphSize { get => GetV(0d); set => Set(value); }
     public Color GlyphColor { get => GetV(Colors.White); set => Set(value); }
+    public SolidColorBrush GlyphBrush { get => Get<SolidColorBrush>(); set => Set(value); }
     public bool ExportColor { get => GetV(true); set => Set(value); }
     public bool IsWhiteChecked { get => GetV(false); set => Set(value); }
     public bool IsBlackChecked { get => GetV(false); set => Set(value); }
@@ -50,13 +52,14 @@ public class ExportViewModel : ViewModelBase
     {
         Font = viewModel.SelectedFont.Font;
         Categories = viewModel.SelectedGlyphCategories.ToList(); // Makes a copy of the list
-        Variant = viewModel.RenderingOptions.Variant;
+        Variant = viewModel.RenderingOptions.Face;
         Options = viewModel.RenderingOptions;
         GlyphSize = viewModel.Settings.PngSize;
         ExportColor = viewModel.ShowColorGlyphs;
 
         IsWhiteChecked = ResourceHelper.GetEffectiveTheme() == ElementTheme.Dark;
         IsBlackChecked = ResourceHelper.GetEffectiveTheme() == ElementTheme.Light;
+        UpdateBrush();
 
         UpdateCharacters();
     }
@@ -70,6 +73,7 @@ public class ExportViewModel : ViewModelBase
                     IsBlackChecked = false;
                 if (GlyphColor != Colors.White)
                     IsWhiteChecked = false;
+                UpdateBrush();
                 break;
 
             case nameof(IsWhiteChecked) when IsWhiteChecked:
@@ -96,17 +100,22 @@ public class ExportViewModel : ViewModelBase
         }
     }
 
+    private void UpdateBrush()
+    {
+        GlyphBrush = new(GlyphColor);
+    }
+
     private void UpdateCharacters()
     {
         // Fast path : all characters;
         if (!Categories.Any(c => !c.IsSelected) && !HideWhitespace)
         {
-            Characters = Variant.Characters;
+            Characters = Variant.GetCharacters();
             return;
         }
 
         // Filter characters
-        Characters = Unicode.FilterCharacters(Variant.Characters, Categories, HideWhitespace);
+        Characters = Unicode.FilterCharacters(Variant.GetCharacters(), Categories, HideWhitespace);
     }
 
     public void UpdateCategories(IList<UnicodeRangeModel> value)

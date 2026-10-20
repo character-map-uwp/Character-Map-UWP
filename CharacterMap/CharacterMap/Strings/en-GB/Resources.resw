@@ -135,4 +135,7 @@
   <data name="FilterColorBitmap.Text" xml:space="preserve">
     <value>Colour Bitmap</value>
   </data>
+  <data name="AllColorTitle.Text" xml:space="preserve">
+    <value>All Colour Fonts</value>
+  </data>
 </root>

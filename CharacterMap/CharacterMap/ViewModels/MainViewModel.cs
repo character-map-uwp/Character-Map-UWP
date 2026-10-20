@@ -415,6 +415,8 @@ public partial class MainViewModel : ViewModelBase
             bool removed = false;
             Fonts.Clear();
 
+            bool tabs = ResourceHelper.Get<bool>("SupportsTabs");
+
             // 1. Parse list of saved fonts
             for (int i = 0; i < list.Count; i++)
             {
@@ -435,8 +437,21 @@ public partial class MainViewModel : ViewModelBase
                     Fonts.Add(new(font)
                     {
                         Selected = sel,
-                        DisplayMode = (FontDisplayMode)Convert.ToInt32(list[++i])
+                        DisplayMode = (FontDisplayMode)GetDisplayMode(list[++i], tabs)
                     });
+
+                    static int GetDisplayMode(string v, bool t)
+                    {
+                        int mode = Convert.ToInt32(v);
+
+                        // A horrible hack for the fact that launching the application
+                        // without tabs enabled into Ligatures view BREAKS ligatures
+                        // for the rest of the session, and there doesn't seem to be 
+                        // any discernible reason for this.
+                        if (!t && mode == (int)FontDisplayMode.LigaturesState)
+                            mode = (int)FontDisplayMode.CharacterMapState;
+                        return mode;
+                    }
                 }
                 else
                 {

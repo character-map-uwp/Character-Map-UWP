@@ -28,9 +28,9 @@ public class UnicodeFilterReader : IIncrementalGenerator
 
             sbu.AppendLine("" +
                 "/// <summary>\r\n    /// Unicode Ranges sorted by Range\r\n    /// </summary>\r\n" +
-                "    public static IReadOnlyList<NamedUnicodeRange> All { get; } = [");
+                "    public static IReadOnlyList<NamedUnicodeRange> All => field ??= [");
 
-            sbf.AppendLine("public static IReadOnlyList<BasicFontFilter> AllFilters { get; } = [");
+            sbf.AppendLine("public static IReadOnlyList<BasicFontFilter> AllFilters => field ??= [");
 
             foreach (var u in nodes)
             {

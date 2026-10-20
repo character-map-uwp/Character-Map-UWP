@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml;
+﻿using Windows.UI.Composition;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 
@@ -18,6 +19,8 @@ public abstract partial class ViewBase : Page
 
     protected virtual ViewModelBase GetViewModel() => null;
 
+    public Compositor Compositor => field ??= Window.Current.Compositor;
+
     public ViewBase()
     {
         this.Loaded += OnLoadedBase;
@@ -35,7 +38,7 @@ public abstract partial class ViewBase : Page
     {
         ResourceHelper.GoToThemeState(this);
 
-        if (GetViewModel() is { } vm)
+        if (DesignMode is false && GetViewModel() is { } vm)
         {
             foreach (var state in _trackedStates)
                 GoToState(BaseNotifyingModel.GetValue<string>(vm, state));

@@ -1,4 +1,4 @@
-﻿using System.IO.Compression;
+using System.IO.Compression;
 using WoffToOtf;
 
 namespace CharacterMap.Helpers;
@@ -88,40 +88,54 @@ public static class FontConverter
     /// <returns></returns>
     public static async Task<List<StorageFile>> ExtractFontsFromZipAsync(StorageFile file, StorageFolder folder, FolderOpenOptions options)
     {
-        List<StorageFile> files = new();
+        List<StorageFile> files = [];
 
         try
         {
-            using var s = await file.OpenStreamForReadAsync().ConfigureAwait(false);
-            ZipArchive zip = new(s);
+            using Stream s = await file.OpenStreamForReadAsync().ConfigureAwait(false);
+            using ZipArchive zip = new(s, ZipArchiveMode.Read);
+            string folderPath = folder.Path;
 
-            foreach (var entry in zip.Entries)
+            foreach (ZipArchiveEntry entry in zip.Entries)
             {
                 if (options.IsCancelled)
                     return files;
 
-                var ext = Path.GetExtension(entry.Name);
+                string ext = Path.GetExtension(entry.Name);
                 if (FontImporter.ImportFormats.Contains(ext.ToLower()))
                 {
                     try
                     {
-                        var extracted = await entry.ExtractToFolderAsync(folder, entry.Name, CreationCollisionOption.GenerateUniqueName).ConfigureAwait(false);
-                        var result = await FontConverter.TryConvertAsync(extracted, folder).ConfigureAwait(false);
+                        bool isWoff = ext.EndsWith("woff", StringComparison.OrdinalIgnoreCase);
+                        bool isWoff2 = ext.EndsWith("woff2", StringComparison.OrdinalIgnoreCase);
 
-                        // If the file was converted we can delete the original extracted file.
-                        // We don't need to await this.
-                        if (result.File != extracted)
-                            _ = extracted.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                        if (isWoff || isWoff2)
+                        {
+                            StorageFile extracted = await entry.ExtractToFolderAsync(folder, entry.Name, CreationCollisionOption.GenerateUniqueName).ConfigureAwait(false);
+                            (StorageFile File, ConversionStatus Result) result = await FontConverter.TryConvertAsync(extracted, folder).ConfigureAwait(false);
 
-                        if (result.Result == ConversionStatus.OK)
-                            files.Add(result.File);
+                            // If the file was converted we can delete the original extracted file.
+                            if (result.File != extracted)
+                                await extracted.DeleteAsync(StorageDeleteOption.PermanentDelete).AsTask().ConfigureAwait(false);
+
+                            if (result.Result == ConversionStatus.OK)
+                                files.Add(result.File);
+                        }
+                        else
+                        {
+                            string fileName = $"{Path.GetRandomFileName()}{ext}";
+                            string targetPath = Path.Combine(folderPath, fileName);
+                            using (Stream entryStream = entry.Open())
+                            using (FileStream fs = new(targetPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+                                entryStream.CopyTo(fs);
+
+                            StorageFile extracted = await StorageFile.GetFileFromPathAsync(targetPath).AsTask().ConfigureAwait(false);
+                            files.Add(extracted);
+                        }
                     }
                     catch (Exception ex)
                     {
                         Utils.AppendDiagnostics("FontConverter ExtractFontsFromZipAsync", ex);
-
-                        // Possibly file already exists, ExtractToFile doesn't take
-                        // options for handling collisions
                     }
                 }
             }

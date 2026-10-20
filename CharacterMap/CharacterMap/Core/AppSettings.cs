@@ -15,8 +15,8 @@ public class AppSettings : INotifyPropertyChanged
 
     public bool EnableSubsetter
     {
-        get => Get(false);
-        set => Set(value);
+        get => Get(true, "EnableSubsetter1");
+        set => Set(value, "EnableSubsetter1");
     }
 
     public bool CopyTypographicVariantsAsMappedChars

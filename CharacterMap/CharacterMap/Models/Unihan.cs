@@ -1,4 +1,4 @@
-﻿// Ignore Spelling: Unihan
+// Ignore Spelling: Unihan
 
 using SQLite;
 using System.Diagnostics;
@@ -87,7 +87,7 @@ public class UnihanReading
     }
 
 #if DEBUG
-    [Indexed, Column("Ix")]
+    [Column("Ix")]
 #endif
     public int Index { get; set; }
 
