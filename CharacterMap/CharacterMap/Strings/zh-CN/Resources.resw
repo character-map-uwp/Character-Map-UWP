@@ -119,84 +119,108 @@
   </resheader>
   <data name="AddToCollectionHint.Text" xml:space="preserve">
     <value>添加到库</value>
+    <comment>Button label to add current font to font library</comment>
   </data>
   <data name="AppName" xml:space="preserve">
     <value>字符映射表</value>
+    <comment>Application title. Usually kept untranslated.</comment>
   </data>
   <data name="BlackFill.Text" xml:space="preserve">
     <value>黑色填充</value>
+    <comment>Preview background color option</comment>
   </data>
   <data name="BtnCopy.Text" xml:space="preserve">
     <value>复制为文本</value>
+    <comment>Context menu item to copy glyph character as plain text</comment>
   </data>
   <data name="BtnSelect.Content" xml:space="preserve">
     <value>选择</value>
+    <comment>Button label - select item</comment>
   </data>
   <data name="ColoredGlyphLabel.Text" xml:space="preserve">
     <value>着色字形</value>
+    <comment>Label indicating character contains multi-color glyph data</comment>
   </data>
   <data name="ColorGlyphToggle.OffContent" xml:space="preserve">
     <value>单色字形</value>
+    <comment>Toggle switch off-state label</comment>
   </data>
   <data name="ColorGlyphToggle.OnContent" xml:space="preserve">
     <value>有色字形</value>
+    <comment>Toggle switch on-state label</comment>
   </data>
   <data name="FontDisplayHeader.Text" xml:space="preserve">
     <value>字体显示选项</value>
   </data>
   <data name="FontOptionsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>字体渲染选项</value>
+    <comment>Button tooltip to show OpenType font features</comment>
   </data>
   <data name="FontPropertiesButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>字体属性</value>
+    <comment>Button tooltip to show font metadata and properties</comment>
   </data>
   <data name="FontPropFace.Text" xml:space="preserve">
     <value>字体名称</value>
+    <comment>Typography: Font face name (e.g. Regular, Bold, Italic)</comment>
   </data>
   <data name="FontPropFamily.Text" xml:space="preserve">
     <value>字体家族名称</value>
+    <comment>Typography: Font family name (e.g. Arial, Segoe UI)</comment>
   </data>
   <data name="FontPropMonospaced.Text" xml:space="preserve">
     <value>是否等宽</value>
+    <comment>Typography: Whether font characters have fixed width</comment>
   </data>
   <data name="FontPropStretch.Text" xml:space="preserve">
     <value>宽窄</value>
+    <comment>Typography: Font width/stretch (e.g. Condensed, Expanded)</comment>
   </data>
   <data name="FontPropStyle.Text" xml:space="preserve">
     <value>风格</value>
+    <comment>Typography: Font slope style (e.g. Normal, Italic, Oblique)</comment>
   </data>
   <data name="FontPropSymbol.Text" xml:space="preserve">
     <value>是否为符号字体</value>
+    <comment>Typography: Whether font is an icon/symbol font</comment>
   </data>
   <data name="FontPropTitle.Text" xml:space="preserve">
     <value>字体属性</value>
   </data>
   <data name="FontPropType.Text" xml:space="preserve">
     <value>类型</value>
+    <comment>Typography: Font outline format (e.g. TrueType, OpenType, CFF)</comment>
   </data>
   <data name="FontPropWeight.Text" xml:space="preserve">
     <value>粗细</value>
+    <comment>Typography: Font stroke thickness (e.g. Light, Regular, Bold)</comment>
   </data>
   <data name="InvalidFontMessage" xml:space="preserve">
     <value>抱歉，我们无法在该文件中找到支持的字体。</value>
+    <comment>Error dialog message</comment>
   </data>
   <data name="InvalidFontTitle" xml:space="preserve">
     <value>不支持的文件</value>
+    <comment>Error dialog title</comment>
   </data>
   <data name="OpenInNewWindow.Text" xml:space="preserve">
     <value>在新窗口中打开</value>
+    <comment>Context menu item to open font in a new window</comment>
   </data>
   <data name="RemoveFontFlyout.Text" xml:space="preserve">
     <value>删除字体</value>
+    <comment>Context menu item to delete font from library</comment>
   </data>
   <data name="RestartButton.Content" xml:space="preserve">
     <value>重启应用</value>
+    <comment>Button to restart the application</comment>
   </data>
   <data name="RestartHeader.Text" xml:space="preserve">
     <value>需重启应用才可生效。</value>
   </data>
   <data name="SearchBox.PlaceholderText" xml:space="preserve">
     <value>搜索字符、Unicode 名称或 16 进制序号</value>
+    <comment>Placeholder text in main search box</comment>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
     <value>关于本应用</value>
@@ -206,6 +230,7 @@
   </data>
   <data name="TxtCopiedMessage.Text" xml:space="preserve">
     <value>已复制</value>
+    <comment>In-app flyout message confirming character was copied</comment>
   </data>
   <data name="TxtFontIcon.Header" xml:space="preserve">
     <value>FontIcon 图标</value>
@@ -217,18 +242,23 @@
   </data>
   <data name="TxtTitle.Text" xml:space="preserve">
     <value>字符映射表</value>
+    <comment>Application title in header</comment>
   </data>
   <data name="TxtUnicode.Header" xml:space="preserve">
     <value>Unicode 编码</value>
+    <comment>Header for Unicode codepoint value. Does not need translation.</comment>
   </data>
   <data name="TxtXamlCode.Header" xml:space="preserve">
     <value>XAML 转义代码</value>
+    <comment>Header for XAML glyph hex code value</comment>
   </data>
   <data name="TypographyVariantsHeader.Text" xml:space="preserve">
     <value>字形变体</value>
+    <comment>Header for OpenType typography features panel</comment>
   </data>
   <data name="WhiteFill.Text" xml:space="preserve">
     <value>白色填充</value>
+    <comment>Preview background color option</comment>
   </data>
   <data name="ImportNotAFile" xml:space="preserve">
     <value>不是一个文件</value>
@@ -265,141 +295,182 @@
   </data>
   <data name="FontPropXaml.Text" xml:space="preserve">
     <value>XAML FontFamily 源代码</value>
+    <comment>XAML syntax string. 'FontFamily' and 'XAML' do not need translation.</comment>
   </data>
   <data name="FilePickerConfirm" xml:space="preserve">
     <value>导入</value>
+    <comment>File picker dialog commit button label</comment>
   </data>
   <data name="ImportFontsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>导入字体</value>
+    <comment>Button tooltip to import fonts</comment>
   </data>
   <data name="OpenFontButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>打开字体</value>
+    <comment>Button tooltip to open font file</comment>
   </data>
   <data name="OpenFontPickerConfirm" xml:space="preserve">
     <value>打开</value>
+    <comment>File picker dialog commit button label</comment>
   </data>
   <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
     <value>收藏集名称</value>
+    <comment>Input field header for naming a collection</comment>
   </data>
   <data name="DigCreateCollection.PrimaryButtonText" xml:space="preserve">
     <value>创建</value>
+    <comment>Dialog confirmation button</comment>
   </data>
   <data name="DigCreateCollection.Title" xml:space="preserve">
     <value>创建收藏集</value>
+    <comment>Dialog title</comment>
   </data>
   <data name="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>删除收藏集</value>
+    <comment>Button tooltip to delete selected collection</comment>
   </data>
   <data name="Delete" xml:space="preserve">
     <value>删除</value>
+    <comment>Dialog button label - confirm deletion</comment>
   </data>
   <data name="DigDeleteCollection.Title" xml:space="preserve">
     <value>确定要删除该收藏集吗？</value>
+    <comment>Confirmation dialog title</comment>
   </data>
   <data name="DigRenameCollection.PrimaryButtonText" xml:space="preserve">
     <value>重命名</value>
+    <comment>Dialog confirmation button</comment>
   </data>
   <data name="DigRenameCollection.Title" xml:space="preserve">
     <value>重命名收藏集</value>
+    <comment>Dialog title</comment>
   </data>
   <data name="OptionAllFonts.Text" xml:space="preserve">
     <value>所有字体</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionImportedFonts.Text" xml:space="preserve">
     <value>导入的字体</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionSymbolFonts.Text" xml:space="preserve">
     <value>符号字体</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="RenameCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>重命名收藏集</value>
+    <comment>Button tooltip to rename collection</comment>
   </data>
   <data name="FontListDisplayHeader.Text" xml:space="preserve">
     <value>字体显示</value>
   </data>
   <data name="FontPropCount.Text" xml:space="preserve">
     <value>字形数量</value>
+    <comment>Typography: Count of glyphs in font face</comment>
   </data>
   <data name="OptionMonospacedFonts.Text" xml:space="preserve">
     <value>等宽字体</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionSansSerifFonts.Text" xml:space="preserve">
     <value>无衬线字体</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionSerifFonts.Text" xml:space="preserve">
     <value>衬线字体</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="NewCollectionItem.Text" xml:space="preserve">
     <value>新建收藏集</value>
+    <comment>Context menu item to create a new collection</comment>
   </data>
   <data name="RemoveFromCollectionItem.Text" xml:space="preserve">
     <value>从收藏集中删除</value>
+    <comment>Context menu item to remove font from collection</comment>
   </data>
   <data name="AddToCollectionFlyout.Text" xml:space="preserve">
     <value>添加到收藏集</value>
+    <comment>Context menu item / submenu header to add font to collection</comment>
   </data>
   <data name="InstantSearchToggle.OffContent" xml:space="preserve">
     <value>即时搜索已关闭</value>
+    <comment>Toggle switch off-state label</comment>
   </data>
   <data name="InstantSearchToggle.OnContent" xml:space="preserve">
     <value>即时搜索已启用</value>
+    <comment>Toggle switch on-state label</comment>
   </data>
   <data name="SearchResultsSlider.Header" xml:space="preserve">
     <value>最大搜索结果数量</value>
   </data>
   <data name="FontPropCharCount.Text" xml:space="preserve">
     <value>字符数量</value>
+    <comment>Typography: Count of Unicode characters supported in font face</comment>
   </data>
   <data name="FontPropFilePath.Text" xml:space="preserve">
     <value>文件路径</value>
   </data>
   <data name="DWriteSourceAppxPackage" xml:space="preserve">
     <value>微软应用商店</value>
+    <comment>DirectWrite font source: installed via Microsoft Store package</comment>
   </data>
   <data name="DWriteSourcePerMachine" xml:space="preserve">
     <value>所有用户</value>
+    <comment>DirectWrite font source: installed system-wide for all users</comment>
   </data>
   <data name="DWriteSourcePerUser" xml:space="preserve">
     <value>仅当前用户</value>
+    <comment>DirectWrite font source: installed for current user only</comment>
   </data>
   <data name="DWriteSourceRemoteFontProvider" xml:space="preserve">
     <value>云提供商</value>
+    <comment>DirectWrite font source: downloaded from cloud provider</comment>
   </data>
   <data name="DWriteSourceUnknown" xml:space="preserve">
     <value>未定义</value>
+    <comment>DirectWrite font source: unspecified or unknown source</comment>
   </data>
   <data name="FontPropInstallType.Text" xml:space="preserve">
     <value>安装类型</value>
   </data>
   <data name="OptionAppxFonts.Text" xml:space="preserve">
     <value>来自微软应用商店</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionCloudFonts.Text" xml:space="preserve">
     <value>云端字体</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionColorFonts.Text" xml:space="preserve">
     <value>有色字体</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionDecorativeFonts.Text" xml:space="preserve">
     <value>装饰体</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionMoreFilters.Text" xml:space="preserve">
     <value>更多</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionScriptFonts.Text" xml:space="preserve">
     <value>书写体</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="StatusBarFontCount" xml:space="preserve">
     <value>{0} 种字体家族</value>
+    <comment>{0} = number of font families</comment>
   </data>
   <data name="FontPropFileSize.Text" xml:space="preserve">
     <value>文件大小</value>
   </data>
   <data name="InstallTypeImported" xml:space="preserve">
     <value>未安装 (导入)</value>
+    <comment>Font source: loaded into application without installing in Windows</comment>
   </data>
   <data name="StatusBarCharacterCount" xml:space="preserve">
     <value>{0} 个字符</value>
+    <comment>{0} = number of characters in font face</comment>
   </data>
   <data name="SearchDelaySelector.Header" xml:space="preserve">
     <value>搜索延迟 (毫秒)</value>
@@ -409,51 +480,67 @@
   </data>
   <data name="CharacterSavedMessage.Text" xml:space="preserve">
     <value>保存到</value>
+    <comment>Precedes folder path: 'Saved to [folder path]'</comment>
   </data>
   <data name="NotificationAddedToCollection" xml:space="preserve">
     <value>{0} 已添加到收藏集 "{1}"</value>
+    <comment>{0} = font name, {1} = collection name</comment>
   </data>
   <data name="BtnOpenFile.Content" xml:space="preserve">
     <value>打开文件</value>
+    <comment>Button label to open exported file</comment>
   </data>
   <data name="BtnOpenFolder.Content" xml:space="preserve">
     <value>在文件夹中显示</value>
+    <comment>Button label to open folder in File Explorer</comment>
   </data>
   <data name="BtnHidePane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>隐藏字体面板 (Ctrl+L)</value>
+    <comment>Tooltip to collapse the font list pane</comment>
   </data>
   <data name="NotificationImportFailed" xml:space="preserve">
     <value>导入失败</value>
+    <comment>Notification header when font import fails</comment>
   </data>
   <data name="NotificationMultipleFontsAdded" xml:space="preserve">
     <value>已将 {0} 个文件添加到您的收藏集中</value>
+    <comment>{0} = number of font files added</comment>
   </data>
   <data name="NotificationSingleFontAdded" xml:space="preserve">
     <value>已将 {0} 添加到您的收藏集中</value>
+    <comment>{0} = font name</comment>
   </data>
   <data name="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>显示字体面板 (Ctrl+L)</value>
+    <comment>Tooltip to expand the font list pane</comment>
   </data>
   <data name="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>更多</value>
+    <comment>Tooltip for overflow menu button</comment>
   </data>
   <data name="FontListFilter.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>筛选字体</value>
+    <comment>Tooltip for font list filter flyout button</comment>
   </data>
   <data name="ToggleFullScreenModeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>切换全屏</value>
+    <comment>Tooltip to toggle fullscreen mode</comment>
   </data>
   <data name="DlgDeleteFont.Title" xml:space="preserve">
     <value>你确定要将该字体从库中删除吗？ </value>
+    <comment>Confirmation dialog title</comment>
   </data>
   <data name="NotificationCollectionDeleted" xml:space="preserve">
     <value>收藏集 "{0}" 已删除</value>
+    <comment>{0} = collection name</comment>
   </data>
   <data name="DlgException.PrimaryButtonText" xml:space="preserve">
     <value>确定</value>
+    <comment>Dialog button</comment>
   </data>
   <data name="DlgException.Title" xml:space="preserve">
     <value>出错了</value>
+    <comment>Unhandled error dialog title</comment>
   </data>
   <data name="DlgExceptionCopyMessage.Text" xml:space="preserve">
     <value>复制出错信息到剪切板并打开 Github</value>
@@ -466,60 +553,75 @@
   </data>
   <data name="BtnClose.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>关闭</value>
+    <comment>Tooltip to close pane or dialog</comment>
   </data>
   <data name="BtnCopyDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>复制</value>
+    <comment>Tooltip to copy code snippet to clipboard</comment>
   </data>
   <data name="BtnRateAndReview.Content" xml:space="preserve">
     <value>评分及反馈</value>
+    <comment>Button label - open Microsoft Store rating page</comment>
   </data>
   <data name="BtnXAMLGeometry.Content" xml:space="preserve">
     <value>点击以查看</value>
+    <comment>Button label - show full XAML path geometry</comment>
   </data>
   <data name="RbThemeDark.Content" xml:space="preserve">
     <value>黑暗</value>
+    <comment>Theme option: dark mode</comment>
   </data>
   <data name="RbThemeLight.Content" xml:space="preserve">
     <value>明亮</value>
+    <comment>Theme option: light mode</comment>
   </data>
   <data name="RbThemeSystem.Content" xml:space="preserve">
     <value>Windows 默认</value>
+    <comment>Theme option: follow Windows default theme</comment>
   </data>
   <data name="RbUseActualFont.Content" xml:space="preserve">
     <value>使用字体本身</value>
+    <comment>Setting option: render font names in the font list using each font's own typeface</comment>
   </data>
   <data name="RbUseSystemFont.Content" xml:space="preserve">
     <value>使用系统字体</value>
+    <comment>Setting option: render font names in the font list using the system font</comment>
   </data>
   <data name="SettingsCharacterSearchDescription.Text" xml:space="preserve">
     <value>即时搜索切换开关。若禁用，可按 Enter 键或点击搜索图标进行搜索。</value>
   </data>
   <data name="SettingsCharacterSearchHeader.Text" xml:space="preserve">
     <value>字符搜索</value>
+    <comment>Settings section header for search settings</comment>
   </data>
   <data name="SettingsCharGridDescription.Text" xml:space="preserve">
     <value>字符网格内单个字符的尺寸大小。较小的尺寸或许会影响性能。</value>
   </data>
   <data name="SettingsCharGridHeader.Text" xml:space="preserve">
     <value>字符网格尺寸</value>
+    <comment>Settings header for character grid size slider</comment>
   </data>
   <data name="SettingsCharPreviewHint.Text" xml:space="preserve">
     <value>字符网格效果预览</value>
+    <comment>Label for character grid preview box</comment>
   </data>
   <data name="SettingsDevToolsDescription.Text" xml:space="preserve">
     <value>显示供 XAML 开发者使用的工具，如 Symbol Icon (符号图标) 和 Font Icon (字体图标)。</value>
   </data>
   <data name="SettingsDevToolsGroupHeader.Text" xml:space="preserve">
     <value>开发者功能</value>
+    <comment>Settings header for developer tools options</comment>
   </data>
   <data name="SettingsDevToolsHeader.Text" xml:space="preserve">
     <value>显示开发者功能</value>
+    <comment>Setting toggle header to enable developer features</comment>
   </data>
   <data name="SettingsDevToolsLangDescription.Text" xml:space="preserve">
     <value>选择开发者功能显示的编程语言。</value>
   </data>
   <data name="SettingsDevToolsLangHeader.Text" xml:space="preserve">
     <value>语言</value>
+    <comment>Dropdown header for choosing developer code preview language</comment>
   </data>
   <data name="SettingsExpensiveAnimationDescription.Text" xml:space="preserve">
     <value>调整窗口时，字符网格的动画效果。
@@ -527,18 +629,22 @@
   </data>
   <data name="SettingsExpensiveAnimationHeader.Text" xml:space="preserve">
     <value>启动窗口尺寸调整动画</value>
+    <comment>Setting toggle header</comment>
   </data>
   <data name="SettingsExportHeader.Text" xml:space="preserve">
     <value>导出</value>
+    <comment>Settings section header for export options</comment>
   </data>
   <data name="SettingsFontListDescription.Text" xml:space="preserve">
     <value>选择字体列表内各字体名称的显示字体。</value>
   </data>
   <data name="SettingsFontListPreviewHint.Text" xml:space="preserve">
     <value>字体列表预览效果</value>
+    <comment>Label for font list preview box</comment>
   </data>
   <data name="SettingsHeader.Text" xml:space="preserve">
     <value>设置</value>
+    <comment>Settings page title</comment>
   </data>
   <data name="SettingsLanguageDescription.Text" xml:space="preserve">
     <value>覆盖应用语言设置。
@@ -546,12 +652,14 @@
   </data>
   <data name="SettingsLanguageHeader.Text" xml:space="preserve">
     <value>语言</value>
+    <comment>Dropdown header to override application language</comment>
   </data>
   <data name="SettingsPNGExportDescription.Text" xml:space="preserve">
     <value>导出的 PNG 尺寸的像素值。</value>
   </data>
   <data name="SettingsPNGExportHeader.Text" xml:space="preserve">
     <value>PNG 导出图片尺寸</value>
+    <comment>Dropdown header for exported PNG image resolution</comment>
   </data>
   <data name="SettingsShadowsDescription.Text" xml:space="preserve">
     <value>在用户界面上启用精细深度阴影。仅在浅色主题上有显著效果。
@@ -560,6 +668,7 @@
   </data>
   <data name="SettingsShadowsHeader.Text" xml:space="preserve">
     <value>启用阴影</value>
+    <comment>Setting toggle header for light theme depth shadows</comment>
   </data>
   <data name="SettingsSimpleAnimationDescription.Text" xml:space="preserve">
     <value>控制应用内的多数动画。关闭此项将会禁用多数动画效果。
@@ -567,12 +676,15 @@
   </data>
   <data name="SettingsSimpleAnimationHeader.Text" xml:space="preserve">
     <value>启用动画效果</value>
+    <comment>Setting toggle header for UI animations</comment>
   </data>
   <data name="SettingsThemeHeader.Text" xml:space="preserve">
     <value>主题</value>
+    <comment>Settings section header for theme selection</comment>
   </data>
   <data name="SettingsUIHeader.Text" xml:space="preserve">
     <value>布局</value>
+    <comment>Settings section header for layout and sizing</comment>
   </data>
   <data name="TxtPathGeometry.Text" xml:space="preserve">
     <value>Path Geometry</value>
@@ -583,102 +695,138 @@
   </data>
   <data name="SettingsNeedRestart.Text" xml:space="preserve">
     <value>应用重启后生效</value>
+    <comment>Notice shown when a setting requires restarting the app to take effect</comment>
   </data>
   <data name="BtnContributors.Content" xml:space="preserve">
     <value>贡献者</value>
+    <comment>Button label - view GitHub project contributors</comment>
   </data>
   <data name="TxtLoadingFonts.Text" xml:space="preserve">
     <value>正在加载字体</value>
+    <comment>Loading indicator text while scanning font files</comment>
   </data>
   <data name="AppBtnClear.Label" xml:space="preserve">
     <value>清除</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="AppBtnReset.Label" xml:space="preserve">
     <value>重置</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="AppBtnSelectAll.Label" xml:space="preserve">
     <value>全选</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="BtnApply.Content" xml:space="preserve">
     <value>应用</value>
+    <comment>Button label - apply changes</comment>
   </data>
   <data name="Cancel" xml:space="preserve">
     <value>取消</value>
+    <comment>Dialog button label - cancel operation</comment>
   </data>
   <data name="BtnContinue.Content" xml:space="preserve">
     <value>继续</value>
+    <comment>Button label - proceed to next step</comment>
   </data>
   <data name="BtnPrint.Content" xml:space="preserve">
     <value>打印</value>
+    <comment>Button label - print character catalog</comment>
   </data>
   <data name="CbCharacterLabel.Header" xml:space="preserve">
     <value>字符标签</value>
+    <comment>Print settings dropdown header for label printed under characters</comment>
   </data>
   <data name="CbiPageOrientationLandscape.Content" xml:space="preserve">
     <value>横向</value>
+    <comment>Print page orientation option</comment>
   </data>
   <data name="CbiPageOrientationPortrait.Content" xml:space="preserve">
     <value>纵向</value>
+    <comment>Print page orientation option</comment>
   </data>
   <data name="CbListStyle.Header" xml:space="preserve">
     <value>列表样式</value>
+    <comment>Print settings dropdown header for list style</comment>
   </data>
   <data name="CbShowMargins.Content" xml:space="preserve">
     <value>显示边距</value>
+    <comment>Print settings checkbox to show printable page margins</comment>
   </data>
   <data name="ChkBxHideWhitespace.Content" xml:space="preserve">
     <value>隐藏空白和控制字符</value>
+    <comment>Print settings checkbox</comment>
   </data>
   <data name="ChkBxShowBorders.Content" xml:space="preserve">
     <value>显示框线</value>
+    <comment>Print settings checkbox to draw grid cell borders</comment>
   </data>
   <data name="GlyphAnnotation_None" xml:space="preserve">
     <value>无</value>
+    <comment>Character label option: show no text under character in grid</comment>
   </data>
   <data name="GlyphAnnotation_UnicodeHex" xml:space="preserve">
     <value>16 进制 Unicode 序号</value>
+    <comment>Character label option: show hex code (e.g. 0041) under character</comment>
   </data>
   <data name="GlyphAnnotation_UnicodeIndex" xml:space="preserve">
     <value>10 进制 Unicode 序号</value>
+    <comment>Character label option: show decimal index under character</comment>
   </data>
   <data name="PrintCharacterFilterContent.Text" xml:space="preserve">
     <value>选择要显示的字符群组</value>
+    <comment>Print settings button text to open category selector</comment>
   </data>
   <data name="PrintDataHeader.Text" xml:space="preserve">
     <value>数据</value>
+    <comment>Print configuration section header for character data to include</comment>
   </data>
   <data name="PrintViewCharSize.Text" xml:space="preserve">
     <value>字符大小</value>
+    <comment>Print settings header for character font size slider</comment>
   </data>
   <data name="PrintViewHorizontalMarginHeader.Text" xml:space="preserve">
     <value>水平边距</value>
+    <comment>Print settings slider header</comment>
   </data>
   <data name="PrintViewLayoutHeader.Text" xml:space="preserve">
     <value>布局</value>
+    <comment>Print settings section header for page layout</comment>
   </data>
   <data name="PrintViewOfLabel.Text" xml:space="preserve">
     <value>/</value>
+    <comment>Page number separator in 'Page X of Y'</comment>
   </data>
   <data name="PrintViewPageOrientation.Header" xml:space="preserve">
     <value>页面方向</value>
+    <comment>Print settings dropdown header for orientation</comment>
   </data>
   <data name="PrintViewPageRange.Text" xml:space="preserve">
     <value>页面范围</value>
+    <comment>Print settings section header for page range</comment>
   </data>
   <data name="PrintViewPageRangeDesc.Text" xml:space="preserve">
     <value>一次最多打印 50 页。请在此处选择需要打印的页面范围。</value>
   </data>
   <data name="PrintViewPageRangeSelector.Header" xml:space="preserve">
     <value>要打印的页面数:</value>
+    <comment>Print settings dropdown header for page count</comment>
   </data>
   <data name="PrintViewPageSelector.Header" xml:space="preserve">
     <value>从第几页开始:</value>
+    <comment>Print settings dropdown header for first page to print</comment>
   </data>
   <data name="PrintViewPageSetupHeader.Text" xml:space="preserve">
     <value>页面设置</value>
+    <comment>Print settings section header for margins and orientation</comment>
   </data>
   <data name="PrintViewPreviewingLabel.Text" xml:space="preserve">
     <value>预览页面</value>
+    <comment>Status label in print preview, e.g. 'Previewing page 1 of 5'</comment>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>预览</value>
+    <comment>Tab or button label to preview print layout</comment>
   </data>
   <data name="PrintViewPreviewOutOfBoundsLabel.Text" xml:space="preserve">
     <value>该页不在当前页面范围内，不会被打印。
@@ -686,39 +834,50 @@
   </data>
   <data name="PrintViewPrintingLabel" xml:space="preserve">
     <value>正在打印页面 {0} - {1}</value>
+    <comment>{0} = start page number, {1} = end page number</comment>
   </data>
   <data name="PrintViewTitle.Text" xml:space="preserve">
     <value>打印配置</value>
+    <comment>Print configuration view title</comment>
   </data>
   <data name="PrintViewVerticalMarginHeader.Text" xml:space="preserve">
     <value>垂直距离</value>
+    <comment>Print settings slider header</comment>
   </data>
   <data name="SettingsCharLabel.Text" xml:space="preserve">
     <value>字符标签</value>
+    <comment>Setting dropdown header for label shown under characters</comment>
   </data>
   <data name="SettingsCharLabelDesc.Text" xml:space="preserve">
     <value>在各个字符下显示标签。对滚动时的性能可能稍有影响。</value>
   </data>
   <data name="SettingsManageSystemFonts.Content" xml:space="preserve">
     <value>管理已安装字体</value>
+    <comment>Button to open Windows Settings font management page</comment>
   </data>
   <data name="SettingsSystemFontHeader.Text" xml:space="preserve">
     <value>已安装字体</value>
+    <comment>Settings section header for installed system fonts</comment>
   </data>
   <data name="SettingsWindowsThemeSettings.Content" xml:space="preserve">
     <value>Windows 主题设置</value>
+    <comment>Button to open Windows Settings theme page</comment>
   </data>
   <data name="UnicodeFiltersTitle.Text" xml:space="preserve">
     <value>UNICODE 类别筛选器</value>
+    <comment>Header for Unicode category filter list</comment>
   </data>
   <data name="PrintLayout_Grid" xml:space="preserve">
     <value>网格</value>
+    <comment>Print layout option: characters arranged in grid cells</comment>
   </data>
   <data name="PrintLayout_List" xml:space="preserve">
     <value>列表</value>
+    <comment>Print layout option: single column list with details</comment>
   </data>
   <data name="PrintLayout_TwoColumn" xml:space="preserve">
     <value>两列</value>
+    <comment>Print layout option: two column list with details</comment>
   </data>
   <data name="SettingsTransparencyDescription.Text" xml:space="preserve">
     <value>启用用户界面透明效果。若在 Windows 设置中禁用了透明效果，此项不会生效。
@@ -726,12 +885,15 @@
   </data>
   <data name="SettingsTransparencyHeader.Text" xml:space="preserve">
     <value>启用透明效果</value>
+    <comment>Setting toggle header for acrylic transparency effects</comment>
   </data>
   <data name="StartupFailedButton.Content" xml:space="preserve">
     <value>显示详细信息</value>
+    <comment>Button on startup failure screen to display stack trace</comment>
   </data>
   <data name="StartupFailedHeader.Text" xml:space="preserve">
     <value>尴尬</value>
+    <comment>Header on catastrophic startup failure screen</comment>
   </data>
   <data name="StartupFailedMessage.Text" xml:space="preserve">
     <value>出错了，目前无法启动应用。
@@ -739,63 +901,82 @@
   </data>
   <data name="CharacterKeystrokeLabel" xml:space="preserve">
     <value>按键: Alt + {0:0000}</value>
+    <comment>{0:0000} = 4-digit Windows Alt code</comment>
   </data>
   <data name="ExportSVGLabel.Text" xml:space="preserve">
     <value>保存为 SVG 图片</value>
+    <comment>Menu item to save glyph as SVG file</comment>
   </data>
   <data name="ExportPNGLabel.Text" xml:space="preserve">
     <value>保存为 PNG 图片</value>
+    <comment>Menu item to save glyph as PNG file</comment>
   </data>
   <data name="ExportSVGGlyphLabel.Text" xml:space="preserve">
     <value>SVG 字形</value>
+    <comment>Menu header for exporting SVG glyph</comment>
   </data>
   <data name="BtnCopyGlyph.Label" xml:space="preserve">
     <value>复制</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="BtnCopyGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>复制到剪切板</value>
+    <comment>Tooltip to copy character to clipboard</comment>
   </data>
   <data name="BtnSaveGlyph.Label" xml:space="preserve">
     <value>另存为</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>另存为</value>
+    <comment>Tooltip to export character as image</comment>
   </data>
   <data name="BtnFit.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>适配字符</value>
+    <comment>Tooltip to fit character inside preview bounds</comment>
   </data>
   <data name="NotificationFontRemovedBody.Text" xml:space="preserve">
     <value>已移除自</value>
+    <comment>Sentence fragment: '[Font Name] was removed from [Collection Name]'</comment>
   </data>
   <data name="NotificationFontAddedBody.Text" xml:space="preserve">
     <value>已添加到</value>
+    <comment>Sentence fragment: '[Font Name] was added to [Collection Name]'</comment>
   </data>
   <data name="ExportFontFile.Text" xml:space="preserve">
     <value>字体文件</value>
+    <comment>Export option to save raw font file</comment>
   </data>
   <data name="ExportFontFileLabel.Text" xml:space="preserve">
     <value>将字体文件另存为</value>
+    <comment>File picker dialog title when exporting font file</comment>
   </data>
   <data name="FontExportedMessage" xml:space="preserve">
     <value>{0} 已导出</value>
+    <comment>{0} = exported font file name</comment>
   </data>
   <data name="CollectionExportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>导出字体</value>
+    <comment>Button tooltip to export fonts in collection</comment>
   </data>
   <data name="CollectionExportFolder.Text" xml:space="preserve">
     <value>到文件夹</value>
+    <comment>Export option: export font files to folder</comment>
   </data>
   <data name="CollectionExportHeader.Text" xml:space="preserve">
     <value>导出字体</value>
+    <comment>Collection export flyout header</comment>
   </data>
   <data name="CollectionExportZip.Text" xml:space="preserve">
     <value>Zip 压缩包</value>
+    <comment>Export option: export font files as zip archive</comment>
   </data>
   <data name="SystemFontsExpiredMessage.Text" xml:space="preserve">
     <value>字体列表过期。点击重启应用。</value>
   </data>
   <data name="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>开发者工具切换开关</value>
+    <comment>Tooltip to toggle developer features panel</comment>
   </data>
   <data name="TxtPathIcon.Text" xml:space="preserve">
     <value>PathIcon 图标</value>
@@ -803,54 +984,71 @@
   </data>
   <data name="OptionAllEmoji.Text" xml:space="preserve">
     <value>全部类别</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionAllEmojiTitle.Text" xml:space="preserve">
     <value>所有 Emoji</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionEmojiDingbats.Text" xml:space="preserve">
     <value>装饰符号 (Dingbat)</value>
+    <comment>Font filter flyout: emoji category option</comment>
   </data>
   <data name="OptionEmojiEmoticons.Text" xml:space="preserve">
     <value>表情图标</value>
+    <comment>Font filter flyout: emoji category option</comment>
   </data>
   <data name="OptionEmojiSymbols.Text" xml:space="preserve">
     <value>符号与象形文字</value>
+    <comment>Font filter flyout: emoji category option</comment>
   </data>
   <data name="OptionScriptArabic.Text" xml:space="preserve">
     <value>阿拉伯字符</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="OptionScriptBasicLatin.Text" xml:space="preserve">
     <value>拉丁字符</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="OptionScriptCJKUnifiedIdeographs.Text" xml:space="preserve">
     <value>中日韩字符 (CJK)</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="OptionScriptCyrillic.Text" xml:space="preserve">
     <value>西里尔字符</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="OptionScriptGreekAndCoptic.Text" xml:space="preserve">
     <value>希腊与科普特字符</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="OptionScriptHebrew.Text" xml:space="preserve">
     <value>希伯来字符</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="OptionScriptThai.Text" xml:space="preserve">
     <value>泰文字符</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="CultureSpecificPangram.Text" xml:space="preserve">
     <value>有朋自远方来 不亦乐乎</value>
+    <comment>Provide a pangram (sentence containing every letter) and digits for the target language.</comment>
   </data>
   <data name="LblSwitchToCharMap.Text" xml:space="preserve">
     <value>切换到字符映射表视图 (Ctrl+T)</value>
+    <comment>Button label to switch from Type Ramp to Character Map view</comment>
   </data>
   <data name="LblSwitchToTypeRamp.Text" xml:space="preserve">
     <value>切换到字阶视图 (Ctrl+T)</value>
+    <comment>Button label to switch from Character Map to Type Ramp view</comment>
   </data>
   <data name="TypeRampInputBox.PlaceholderText" xml:space="preserve">
     <value>输入或从下拉框中选择文字</value>
+    <comment>Placeholder text in Type Ramp custom preview text box</comment>
   </data>
   <data name="ExportedToFolderMessage" xml:space="preserve">
     <value>已导出到 {0}</value>
+    <comment>{0} = destination folder name</comment>
   </data>
   <data name="ImportDragDropDescriptionLabel.Text" xml:space="preserve">
     <value>将文件从文件资源管理器中拖放到此处导入</value>
@@ -860,18 +1058,22 @@
   </data>
   <data name="SettingsAboutLabel.Text" xml:space="preserve">
     <value>关于</value>
+    <comment>Settings navigation tab label</comment>
   </data>
   <data name="SettingsAdvancedUILabel.Text" xml:space="preserve">
     <value>外观</value>
+    <comment>Settings navigation tab label for appearance and themes</comment>
   </data>
   <data name="SettingsExportImportedLabel.Text" xml:space="preserve">
     <value>导出所有已导入的字体</value>
   </data>
   <data name="SettingsFontExportOptimizedLabel.Text" xml:space="preserve">
     <value>优化</value>
+    <comment>Font export naming option: smart name based on family and face</comment>
   </data>
   <data name="SettingsFontExportSystemLabel.Text" xml:space="preserve">
     <value>系统</value>
+    <comment>Font export naming option: exact uppercase Windows font file name</comment>
   </data>
   <data name="SettingsFontImportDescription.Text" xml:space="preserve">
     <value>您可将字体导入本应用查看，而不用安装到 Windows 中。
@@ -880,6 +1082,7 @@
   </data>
   <data name="SettingsFontManagementLabel.Text" xml:space="preserve">
     <value>字体管理</value>
+    <comment>Settings navigation tab label for managing fonts</comment>
   </data>
   <data name="SettingsFontNameExportDescription.Text" xml:space="preserve">
     <value>选择字体导出时的文件名。
@@ -898,18 +1101,22 @@
   </data>
   <data name="SettingsLicensesLabel.Text" xml:space="preserve">
     <value>许可协议</value>
+    <comment>Settings navigation tab label for open source software licenses</comment>
   </data>
   <data name="BtnReset.Content" xml:space="preserve">
     <value>重置</value>
   </data>
   <data name="OptionVariableFonts.Text" xml:space="preserve">
     <value>可变字体</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="VariableFeaturesMessage.Text" xml:space="preserve">
     <value>此字体具有可变特性。请使用上面的切换按钮切换到字阶视图浏览。</value>
+    <comment>Deprecated. Do not use.</comment>
   </data>
   <data name="VariableFeaturesMessage1.Text" xml:space="preserve">
     <value>此字体具有可变特性。请使用上面的切换按钮切换到字阶视图浏览。</value>
+    <comment>Notice explaining variable features can be adjusted in Variable Font Axis panel</comment>
   </data>
   <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
     <value>显示或隐藏屏幕右侧的预览面板。若关闭，许多功能仍可通过在字符网格内右击或长按字符访问。</value>
@@ -919,76 +1126,100 @@
   </data>
   <data name="CopyFontIconCode.Text" xml:space="preserve">
     <value>复制 FontIcon 代码</value>
+    <comment>Context menu item to copy XAML FontIcon markup</comment>
   </data>
   <data name="CopyGlyphCode.Text" xml:space="preserve">
     <value>复制字形代码</value>
+    <comment>Context menu item to copy glyph code markup</comment>
   </data>
   <data name="CopyPathIconCode.Text" xml:space="preserve">
     <value>复制 PathIcon 代码</value>
+    <comment>Context menu item to copy XAML PathIcon markup</comment>
   </data>
   <data name="SearchBoxShorter" xml:space="preserve">
     <value>搜索...</value>
+    <comment>Compact search box placeholder text when window is narrow</comment>
   </data>
   <data name="CopyUnicodeValue.Text" xml:space="preserve">
     <value>复制 Unicode 值</value>
+    <comment>Context menu item to copy Unicode hex value (e.g. U+0041)</comment>
   </data>
   <data name="DecreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>减小字符尺寸 (Ctrl+-)</value>
+    <comment>Tooltip to zoom out character grid</comment>
   </data>
   <data name="IncreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>增大字符尺寸 (Ctrl++)</value>
+    <comment>Tooltip to zoom in character grid</comment>
   </data>
   <data name="SwitchViewButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>切换视图 (Ctrl+T)</value>
+    <comment>Tooltip to switch between Character Map and Type Ramp views</comment>
   </data>
   <data name="TogglePaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>开关预览面板 (Ctrl+R)</value>
+    <comment>Tooltip to toggle character preview side-pane</comment>
   </data>
   <data name="NotificationCopied" xml:space="preserve">
     <value>已复制</value>
+    <comment>Notification message shown when text is copied to clipboard</comment>
   </data>
   <data name="AddButton.Label" xml:space="preserve">
     <value>添加</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="AddSelectionItem.Text" xml:space="preserve">
     <value>添加到选择</value>
+    <comment>Context menu item to add character to copy sequence</comment>
   </data>
   <data name="CopySequencePlaceholder.Text" xml:space="preserve">
     <value>双击某个字符或点击 "添加" 按钮</value>
+    <comment>Placeholder text in bottom copy sequence bar</comment>
   </data>
   <data name="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>开关复制面板 (Ctrl+B)</value>
+    <comment>Tooltip to toggle bottom copy sequence pane</comment>
   </data>
   <data name="CompactOverlayButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>保持前置</value>
+    <comment>Enters Picture-in-Picture / Compact Overlay mode</comment>
   </data>
   <data name="TypographyVariationsSelectorRun.Text" xml:space="preserve">
     <value>种排印变体</value>
+    <comment>Appears after count: '{count} Typography Variations'</comment>
   </data>
   <data name="ToggleDevDefaultLabel" xml:space="preserve">
     <value>工具</value>
+    <comment>Default label for developer tools toggle button. Keep short.</comment>
   </data>
   <data name="BtnFit.Label" xml:space="preserve">
     <value>适合</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="TxtCopiedVariantMessage.Text" xml:space="preserve">
     <value>无法复制字形变体。
 已复制默认形体。</value>
+    <comment>Notice when attempting to copy a variable font instance</comment>
   </data>
   <data name="CollectionFontHelpBlock.Text" xml:space="preserve">
     <value>此收藏集内尚无字体。</value>
+    <comment>Empty state message for empty font collections</comment>
   </data>
   <data name="SearchFontHelpBlock.Text" xml:space="preserve">
     <value>搜不到任何结果。试试别的。</value>
+    <comment>Empty state message when font search yields no results</comment>
   </data>
   <data name="FontListSearchBox.PlaceholderText" xml:space="preserve">
     <value>查找字体家族</value>
+    <comment>Placeholder text in font list search box</comment>
   </data>
   <data name="BtnToggleDev.Label" xml:space="preserve">
     <value>工具</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="DevPopupHeader.Text" xml:space="preserve">
     <value>显示开发者工具</value>
+    <comment>Header for developer tools flyout</comment>
   </data>
   <data name="ContextMenuDevCopyCommand" xml:space="preserve">
     <value>复制 {0}</value>
@@ -996,9 +1227,11 @@
   </data>
   <data name="ProviderNone" xml:space="preserve">
     <value>无</value>
+    <comment>Option in developer features to disable developer code preview</comment>
   </data>
   <data name="SettingsChangelogLabel.Text" xml:space="preserve">
     <value>变更记录</value>
+    <comment>Settings navigation tab label</comment>
   </data>
   <data name="TxtFontImageSource.Text" xml:space="preserve">
     <value>Font Image Source</value>
@@ -1012,60 +1245,86 @@
   </data>
   <data name="CharacterFilterButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>筛选字符</value>
+    <comment>Button tooltip to filter characters by category</comment>
   </data>
   <data name="CompareFontsTitle.Text" xml:space="preserve">
     <value>对比字体</value>
+    <comment>Font comparison view title</comment>
   </data>
   <data name="LayoutGridToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>网格布局</value>
+    <comment>Tooltip to switch comparison view to grid layout</comment>
   </data>
   <data name="LayoutListToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>列表布局</value>
+    <comment>Tooltip to switch comparison view to list layout</comment>
   </data>
   <data name="QuickCompareTitle.Text" xml:space="preserve">
     <value>快速对比</value>
+    <comment>Quick comparison window title</comment>
   </data>
   <data name="AddToQuickCompare.Text" xml:space="preserve">
     <value>添加到快速对比</value>
+    <comment>Menu item to add font face to quick compare window</comment>
+  </data>
+  <data name="AddMultiToQuickCompare.Text" xml:space="preserve">
+    <value>将字体家族添加到快速对比</value>
+    <comment>Menu item to add all faces in font family to quick compare</comment>
   </data>
   <data name="CompareFontsButton.Text" xml:space="preserve">
     <value>对比所有字体</value>
+    <comment>Button label to open font comparison view</comment>
   </data>
   <data name="BtnGithubCommits.Content" xml:space="preserve">
     <value>查看 Github 上最新的提交</value>
+    <comment>Button label - view GitHub commit history</comment>
   </data>
   <data name="ExportGlyphsHeader.Text" xml:space="preserve">
     <value>导出字符</value>
+    <comment>Export dialog header</comment>
+  </data>
+  <data name="SelectedGlyphs.Text" xml:space="preserve">
+    <value>已选取 {0} 个字形</value>
+    <comment>{0} = number of selected glyphs</comment>
   </data>
   <data name="ExportGlyphsSummary.Text" xml:space="preserve">
     <value>准备将 {0} 个字符导出为 {1}</value>
+    <comment>{0} = character count, {1} = export format (e.g. SVG or PNG)</comment>
   </data>
   <data name="ExportCharactersLabel.Text" xml:space="preserve">
     <value>导出字符</value>
+    <comment>Menu item to open character export dialog</comment>
   </data>
   <data name="ExportGlyphsResultMessage.Text" xml:space="preserve">
     <value>已导出 {0} 个字符</value>
+    <comment>{0} = number of exported characters</comment>
   </data>
   <data name="ExportGlyphsProgressMessage.Text" xml:space="preserve">
     <value>正在导出 {1} 个字符中的第 {0} 个</value>
+    <comment>{0} = current character index, {1} = total character count</comment>
   </data>
   <data name="ExportAllowColor.Content" xml:space="preserve">
     <value>允许字体使用自带的色彩 (若有)</value>
+    <comment>Export dialog checkbox</comment>
   </data>
   <data name="ExportColorHeader.Text" xml:space="preserve">
     <value>默认颜色</value>
+    <comment>Export dialog color picker header</comment>
   </data>
   <data name="ExportGlyphFormatDescription.Text" xml:space="preserve">
     <value>以二进制格式存储的字形将以原本的格式导出，不受此选项影响。</value>
   </data>
   <data name="ExportGlyphSelectedCharacters.Text" xml:space="preserve">
     <value>已从 {1} 个字符中选中 {0} 个字符</value>
+    <comment>{0} = selected characters count, {1} = total characters count</comment>
   </data>
   <data name="ExportFileOptionsHeader.Text" xml:space="preserve">
     <value>文件选项</value>
+    <comment>Export dialog section header</comment>
   </data>
   <data name="ExportSkipBlank.Content" xml:space="preserve">
     <value>不导出无可见内容的字形</value>
+    <comment>Export dialog checkbox</comment>
   </data>
   <data name="CharacterFilterButton.Label" xml:space="preserve">
     <value>筛选</value>
@@ -1101,6 +1360,7 @@
   </data>
   <data name="SettingsDesignStyle.Title" xml:space="preserve">
     <value>设计风格</value>
+    <comment>Setting title for switching application design theme</comment>
   </data>
   <data name="ViewToggleButton.Label" xml:space="preserve">
     <value>切换</value>
@@ -1108,150 +1368,198 @@
   </data>
   <data name="AddToButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>添加到收藏集</value>
+    <comment>Button tooltip to add selected fonts to collection</comment>
   </data>
   <data name="ClearSelectionLabel" xml:space="preserve">
     <value>清除选择</value>
+    <comment>Action label to deselect all selected fonts or glyphs</comment>
   </data>
   <data name="CreateNewButton.Content" xml:space="preserve">
     <value>新建</value>
+    <comment>Button label - create a new font collection</comment>
   </data>
   <data name="OrLabel.Text" xml:space="preserve">
     <value>或</value>
+    <comment>Separator between 'choose existing collection' and 'create new'</comment>
   </data>
   <data name="RemoveFromButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>从收藏集中移除</value>
+    <comment>Button tooltip to remove selected fonts from collection</comment>
   </data>
   <data name="SelectCollectionLabel" xml:space="preserve">
     <value>选择收藏集</value>
+    <comment>Dropdown placeholder or header to choose a font collection</comment>
   </data>
   <data name="SettingsCollectionsHeader" xml:space="preserve">
     <value>收藏集</value>
+    <comment>Navigation header for Collections view</comment>
   </data>
   <data name="DigOpenFolder.PrimaryButtonText" xml:space="preserve">
     <value>打开字体</value>
+    <comment>Dialog button to open and scan selected folder for fonts</comment>
   </data>
   <data name="DigOpenFolder.Title" xml:space="preserve">
     <value>打开字体文件夹</value>
+    <comment>Dialog title for opening a folder containing font files</comment>
   </data>
   <data name="DigOpenFolderContent.CheckRecursiveContent" xml:space="preserve">
     <value>寻找位于子文件夹内的字体</value>
+    <comment>Open Folder dialog checkbox to scan subdirectories</comment>
   </data>
   <data name="DigOpenFolderContent.CheckZipContent" xml:space="preserve">
     <value>寻找位于 ZIP 压缩包内的字体</value>
+    <comment>Open Folder dialog checkbox to scan zip files</comment>
   </data>
   <data name="DigOpenFolderContent.FindDescription" xml:space="preserve">
     <value>启用这些选项可能明显增加打开文件夹所需的时间</value>
   </data>
   <data name="DigOpenFolderContent.FindHeader" xml:space="preserve">
     <value>查找选项</value>
+    <comment>Open Folder dialog options header</comment>
   </data>
   <data name="DigOpenFolderContent.FindingFontsLabel" xml:space="preserve">
     <value>正在查找字体...</value>
+    <comment>Progress label while scanning folder for font files</comment>
   </data>
   <data name="DigOpenFolderContent.PrefixLabel" xml:space="preserve">
     <value>已找到</value>
+    <comment>Sentence fragment: '[Found] {count} [font files]'</comment>
   </data>
   <data name="DigOpenFolderContent.SelectHeader" xml:space="preserve">
     <value>选中的文件夹 (点击更换)</value>
+    <comment>Header above folder path button in Open Folder dialog</comment>
   </data>
   <data name="DigOpenFolderContent.SuffixLabel" xml:space="preserve">
     <value>字体文件</value>
+    <comment>Sentence fragment: '[Found] {count} [font files]'</comment>
   </data>
   <data name="FontFileMenuItem.Text" xml:space="preserve">
     <value>打开字体文件</value>
+    <comment>Menu item to open a single font file</comment>
   </data>
   <data name="FontFolderMenuItem.Text" xml:space="preserve">
     <value>打开字体文件夹</value>
+    <comment>Menu item to scan and open a folder of fonts</comment>
   </data>
   <data name="AddHistoryButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>添加到历史记录</value>
+    <comment>Save current calligraphy drawing to history</comment>
   </data>
   <data name="CalligraphyLabel.Text" xml:space="preserve">
     <value>书法</value>
+    <comment>Side menu navigation item for calligraphy feature</comment>
   </data>
   <data name="ClearAllButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>全部清除</value>
+    <comment>Clear calligraphy canvas</comment>
   </data>
   <data name="ClearAllItem.Text" xml:space="preserve">
     <value>全部清除</value>
+    <comment>Menu item to clear calligraphy canvas</comment>
   </data>
   <data name="GuideToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>显示参考</value>
+    <comment>Toggle handwriting guide lines in calligraphy view</comment>
   </data>
   <data name="HistoryLabel.Text" xml:space="preserve">
     <value>历史记录</value>
+    <comment>Header for saved calligraphy drawings history list</comment>
   </data>
   <data name="RedoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>重做 (Ctrl+Y)</value>
+    <comment>Button tooltip for redo in calligraphy view</comment>
   </data>
   <data name="RemoveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>移除</value>
+    <comment>Button tooltip to remove saved calligraphy drawing</comment>
   </data>
   <data name="SaveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>保存 (Ctrl+S)</value>
+    <comment>Button tooltip to save calligraphy drawing</comment>
   </data>
   <data name="SideBySideToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>并排</value>
+    <comment>Calligraphy comparison mode</comment>
   </data>
   <data name="UndoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>撤消 (Ctrl+Z)</value>
+    <comment>Button tooltip for undo in calligraphy view</comment>
   </data>
   <data name="GuideFontSlider.Header" xml:space="preserve">
     <value>参考尺寸</value>
+    <comment>Slider header for calligraphy guide text font size</comment>
   </data>
   <data name="CharacterPickerButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>打开字符拾取器</value>
+    <comment>Open character picker to select glyph to practice</comment>
   </data>
   <data name="GuideHeaderLabel.Text" xml:space="preserve">
     <value>参考文本</value>
+    <comment>Header for guide text input in calligraphy view</comment>
   </data>
   <data name="GuideSizeLabel.Text" xml:space="preserve">
     <value>参考尺寸</value>
+    <comment>Header for guide size slider in calligraphy view</comment>
   </data>
   <data name="MenuToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>显示或隐藏字体面板 (Ctrl+L)</value>
+    <comment>Toggle visibility of font navigation pane</comment>
   </data>
   <data name="OpenInNewTab.Text" xml:space="preserve">
     <value>在新标签页中打开</value>
+    <comment>Menu item to open font in a new tab</comment>
   </data>
   <data name="OptionScriptKorean.Text" xml:space="preserve">
     <value>谚文</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="AddActiveToCollectionItem.Text" xml:space="preserve">
     <value>将已打开的标签页的字体添加到收藏集</value>
+    <comment>Menu item to add currently displayed font to collection</comment>
   </data>
   <data name="CompareActiveItem.Text" xml:space="preserve">
     <value>对比已打开的标签页的字体</value>
+    <comment>Menu item to compare font faces of currently opened fonts</comment>
   </data>
   <data name="OptionEmoji.Text" xml:space="preserve">
     <value>Emoji</value>
+    <comment>Font filter flyout: emoji category option</comment>
   </data>
   <data name="OptionSupportedScripts.Text" xml:space="preserve">
     <value>支持的文字</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="CompareFontFaceTitle.Text" xml:space="preserve">
     <value>对比字体</value>
+    <comment>Font face comparison view title</comment>
   </data>
   <data name="CompareFacesCountLabel.Text" xml:space="preserve">
     <value>对比 {0} 种字体</value>
+    <comment>Label removed</comment>
   </data>
   <data name="CompareFamilyTitle.Text" xml:space="preserve">
     <value>对比 {0}</value>
+    <comment>{0} = font family name</comment>
   </data>
   <data name="MenuButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>打开菜单</value>
+    <comment>Open main menu flyout</comment>
   </data>
   <data name="FontsSelectedCountLabel" xml:space="preserve">
     <value>{0} 种字体，已选中 {1} 种</value>
+    <comment>{0} = total fonts in collection, {1} = number of selected fonts</comment>
   </data>
   <data name="CompareShortLabel" xml:space="preserve">
     <value>对比</value>
+    <comment>Short button label for font comparison. Keep short.</comment>
   </data>
   <data name="AllFontsLabel.Text" xml:space="preserve">
     <value>所有字体</value>
+    <comment>Navigation item to show all fonts library</comment>
   </data>
   <data name="ImportLabel.Text" xml:space="preserve">
     <value>导入</value>
+    <comment>Navigation item or button to import fonts</comment>
   </data>
   <data name="PreferredFormatGroup.Text" xml:space="preserve">
     <value>偏好格式</value>
@@ -1259,33 +1567,42 @@
   </data>
   <data name="RemoveLabel.Text" xml:space="preserve">
     <value>移除</value>
+    <comment>Action label to remove font or item</comment>
   </data>
   <data name="UndoLabel" xml:space="preserve">
     <value>撤消</value>
+    <comment>Notification action button - undo last operation</comment>
   </data>
   <data name="CalligraphyDescription.Text" xml:space="preserve">
     <value>练习书写当前字体样式</value>
+    <comment>Feature description for calligraphy</comment>
   </data>
   <data name="CompareFontsDescription.Text" xml:space="preserve">
     <value>以并排或列表方式查看对比所有字体</value>
+    <comment>Feature description for font comparison</comment>
   </data>
   <data name="DoMoreLabel.Text" xml:space="preserve">
     <value>更多操作</value>
+    <comment>Section header in side menu for extra tools and features</comment>
   </data>
   <data name="FullscreenLabel.Text" xml:space="preserve">
     <value>全屏</value>
+    <comment>Button label to enter fullscreen mode. Opposite of Restore.</comment>
   </data>
   <data name="OpenFolderDescription.Text" xml:space="preserve">
     <value>打开某文件夹内能找到的所有字体文件</value>
+    <comment>Feature description for opening font folder</comment>
   </data>
   <data name="OpenFontDescription.Text" xml:space="preserve">
     <value>打开 TTF、OTF、OTC、TTC、WOFF、WOFF2 或 ZIP 文件</value>
+    <comment>Feature description listing supported font formats</comment>
   </data>
   <data name="SettingsPointerOverAnimation.Description" xml:space="preserve">
     <value>启用鼠标指针经过按钮时的精细弹跳动画效果。</value>
   </data>
   <data name="SettingsPointerOverAnimation.Title" xml:space="preserve">
     <value>启用指针经过的动画效果</value>
+    <comment>Setting title</comment>
   </data>
   <data name="SettingsCustomSuggestions.Description" xml:space="preserve">
     <value>添加与管理自定义示例文本建议项，显示于字阶视图和字体对比窗口内的文本框下拉列表内。
@@ -1293,159 +1610,208 @@
   </data>
   <data name="SettingsCustomSuggestions.Title" xml:space="preserve">
     <value>自定义项</value>
+    <comment>Setting title for custom preview text suggestions</comment>
   </data>
   <data name="SettingsSuggestionsHeader.Text" xml:space="preserve">
     <value>预览建议</value>
+    <comment>Settings section header for Type Ramp text suggestions</comment>
   </data>
   <data name="SettingsSuggestionTextBox.PlaceholderText" xml:space="preserve">
     <value>在此输入建议</value>
+    <comment>Placeholder text in custom suggestion text input</comment>
   </data>
   <data name="FontPropPanoseTitle.Text" xml:space="preserve">
     <value>PANOSE 值</value>
+    <comment>PANOSE classification system values header</comment>
   </data>
   <data name="CharacterGroupingToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>按 Unicode 范围将字符分组 (Ctrl+G)</value>
+    <comment>Tooltip to group characters by Unicode range</comment>
   </data>
   <data name="PixelUnits.Text" xml:space="preserve">
     <value>像素</value>
+    <comment>Pixel unit abbreviation. Usually kept as 'px'.</comment>
   </data>
   <data name="SettingsCharGrouping.Description" xml:space="preserve">
     <value>若启用，字符映射表内的字符将按 Unicode 范围分组，否则字体内所有字符都将不分组地显示在同一列表内。</value>
   </data>
   <data name="SettingsCharGrouping.Title" xml:space="preserve">
     <value>字符分组</value>
+    <comment>Setting title for grouping characters by Unicode range</comment>
   </data>
   <data name="CopyAsImageItem.Text" xml:space="preserve">
     <value>复制为图像</value>
+    <comment>Menu item to copy character as image to clipboard</comment>
   </data>
   <data name="CopyAsPngItem.Text" xml:space="preserve">
     <value>复制为 PNG</value>
+    <comment>Menu item to copy character as PNG image to clipboard</comment>
   </data>
   <data name="CopyAsSvgItem.Text" xml:space="preserve">
     <value>复制为 SVG</value>
+    <comment>Menu item to copy character as SVG image to clipboard</comment>
   </data>
   <data name="NotificationCopiedPNG" xml:space="preserve">
     <value>已复制为 PNG</value>
+    <comment>Notification message shown when PNG image is copied to clipboard</comment>
   </data>
   <data name="NotificationCopiedSVG" xml:space="preserve">
     <value>已复制为 SVG</value>
+    <comment>Notification message shown when SVG vector is copied to clipboard</comment>
   </data>
   <data name="ColrV1SupportMessage.Text" xml:space="preserve">
     <value>字体包含 COLRv1 字形。要预览，请用上方的切换按钮切换到字阶视图，以得到正确渲染支持。</value>
+    <comment>Notice explaining COLRv1 vector color font preview requires Type Ramp view</comment>
   </data>
   <data name="FontPropCOLRVersion.Text" xml:space="preserve">
     <value>COLR 版本</value>
+    <comment>Typography: Version of OpenType COLR table (e.g. 0 or 1). Keep COLR untranslated.</comment>
   </data>
   <data name="FontPropColourFormats.Text" xml:space="preserve">
     <value>有色字形格式</value>
+    <comment>Typography: Color font formats supported (e.g. COLRv0, COLRv1, SVG, CBDT)</comment>
   </data>
   <data name="GlyphTypeBitmap" xml:space="preserve">
     <value>位图</value>
+    <comment>Typography: Indicates glyph is stored as a raster bitmap</comment>
   </data>
   <data name="TypeRampFlowButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>更改文本流方向</value>
+    <comment>Toggle text reading direction (left-to-right vs right-to-left)</comment>
   </data>
   <data name="TxtUniCodepoint.Header" xml:space="preserve">
     <value>Unicode 码点</value>
+    <comment>Header for Unicode codepoint value (e.g. U+0041)</comment>
   </data>
   <data name="TxtUTF16.Header" xml:space="preserve">
     <value>UTF-16 值</value>
+    <comment>UTF-16 encoding value. Does not need translation.</comment>
   </data>
   <data name="EditSuggestionsItem.Text" xml:space="preserve">
     <value>编辑建议</value>
+    <comment>Menu item to edit preview text suggestions</comment>
   </data>
   <data name="OptionScriptHiraganaAndKatakana.Text" xml:space="preserve">
     <value>平假名与片假名</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="OptionsScriptBengali.Text" xml:space="preserve">
     <value>孟加拉字符</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="OptionsScriptDevanagari.Text" xml:space="preserve">
     <value>天城字符</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="BtnTextClose.Content" xml:space="preserve">
     <value>关闭</value>
+    <comment>Button label - close dialog</comment>
   </data>
   <data name="EditSuggestionsLabel.Text" xml:space="preserve">
     <value>编辑自定义建议</value>
+    <comment>Title for dialog or pane to edit preview text suggestions</comment>
   </data>
   <data name="ShowSuggestionsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>显示建议</value>
+    <comment>Button tooltip to show Type Ramp sample text suggestions</comment>
   </data>
   <data name="SuggestOptionArabic.Text" xml:space="preserve">
     <value>阿拉伯文</value>
+    <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="SuggestOptionBengali.Text" xml:space="preserve">
     <value>孟加拉文</value>
+    <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="SuggestOptionBulgarian.Text" xml:space="preserve">
     <value>保加利亚文</value>
+    <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="SuggestOptionChineseTraditional.Text" xml:space="preserve">
     <value>中文 (繁体)</value>
+    <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="SuggestOptionCultureSpecific.Text" xml:space="preserve">
     <value>中文 (简体)</value>
+    <comment>Name of the target language for the culture-specific pangram (e.g. Spanish, German).</comment>
   </data>
   <data name="SuggestOptionCustom.Text" xml:space="preserve">
     <value>自定义</value>
+    <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="SuggestOptionCyrillicAlpha.Text" xml:space="preserve">
     <value>西里尔字母</value>
+    <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="SuggestOptionEmoji.Text" xml:space="preserve">
     <value>Emoji</value>
+    <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="SuggestOptionEnglish.Text" xml:space="preserve">
     <value>英文</value>
+    <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="SuggestOptionGreek.Text" xml:space="preserve">
     <value>希腊文</value>
+    <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="SuggestOptionHebrew.Text" xml:space="preserve">
     <value>希伯来文</value>
+    <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="SuggestOptionHindi.Text" xml:space="preserve">
     <value>印地文</value>
+    <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="SuggestOptionJapanese.Text" xml:space="preserve">
     <value>日文</value>
+    <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="SuggestOptionKorean.Text" xml:space="preserve">
     <value>朝鲜文/韩文</value>
+    <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="SuggestOptionLatinAlpha.Text" xml:space="preserve">
     <value>拉丁字母</value>
+    <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="SuggestOptionLatinSymbols.Text" xml:space="preserve">
     <value>阿拉伯数字与拉丁符号</value>
+    <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="SuggestOptionSample.Text" xml:space="preserve">
     <value>字体示例文本</value>
+    <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="SuggestOptionThai.Text" xml:space="preserve">
     <value>泰文</value>
+    <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="SuggestOptionVietnamese.Text" xml:space="preserve">
     <value>越南文</value>
+    <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="InstallCountLabel" xml:space="preserve">
     <value>您的计算机上安装了 {0} 种字体家族，{1} 种字体</value>
+    <comment>{0} = count of font families, {1} = count of font faces</comment>
   </data>
   <data name="OptionSystemFonts.Text" xml:space="preserve">
     <value>已安装的字体</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="SettingsExportInstalledLabel.Text" xml:space="preserve">
     <value>导出已安装的字体</value>
   </data>
   <data name="OptionDesignTag.Text" xml:space="preserve">
     <value>按设计的语言</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="HiddenGlyphsMessage.Text" xml:space="preserve">
     <value>已弃用的图标字形依您的设置默认隐藏。您可以使用上面的筛选器按钮显示它们。</value>
   </data>
   <data name="InstallDialog.Title" xml:space="preserve">
     <value>安装字体</value>
+    <comment>Font installation dialog title</comment>
   </data>
   <data name="InstallFontInstructions.Text" xml:space="preserve">
     <value>在继续安装字体前，请读完说明
@@ -1459,12 +1825,15 @@
   </data>
   <data name="InstallLabel.Text" xml:space="preserve">
     <value>安装</value>
+    <comment>Button label in font viewer window (referenced in InstallFontInstructions)</comment>
   </data>
   <data name="OptionUnicodeRange/Text" xml:space="preserve">
     <value>按 Unicode 范围</value>
+    <comment>Font filter option to group/filter characters by Unicode range</comment>
   </data>
   <data name="SettingsAdvancedOptionsLabel.Text" xml:space="preserve">
     <value>高级</value>
+    <comment>Settings navigation tab label</comment>
   </data>
   <data name="SettingsDeprecatedIconsPresenter.Description" xml:space="preserve">
     <value>若启用，将默认隐藏 Segoe MDL2 和 Segoe Fluent Icon 字体内的已弃用的图标。图标仍可通过筛选器弹出框选择显示。
@@ -1473,59 +1842,76 @@
   </data>
   <data name="SettingsDeprecatedIconsPresenter.Title" xml:space="preserve">
     <value>隐藏废弃的图标</value>
+    <comment>Setting title for hiding deprecated MDL2 / Fluent icons</comment>
   </data>
   <data name="StartLabel.Text" xml:space="preserve">
     <value>开始</value>
+    <comment>Button label to start font installation (referenced in InstallFontInstructions)</comment>
   </data>
   <data name="TxtUniHexValue.Text" xml:space="preserve">
     <value>16 进制值</value>
+    <comment>Hexadecimal value of character</comment>
   </data>
   <data name="FileExplorerFileToolTip" xml:space="preserve">
     <value>预览文件</value>
+    <comment>Tooltip for previewing a font file in file explorer</comment>
   </data>
   <data name="ImportCountLabel" xml:space="preserve">
     <value>导入了 {0} 种字体家族，{1} 种字体</value>
+    <comment>{0} = count of font families, {1} = count of font faces</comment>
   </data>
   <data name="SettingsFontExportVersionLabel.Text" xml:space="preserve">
     <value>在文件名内包括版本号</value>
   </data>
   <data name="HideUnihanLabel.Text" xml:space="preserve">
     <value>隐藏 Unihan 数据</value>
+    <comment>Button label to collapse Unihan ideograph data section</comment>
   </data>
   <data name="ShowUnihanLabel.Text" xml:space="preserve">
     <value>显示 Unihan 数据</value>
+    <comment>Button label to expand Unihan ideograph data section</comment>
   </data>
   <data name="UnihanDefinition.Text" xml:space="preserve">
     <value>释义</value>
+    <comment>Unicode Unihan database: English definition of CJK ideograph</comment>
   </data>
   <data name="UnihanPronunciations.Text" xml:space="preserve">
     <value>发音</value>
+    <comment>Unicode Unihan database: Pronunciation readings section header</comment>
   </data>
   <data name="UnihanTypeDescriptionCantonese" xml:space="preserve">
     <value>该字最惯用的粤拼 (粤语) 读法。</value>
+    <comment>Unicode Unihan database reading description</comment>
   </data>
   <data name="UnihanTypeDescriptionHangul" xml:space="preserve">
     <value>该字以谚文表示的现代韩语发音，括号内为其来源。</value>
+    <comment>Unicode Unihan database reading description</comment>
   </data>
   <data name="UnihanTypeDescriptionHanyuPinlu" xml:space="preserve">
     <value>该字的发音和频率，部分基于《现代汉语频率词典》</value>
+    <comment>Unicode Unihan database reading description</comment>
   </data>
   <data name="UnihanTypeDescriptionHanyuPinyin" xml:space="preserve">
     <value>(参照) 列于 kHanYu 属性描述内，出现在《汉语大字典》发行版中的汉语拼音读法。</value>
+    <comment>Unicode Unihan database reading description</comment>
   </data>
   <data name="UnihanTypeDescriptionJapanese" xml:space="preserve">
     <value>该字以假名表示的日语读音。
 
 以平假名表示的读法为常规训读，以片假名表示的读法为常规音读。</value>
+    <comment>Unicode Unihan database reading description</comment>
   </data>
   <data name="UnihanTypeDescriptionJapaneseKun" xml:space="preserve">
     <value>该字以平文式转写 (Hepburn romanization) 的日语发音。</value>
+    <comment>Unicode Unihan database reading description</comment>
   </data>
   <data name="UnihanTypeDescriptionJapaneseOn" xml:space="preserve">
     <value>该字的日本汉字音。</value>
+    <comment>Unicode Unihan database reading description</comment>
   </data>
   <data name="UnihanTypeDescriptionKorean" xml:space="preserve">
     <value>该字用耶鲁式转写 (Yale romanization) 系统表示的朝鲜/韩语发音。</value>
+    <comment>Unicode Unihan database reading description</comment>
   </data>
   <data name="UnihanTypeDescriptionMandarin" xml:space="preserve">
     <value>该字的最惯用读法的拼音。
@@ -1533,6 +1919,7 @@
 当有两个值时，首个适用于普通话 (陆)，第二个适用于国语 (台)。
 
 仅有一个时，二者相同。</value>
+    <comment>Unicode Unihan database reading description</comment>
   </data>
   <data name="UnihanTypeDescriptionSMSZD2003Readings" xml:space="preserve">
     <value>这代表《商务新字典》中该字的普通话和粤语读法。
@@ -1540,84 +1927,110 @@
 普通话读法以汉语拼音表示。粤语读法为粤拼表示。注意，部分字的读法并非如此 (例如，其在多音节中的实际读法可能会有所变化)。
 
 若某一字有多个条目，则表示该字有多个定义，并且读法按这些定义的顺序分组。</value>
+    <comment>Unicode Unihan database reading description</comment>
   </data>
   <data name="UnihanTypeDescriptionTang" xml:space="preserve">
     <value>源于或基于 1976 年耶鲁大学 Hugh M. Stimson 的《唐诗词汇》(T’ang Poetic Vocabulary, Far Eastern Publications)，该字的唐代发音。</value>
+    <comment>Unicode Unihan database reading description</comment>
   </data>
   <data name="UnihanTypeDescriptionTGHZ2013" xml:space="preserve">
     <value>《通用规范汉字字典》中给出的汉语拼音单音或多音读法。</value>
+    <comment>Unicode Unihan database reading description</comment>
   </data>
   <data name="UnihanTypeDescriptionVietnamese" xml:space="preserve">
     <value>该字的汉越音。</value>
+    <comment>Unicode Unihan database reading description</comment>
   </data>
   <data name="UnihanTypeDescriptionXHC1983" xml:space="preserve">
     <value>《现代汉语词典》中所给出的汉语拼音读法。</value>
+    <comment>Unicode Unihan database reading description</comment>
   </data>
   <data name="UnihanTypeNameCantonese" xml:space="preserve">
     <value>粤语</value>
+    <comment>Unicode Unihan database reading system name</comment>
   </data>
   <data name="UnihanTypeNameHangul" xml:space="preserve">
     <value>谚文</value>
+    <comment>Unicode Unihan database reading system name</comment>
   </data>
   <data name="UnihanTypeNameHanyuPinlu" xml:space="preserve">
     <value>汉语频率</value>
+    <comment>Unicode Unihan database reading system name</comment>
   </data>
   <data name="UnihanTypeNameHanyuPinyin" xml:space="preserve">
     <value>汉语拼音</value>
+    <comment>Unicode Unihan database reading system name</comment>
   </data>
   <data name="UnihanTypeNameJapanese" xml:space="preserve">
     <value>日语</value>
+    <comment>Unicode Unihan database reading system name</comment>
   </data>
   <data name="UnihanTypeNameJapaneseKun" xml:space="preserve">
     <value>日语训读</value>
+    <comment>Unicode Unihan database reading system name</comment>
   </data>
   <data name="UnihanTypeNameJapaneseOn" xml:space="preserve">
     <value>日语音读</value>
+    <comment>Unicode Unihan database reading system name</comment>
   </data>
   <data name="UnihanTypeNameKorean" xml:space="preserve">
     <value>朝/韩语</value>
+    <comment>Unicode Unihan database reading system name</comment>
   </data>
   <data name="UnihanTypeNameMandarin" xml:space="preserve">
     <value>普通话</value>
+    <comment>Unicode Unihan database reading system name</comment>
   </data>
   <data name="UnihanTypeNameSMSZD2003Readings" xml:space="preserve">
     <value>SmSZ</value>
+    <comment>Unicode Unihan database reading system name</comment>
   </data>
   <data name="UnihanTypeNameTang" xml:space="preserve">
     <value>唐朝音</value>
+    <comment>Unicode Unihan database reading system name</comment>
   </data>
   <data name="UnihanTypeNameTGHZ2013" xml:space="preserve">
     <value>汉语拼音 (TGHZ)</value>
+    <comment>Unicode Unihan database reading system name</comment>
   </data>
   <data name="UnihanTypeNameVietnamese" xml:space="preserve">
     <value>越南语</value>
+    <comment>Unicode Unihan database reading system name</comment>
   </data>
   <data name="UnihanTypeNameXHC1983" xml:space="preserve">
     <value>汉语拼音 (XHC)</value>
+    <comment>Unicode Unihan database reading system name</comment>
   </data>
   <data name="HiddenSearchResultsLabel.Text" xml:space="preserve">
     <value>隐藏</value>
+    <comment>Header for search results that are hidden by current filters</comment>
   </data>
   <data name="NotificationSearchSelectedCharHidden" xml:space="preserve">
     <value>所选的字符当前已被所选的筛选器隐藏</value>
+    <comment>Notification banner when searching for a character that is excluded by current filters</comment>
   </data>
   <data name="SuggestOptionChineseSimplified.Text" xml:space="preserve">
     <value>中文 (简体)</value>
+    <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="CanvasFontInformationDesignScriptLanguageTag" xml:space="preserve">
     <value>设计的目标语言</value>
+    <comment>Font metadata property name</comment>
   </data>
   <data name="CollectionManagementHint.Text" xml:space="preserve">
     <value>创建收藏集，可用于同时对比、导出或管理多种字体。开始前，请选择现有的收藏集，或新建收藏集。</value>
   </data>
   <data name="CollectionSelector.PlaceholderText" xml:space="preserve">
     <value>选择现有的</value>
+    <comment>Placeholder text in dropdown to pick an existing collection</comment>
   </data>
   <data name="FindCharButton.Text" xml:space="preserve">
     <value>在其他字体内查找</value>
+    <comment>Context menu action to search for current character in other installed fonts</comment>
   </data>
   <data name="FontFamilyFilterInput.PlaceholderText" xml:space="preserve">
     <value>按字体家族筛选</value>
+    <comment>Placeholder text in font family filter search box</comment>
   </data>
   <data name="SettingsRememberFilter.Description" xml:space="preserve">
     <value>若启用，应用将记住最近选择的收藏集或筛选器，并在应用重启后将其恢复。
@@ -1626,84 +2039,110 @@
   </data>
   <data name="SettingsRememberFilter.Title" xml:space="preserve">
     <value>记住选中的字体列表筛选器</value>
+    <comment>Setting title</comment>
   </data>
   <data name="GlyphNameToggleHeader.Text" xml:space="preserve">
     <value>文件名称模板</value>
+    <comment>Settings section header for exported glyph file naming template</comment>
   </data>
   <data name="GlyphNameToggleLabel.Text" xml:space="preserve">
     <value>显示模板部件</value>
+    <comment>Toggle button label to show naming template tokens</comment>
   </data>
   <data name="FileNameWriterCharDescDesc" xml:space="preserve">
     <value>字形 Unicode 描述，若无则为 Unicode 字符串</value>
+    <comment>Description of file naming template variable</comment>
   </data>
   <data name="FileNameWriterExtensionDesc" xml:space="preserve">
     <value>文件扩展名</value>
+    <comment>Description of file naming template variable</comment>
   </data>
   <data name="FileNameWriterFaceDesc" xml:space="preserve">
     <value>当前字体名称</value>
+    <comment>Description of file naming template variable</comment>
   </data>
   <data name="FileNameWriterFamilyDesc" xml:space="preserve">
     <value>字体家族名称</value>
+    <comment>Description of file naming template variable</comment>
   </data>
   <data name="FileNameWriterPixelSizeDesc" xml:space="preserve">
     <value>尺寸像素值</value>
+    <comment>Description of file naming template variable</comment>
   </data>
   <data name="FileNameWriterStringFormat" xml:space="preserve">
     <value>{0}，例如 {1}</value>
+    <comment>{0} = token description, {1} = example filename output</comment>
   </data>
   <data name="FileNameWriterUnicodeCPDesc" xml:space="preserve">
     <value>10 进制 Unicode 序号/码点值</value>
+    <comment>Description of file naming template variable</comment>
   </data>
   <data name="FileNameWriterUnicodeHexDesc" xml:space="preserve">
     <value>16 进制 Unicode 值</value>
+    <comment>Description of file naming template variable</comment>
   </data>
   <data name="FileNameWriterXamlGlyphDesc" xml:space="preserve">
     <value>XAML 字形代码</value>
+    <comment>Description of file naming template variable</comment>
   </data>
   <data name="SettingsGlyphNaming.Description" xml:space="preserve">
     <value>选择要如何命名导出的字符文件。</value>
   </data>
   <data name="SettingsGlyphNaming.Title" xml:space="preserve">
     <value>字形导出命名</value>
+    <comment>Setting title for exported glyph file naming format</comment>
   </data>
   <data name="ExampleFormat" xml:space="preserve">
     <value>例如 {0}</value>
+    <comment>{0} = example filename or string</comment>
   </data>
   <data name="FileNameWriterFontVerDesc" xml:space="preserve">
     <value>字体版本号 (若可用)</value>
+    <comment>Description of file naming template variable</comment>
   </data>
   <data name="CanvasFontInformationCopyrightNotice" xml:space="preserve">
     <value>版权告示</value>
+    <comment>Font metadata property name</comment>
   </data>
   <data name="CanvasFontInformationDescription" xml:space="preserve">
     <value>描述</value>
+    <comment>Font metadata property name</comment>
   </data>
   <data name="CanvasFontInformationDesigner" xml:space="preserve">
     <value>设计者</value>
+    <comment>Font metadata property name</comment>
   </data>
   <data name="CanvasFontInformationDesignerUrl" xml:space="preserve">
     <value>设计者 URL</value>
+    <comment>Font metadata property name</comment>
   </data>
   <data name="CanvasFontInformationFontVendorUrl" xml:space="preserve">
     <value>字体供应商 URL</value>
+    <comment>Font metadata property name</comment>
   </data>
   <data name="CanvasFontInformationFullName" xml:space="preserve">
     <value>全名</value>
+    <comment>Font metadata property name</comment>
   </data>
   <data name="CanvasFontInformationLicenseDescription" xml:space="preserve">
     <value>许可协议</value>
+    <comment>Font metadata property name</comment>
   </data>
   <data name="CanvasFontInformationLicenseInfoUrl" xml:space="preserve">
     <value>许可协议 URL</value>
+    <comment>Font metadata property name</comment>
   </data>
   <data name="CanvasFontInformationManufacturer" xml:space="preserve">
     <value>厂商</value>
+    <comment>Font metadata property name</comment>
   </data>
   <data name="CanvasFontInformationTrademark" xml:space="preserve">
     <value>商标</value>
+    <comment>Font metadata property name</comment>
   </data>
   <data name="CanvasFontInformationVersionStrings" xml:space="preserve">
     <value>版本字符串</value>
+    <comment>Font metadata property name</comment>
   </data>
   <data name="RestoreLabel.Text" xml:space="preserve">
     <value>恢复</value>
@@ -1711,81 +2150,411 @@
   </data>
   <data name="CreateSmartCollectionCheck.Content" xml:space="preserve">
     <value>创建智能收藏集</value>
+    <comment>Checkbox to save search criteria as a dynamic Smart Collection</comment>
   </data>
   <data name="CreateSmartCollectionHint.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>查看智能收藏集的在线文档</value>
+    <comment>Link to online documentation for Smart Collections</comment>
   </data>
   <data name="CharacterFilter" xml:space="preserve">
-    <value>char:</value>
+    <value>字符:</value>
     <comment>Command used for character searches. Should be short.</comment>
   </data>
   <data name="DesignerFilter" xml:space="preserve">
-    <value>designer:</value>
+    <value>设计师:</value>
     <comment>Command used for designer searches. Should be short.</comment>
   </data>
   <data name="FilePathFilter" xml:space="preserve">
-    <value>filepath:</value>
+    <value>路径:</value>
     <comment>Command used for file path searches. Should be short.</comment>
   </data>
   <data name="FoundryFilter" xml:space="preserve">
-    <value>foundry:</value>
+    <value>厂商:</value>
     <comment>Command used for foundry searches. Should be short.</comment>
   </data>
   <data name="SmartCollectionDesignerFilter.Text" xml:space="preserve">
     <value>设计者筛选器</value>
+    <comment>Filter criterion label in Smart Collections</comment>
   </data>
   <data name="SmartCollectionFilePathFilter.Text" xml:space="preserve">
     <value>文件路径筛选器</value>
+    <comment>Filter criterion label in Smart Collections</comment>
   </data>
   <data name="SmartCollectionFoundryFilter.Text" xml:space="preserve">
     <value>厂商筛选器</value>
+    <comment>Filter criterion label in Smart Collections</comment>
   </data>
   <data name="SmartCollectionCharacterFilter.Text" xml:space="preserve">
     <value>字符筛选器</value>
+    <comment>Filter criterion label in Smart Collections</comment>
   </data>
   <data name="DigEditCollection.PrimaryButtonText" xml:space="preserve">
     <value>编辑</value>
+    <comment>Dialog confirmation button to save edited collection</comment>
   </data>
   <data name="DigEditCollection.Title" xml:space="preserve">
     <value>编辑收藏集</value>
+    <comment>Dialog title for editing an existing collection</comment>
   </data>
   <data name="EditCollectionButton.Label" xml:space="preserve">
     <value>编辑</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="EditCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>编辑收藏集</value>
+    <comment>Button tooltip to edit collection</comment>
   </data>
   <data name="BtnHelpAndTips.Content" xml:space="preserve">
     <value>帮助与提示</value>
+    <comment>Button label - open documentation and tips</comment>
   </data>
   <data name="SmartCollectionEditHint.Text" xml:space="preserve">
     <value>要修改智能收藏集，请点击上方的编辑按钮。</value>
   </data>
   <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
     <value>选择文件夹</value>
+    <comment>Button to open folder picker in Open Folder dialog</comment>
   </data>
   <data name="ChangeSortToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>更改次序</value>
+    <comment>Toggle between ascending and descending sort order</comment>
   </data>
   <data name="SortedByRangeLabel.Text" xml:space="preserve">
     <value>按范围排序</value>
+    <comment>Status label indicating character grid is sorted by Unicode range</comment>
   </data>
   <data name="RefreshResultsLabel.Text" xml:space="preserve">
     <value>刷新结果</value>
+    <comment>Button label to re-run smart collection search filter</comment>
   </data>
   <data name="ResultsCountLabel" xml:space="preserve">
     <value>{0} 个结果</value>
+    <comment>{0} = number of search results</comment>
   </data>
   <data name="SortedByNameLabel.Text" xml:space="preserve">
     <value>按名称排序</value>
+    <comment>Status label indicating character grid is sorted alphabetically by name</comment>
   </data>
   <data name="SettingsFontListToolTip.Description" xml:space="preserve">
     <value>用于指向字体列表或标签页时，所显示悬浮提示的默认文本。</value>
   </data>
   <data name="SettingsFontListToolTip.Title" xml:space="preserve">
     <value>字体列表提示</value>
+    <comment>Setting title for font list tooltip preview text</comment>
   </data>
   <data name="CalligraphyPenInkToolbarButtonToolTip" xml:space="preserve">
     <value>书法笔</value>
+    <comment>Calligraphy pen tool selection button</comment>
+  </data>
+  <data name="SettingsSimulatedFontFaces.Title" xml:space="preserve">
+    <value>隐藏模拟字体外观</value>
+    <comment>Setting title for hiding synthetic bold/oblique faces</comment>
+  </data>
+  <data name="SettingsSimulatedFontFaces.Description" xml:space="preserve">
+    <value>若启用，由 Windows 自动生成的模拟字体外观将不会显示在字体外观选择器中。
+
+模拟字体外观通常是为未自行定义粗体或斜体外观的字体所生成的粗体和斜体字体。
+
+需要重启应用才能生效。</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value>若启用，由 Windows 自动生成的模拟字体外观将不会显示在字体外观选择器中。模拟字体外观通常是为未自行定义粗体或斜体外观的字体所生成的粗体和斜体字体。</value>
+    <comment>Deprecated or duplicate of SettingsSimulatedFontFaces.Description.</comment>
+  </data>
+  <data name="FontPropSimulated.Text" xml:space="preserve">
+    <value>是否为模拟外观</value>
+    <comment>Typography: Whether face is synthetically generated by Windows</comment>
+  </data>
+  <data name="SimulatedHeader" xml:space="preserve">
+    <value>模拟</value>
+    <comment>Simulated font faces descriptor</comment>
+  </data>
+  <data name="FontListSizeNormal" xml:space="preserve">
+    <value>标准</value>
+    <comment>Setting option: standard font size in font list</comment>
+  </data>
+  <data name="FontListSizeLarge" xml:space="preserve">
+    <value>大</value>
+    <comment>Setting option: large font size in font list</comment>
+  </data>
+  <data name="FontListSizeLarger" xml:space="preserve">
+    <value>特大</value>
+    <comment>Setting option: extra large font size in font list</comment>
+  </data>
+  <data name="CanvasFontInformationSupportedScriptLanguageTag" xml:space="preserve">
+    <value>支持的语言</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationEmbeddingRights" xml:space="preserve">
+    <value>嵌入权限</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="EmbeddingTypeInstallable" xml:space="preserve">
+    <value>可安装嵌入：字体可以嵌入，且可以永久安装以在远程系统上使用，或供其他用户使用。远程系统的用户获得与字体原始购买者相同的字体权利、义务与许可，并受相同的最终用户许可协议、版权、外观设计专利和/或商标的约束。</value>
+    <comment>Font embedding licensing permission description</comment>
+  </data>
+  <data name="EmbeddingTypeRestricted" xml:space="preserve">
+    <value>受限许可嵌入：未事先获得法定所有者的明确许可，不得以任何方式修改、嵌入或交换该字体。</value>
+    <comment>Font embedding licensing permission description</comment>
+  </data>
+  <data name="EmbeddingTypePreviewPrint" xml:space="preserve">
+    <value>预览与打印嵌入：字体可以嵌入，并可临时加载到其他系统上以用于查看或打印文档。包含“预览与打印”字体的文档必须以“只读”方式打开；不得对文档进行任何编辑。</value>
+    <comment>Font embedding licensing permission description</comment>
+  </data>
+  <data name="EmbeddingTypeEditable" xml:space="preserve">
+    <value>可编辑嵌入：字体可以嵌入，并可临时加载到其他系统上。包含“可编辑”字体的文档可打开阅读。此外允许进行编辑，包括使用嵌入字体设置新文本格式，并可保存更改。</value>
+    <comment>Font embedding licensing permission description</comment>
+  </data>
+  <data name="EmbeddingTypeNoSubsetting" xml:space="preserve">
+    <value>不可子集化：嵌入前不得对字体进行子集化处理。</value>
+    <comment>Font embedding licensing permission description</comment>
+  </data>
+  <data name="EmbeddingTypeBitmapOnly" xml:space="preserve">
+    <value>仅位图嵌入：仅字体中包含的位图可以嵌入。轮廓数据不可嵌入。若字体中没有位图可用，则该字体被视为不可嵌入，嵌入服务将会失败。</value>
+    <comment>Font embedding licensing permission description</comment>
+  </data>
+  <data name="FilterEmbeddingInstallable.Text" xml:space="preserve">
+    <value>可安装</value>
+    <comment>Font embedding rights filter option</comment>
+  </data>
+  <data name="FilterEmbeddingEditable.Text" xml:space="preserve">
+    <value>可编辑</value>
+    <comment>Font embedding rights filter option</comment>
+  </data>
+  <data name="FilterEmbeddingPreviewPrint.Text" xml:space="preserve">
+    <value>预览与打印</value>
+    <comment>Font embedding rights filter option</comment>
+  </data>
+  <data name="FilterEmbeddingRestricted.Text" xml:space="preserve">
+    <value>受限许可</value>
+    <comment>Font embedding rights filter option</comment>
+  </data>
+  <data name="FilterEmbeddingBitmap.Text" xml:space="preserve">
+    <value>仅位图</value>
+    <comment>Font embedding rights filter option</comment>
+  </data>
+  <data name="All.Text" xml:space="preserve">
+    <value>全部</value>
+    <comment>Filter option to show all items</comment>
+  </data>
+  <data name="UnihanTypeDescriptionZhuang" xml:space="preserve">
+    <value>该汉字最常用的壮语读音。不属于标准壮语词汇的读音后附有星号 (*)。</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnicodeTypeNameZhuang" xml:space="preserve">
+    <value>壮语</value>
+    <comment>Name of the Zhuang script/language</comment>
+  </data>
+  <data name="UnihanTypeDescriptionFanqie" xml:space="preserve">
+    <value>古代汉语字书与韵书中常用的一种标注字音的方法（反切）。该方法使用两个汉字来标注一个字音：上字取声母，下字取韵母与声调。例如，“德”(tək) 和“红”(ɣuŋ) 用于标注“东”(tuŋ) 的中古音，因此 U+6771“东”的反切属性值为双字“德红”。反切通常包含第三个字“反”或“切”，因此不计入反切属性值中。</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeNameFanqie" xml:space="preserve">
+    <value>反切</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="SubsetterTitleBETA.Title" xml:space="preserve">
+    <value>Segoe 图标子集生成器 (BETA)</value>
+    <comment>Tool name for creating custom subset font files</comment>
+  </data>
+  <data name="SubsetterTitleBETA.Description" xml:space="preserve">
+    <value>创建 Segoe 图标字体的自定义子集。</value>
+  </data>
+  <data name="OutputPropertiesLabel.Text" xml:space="preserve">
+    <value>输出属性</value>
+    <comment>Section header for generated subset font file properties</comment>
+  </data>
+  <data name="FontVersion" xml:space="preserve">
+    <value>字体版本</value>
+    <comment>Label for font version metadata field</comment>
+  </data>
+  <data name="FontFamilyName" xml:space="preserve">
+    <value>字体家族名称</value>
+    <comment>Label for font family name metadata field</comment>
+  </data>
+  <data name="SubSetterClashWarningDescription.Text" xml:space="preserve">
+    <value>警告：此字体有多个冲突的索引。请移除冲突的字符。</value>
+    <comment>Warning in Segoe Icons Subsetter when characters share the same glyph index</comment>
+  </data>
+  <data name="SubSetterChosenGlyphsHeader.Text" xml:space="preserve">
+    <value>已选取的字符</value>
+    <comment>Header for selected characters list in Subsetter</comment>
+  </data>
+  <data name="SubSetterChosenGlyphsLabel" xml:space="preserve">
+    <value>已选取 {0} 个</value>
+    <comment>{0} = number of selected characters</comment>
+  </data>
+  <data name="SubsetSuccessMessage" xml:space="preserve">
+    <value>字体子集生成成功</value>
+    <comment>Notification message shown after successfully generating a font subset</comment>
+  </data>
+  <data name="SettingsSubsetterBETA.Title" xml:space="preserve">
+    <value>启用 Segoe 图标子集生成器 (BETA)</value>
+    <comment>Setting title for icon subsetter feature</comment>
+  </data>
+  <data name="SettingsSubsetterBETA.Description" xml:space="preserve">
+    <value>若启用，可从主应用程序菜单中使用 Segoe 图标子集生成器。</value>
+  </data>
+  <data name="AddSVGHint.Text" xml:space="preserve">
+    <value>添加 SVG</value>
+    <comment>Button/hint to import an SVG glyph into subset font</comment>
+  </data>
+  <data name="CharacterMapDescription.Title" xml:space="preserve">
+    <value>字符映射表</value>
+    <comment>Main view showing characters mapped to Unicode code points</comment>
+  </data>
+  <data name="CharacterMapDescription.Description" xml:space="preserve">
+    <value>查看字体外观中可访问的字符。这些字符可在大多数应用程序中使用。</value>
+  </data>
+  <data name="GlyphMapDescription.Title" xml:space="preserve">
+    <value>字形映射表</value>
+    <comment>View showing internal font glyphs by index rather than character code</comment>
+  </data>
+  <data name="GlyphMapDescription.Description" xml:space="preserve">
+    <value>查看字体外观用来构成字符的内部字形。这些字形通常无法在其他应用程序中访问。</value>
+  </data>
+  <data name="TypeRampDescription.Title" xml:space="preserve">
+    <value>字阶</value>
+    <comment>Typography: Preview of text at progressively increasing font sizes</comment>
+  </data>
+  <data name="TypeRampDescription.Description" xml:space="preserve">
+    <value>以不同大小预览字体，并探索可变字体轴。</value>
+  </data>
+  <data name="FaceSelectorDescription.Title" xml:space="preserve">
+    <value>当前字体外观</value>
+    <comment>Font face selection header</comment>
+  </data>
+  <data name="FaceSelectorDescription.Description" xml:space="preserve">
+    <value>同一字体家族中的不同字体外观可能具有不同的可用字符。
+
+对于未提供粗体或斜体外观的字体家族，Windows 将提供模拟版本。这些模拟外观可能无法在所有应用程序中使用。</value>
+  </data>
+  <data name="FaceMetadataDescription.Description" xml:space="preserve">
+    <value>查看此字体外观的通用元数据。</value>
+  </data>
+  <data name="FaceOpenTypeFeaturesDescription.Description" xml:space="preserve">
+    <value>切换 OpenType 字体特性与彩色字形。</value>
+  </data>
+  <data name="CharacterFilterDescription.Description" xml:space="preserve">
+    <value>按 Unicode 类别筛选显示的字符。</value>
+  </data>
+  <data name="GlyphsCount" xml:space="preserve">
+    <value>{0} 个字形</value>
+    <comment>{0} = count of glyphs in font face</comment>
+  </data>
+  <data name="SimulatedFacesGlyphsMessage.Content" xml:space="preserve">
+    <value>模拟字体外观只会显示来自其原始非模拟外观的字形</value>
+    <comment>Warning banner in glyph map view for simulated font faces</comment>
+  </data>
+  <data name="OptionOutlineTypes.Text" xml:space="preserve">
+    <value>轮廓类型</value>
+    <comment>Font filter flyout option</comment>
+  </data>
+  <data name="FilterColorBitmap.Text" xml:space="preserve">
+    <value>彩色位图</value>
+    <comment>Font filter option for color bitmap fonts (e.g. CBDT, sbix)</comment>
+  </data>
+  <data name="FilterLegacyBitmap.Text" xml:space="preserve">
+    <value>传统位图</value>
+    <comment>Font filter option for legacy non-color bitmap fonts</comment>
+  </data>
+  <data name="OutlineFilter" xml:space="preserve">
+    <value>轮廓:</value>
+    <comment>Command used for font outline type searches. Should be short.</comment>
+  </data>
+  <data name="SmartCollectionOutlineFilter.Text" xml:space="preserve">
+    <value>轮廓筛选器</value>
+    <comment>Label for outline type filter in Smart Collections dialog</comment>
+  </data>
+  <data name="SupportedValuesHint" xml:space="preserve">
+    <value>支持的值: {0}</value>
+    <comment>{0} = comma-separated list of supported outline types</comment>
+  </data>
+  <data name="ClassNameInput.Header" xml:space="preserve">
+    <value>类名称</value>
+    <comment>Input field header for generating a C# helper class</comment>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>代码</value>
+    <comment>Tab header for generated C# code preview</comment>
+  </data>
+  <data name="PlusMore" xml:space="preserve">
+    <value>+ 还有 {0} 项</value>
+    <comment>{0} = count of remaining items</comment>
+  </data>
+  <data name="OnlineDocumentationHint.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>查看在线文档</value>
+    <comment>Link to online documentation</comment>
+  </data>
+  <data name="SettingsCopyTypographicVariantsAsMappedCharacters.Description" xml:space="preserve">
+    <value>若启用，当字体具有映射为 Unicode 字符的排版变体字形时，排版变体将以其对应的 Unicode 字符复制。
+
+这会在更改字体和拼写检查时破坏字形映射，但这是在应用程序之间成功复制排版变体的唯一方法。
+
+并非所有字体都会将排版变体表示为映射字符。</value>
+  </data>
+  <data name="SettingsCopyTypographicVariantsAsMappedCharacters.Title" xml:space="preserve">
+    <value>将排版变体复制为对应的 Unicode 字符</value>
+    <comment>Setting title</comment>
+  </data>
+  <data name="TxtGlyphHeader" xml:space="preserve">
+    <value>字形:</value>
+    <comment>Label for glyph identifier</comment>
+  </data>
+  <data name="TxtGlyphsHeader" xml:space="preserve">
+    <value>字形:</value>
+    <comment>Label for glyph identifiers list</comment>
+  </data>
+  <data name="TxtGlyphIndex.Header" xml:space="preserve">
+    <value>字形索引</value>
+    <comment>Typography: Internal font glyph index</comment>
+  </data>
+  <data name="NoLigaturesMessage" xml:space="preserve">
+    <value>此字体不包含任何 OpenType 连字。</value>
+    <comment>Message shown in ligature view when font has no OpenType ligatures</comment>
+  </data>
+  <data name="LigaturesSummaryString" xml:space="preserve">
+    <value>在 {1} 个 OpenType 特性中包含 {0} 个连字</value>
+    <comment>{0} = total ligatures count, {1} = number of OpenType features</comment>
+  </data>
+  <data name="CopySequenceMessage" xml:space="preserve">
+    <value>复制文本序列</value>
+    <comment>Tooltip or message for copying the sequence of selected characters</comment>
+  </data>
+  <data name="ViewInGlyphMapMessage" xml:space="preserve">
+    <value>在字形映射表中查看 {0}</value>
+    <comment>{0} = glyph name or index</comment>
+  </data>
+  <data name="LigatureMapDescription.Title" xml:space="preserve">
+    <value>连字映射表</value>
+    <comment>Typography: Combinations where multiple characters form a single glyph</comment>
+  </data>
+  <data name="LigatureMapDescription.Description" xml:space="preserve">
+    <value>查看字体外观支持的连字组合及其组成成分</value>
+  </data>
+  <data name="GlyphsSummary.Text" xml:space="preserve">
+    <value>包含映射到 {1} 个字符的 {0} 个字形</value>
+    <comment>{0} = glyph count, {1} = character count</comment>
+  </data>
+  <data name="FaceVariationsDescription.Title" xml:space="preserve">
+    <value>可变字体轴</value>
+    <comment>Typography: OpenType Variable Font design axes (e.g. weight, width, slant)</comment>
+  </data>
+  <data name="FaceVariationsDescription.Description" xml:space="preserve">
+    <value>调整字体外观的 OpenType 字体变化轴。
+
+变化形式无法复制为文本，但可以导出为 PNG 或 SVG。</value>
+  </data>
+  <data name="AllColorTitle.Text" xml:space="preserve">
+    <value>所有彩色字体</value>
+    <comment>Filter title to show all color fonts</comment>
+  </data>
+  <data name="HiddenAxisHintLabel" xml:space="preserve">
+    <value>隐藏轴 - 不供最终用户控制</value>
+    <comment>Variable font design axis marked as hidden in font metadata</comment>
+  </data>
+  <data name="ExportImageLabel.Text" xml:space="preserve">
+    <value>保存为图像</value>
+    <comment>Context menu item to save glyph as image file</comment>
   </data>
 </root>
