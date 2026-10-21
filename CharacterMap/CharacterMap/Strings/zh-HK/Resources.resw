@@ -987,7 +987,7 @@
     <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionAllEmojiTitle.Text" xml:space="preserve">
-    <value>所有 Emoji</value>
+    <value>所有表情符號</value>
     <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionEmojiDingbats.Text" xml:space="preserve">
@@ -1522,7 +1522,7 @@
     <comment>Menu item to compare font faces of currently opened fonts</comment>
   </data>
   <data name="OptionEmoji.Text" xml:space="preserve">
-    <value>Emoji</value>
+    <value>表情符號</value>
     <comment>Font filter flyout: emoji category option</comment>
   </data>
   <data name="OptionSupportedScripts.Text" xml:space="preserve">
@@ -1744,7 +1744,7 @@
     <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="SuggestOptionEmoji.Text" xml:space="preserve">
-    <value>Emoji</value>
+    <value>表情符號</value>
     <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="SuggestOptionEnglish.Text" xml:space="preserve">

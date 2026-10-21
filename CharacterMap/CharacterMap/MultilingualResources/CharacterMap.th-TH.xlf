@@ -1034,7 +1034,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="BtnSaveGlyph.Label" translate="yes" xml:space="preserve">
           <source>Save As</source>
-          <target state="translated">บันทึกเป็น</target>
+          <target state="translated">บันทึก</target>
           <note from="Multilingual Build" annotates="source" priority="2">Labels must be as short as possible</note>
         </trans-unit>
         <trans-unit id="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
@@ -1896,7 +1896,7 @@ Requires a restart to take effect.</source>
         <trans-unit id="SettingsCustomSuggestions.Description" translate="yes" xml:space="preserve">
           <source>Add and manage custom options to show in Type Ramp view and Comparison window text suggestions.
 Tap and hold to arrange.</source>
-          <target state="translated">เพิ่มและจัดการข้อความตัวอย่างที่จะแสดงในมุมมอง Type Ramp และหน้าต่างเปรียบเทียบ
+          <target state="translated">เพิ่มและจัดการข้อความตัวอย่างที่จะแสดงในมุมมองการไล่ระดับขนาดอักษร และหน้าต่างเปรียบเทียบ
 แตะค้างไว้เพื่อจัดเรียง</target>
         </trans-unit>
         <trans-unit id="SettingsCustomSuggestions.Title" translate="yes" xml:space="preserve">
@@ -1965,7 +1965,7 @@ Tap and hold to arrange.</source>
         </trans-unit>
         <trans-unit id="ColrV1SupportMessage.Text" translate="yes" xml:space="preserve">
           <source>This font contains COLRv1 glyphs. To preview them with proper rendering support, switch to Type Ramp view using the switch button above.</source>
-          <target state="translated">ฟอนต์นี้มีกลิฟ COLRv1 หากต้องการแสดงตัวอย่างด้วยการเรนเดอร์ที่ถูกต้อง ให้สลับไปยังมุมมอง Type Ramp โดยใช้ปุ่มด้านบน</target>
+          <target state="translated">ฟอนต์นี้มีกลิฟ COLRv1 หากต้องการแสดงตัวอย่างด้วยการเรนเดอร์ที่ถูกต้อง ให้สลับไปยังมุมมองการไล่ระดับขนาดอักษร โดยใช้ปุ่มด้านบน</target>
           <note from="Multilingual Build" annotates="source" priority="2">Notice explaining COLRv1 vector color font preview requires Type Ramp view</note>
         </trans-unit>
         <trans-unit id="FontPropCOLRVersion.Text" translate="yes" xml:space="preserve">
@@ -2919,7 +2919,7 @@ Requires a restart to take effect.</source>
         </trans-unit>
         <trans-unit id="TypeRampDescription.Title" translate="yes" xml:space="preserve">
           <source>Type Ramp</source>
-          <target state="translated">Type Ramp</target>
+          <target state="translated">การไล่ระดับขนาดอักษร</target>
           <note from="Multilingual Build" annotates="source" priority="2">Typography: Preview of text at progressively increasing font sizes</note>
         </trans-unit>
         <trans-unit id="TypeRampDescription.Description" translate="yes" xml:space="preserve">

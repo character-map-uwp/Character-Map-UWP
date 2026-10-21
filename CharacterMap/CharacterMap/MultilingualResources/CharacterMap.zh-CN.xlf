@@ -1111,7 +1111,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="OptionAllEmojiTitle.Text" translate="yes" xml:space="preserve">
           <source>All Emoji</source>
-          <target state="translated">所有 Emoji</target>
+          <target state="translated">所有表情符号</target>
           <note from="Multilingual Build" annotates="source" priority="2">Font filter flyout option</note>
         </trans-unit>
         <trans-unit id="OptionEmojiDingbats.Text" translate="yes" xml:space="preserve">
@@ -1789,7 +1789,7 @@ Requires a restart to take effect.</source>
         </trans-unit>
         <trans-unit id="OptionEmoji.Text" translate="yes" xml:space="preserve">
           <source>Emoji</source>
-          <target state="translated">Emoji</target>
+          <target state="translated">表情符号</target>
           <note from="Multilingual Build" annotates="source" priority="2">Font filter flyout: emoji category option</note>
         </trans-unit>
         <trans-unit id="OptionSupportedScripts.Text" translate="yes" xml:space="preserve">
@@ -2068,7 +2068,7 @@ Tap and hold to arrange.</source>
         </trans-unit>
         <trans-unit id="SuggestOptionEmoji.Text" translate="yes" xml:space="preserve">
           <source>Emoji</source>
-          <target state="translated">Emoji</target>
+          <target state="translated">表情符号</target>
           <note from="Multilingual Build" annotates="source" priority="2">Type ramp preview text preset option</note>
         </trans-unit>
         <trans-unit id="SuggestOptionEnglish.Text" translate="yes" xml:space="preserve">

@@ -926,7 +926,7 @@
     <comment>Tooltip to copy character to clipboard</comment>
   </data>
   <data name="BtnSaveGlyph.Label" xml:space="preserve">
-    <value>บันทึกเป็น</value>
+    <value>บันทึก</value>
     <comment>Labels must be as short as possible</comment>
   </data>
   <data name="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
@@ -1607,7 +1607,7 @@
     <comment>Setting title</comment>
   </data>
   <data name="SettingsCustomSuggestions.Description" xml:space="preserve">
-    <value>เพิ่มและจัดการข้อความตัวอย่างที่จะแสดงในมุมมอง Type Ramp และหน้าต่างเปรียบเทียบ
+    <value>เพิ่มและจัดการข้อความตัวอย่างที่จะแสดงในมุมมองการไล่ระดับขนาดอักษร และหน้าต่างเปรียบเทียบ
 แตะค้างไว้เพื่อจัดเรียง</value>
   </data>
   <data name="SettingsCustomSuggestions.Title" xml:space="preserve">
@@ -1662,7 +1662,7 @@
     <comment>Notification message shown when SVG vector is copied to clipboard</comment>
   </data>
   <data name="ColrV1SupportMessage.Text" xml:space="preserve">
-    <value>ฟอนต์นี้มีกลิฟ COLRv1 หากต้องการแสดงตัวอย่างด้วยการเรนเดอร์ที่ถูกต้อง ให้สลับไปยังมุมมอง Type Ramp โดยใช้ปุ่มด้านบน</value>
+    <value>ฟอนต์นี้มีกลิฟ COLRv1 หากต้องการแสดงตัวอย่างด้วยการเรนเดอร์ที่ถูกต้อง ให้สลับไปยังมุมมองการไล่ระดับขนาดอักษร โดยใช้ปุ่มด้านบน</value>
     <comment>Notice explaining COLRv1 vector color font preview requires Type Ramp view</comment>
   </data>
   <data name="FontPropCOLRVersion.Text" xml:space="preserve">
@@ -2406,7 +2406,7 @@
     <value>ดูกลิฟภายในที่รูปแบบฟอนต์ใช้เพื่อสร้างอักขระ โดยทั่วไปไม่สามารถเข้าถึงได้โดยตรงในแอปอื่น</value>
   </data>
   <data name="TypeRampDescription.Title" xml:space="preserve">
-    <value>Type Ramp</value>
+    <value>การไล่ระดับขนาดอักษร</value>
     <comment>Typography: Preview of text at progressively increasing font sizes</comment>
   </data>
   <data name="TypeRampDescription.Description" xml:space="preserve">

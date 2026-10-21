@@ -2404,7 +2404,7 @@ Erfordert Neustart.</value>
     <value>Zeigt die internen Glyphen des Schriftschnitts. Diese sind in anderen Programmen meist nicht direkt zugänglich.</value>
   </data>
   <data name="TypeRampDescription.Title" xml:space="preserve">
-    <value>Type Ramp</value>
+    <value>Rampenansicht</value>
     <comment>Typography: Preview of text at progressively increasing font sizes</comment>
   </data>
   <data name="TypeRampDescription.Description" xml:space="preserve">

@@ -1175,7 +1175,7 @@ Ti consigliamo di pubblicare i dettagli di questo errore su GitHub in modo che p
         </trans-unit>
         <trans-unit id="LblSwitchToTypeRamp.Text" translate="yes" xml:space="preserve">
           <source>Switch to Type Ramp view (Ctrl+T)</source>
-          <target state="translated">Passa alla visualizzazione con testo</target>
+          <target state="translated">Passa alla scala tipografica (Ctrl+T)</target>
           <note from="Multilingual Build" annotates="source" priority="2">Button label to switch from Character Map to Type Ramp view</note>
         </trans-unit>
         <trans-unit id="TypeRampInputBox.PlaceholderText" translate="yes" xml:space="preserve">
@@ -1963,7 +1963,7 @@ Tocca e tieni premuto per disporre.</target>
         </trans-unit>
         <trans-unit id="ColrV1SupportMessage.Text" translate="yes" xml:space="preserve">
           <source>This font contains COLRv1 glyphs. To preview them with proper rendering support, switch to Type Ramp view using the switch button above.</source>
-          <target state="translated">Questo font contiene glifi COLRv1. Per visualizzarli con il rendering corretto, passa alla visualizzazione Type Ramp usando il pulsante in alto.</target>
+          <target state="translated">Questo font contiene glifi COLRv1. Per visualizzarli con il rendering corretto, passa alla scala tipografica usando il pulsante in alto.</target>
           <note from="Multilingual Build" annotates="source" priority="2">Notice explaining COLRv1 vector color font preview requires Type Ramp view</note>
         </trans-unit>
         <trans-unit id="FontPropCOLRVersion.Text" translate="yes" xml:space="preserve">
@@ -2917,7 +2917,7 @@ Richiede il riavvio dell'applicazione.</target>
         </trans-unit>
         <trans-unit id="TypeRampDescription.Title" translate="yes" xml:space="preserve">
           <source>Type Ramp</source>
-          <target state="translated">Type Ramp</target>
+          <target state="translated">Scala tipografica</target>
           <note from="Multilingual Build" annotates="source" priority="2">Typography: Preview of text at progressively increasing font sizes</note>
         </trans-unit>
         <trans-unit id="TypeRampDescription.Description" translate="yes" xml:space="preserve">

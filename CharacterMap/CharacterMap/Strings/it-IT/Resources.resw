@@ -1038,7 +1038,7 @@ Ti consigliamo di pubblicare i dettagli di questo errore su GitHub in modo che p
     <comment>Button label to switch from Type Ramp to Character Map view</comment>
   </data>
   <data name="LblSwitchToTypeRamp.Text" xml:space="preserve">
-    <value>Passa alla visualizzazione con testo</value>
+    <value>Passa alla scala tipografica (Ctrl+T)</value>
     <comment>Button label to switch from Character Map to Type Ramp view</comment>
   </data>
   <data name="TypeRampInputBox.PlaceholderText" xml:space="preserve">
@@ -1660,7 +1660,7 @@ Tocca e tieni premuto per disporre.</value>
     <comment>Notification message shown when SVG vector is copied to clipboard</comment>
   </data>
   <data name="ColrV1SupportMessage.Text" xml:space="preserve">
-    <value>Questo font contiene glifi COLRv1. Per visualizzarli con il rendering corretto, passa alla visualizzazione Type Ramp usando il pulsante in alto.</value>
+    <value>Questo font contiene glifi COLRv1. Per visualizzarli con il rendering corretto, passa alla scala tipografica usando il pulsante in alto.</value>
     <comment>Notice explaining COLRv1 vector color font preview requires Type Ramp view</comment>
   </data>
   <data name="FontPropCOLRVersion.Text" xml:space="preserve">
@@ -2404,7 +2404,7 @@ Richiede il riavvio dell'applicazione.</value>
     <value>Visualizza i glifi interni utilizzati dal font per formare i caratteri. Di solito non sono accessibili direttamente in altre applicazioni.</value>
   </data>
   <data name="TypeRampDescription.Title" xml:space="preserve">
-    <value>Type Ramp</value>
+    <value>Scala tipografica</value>
     <comment>Typography: Preview of text at progressively increasing font sizes</comment>
   </data>
   <data name="TypeRampDescription.Description" xml:space="preserve">

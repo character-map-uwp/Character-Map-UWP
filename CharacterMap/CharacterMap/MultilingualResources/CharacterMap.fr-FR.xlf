@@ -1015,7 +1015,7 @@ N'hésitez pas à publier les détails de cette erreur sur GitHub afin que nous 
         </trans-unit>
         <trans-unit id="BtnCopyGlyph.Label" translate="yes" xml:space="preserve">
           <source>Copy</source>
-          <target state="translated">Copier le glyphe</target>
+          <target state="translated">Copier</target>
           <note from="Multilingual Build" annotates="source" priority="2">Labels must be as short as possible</note>
         </trans-unit>
         <trans-unit id="BtnCopyGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
@@ -1025,7 +1025,7 @@ N'hésitez pas à publier les détails de cette erreur sur GitHub afin que nous 
         </trans-unit>
         <trans-unit id="BtnSaveGlyph.Label" translate="yes" xml:space="preserve">
           <source>Save As</source>
-          <target state="translated">Enregistrer le glyphe</target>
+          <target state="translated">Enreg.</target>
           <note from="Multilingual Build" annotates="source" priority="2">Labels must be as short as possible</note>
         </trans-unit>
         <trans-unit id="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
@@ -1169,7 +1169,7 @@ N'hésitez pas à publier les détails de cette erreur sur GitHub afin que nous 
         </trans-unit>
         <trans-unit id="LblSwitchToTypeRamp.Text" translate="yes" xml:space="preserve">
           <source>Switch to Type Ramp view (Ctrl+T)</source>
-          <target state="translated">Basculer vers Type Ramp</target>
+          <target state="translated">Basculer vers l'échelle typographique (Ctrl+T)</target>
           <note from="Multilingual Build" annotates="source" priority="2">Button label to switch from Character Map to Type Ramp view</note>
         </trans-unit>
         <trans-unit id="TypeRampInputBox.PlaceholderText" translate="yes" xml:space="preserve">
@@ -1949,7 +1949,7 @@ Tap and hold to arrange.</source>
         </trans-unit>
         <trans-unit id="ColrV1SupportMessage.Text" translate="yes" xml:space="preserve">
           <source>This font contains COLRv1 glyphs. To preview them with proper rendering support, switch to Type Ramp view using the switch button above.</source>
-          <target state="translated">Cette police contient des glyphes COLRv1. Pour les afficher correctement, passez à la vue Type Ramp à l'aide du bouton ci-dessus.</target>
+          <target state="translated">Cette police contient des glyphes COLRv1. Pour les afficher correctement, passez à l'échelle typographique à l'aide du bouton ci-dessus.</target>
           <note from="Multilingual Build" annotates="source" priority="2">Notice explaining COLRv1 vector color font preview requires Type Ramp view</note>
         </trans-unit>
         <trans-unit id="FontPropCOLRVersion.Text" translate="yes" xml:space="preserve">
@@ -2054,7 +2054,7 @@ Tap and hold to arrange.</source>
         </trans-unit>
         <trans-unit id="SuggestOptionEmoji.Text" translate="yes" xml:space="preserve">
           <source>Emoji</source>
-          <target state="translated">Emoji</target>
+          <target state="translated">Émoji</target>
           <note from="Multilingual Build" annotates="source" priority="2">Type ramp preview text preset option</note>
         </trans-unit>
         <trans-unit id="SuggestOptionEnglish.Text" translate="yes" xml:space="preserve">
@@ -2903,7 +2903,7 @@ Nécessite le redémarrage de l'application.</target>
         </trans-unit>
         <trans-unit id="TypeRampDescription.Title" translate="yes" xml:space="preserve">
           <source>Type Ramp</source>
-          <target state="translated">Type Ramp</target>
+          <target state="translated">Échelle typographique</target>
           <note from="Multilingual Build" annotates="source" priority="2">Typography: Preview of text at progressively increasing font sizes</note>
         </trans-unit>
         <trans-unit id="TypeRampDescription.Description" translate="yes" xml:space="preserve">

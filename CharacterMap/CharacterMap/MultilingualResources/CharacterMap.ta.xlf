@@ -1035,7 +1035,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="BtnSaveGlyph.Label" translate="yes" xml:space="preserve">
           <source>Save As</source>
-          <target state="translated">இவ்வாறு சேமி</target>
+          <target state="translated">சேமி</target>
           <note from="Multilingual Build" annotates="source" priority="2">Labels must be as short as possible</note>
         </trans-unit>
         <trans-unit id="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
@@ -1179,7 +1179,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="LblSwitchToTypeRamp.Text" translate="yes" xml:space="preserve">
           <source>Switch to Type Ramp view (Ctrl+T)</source>
-          <target state="translated">வகை ராம்ப் காட்சிக்கு மாறு</target>
+          <target state="translated">அளவு முன்னோட்டக் காட்சிக்கு மாறு (Ctrl+T)</target>
           <note from="Multilingual Build" annotates="source" priority="2">Button label to switch from Character Map to Type Ramp view</note>
         </trans-unit>
         <trans-unit id="TypeRampInputBox.PlaceholderText" translate="yes" xml:space="preserve">
@@ -1274,7 +1274,7 @@ Optimized will create a smart name based on Font Family and Font Name.</source>
         </trans-unit>
         <trans-unit id="VariableFeaturesMessage.Text" translate="yes" xml:space="preserve">
           <source>This font has variable features. To explore them, switch to Type Ramp view using the switch button above.</source>
-          <target state="translated">இந்த எழுத்துருவில் மாறி அம்சங்கள் உள்ளன. அவற்றை ஆராய, மேலே உள்ள காட்சி பொத்தானை பயன்படுத்தி, வகை ராம்ப் காட்சிக்கு மாறவும்.</target>
+          <target state="translated">இந்த எழுத்துருவில் மாறி அம்சங்கள் உள்ளன. அவற்றை ஆராய, மேலே உள்ள காட்சி பொத்தானை பயன்படுத்தி, அளவு முன்னோட்டக் காட்சிக்கு மாறவும்.</target>
           <note from="Multilingual Build" annotates="source" priority="2">Deprecated. Do not use.</note>
         </trans-unit>
         <trans-unit id="VariableFeaturesMessage1.Text" translate="yes" xml:space="preserve">

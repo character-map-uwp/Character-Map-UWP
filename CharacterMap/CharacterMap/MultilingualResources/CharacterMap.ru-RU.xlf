@@ -1022,7 +1022,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="BtnCopyGlyph.Label" translate="yes" xml:space="preserve">
           <source>Copy</source>
-          <target state="translated">Копировать</target>
+          <target state="translated">Копия</target>
           <note from="Multilingual Build" annotates="source" priority="2">Labels must be as short as possible</note>
         </trans-unit>
         <trans-unit id="BtnCopyGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
@@ -1032,7 +1032,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="BtnSaveGlyph.Label" translate="yes" xml:space="preserve">
           <source>Save As</source>
-          <target state="translated">Сохранить</target>
+          <target state="translated">Сохр.</target>
           <note from="Multilingual Build" annotates="source" priority="2">Labels must be as short as possible</note>
         </trans-unit>
         <trans-unit id="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">

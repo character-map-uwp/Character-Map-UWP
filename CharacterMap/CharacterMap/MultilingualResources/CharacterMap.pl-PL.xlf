@@ -1032,7 +1032,7 @@ Rozważ opublikowanie szczegółów dotyczących tego błędu w usłudze GitHub,
         </trans-unit>
         <trans-unit id="BtnSaveGlyph.Label" translate="yes" xml:space="preserve">
           <source>Save As</source>
-          <target state="translated">Zapisz jako</target>
+          <target state="translated">Zapisz</target>
           <note from="Multilingual Build" annotates="source" priority="2">Labels must be as short as possible</note>
         </trans-unit>
         <trans-unit id="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">

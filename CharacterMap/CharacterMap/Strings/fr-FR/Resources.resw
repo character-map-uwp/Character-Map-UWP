@@ -909,7 +909,7 @@ N'hésitez pas à publier les détails de cette erreur sur GitHub afin que nous 
     <comment>Menu header for exporting SVG glyph</comment>
   </data>
   <data name="BtnCopyGlyph.Label" xml:space="preserve">
-    <value>Copier le glyphe</value>
+    <value>Copier</value>
     <comment>Labels must be as short as possible</comment>
   </data>
   <data name="BtnCopyGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
@@ -917,7 +917,7 @@ N'hésitez pas à publier les détails de cette erreur sur GitHub afin que nous 
     <comment>Tooltip to copy character to clipboard</comment>
   </data>
   <data name="BtnSaveGlyph.Label" xml:space="preserve">
-    <value>Enregistrer le glyphe</value>
+    <value>Enreg.</value>
     <comment>Labels must be as short as possible</comment>
   </data>
   <data name="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
@@ -1032,7 +1032,7 @@ N'hésitez pas à publier les détails de cette erreur sur GitHub afin que nous 
     <comment>Button label to switch from Type Ramp to Character Map view</comment>
   </data>
   <data name="LblSwitchToTypeRamp.Text" xml:space="preserve">
-    <value>Basculer vers Type Ramp</value>
+    <value>Basculer vers l'échelle typographique (Ctrl+T)</value>
     <comment>Button label to switch from Character Map to Type Ramp view</comment>
   </data>
   <data name="TypeRampInputBox.PlaceholderText" xml:space="preserve">
@@ -1646,7 +1646,7 @@ Variante par défaut copiée.</value>
     <comment>Notification message shown when SVG vector is copied to clipboard</comment>
   </data>
   <data name="ColrV1SupportMessage.Text" xml:space="preserve">
-    <value>Cette police contient des glyphes COLRv1. Pour les afficher correctement, passez à la vue Type Ramp à l'aide du bouton ci-dessus.</value>
+    <value>Cette police contient des glyphes COLRv1. Pour les afficher correctement, passez à l'échelle typographique à l'aide du bouton ci-dessus.</value>
     <comment>Notice explaining COLRv1 vector color font preview requires Type Ramp view</comment>
   </data>
   <data name="FontPropCOLRVersion.Text" xml:space="preserve">
@@ -1730,7 +1730,7 @@ Variante par défaut copiée.</value>
     <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="SuggestOptionEmoji.Text" xml:space="preserve">
-    <value>Emoji</value>
+    <value>Émoji</value>
     <comment>Type ramp preview text preset option</comment>
   </data>
   <data name="SuggestOptionEnglish.Text" xml:space="preserve">
@@ -2390,7 +2390,7 @@ Nécessite le redémarrage de l'application.</value>
     <value>Affiche les glyphes internes utilisés par la police pour composer les caractères. Ils ne sont généralement pas directement accessibles dans les autres applications.</value>
   </data>
   <data name="TypeRampDescription.Title" xml:space="preserve">
-    <value>Type Ramp</value>
+    <value>Échelle typographique</value>
     <comment>Typography: Preview of text at progressively increasing font sizes</comment>
   </data>
   <data name="TypeRampDescription.Description" xml:space="preserve">

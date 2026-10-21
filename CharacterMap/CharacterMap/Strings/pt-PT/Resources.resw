@@ -924,7 +924,7 @@ Considere colocar detalhes sobre este erro no GitHub para lhe podermos ajudar a 
     <comment>Tooltip to copy character to clipboard</comment>
   </data>
   <data name="BtnSaveGlyph.Label" xml:space="preserve">
-    <value>Guardar como</value>
+    <value>Guardar</value>
     <comment>Labels must be as short as possible</comment>
   </data>
   <data name="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
@@ -2410,7 +2410,7 @@ Requer o reinício da aplicação.</value>
     <value>Veja os glifos internos utilizados pela variante do tipo de letra para formar os carateres. Geralmente não estão acessíveis noutras aplicações.</value>
   </data>
   <data name="TypeRampDescription.Title" xml:space="preserve">
-    <value>Type Ramp</value>
+    <value>Escala tipográfica</value>
     <comment>Typography: Preview of text at progressively increasing font sizes</comment>
   </data>
   <data name="TypeRampDescription.Description" xml:space="preserve">
