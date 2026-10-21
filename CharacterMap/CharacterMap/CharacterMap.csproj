@@ -636,6 +636,7 @@
   <ItemGroup>
     <XliffResource Include="MultilingualResources\CharacterMap.de-DE.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.en-GB.xlf" />
+    <XliffResource Include="MultilingualResources\CharacterMap.es-ES.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.fr-FR.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.it-IT.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.pl-PL.xlf" />
