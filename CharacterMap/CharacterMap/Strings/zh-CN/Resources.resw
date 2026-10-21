@@ -2557,4 +2557,8 @@
     <value>保存为图像</value>
     <comment>Context menu item to save glyph as image file</comment>
   </data>
+  <data name="FaceCountLabel" xml:space="preserve">
+    <value>{0} 个字体外观</value>
+    <comment>The amount of real font, non-simulated font faces for a font family. Includes optional plural verbiage.</comment>
+  </data>
 </root>

@@ -240,8 +240,7 @@
                 <controls:ContentGroup.Text>
                     <TextBlock>
                         <Run Text="{x:Bind Name}" />
-                        <Run Foreground="{ThemeResource TextControlPlaceholderForegroundDisabled}" Text="{x:Bind Variants.Count}" />
-                        <Run Foreground="{ThemeResource TextControlPlaceholderForegroundDisabled}" Text="face(s)" />
+                        <Run Foreground="{ThemeResource TextControlPlaceholderForegroundDisabled}" Text="{x:Bind core:Converters.GetFormat('FaceCountLabel', RealFaces.Count)}" />
                     </TextBlock>
                 </controls:ContentGroup.Text>
                 <controls:ContentGroup.SecondaryContent>

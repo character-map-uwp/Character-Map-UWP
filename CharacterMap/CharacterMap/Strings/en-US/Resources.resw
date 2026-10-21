@@ -3466,4 +3466,8 @@ Variations cannot be copied as text, but can be exported as PNG or SVG.</value>
     <value>Save as image</value>
     <comment>Context menu item to save glyph as image file</comment>
   </data>
+  <data name="FaceCountLabel" xml:space="preserve">
+    <value>{0} face(s)</value>
+    <comment>The amount of real font, non-simulated font faces for a font family. Includes optional plural verbiage.</comment>
+  </data>
 </root>

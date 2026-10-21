@@ -3111,6 +3111,11 @@ Wariacje nie mogą być kopiowane jako tekst, ale można je wyeksportować jako 
           <target state="translated">Zapisz jako obraz</target>
           <note from="Multilingual Build" annotates="source" priority="2">Context menu item to save glyph as image file</note>
         </trans-unit>
+        <trans-unit id="FaceCountLabel" translate="yes" xml:space="preserve">
+          <source>{0} face(s)</source>
+          <target state="translated">{0} odmian(y)</target>
+          <note from="Multilingual Build" annotates="source" priority="2">The amount of real font, non-simulated font faces for a font family. Includes optional plural verbiage.</note>
+        </trans-unit>
       </group>
     </body>
   </file>

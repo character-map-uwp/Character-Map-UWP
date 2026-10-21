@@ -3113,6 +3113,11 @@ Variations cannot be copied as text, but can be exported as PNG or SVG.</source>
           <target state="translated">保存为图像</target>
           <note from="Multilingual Build" annotates="source" priority="2">Context menu item to save glyph as image file</note>
         </trans-unit>
+        <trans-unit id="FaceCountLabel" translate="yes" xml:space="preserve">
+          <source>{0} face(s)</source>
+          <target state="translated">{0} 个字体外观</target>
+          <note from="Multilingual Build" annotates="source" priority="2">The amount of real font, non-simulated font faces for a font family. Includes optional plural verbiage.</note>
+        </trans-unit>
       </group>
     </body>
   </file>

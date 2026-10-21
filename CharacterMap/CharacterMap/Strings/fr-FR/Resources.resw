@@ -2531,4 +2531,8 @@ Les variations ne peuvent pas être copiées sous forme de texte, mais peuvent �
     <value>Enregistrer comme image</value>
     <comment>Context menu item to save glyph as image file</comment>
   </data>
+  <data name="FaceCountLabel" xml:space="preserve">
+    <value>{0} style(s)</value>
+    <comment>The amount of real font, non-simulated font faces for a font family. Includes optional plural verbiage.</comment>
+  </data>
 </root>

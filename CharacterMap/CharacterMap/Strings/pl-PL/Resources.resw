@@ -2555,4 +2555,8 @@ Wariacje nie mogą być kopiowane jako tekst, ale można je wyeksportować jako 
     <value>Zapisz jako obraz</value>
     <comment>Context menu item to save glyph as image file</comment>
   </data>
+  <data name="FaceCountLabel" xml:space="preserve">
+    <value>{0} odmian(y)</value>
+    <comment>The amount of real font, non-simulated font faces for a font family. Includes optional plural verbiage.</comment>
+  </data>
 </root>

@@ -2545,4 +2545,8 @@ Variationen lassen sich nicht als Text kopieren, aber als PNG oder SVG exportier
     <value>Bild speichern</value>
     <comment>Context menu item to save glyph as image file</comment>
   </data>
+  <data name="FaceCountLabel" xml:space="preserve">
+    <value>{0} Schnitt(e)</value>
+    <comment>The amount of real font, non-simulated font faces for a font family. Includes optional plural verbiage.</comment>
+  </data>
 </root>

@@ -33,17 +33,17 @@
         </trans-unit>
         <trans-unit id="ColoredGlyphLabel.Text" translate="yes" xml:space="preserve">
           <source>Colored Glyph</source>
-          <target state="translated">வண்ணமிட்ட கிளிஃப்</target>
+          <target state="translated">வண்ண வரிவடிவம்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Label indicating character contains multi-color glyph data</note>
         </trans-unit>
         <trans-unit id="ColorGlyphToggle.OffContent" translate="yes" xml:space="preserve">
           <source>Monochrome Glyphs</source>
-          <target state="translated">ஒற்றைகுருமம் கிளிஃப்கள்</target>
+          <target state="translated">ஒற்றை நிறம்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Toggle switch off-state label</note>
         </trans-unit>
         <trans-unit id="ColorGlyphToggle.OnContent" translate="yes" xml:space="preserve">
           <source>Color glyphs</source>
-          <target state="translated">வண்ண கிளிஃப்கள்</target>
+          <target state="translated">வண்ணம்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Toggle switch on-state label</note>
         </trans-unit>
         <trans-unit id="FontDisplayHeader.Text" translate="yes" xml:space="preserve">
@@ -52,17 +52,17 @@
         </trans-unit>
         <trans-unit id="FontOptionsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Font Face Features</source>
-          <target state="translated">எழுத்துரு வரைதல் விருப்பங்கள்</target>
+          <target state="translated">எழுத்துரு நடை அம்சங்கள்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Button tooltip to show OpenType font features</note>
         </trans-unit>
         <trans-unit id="FontPropertiesButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Font Face Properties</source>
-          <target state="translated">எழுத்துரு முக பண்புகள்</target>
+          <target state="translated">எழுத்துரு நடைப் பண்புகள்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Button tooltip to show font metadata and properties</note>
         </trans-unit>
         <trans-unit id="FontPropFace.Text" translate="yes" xml:space="preserve">
           <source>Face Name</source>
-          <target state="translated">முகத்தின் பெயர்</target>
+          <target state="translated">நடையின் பெயர்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Typography: Font face name (e.g. Regular, Bold, Italic)</note>
         </trans-unit>
         <trans-unit id="FontPropFamily.Text" translate="yes" xml:space="preserve">
@@ -72,7 +72,7 @@
         </trans-unit>
         <trans-unit id="FontPropMonospaced.Text" translate="yes" xml:space="preserve">
           <source>Is Monospaced</source>
-          <target state="translated">ஒற்றையிடமுள்ள எழுத்துருவா</target>
+          <target state="translated">நிலையான அகலமா</target>
           <note from="Multilingual Build" annotates="source" priority="2">Typography: Whether font characters have fixed width</note>
         </trans-unit>
         <trans-unit id="FontPropStretch.Text" translate="yes" xml:space="preserve">
@@ -92,7 +92,7 @@
         </trans-unit>
         <trans-unit id="FontPropTitle.Text" translate="yes" xml:space="preserve">
           <source>Font Face Properties</source>
-          <target state="translated">எழுத்துரு முக பண்புகள்</target>
+          <target state="translated">எழுத்துரு நடைப் பண்புகள்</target>
         </trans-unit>
         <trans-unit id="FontPropType.Text" translate="yes" xml:space="preserve">
           <source>Type</source>
@@ -111,12 +111,12 @@
         </trans-unit>
         <trans-unit id="InvalidFontTitle" translate="yes" xml:space="preserve">
           <source>Unsupported File</source>
-          <target state="translated">ஆதரவளிக்கப்படாத கோப்பு</target>
+          <target state="translated">ஆதரிக்கப்படாத கோப்பு</target>
           <note from="Multilingual Build" annotates="source" priority="2">Error dialog title</note>
         </trans-unit>
         <trans-unit id="OpenInNewWindow.Text" translate="yes" xml:space="preserve">
           <source>Open in New Window</source>
-          <target state="translated">புதியச் சாளரத்தில் திற</target>
+          <target state="translated">புதிய சாளரத்தில் திற</target>
           <note from="Multilingual Build" annotates="source" priority="2">Context menu item to open font in a new window</note>
         </trans-unit>
         <trans-unit id="RemoveFontFlyout.Text" translate="yes" xml:space="preserve">
@@ -126,16 +126,16 @@
         </trans-unit>
         <trans-unit id="RestartButton.Content" translate="yes" xml:space="preserve">
           <source>Restart app</source>
-          <target state="translated">பயன்பாட்டை மறுதொடக்கம் செய்</target>
+          <target state="translated">மறுதொடக்கம் செய்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Button to restart the application</note>
         </trans-unit>
         <trans-unit id="RestartHeader.Text" translate="yes" xml:space="preserve">
           <source>Requires application restart to take effect.</source>
-          <target state="translated">செயற்படுத்து பயன்பாட்டு மறுதொடக்கம் தேவை.</target>
+          <target state="translated">செயல்பட பயன்பாட்டு மறுதொடக்கம் தேவை.</target>
         </trans-unit>
         <trans-unit id="SearchBox.PlaceholderText" translate="yes" xml:space="preserve">
           <source>Search by name or unicode hex</source>
-          <target state="translated">எழுத்து பெயர் அல்லது Unicode Hexஐ தேடு</target>
+          <target state="translated">பெயர் அல்லது யூனிகோட் ஹெக்ஸ் தேடு</target>
           <note from="Multilingual Build" annotates="source" priority="2">Placeholder text in main search box</note>
         </trans-unit>
         <trans-unit id="Settings_About.Text" translate="yes" xml:space="preserve">
@@ -168,12 +168,12 @@
         </trans-unit>
         <trans-unit id="TxtUnicode.Header" translate="yes" xml:space="preserve">
           <source>Unicode</source>
-          <target state="translated">Unicode</target>
+          <target state="translated">யூனிகோட்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Header for Unicode codepoint value. Does not need translation.</note>
         </trans-unit>
         <trans-unit id="TxtXamlCode.Header" translate="yes" xml:space="preserve">
           <source>Glyph Code</source>
-          <target state="translated">கிளிஃப் குறியீடு</target>
+          <target state="translated">வரிவடிவக் குறியீடு</target>
           <note from="Multilingual Build" annotates="source" priority="2">Header for XAML glyph hex code value</note>
         </trans-unit>
         <trans-unit id="TypographyVariantsHeader.Text" translate="yes" xml:space="preserve">
@@ -200,15 +200,15 @@
         </trans-unit>
         <trans-unit id="ImportUnsupportedFileType" translate="yes" xml:space="preserve">
           <source>Unsupported File Type</source>
-          <target state="translated">ஆதரவளிக்கப்படாத கோப்பு வகை</target>
+          <target state="translated">ஆதரிக்கப்படாத கோப்பு வகை</target>
         </trans-unit>
         <trans-unit id="ImportUnsupportedFontType" translate="yes" xml:space="preserve">
           <source>Unsupported Font Type</source>
-          <target state="translated">ஆதரவளிக்கப்படாதக் எழுத்துரு வகை</target>
+          <target state="translated">ஆதரிக்கப்படாத எழுத்துரு வகை</target>
         </trans-unit>
         <trans-unit id="FontsClearedOnNextLaunchNotice" translate="yes" xml:space="preserve">
           <source>Some fonts could not be completely removed right now. These fonts will not show in the application and will be completely removed next time the app is launched.</source>
-          <target state="translated">Some fonts could not be completely removed right now. These fonts will not show in the application and will be completely removed next time the app is launched.</target>
+          <target state="translated">சில எழுத்துருக்களை இப்போது முழுமையாக நீக்க முடியவில்லை. அவை பயன்பாட்டில் காட்டப்படாது, அடுத்த முறை பயன்பாடு தொடங்கும் போது முழுமையாக நீக்கப்படும்.</target>
         </trans-unit>
         <trans-unit id="SaveImageError" translate="yes" xml:space="preserve">
           <source>Sorry, something went wrong whilst we were trying to save the image.</source>
@@ -247,7 +247,7 @@
         </trans-unit>
         <trans-unit id="OpenFontButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Open Font</source>
-          <target state="translated">எழுத்துருகவை திற</target>
+          <target state="translated">எழுத்துருவைத் திற</target>
           <note from="Multilingual Build" annotates="source" priority="2">Button tooltip to open font file</note>
         </trans-unit>
         <trans-unit id="OpenFontPickerConfirm" translate="yes" xml:space="preserve">
@@ -302,7 +302,7 @@
         </trans-unit>
         <trans-unit id="OptionImportedFonts.Text" translate="yes" xml:space="preserve">
           <source>Imported Fonts</source>
-          <target state="translated">இறக்குமதி செய்யப்பட்ட எழுத்துருக்கள்</target>
+          <target state="translated">இறக்குமதி செய்த எழுத்துருக்கள்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Font filter flyout option</note>
         </trans-unit>
         <trans-unit id="OptionSymbolFonts.Text" translate="yes" xml:space="preserve">
@@ -321,27 +321,27 @@
         </trans-unit>
         <trans-unit id="FontPropCount.Text" translate="yes" xml:space="preserve">
           <source>Glyph Count</source>
-          <target state="translated">கிளிஃப் எண்ணிக்கை</target>
+          <target state="translated">வரிவடிவ எண்ணிக்கை</target>
           <note from="Multilingual Build" annotates="source" priority="2">Typography: Count of glyphs in font face</note>
         </trans-unit>
         <trans-unit id="OptionMonospacedFonts.Text" translate="yes" xml:space="preserve">
           <source>Monospaced Fonts</source>
-          <target state="translated">Choose the label to show under each character. May have a minor effect on scrolling performance.</target>
+          <target state="translated">நிலையான அகல எழுத்துருக்கள்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Font filter flyout option</note>
         </trans-unit>
         <trans-unit id="OptionSansSerifFonts.Text" translate="yes" xml:space="preserve">
           <source>Sans Serif Fonts</source>
-          <target state="translated">Sans Serif எழுத்துருக்கள்</target>
+          <target state="translated">செரிஃப் அற்ற எழுத்துருக்கள்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Font filter flyout option</note>
         </trans-unit>
         <trans-unit id="OptionSerifFonts.Text" translate="yes" xml:space="preserve">
           <source>Serif Fonts</source>
-          <target state="translated">Serif எழுத்துருக்கள்</target>
+          <target state="translated">செரிஃப் எழுத்துருக்கள்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Font filter flyout option</note>
         </trans-unit>
         <trans-unit id="NewCollectionItem.Text" translate="yes" xml:space="preserve">
           <source>New Collection</source>
-          <target state="translated">புதியத் தொகுப்பு</target>
+          <target state="translated">புதிய தொகுப்பு</target>
           <note from="Multilingual Build" annotates="source" priority="2">Context menu item to create a new collection</note>
         </trans-unit>
         <trans-unit id="RemoveFromCollectionItem.Text" translate="yes" xml:space="preserve">
@@ -356,12 +356,12 @@
         </trans-unit>
         <trans-unit id="InstantSearchToggle.OffContent" translate="yes" xml:space="preserve">
           <source>Instant search disabled</source>
-          <target state="translated">உடனடித் தேடல் முடக்கப்பட்டுள்ளது</target>
+          <target state="translated">முடக்கப்பட்டது</target>
           <note from="Multilingual Build" annotates="source" priority="2">Toggle switch off-state label</note>
         </trans-unit>
         <trans-unit id="InstantSearchToggle.OnContent" translate="yes" xml:space="preserve">
           <source>Instant search enabled</source>
-          <target state="translated">உடனடித் தேடல் இயக்கப்பட்டுள்ளது</target>
+          <target state="translated">இயக்கப்பட்டது</target>
           <note from="Multilingual Build" annotates="source" priority="2">Toggle switch on-state label</note>
         </trans-unit>
         <trans-unit id="SearchResultsSlider.Header" translate="yes" xml:space="preserve">
@@ -413,7 +413,7 @@
         </trans-unit>
         <trans-unit id="OptionCloudFonts.Text" translate="yes" xml:space="preserve">
           <source>Cloud-based Fonts</source>
-          <target state="translated">Cloud-சார்ந்த எழுத்துருக்கள்</target>
+          <target state="translated">மேகக்கணி எழுத்துருக்கள்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Font filter flyout option</note>
         </trans-unit>
         <trans-unit id="OptionColorFonts.Text" translate="yes" xml:space="preserve">
@@ -485,7 +485,7 @@
         </trans-unit>
         <trans-unit id="BtnHidePane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Hide font pane (Ctrl+L)</source>
-          <target state="translated">எழுத்துரு பலகையை மறை</target>
+          <target state="translated">எழுத்துருப் பலகையை மறை (Ctrl+L)</target>
           <note from="Multilingual Build" annotates="source" priority="2">Tooltip to collapse the font list pane</note>
         </trans-unit>
         <trans-unit id="NotificationImportFailed" translate="yes" xml:space="preserve">
@@ -505,7 +505,7 @@
         </trans-unit>
         <trans-unit id="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Show font pane (Ctrl+L)</source>
-          <target state="translated">எழுத்துரு பலகையைக் காண்பி</target>
+          <target state="translated">எழுத்துருப் பலகையைக் காட்டு (Ctrl+L)</target>
           <note from="Multilingual Build" annotates="source" priority="2">Tooltip to expand the font list pane</note>
         </trans-unit>
         <trans-unit id="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
@@ -515,12 +515,12 @@
         </trans-unit>
         <trans-unit id="FontListFilter.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Filter fonts</source>
-          <target state="translated">எழுத்துருக்களை வடிகட்டவும்</target>
+          <target state="translated">எழுத்துருக்களை வடிகட்டு</target>
           <note from="Multilingual Build" annotates="source" priority="2">Tooltip for font list filter flyout button</note>
         </trans-unit>
         <trans-unit id="ToggleFullScreenModeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Toggle Fullscreen</source>
-          <target state="translated">முழுத் திரைக்கு செல் அல்லது முழுத் திரையிலிருந்து வெளியேறு</target>
+          <target state="translated">முழுத்திரை நிலைமாற்று</target>
           <note from="Multilingual Build" annotates="source" priority="2">Tooltip to toggle fullscreen mode</note>
         </trans-unit>
         <trans-unit id="DlgDeleteFont.Title" translate="yes" xml:space="preserve">
@@ -553,7 +553,7 @@
         </trans-unit>
         <trans-unit id="DlgExceptionMessage.Text" translate="yes" xml:space="preserve">
           <source>To help us debug and fix this for you, please consider opening an issue on our GitHub page and posting the details. We'll try and fix it right away!</source>
-          <target state="translated">To help us debug and fix this for you, please consider opening an issue on our GitHub page and posting the details. We'll try and fix it right away!</target>
+          <target state="translated">இதை நாங்கள் சரிசெய்ய உதவ, தயவுசெய்து எங்கள் GitHub பக்கத்தில் விவரங்களுடன் சிக்கலைப் பதிவுசெய்யவும். நாங்கள் உடனடியாக அதைச் சரிசெய்ய முயற்சிப்போம்!</target>
         </trans-unit>
         <trans-unit id="BtnClose.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Close</source>
@@ -567,12 +567,12 @@
         </trans-unit>
         <trans-unit id="BtnRateAndReview.Content" translate="yes" xml:space="preserve">
           <source>Rate &amp; Review</source>
-          <target state="translated">தரமதிப்பிட்டு &amp; மதிப்பாய்வு</target>
+          <target state="translated">மதிப்பீடு &amp; கருத்துரை</target>
           <note from="Multilingual Build" annotates="source" priority="2">Button label - open Microsoft Store rating page</note>
         </trans-unit>
         <trans-unit id="BtnXAMLGeometry.Content" translate="yes" xml:space="preserve">
           <source>Click to view</source>
-          <target state="translated">பார்க்க கிளிக் செய்க</target>
+          <target state="translated">காண்க</target>
           <note from="Multilingual Build" annotates="source" priority="2">Button label - show full XAML path geometry</note>
         </trans-unit>
         <trans-unit id="RbThemeDark.Content" translate="yes" xml:space="preserve">
@@ -592,13 +592,12 @@
         </trans-unit>
         <trans-unit id="RbUseActualFont.Content" translate="yes" xml:space="preserve">
           <source>Use actual font</source>
-          <target state="translated">உண்மையான எழுத்துருவை பயன்படுத்து
-</target>
+          <target state="translated">அசல் எழுத்துருவைப் பயன்படுத்து</target>
           <note from="Multilingual Build" annotates="source" priority="2">Setting option: render font names in the font list using each font's own typeface</note>
         </trans-unit>
         <trans-unit id="RbUseSystemFont.Content" translate="yes" xml:space="preserve">
           <source>Use system font</source>
-          <target state="translated">முறைமை எழுத்துருவை பயன்படுத்து</target>
+          <target state="translated">முறைமை எழுத்துருவைப் பயன்படுத்து</target>
           <note from="Multilingual Build" annotates="source" priority="2">Setting option: render font names in the font list using the system font</note>
         </trans-unit>
         <trans-unit id="SettingsCharacterSearchDescription.Text" translate="yes" xml:space="preserve">
@@ -635,7 +634,7 @@
         </trans-unit>
         <trans-unit id="SettingsDevToolsHeader.Text" translate="yes" xml:space="preserve">
           <source>Show developers features</source>
-          <target state="translated">உருவாக்குநர்கள் அமைப்புகளைக் காண்பி</target>
+          <target state="translated">உருவாக்குநர் கருவிகளைக் காட்டு</target>
           <note from="Multilingual Build" annotates="source" priority="2">Setting toggle header to enable developer features</note>
         </trans-unit>
         <trans-unit id="SettingsDevToolsLangDescription.Text" translate="yes" xml:space="preserve">
@@ -651,16 +650,16 @@
           <source>Animates the character grid when resizing the window.
 Turning this on can incur a large performance penalty when resizing the window.</source>
           <target state="translated">சாளரத்தை மறுஅளவிடும் போது எழுத்துக்குறி கட்டத்தை அசைவூட்டம் செய்யும்.
-இதை இயக்கினால், சாளரத்தை மறுஅளவிடும் போது ஒரு பெரிய செயல்திறன் அபராதம் ஏற்படலாம்.</target>
+இதை இயக்கினால், சாளரத்தை மறுஅளவிடும்போது செயல்திறன் கணிசமாகக் குறையலாம்.</target>
         </trans-unit>
         <trans-unit id="SettingsExpensiveAnimationHeader.Text" translate="yes" xml:space="preserve">
           <source>Enable window resize animations</source>
-          <target state="translated">சாளர மறுஅளவாக்கல் அசைவூட்டங்களை செயற்படுத்து</target>
+          <target state="translated">மறுஅளவிடும் அசைவூட்டங்களை இயக்கு</target>
           <note from="Multilingual Build" annotates="source" priority="2">Setting toggle header</note>
         </trans-unit>
         <trans-unit id="SettingsExportHeader.Text" translate="yes" xml:space="preserve">
           <source>Export</source>
-          <target state="translated">ஏற்றுமதிசெய்</target>
+          <target state="translated">ஏற்றுமதி</target>
           <note from="Multilingual Build" annotates="source" priority="2">Settings section header for export options</note>
         </trans-unit>
         <trans-unit id="SettingsFontListDescription.Text" translate="yes" xml:space="preserve">
@@ -681,7 +680,7 @@ Turning this on can incur a large performance penalty when resizing the window.<
           <source>Override the in-app language.
 Requires a restart to take effect.</source>
           <target state="translated">பயன்பாட்டிலுள்ள மொழியை மாற்றவும்.
-செயற்படுத்து மறுதொடக்கம் தேவை.</target>
+செயல்பட பயன்பாட்டு மறுதொடக்கம் தேவை.</target>
         </trans-unit>
         <trans-unit id="SettingsLanguageHeader.Text" translate="yes" xml:space="preserve">
           <source>Language override</source>
@@ -703,11 +702,11 @@ Turning this on may have a small performance impact on weaker devices.
 Requires a restart to take effect.</source>
           <target state="translated">UI இல் நுட்பமான ஆழ நிழல்களை இயக்கும். வெளிச்சப் பயன்முறையை பயன்படுத்தும் போது மட்டுமே குறிப்பிடத்தக்கது.
 இதை இயக்குவது பலவீனமான சாதனங்களில் ஒரு சிறிய செயல்திறன் தாக்கத்தை ஏற்படுத்தலாம்.
-செயற்படுத்த மறுதொடக்கம் தேவை.</target>
+செயல்பட பயன்பாட்டு மறுதொடக்கம் தேவை.</target>
         </trans-unit>
         <trans-unit id="SettingsShadowsHeader.Text" translate="yes" xml:space="preserve">
           <source>Enable shadows</source>
-          <target state="translated">நிழல்களை செயற்படுத்து</target>
+          <target state="translated">நிழல்களை இயக்கு</target>
           <note from="Multilingual Build" annotates="source" priority="2">Setting toggle header for light theme depth shadows</note>
         </trans-unit>
         <trans-unit id="SettingsSimpleAnimationDescription.Text" translate="yes" xml:space="preserve">
@@ -718,7 +717,7 @@ Turning this on has negligible performance impact.</source>
         </trans-unit>
         <trans-unit id="SettingsSimpleAnimationHeader.Text" translate="yes" xml:space="preserve">
           <source>Enable animations</source>
-          <target state="translated">எளிய அசைவூட்டங்களை செயற்படுத்து</target>
+          <target state="translated">எளிய அசைவூட்டங்களை இயக்கு</target>
           <note from="Multilingual Build" annotates="source" priority="2">Setting toggle header for UI animations</note>
         </trans-unit>
         <trans-unit id="SettingsThemeHeader.Text" translate="yes" xml:space="preserve">
@@ -752,8 +751,7 @@ Turning this on has negligible performance impact.</source>
         </trans-unit>
         <trans-unit id="TxtLoadingFonts.Text" translate="yes" xml:space="preserve">
           <source>Loading Fonts</source>
-          <target state="translated">எழுத்துருக்களை ஏற்றுகிறது
-</target>
+          <target state="translated">எழுத்துருக்களை ஏற்றுகிறது</target>
           <note from="Multilingual Build" annotates="source" priority="2">Loading indicator text while scanning font files</note>
         </trans-unit>
         <trans-unit id="AppBtnClear.Label" translate="yes" xml:space="preserve">
@@ -793,7 +791,7 @@ Turning this on has negligible performance impact.</source>
         </trans-unit>
         <trans-unit id="CbCharacterLabel.Header" translate="yes" xml:space="preserve">
           <source>Character Label</source>
-          <target state="translated">எழுத்துக்குறி பெயர் பலகை</target>
+          <target state="translated">எழுத்துக் குறிச்சொல்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Print settings dropdown header for label printed under characters</note>
         </trans-unit>
         <trans-unit id="CbiPageOrientationLandscape.Content" translate="yes" xml:space="preserve">
@@ -902,7 +900,7 @@ Turning this on has negligible performance impact.</source>
         </trans-unit>
         <trans-unit id="PrintViewPreviewingLabel.Text" translate="yes" xml:space="preserve">
           <source>Previewing page</source>
-          <target state="translated">முன்னோட்டமிடும் பக்கம்</target>
+          <target state="translated">முன்னோட்டப் பக்கம்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Status label in print preview, e.g. 'Previewing page 1 of 5'</note>
         </trans-unit>
         <trans-unit id="Preview" translate="yes" xml:space="preserve">
@@ -914,17 +912,16 @@ Turning this on has negligible performance impact.</source>
           <source>This page is outside the current page range and will not be printed.
 You can change the page range in the Page Setup section.</source>
           <target state="translated">இந்தப் பக்கம் நடப்புப் பக்க வரம்பிற்கு வெளியே உள்ளது, அதனால் அச்சிடப்படாது.
-பக்க வரம்பை நீங்கள் பக்க அமைவு பகுதியில் மாற்றலாம்..</target>
+பக்க வரம்பை நீங்கள் பக்க அமைவு பகுதியில் மாற்றலாம்.</target>
         </trans-unit>
         <trans-unit id="PrintViewPrintingLabel" translate="yes" xml:space="preserve">
           <source>Printing pages {0} - {1}</source>
-          <target state="translated">பக்கங்களை அச்சிடுதல் {0} - {1}</target>
+          <target state="translated">அச்சிடுகிறது: {0} - {1}</target>
           <note from="Multilingual Build" annotates="source" priority="2">{0} = start page number, {1} = end page number</note>
         </trans-unit>
         <trans-unit id="PrintViewTitle.Text" translate="yes" xml:space="preserve">
           <source>Print Configuration</source>
-          <target state="translated">Print Configuration
-</target>
+          <target state="translated">அச்சு உள்ளமைவு</target>
           <note from="Multilingual Build" annotates="source" priority="2">Print configuration view title</note>
         </trans-unit>
         <trans-unit id="PrintViewVerticalMarginHeader.Text" translate="yes" xml:space="preserve">
@@ -934,12 +931,12 @@ You can change the page range in the Page Setup section.</source>
         </trans-unit>
         <trans-unit id="SettingsCharLabel.Text" translate="yes" xml:space="preserve">
           <source>Character Label</source>
-          <target state="translated">எழுத்துக்குறி பெயர் பலகை</target>
+          <target state="translated">எழுத்துக் குறிச்சொல்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Setting dropdown header for label shown under characters</note>
         </trans-unit>
         <trans-unit id="SettingsCharLabelDesc.Text" translate="yes" xml:space="preserve">
           <source>Choose the label to show under each character. May have a minor effect on scrolling performance.</source>
-          <target state="translated">Choose the label to show under each character. May have a minor effect on scrolling performance.</target>
+          <target state="translated">ஒவ்வொரு எழுத்தின் கீழும் காட்ட வேண்டிய லேபிளைத் தேர்வுசெய்க. இது உருளல் செயல்திறனில் சிறிய தாக்கத்தை ஏற்படுத்தலாம்.</target>
         </trans-unit>
         <trans-unit id="SettingsManageSystemFonts.Content" translate="yes" xml:space="preserve">
           <source>Manage installed fonts</source>
@@ -948,7 +945,7 @@ You can change the page range in the Page Setup section.</source>
         </trans-unit>
         <trans-unit id="SettingsSystemFontHeader.Text" translate="yes" xml:space="preserve">
           <source>Installed Fonts</source>
-          <target state="translated">நிறுவப்பட்ட எழுத்துரு</target>
+          <target state="translated">நிறுவப்பட்ட எழுத்துருக்கள்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Settings section header for installed system fonts</note>
         </trans-unit>
         <trans-unit id="SettingsWindowsThemeSettings.Content" translate="yes" xml:space="preserve">
@@ -958,7 +955,7 @@ You can change the page range in the Page Setup section.</source>
         </trans-unit>
         <trans-unit id="UnicodeFiltersTitle.Text" translate="yes" xml:space="preserve">
           <source>Unicode Category Filters</source>
-          <target state="translated">Unicode வகை வடிகட்டிகள்</target>
+          <target state="translated">யூனிகோட் வகை வடிகட்டிகள்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Header for Unicode category filter list</note>
         </trans-unit>
         <trans-unit id="PrintLayout_Grid" translate="yes" xml:space="preserve">
@@ -984,7 +981,7 @@ May have a minor effect on performance on older or weaker devices.</source>
         </trans-unit>
         <trans-unit id="SettingsTransparencyHeader.Text" translate="yes" xml:space="preserve">
           <source>Enable transparency</source>
-          <target state="translated">வெளிப்படைத்தன்மையை செயற்படுத்து</target>
+          <target state="translated">வெளிப்படைத்தன்மையை இயக்கு</target>
           <note from="Multilingual Build" annotates="source" priority="2">Setting toggle header for acrylic transparency effects</note>
         </trans-unit>
         <trans-unit id="StartupFailedButton.Content" translate="yes" xml:space="preserve">
@@ -1020,7 +1017,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="ExportSVGGlyphLabel.Text" translate="yes" xml:space="preserve">
           <source>SVG Glyph</source>
-          <target state="translated">SVG கிளிஃப்</target>
+          <target state="translated">SVG வரிவடிவம்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Menu header for exporting SVG glyph</note>
         </trans-unit>
         <trans-unit id="BtnCopyGlyph.Label" translate="yes" xml:space="preserve">
@@ -1050,7 +1047,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="NotificationFontRemovedBody.Text" translate="yes" xml:space="preserve">
           <source>was removed from</source>
-          <target state="translated">இருந்து அகற்றப்பட்டது</target>
+          <target state="translated">இலிருந்து அகற்றப்பட்டது</target>
           <note from="Multilingual Build" annotates="source" priority="2">Sentence fragment: '[Font Name] was removed from [Collection Name]'</note>
         </trans-unit>
         <trans-unit id="NotificationFontAddedBody.Text" translate="yes" xml:space="preserve">
@@ -1065,7 +1062,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="ExportFontFileLabel.Text" translate="yes" xml:space="preserve">
           <source>Save Font File As</source>
-          <target state="translated">எழுத்துரு கோப்பை இவ்வாறு சேமி</target>
+          <target state="translated">எழுத்துருக் கோப்பைச் சேமி</target>
           <note from="Multilingual Build" annotates="source" priority="2">File picker dialog title when exporting font file</note>
         </trans-unit>
         <trans-unit id="FontExportedMessage" translate="yes" xml:space="preserve">
@@ -1099,7 +1096,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Toggle Dev Utils</source>
-          <target state="translated">உருவாக்குநர் கருவிகளைக் காண்பி/மறை</target>
+          <target state="translated">உருவாக்குநர் கருவிகள்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Tooltip to toggle developer features panel</note>
         </trans-unit>
         <trans-unit id="TxtPathIcon.Text" translate="yes" xml:space="preserve">
@@ -1119,7 +1116,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="OptionEmojiDingbats.Text" translate="yes" xml:space="preserve">
           <source>Dingbats</source>
-          <target state="translated">டிங்பாட்கள் (Dingbats)</target>
+          <target state="translated">டிங்பாட்கள்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Font filter flyout: emoji category option</note>
         </trans-unit>
         <trans-unit id="OptionEmojiEmoticons.Text" translate="yes" xml:space="preserve">
@@ -1174,7 +1171,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="LblSwitchToCharMap.Text" translate="yes" xml:space="preserve">
           <source>Switch to Character Map view (Ctrl+T)</source>
-          <target state="translated">எழுத்துக்குறி வரைபடம் காட்சிக்கு மாறு</target>
+          <target state="translated">வரைபடக் காட்சிக்கு மாறு (Ctrl+T)</target>
           <note from="Multilingual Build" annotates="source" priority="2">Button label to switch from Type Ramp to Character Map view</note>
         </trans-unit>
         <trans-unit id="LblSwitchToTypeRamp.Text" translate="yes" xml:space="preserve">
@@ -1207,14 +1204,12 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="SettingsAdvancedUILabel.Text" translate="yes" xml:space="preserve">
           <source>Look &amp; Feel</source>
-          <target state="translated">
-மேம்பட்ட பயனர் இடைமுகம்</target>
+          <target state="translated">தோற்றம் &amp; உணர்வு</target>
           <note from="Multilingual Build" annotates="source" priority="2">Settings navigation tab label for appearance and themes</note>
         </trans-unit>
         <trans-unit id="SettingsExportImportedLabel.Text" translate="yes" xml:space="preserve">
           <source>Export all imported fonts</source>
-          <target state="translated">Export all imported fonts
-</target>
+          <target state="translated">இறக்குமதி செய்த எழுத்துருக்களை ஏற்றுமதி செய்</target>
         </trans-unit>
         <trans-unit id="SettingsFontExportOptimizedLabel.Text" translate="yes" xml:space="preserve">
           <source>Optimized</source>
@@ -1230,9 +1225,9 @@ Please consider posting details about this error to GitHub so we can help you fi
           <source>You can import fonts into the application to view them without installing them in Windows. 
 
 Imported font files are copied into the app's private storage, so will still show if you delete the original file on your computer.</source>
-          <target state="translated">You can import fonts into the application to view them without installing them in Windows. 
+          <target state="translated">Windows இல் நிறுவமலே எழுத்துருக்களைப் பார்க்க அவற்றை நீங்கள் பயன்பாட்டில் இறக்குமதி செய்யலாம்.
 
-Imported font files are copied into the app's private storage, so will still show if you delete the original file on your computer.</target>
+இறக்குமதி செய்த எழுத்துருக் கோப்புகள் பயன்பாட்டின் தனிப்பட்ட சேமிப்பகத்தில் நகலெடுக்கப்படுவதால், உங்கள் கணினியிலுள்ள அசல் கோப்பை நீக்கினாலும் அவை தொடர்ந்து காட்டப்படும்.</target>
         </trans-unit>
         <trans-unit id="SettingsFontManagementLabel.Text" translate="yes" xml:space="preserve">
           <source>Font Management</source>
@@ -1244,7 +1239,10 @@ Imported font files are copied into the app's private storage, so will still sho
 
 System will return the name of the font file Windows uses in uppercase.
 Optimized will create a smart name based on Font Family and Font Name.</source>
-          <target state="translated">Font File Export Naming</target>
+          <target state="translated">எழுத்துருக் கோப்புகளை ஏற்றுமதி செய்யும்போது அவற்றுக்குப் பெயரிடும் முறையைத் தேர்வுசெய்க.
+
+கணினி அமைப்பு (System) முறை Windows பயன்படுத்தும் பெயரைப் பேரெழுத்துகளில் தரும்.
+மேம்படுத்தப்பட்ட (Optimized) முறை குடும்பப் பெயர் மற்றும் எழுத்துருப் பெயரைக் கொண்டு பொருத்தமான பெயரை உருவாக்கும்.</target>
         </trans-unit>
         <trans-unit id="SettingsFontNameExportLabel.Text" translate="yes" xml:space="preserve">
           <source>Font File Export Naming</source>
@@ -1252,7 +1250,7 @@ Optimized will create a smart name based on Font Family and Font Name.</source>
         </trans-unit>
         <trans-unit id="SettingsImportedFontsLabel.Text" translate="yes" xml:space="preserve">
           <source>Imported Fonts</source>
-          <target state="translated">இறக்குமதி செய்யப்பட்ட எழுத்துருக்கள்</target>
+          <target state="translated">இறக்குமதி செய்த எழுத்துருக்கள்</target>
         </trans-unit>
         <trans-unit id="SettingsLicensesDescriptionLabel.Text" translate="yes" xml:space="preserve">
           <source>This application makes use of the following open source libraries</source>
@@ -1317,12 +1315,12 @@ Optimized will create a smart name based on Font Family and Font Name.</source>
         </trans-unit>
         <trans-unit id="DecreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Decrease Character Size (Ctrl+-)</source>
-          <target state="translated">எழுத்துரு அளவைக் குறை (Ctrl+-)</target>
+          <target state="translated">எழுத்து அளவைக் குறை (Ctrl+-)</target>
           <note from="Multilingual Build" annotates="source" priority="2">Tooltip to zoom out character grid</note>
         </trans-unit>
         <trans-unit id="IncreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Increase Character Size (Ctrl++)</source>
-          <target state="translated">எழுத்துரு அளவை அதிகரி (Ctrl++)</target>
+          <target state="translated">எழுத்து அளவை அதிகரி (Ctrl++)</target>
           <note from="Multilingual Build" annotates="source" priority="2">Tooltip to zoom in character grid</note>
         </trans-unit>
         <trans-unit id="SwitchViewButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
@@ -1429,7 +1427,7 @@ Default variant copied.</source>
         </trans-unit>
         <trans-unit id="TxtFontImageSource.Text" translate="yes" xml:space="preserve">
           <source>Font Image Source</source>
-          <target state="translated">Font Image Source</target>
+          <target state="translated">எழுத்துரு பட மூலம்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Xamarin FontImageSource. Does not need translation.</note>
         </trans-unit>
         <trans-unit id="ImportFailedWoff" translate="yes" xml:space="preserve">
@@ -1482,7 +1480,7 @@ Default variant copied.</source>
         </trans-unit>
         <trans-unit id="BtnGithubCommits.Content" translate="yes" xml:space="preserve">
           <source>View the latest commits on Github</source>
-          <target state="translated">Github இல் சமீபத்திய மாற்றங்களைக் காண்க</target>
+          <target state="translated">GitHub மாற்றங்களைக் காண்க</target>
           <note from="Multilingual Build" annotates="source" priority="2">Button label - view GitHub commit history</note>
         </trans-unit>
         <trans-unit id="ExportGlyphsHeader.Text" translate="yes" xml:space="preserve">
@@ -1627,7 +1625,7 @@ Requires a restart to take effect.</source>
         </trans-unit>
         <trans-unit id="SettingsCollectionsHeader" translate="yes" xml:space="preserve">
           <source>Collections</source>
-          <target state="translated">எழுத்துரு தொகுப்புகள்</target>
+          <target state="translated">தொகுப்புகள்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Navigation header for Collections view</note>
         </trans-unit>
         <trans-unit id="DigOpenFolder.PrimaryButtonText" translate="yes" xml:space="preserve">
@@ -1696,7 +1694,7 @@ Requires a restart to take effect.</source>
         </trans-unit>
         <trans-unit id="CalligraphyLabel.Text" translate="yes" xml:space="preserve">
           <source>Calligraphy</source>
-          <target state="translated">அழகெழுத்துக் கலை (Calligraphy)</target>
+          <target state="translated">அழகெழுத்துக் கலை</target>
           <note from="Multilingual Build" annotates="source" priority="2">Side menu navigation item for calligraphy feature</note>
         </trans-unit>
         <trans-unit id="ClearAllButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
@@ -1766,7 +1764,7 @@ Requires a restart to take effect.</source>
         </trans-unit>
         <trans-unit id="MenuToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Show or Hide Font Pane (Ctrl+L)</source>
-          <target state="translated">எழுத்துருப் பலகையைக் காட்டு அல்லது மறை (Ctrl+L)</target>
+          <target state="translated">எழுத்துருப் பலகை (Ctrl+L)</target>
           <note from="Multilingual Build" annotates="source" priority="2">Toggle visibility of font navigation pane</note>
         </trans-unit>
         <trans-unit id="OpenInNewTab.Text" translate="yes" xml:space="preserve">
@@ -1781,12 +1779,12 @@ Requires a restart to take effect.</source>
         </trans-unit>
         <trans-unit id="AddActiveToCollectionItem.Text" translate="yes" xml:space="preserve">
           <source>Add active to Collection</source>
-          <target state="translated">செயலில் உள்ள தத்தலைத் தொகுப்பில் சேர்</target>
+          <target state="translated">தத்தலைத் தொகுப்பில் சேர்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Menu item to add currently displayed font to collection</note>
         </trans-unit>
         <trans-unit id="CompareActiveItem.Text" translate="yes" xml:space="preserve">
           <source>Compare active font faces</source>
-          <target state="translated">செயலில் உள்ள எழுத்துரு நடைகளை ஒப்பிடு</target>
+          <target state="translated">நடப்பு நடைகளை ஒப்பிடு</target>
           <note from="Multilingual Build" annotates="source" priority="2">Menu item to compare font faces of currently opened fonts</note>
         </trans-unit>
         <trans-unit id="OptionEmoji.Text" translate="yes" xml:space="preserve">
@@ -1806,7 +1804,7 @@ Requires a restart to take effect.</source>
         </trans-unit>
         <trans-unit id="CompareFacesCountLabel.Text" translate="yes" xml:space="preserve">
           <source>Compare family</source>
-          <target state="translated">{0} எழுத்துரு நடைகளை ஒப்பிடு</target>
+          <target state="translated">குடும்பத்தை ஒப்பிடு</target>
           <note from="Multilingual Build" annotates="source" priority="2">Label removed</note>
         </trans-unit>
         <trans-unit id="CompareFamilyTitle.Text" translate="yes" xml:space="preserve">
@@ -1921,7 +1919,7 @@ Tap and hold to arrange.</source>
         </trans-unit>
         <trans-unit id="CharacterGroupingToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Group Characters by Unicode Range (Ctrl+G)</source>
-          <target state="translated">யூனிகோட் வரம்பின்படி எழுத்துக்களைக் குழுவாக்கு (Ctrl+G)</target>
+          <target state="translated">வரம்பின்படி குழுவாக்கு (Ctrl+G)</target>
           <note from="Multilingual Build" annotates="source" priority="2">Tooltip to group characters by Unicode range</note>
         </trans-unit>
         <trans-unit id="PixelUnits.Text" translate="yes" xml:space="preserve">
@@ -2415,7 +2413,7 @@ If an ideograph has multiple entries, it means that the ideograph has multiple d
         </trans-unit>
         <trans-unit id="CollectionManagementHint.Text" translate="yes" xml:space="preserve">
           <source>Create collections to compare, export or manage multiple fonts at once. To get started, select an existing collection above or create a new one.</source>
-          <target state="translated">தொகுப்பு மேலாண்மை</target>
+          <target state="translated">ஒரே நேரத்தில் பல எழுத்துருக்களை ஒப்பிட, ஏற்றுமதி செய்ய அல்லது நிர்வகிக்க தொகுப்புகளை உருவாக்கவும். தொடங்க, மேலே உள்ள ஏற்கனவே உள்ள தொகுப்பைத் தேர்ந்தெடுக்கவும் அல்லது புதிய ஒன்றை உருவாக்கவும்.</target>
         </trans-unit>
         <trans-unit id="CollectionSelector.PlaceholderText" translate="yes" xml:space="preserve">
           <source>Choose existing</source>
@@ -2465,7 +2463,7 @@ Otherwise, "All Fonts" is selected by default on every launch.</source>
         </trans-unit>
         <trans-unit id="FileNameWriterFaceDesc" translate="yes" xml:space="preserve">
           <source>Name of current font face</source>
-          <target state="translated">தற்போதைய எழுத்துரு தோற்றத்தின் பெயர்</target>
+          <target state="translated">தற்போதைய எழுத்துரு நடையின் பெயர்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Description of file naming template variable</note>
         </trans-unit>
         <trans-unit id="FileNameWriterFamilyDesc" translate="yes" xml:space="preserve">
@@ -2697,7 +2695,7 @@ Otherwise, "All Fonts" is selected by default on every launch.</source>
         </trans-unit>
         <trans-unit id="CalligraphyPenInkToolbarButtonToolTip" translate="yes" xml:space="preserve">
           <source>Calligraphy pen</source>
-          <target state="translated">அழகெழுத்துப் பேனா (Calligraphy pen)</target>
+          <target state="translated">அழகெழுத்துப் பேனா</target>
           <note from="Multilingual Build" annotates="source" priority="2">Calligraphy pen tool selection button</note>
         </trans-unit>
         <trans-unit id="SettingsSimulatedFontFaces.Title" translate="yes" xml:space="preserve">
@@ -2868,7 +2866,7 @@ Requires a restart to take effect.</source>
         </trans-unit>
         <trans-unit id="SubSetterChosenGlyphsHeader.Text" translate="yes" xml:space="preserve">
           <source>Selected Characters</source>
-          <target state="translated">தேர்ந்தெடுக்கப்பட்ட எழுத்துருக்கள்</target>
+          <target state="translated">தேர்ந்தெடுக்கப்பட்ட எழுத்துக்கள்</target>
           <note from="Multilingual Build" annotates="source" priority="2">Header for selected characters list in Subsetter</note>
         </trans-unit>
         <trans-unit id="SubSetterChosenGlyphsLabel" translate="yes" xml:space="preserve">
@@ -3098,6 +3096,11 @@ Variations cannot be copied as text, but can be exported as PNG or SVG.</source>
           <source>Save as image</source>
           <target state="translated">படமாகச் சேமி</target>
           <note from="Multilingual Build" annotates="source" priority="2">Context menu item to save glyph as image file</note>
+        </trans-unit>
+        <trans-unit id="FaceCountLabel" translate="yes" xml:space="preserve">
+          <source>{0} face(s)</source>
+          <target state="translated">{0} நடை(கள்)</target>
+          <note from="Multilingual Build" annotates="source" priority="2">The amount of real font, non-simulated font faces for a font family. Includes optional plural verbiage.</note>
         </trans-unit>
       </group>
     </body>
