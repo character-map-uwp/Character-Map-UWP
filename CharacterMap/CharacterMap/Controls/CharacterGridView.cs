@@ -169,14 +169,17 @@ public partial class CharacterGridView : GridView
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     void SetDefaultItemSize()
     {
-        if (hasSetItemSize) 
+        // Required if animations are disabled
+        if (this.ItemsPanelRoot is null)
+            hasSetItemSize = false;
+
+        if (hasSetItemSize)
             return;
 
         if (this.ItemsPanelRoot is ItemsWrapGrid g)
         {
             g.ItemHeight = ItemSize;
             g.ItemWidth = ItemSize;
-            hasSetItemSize = true;
         }
     }
 
