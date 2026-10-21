@@ -119,84 +119,108 @@
   </resheader>
   <data name="AddToCollectionHint.Text" xml:space="preserve">
     <value>เพิ่มเข้ารายการสะสม</value>
+    <comment>Button label to add current font to font library</comment>
   </data>
   <data name="AppName" xml:space="preserve">
     <value>ผังอักขระ</value>
+    <comment>Application title. Usually kept untranslated.</comment>
   </data>
   <data name="BlackFill.Text" xml:space="preserve">
     <value>อักษรสีดำ</value>
+    <comment>Preview background color option</comment>
   </data>
   <data name="BtnCopy.Text" xml:space="preserve">
     <value>คัดลอกตัวอักษรนี้</value>
+    <comment>Context menu item to copy glyph character as plain text</comment>
   </data>
   <data name="BtnSelect.Content" xml:space="preserve">
     <value>เลือก</value>
+    <comment>Button label - select item</comment>
   </data>
   <data name="ColoredGlyphLabel.Text" xml:space="preserve">
     <value>อักษรสี</value>
+    <comment>Label indicating character contains multi-color glyph data</comment>
   </data>
   <data name="ColorGlyphToggle.OffContent" xml:space="preserve">
     <value>ตัวอักษรขาวดำ</value>
+    <comment>Toggle switch off-state label</comment>
   </data>
   <data name="ColorGlyphToggle.OnContent" xml:space="preserve">
     <value>ตัวอักษรสี</value>
+    <comment>Toggle switch on-state label</comment>
   </data>
   <data name="FontDisplayHeader.Text" xml:space="preserve">
     <value>ตัวเลือกการแสดงผลฟอนต์</value>
   </data>
   <data name="FontOptionsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>ตัวเลือกการแสดงผล</value>
+    <comment>Button tooltip to show OpenType font features</comment>
   </data>
   <data name="FontPropertiesButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>คุณสมบัติฟอนต์</value>
+    <comment>Button tooltip to show font metadata and properties</comment>
   </data>
   <data name="FontPropFace.Text" xml:space="preserve">
     <value>ชื่อรูปแบบฟอนต์</value>
+    <comment>Typography: Font face name (e.g. Regular, Bold, Italic)</comment>
   </data>
   <data name="FontPropFamily.Text" xml:space="preserve">
     <value>ชื่อสกุลฟอนต์</value>
+    <comment>Typography: Font family name (e.g. Arial, Segoe UI)</comment>
   </data>
   <data name="FontPropMonospaced.Text" xml:space="preserve">
     <value>เป็นฟอนต์แบบกว้างคงที่</value>
+    <comment>Typography: Whether font characters have fixed width</comment>
   </data>
   <data name="FontPropStretch.Text" xml:space="preserve">
     <value>ความยืด</value>
+    <comment>Typography: Font width/stretch (e.g. Condensed, Expanded)</comment>
   </data>
   <data name="FontPropStyle.Text" xml:space="preserve">
     <value>รูปแบบ</value>
+    <comment>Typography: Font slope style (e.g. Normal, Italic, Oblique)</comment>
   </data>
   <data name="FontPropSymbol.Text" xml:space="preserve">
     <value>เป็นฟอนต์สัญลักษณ์</value>
+    <comment>Typography: Whether font is an icon/symbol font</comment>
   </data>
   <data name="FontPropTitle.Text" xml:space="preserve">
     <value>คุณสมบัติฟอนต์</value>
   </data>
   <data name="FontPropType.Text" xml:space="preserve">
     <value>ประเภท</value>
+    <comment>Typography: Font outline format (e.g. TrueType, OpenType, CFF)</comment>
   </data>
   <data name="FontPropWeight.Text" xml:space="preserve">
     <value>น้ำหนัก</value>
+    <comment>Typography: Font stroke thickness (e.g. Light, Regular, Bold)</comment>
   </data>
   <data name="InvalidFontMessage" xml:space="preserve">
     <value>ขออภัย, เราไม่พบข้อมูลใดๆ ที่เป็นฟอนต์ที่รองรับ</value>
+    <comment>Error dialog message</comment>
   </data>
   <data name="InvalidFontTitle" xml:space="preserve">
     <value>ไม่รองรับไฟล์นี้</value>
+    <comment>Error dialog title</comment>
   </data>
   <data name="OpenInNewWindow.Text" xml:space="preserve">
     <value>เปิดในหน้าต่างใหม่</value>
+    <comment>Context menu item to open font in a new window</comment>
   </data>
   <data name="RemoveFontFlyout.Text" xml:space="preserve">
     <value>ลบฟอนต์</value>
+    <comment>Context menu item to delete font from library</comment>
   </data>
   <data name="RestartButton.Content" xml:space="preserve">
     <value>รีสตาร์ท</value>
+    <comment>Button to restart the application</comment>
   </data>
   <data name="RestartHeader.Text" xml:space="preserve">
     <value>จะมีผลเมื่อแอปรีสตาร์ทแล้ว</value>
   </data>
   <data name="SearchBox.PlaceholderText" xml:space="preserve">
     <value>ค้นหาตัวอักษรด้วยชื่อหรือด้วยรหัส Unicode</value>
+    <comment>Placeholder text in main search box</comment>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
     <value>เกี่ยวกับแอพพลิเคชั่นนี้</value>
@@ -206,6 +230,7 @@
   </data>
   <data name="TxtCopiedMessage.Text" xml:space="preserve">
     <value>คัดลอกเรียบร้อย</value>
+    <comment>In-app flyout message confirming character was copied</comment>
   </data>
   <data name="TxtFontIcon.Header" xml:space="preserve">
     <value>Font Icon</value>
@@ -217,18 +242,23 @@
   </data>
   <data name="TxtTitle.Text" xml:space="preserve">
     <value>ผังอักขระ</value>
+    <comment>Application title in header</comment>
   </data>
   <data name="TxtUnicode.Header" xml:space="preserve">
     <value>Unicode</value>
+    <comment>Header for Unicode codepoint value. Does not need translation.</comment>
   </data>
   <data name="TxtXamlCode.Header" xml:space="preserve">
     <value>Glyph Code</value>
+    <comment>Header for XAML glyph hex code value</comment>
   </data>
   <data name="TypographyVariantsHeader.Text" xml:space="preserve">
     <value>รูปแบบอักษร</value>
+    <comment>Header for OpenType typography features panel</comment>
   </data>
   <data name="WhiteFill.Text" xml:space="preserve">
     <value>อักษรสีขาว</value>
+    <comment>Preview background color option</comment>
   </data>
   <data name="ImportNotAFile" xml:space="preserve">
     <value>ไม่ใช่ไฟล์</value>
@@ -255,7 +285,7 @@
     <value>ไม่สามารถโหลดรายการฟอนต์ได้</value>
   </data>
   <data name="NoticeLabel.Text" xml:space="preserve">
-    <value>ประกาศ</value>
+    <value>หมายเหตุ</value>
   </data>
   <data name="ImportFileCopyFail" xml:space="preserve">
     <value>มีบางอย่างผิดพลาด. กรุณาลองใหม่อีกครั้ง.</value>
@@ -265,141 +295,182 @@
   </data>
   <data name="FontPropXaml.Text" xml:space="preserve">
     <value>XAML FontFamily Source</value>
+    <comment>XAML syntax string. 'FontFamily' and 'XAML' do not need translation.</comment>
   </data>
   <data name="FilePickerConfirm" xml:space="preserve">
     <value>นำเข้า</value>
+    <comment>File picker dialog commit button label</comment>
   </data>
   <data name="ImportFontsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>นำเข้าฟอนต์</value>
+    <comment>Button tooltip to import fonts</comment>
   </data>
   <data name="OpenFontButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>เปิดฟอนต์</value>
+    <comment>Button tooltip to open font file</comment>
   </data>
   <data name="OpenFontPickerConfirm" xml:space="preserve">
     <value>เปิด</value>
+    <comment>File picker dialog commit button label</comment>
   </data>
   <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
     <value>ชื่อรายการสะสม</value>
+    <comment>Input field header for naming a collection</comment>
   </data>
   <data name="DigCreateCollection.PrimaryButtonText" xml:space="preserve">
     <value>สร้าง</value>
+    <comment>Dialog confirmation button</comment>
   </data>
   <data name="DigCreateCollection.Title" xml:space="preserve">
     <value>สร้างรายการสะสม</value>
+    <comment>Dialog title</comment>
   </data>
   <data name="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>ลบรายการสะสม</value>
+    <comment>Button tooltip to delete selected collection</comment>
   </data>
   <data name="Delete" xml:space="preserve">
     <value>ลบ</value>
+    <comment>Dialog button label - confirm deletion</comment>
   </data>
   <data name="DigDeleteCollection.Title" xml:space="preserve">
     <value>คุณแน่ในหรือไม่ว่าคุณต้องการลบรายการสะสมนี้?</value>
+    <comment>Confirmation dialog title</comment>
   </data>
   <data name="DigRenameCollection.PrimaryButtonText" xml:space="preserve">
     <value>เปลี่ยนชื่อ</value>
+    <comment>Dialog confirmation button</comment>
   </data>
   <data name="DigRenameCollection.Title" xml:space="preserve">
     <value>เปลิ่ยนชื่อรายการสะสม</value>
+    <comment>Dialog title</comment>
   </data>
   <data name="OptionAllFonts.Text" xml:space="preserve">
     <value>ฟอนต์ทั้งหมด</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionImportedFonts.Text" xml:space="preserve">
     <value>ฟอนต์ที่นำเข้า</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionSymbolFonts.Text" xml:space="preserve">
     <value>ฟอนต์สัญลักษณ์</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="RenameCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>เปลี่ยนชื่อรายการสะสม</value>
+    <comment>Button tooltip to rename collection</comment>
   </data>
   <data name="FontListDisplayHeader.Text" xml:space="preserve">
     <value>รายการแสดงผลฟอนต์</value>
   </data>
   <data name="FontPropCount.Text" xml:space="preserve">
     <value>จำนวนตัวอักษร</value>
+    <comment>Typography: Count of glyphs in font face</comment>
   </data>
   <data name="OptionMonospacedFonts.Text" xml:space="preserve">
     <value>ฟอนต์อักษรเท่ากัน</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionSansSerifFonts.Text" xml:space="preserve">
     <value>ฟอนต์ไม่มีหาง (ฟอนต์เรียบ)</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionSerifFonts.Text" xml:space="preserve">
     <value>ฟอนต์มีหาง</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="NewCollectionItem.Text" xml:space="preserve">
     <value>สร้างรายการสะสมใหม่</value>
+    <comment>Context menu item to create a new collection</comment>
   </data>
   <data name="RemoveFromCollectionItem.Text" xml:space="preserve">
     <value>ลบจากรายการสะสม</value>
+    <comment>Context menu item to remove font from collection</comment>
   </data>
   <data name="AddToCollectionFlyout.Text" xml:space="preserve">
     <value>เพิ่มเข้ารายการสะสม</value>
+    <comment>Context menu item / submenu header to add font to collection</comment>
   </data>
   <data name="InstantSearchToggle.OffContent" xml:space="preserve">
     <value>ปิดการค้นหาทันทีขณะเขียน</value>
+    <comment>Toggle switch off-state label</comment>
   </data>
   <data name="InstantSearchToggle.OnContent" xml:space="preserve">
     <value>เปิดการค้นหาทันทีขณะเขียน</value>
+    <comment>Toggle switch on-state label</comment>
   </data>
   <data name="SearchResultsSlider.Header" xml:space="preserve">
     <value>จำนวนผลการค้นหาสูงสุด</value>
   </data>
   <data name="FontPropCharCount.Text" xml:space="preserve">
     <value>จำนวนตัวอักษร</value>
+    <comment>Typography: Count of Unicode characters supported in font face</comment>
   </data>
   <data name="FontPropFilePath.Text" xml:space="preserve">
     <value>ที่ตั้งของไฟล์</value>
   </data>
   <data name="DWriteSourceAppxPackage" xml:space="preserve">
     <value>Microsoft Store</value>
+    <comment>DirectWrite font source: installed via Microsoft Store package</comment>
   </data>
   <data name="DWriteSourcePerMachine" xml:space="preserve">
     <value>ผู้ใช้ทั้งหมด</value>
+    <comment>DirectWrite font source: installed system-wide for all users</comment>
   </data>
   <data name="DWriteSourcePerUser" xml:space="preserve">
     <value>ผู้ใช้ปัจจุบันเท่านั้น</value>
+    <comment>DirectWrite font source: installed for current user only</comment>
   </data>
   <data name="DWriteSourceRemoteFontProvider" xml:space="preserve">
     <value>ฟอนต์จากอินเตอร์เน็ต</value>
+    <comment>DirectWrite font source: downloaded from cloud provider</comment>
   </data>
   <data name="DWriteSourceUnknown" xml:space="preserve">
     <value>ไม่ได้ระบุ</value>
+    <comment>DirectWrite font source: unspecified or unknown source</comment>
   </data>
   <data name="FontPropInstallType.Text" xml:space="preserve">
     <value>ประเภทฟอนต์</value>
   </data>
   <data name="OptionAppxFonts.Text" xml:space="preserve">
     <value>ฟอนต์จาก Microsoft Store</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionCloudFonts.Text" xml:space="preserve">
     <value>ฟอนต์ออนไลน์</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionColorFonts.Text" xml:space="preserve">
     <value>ฟอนต์สี</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionDecorativeFonts.Text" xml:space="preserve">
     <value>ฟอนต์ตกแต่ง</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionMoreFilters.Text" xml:space="preserve">
     <value>ฟอนต์อื่นๆ </value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionScriptFonts.Text" xml:space="preserve">
     <value>ฟอนต์ตัวเขียน</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="StatusBarFontCount" xml:space="preserve">
     <value>{0} ฟอนต์</value>
+    <comment>{0} = number of font families</comment>
   </data>
   <data name="FontPropFileSize.Text" xml:space="preserve">
     <value>ขนาดไฟล์</value>
   </data>
   <data name="InstallTypeImported" xml:space="preserve">
     <value>ไม่ได้ติดตั้ง (นำเข้า)</value>
+    <comment>Font source: loaded into application without installing in Windows</comment>
   </data>
   <data name="StatusBarCharacterCount" xml:space="preserve">
     <value>{0} ตัวอักษร</value>
+    <comment>{0} = number of characters in font face</comment>
   </data>
   <data name="SearchDelaySelector.Header" xml:space="preserve">
     <value>ดีเลย์ก่อนค้นหา (ms)</value>
@@ -409,51 +480,67 @@
   </data>
   <data name="CharacterSavedMessage.Text" xml:space="preserve">
     <value>บันทึกไว้ที่</value>
+    <comment>Precedes folder path: 'Saved to [folder path]'</comment>
   </data>
   <data name="NotificationAddedToCollection" xml:space="preserve">
     <value>ฟอนต์ {0} ถูกเพิ่มเข้ารายการ "{1}" แล้ว</value>
+    <comment>{0} = font name, {1} = collection name</comment>
   </data>
   <data name="BtnOpenFile.Content" xml:space="preserve">
     <value>เปิดฟอนต์</value>
+    <comment>Button label to open exported file</comment>
   </data>
   <data name="BtnOpenFolder.Content" xml:space="preserve">
     <value>เปิดโฟล์เดอร์</value>
+    <comment>Button label to open folder in File Explorer</comment>
   </data>
   <data name="BtnHidePane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>ซ่อนรายการฟอนต์ (Ctrl+L)</value>
+    <comment>Tooltip to collapse the font list pane</comment>
   </data>
   <data name="NotificationImportFailed" xml:space="preserve">
     <value>นำเข้าฟอนต์ล้มเหลว</value>
+    <comment>Notification header when font import fails</comment>
   </data>
   <data name="NotificationMultipleFontsAdded" xml:space="preserve">
     <value>{0} ไฟล์ได้ถูกเพิ่มเข้าไปในรายการเรียบร้อยแล้ว</value>
+    <comment>{0} = number of font files added</comment>
   </data>
   <data name="NotificationSingleFontAdded" xml:space="preserve">
     <value>เพิ่มฟอนต์ {0} เข้ารายการสะสมเรียบร้อย</value>
+    <comment>{0} = font name</comment>
   </data>
   <data name="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>แสดงรายการฟอนต์ (Ctrl+L)</value>
+    <comment>Tooltip to expand the font list pane</comment>
   </data>
   <data name="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>อื่นๆ </value>
+    <comment>Tooltip for overflow menu button</comment>
   </data>
   <data name="FontListFilter.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>กรองรายการฟอนต์</value>
+    <comment>Tooltip for font list filter flyout button</comment>
   </data>
   <data name="ToggleFullScreenModeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>สลับเต็มจอ</value>
+    <comment>Tooltip to toggle fullscreen mode</comment>
   </data>
   <data name="DlgDeleteFont.Title" xml:space="preserve">
     <value>คุณแน่ใจว่าคุณต้องการลบฟอนต์นี้ออกจากรายการฟอนต์ของคุณ?</value>
+    <comment>Confirmation dialog title</comment>
   </data>
   <data name="NotificationCollectionDeleted" xml:space="preserve">
     <value>ลบรายการสะสม "{0}" แล้ว</value>
+    <comment>{0} = collection name</comment>
   </data>
   <data name="DlgException.PrimaryButtonText" xml:space="preserve">
     <value>ตกลง</value>
+    <comment>Dialog button</comment>
   </data>
   <data name="DlgException.Title" xml:space="preserve">
     <value>เกิดการผิดพลาดบางอย่าง</value>
+    <comment>Unhandled error dialog title</comment>
   </data>
   <data name="DlgExceptionCopyMessage.Text" xml:space="preserve">
     <value>คัดลอกรายละเอียดข้อผิดพลาดแล้วรายงานให้นักพัฒนา (บน GitHub)</value>
@@ -466,60 +553,75 @@
   </data>
   <data name="BtnClose.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>ปิด</value>
+    <comment>Tooltip to close pane or dialog</comment>
   </data>
   <data name="BtnCopyDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>คัดลอก</value>
+    <comment>Tooltip to copy code snippet to clipboard</comment>
   </data>
   <data name="BtnRateAndReview.Content" xml:space="preserve">
     <value>ให้คะแนนความพอใจและความเห็น</value>
+    <comment>Button label - open Microsoft Store rating page</comment>
   </data>
   <data name="BtnXAMLGeometry.Content" xml:space="preserve">
     <value>คลิกเพื่อดู</value>
+    <comment>Button label - show full XAML path geometry</comment>
   </data>
   <data name="RbThemeDark.Content" xml:space="preserve">
     <value>มืด</value>
+    <comment>Theme option: dark mode</comment>
   </data>
   <data name="RbThemeLight.Content" xml:space="preserve">
     <value>สว่าง</value>
+    <comment>Theme option: light mode</comment>
   </data>
   <data name="RbThemeSystem.Content" xml:space="preserve">
     <value>ตามการตั้งค่าระบบ</value>
+    <comment>Theme option: follow Windows default theme</comment>
   </data>
   <data name="RbUseActualFont.Content" xml:space="preserve">
     <value>แสดงตัวอย่างฟอนต์</value>
+    <comment>Setting option: render font names in the font list using each font's own typeface</comment>
   </data>
   <data name="RbUseSystemFont.Content" xml:space="preserve">
     <value>ใช้ฟอนต์ระบบ</value>
+    <comment>Setting option: render font names in the font list using the system font</comment>
   </data>
   <data name="SettingsCharacterSearchDescription.Text" xml:space="preserve">
     <value>ค้นหาทันทีที่เขียน. หากปิดแล้ว เมื่อจะค้นหาต้องกด Enter หรือคลิกที่ปุ่มค้นหา</value>
   </data>
   <data name="SettingsCharacterSearchHeader.Text" xml:space="preserve">
     <value>ค้นหาตัวอักษร</value>
+    <comment>Settings section header for search settings</comment>
   </data>
   <data name="SettingsCharGridDescription.Text" xml:space="preserve">
     <value>ขนาดการแสดงผลตัวอักษรในตาราง. ขนาดใหญ่เกินไปอาจมีผลต่อความเร็วแอป.</value>
   </data>
   <data name="SettingsCharGridHeader.Text" xml:space="preserve">
     <value>ขนาดตารางแสดงตัวอักษร</value>
+    <comment>Settings header for character grid size slider</comment>
   </data>
   <data name="SettingsCharPreviewHint.Text" xml:space="preserve">
     <value>ตัวอย่างตารางตัวอักษร</value>
+    <comment>Label for character grid preview box</comment>
   </data>
   <data name="SettingsDevToolsDescription.Text" xml:space="preserve">
     <value>แสดงเครื่องมือช่วยนักพัฒนา. เช่นโค้ดสำหรับไอคอนตัวอักษร.</value>
   </data>
   <data name="SettingsDevToolsGroupHeader.Text" xml:space="preserve">
     <value>ฟังชั่นก์สำหรับนักพัฒนา</value>
+    <comment>Settings header for developer tools options</comment>
   </data>
   <data name="SettingsDevToolsHeader.Text" xml:space="preserve">
     <value>แสดงเครื่องมือนักพัฒนา</value>
+    <comment>Setting toggle header to enable developer features</comment>
   </data>
   <data name="SettingsDevToolsLangDescription.Text" xml:space="preserve">
     <value>เลือกภาษาโค้ดที่จะแสดงผลในเครื่องมือนักพัฒนา</value>
   </data>
   <data name="SettingsDevToolsLangHeader.Text" xml:space="preserve">
     <value>ภาษา</value>
+    <comment>Dropdown header for choosing developer code preview language</comment>
   </data>
   <data name="SettingsExpensiveAnimationDescription.Text" xml:space="preserve">
     <value>แสดงอนิเมชั่นเมื่อเปลื่ยนขนาดโปรแกรม.
@@ -527,18 +629,22 @@
   </data>
   <data name="SettingsExpensiveAnimationHeader.Text" xml:space="preserve">
     <value>ใช้อนิเมชั่นเมื่อย่อ-ขยายหน้าต่างโปรแกรม</value>
+    <comment>Setting toggle header</comment>
   </data>
   <data name="SettingsExportHeader.Text" xml:space="preserve">
     <value>บันทึก</value>
+    <comment>Settings section header for export options</comment>
   </data>
   <data name="SettingsFontListDescription.Text" xml:space="preserve">
     <value>เลือกฟอนต์ที่จะแสดงในรายการแสดงผลรายการฟอนต์.</value>
   </data>
   <data name="SettingsFontListPreviewHint.Text" xml:space="preserve">
     <value>ตัวอย่างแสดงรายการฟอนต์</value>
+    <comment>Label for font list preview box</comment>
   </data>
   <data name="SettingsHeader.Text" xml:space="preserve">
     <value>ตั้งค่า</value>
+    <comment>Settings page title</comment>
   </data>
   <data name="SettingsLanguageDescription.Text" xml:space="preserve">
     <value>กำหนดภาษาแสดงผลแอป.
@@ -546,12 +652,14 @@
   </data>
   <data name="SettingsLanguageHeader.Text" xml:space="preserve">
     <value>ตั้งค่าภาษา</value>
+    <comment>Dropdown header to override application language</comment>
   </data>
   <data name="SettingsPNGExportDescription.Text" xml:space="preserve">
     <value>ขนาดรูป PNG ที่บันทึก.</value>
   </data>
   <data name="SettingsPNGExportHeader.Text" xml:space="preserve">
     <value>ขนาดรูป PNG</value>
+    <comment>Dropdown header for exported PNG image resolution</comment>
   </data>
   <data name="SettingsShadowsDescription.Text" xml:space="preserve">
     <value>เปิดเอฟเฟ็คเงาในแอป. จะเห็นได้ชัดเจนเมื่อใช้แอปในชุดรูปแบบสว่าง.
@@ -560,6 +668,7 @@
   </data>
   <data name="SettingsShadowsHeader.Text" xml:space="preserve">
     <value>ใช้เอฟเฟ็คเงา</value>
+    <comment>Setting toggle header for light theme depth shadows</comment>
   </data>
   <data name="SettingsSimpleAnimationDescription.Text" xml:space="preserve">
     <value>ใช้อนิเมชั่นขณะโหลดฟอนต์, เปลี่ยนฟอนต์, เปลี่ยนตัวอักษรที่เลือก.
@@ -567,12 +676,15 @@
   </data>
   <data name="SettingsSimpleAnimationHeader.Text" xml:space="preserve">
     <value>ใช้อนิเมชั่น</value>
+    <comment>Setting toggle header for UI animations</comment>
   </data>
   <data name="SettingsThemeHeader.Text" xml:space="preserve">
     <value>ชุดรูปแบบ</value>
+    <comment>Settings section header for theme selection</comment>
   </data>
   <data name="SettingsUIHeader.Text" xml:space="preserve">
     <value>เค้าโครง</value>
+    <comment>Settings section header for layout and sizing</comment>
   </data>
   <data name="TxtPathGeometry.Text" xml:space="preserve">
     <value>Path Geometry</value>
@@ -583,87 +695,115 @@
   </data>
   <data name="SettingsNeedRestart.Text" xml:space="preserve">
     <value>จะมีผลเมื่อเปิดแอปครั้งหน้า (เริ่มต้นแอปใหม่)</value>
+    <comment>Notice shown when a setting requires restarting the app to take effect</comment>
   </data>
   <data name="BtnContributors.Content" xml:space="preserve">
     <value>ผู้ร่วมพัฒนา</value>
+    <comment>Button label - view GitHub project contributors</comment>
   </data>
   <data name="TxtLoadingFonts.Text" xml:space="preserve">
     <value>กำลังโหลดฟอนต์</value>
+    <comment>Loading indicator text while scanning font files</comment>
   </data>
   <data name="AppBtnClear.Label" xml:space="preserve">
     <value>ไม่เลือกทุกอัน</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="AppBtnReset.Label" xml:space="preserve">
     <value>รีเซทเลือก</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="AppBtnSelectAll.Label" xml:space="preserve">
     <value>เลือกทั้งหมด</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="BtnApply.Content" xml:space="preserve">
     <value>เลือกกลุ่มอักษร</value>
+    <comment>Button label - apply changes</comment>
   </data>
   <data name="Cancel" xml:space="preserve">
     <value>ยกเลิก</value>
+    <comment>Dialog button label - cancel operation</comment>
   </data>
   <data name="BtnContinue.Content" xml:space="preserve">
     <value>ส่งพิมพ์</value>
+    <comment>Button label - proceed to next step</comment>
   </data>
   <data name="BtnPrint.Content" xml:space="preserve">
     <value>พิมพ์</value>
+    <comment>Button label - print character catalog</comment>
   </data>
   <data name="CbCharacterLabel.Header" xml:space="preserve">
     <value>แสดงชื่ออักษร</value>
+    <comment>Print settings dropdown header for label printed under characters</comment>
   </data>
   <data name="CbiPageOrientationLandscape.Content" xml:space="preserve">
     <value>แนวนอน</value>
+    <comment>Print page orientation option</comment>
   </data>
   <data name="CbiPageOrientationPortrait.Content" xml:space="preserve">
     <value>แนวตั้ง</value>
+    <comment>Print page orientation option</comment>
   </data>
   <data name="CbListStyle.Header" xml:space="preserve">
     <value>รูปแบบรายการ</value>
+    <comment>Print settings dropdown header for list style</comment>
   </data>
   <data name="CbShowMargins.Content" xml:space="preserve">
     <value>แสดงขอบกระดาษ</value>
+    <comment>Print settings checkbox to show printable page margins</comment>
   </data>
   <data name="ChkBxHideWhitespace.Content" xml:space="preserve">
     <value>ซ่อนอักขระว่าง</value>
+    <comment>Print settings checkbox</comment>
   </data>
   <data name="ChkBxShowBorders.Content" xml:space="preserve">
     <value>แสดงขอบตาราง</value>
+    <comment>Print settings checkbox to draw grid cell borders</comment>
   </data>
   <data name="GlyphAnnotation_None" xml:space="preserve">
     <value>ไม่แสดง</value>
+    <comment>Character label option: show no text under character in grid</comment>
   </data>
   <data name="GlyphAnnotation_UnicodeHex" xml:space="preserve">
     <value>รหัสอักษร</value>
+    <comment>Character label option: show hex code (e.g. 0041) under character</comment>
   </data>
   <data name="GlyphAnnotation_UnicodeIndex" xml:space="preserve">
     <value>ที่อยู่อักษร</value>
+    <comment>Character label option: show decimal index under character</comment>
   </data>
   <data name="PrintCharacterFilterContent.Text" xml:space="preserve">
     <value>เลือกกลุ่มอักษรที่จะพิมพ์</value>
+    <comment>Print settings button text to open category selector</comment>
   </data>
   <data name="PrintDataHeader.Text" xml:space="preserve">
     <value>ตั้งค่าข้อมูลอักษร</value>
+    <comment>Print configuration section header for character data to include</comment>
   </data>
   <data name="PrintViewCharSize.Text" xml:space="preserve">
     <value>ขนาดอักษร</value>
+    <comment>Print settings header for character font size slider</comment>
   </data>
   <data name="PrintViewHorizontalMarginHeader.Text" xml:space="preserve">
     <value>ขนาดขอบแนวนอน</value>
+    <comment>Print settings slider header</comment>
   </data>
   <data name="PrintViewLayoutHeader.Text" xml:space="preserve">
     <value>ตั้งค่าอักษรพิมพ์</value>
+    <comment>Print settings section header for page layout</comment>
   </data>
   <data name="PrintViewOfLabel.Text" xml:space="preserve">
     <value>จาก</value>
+    <comment>Page number separator in 'Page X of Y'</comment>
   </data>
   <data name="PrintViewPageOrientation.Header" xml:space="preserve">
     <value>แนวหน้ากระดาษ</value>
+    <comment>Print settings dropdown header for orientation</comment>
   </data>
   <data name="PrintViewPageRange.Text" xml:space="preserve">
     <value>ระยะหน้าที่พิมพ์</value>
+    <comment>Print settings section header for page range</comment>
   </data>
   <data name="PrintViewPageRangeDesc.Text" xml:space="preserve">
     <value>เลือกระยะหน้าที่จะพิมพ์ข้างล่างนี้
@@ -671,15 +811,23 @@
   </data>
   <data name="PrintViewPageRangeSelector.Header" xml:space="preserve">
     <value>พิมพ์เป็นจำนวน (หน้า):</value>
+    <comment>Print settings dropdown header for page count</comment>
   </data>
   <data name="PrintViewPageSelector.Header" xml:space="preserve">
     <value>เริ่มจากหน้า:</value>
+    <comment>Print settings dropdown header for first page to print</comment>
   </data>
   <data name="PrintViewPageSetupHeader.Text" xml:space="preserve">
     <value>ตั้งค่าหน้ากระดาษ</value>
+    <comment>Print settings section header for margins and orientation</comment>
   </data>
   <data name="PrintViewPreviewingLabel.Text" xml:space="preserve">
     <value>กำลังแสดงตัวอย่างหน้า</value>
+    <comment>Status label in print preview, e.g. 'Previewing page 1 of 5'</comment>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>แสดงตัวอย่าง</value>
+    <comment>Tab or button label to preview print layout</comment>
   </data>
   <data name="PrintViewPreviewOutOfBoundsLabel.Text" xml:space="preserve">
     <value>หน้านี้อยู่นอกเหนือจากจำนวนหน้าที่จะพิมพ์จึงจะไม่ถูกพิมพ์
@@ -687,15 +835,19 @@
   </data>
   <data name="PrintViewPrintingLabel" xml:space="preserve">
     <value>พิมพ์หน้าที่ {0} ถึง {1}</value>
+    <comment>{0} = start page number, {1} = end page number</comment>
   </data>
   <data name="PrintViewTitle.Text" xml:space="preserve">
     <value>ตั้งค่าก่อนพิมพ์</value>
+    <comment>Print configuration view title</comment>
   </data>
   <data name="PrintViewVerticalMarginHeader.Text" xml:space="preserve">
     <value>ขนาดขอบแนวตั้ง</value>
+    <comment>Print settings slider header</comment>
   </data>
   <data name="SettingsCharLabel.Text" xml:space="preserve">
     <value>ชื่ออักษร</value>
+    <comment>Setting dropdown header for label shown under characters</comment>
   </data>
   <data name="SettingsCharLabelDesc.Text" xml:space="preserve">
     <value>เลือกการแสดงผลข้อมูลใต้อักษร
@@ -703,24 +855,31 @@
   </data>
   <data name="SettingsManageSystemFonts.Content" xml:space="preserve">
     <value>จัดการฟอนต์ที่ติดตั้งในเครื่อง</value>
+    <comment>Button to open Windows Settings font management page</comment>
   </data>
   <data name="SettingsSystemFontHeader.Text" xml:space="preserve">
     <value>ฟอนต์ที่ติดตั้งไว้ในเครื่อง</value>
+    <comment>Settings section header for installed system fonts</comment>
   </data>
   <data name="SettingsWindowsThemeSettings.Content" xml:space="preserve">
     <value>ตั้งค่าสีของระบบ</value>
+    <comment>Button to open Windows Settings theme page</comment>
   </data>
   <data name="UnicodeFiltersTitle.Text" xml:space="preserve">
     <value>กรองกลุ่มอักษรที่พิมพ์</value>
+    <comment>Header for Unicode category filter list</comment>
   </data>
   <data name="PrintLayout_Grid" xml:space="preserve">
     <value>ตาราง</value>
+    <comment>Print layout option: characters arranged in grid cells</comment>
   </data>
   <data name="PrintLayout_List" xml:space="preserve">
     <value>รายการ</value>
+    <comment>Print layout option: single column list with details</comment>
   </data>
   <data name="PrintLayout_TwoColumn" xml:space="preserve">
     <value>2 แถว</value>
+    <comment>Print layout option: two column list with details</comment>
   </data>
   <data name="SettingsTransparencyDescription.Text" xml:space="preserve">
     <value>เปิดใช้การแสดงผลหน้าตาโปร่งใส. หากการตั้งค่านี้ถูกปิดในระบบจะไม่มีผลใดๆ เมื่อเปิด
@@ -728,12 +887,15 @@
   </data>
   <data name="SettingsTransparencyHeader.Text" xml:space="preserve">
     <value>เปิดใช้หน้าตาโปร่งใส</value>
+    <comment>Setting toggle header for acrylic transparency effects</comment>
   </data>
   <data name="StartupFailedButton.Content" xml:space="preserve">
     <value>แสดงรายละเอียดข้อผิดพลาด</value>
+    <comment>Button on startup failure screen to display stack trace</comment>
   </data>
   <data name="StartupFailedHeader.Text" xml:space="preserve">
     <value>โอ้.. ซวยละ..</value>
+    <comment>Header on catastrophic startup failure screen</comment>
   </data>
   <data name="StartupFailedMessage.Text" xml:space="preserve">
     <value>มีบางอย่างผิดพลาดทำให้ไม่สามารถเปิดแอปได้
@@ -741,63 +903,82 @@
   </data>
   <data name="CharacterKeystrokeLabel" xml:space="preserve">
     <value>คีย์ลัด: Alt + {0:0000}</value>
+    <comment>{0:0000} = 4-digit Windows Alt code</comment>
   </data>
   <data name="ExportSVGLabel.Text" xml:space="preserve">
     <value>บันทึกเป็นรูป SVG</value>
+    <comment>Menu item to save glyph as SVG file</comment>
   </data>
   <data name="ExportPNGLabel.Text" xml:space="preserve">
     <value>บันทึกเป็นรูป PNG</value>
+    <comment>Menu item to save glyph as PNG file</comment>
   </data>
   <data name="ExportSVGGlyphLabel.Text" xml:space="preserve">
     <value>อักษร SVG</value>
+    <comment>Menu header for exporting SVG glyph</comment>
   </data>
   <data name="BtnCopyGlyph.Label" xml:space="preserve">
     <value>คัดลอก</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="BtnCopyGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>คัดลอกไปยังคลิปบอร์ด</value>
+    <comment>Tooltip to copy character to clipboard</comment>
   </data>
   <data name="BtnSaveGlyph.Label" xml:space="preserve">
     <value>บันทึกเป็น</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>บันทึกเป็น</value>
+    <comment>Tooltip to export character as image</comment>
   </data>
   <data name="BtnFit.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>ขยายอักษรตัวอย่าง</value>
+    <comment>Tooltip to fit character inside preview bounds</comment>
   </data>
   <data name="NotificationFontRemovedBody.Text" xml:space="preserve">
     <value>ถูกลบออกจาก</value>
+    <comment>Sentence fragment: '[Font Name] was removed from [Collection Name]'</comment>
   </data>
   <data name="NotificationFontAddedBody.Text" xml:space="preserve">
     <value>ถูกเพิ่มเข้าไปยัง</value>
+    <comment>Sentence fragment: '[Font Name] was added to [Collection Name]'</comment>
   </data>
   <data name="ExportFontFile.Text" xml:space="preserve">
     <value>ไฟล์ฟอนต์</value>
+    <comment>Export option to save raw font file</comment>
   </data>
   <data name="ExportFontFileLabel.Text" xml:space="preserve">
     <value>บันทึกไฟล์ฟอนต์เป็น</value>
+    <comment>File picker dialog title when exporting font file</comment>
   </data>
   <data name="FontExportedMessage" xml:space="preserve">
     <value>ส่งออก {0} ฟอนต์</value>
+    <comment>{0} = exported font file name</comment>
   </data>
   <data name="CollectionExportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>ส่งออกฟอนต์</value>
+    <comment>Button tooltip to export fonts in collection</comment>
   </data>
   <data name="CollectionExportFolder.Text" xml:space="preserve">
     <value>ไปยังโฟลเดอร์</value>
+    <comment>Export option: export font files to folder</comment>
   </data>
   <data name="CollectionExportHeader.Text" xml:space="preserve">
     <value>ส่งออกฟอนต์</value>
+    <comment>Collection export flyout header</comment>
   </data>
   <data name="CollectionExportZip.Text" xml:space="preserve">
     <value>บันทึกเป็น Zip</value>
+    <comment>Export option: export font files as zip archive</comment>
   </data>
   <data name="SystemFontsExpiredMessage.Text" xml:space="preserve">
     <value>มีฟอนต์ถูกเพิ่มหรือลบออก คลิกที่นี่เพิ่อโหลดอัพเดตรายการฟ้อนต์ใหม่</value>
   </data>
   <data name="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>ซ่อน/แสดง เครื่องมือนักพัฒนา</value>
+    <comment>Tooltip to toggle developer features panel</comment>
   </data>
   <data name="TxtPathIcon.Text" xml:space="preserve">
     <value>Path Icon</value>
@@ -805,54 +986,71 @@
   </data>
   <data name="OptionAllEmoji.Text" xml:space="preserve">
     <value>ทุกกลุ่ม</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionAllEmojiTitle.Text" xml:space="preserve">
     <value>ทุกอีโมจิ</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionEmojiDingbats.Text" xml:space="preserve">
     <value>ดิงแบท</value>
+    <comment>Font filter flyout: emoji category option</comment>
   </data>
   <data name="OptionEmojiEmoticons.Text" xml:space="preserve">
     <value>อีโมติคอน</value>
+    <comment>Font filter flyout: emoji category option</comment>
   </data>
   <data name="OptionEmojiSymbols.Text" xml:space="preserve">
     <value>สัญลักษณ์ภาพและอักษร</value>
+    <comment>Font filter flyout: emoji category option</comment>
   </data>
   <data name="OptionScriptArabic.Text" xml:space="preserve">
     <value>อารบิค</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="OptionScriptBasicLatin.Text" xml:space="preserve">
     <value>ละติน</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="OptionScriptCJKUnifiedIdeographs.Text" xml:space="preserve">
     <value>CJK (จีน/ญี่ปุ่น/เกาหลี)</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="OptionScriptCyrillic.Text" xml:space="preserve">
     <value>ซิริลลิก</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="OptionScriptGreekAndCoptic.Text" xml:space="preserve">
     <value>กรีกและคอปติก</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="OptionScriptHebrew.Text" xml:space="preserve">
     <value>ฮิบรู</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="OptionScriptThai.Text" xml:space="preserve">
     <value>ไทย</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="CultureSpecificPangram.Text" xml:space="preserve">
     <value>เป็นมนุษย์สุดประเสริฐเลิศคุณค่ากว่าบรรดาฝูงสัตว์เดรัจฉาน ๑๒๓๔๕๖๗๘๙๐</value>
+    <comment>Provide a pangram (sentence containing every letter) and digits for the target language.</comment>
   </data>
   <data name="LblSwitchToCharMap.Text" xml:space="preserve">
     <value>สลับเป็นมุมมองผังอักษร (Ctrl+T)</value>
+    <comment>Button label to switch from Type Ramp to Character Map view</comment>
   </data>
   <data name="LblSwitchToTypeRamp.Text" xml:space="preserve">
     <value>สลับเป็นมุมมองแสดงตัวอย่างอักษร (Ctrl+T)</value>
+    <comment>Button label to switch from Character Map to Type Ramp view</comment>
   </data>
   <data name="TypeRampInputBox.PlaceholderText" xml:space="preserve">
     <value>พิมพ์หรือเลือกข้อความจากรายการ</value>
+    <comment>Placeholder text in Type Ramp custom preview text box</comment>
   </data>
   <data name="ExportedToFolderMessage" xml:space="preserve">
     <value>ส่งออกไปยัง {0}</value>
+    <comment>{0} = destination folder name</comment>
   </data>
   <data name="ImportDragDropDescriptionLabel.Text" xml:space="preserve">
     <value>ลากไฟล์จากตัวจัดการไฟล์หรือ Desktop แล้ววางไว้ตรงนี้เพื่อนำเข้าฟอนต์.</value>
@@ -862,18 +1060,22 @@
   </data>
   <data name="SettingsAboutLabel.Text" xml:space="preserve">
     <value>เกี่ยวกับ</value>
+    <comment>Settings navigation tab label</comment>
   </data>
   <data name="SettingsAdvancedUILabel.Text" xml:space="preserve">
     <value>การแสดงผลขั้นสูง</value>
+    <comment>Settings navigation tab label for appearance and themes</comment>
   </data>
   <data name="SettingsExportImportedLabel.Text" xml:space="preserve">
     <value>ส่งออกฟอนต์ที่นำเข้าทั้งหมด</value>
   </data>
   <data name="SettingsFontExportOptimizedLabel.Text" xml:space="preserve">
     <value>ปรับให้เหมาะสม</value>
+    <comment>Font export naming option: smart name based on family and face</comment>
   </data>
   <data name="SettingsFontExportSystemLabel.Text" xml:space="preserve">
     <value>ตามระบบ</value>
+    <comment>Font export naming option: exact uppercase Windows font file name</comment>
   </data>
   <data name="SettingsFontImportDescription.Text" xml:space="preserve">
     <value>คุณสามารถนำเข้าฟอนต์เข้าแอพพลิเคชั่นเพื่อดูได้ โดยไม่ต้องติดตั้งเข้าระบบ
@@ -882,6 +1084,7 @@
   </data>
   <data name="SettingsFontManagementLabel.Text" xml:space="preserve">
     <value>จัดการฟอนต์</value>
+    <comment>Settings navigation tab label for managing fonts</comment>
   </data>
   <data name="SettingsFontNameExportDescription.Text" xml:space="preserve">
     <value>เลือกวิธีตั้งชื่อฟอนต์ที่จะส่งออก
@@ -900,18 +1103,22 @@
   </data>
   <data name="SettingsLicensesLabel.Text" xml:space="preserve">
     <value>สิทธิ์การใช้งาน</value>
+    <comment>Settings navigation tab label for open source software licenses</comment>
   </data>
   <data name="BtnReset.Content" xml:space="preserve">
     <value>รีเซท</value>
   </data>
   <data name="OptionVariableFonts.Text" xml:space="preserve">
     <value>ฟอนต์ตัวแปร</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="VariableFeaturesMessage.Text" xml:space="preserve">
     <value>ฟอนต์นี้สามารถปรับแต่งตามค่าตัวแปรได้. หากต้องการดูให้สลับไปยังมุมมองแสดงตัวอย่างโดยคลิกที่ปุ่มสลับมุมมองด้านบน.</value>
+    <comment>Deprecated. Do not use.</comment>
   </data>
   <data name="VariableFeaturesMessage1.Text" xml:space="preserve">
     <value>ฟอนต์นี้สามารถปรับแต่งตามค่าตัวแปรได้. หากต้องการดูให้สลับไปยังมุมมองแสดงตัวอย่างโดยคลิกที่ปุ่มสลับมุมมองด้านบน.</value>
+    <comment>Notice explaining variable features can be adjusted in Variable Font Axis panel</comment>
   </data>
   <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
     <value>ซ่อนหรือแสดงตัวอย่างอักษรที่เลือกด้านขวา. หากปิดไป ฟังก์ชั่นต่างๆ ยังสามารถเข้าถึงได้ด้วยเมนูคลิกขวาที่ตัวอักษรในรายการผังอักษร.</value>
@@ -921,76 +1128,100 @@
   </data>
   <data name="CopyFontIconCode.Text" xml:space="preserve">
     <value>คัดลอกโค้ดแบบ FontIcon</value>
+    <comment>Context menu item to copy XAML FontIcon markup</comment>
   </data>
   <data name="CopyGlyphCode.Text" xml:space="preserve">
     <value>คัดลอกโค้ดแบบ Glyph</value>
+    <comment>Context menu item to copy glyph code markup</comment>
   </data>
   <data name="CopyPathIconCode.Text" xml:space="preserve">
     <value>คัดลอกโค้ดแบบ PathIcon </value>
+    <comment>Context menu item to copy XAML PathIcon markup</comment>
   </data>
   <data name="SearchBoxShorter" xml:space="preserve">
     <value>ค้นหา...</value>
+    <comment>Compact search box placeholder text when window is narrow</comment>
   </data>
   <data name="CopyUnicodeValue.Text" xml:space="preserve">
     <value>คัดลอกโค้ดแบบ Unicode Value</value>
+    <comment>Context menu item to copy Unicode hex value (e.g. U+0041)</comment>
   </data>
   <data name="DecreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>ย่อขนาดการแสดงอักษรในผังอักษร (Ctrl+-)</value>
+    <comment>Tooltip to zoom out character grid</comment>
   </data>
   <data name="IncreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>ขยายขนาดการแสดงอักษรในผังอักษร (Ctrl++)</value>
+    <comment>Tooltip to zoom in character grid</comment>
   </data>
   <data name="SwitchViewButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>สลับมุมมอง (Ctrl+T)</value>
+    <comment>Tooltip to switch between Character Map and Type Ramp views</comment>
   </data>
   <data name="TogglePaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>ซ่อน/แสดง ผังแสดงตัวอย่างอักขระที่เลือก(Ctrl+R)</value>
+    <comment>Tooltip to toggle character preview side-pane</comment>
   </data>
   <data name="NotificationCopied" xml:space="preserve">
     <value>คัดลอกเรียบร้อยแล้ว</value>
+    <comment>Notification message shown when text is copied to clipboard</comment>
   </data>
   <data name="AddButton.Label" xml:space="preserve">
     <value>เพิ่ม</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="AddSelectionItem.Text" xml:space="preserve">
     <value>เพิ่มเข้าผังคัดลอกอักขระ</value>
+    <comment>Context menu item to add character to copy sequence</comment>
   </data>
   <data name="CopySequencePlaceholder.Text" xml:space="preserve">
     <value>ดับเบิ้ลคลิกที่ตัวอักษรเพื่อเพิ่่มเข้าผังคัดลอกอักขระ</value>
+    <comment>Placeholder text in bottom copy sequence bar</comment>
   </data>
   <data name="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>ซ่อน/แสดง ผังคัดลอกอักขระ (Ctrl+B)</value>
+    <comment>Tooltip to toggle bottom copy sequence pane</comment>
   </data>
   <data name="CompactOverlayButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>ตรึงให้แสดงเหนือโปรแกรมอื่น</value>
+    <comment>Enters Picture-in-Picture / Compact Overlay mode</comment>
   </data>
   <data name="TypographyVariationsSelectorRun.Text" xml:space="preserve">
     <value>Typography Variations</value>
+    <comment>Appears after count: '{count} Typography Variations'</comment>
   </data>
   <data name="ToggleDevDefaultLabel" xml:space="preserve">
     <value>เครื่องมือ</value>
+    <comment>Default label for developer tools toggle button. Keep short.</comment>
   </data>
   <data name="BtnFit.Label" xml:space="preserve">
     <value>ย่อ/ขยาย</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="TxtCopiedVariantMessage.Text" xml:space="preserve">
     <value>ไม่สามารถคัดลอกรูปแบบอักษรที่เลือกได้.
 คัดลอกรูปแบบเริ่มต้นแทนแล้ว.</value>
+    <comment>Notice when attempting to copy a variable font instance</comment>
   </data>
   <data name="CollectionFontHelpBlock.Text" xml:space="preserve">
     <value>รายการสะสมนี้ยังไม่มีฟ้อนค์ใดๆ</value>
+    <comment>Empty state message for empty font collections</comment>
   </data>
   <data name="SearchFontHelpBlock.Text" xml:space="preserve">
     <value>ไม่พบผลการค้นหาที่ต้องการ. กรุณาลองค้นหาด้วยคำอื่น.</value>
+    <comment>Empty state message when font search yields no results</comment>
   </data>
   <data name="FontListSearchBox.PlaceholderText" xml:space="preserve">
     <value>ค้นหาฟ้อนต์</value>
+    <comment>Placeholder text in font list search box</comment>
   </data>
   <data name="BtnToggleDev.Label" xml:space="preserve">
     <value>เครื่องมือ</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="DevPopupHeader.Text" xml:space="preserve">
     <value>แสดงเครื่องมือนักพัฒนา</value>
+    <comment>Header for developer tools flyout</comment>
   </data>
   <data name="ContextMenuDevCopyCommand" xml:space="preserve">
     <value>คัดลอก {0}</value>
@@ -998,9 +1229,11 @@
   </data>
   <data name="ProviderNone" xml:space="preserve">
     <value>ไม่มี</value>
+    <comment>Option in developer features to disable developer code preview</comment>
   </data>
   <data name="SettingsChangelogLabel.Text" xml:space="preserve">
     <value>รายการเปลี่ยนแปลง</value>
+    <comment>Settings navigation tab label</comment>
   </data>
   <data name="TxtFontImageSource.Text" xml:space="preserve">
     <value>Font Image Source</value>
@@ -1014,60 +1247,86 @@
   </data>
   <data name="CharacterFilterButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>กรองตัวอักษร</value>
+    <comment>Button tooltip to filter characters by category</comment>
   </data>
   <data name="CompareFontsTitle.Text" xml:space="preserve">
     <value>เปรียบเทียบฟ้อนต์</value>
+    <comment>Font comparison view title</comment>
   </data>
   <data name="LayoutGridToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>เปลี่ยนเป็นมุมมองแบบตาราง</value>
+    <comment>Tooltip to switch comparison view to grid layout</comment>
   </data>
   <data name="LayoutListToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>เปลี่ยนเป็นมุมมองแบบรายการ</value>
+    <comment>Tooltip to switch comparison view to list layout</comment>
   </data>
   <data name="QuickCompareTitle.Text" xml:space="preserve">
     <value>รายการเปรียบเทียบด่วน</value>
+    <comment>Quick comparison window title</comment>
   </data>
   <data name="AddToQuickCompare.Text" xml:space="preserve">
     <value>เพิ่มเข้ารายการเปรียบเทียบด่วน</value>
+    <comment>Menu item to add font face to quick compare window</comment>
+  </data>
+  <data name="AddMultiToQuickCompare.Text" xml:space="preserve">
+    <value>เพิ่มตระกูลฟอนต์ไปยังการเปรียบเทียบด่วน</value>
+    <comment>Menu item to add all faces in font family to quick compare</comment>
   </data>
   <data name="CompareFontsButton.Text" xml:space="preserve">
     <value>เปรียบเทียบทุกฟ้อนต์</value>
+    <comment>Button label to open font comparison view</comment>
   </data>
   <data name="BtnGithubCommits.Content" xml:space="preserve">
     <value>ดูสถานาความคืบหน้าการอัพเดตบน GitHub</value>
+    <comment>Button label - view GitHub commit history</comment>
   </data>
   <data name="ExportGlyphsHeader.Text" xml:space="preserve">
     <value>ส่งออกตัวอักขระ</value>
+    <comment>Export dialog header</comment>
+  </data>
+  <data name="SelectedGlyphs.Text" xml:space="preserve">
+    <value>เลือกแล้ว {0} กลิฟ</value>
+    <comment>{0} = number of selected glyphs</comment>
   </data>
   <data name="ExportGlyphsSummary.Text" xml:space="preserve">
     <value>พร้อมส่งออกอักษร {0} ด้วยวิธี {1}</value>
+    <comment>{0} = character count, {1} = export format (e.g. SVG or PNG)</comment>
   </data>
   <data name="ExportCharactersLabel.Text" xml:space="preserve">
     <value>ส่งออกอักขระ...</value>
+    <comment>Menu item to open character export dialog</comment>
   </data>
   <data name="ExportGlyphsResultMessage.Text" xml:space="preserve">
     <value>อักขระทั้ง {0} ตัว ถูกส่งออกเรียบร้อย</value>
+    <comment>{0} = number of exported characters</comment>
   </data>
   <data name="ExportGlyphsProgressMessage.Text" xml:space="preserve">
     <value>กำลังบันทึกอักขระที่ {0} จากทั้งหมด {1} ตัว</value>
+    <comment>{0} = current character index, {1} = total character count</comment>
   </data>
   <data name="ExportAllowColor.Content" xml:space="preserve">
     <value>ปล่อยให้ฟ้อนต์ใช้สีที่ระบุไว้ในฟ้อนต์หากมี</value>
+    <comment>Export dialog checkbox</comment>
   </data>
   <data name="ExportColorHeader.Text" xml:space="preserve">
     <value>เติมสีอักขระ</value>
+    <comment>Export dialog color picker header</comment>
   </data>
   <data name="ExportGlyphFormatDescription.Text" xml:space="preserve">
     <value>Glyphs stored in binary formats will be exported as their native format regardless of this choice.</value>
   </data>
   <data name="ExportGlyphSelectedCharacters.Text" xml:space="preserve">
     <value>อักษร {0} ตัว จะถูกส่งออก จากทั้งหมด {1} ตัว</value>
+    <comment>{0} = selected characters count, {1} = total characters count</comment>
   </data>
   <data name="ExportFileOptionsHeader.Text" xml:space="preserve">
     <value>ตั้งค่าไฟล์</value>
+    <comment>Export dialog section header</comment>
   </data>
   <data name="ExportSkipBlank.Content" xml:space="preserve">
     <value>ไม่ส่งออกอักษรที่ว่างเปล่า</value>
+    <comment>Export dialog checkbox</comment>
   </data>
   <data name="CharacterFilterButton.Label" xml:space="preserve">
     <value>ตัวกรอง</value>
@@ -1103,6 +1362,7 @@
   </data>
   <data name="SettingsDesignStyle.Title" xml:space="preserve">
     <value>รูปแบบการแสดงผลโปรแกรม</value>
+    <comment>Setting title for switching application design theme</comment>
   </data>
   <data name="ViewToggleButton.Label" xml:space="preserve">
     <value>สลับ</value>
@@ -1110,65 +1370,1181 @@
   </data>
   <data name="AddToButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>เพิ่มเข้ารายการสะสม</value>
+    <comment>Button tooltip to add selected fonts to collection</comment>
   </data>
   <data name="ClearSelectionLabel" xml:space="preserve">
     <value>ล้างรายการสะสม</value>
+    <comment>Action label to deselect all selected fonts or glyphs</comment>
   </data>
   <data name="CreateNewButton.Content" xml:space="preserve">
     <value>สร้างรายการสะสมใหม่</value>
+    <comment>Button label - create a new font collection</comment>
   </data>
   <data name="OrLabel.Text" xml:space="preserve">
     <value>หรือ</value>
+    <comment>Separator between 'choose existing collection' and 'create new'</comment>
   </data>
   <data name="RemoveFromButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>ลบจากรายการสะสม</value>
+    <comment>Button tooltip to remove selected fonts from collection</comment>
   </data>
   <data name="SelectCollectionLabel" xml:space="preserve">
     <value>เลือกรายการสะสม</value>
+    <comment>Dropdown placeholder or header to choose a font collection</comment>
   </data>
   <data name="SettingsCollectionsHeader" xml:space="preserve">
     <value>รายการสะสม</value>
+    <comment>Navigation header for Collections view</comment>
   </data>
   <data name="DigOpenFolder.PrimaryButtonText" xml:space="preserve">
-    <value>เปิดฟ้อนต์</value>
+    <value>เปิดฟอนต์</value>
+    <comment>Dialog button to open and scan selected folder for fonts</comment>
   </data>
   <data name="DigOpenFolder.Title" xml:space="preserve">
     <value>เปิดโฟลเดอร์ฟ้อนค์</value>
+    <comment>Dialog title for opening a folder containing font files</comment>
   </data>
   <data name="DigOpenFolderContent.CheckRecursiveContent" xml:space="preserve">
     <value>เพิ่มฟ้อนค์ที่อยู่ในโฟล์เดอร์ย่อย</value>
+    <comment>Open Folder dialog checkbox to scan subdirectories</comment>
   </data>
   <data name="DigOpenFolderContent.CheckZipContent" xml:space="preserve">
     <value>เพิ่มฟ้อนต์ที่อยู่ในแฟ้มบิบอัด .zip</value>
+    <comment>Open Folder dialog checkbox to scan zip files</comment>
   </data>
   <data name="DigOpenFolderContent.FindDescription" xml:space="preserve">
     <value>ตั้งค่านี้อาจทำให้การหาฟ้อนต์ช้าลงไปอีก</value>
   </data>
   <data name="DigOpenFolderContent.FindHeader" xml:space="preserve">
     <value>ตั้งค่าการหาฟ้อนต์</value>
+    <comment>Open Folder dialog options header</comment>
   </data>
   <data name="DigOpenFolderContent.FindingFontsLabel" xml:space="preserve">
     <value>กำลังค้นหาฟ้อนต์...</value>
+    <comment>Progress label while scanning folder for font files</comment>
   </data>
   <data name="DigOpenFolderContent.PrefixLabel" xml:space="preserve">
-    <value>เจอ</value>
+    <value>พบ</value>
+    <comment>Sentence fragment: '[Found] {count} [font files]'</comment>
   </data>
   <data name="DigOpenFolderContent.SelectHeader" xml:space="preserve">
     <value>โฟลเดอร์ที่เลือกไว้ (คลิกเพื่อเปลี่ยน)</value>
+    <comment>Header above folder path button in Open Folder dialog</comment>
   </data>
   <data name="DigOpenFolderContent.SuffixLabel" xml:space="preserve">
-    <value>ไฟล์ฟ้อนต์</value>
+    <value>ไฟล์ฟอนต์</value>
+    <comment>Sentence fragment: '[Found] {count} [font files]'</comment>
   </data>
   <data name="FontFileMenuItem.Text" xml:space="preserve">
     <value>ไฟล์ฟ้อนต์</value>
+    <comment>Menu item to open a single font file</comment>
   </data>
   <data name="FontFolderMenuItem.Text" xml:space="preserve">
     <value>โฟลเดอร์ฟ้อนต์</value>
+    <comment>Menu item to scan and open a folder of fonts</comment>
+  </data>
+  <data name="AddHistoryButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>เพิ่มในประวัติ</value>
+    <comment>Save current calligraphy drawing to history</comment>
+  </data>
+  <data name="CalligraphyLabel.Text" xml:space="preserve">
+    <value>การประดิษฐ์ตัวอักษร</value>
+    <comment>Side menu navigation item for calligraphy feature</comment>
+  </data>
+  <data name="ClearAllButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ล้างทั้งหมด</value>
+    <comment>Clear calligraphy canvas</comment>
+  </data>
+  <data name="ClearAllItem.Text" xml:space="preserve">
+    <value>ล้างทั้งหมด</value>
+    <comment>Menu item to clear calligraphy canvas</comment>
+  </data>
+  <data name="GuideToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>แสดงเส้นบอกแนว</value>
+    <comment>Toggle handwriting guide lines in calligraphy view</comment>
+  </data>
+  <data name="HistoryLabel.Text" xml:space="preserve">
+    <value>ประวัติ</value>
+    <comment>Header for saved calligraphy drawings history list</comment>
+  </data>
+  <data name="RedoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ทำซ้ำ (Ctrl+Y)</value>
+    <comment>Button tooltip for redo in calligraphy view</comment>
+  </data>
+  <data name="RemoveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ลบออก</value>
+    <comment>Button tooltip to remove saved calligraphy drawing</comment>
+  </data>
+  <data name="SaveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>บันทึก (Ctrl+S)</value>
+    <comment>Button tooltip to save calligraphy drawing</comment>
+  </data>
+  <data name="SideBySideToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>เคียงข้างกัน</value>
+    <comment>Calligraphy comparison mode</comment>
+  </data>
+  <data name="UndoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>เลิกทำ (Ctrl+Z)</value>
+    <comment>Button tooltip for undo in calligraphy view</comment>
+  </data>
+  <data name="GuideFontSlider.Header" xml:space="preserve">
+    <value>ขนาดเส้นบอกแนว</value>
+    <comment>Slider header for calligraphy guide text font size</comment>
+  </data>
+  <data name="CharacterPickerButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>เปิดตัวเลือกอักขระ</value>
+    <comment>Open character picker to select glyph to practice</comment>
+  </data>
+  <data name="GuideHeaderLabel.Text" xml:space="preserve">
+    <value>ข้อความบอกแนว</value>
+    <comment>Header for guide text input in calligraphy view</comment>
+  </data>
+  <data name="GuideSizeLabel.Text" xml:space="preserve">
+    <value>ขนาดเส้นบอกแนว</value>
+    <comment>Header for guide size slider in calligraphy view</comment>
+  </data>
+  <data name="MenuToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>แสดงหรือซ่อนบานหน้าต่างฟอนต์ (Ctrl+L)</value>
+    <comment>Toggle visibility of font navigation pane</comment>
+  </data>
+  <data name="OpenInNewTab.Text" xml:space="preserve">
+    <value>เปิดในแท็บใหม่</value>
+    <comment>Menu item to open font in a new tab</comment>
+  </data>
+  <data name="OptionScriptKorean.Text" xml:space="preserve">
+    <value>เกาหลี</value>
+    <comment>Font filter flyout: script/writing system option</comment>
+  </data>
+  <data name="AddActiveToCollectionItem.Text" xml:space="preserve">
+    <value>เพิ่มฟอนต์ที่ใช้งานอยู่ไปยังคอลเลกชัน</value>
+    <comment>Menu item to add currently displayed font to collection</comment>
+  </data>
+  <data name="CompareActiveItem.Text" xml:space="preserve">
+    <value>เปรียบเทียบรูปแบบฟอนต์ที่ใช้งานอยู่</value>
+    <comment>Menu item to compare font faces of currently opened fonts</comment>
+  </data>
+  <data name="OptionEmoji.Text" xml:space="preserve">
+    <value>อิโมจิ</value>
+    <comment>Font filter flyout: emoji category option</comment>
+  </data>
+  <data name="OptionSupportedScripts.Text" xml:space="preserve">
+    <value>ระบบการเขียนที่รองรับ</value>
+    <comment>Font filter flyout option</comment>
+  </data>
+  <data name="CompareFontFaceTitle.Text" xml:space="preserve">
+    <value>เปรียบเทียบรูปแบบฟอนต์</value>
+    <comment>Font face comparison view title</comment>
+  </data>
+  <data name="CompareFacesCountLabel.Text" xml:space="preserve">
+    <value>เปรียบเทียบ {0} รูปแบบ</value>
+    <comment>Label removed</comment>
+  </data>
+  <data name="CompareFamilyTitle.Text" xml:space="preserve">
+    <value>เปรียบเทียบ {0}</value>
+    <comment>{0} = font family name</comment>
+  </data>
+  <data name="MenuButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>เปิดเมนู</value>
+    <comment>Open main menu flyout</comment>
+  </data>
+  <data name="FontsSelectedCountLabel" xml:space="preserve">
+    <value>{0} ฟอนต์, เลือกอยู่ {1} รายการ</value>
+    <comment>{0} = total fonts in collection, {1} = number of selected fonts</comment>
+  </data>
+  <data name="CompareShortLabel" xml:space="preserve">
+    <value>เปรียบเทียบ</value>
+    <comment>Short button label for font comparison. Keep short.</comment>
+  </data>
+  <data name="AllFontsLabel.Text" xml:space="preserve">
+    <value>ฟอนต์ทั้งหมด</value>
+    <comment>Navigation item to show all fonts library</comment>
+  </data>
+  <data name="ImportLabel.Text" xml:space="preserve">
+    <value>นำเข้า</value>
+    <comment>Navigation item or button to import fonts</comment>
+  </data>
+  <data name="PreferredFormatGroup.Text" xml:space="preserve">
+    <value>รูปแบบที่ต้องการ</value>
+    <comment>Preferred export format</comment>
+  </data>
+  <data name="RemoveLabel.Text" xml:space="preserve">
+    <value>ลบออก</value>
+    <comment>Action label to remove font or item</comment>
+  </data>
+  <data name="UndoLabel" xml:space="preserve">
+    <value>เลิกทำ</value>
+    <comment>Notification action button - undo last operation</comment>
+  </data>
+  <data name="CalligraphyDescription.Text" xml:space="preserve">
+    <value>ฝึกเขียนตามรูปแบบของฟอนต์ปัจจุบัน</value>
+    <comment>Feature description for calligraphy</comment>
+  </data>
+  <data name="CompareFontsDescription.Text" xml:space="preserve">
+    <value>ดูและเปรียบเทียบฟอนต์ทั้งหมดของคุณแบบเคียงข้างกัน</value>
+    <comment>Feature description for font comparison</comment>
+  </data>
+  <data name="DoMoreLabel.Text" xml:space="preserve">
+    <value>เครื่องมือเพิ่มเติม</value>
+    <comment>Section header in side menu for extra tools and features</comment>
+  </data>
+  <data name="FullscreenLabel.Text" xml:space="preserve">
+    <value>เต็มหน้าจอ</value>
+    <comment>Button label to enter fullscreen mode. Opposite of Restore.</comment>
+  </data>
+  <data name="OpenFolderDescription.Text" xml:space="preserve">
+    <value>เปิดไฟล์ฟอนต์ทั้งหมดที่พบในโฟลเดอร์</value>
+    <comment>Feature description for opening font folder</comment>
+  </data>
+  <data name="OpenFontDescription.Text" xml:space="preserve">
+    <value>เปิดไฟล์ TTF, OTF, OTC, TTC, WOFF, WOFF2 หรือ ZIP</value>
+    <comment>Feature description listing supported font formats</comment>
+  </data>
+  <data name="SettingsPointerOverAnimation.Description" xml:space="preserve">
+    <value>เปิดใช้งานภาพเคลื่อนไหวเด้งเล็กน้อยเมื่อเลื่อนตัวชี้เมาส์ไปเหนือปุ่มบางปุ่ม</value>
+  </data>
+  <data name="SettingsPointerOverAnimation.Title" xml:space="preserve">
+    <value>เปิดใช้งานภาพเคลื่อนไหวเมื่อชี้เมาส์</value>
+    <comment>Setting title</comment>
+  </data>
+  <data name="SettingsCustomSuggestions.Description" xml:space="preserve">
+    <value>เพิ่มและจัดการข้อความตัวอย่างที่จะแสดงในมุมมอง Type Ramp และหน้าต่างเปรียบเทียบ
+แตะค้างไว้เพื่อจัดเรียง</value>
+  </data>
+  <data name="SettingsCustomSuggestions.Title" xml:space="preserve">
+    <value>ตัวเลือกแบบกำหนดเอง</value>
+    <comment>Setting title for custom preview text suggestions</comment>
+  </data>
+  <data name="SettingsSuggestionsHeader.Text" xml:space="preserve">
+    <value>ข้อความตัวอย่างที่แนะนำ</value>
+    <comment>Settings section header for Type Ramp text suggestions</comment>
+  </data>
+  <data name="SettingsSuggestionTextBox.PlaceholderText" xml:space="preserve">
+    <value>ป้อนข้อความแนะนำของคุณที่นี่</value>
+    <comment>Placeholder text in custom suggestion text input</comment>
+  </data>
+  <data name="FontPropPanoseTitle.Text" xml:space="preserve">
+    <value>ค่า PANOSE</value>
+    <comment>PANOSE classification system values header</comment>
+  </data>
+  <data name="CharacterGroupingToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>จัดกลุ่มอักขระตามช่วง Unicode (Ctrl+G)</value>
+    <comment>Tooltip to group characters by Unicode range</comment>
+  </data>
+  <data name="PixelUnits.Text" xml:space="preserve">
+    <value>px</value>
+    <comment>Pixel unit abbreviation. Usually kept as 'px'.</comment>
+  </data>
+  <data name="SettingsCharGrouping.Description" xml:space="preserve">
+    <value>หากเปิดใช้งาน อักขระจะถูกจัดกลุ่มตามช่วง Unicode ในแผนผังอักขระ มิฉะนั้นอักขระทั้งหมดจะแสดงในรายการเดียวโดยไม่จัดกลุ่ม</value>
+  </data>
+  <data name="SettingsCharGrouping.Title" xml:space="preserve">
+    <value>การจัดกลุ่มอักขระ</value>
+    <comment>Setting title for grouping characters by Unicode range</comment>
+  </data>
+  <data name="CopyAsImageItem.Text" xml:space="preserve">
+    <value>คัดลอกเป็นรูปภาพ</value>
+    <comment>Menu item to copy character as image to clipboard</comment>
+  </data>
+  <data name="CopyAsPngItem.Text" xml:space="preserve">
+    <value>คัดลอกเป็น PNG</value>
+    <comment>Menu item to copy character as PNG image to clipboard</comment>
+  </data>
+  <data name="CopyAsSvgItem.Text" xml:space="preserve">
+    <value>คัดลอกเป็น SVG</value>
+    <comment>Menu item to copy character as SVG image to clipboard</comment>
+  </data>
+  <data name="NotificationCopiedPNG" xml:space="preserve">
+    <value>คัดลอกเป็น PNG แล้ว</value>
+    <comment>Notification message shown when PNG image is copied to clipboard</comment>
+  </data>
+  <data name="NotificationCopiedSVG" xml:space="preserve">
+    <value>คัดลอกเป็น SVG แล้ว</value>
+    <comment>Notification message shown when SVG vector is copied to clipboard</comment>
+  </data>
+  <data name="ColrV1SupportMessage.Text" xml:space="preserve">
+    <value>ฟอนต์นี้มีกลิฟ COLRv1 หากต้องการแสดงตัวอย่างด้วยการเรนเดอร์ที่ถูกต้อง ให้สลับไปยังมุมมอง Type Ramp โดยใช้ปุ่มด้านบน</value>
+    <comment>Notice explaining COLRv1 vector color font preview requires Type Ramp view</comment>
+  </data>
+  <data name="FontPropCOLRVersion.Text" xml:space="preserve">
+    <value>เวอร์ชัน COLR</value>
+    <comment>Typography: Version of OpenType COLR table (e.g. 0 or 1). Keep COLR untranslated.</comment>
+  </data>
+  <data name="FontPropColourFormats.Text" xml:space="preserve">
+    <value>รูปแบบกลิฟสี</value>
+    <comment>Typography: Color font formats supported (e.g. COLRv0, COLRv1, SVG, CBDT)</comment>
+  </data>
+  <data name="GlyphTypeBitmap" xml:space="preserve">
+    <value>บิตแมป</value>
+    <comment>Typography: Indicates glyph is stored as a raster bitmap</comment>
+  </data>
+  <data name="TypeRampFlowButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>เปลี่ยนทิศทางการอ่านข้อความ</value>
+    <comment>Toggle text reading direction (left-to-right vs right-to-left)</comment>
+  </data>
+  <data name="TxtUniCodepoint.Header" xml:space="preserve">
+    <value>จุดรหัส Unicode</value>
+    <comment>Header for Unicode codepoint value (e.g. U+0041)</comment>
+  </data>
+  <data name="TxtUTF16.Header" xml:space="preserve">
+    <value>ค่า UTF-16</value>
+    <comment>UTF-16 encoding value. Does not need translation.</comment>
+  </data>
+  <data name="EditSuggestionsItem.Text" xml:space="preserve">
+    <value>แก้ไขข้อความแนะนำ</value>
+    <comment>Menu item to edit preview text suggestions</comment>
+  </data>
+  <data name="OptionScriptHiraganaAndKatakana.Text" xml:space="preserve">
+    <value>ฮิระงะนะและคะตะกะนะ</value>
+    <comment>Font filter flyout: script/writing system option</comment>
+  </data>
+  <data name="OptionsScriptBengali.Text" xml:space="preserve">
+    <value>เบงกาลี</value>
+    <comment>Font filter flyout: script/writing system option</comment>
+  </data>
+  <data name="OptionsScriptDevanagari.Text" xml:space="preserve">
+    <value>เทวนาครี</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="BtnTextClose.Content" xml:space="preserve">
     <value>ปิด</value>
+    <comment>Button label - close dialog</comment>
+  </data>
+  <data name="EditSuggestionsLabel.Text" xml:space="preserve">
+    <value>แก้ไขข้อความแนะนำที่กำหนดเอง</value>
+    <comment>Title for dialog or pane to edit preview text suggestions</comment>
+  </data>
+  <data name="ShowSuggestionsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>แสดงข้อความแนะนำ</value>
+    <comment>Button tooltip to show Type Ramp sample text suggestions</comment>
+  </data>
+  <data name="SuggestOptionArabic.Text" xml:space="preserve">
+    <value>อาหรับ</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionBengali.Text" xml:space="preserve">
+    <value>เบงกาลี</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionBulgarian.Text" xml:space="preserve">
+    <value>บัลแกเรีย</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionChineseTraditional.Text" xml:space="preserve">
+    <value>จีน (ตัวเต็ม)</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionCultureSpecific.Text" xml:space="preserve">
+    <value>ไทย</value>
+    <comment>Name of the target language for the culture-specific pangram (e.g. Spanish, German).</comment>
+  </data>
+  <data name="SuggestOptionCustom.Text" xml:space="preserve">
+    <value>กำหนดเอง</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionCyrillicAlpha.Text" xml:space="preserve">
+    <value>อักษรซีริลลิก</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionEmoji.Text" xml:space="preserve">
+    <value>อิโมจิ</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionEnglish.Text" xml:space="preserve">
+    <value>อังกฤษ</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionGreek.Text" xml:space="preserve">
+    <value>กรีก</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionHebrew.Text" xml:space="preserve">
+    <value>ฮีบรู</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionHindi.Text" xml:space="preserve">
+    <value>ฮินดี</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionJapanese.Text" xml:space="preserve">
+    <value>ญี่ปุ่น</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionKorean.Text" xml:space="preserve">
+    <value>เกาหลี</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionLatinAlpha.Text" xml:space="preserve">
+    <value>อักษรละติน</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionLatinSymbols.Text" xml:space="preserve">
+    <value>ตัวเลขและสัญลักษณ์ละติน</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionSample.Text" xml:space="preserve">
+    <value>ข้อความตัวอย่างของฟอนต์</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionThai.Text" xml:space="preserve">
+    <value>ไทย</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionVietnamese.Text" xml:space="preserve">
+    <value>เวียดนาม</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="InstallCountLabel" xml:space="preserve">
+    <value>{0} ตระกูลฟอนต์, {1} รูปแบบฟอนต์ที่ติดตั้งในคอมพิวเตอร์ของคุณ</value>
+    <comment>{0} = count of font families, {1} = count of font faces</comment>
+  </data>
+  <data name="OptionSystemFonts.Text" xml:space="preserve">
+    <value>ฟอนต์ที่ติดตั้งแล้ว</value>
+    <comment>Font filter flyout option</comment>
+  </data>
+  <data name="SettingsExportInstalledLabel.Text" xml:space="preserve">
+    <value>ส่งออกฟอนต์ที่ติดตั้งแล้ว</value>
+  </data>
+  <data name="OptionDesignTag.Text" xml:space="preserve">
+    <value>ตามภาษาของการออกแบบ</value>
+    <comment>Font filter flyout option</comment>
+  </data>
+  <data name="HiddenGlyphsMessage.Text" xml:space="preserve">
+    <value>กลิฟไอคอนที่เลิกใช้แล้วจะถูกซ่อนไว้ตามค่าเริ่มต้น คุณสามารถแสดงได้โดยใช้ปุ่มตัวกรองด้านบน</value>
+  </data>
+  <data name="InstallDialog.Title" xml:space="preserve">
+    <value>ติดตั้งฟอนต์</value>
+    <comment>Font installation dialog title</comment>
+  </data>
+  <data name="InstallFontInstructions.Text" xml:space="preserve">
+    <value>โปรดอ่านคำแนะนำทั้งหมดก่อนดำเนินการติดตั้งฟอนต์ของคุณ:
+
+1. กด "เริ่ม" ด้านล่าง
+2. เลือก "Windows Font Viewer" แล้วเลือก "เฉพาะครั้งนี้" หรือ "เปิด"
+3. กด "ติดตั้ง" ที่ด้านบนของหน้าต่างโปรแกรมดูฟอนต์
+
+เว็บฟอนต์ของคุณจะถูกแปลงเป็นรูปแบบ OTF สำหรับการติดตั้ง</value>
+    <comment>Word in such a way that encourages the user to read all the steps before continuing</comment>
+  </data>
+  <data name="InstallLabel.Text" xml:space="preserve">
+    <value>ติดตั้ง</value>
+    <comment>Button label in font viewer window (referenced in InstallFontInstructions)</comment>
+  </data>
+  <data name="OptionUnicodeRange/Text" xml:space="preserve">
+    <value>ตามช่วง Unicode</value>
+    <comment>Font filter option to group/filter characters by Unicode range</comment>
+  </data>
+  <data name="SettingsAdvancedOptionsLabel.Text" xml:space="preserve">
+    <value>ขั้นสูง</value>
+    <comment>Settings navigation tab label</comment>
+  </data>
+  <data name="SettingsDeprecatedIconsPresenter.Description" xml:space="preserve">
+    <value>หากเปิดใช้งาน จะซ่อนไอคอนที่เลิกใช้แล้วในฟอนต์ Segoe MDL2 และ Segoe Fluent Icons ตามค่าเริ่มต้น คุณยังคงสามารถแสดงไอคอนเหล่านี้ได้จากเมนูตัวกรอง
+
+ไม่แนะนำให้อ้างอิงไอคอนที่เลิกใช้แล้วด้วยจุดรหัส Unicode เนื่องจากไอคอนที่เลิกใช้แล้วทั้งหมดมีไอคอนใหม่ทดแทน</value>
+  </data>
+  <data name="SettingsDeprecatedIconsPresenter.Title" xml:space="preserve">
+    <value>ซ่อนไอคอนที่เลิกใช้แล้ว</value>
+    <comment>Setting title for hiding deprecated MDL2 / Fluent icons</comment>
+  </data>
+  <data name="StartLabel.Text" xml:space="preserve">
+    <value>เริ่ม</value>
+    <comment>Button label to start font installation (referenced in InstallFontInstructions)</comment>
+  </data>
+  <data name="TxtUniHexValue.Text" xml:space="preserve">
+    <value>ค่าฐานสิบหก</value>
+    <comment>Hexadecimal value of character</comment>
+  </data>
+  <data name="FileExplorerFileToolTip" xml:space="preserve">
+    <value>แสดงตัวอย่างไฟล์</value>
+    <comment>Tooltip for previewing a font file in file explorer</comment>
+  </data>
+  <data name="ImportCountLabel" xml:space="preserve">
+    <value>{0} ตระกูลฟอนต์, {1} รูปแบบฟอนต์ที่นำเข้าแล้ว</value>
+    <comment>{0} = count of font families, {1} = count of font faces</comment>
+  </data>
+  <data name="SettingsFontExportVersionLabel.Text" xml:space="preserve">
+    <value>ใส่หมายเลขเวอร์ชันในชื่อไฟล์</value>
+  </data>
+  <data name="HideUnihanLabel.Text" xml:space="preserve">
+    <value>ซ่อนข้อมูล Unihan</value>
+    <comment>Button label to collapse Unihan ideograph data section</comment>
+  </data>
+  <data name="ShowUnihanLabel.Text" xml:space="preserve">
+    <value>แสดงข้อมูล Unihan</value>
+    <comment>Button label to expand Unihan ideograph data section</comment>
+  </data>
+  <data name="UnihanDefinition.Text" xml:space="preserve">
+    <value>คำจำกัดความ</value>
+    <comment>Unicode Unihan database: English definition of CJK ideograph</comment>
+  </data>
+  <data name="UnihanPronunciations.Text" xml:space="preserve">
+    <value>การออกเสียง</value>
+    <comment>Unicode Unihan database: Pronunciation readings section header</comment>
+  </data>
+  <data name="UnihanTypeDescriptionCantonese" xml:space="preserve">
+    <value>การอ่านแบบยวึดเพ็ง (กวางตุ้ง) ที่ใช้กันทั่วไปสำหรับอักษรนี้</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionHangul" xml:space="preserve">
+    <value>การออกเสียงภาษาเกาหลีสมัยใหม่ในอักษรฮันกึลสำหรับอักษรนี้ พร้อมแหล่งที่มาในวงเล็บ</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionHanyuPinlu" xml:space="preserve">
+    <value>การอ่านและความถี่ของอักษรนี้ โดยอิงส่วนหนึ่งจาก 《現代漢語頻率詞典》 &lt;Xiandai Hanyu Pinlu Cidian&gt;</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionHanyuPinyin" xml:space="preserve">
+    <value>การอ่านแบบ Hànyǔ Pīnyīn ที่ปรากฏใน 《漢語大字典》 Hànyǔ Dà Zìdiǎn (HDZ)</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionJapanese" xml:space="preserve">
+    <value>การอ่านภาษาญี่ปุ่นสำหรับอักษรนี้ในอักษรคานะ การอ่านในฮิระงะนะถือเป็นการอ่านแบบคุนโยะมิ (訓読み) และในคะตะกะนะถือเป็นการอ่านแบบอนโยะมิ (音読み)</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionJapaneseKun" xml:space="preserve">
+    <value>การออกเสียงภาษาญี่ปุ่น (คุนโยะมิ) ในระบบถอดอักษรแบบเฮปเบิร์น</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionJapaneseOn" xml:space="preserve">
+    <value>การออกเสียงภาษาญี่ปุ่นที่ยืมจากภาษาจีน (อนโยะมิ)</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionKorean" xml:space="preserve">
+    <value>การออกเสียงภาษาเกาหลีสำหรับอักษรนี้ โดยใช้ระบบการถอดอักษรแบบเยล</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionMandarin" xml:space="preserve">
+    <value>การอ่านแบบพินอินที่ใช้กันทั่วไปที่สุดสำหรับอักษรนี้</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionSMSZD2003Readings" xml:space="preserve">
+    <value>การอ่านภาษาจีนกลางและกวางตุ้งจากพจนานุกรม Soengmou San Zidin (商務新字典)</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionTang" xml:space="preserve">
+    <value>การออกเสียงสมัยราชวงศ์ถังสำหรับอักษรนี้ อิงจาก T’ang Poetic Vocabulary (Hugh M. Stimson, Yale 1976)</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionTGHZ2013" xml:space="preserve">
+    <value>การอ่านแบบ Hànyǔ Pīnyīn ตาม Tōngyòng Guīfàn Hànzì Zìdiǎn</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionVietnamese" xml:space="preserve">
+    <value>การออกเสียงอักษรนี้ในอักษรโกว๊กหงือ (Quốc ngữ)</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionXHC1983" xml:space="preserve">
+    <value>การอ่านแบบ Hànyǔ Pīnyīn ตามพจนานุกรม Xiàndài Hànyǔ Cídiǎn</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeNameCantonese" xml:space="preserve">
+    <value>กวางตุ้ง</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameHangul" xml:space="preserve">
+    <value>ฮันกึล</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameHanyuPinlu" xml:space="preserve">
+    <value>Hanyu Pinlu</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameHanyuPinyin" xml:space="preserve">
+    <value>Hànyǔ Pīnyīn</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameJapanese" xml:space="preserve">
+    <value>ญี่ปุ่น</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameJapaneseKun" xml:space="preserve">
+    <value>ญี่ปุ่น Kun</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameJapaneseOn" xml:space="preserve">
+    <value>ญี่ปุ่น On</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameKorean" xml:space="preserve">
+    <value>เกาหลี</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameMandarin" xml:space="preserve">
+    <value>จีนกลาง</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameSMSZD2003Readings" xml:space="preserve">
+    <value>SmSZ</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameTang" xml:space="preserve">
+    <value>ถัง</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameTGHZ2013" xml:space="preserve">
+    <value>Hànyǔ Pīnyīn (TGHZ)</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameVietnamese" xml:space="preserve">
+    <value>เวียดนาม</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameXHC1983" xml:space="preserve">
+    <value>Hànyǔ Pīnyīn (XHC)</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="HiddenSearchResultsLabel.Text" xml:space="preserve">
+    <value>ซ่อนอยู่</value>
+    <comment>Header for search results that are hidden by current filters</comment>
+  </data>
+  <data name="NotificationSearchSelectedCharHidden" xml:space="preserve">
+    <value>อักขระที่เลือกถูกซ่อนอยู่โดยตัวกรองที่คุณเลือก</value>
+    <comment>Notification banner when searching for a character that is excluded by current filters</comment>
+  </data>
+  <data name="SuggestOptionChineseSimplified.Text" xml:space="preserve">
+    <value>จีน (ตัวย่อ)</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="CanvasFontInformationDesignScriptLanguageTag" xml:space="preserve">
+    <value>ภาษาที่ออกแบบ</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CollectionManagementHint.Text" xml:space="preserve">
+    <value>สร้างคอลเลกชันเพื่อเปรียบเทียบ ส่งออก หรือจัดการฟอนต์หลายตัวพร้อมกัน ในการเริ่มต้น ให้เลือกคอลเลกชันที่มีอยู่ด้านบนหรือสร้างคอลเลกชันใหม่</value>
+  </data>
+  <data name="CollectionSelector.PlaceholderText" xml:space="preserve">
+    <value>เลือกที่มีอยู่</value>
+    <comment>Placeholder text in dropdown to pick an existing collection</comment>
+  </data>
+  <data name="FindCharButton.Text" xml:space="preserve">
+    <value>ค้นหาในฟอนต์อื่น</value>
+    <comment>Context menu action to search for current character in other installed fonts</comment>
+  </data>
+  <data name="FontFamilyFilterInput.PlaceholderText" xml:space="preserve">
+    <value>กรองตามตระกูลฟอนต์</value>
+    <comment>Placeholder text in font family filter search box</comment>
+  </data>
+  <data name="SettingsRememberFilter.Description" xml:space="preserve">
+    <value>หากเปิดใช้งาน แอปจะจดจำคอลเลกชันหรือตัวกรองที่เลือกล่าสุดและกู้คืนเมื่อเริ่มแอปใหม่
+
+มิฉะนั้น จะเลือก "ฟอนต์ทั้งหมด" ตามค่าเริ่มต้นในทุกครั้งที่เปิดใช้งาน</value>
+  </data>
+  <data name="SettingsRememberFilter.Title" xml:space="preserve">
+    <value>จดจำตัวกรองรายการฟอนต์ที่เลือกระหว่างเซสชัน</value>
+    <comment>Setting title</comment>
+  </data>
+  <data name="GlyphNameToggleHeader.Text" xml:space="preserve">
+    <value>เทมเพลตชื่อไฟล์</value>
+    <comment>Settings section header for exported glyph file naming template</comment>
+  </data>
+  <data name="GlyphNameToggleLabel.Text" xml:space="preserve">
+    <value>แสดงส่วนประกอบของเทมเพลต</value>
+    <comment>Toggle button label to show naming template tokens</comment>
+  </data>
+  <data name="FileNameWriterCharDescDesc" xml:space="preserve">
+    <value>คำอธิบาย Unicode ของกลิฟ หรือสตริงข้อความหากไม่มี</value>
+    <comment>Description of file naming template variable</comment>
+  </data>
+  <data name="FileNameWriterExtensionDesc" xml:space="preserve">
+    <value>นามสกุลไฟล์</value>
+    <comment>Description of file naming template variable</comment>
+  </data>
+  <data name="FileNameWriterFaceDesc" xml:space="preserve">
+    <value>ชื่อรูปแบบฟอนต์ปัจจุบัน</value>
+    <comment>Description of file naming template variable</comment>
+  </data>
+  <data name="FileNameWriterFamilyDesc" xml:space="preserve">
+    <value>ชื่อตระกูลฟอนต์</value>
+    <comment>Description of file naming template variable</comment>
+  </data>
+  <data name="FileNameWriterPixelSizeDesc" xml:space="preserve">
+    <value>ขนาดเป็นพิกเซล</value>
+    <comment>Description of file naming template variable</comment>
+  </data>
+  <data name="FileNameWriterStringFormat" xml:space="preserve">
+    <value>{0}, เช่น {1}</value>
+    <comment>{0} = token description, {1} = example filename output</comment>
+  </data>
+  <data name="FileNameWriterUnicodeCPDesc" xml:space="preserve">
+    <value>ดัชนีหรือค่าจุดรหัส Unicode</value>
+    <comment>Description of file naming template variable</comment>
+  </data>
+  <data name="FileNameWriterUnicodeHexDesc" xml:space="preserve">
+    <value>ค่าฐานสิบหกของ Unicode</value>
+    <comment>Description of file naming template variable</comment>
+  </data>
+  <data name="FileNameWriterXamlGlyphDesc" xml:space="preserve">
+    <value>รหัสกลิฟ XAML</value>
+    <comment>Description of file naming template variable</comment>
+  </data>
+  <data name="SettingsGlyphNaming.Description" xml:space="preserve">
+    <value>เลือกรูปแบบการตั้งชื่อไฟล์อักขระที่ส่งออก</value>
+  </data>
+  <data name="SettingsGlyphNaming.Title" xml:space="preserve">
+    <value>การตั้งชื่อการส่งออกกลิฟ</value>
+    <comment>Setting title for exported glyph file naming format</comment>
+  </data>
+  <data name="ExampleFormat" xml:space="preserve">
+    <value>เช่น {0}</value>
+    <comment>{0} = example filename or string</comment>
+  </data>
+  <data name="FileNameWriterFontVerDesc" xml:space="preserve">
+    <value>หมายเลขเวอร์ชันของฟอนต์ (ถ้ามี)</value>
+    <comment>Description of file naming template variable</comment>
+  </data>
+  <data name="CanvasFontInformationCopyrightNotice" xml:space="preserve">
+    <value>ประกาศลิขสิทธิ์</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationDescription" xml:space="preserve">
+    <value>คำอธิบาย</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationDesigner" xml:space="preserve">
+    <value>ผู้ออกแบบ</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationDesignerUrl" xml:space="preserve">
+    <value>URL ของผู้ออกแบบ</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationFontVendorUrl" xml:space="preserve">
+    <value>URL ของผู้จัดจำหน่ายฟอนต์</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationFullName" xml:space="preserve">
+    <value>ชื่อเต็ม</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationLicenseDescription" xml:space="preserve">
+    <value>ใบอนุญาต</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationLicenseInfoUrl" xml:space="preserve">
+    <value>URL ของใบอนุญาต</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationManufacturer" xml:space="preserve">
+    <value>ผู้ผลิต</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationTrademark" xml:space="preserve">
+    <value>เครื่องหมายการค้า</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationVersionStrings" xml:space="preserve">
+    <value>สตริงเวอร์ชัน</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="RestoreLabel.Text" xml:space="preserve">
+    <value>คืนค่าขนาด</value>
+    <comment>Opposite of Fullscreen</comment>
+  </data>
+  <data name="CreateSmartCollectionCheck.Content" xml:space="preserve">
+    <value>สร้างเป็นคอลเลกชันอัจฉริยะ</value>
+    <comment>Checkbox to save search criteria as a dynamic Smart Collection</comment>
+  </data>
+  <data name="CreateSmartCollectionHint.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ดูเอกสารออนไลน์สำหรับคอลเลกชันอัจฉริยะ</value>
+    <comment>Link to online documentation for Smart Collections</comment>
+  </data>
+  <data name="CharacterFilter" xml:space="preserve">
+    <value>อักขระ:</value>
+    <comment>Command used for character searches. Should be short.</comment>
+  </data>
+  <data name="DesignerFilter" xml:space="preserve">
+    <value>ผู้ออกแบบ:</value>
+    <comment>Command used for designer searches. Should be short.</comment>
+  </data>
+  <data name="FilePathFilter" xml:space="preserve">
+    <value>เส้นทางไฟล์:</value>
+    <comment>Command used for file path searches. Should be short.</comment>
+  </data>
+  <data name="FoundryFilter" xml:space="preserve">
+    <value>โรงหล่อ:</value>
+    <comment>Command used for foundry searches. Should be short.</comment>
+  </data>
+  <data name="SmartCollectionDesignerFilter.Text" xml:space="preserve">
+    <value>ตัวกรองผู้ออกแบบ</value>
+    <comment>Filter criterion label in Smart Collections</comment>
+  </data>
+  <data name="SmartCollectionFilePathFilter.Text" xml:space="preserve">
+    <value>ตัวกรองเส้นทางไฟล์</value>
+    <comment>Filter criterion label in Smart Collections</comment>
+  </data>
+  <data name="SmartCollectionFoundryFilter.Text" xml:space="preserve">
+    <value>ตัวกรองโรงหล่อ</value>
+    <comment>Filter criterion label in Smart Collections</comment>
+  </data>
+  <data name="SmartCollectionCharacterFilter.Text" xml:space="preserve">
+    <value>ตัวกรองอักขระ</value>
+    <comment>Filter criterion label in Smart Collections</comment>
+  </data>
+  <data name="DigEditCollection.PrimaryButtonText" xml:space="preserve">
+    <value>แก้ไข</value>
+    <comment>Dialog confirmation button to save edited collection</comment>
+  </data>
+  <data name="DigEditCollection.Title" xml:space="preserve">
+    <value>แก้ไขคอลเลกชัน</value>
+    <comment>Dialog title for editing an existing collection</comment>
+  </data>
+  <data name="EditCollectionButton.Label" xml:space="preserve">
+    <value>แก้ไข</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="EditCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>แก้ไขคอลเลกชัน</value>
+    <comment>Button tooltip to edit collection</comment>
+  </data>
+  <data name="BtnHelpAndTips.Content" xml:space="preserve">
+    <value>วิธีใช้และคำแนะนำ</value>
+    <comment>Button label - open documentation and tips</comment>
+  </data>
+  <data name="SmartCollectionEditHint.Text" xml:space="preserve">
+    <value>หากต้องการแก้ไขคอลเลกชันอัจฉริยะ ให้ใช้ปุ่มแก้ไขด้านบน</value>
   </data>
   <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
     <value>เลือกโฟลเดอร์r</value>
+    <comment>Button to open folder picker in Open Folder dialog</comment>
+  </data>
+  <data name="ChangeSortToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>เปลี่ยนการจัดเรียง</value>
+    <comment>Toggle between ascending and descending sort order</comment>
+  </data>
+  <data name="SortedByRangeLabel.Text" xml:space="preserve">
+    <value>จัดเรียงตามช่วง</value>
+    <comment>Status label indicating character grid is sorted by Unicode range</comment>
+  </data>
+  <data name="RefreshResultsLabel.Text" xml:space="preserve">
+    <value>รีเฟรชผลลัพธ์</value>
+    <comment>Button label to re-run smart collection search filter</comment>
+  </data>
+  <data name="ResultsCountLabel" xml:space="preserve">
+    <value>{0} ผลลัพธ์</value>
+    <comment>{0} = number of search results</comment>
+  </data>
+  <data name="SortedByNameLabel.Text" xml:space="preserve">
+    <value>จัดเรียงตามชื่อ</value>
+    <comment>Status label indicating character grid is sorted alphabetically by name</comment>
+  </data>
+  <data name="SettingsFontListToolTip.Description" xml:space="preserve">
+    <value>ข้อความเริ่มต้นที่ใช้ในคำแนะนำเครื่องมือที่แสดงขณะวางเมาส์เหนือรายการฟอนต์หรือแท็บ</value>
+  </data>
+  <data name="SettingsFontListToolTip.Title" xml:space="preserve">
+    <value>คำแนะนำเครื่องมือแสดงตัวอย่างรายการฟอนต์</value>
+    <comment>Setting title for font list tooltip preview text</comment>
+  </data>
+  <data name="CalligraphyPenInkToolbarButtonToolTip" xml:space="preserve">
+    <value>ปากกาเขียนอักษรวิจิตร</value>
+    <comment>Calligraphy pen tool selection button</comment>
+  </data>
+  <data name="SettingsSimulatedFontFaces.Title" xml:space="preserve">
+    <value>ซ่อนรูปแบบฟอนต์จำลอง</value>
+    <comment>Setting title for hiding synthetic bold/oblique faces</comment>
+  </data>
+  <data name="SettingsSimulatedFontFaces.Description" xml:space="preserve">
+    <value>หากเปิดใช้งาน รูปแบบฟอนต์จำลองที่ Windows สร้างขึ้นโดยอัตโนมัติจะไม่แสดงในตัวเลือกรูปแบบฟอนต์
+
+รูปแบบฟอนต์จำลองมักเป็นรูปแบบตัวหนาและตัวเอียงสำหรับฟอนต์ที่ไม่มีรูปแบบเฉพาะของตนเอง
+
+ต้องรีสตาร์ทแอปเพื่อให้มีผล</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value>หากเปิดใช้งาน รูปแบบฟอนต์จำลองที่ Windows สร้างขึ้นโดยอัตโนมัติจะไม่แสดงในตัวเลือกรูปแบบฟอนต์ รูปแบบฟอนต์จำลองมักเป็นรูปแบบตัวหนาและตัวเอียงสำหรับฟอนต์ที่ไม่มีรูปแบบเฉพาะของตนเอง</value>
+    <comment>Deprecated or duplicate of SettingsSimulatedFontFaces.Description.</comment>
+  </data>
+  <data name="FontPropSimulated.Text" xml:space="preserve">
+    <value>รูปแบบจำลอง</value>
+    <comment>Typography: Whether face is synthetically generated by Windows</comment>
+  </data>
+  <data name="SimulatedHeader" xml:space="preserve">
+    <value>จำลอง</value>
+    <comment>Simulated font faces descriptor</comment>
+  </data>
+  <data name="FontListSizeNormal" xml:space="preserve">
+    <value>ปกติ</value>
+    <comment>Setting option: standard font size in font list</comment>
+  </data>
+  <data name="FontListSizeLarge" xml:space="preserve">
+    <value>ใหญ่</value>
+    <comment>Setting option: large font size in font list</comment>
+  </data>
+  <data name="FontListSizeLarger" xml:space="preserve">
+    <value>ใหญ่กว่า</value>
+    <comment>Setting option: extra large font size in font list</comment>
+  </data>
+  <data name="CanvasFontInformationSupportedScriptLanguageTag" xml:space="preserve">
+    <value>ภาษาที่รองรับ</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationEmbeddingRights" xml:space="preserve">
+    <value>สิทธิ์ในการฝัง</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="EmbeddingTypeInstallable" xml:space="preserve">
+    <value>การฝังแบบติดตั้งได้: ฟอนต์อาจถูกฝังและติดตั้งอย่างถาวรสำหรับใช้งานบนระบบระยะไกล</value>
+    <comment>Font embedding licensing permission description</comment>
+  </data>
+  <data name="EmbeddingTypeRestricted" xml:space="preserve">
+    <value>การฝังแบบจำกัดสิทธิ์: ห้ามดัดแปลง ฝัง หรือแลกเปลี่ยนฟอนต์โดยไม่ได้รับอนุญาต</value>
+    <comment>Font embedding licensing permission description</comment>
+  </data>
+  <data name="EmbeddingTypePreviewPrint" xml:space="preserve">
+    <value>การฝังสำหรับแสดงตัวอย่างและพิมพ์: ฟอนต์อาจถูกฝังและโหลดชั่วคราวบนระบบอื่นเพื่อดูหรือพิมพ์เอกสาร (อ่านอย่างเดียว)</value>
+    <comment>Font embedding licensing permission description</comment>
+  </data>
+  <data name="EmbeddingTypeEditable" xml:space="preserve">
+    <value>การฝังแบบแก้ไขได้: ฟอนต์อาจถูกฝังและโหลดชั่วคราวบนระบบอื่นเพื่อให้แก้ไขและจัดรูปแบบข้อความได้ พร้อมบันทึกการเปลี่ยนแปลง</value>
+    <comment>Font embedding licensing permission description</comment>
+  </data>
+  <data name="EmbeddingTypeNoSubsetting" xml:space="preserve">
+    <value>ไม่อนุญาตให้แยกส่วนย่อย: ห้ามแยกส่วนย่อยของฟอนต์ก่อนการฝัง</value>
+    <comment>Font embedding licensing permission description</comment>
+  </data>
+  <data name="EmbeddingTypeBitmapOnly" xml:space="preserve">
+    <value>การฝังเฉพาะบิตแมป: สามารถฝังได้เฉพาะบิตแมปที่อยู่ในฟอนต์เท่านั้น ห้ามฝังข้อมูลเวกเตอร์</value>
+    <comment>Font embedding licensing permission description</comment>
+  </data>
+  <data name="FilterEmbeddingInstallable.Text" xml:space="preserve">
+    <value>ติดตั้งได้</value>
+    <comment>Font embedding rights filter option</comment>
+  </data>
+  <data name="FilterEmbeddingEditable.Text" xml:space="preserve">
+    <value>แก้ไขได้</value>
+    <comment>Font embedding rights filter option</comment>
+  </data>
+  <data name="FilterEmbeddingPreviewPrint.Text" xml:space="preserve">
+    <value>แสดงตัวอย่างและพิมพ์</value>
+    <comment>Font embedding rights filter option</comment>
+  </data>
+  <data name="FilterEmbeddingRestricted.Text" xml:space="preserve">
+    <value>จำกัดสิทธิ์</value>
+    <comment>Font embedding rights filter option</comment>
+  </data>
+  <data name="FilterEmbeddingBitmap.Text" xml:space="preserve">
+    <value>เฉพาะบิตแมป</value>
+    <comment>Font embedding rights filter option</comment>
+  </data>
+  <data name="All.Text" xml:space="preserve">
+    <value>ทั้งหมด</value>
+    <comment>Filter option to show all items</comment>
+  </data>
+  <data name="UnihanTypeDescriptionZhuang" xml:space="preserve">
+    <value>การอ่านภาษาจ้วงที่ใช้กันทั่วไปสำหรับอักษรนี้ การอ่านที่ไม่ใช่ศัพท์มาตรฐานจะตามด้วยเครื่องหมายดอกจัน</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnicodeTypeNameZhuang" xml:space="preserve">
+    <value>จ้วง</value>
+    <comment>Name of the Zhuang script/language</comment>
+  </data>
+  <data name="UnihanTypeDescriptionFanqie" xml:space="preserve">
+    <value>วิธีฟ่านเชี่ยที่ใช้ในพจนานุกรมจีนโบราณเพื่อระบุการอ่านอักษรโดยใช้คู่ของตัวอักษร</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeNameFanqie" xml:space="preserve">
+    <value>ฟ่านเชี่ย</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="SubsetterTitleBETA.Title" xml:space="preserve">
+    <value>Segoe Icons Subsetter (BETA)</value>
+    <comment>Tool name for creating custom subset font files</comment>
+  </data>
+  <data name="SubsetterTitleBETA.Description" xml:space="preserve">
+    <value>สร้างชุดฟอนต์ย่อยแบบกำหนดเองจากฟอนต์ไอคอน Segoe</value>
+  </data>
+  <data name="OutputPropertiesLabel.Text" xml:space="preserve">
+    <value>คุณสมบัติผลลัพธ์</value>
+    <comment>Section header for generated subset font file properties</comment>
+  </data>
+  <data name="FontVersion" xml:space="preserve">
+    <value>เวอร์ชันฟอนต์</value>
+    <comment>Label for font version metadata field</comment>
+  </data>
+  <data name="FontFamilyName" xml:space="preserve">
+    <value>ชื่อตระกูลฟอนต์</value>
+    <comment>Label for font family name metadata field</comment>
+  </data>
+  <data name="SubSetterClashWarningDescription.Text" xml:space="preserve">
+    <value>คำเตือน: ฟอนต์นี้มีดัชนีที่ขัดแย้งกันหลายรายการ โปรดลบอักขระที่ขัดแย้งกันออก</value>
+    <comment>Warning in Segoe Icons Subsetter when characters share the same glyph index</comment>
+  </data>
+  <data name="SubSetterChosenGlyphsHeader.Text" xml:space="preserve">
+    <value>อักขระที่เลือก</value>
+    <comment>Header for selected characters list in Subsetter</comment>
+  </data>
+  <data name="SubSetterChosenGlyphsLabel" xml:space="preserve">
+    <value>เลือกแล้ว {0} รายการ</value>
+    <comment>{0} = number of selected characters</comment>
+  </data>
+  <data name="SubsetSuccessMessage" xml:space="preserve">
+    <value>สร้างชุดฟอนต์ย่อยสำเร็จแล้ว</value>
+    <comment>Notification message shown after successfully generating a font subset</comment>
+  </data>
+  <data name="SettingsSubsetterBETA.Title" xml:space="preserve">
+    <value>เปิดใช้งาน Segoe Icon Subsetter (BETA)</value>
+    <comment>Setting title for icon subsetter feature</comment>
+  </data>
+  <data name="SettingsSubsetterBETA.Description" xml:space="preserve">
+    <value>หากเปิดใช้งาน จะอนุญาตให้ใช้ Segoe Icon Subsetter ได้จากเมนูหลักของแอป</value>
+  </data>
+  <data name="AddSVGHint.Text" xml:space="preserve">
+    <value>เพิ่ม SVG</value>
+    <comment>Button/hint to import an SVG glyph into subset font</comment>
+  </data>
+  <data name="CharacterMapDescription.Title" xml:space="preserve">
+    <value>แผนผังอักขระ</value>
+    <comment>Main view showing characters mapped to Unicode code points</comment>
+  </data>
+  <data name="CharacterMapDescription.Description" xml:space="preserve">
+    <value>ดูอักขระที่สามารถเข้าถึงได้ในรูปแบบฟอนต์ อักขระเหล่านี้สามารถใช้ได้ในแอปส่วนใหญ่</value>
+  </data>
+  <data name="GlyphMapDescription.Title" xml:space="preserve">
+    <value>แผนผังกลิฟ</value>
+    <comment>View showing internal font glyphs by index rather than character code</comment>
+  </data>
+  <data name="GlyphMapDescription.Description" xml:space="preserve">
+    <value>ดูกลิฟภายในที่รูปแบบฟอนต์ใช้เพื่อสร้างอักขระ โดยทั่วไปไม่สามารถเข้าถึงได้โดยตรงในแอปอื่น</value>
+  </data>
+  <data name="TypeRampDescription.Title" xml:space="preserve">
+    <value>Type Ramp</value>
+    <comment>Typography: Preview of text at progressively increasing font sizes</comment>
+  </data>
+  <data name="TypeRampDescription.Description" xml:space="preserve">
+    <value>แสดงตัวอย่างฟอนต์ในขนาดต่างๆ และสำรวจแกนฟอนต์แบบปรับเปลี่ยนได้ (Variable Font)</value>
+  </data>
+  <data name="FaceSelectorDescription.Title" xml:space="preserve">
+    <value>รูปแบบฟอนต์ที่ใช้งานอยู่</value>
+    <comment>Font face selection header</comment>
+  </data>
+  <data name="FaceSelectorDescription.Description" xml:space="preserve">
+    <value>รูปแบบฟอนต์ภายในตระกูลเดียวกันอาจมีอักขระที่พร้อมใช้งานต่างกัน
+
+สำหรับตระกูลฟอนต์ที่ไม่มีรูปแบบตัวหนาหรือตัวเอียง Windows จะจัดเตรียมเวอร์ชันจำลองให้</value>
+  </data>
+  <data name="FaceMetadataDescription.Description" xml:space="preserve">
+    <value>ดูข้อมูลเมทาดาตาทั่วไปสำหรับรูปแบบฟอนต์นี้</value>
+  </data>
+  <data name="FaceOpenTypeFeaturesDescription.Description" xml:space="preserve">
+    <value>สลับเปิด/ปิดคุณลักษณะฟอนต์ OpenType และกลิฟสี</value>
+  </data>
+  <data name="CharacterFilterDescription.Description" xml:space="preserve">
+    <value>กรองอักขระที่แสดงตามหมวดหมู่ Unicode</value>
+  </data>
+  <data name="GlyphsCount" xml:space="preserve">
+    <value>{0} กลิฟ</value>
+    <comment>{0} = count of glyphs in font face</comment>
+  </data>
+  <data name="SimulatedFacesGlyphsMessage.Content" xml:space="preserve">
+    <value>รูปแบบฟอนต์จำลองจะแสดงเฉพาะกลิฟจากรูปแบบดั้งเดิมที่ไม่ใช่การจำลองเท่านั้น</value>
+    <comment>Warning banner in glyph map view for simulated font faces</comment>
+  </data>
+  <data name="OptionOutlineTypes.Text" xml:space="preserve">
+    <value>ประเภทเค้าร่าง</value>
+    <comment>Font filter flyout option</comment>
+  </data>
+  <data name="FilterColorBitmap.Text" xml:space="preserve">
+    <value>บิตแมปสี</value>
+    <comment>Font filter option for color bitmap fonts (e.g. CBDT, sbix)</comment>
+  </data>
+  <data name="FilterLegacyBitmap.Text" xml:space="preserve">
+    <value>บิตแมปแบบดั้งเดิม</value>
+    <comment>Font filter option for legacy non-color bitmap fonts</comment>
+  </data>
+  <data name="OutlineFilter" xml:space="preserve">
+    <value>เค้าร่าง:</value>
+    <comment>Command used for font outline type searches. Should be short.</comment>
+  </data>
+  <data name="SmartCollectionOutlineFilter.Text" xml:space="preserve">
+    <value>ตัวกรองเค้าร่าง</value>
+    <comment>Label for outline type filter in Smart Collections dialog</comment>
+  </data>
+  <data name="SupportedValuesHint" xml:space="preserve">
+    <value>ค่าที่รองรับ: {0}</value>
+    <comment>{0} = comma-separated list of supported outline types</comment>
+  </data>
+  <data name="ClassNameInput.Header" xml:space="preserve">
+    <value>ชื่อคลาส</value>
+    <comment>Input field header for generating a C# helper class</comment>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>โค้ด</value>
+    <comment>Tab header for generated C# code preview</comment>
+  </data>
+  <data name="PlusMore" xml:space="preserve">
+    <value>+ อีก {0} รายการ</value>
+    <comment>{0} = count of remaining items</comment>
+  </data>
+  <data name="OnlineDocumentationHint.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ดูเอกสารออนไลน์</value>
+    <comment>Link to online documentation</comment>
+  </data>
+  <data name="SettingsCopyTypographicVariantsAsMappedCharacters.Description" xml:space="preserve">
+    <value>หากเปิดใช้งาน หากฟอนต์มีกลิฟตัวแปรทางการพิมพ์ที่แมปเป็นอักขระ Unicode ระบบจะคัดลอกตัวแปรดังกล่าวเป็นอักขระ Unicode ที่แมปไว้
+
+การดำเนินการนี้อาจส่งผลต่อการแมปกลิฟเมื่อเปลี่ยนฟอนต์หรือตรวจการสะกด แต่เป็นวิธีเดียวที่สามารถคัดลอกตัวแปรทางการพิมพ์ระหว่างแอปพลิเคชันได้สำเร็จ</value>
+  </data>
+  <data name="SettingsCopyTypographicVariantsAsMappedCharacters.Title" xml:space="preserve">
+    <value>คัดลอกตัวแปรทางการพิมพ์เป็นอักขระ Unicode ที่แมปไว้</value>
+    <comment>Setting title</comment>
+  </data>
+  <data name="TxtGlyphHeader" xml:space="preserve">
+    <value>กลิฟ:</value>
+    <comment>Label for glyph identifier</comment>
+  </data>
+  <data name="TxtGlyphsHeader" xml:space="preserve">
+    <value>กลิฟ:</value>
+    <comment>Label for glyph identifiers list</comment>
+  </data>
+  <data name="TxtGlyphIndex.Header" xml:space="preserve">
+    <value>ดัชนีกลิฟ</value>
+    <comment>Typography: Internal font glyph index</comment>
+  </data>
+  <data name="NoLigaturesMessage" xml:space="preserve">
+    <value>ฟอนต์นี้ไม่มีอักษรควบ (Ligature) แบบ OpenType</value>
+    <comment>Message shown in ligature view when font has no OpenType ligatures</comment>
+  </data>
+  <data name="LigaturesSummaryString" xml:space="preserve">
+    <value>มี {0} อักษรควบใน {1} คุณลักษณะ OpenType</value>
+    <comment>{0} = total ligatures count, {1} = number of OpenType features</comment>
+  </data>
+  <data name="CopySequenceMessage" xml:space="preserve">
+    <value>คัดลอกลำดับข้อความ</value>
+    <comment>Tooltip or message for copying the sequence of selected characters</comment>
+  </data>
+  <data name="ViewInGlyphMapMessage" xml:space="preserve">
+    <value>ดู {0} ในแผนผังกลิฟ</value>
+    <comment>{0} = glyph name or index</comment>
+  </data>
+  <data name="LigatureMapDescription.Title" xml:space="preserve">
+    <value>แผนผังอักษรควบ</value>
+    <comment>Typography: Combinations where multiple characters form a single glyph</comment>
+  </data>
+  <data name="LigatureMapDescription.Description" xml:space="preserve">
+    <value>ดูชุดอักษรควบที่รูปแบบฟอนต์รองรับและองค์ประกอบของอักษรควบเหล่านั้น</value>
+  </data>
+  <data name="GlyphsSummary.Text" xml:space="preserve">
+    <value>ประกอบด้วย {0} กลิฟ ที่แมปกับ {1} อักขระ</value>
+    <comment>{0} = glyph count, {1} = character count</comment>
+  </data>
+  <data name="FaceVariationsDescription.Title" xml:space="preserve">
+    <value>แกนฟอนต์แบบปรับเปลี่ยนได้</value>
+    <comment>Typography: OpenType Variable Font design axes (e.g. weight, width, slant)</comment>
+  </data>
+  <data name="FaceVariationsDescription.Description" xml:space="preserve">
+    <value>ปรับแกนฟอนต์แบบปรับเปลี่ยนได้ (OpenType Font Variation) สำหรับรูปแบบฟอนต์
+
+ไม่สามารถคัดลอกตัวแปรเป็นข้อความได้ แต่สามารถส่งออกเป็นไฟล์ PNG หรือ SVG ได้</value>
+  </data>
+  <data name="AllColorTitle.Text" xml:space="preserve">
+    <value>ฟอนต์สีทั้งหมด</value>
+    <comment>Filter title to show all color fonts</comment>
+  </data>
+  <data name="HiddenAxisHintLabel" xml:space="preserve">
+    <value>แกนที่ซ่อนอยู่: ไม่ได้มีไว้สำหรับการควบคุมโดยผู้ใช้ทั่วไป</value>
+    <comment>Variable font design axis marked as hidden in font metadata</comment>
+  </data>
+  <data name="ExportImageLabel.Text" xml:space="preserve">
+    <value>บันทึกเป็นรูปภาพ</value>
+    <comment>Context menu item to save glyph as image file</comment>
   </data>
 </root>
