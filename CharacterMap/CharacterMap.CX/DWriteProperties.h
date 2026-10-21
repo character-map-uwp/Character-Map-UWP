@@ -38,13 +38,13 @@ namespace CharacterMapCX
 
 		property FontStretch Stretch { FontStretch get() { return m_stretch; } }
 
-		property bool IsColorFont		{ bool get() { EnsureFontFacePropertiesLoaded(); return m_isColorFont; } }
-		property bool HasCFFOutlines	{ bool get() { EnsureFontFacePropertiesLoaded(); return m_hasCFF; } }
-		property bool HasTTFOutlines	{ bool get() { EnsureFontFacePropertiesLoaded(); return m_hasTTF; } }
-		property bool HasSVGOutlines	{ bool get() { EnsureFontFacePropertiesLoaded(); return m_hasSVG; } }
+		property bool IsColorFont				{ bool get() { EnsureFontFacePropertiesLoaded(); return m_isColorFont; } }
+		property bool HasCFFOutlines			{ bool get() { EnsureFontFacePropertiesLoaded(); return m_hasCFF; } }
+		property bool HasTTFOutlines			{ bool get() { EnsureFontFacePropertiesLoaded(); return m_hasTTF; } }
+		property bool HasSVGOutlines			{ bool get() { EnsureFontFacePropertiesLoaded(); return m_hasSVG; } }
+		property bool HasBrokenItalics			{ bool get() { EnsureFontFacePropertiesLoaded(); return m_hasBrokenItalics; } }
 		property bool HasColorBitmapOutlines	{ bool get() { EnsureFontFacePropertiesLoaded(); return m_hasColorBitmap; } }
 		property bool HasMonoBitmapOutlines		{ bool get() { EnsureFontFacePropertiesLoaded(); return m_hasMonoBitmap; } }
-
 
 		/// <summary>
 		/// If true, font is from a remote provider
@@ -145,16 +145,16 @@ namespace CharacterMapCX
 			p->m_simulations = sim;
 			p->m_isSimulated = sim != Windows::UI::Xaml::Media::StyleSimulations::None;
 
-			if (sim == Windows::UI::Xaml::Media::StyleSimulations::ItalicSimulation ||
+			/*if (sim == Windows::UI::Xaml::Media::StyleSimulations::ItalicSimulation ||
 				sim == Windows::UI::Xaml::Media::StyleSimulations::BoldItalicSimulation)
 			{
-				p->m_style = Windows::UI::Text::FontStyle::Italic;
+				p->m_style = Windows::UI::Text::FontStyle::;
 			}
 			if (sim == Windows::UI::Xaml::Media::StyleSimulations::BoldSimulation ||
 				sim == Windows::UI::Xaml::Media::StyleSimulations::BoldItalicSimulation)
 			{
 				p->m_weight = Windows::UI::Text::FontWeight{ (std::max)(m_weight.Weight, static_cast<uint16_t>(700)) };
-			}
+			}*/
 
 			p->m_loadedVariations = m_loadedVariations;
 			p->m_loadedRemote = m_loadedRemote;
@@ -267,6 +267,34 @@ namespace CharacterMapCX
 						fontFace->ReleaseFontTable(ctx);
 					}
 				}
+
+				// Certain italic faces (particularly UPC faces) report their italic angle as 0,
+				// which causes the XAML text renderer to apply the oblique shear matrix to force
+				// it be italic, because it thinks it isn't.
+				// We detect this here
+				if (SUCCEEDED(fontFace->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('p', 'o', 's', 't'), &data, &size, &ctx, &exists)) && exists)
+				{
+					if (size >= 8)
+					{
+						// italicAngle is a 16.16 fixed point number at offset 4 (Big-Endian)
+						int32_t rawAngle = _byteswap_ulong(*(const int32_t*)((const char*)data + 4));
+						float angle = rawAngle / 65536.0f;
+						auto m_italicAngle = angle;
+
+						// 1. Real face claims Italic/Oblique but angle is 0.0° -> XAML double-slants (e.g. EucrosiaUPC)
+						bool brokenRealItalic = !m_isSimulated
+							&& (m_style != Windows::UI::Text::FontStyle::Normal)
+							&& (angle == 0.0f);
+
+						// 2. Simulated face has Italic/Oblique simulation but angle != 0.0° -> XAML skips shear (e.g. LG Smart)
+						bool brokenSimulatedItalic = m_isSimulated
+							&& ((m_simulations == Windows::UI::Xaml::Media::StyleSimulations::ItalicSimulation) ||
+								(m_simulations == Windows::UI::Xaml::Media::StyleSimulations::BoldItalicSimulation))
+							&& (angle != 0.0f);
+						m_hasBrokenItalics = brokenRealItalic || brokenSimulatedItalic;
+					}
+					fontFace->ReleaseFontTable(ctx);
+				}
 			}
 		}
 
@@ -292,6 +320,7 @@ namespace CharacterMapCX
 		bool m_hasSVG    = false;
 		bool m_hasColorBitmap = false;
 		bool m_hasMonoBitmap = false;
+		bool m_hasBrokenItalics = false;
     
 	};
 }

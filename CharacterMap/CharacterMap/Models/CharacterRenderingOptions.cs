@@ -16,7 +16,6 @@ public record CharacterRenderingOptions
     public IReadOnlyList<TypographyFeatureInfo> Typography { get; init; }
     public DWriteColorRenderOption ColorRenderOption { get; init; } = DWriteColorRenderOption.Default;
     public IReadOnlyList<DWriteFontAxis> Axis { get; init; }
-    public bool IsVariation { get; }
 
     public bool IsColorRenderingEnabled => ColorRenderOption != DWriteColorRenderOption.Monochrome;
 
@@ -32,9 +31,10 @@ public record CharacterRenderingOptions
     public DWriteTypographyCollection TypographyCollection => field ??= new(DXTypography.Feature);
 
     /// <summary>
-    /// If set to true, XAML rendering cannot properly display all variations of this rendering
+    /// If set to true, XAML TextBlock is not suitable to render this.
+    /// DirectText, FontGlyphs or similar native DWrite renderer should be used.
     /// </summary>
-    public bool RequiresNativeRender { get; }
+    public bool RequiresNativeRender => Face.PreferNativeRender;
 
     public static CharacterRenderingOptions CreateDefault(CMFontFamily font)
     {
@@ -68,9 +68,6 @@ public record CharacterRenderingOptions
         DXTypography = typography.FirstOrDefault();
 
         Axis = axis?.Copy() ?? _emptyAxis;
-
-        //IsVariation = Axis != null && Axis.Where(a => a.Value != a.DefaultValue).ToList() is List<DWriteFontAxis> a && a.Count > 0;
-        RequiresNativeRender = Face.DirectWriteProperties.HasVariations || Face.SupportsCOLRv1Rendering;
     }
 
 
