@@ -116,7 +116,7 @@ public class FontSubsetter
         //   - space
         uint[] required = [32, 13, 0];
         List<CMFontFace> faces = null;
-        CMFontFace fallbackFace = FontFinder.DefaultFont.DefaultVariant;
+        CMFontFace fallbackFace = FontFinder.DefaultFont.DefaultFace;
         foreach (var r in required)
         {
             if (!characters.Any(c => c.Character.UnicodeIndex == r))
@@ -167,8 +167,8 @@ public class FontSubsetter
         ushort unitsPerEm = templateFont.Face.DesignUnitsPerEm;
 
         // 4.1. Remove the fallback now so it's metadata doesn't get merged in
-        faces.Remove(FontFinder.DefaultFont.DefaultVariant);
-        uniqueFonts.Remove(FontFinder.DefaultFont.DefaultVariant);
+        faces.Remove(FontFinder.DefaultFont.DefaultFace);
+        uniqueFonts.Remove(FontFinder.DefaultFont.DefaultFace);
 
         // 5. Figure out the final CMAP
         ushort outputNumGlyphs = (ushort)(characters.Count + 1);

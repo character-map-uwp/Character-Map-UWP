@@ -240,17 +240,17 @@ public class FontFinder
         HasVariableFonts = true;
     }
 
-    internal static List<CMFontFace> GetImportedVariants(bool includeSimulations = false)
+    internal static List<CMFontFace> GetImportedFaces(bool includeSimulations = false)
     {
         return Fonts.Where(f => f.HasImportedFiles)
-                    .SelectMany(f => f.Variants.Where(v => v.IsImported 
+                    .SelectMany(f => f.RealFaces.Where(v => v.IsImported 
                         && (includeSimulations ? true : v.DirectWriteProperties.IsSimulated is false)))
                     .ToList();
     }
 
-    internal static List<CMFontFace> GetSystemVariants(bool includeSimulations = false)
+    internal static List<CMFontFace> GetSystemFaces(bool includeSimulations = false)
     {
-        return Fonts.SelectMany(f => f.Variants.Where(v => v.IsImported is false
+        return Fonts.SelectMany(f => f.RealFaces.Where(v => v.IsImported is false
                         && (includeSimulations ? true : v.DirectWriteProperties.IsSimulated is false)))
                     .ToList();
     }

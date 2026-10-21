@@ -117,7 +117,7 @@ public partial class QuickCompareViewModel : ViewModelBase
                 Register<CharacterRenderingOptions>(m =>
                 {
                     // Only add the font variant if it's not already in the list.
-                    foreach (var f in m.Family.Variants)
+                    foreach (var f in m.Family.RealFaces)
                     {
                         var ops = m with { Face = f };
                         if (!QuickFonts.Any(q => ops.IsCompareMatch(q)))

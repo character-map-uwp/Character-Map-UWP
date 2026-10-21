@@ -148,18 +148,18 @@ public static class FontImporter
     {
         font.PrepareForDelete();
 
-        var variants = font.Variants.Where(v => v.IsImported).ToList();
+        var faces = font.RealFaces.Where(v => v.IsImported).ToList();
         var success = true;
 
-        foreach (var variant in variants)
+        foreach (var face in faces)
         {
-            variant.Dispose();
+            face.Dispose();
 
             GC.Collect(); // required to prevent "File in use" exception
 
             try
             {
-                if (await FontImporter.ImportFolder.TryGetItemAsync(variant.FileName)
+                if (await FontImporter.ImportFolder.TryGetItemAsync(face.FileName)
                                     is StorageFile file)
                 {
                     await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
@@ -167,7 +167,7 @@ public static class FontImporter
             }
             catch
             {
-                FontImporter.IgnoredFonts.Add(variant.FileName);
+                FontImporter.IgnoredFonts.Add(face.FileName);
                 success = false;
             }
         }

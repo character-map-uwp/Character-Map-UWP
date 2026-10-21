@@ -38,7 +38,7 @@ public record CharacterRenderingOptions
 
     public static CharacterRenderingOptions CreateDefault(CMFontFamily font)
     {
-        return CreateDefault(font.DefaultVariant, font);
+        return CreateDefault(font.DefaultFace, font);
     }
 
     public static CharacterRenderingOptions CreateDefault(CMFontFace variant, CMFontFamily fam = null)

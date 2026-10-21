@@ -17,7 +17,7 @@ public partial class BasicFontFilter
     public static BasicFontFilter ForDesignScriptTag(string tag, string displayTitle)
     {
         return new BasicFontFilter(
-            (f, c) => f.Where(i => i.Variants.Any(v => v.HasDesignScriptTag(tag))),
+            (f, c) => f.Where(i => i.RealFaces.Any(v => v.HasDesignScriptTag(tag))),
             displayTitle,
             true);
     }
@@ -26,48 +26,48 @@ public partial class BasicFontFilter
     {
         if (range == UnicodeRanges.Unassigned)
             return new(
-                (f, c) => f.Where(i => i.Variants.Any(v => v.GetRanges().Contains(UnicodeRanges.Unassigned))),
+                (f, c) => f.Where(i => i.RealFaces.Any(v => v.GetRanges().Contains(UnicodeRanges.Unassigned))),
                 range.Name,
                 true);
 
         return new(
-            (f, c) => f.Where(i => i.Variants.Any(v => Unicode.ContainsRange(v, range.Range))),
+            (f, c) => f.Where(i => i.RealFaces.Any(v => Unicode.ContainsRange(v, range.Range))),
             range.Name,
             true);
     }
 
     public static BasicFontFilter ForFilePath(string path)
     {
-        return new BasicFontFilter((f, c) => f.Where(v => v.Variants.Any(
+        return new BasicFontFilter((f, c) => f.Where(v => v.RealFaces.Any(
             v => v.QuickFilePath.Contains(path, StringComparison.InvariantCultureIgnoreCase))), null, true);
     }
 
     public static BasicFontFilter ForFontInfo(string query, DWriteFontInformation info)
     {
-        return new BasicFontFilter((f, c) => f.Where(v => v.Variants.Any(
+        return new BasicFontFilter((f, c) => f.Where(v => v.RealFaces.Any(
             v => v.TryGetInfo(info)?.Value is string f
             && f.Contains(query, StringComparison.InvariantCultureIgnoreCase))), null, true);
     }
 
     public static BasicFontFilter ForChar(Character ch)
     {
-        return new BasicFontFilter((f, c) => f.Where(v => v.Variants.Any(
+        return new BasicFontFilter((f, c) => f.Where(v => v.RealFaces.Any(
             v => Unicode.ContainsRange(v, new UnicodeRange(ch.UnicodeIndex, ch.UnicodeIndex)))), null);
     }
 
     public static BasicFontFilter ForRange(UnicodeRange range, string displayTitle)
     {
-        return new BasicFontFilter((f, c) => f.Where(v => v.Variants.Any(v => Unicode.ContainsRange(v, range))), displayTitle);
+        return new BasicFontFilter((f, c) => f.Where(v => v.RealFaces.Any(v => Unicode.ContainsRange(v, range))), displayTitle);
     }
 
     public static BasicFontFilter SupportsScript(UnicodeRange range, string displayTitle)
     {
-        return new BasicFontFilter((f, c) => f.Where(v => v.Variants.Any(v => Unicode.SupportsScript(v, range))), displayTitle);
+        return new BasicFontFilter((f, c) => f.Where(v => v.RealFaces.Any(v => Unicode.SupportsScript(v, range))), displayTitle);
     }
 
     public static BasicFontFilter SupportsScripts(UnicodeRange[] ranges, string displayTitle)
     {
-        return new BasicFontFilter((f, c) => f.Where(v => v.Variants.Any(v => ranges.Any(r => Unicode.SupportsScript(v, r)))), displayTitle);
+        return new BasicFontFilter((f, c) => f.Where(v => v.RealFaces.Any(v => ranges.Any(r => Unicode.SupportsScript(v, r)))), displayTitle);
     }
 
     public BasicFontFilter(Func<IEnumerable<CMFontFamily>, UserCollectionsService, IEnumerable<CMFontFamily>> query, string displayTitle, bool requiresAsync = false)
@@ -107,31 +107,31 @@ public partial class BasicFontFilter
         = new((f, c) => f.Where(v => v.HasImportedFiles), Localization.Get("OptionImportedFonts/Text"));
 
     public static BasicFontFilter MonospacedFonts { get; }
-        = new((f, c) => f.Where(v => v.DefaultVariant.DirectWriteProperties.IsMonospacedFont), Localization.Get("OptionMonospacedFonts/Text"));
+        = new((f, c) => f.Where(v => v.DefaultFace.DirectWriteProperties.IsMonospacedFont), Localization.Get("OptionMonospacedFonts/Text"));
 
     public static BasicFontFilter SerifFonts { get; }
-        = new((f, c) => f.Where(v => v.DefaultVariant.Panose.IsSerifStyle), Localization.Get("OptionSerifFonts/Text"));
+        = new((f, c) => f.Where(v => v.DefaultFace.Panose.IsSerifStyle), Localization.Get("OptionSerifFonts/Text"));
 
     public static BasicFontFilter SansSerifFonts { get; }
-       = new((f, c) => f.Where(v => v.DefaultVariant.Panose.IsSansSerifStyle), Localization.Get("OptionSansSerifFonts/Text"));
+       = new((f, c) => f.Where(v => v.DefaultFace.Panose.IsSansSerifStyle), Localization.Get("OptionSansSerifFonts/Text"));
 
     public static BasicFontFilter AppXFonts { get; }
-        = new((f, c) => f.Where(v => v.DefaultVariant.DirectWriteProperties.Source == DWriteFontSource.AppxPackage), Localization.Get("OptionAppxFonts/Text"));
+        = new((f, c) => f.Where(v => v.DefaultFace.DirectWriteProperties.Source == DWriteFontSource.AppxPackage), Localization.Get("OptionAppxFonts/Text"));
 
     public static BasicFontFilter RemoteFonts { get; }
-        = new((f, c) => f.Where(v => v.DefaultVariant.DirectWriteProperties.Source == DWriteFontSource.RemoteFontProvider), Localization.Get("OptionCloudFonts/Text"));
+        = new((f, c) => f.Where(v => v.DefaultFace.DirectWriteProperties.Source == DWriteFontSource.RemoteFontProvider), Localization.Get("OptionCloudFonts/Text"));
 
     public static BasicFontFilter PanoseDecorativeFonts { get; }
-        = new((f, c) => f.Where(v => v.DefaultVariant.Panose.Family == PanoseFamily.Decorative), Localization.Get("OptionDecorativeFonts/Text"));
+        = new((f, c) => f.Where(v => v.DefaultFace.Panose.Family == PanoseFamily.Decorative), Localization.Get("OptionDecorativeFonts/Text"));
 
     public static BasicFontFilter PanoseScriptFonts { get; }
-        = new((f, c) => f.Where(v => v.DefaultVariant.Panose.Family == PanoseFamily.Script), Localization.Get("OptionScriptFonts/Text"));
+        = new((f, c) => f.Where(v => v.DefaultFace.Panose.Family == PanoseFamily.Script), Localization.Get("OptionScriptFonts/Text"));
 
     public static BasicFontFilter ColorFonts { get; }
-        = new((f, c) => f.Where(v => v.DefaultVariant.DirectWriteProperties.IsColorFont), Localization.Get("OptionColorFonts/Text"));
+        = new((f, c) => f.Where(v => v.DefaultFace.DirectWriteProperties.IsColorFont), Localization.Get("OptionColorFonts/Text"));
 
     public static BasicFontFilter VariableFonts { get; }
-        = new((f, c) => f.Where(v => v.DefaultVariant.DirectWriteProperties.HasVariations), Localization.Get("OptionVariableFonts/Text"), true);
+        = new((f, c) => f.Where(v => v.DefaultFace.DirectWriteProperties.HasVariations), Localization.Get("OptionVariableFonts/Text"), true);
 
 
 
@@ -139,7 +139,7 @@ public partial class BasicFontFilter
     /* EMOJI */
 
     public static BasicFontFilter EmojiAll { get; }
-        = new((f, c) => f.Where(v => v.Variants.Any(v => Unicode.ContainsEmoji(v))),
+        = new((f, c) => f.Where(v => v.RealFaces.Any(v => Unicode.ContainsEmoji(v))),
                 Localization.Get("OptionAllEmoji/Text"),
                 Localization.Get("OptionAllEmojiTitle/Text"));
 
@@ -150,7 +150,7 @@ public partial class BasicFontFilter
         = ForRange(UnicodeRange.Dingbats, Localization.Get("OptionEmojiDingbats/Text"));
 
     public static BasicFontFilter EmojiSymbols { get; }
-        = new((f, c) => f.Where(v => v.Variants.Any(v => Unicode.ContainsEmojiSymbols(v))),
+        = new((f, c) => f.Where(v => v.RealFaces.Any(v => Unicode.ContainsEmojiSymbols(v))),
                 Localization.Get("OptionEmojiSymbols/Text"));
 
 
@@ -158,23 +158,23 @@ public partial class BasicFontFilter
     /* COLOR */
 
     public static BasicFontFilter AllColor { get; }
-       = new((f, c) => f.Where(v => v.DefaultVariant.DirectWriteProperties.IsColorFont),
+       = new((f, c) => f.Where(v => v.DefaultFace.DirectWriteProperties.IsColorFont),
                Localization.Get("All/Text"), Localization.Get("AllColorTitle/Text"));
 
     public static BasicFontFilter COLRV0 { get; }
-       = new((f, c) => f.Where(v => v.Variants.Any(v => v.ContainsCOLRV0Glyphs)),
+       = new((f, c) => f.Where(v => v.RealFaces.Any(v => v.ContainsCOLRV0Glyphs)),
                "COLRv0");
 
     public static BasicFontFilter COLRV1 { get; }
-        = new((f, c) => f.Where(v => v.Variants.Any(v => v.SupportsCOLRv1Rendering)),
+        = new((f, c) => f.Where(v => v.RealFaces.Any(v => v.SupportsCOLRv1Rendering)),
                 "COLRv1");
 
     public static BasicFontFilter SVG { get; }
-       = new((f, c) => f.Where(v => v.Variants.Any(v => v.ContainsSVGGlyphs)),
+       = new((f, c) => f.Where(v => v.RealFaces.Any(v => v.ContainsSVGGlyphs)),
                "SVG");
 
     public static BasicFontFilter Bitmap { get; }
-       = new((f, c) => f.Where(v => v.Variants.Any(v => v.DirectWriteProperties.HasColorBitmapOutlines)),
+       = new((f, c) => f.Where(v => v.RealFaces.Any(v => v.DirectWriteProperties.HasColorBitmapOutlines)),
                Localization.Get("GlyphTypeBitmap"));
 
 
@@ -182,23 +182,23 @@ public partial class BasicFontFilter
 
     /* EMBEDDING RIGHTS */
     public static BasicFontFilter EmbeddingInstallable { get; }
-        = new((f, c) => f.Where(v => v.Variants.Any(v => v.Face.GetEmbeddingType() == FontEmbeddingType.Installable)),
+        = new((f, c) => f.Where(v => v.RealFaces.Any(v => v.Face.GetEmbeddingType() == FontEmbeddingType.Installable)),
                 Localization.Get("FilterEmbeddingInstallable/Text"));
 
     public static BasicFontFilter EmbeddingEditable { get; }
-        = new((f, c) => f.Where(v => v.Variants.Any(v => v.Face.GetEmbeddingType() == FontEmbeddingType.Editable)),
+        = new((f, c) => f.Where(v => v.RealFaces.Any(v => v.Face.GetEmbeddingType() == FontEmbeddingType.Editable)),
                 Localization.Get("FilterEmbeddingEditable/Text"));
 
     public static BasicFontFilter EmbeddingBitmapOnly { get; }
-        = new((f, c) => f.Where(v => v.Variants.Any(v => v.Face.GetEmbeddingType() == FontEmbeddingType.BitmapOnly)),
+        = new((f, c) => f.Where(v => v.RealFaces.Any(v => v.Face.GetEmbeddingType() == FontEmbeddingType.BitmapOnly)),
                 Localization.Get("FilterEmbeddingBitmap/Text"));
 
     public static BasicFontFilter EmbeddingRestricted { get; }
-        = new((f, c) => f.Where(v => v.Variants.Any(v => v.Face.GetEmbeddingType() == FontEmbeddingType.Restricted)),
+        = new((f, c) => f.Where(v => v.RealFaces.Any(v => v.Face.GetEmbeddingType() == FontEmbeddingType.Restricted)),
                 Localization.Get("FilterEmbeddingRestricted/Text"));
 
     public static BasicFontFilter EmbeddingPrintPreview { get; }
-        = new((f, c) => f.Where(v => v.Variants.Any(v => v.Face.GetEmbeddingType() == FontEmbeddingType.PreviewPrint)),
+        = new((f, c) => f.Where(v => v.RealFaces.Any(v => v.Face.GetEmbeddingType() == FontEmbeddingType.PreviewPrint)),
                 Localization.Get("FilterEmbeddingPreviewPrint/Text"));
 
 
@@ -207,21 +207,21 @@ public partial class BasicFontFilter
     public static string SUPPORTED_OUTLINE_VALUES = "cff, ttf, svg, sbix, cblc, ebdt, eblc, raster, png, jpg, jpeg";
 
     public static BasicFontFilter CFFOutlines { get; }
-    = new((fonts, collections) => fonts.Where(f => f.Variants.Any(v => v.DirectWriteProperties.HasCFFOutlines)), "CFF");
+    = new((fonts, collections) => fonts.Where(f => f.RealFaces.Any(v => v.DirectWriteProperties.HasCFFOutlines)), "CFF");
 
     public static BasicFontFilter TTFOutlines { get; }
-        = new((fonts, collections) => fonts.Where(f => f.Variants.Any(v => v.DirectWriteProperties.HasTTFOutlines)), "TrueType (TTF)");
+        = new((fonts, collections) => fonts.Where(f => f.RealFaces.Any(v => v.DirectWriteProperties.HasTTFOutlines)), "TrueType (TTF)");
 
     public static BasicFontFilter SVGOutlines { get; }
-        = new((fonts, collections) => fonts.Where(f => f.Variants.Any(v => v.DirectWriteProperties.HasSVGOutlines)), "SVG");
+        = new((fonts, collections) => fonts.Where(f => f.RealFaces.Any(v => v.DirectWriteProperties.HasSVGOutlines)), "SVG");
 
     public static BasicFontFilter ColorBitmapOutlines { get; }
-        = new((fonts, collections) => fonts.Where(f => f.Variants.Any(v => v.DirectWriteProperties.HasColorBitmapOutlines)),
+        = new((fonts, collections) => fonts.Where(f => f.RealFaces.Any(v => v.DirectWriteProperties.HasColorBitmapOutlines)),
             Localization.Get("FilterColorBitmap/Text"));
 
     // NOTE: We can detect these, but DirectWrite won't render glyphs from the legacy bitmap tables
     public static BasicFontFilter LegacyBitmapOutlines { get; }
-        = new((fonts, collections) => fonts.Where(f => f.Variants.Any(v => v.DirectWriteProperties.HasMonoBitmapOutlines)),
+        = new((fonts, collections) => fonts.Where(f => f.RealFaces.Any(v => v.DirectWriteProperties.HasMonoBitmapOutlines)),
             Localization.Get("FilterLegacyBitmap/Text"));
 
 

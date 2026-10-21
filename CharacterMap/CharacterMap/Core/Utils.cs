@@ -194,16 +194,16 @@ public static class Utils
         return TryCopyToClipboardInternalAsync(s, c, viewModel);
     }
 
-    public static CMFontFace GetDefaultFace(IEnumerable<CMFontFace> variants)
+    public static CMFontFace GetDefaultFace(IEnumerable<CMFontFace> faces)
     {
-        if (variants is null)
+        if (faces is null)
             return null;
 
-        return variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Style == FontStyle.Normal && v.DirectWriteProperties.Stretch == FontStretch.Normal)
-                ?? variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Style == FontStyle.Normal)
-                ?? variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Stretch == FontStretch.Normal)
-                ?? variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight)
-                ?? variants.FirstOrDefault();
+        return faces.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Style == FontStyle.Normal && v.DirectWriteProperties.Stretch == FontStretch.Normal)
+                ?? faces.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Style == FontStyle.Normal)
+                ?? faces.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Stretch == FontStretch.Normal)
+                ?? faces.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight)
+                ?? faces.FirstOrDefault();
     }
 
     public static string ToRtfEscaped(string text)
