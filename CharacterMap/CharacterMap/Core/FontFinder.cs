@@ -161,20 +161,40 @@ public class FontFinder
             foreach (DWriteFontFamily family in systemFonts.Families)
             {
                 string familyName = family.Name;
-                if (string.IsNullOrEmpty(familyName))
+                if (family.FontCount == 0 || string.IsNullOrEmpty(familyName))
                     continue;
 
                 if (resultList.TryGetValue(familyName, out CMFontFamily existingFamily))
                 {
                     foreach (DWriteFontFace font in family.Fonts)
                     {
-                        if (font.Properties.IsSimulated && hideSimulated)
+                        if (hideSimulated && font.Properties.IsSimulated)
                             continue;
-                        existingFamily.AddVariant(font);
+                        existingFamily.AddFace(font);
                     }
                 }
                 else
-                    resultList[familyName] = new(familyName, family);
+                {
+                    if (hideSimulated)
+                    {
+                        // Slow path
+                        foreach (DWriteFontFace font in family.Fonts)
+                        {
+                            if (font.Properties.IsSimulated)
+                                continue;
+
+                            CMFontFamily fontFamily = new(familyName, family);
+                            resultList[familyName] = fontFamily;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        // fastpath
+                        resultList[familyName] = new(familyName, family);
+                    }
+                    
+                }
             }
 
             /* Order everything appropriately */
@@ -200,7 +220,7 @@ public class FontFinder
     {
         List<CMFontFamily> list = [.. fonts.Values];
         foreach (CMFontFamily family in list)
-            family.SortVariants();
+            family.SortFaces();
 
         list.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.CurrentCulture));
         return list;
@@ -265,7 +285,7 @@ public class FontFinder
             {
                 /* Check if we already have a listing for this fontFamily */
                 if (fontList.TryGetValue(familyName, out CMFontFamily fontFamily))
-                    fontFamily.AddVariant(font, filePath);
+                    fontFamily.AddFace(font, filePath);
                 else
                     fontList[familyName] = new(familyName, font, filePath);
             }

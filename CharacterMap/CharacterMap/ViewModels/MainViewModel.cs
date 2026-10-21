@@ -428,10 +428,10 @@ public partial class MainViewModel : ViewModelBase
                     //      deleted making the stored index invalid. Make sure the index is
                     //      still within a valid range.
                     int faceIdx = Math.Max(0, Convert.ToInt32(list[++i]));
-                    if ((faceIdx < font.AllVariants.Count) is false)
-                        faceIdx = font.AllVariants.IndexOf(font.DefaultVariant);
+                    if ((faceIdx < font.AllFaces.Count) is false)
+                        faceIdx = font.AllFaces.IndexOf(font.DefaultVariant);
 
-                    CMFontFace sel = font.AllVariants[faceIdx] as CMFontFace;
+                    CMFontFace sel = font.AllFaces[faceIdx] as CMFontFace;
                     sel ??= font.DefaultVariant;
 
                     Fonts.Add(new(font)

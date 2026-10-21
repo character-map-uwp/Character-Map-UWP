@@ -184,7 +184,7 @@ public static partial class ExportManager
             ext = ".otf";
 
         // Get the default font for the group
-        CMFontFace font = Utils.GetDefaultVariant(group.ToList());
+        CMFontFace font = Utils.GetDefaultFace(group.ToList());
 
         // If we don't have a file name, get one from our default font
         if (string.IsNullOrWhiteSpace(fileName))

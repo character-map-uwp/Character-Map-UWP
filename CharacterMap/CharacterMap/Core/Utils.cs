@@ -194,13 +194,16 @@ public static class Utils
         return TryCopyToClipboardInternalAsync(s, c, viewModel);
     }
 
-    public static CMFontFace GetDefaultVariant(IList<CMFontFace> variants)
+    public static CMFontFace GetDefaultFace(IEnumerable<CMFontFace> variants)
     {
+        if (variants is null)
+            return null;
+
         return variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Style == FontStyle.Normal && v.DirectWriteProperties.Stretch == FontStretch.Normal)
                 ?? variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Style == FontStyle.Normal)
                 ?? variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Stretch == FontStretch.Normal)
                 ?? variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight)
-                ?? variants[0];
+                ?? variants.FirstOrDefault();
     }
 
     public static string ToRtfEscaped(string text)
