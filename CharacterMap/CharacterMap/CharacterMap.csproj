@@ -485,6 +485,7 @@
     <PRIResource Include="Strings\ta\Resources.resw" />
     <PRIResource Include="Strings\th-TH\Resources.resw" />
     <PRIResource Include="Strings\zh-CN\Resources.resw" />
+    <PRIResource Include="Strings\zh-HK\Resources.resw" />
     <PRIResource Include="Strings\zh-TW\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
@@ -642,6 +643,7 @@
     <XliffResource Include="MultilingualResources\CharacterMap.ta.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.th-TH.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.zh-CN.xlf" />
+    <XliffResource Include="MultilingualResources\CharacterMap.zh-HK.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.zh-TW.xlf" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
