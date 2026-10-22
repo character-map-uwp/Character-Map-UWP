@@ -4,6 +4,7 @@
 #include "TypographyAnalyzer.h"
 #include "DirectWrite.h"
 #include "DWHelpers.h"
+#include "CoreDWTextServices.h"
 #include "Utils.h"
 
 #include <cwctype>
@@ -1656,190 +1657,46 @@ void DirectTextBox::Paste()
 
 void DirectTextBox::CreateTextLayout()
 {
-    auto factory = CompositionDeviceManager::GetDWriteFactory();
-    if (factory == nullptr)
-        return;
-
     m_textLayout = nullptr;
     m_placeholderLayout = nullptr;
     m_simulatedFontFace = nullptr;
 
     double size = FontSize > 0.0 ? FontSize : 15.0;
-    Platform::String^ textToFormat = Text != nullptr ? Text : L"";
-
-    // Handle StyleSimulations
-    auto simulations = StyleSimulations;
-    if (FontFace != nullptr)
-    {
-        if (simulations != Windows::UI::Xaml::Media::StyleSimulations::None)
-        {
-            auto faceRef = FontFace->GetReference();
-            if (faceRef != nullptr)
-            {
-                ComPtr<IDWriteFontFace3> simFace;
-                if (SUCCEEDED(faceRef->CreateFontFaceWithSimulations(ToDWriteFontSimulations(simulations), &simFace)))
-                    m_simulatedFontFace = simFace;
-            }
-        }
-        if (m_simulatedFontFace == nullptr)
-            m_simulatedFontFace = FontFace->GetFontFace();
-    }
-
-    // Prepare format
-    ComPtr<IDWriteTextFormat> tempFormat;
-    HRESULT hr = S_OK;
-
-    if (FontFace != nullptr)
-    {
-        const auto& axisValues = FontFace->GetAxisValues();
-        if (!axisValues.empty())
-        {
-            ComPtr<IDWriteTextFormat3> format3;
-            hr = factory->CreateTextFormat(
-                FontFace->Properties->FamilyName->Data(),
-                FontFace->GetFontCollection().Get(),
-                axisValues.data(),
-                static_cast<UINT32>(axisValues.size()),
-                static_cast<FLOAT>(size),
-                L"en-us",
-                &format3);
-            if (SUCCEEDED(hr))
-                tempFormat = format3;
-        }
-
-        if (tempFormat == nullptr)
-        {
-            auto weight = FontFace->Properties->Weight;
-            auto style = FontFace->Properties->Style;
-            auto stretch = FontFace->Properties->Stretch;
-
-            if (simulations == Windows::UI::Xaml::Media::StyleSimulations::BoldSimulation ||
-                simulations == Windows::UI::Xaml::Media::StyleSimulations::BoldItalicSimulation)
-            {
-                weight.Weight = (std::max)(weight.Weight, static_cast<unsigned short>(700));
-            }
-            if (simulations == Windows::UI::Xaml::Media::StyleSimulations::ItalicSimulation ||
-                simulations == Windows::UI::Xaml::Media::StyleSimulations::BoldItalicSimulation)
-            {
-                style = Windows::UI::Text::FontStyle::Italic;
-            }
-
-            hr = factory->CreateTextFormat(
-                FontFace->Properties->FamilyName->Data(),
-                FontFace->GetFontCollection().Get(),
-                static_cast<DWRITE_FONT_WEIGHT>(weight.Weight),
-                static_cast<DWRITE_FONT_STYLE>(style),
-                static_cast<DWRITE_FONT_STRETCH>(stretch),
-                static_cast<FLOAT>(size),
-                L"en-us",
-                &tempFormat);
-        }
-    }
-
-    if (tempFormat == nullptr)
-    {
-        hr = factory->CreateTextFormat(
-            L"Segoe UI",
-            nullptr,
-            DWRITE_FONT_WEIGHT_NORMAL,
-            DWRITE_FONT_STYLE_NORMAL,
-            DWRITE_FONT_STRETCH_NORMAL,
-            static_cast<FLOAT>(size),
-            L"en-us",
-            &tempFormat);
-    }
-
-    if (tempFormat == nullptr)
-        return;
-
-    // Reading direction (RTL support)
-    if (this->FlowDirection == Windows::UI::Xaml::FlowDirection::RightToLeft)
-        tempFormat->SetReadingDirection(DWRITE_READING_DIRECTION_RIGHT_TO_LEFT);
-    else
-        tempFormat->SetReadingDirection(DWRITE_READING_DIRECTION_LEFT_TO_RIGHT);
-
-    // Text alignment
-    switch (TextAlignment)
-    {
-    case Windows::UI::Xaml::TextAlignment::Center:
-        tempFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-        break;
-    case Windows::UI::Xaml::TextAlignment::Right:
-        tempFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
-        break;
-    case Windows::UI::Xaml::TextAlignment::Justify:
-        tempFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_JUSTIFIED);
-        break;
-    default:
-        tempFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-        break;
-    }
-
     FLOAT maxLayoutWidth = TextWrapping == Windows::UI::Xaml::TextWrapping::Wrap
         ? static_cast<FLOAT>((std::max)(1.0, ActualWidth - Padding.Left - Padding.Right))
         : 100000.0f;
     FLOAT maxLayoutHeight = 100000.0f;
 
-    // Create main text layout
-    if (textToFormat->Length() > 0)
+    TextLayoutParameters params;
+    params.FontFace = FontFace;
+    params.FontSize = static_cast<float>(size);
+    params.FontWeight = FontWeight;
+    params.FontStyle = FontStyle;
+    params.FontStretch = FontStretch;
+    params.Simulations = StyleSimulations;
+    params.TypographyCollection = Typography;
+    params.FlowDirection = this->FlowDirection;
+    params.TextAlignment = TextAlignment;
+    params.WordWrapping = TextWrapping == Windows::UI::Xaml::TextWrapping::Wrap;
+    params.MaxWidth = maxLayoutWidth;
+    params.MaxHeight = maxLayoutHeight;
+
+    if (Text != nullptr && Text->Length() > 0)
     {
-        hr = factory->CreateTextLayout(
-            textToFormat->Data(),
-            textToFormat->Length(),
-            tempFormat.Get(),
-            maxLayoutWidth,
-            maxLayoutHeight,
-            &m_textLayout);
-
-        if (SUCCEEDED(hr) && m_textLayout != nullptr)
-        {
-            // Apply variable font axis values
-            if (FontFace != nullptr)
-            {
-                const auto& axisValues = FontFace->GetAxisValues();
-                if (!axisValues.empty())
-                {
-                    ComPtr<IDWriteTextLayout4> layout4;
-                    if (SUCCEEDED(m_textLayout.As(&layout4)))
-                    {
-                        layout4->SetFontAxisValues(
-                            axisValues.data(),
-                            static_cast<UINT32>(axisValues.size()),
-                            DWRITE_TEXT_RANGE{ 0, textToFormat->Length() });
-                    }
-                }
-            }
-
-            // Apply Typography
-            auto typo = Typography;
-            if (typo != nullptr && typo->FeatureCount > 0)
-            {
-                ComPtr<IDWriteTypography> dwriteTypo;
-                if (SUCCEEDED(factory->CreateTypography(&dwriteTypo)))
-                {
-                    for (const auto& f : typo->GetDWriteFontFeatures())
-                        dwriteTypo->AddFontFeature(f);
-
-                    m_textLayout->SetTypography(dwriteTypo.Get(), DWRITE_TEXT_RANGE{ 0, textToFormat->Length() });
-                }
-            }
-
-            m_textLayout->SetWordWrapping(TextWrapping == Windows::UI::Xaml::TextWrapping::Wrap
-                ? DWRITE_WORD_WRAPPING_WRAP
-                : DWRITE_WORD_WRAPPING_NO_WRAP);
-        }
+        params.Text = Text;
+        CoreDWTextServices::CreateLayout(params, &m_textLayout, &m_simulatedFontFace);
+    }
+    else
+    {
+        m_simulatedFontFace = CoreDWTextServices::GetSimulatedFontFace(
+            FontFace,
+            CoreDWTextServices::ResolveSimulations(StyleSimulations, FontFace));
     }
 
-    // Create placeholder layout if placeholder exists
     if (PlaceholderText != nullptr && PlaceholderText->Length() > 0)
     {
-        factory->CreateTextLayout(
-            PlaceholderText->Data(),
-            PlaceholderText->Length(),
-            tempFormat.Get(),
-            maxLayoutWidth,
-            maxLayoutHeight,
-            &m_placeholderLayout);
+        params.Text = PlaceholderText;
+        CoreDWTextServices::CreateLayout(params, &m_placeholderLayout);
     }
 }
 
@@ -2007,16 +1864,13 @@ void DirectTextBox::RenderToSurface()
                 ComPtr<ID2D1SolidColorBrush> d2dBrush;
                 d2dContext->CreateSolidColorBrush(fgColor, &d2dBrush);
 
-                GlyphImageFormat preferredFormat = IsColorFontEnabled ? GlyphImageFormat::None : GlyphImageFormat::TrueType;
+                TextRenderParameters renderParams;
+                renderParams.ForegroundBrush = d2dBrush.Get();
+                renderParams.EnableColor = IsColorFontEnabled;
+                renderParams.PreferredFormat = IsColorFontEnabled ? GlyphImageFormat::None : GlyphImageFormat::TrueType;
+                renderParams.OverrideFace = m_simulatedFontFace.Get();
 
-                CustomColorTextRenderer renderer(
-                    d2dContext.Get(),
-                    CompositionDeviceManager::GetDWriteFactory().Get(),
-                    d2dBrush.Get(),
-                    preferredFormat,
-                    m_simulatedFontFace.Get());
-
-                m_textLayout->Draw(nullptr, &renderer, originX, originY);
+                CoreDWTextServices::DrawTextLayout(d2dContext.Get(), m_textLayout.Get(), D2D1::Point2F(originX, originY), renderParams);
             }
             else if (!hasText && m_placeholderLayout != nullptr)
             {
@@ -2031,14 +1885,13 @@ void DirectTextBox::RenderToSurface()
                 ComPtr<ID2D1SolidColorBrush> phBrush;
                 d2dContext->CreateSolidColorBrush(phColor, &phBrush);
 
-                CustomColorTextRenderer renderer(
-                    d2dContext.Get(),
-                    CompositionDeviceManager::GetDWriteFactory().Get(),
-                    phBrush.Get(),
-                    GlyphImageFormat::TrueType,
-                    m_simulatedFontFace.Get());
+                TextRenderParameters phParams;
+                phParams.ForegroundBrush = phBrush.Get();
+                phParams.EnableColor = false;
+                phParams.PreferredFormat = GlyphImageFormat::TrueType;
+                phParams.OverrideFace = m_simulatedFontFace.Get();
 
-                m_placeholderLayout->Draw(nullptr, &renderer, originX, originY);
+                CoreDWTextServices::DrawTextLayout(d2dContext.Get(), m_placeholderLayout.Get(), D2D1::Point2F(originX, originY), phParams);
             }
 
             // Draw Caret
