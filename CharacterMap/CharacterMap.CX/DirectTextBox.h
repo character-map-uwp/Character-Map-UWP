@@ -326,6 +326,7 @@ namespace CharacterMapCX
             void MoveCaret(int offset, bool extendSelection, bool byWord = false);
             void SetSelectionInternal(int start, int length, bool notifyEditContext = true);
             int FindWordBoundary(int position, bool forward);
+            int SnapToClusterBoundary(int position, bool forward = true);
             int HitTestPointToTextPosition(Windows::Foundation::Point point);
             Windows::Foundation::Rect GetCaretScreenRect();
 

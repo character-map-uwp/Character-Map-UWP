@@ -319,6 +319,10 @@ void DirectTextBox::OnSelectionChangedCallback(DependencyObject^ d, DependencyPr
     int start = (std::max)(0, (std::min)(box->SelectionStart, len));
     int length = (std::max)(0, (std::min)(box->SelectionLength, len - start));
 
+    start = box->SnapToClusterBoundary(start, true);
+    int end = box->SnapToClusterBoundary(start + length, true);
+    length = (std::max)(0, end - start);
+
     if (start != box->SelectionStart || length != box->SelectionLength)
     {
         box->SelectionStart = start;
@@ -1221,8 +1225,9 @@ void DirectTextBox::InsertText(Platform::String^ str)
     Platform::String^ current = Text != nullptr ? Text : L"";
     std::wstring s(current->Data());
 
-    int start = (std::max)(0, (std::min)(SelectionStart, (int)s.length()));
-    int len = (std::max)(0, (std::min)(SelectionLength, (int)s.length() - start));
+    int start = SnapToClusterBoundary((std::max)(0, (std::min)(SelectionStart, (int)s.length())), true);
+    int end = SnapToClusterBoundary(start + (std::max)(0, (std::min)(SelectionLength, (int)s.length() - start)), true);
+    int len = end - start;
 
     s.replace(start, len, str->Data());
 
@@ -1268,16 +1273,10 @@ void DirectTextBox::DeleteSelectionOrChar(bool forward, bool byWord)
         {
             if (start < (int)s.length())
             {
-                int delCount = 1;
-                if (byWord)
-                {
-                    int endPos = FindWordBoundary(start, true);
-                    delCount = endPos - start;
-                }
-                else if (start + 1 < (int)s.length() && s[start] >= 0xD800 && s[start] <= 0xDBFF)
-                {
-                    delCount = 2; // Surrogate pair
-                }
+                int endPos = byWord ? FindWordBoundary(start, true) : SnapToClusterBoundary((std::min)((int)s.length(), start + 1), true);
+                if (endPos <= start)
+                    endPos = (std::min)((int)s.length(), start + 1);
+                int delCount = (std::max)(1, endPos - start);
 
                 s.erase(start, delCount);
                 m_internalTextUpdating = true;
@@ -1290,18 +1289,10 @@ void DirectTextBox::DeleteSelectionOrChar(bool forward, bool byWord)
         {
             if (start > 0)
             {
-                int delCount = 1;
-                int erasePos = start - 1;
-                if (byWord)
-                {
-                    erasePos = FindWordBoundary(start, false);
-                    delCount = start - erasePos;
-                }
-                else if (start >= 2 && s[start - 2] >= 0xD800 && s[start - 2] <= 0xDBFF)
-                {
-                    erasePos = start - 2;
-                    delCount = 2; // Surrogate pair
-                }
+                int erasePos = byWord ? FindWordBoundary(start, false) : SnapToClusterBoundary((std::max)(0, start - 1), false);
+                if (erasePos >= start)
+                    erasePos = (std::max)(0, start - 1);
+                int delCount = (std::max)(1, start - erasePos);
 
                 s.erase(erasePos, delCount);
                 m_internalTextUpdating = true;
@@ -1338,17 +1329,11 @@ void DirectTextBox::MoveCaret(int offset, bool extendSelection, bool byWord)
     {
         if (offset < 0)
         {
-            if (activeEnd >= 2 && current->Data()[activeEnd - 2] >= 0xD800 && current->Data()[activeEnd - 2] <= 0xDBFF)
-                newPos = activeEnd - 2;
-            else
-                newPos = (std::max)(0, activeEnd - 1);
+            newPos = SnapToClusterBoundary((std::max)(0, activeEnd - 1), false);
         }
         else
         {
-            if (activeEnd + 1 < textLen && current->Data()[activeEnd] >= 0xD800 && current->Data()[activeEnd] <= 0xDBFF)
-                newPos = activeEnd + 2;
-            else
-                newPos = (std::min)(textLen, activeEnd + 1);
+            newPos = SnapToClusterBoundary((std::min)(textLen, activeEnd + 1), true);
         }
     }
 
@@ -1372,6 +1357,10 @@ void DirectTextBox::SetSelectionInternal(int start, int length, bool notifyEditC
     int textLen = Text != nullptr ? Text->Length() : 0;
     start = (std::max)(0, (std::min)(start, textLen));
     length = (std::max)(0, (std::min)(length, textLen - start));
+
+    start = SnapToClusterBoundary(start, true);
+    int end = SnapToClusterBoundary(start + length, true);
+    length = (std::max)(0, end - start);
 
     if (SelectionStart != start || SelectionLength != length)
     {
@@ -1414,6 +1403,41 @@ int DirectTextBox::FindWordBoundary(int position, bool forward)
         if (p == position && p > 0) p--;
         return (std::max)(0, p);
     }
+}
+
+int DirectTextBox::SnapToClusterBoundary(int position, bool forward)
+{
+    if (Text == nullptr)
+        return 0;
+
+    int textLen = Text->Length();
+    if (position <= 0)
+        return 0;
+    if (position >= textLen)
+        return textLen;
+
+    // 1. Fast check for UTF-16 surrogate pairs
+    const wchar_t* str = Text->Data();
+    if (str[position] >= 0xDC00 && str[position] <= 0xDFFF && str[position - 1] >= 0xD800 && str[position - 1] <= 0xDBFF)
+    {
+        return forward ? position + 1 : position - 1;
+    }
+
+    // 2. DirectWrite cluster check for multi-codepoint grapheme clusters (emojis with skin tones, ZWJ sequences, etc.)
+    if (m_textLayout != nullptr)
+    {
+        DWRITE_HIT_TEST_METRICS metrics{};
+        float x = 0.0f, y = 0.0f;
+        if (SUCCEEDED(m_textLayout->HitTestTextPosition(position, FALSE, &x, &y, &metrics)))
+        {
+            if (position > (int)metrics.textPosition && position < (int)(metrics.textPosition + metrics.length))
+            {
+                return forward ? (int)(metrics.textPosition + metrics.length) : (int)metrics.textPosition;
+            }
+        }
+    }
+
+    return position;
 }
 
 int DirectTextBox::HitTestPointToTextPosition(Point point)
