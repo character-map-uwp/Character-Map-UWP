@@ -495,7 +495,7 @@ public static class FlyoutHelper
         {
             if (sender is FrameworkElement { Tag: CMFontFamily fnt })
             {
-                _ = QuickCompareView.CreateWindowAsync(new(false, new(fnt.Variants.ToList()) { IsFamilyCompare = true }));
+                _ = QuickCompareView.CreateWindowAsync(new(false, new(fnt.RealFaces.ToList()) { IsFamilyCompare = true }));
             }
         }
 
@@ -582,14 +582,14 @@ public static class FlyoutHelper
             }
 
             // 8. Handle compare options
-            if (font.HasVariants)
+            if (font.HasMultipleRealFaces)
                 menu.AddSeparator();
 
-            if (font.HasVariants)
+            if (font.HasMultipleRealFaces)
             {
                 // 8.1. Add "Compare Fonts button"
                 // NOTE: count is not used on updated translation, left because old translations may still use it
-                factory.Create($"~{string.Format(Localization.Get("CompareFacesCountLabel/Text"), font.Variants.Count)}", ThemeIcon.CompareFonts, OpenFaceCompare, arg);
+                factory.Create($"~{string.Format(Localization.Get("CompareFacesCountLabel/Text"), font.RealFaces.Count)}", ThemeIcon.CompareFonts, OpenFaceCompare, arg);
 
                 // 8.2. Add "Add all to quick compare" button
                 factory.Create("AddMultiToQuickCompare/Text", ThemeIcon.Add, AddToQuickCompareMulti, arg);

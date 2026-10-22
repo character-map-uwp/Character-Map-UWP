@@ -163,7 +163,7 @@ public static class GlyphService
     //public static (string Hex, string FontIcon, string Path, string Symbol) GetDevValues(
     //    Character c, FontVariant v, DWriteTextLayoutAnalysis a, CanvasTypography t, bool isXaml)
     //{
-    //    if (v == FontFinder.DefaultFont.DefaultVariant)
+    //    if (v == FontFinder.DefaultFont.DefaultFace)
     //        return (string.Empty, string.Empty, string.Empty, string.Empty);
 
     //    NativeInterop interop = Utils.GetInterop();

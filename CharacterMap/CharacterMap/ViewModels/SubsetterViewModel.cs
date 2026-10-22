@@ -18,10 +18,10 @@ public record class CollectionChangedMessage(object Sender, NotifyCollectionChan
 public class FamilySelectionModel(CMFontFamily family, IMessenger messenger)
 {
     public List<FaceSelectionModel> Faces => field
-        ??= [..Family.NonSimulatedVariants.OfType<CMFontFace>().Select(
+        ??= [..Family.NonSimulatedFacesSource.OfType<CMFontFace>().Select(
             v => new FaceSelectionModel(this, v, messenger))];
 
-    public FaceSelectionModel Default => field ??= Faces.Where(f => f.Face == Family.DefaultVariant).FirstOrDefault();
+    public FaceSelectionModel Default => field ??= Faces.Where(f => f.Face == Family.DefaultFace).FirstOrDefault();
 
     public CMFontFamily Family { get; } = family;
 
@@ -74,7 +74,7 @@ public partial class FaceSelectionModel : ObservableObject
         _messenger = messenger;
 
         IsPhysical = face is not null;
-        Face ??= FontFinder.DefaultFont.DefaultVariant;
+        Face ??= FontFinder.DefaultFont.DefaultFace;
         FaceAnalysis = new(Face);
 
         // Notify when our selection changes
@@ -292,7 +292,7 @@ public partial class SubsetterViewModel : ViewModelBase
                         && FamilyName == DEFAULT_FONT_NAME)
                         FamilyName = font.Name;
 
-                    string ver = font.DefaultVariant?.TryGetInfo(DWriteFontInformation.VersionStrings)?.Value;
+                    string ver = font.DefaultFace?.TryGetInfo(DWriteFontInformation.VersionStrings)?.Value;
                     if (!string.IsNullOrWhiteSpace(ver)
                         && Version == DEFAULT_VERSION)
                         Version = ver;

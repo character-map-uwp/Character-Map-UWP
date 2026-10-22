@@ -1095,7 +1095,7 @@
                                                 IsTextScaleFactorEnabled="False"
                                                 TextLineBounds="Tight"
                                                 TextTrimming="CharacterEllipsis">
-                                                <Run FontFamily="{x:Bind core:Converters.GetPreviewFontSource(Font.DefaultVariant), FallbackValue='Segoe UI', TargetNullValue='Segoe UI'}" Text="{x:Bind Font.Name}" />
+                                                <Run FontFamily="{x:Bind core:Converters.GetPreviewFontSource(Font.DefaultFace), FallbackValue='Segoe UI', TargetNullValue='Segoe UI'}" Text="{x:Bind Font.Name}" />
                                                 <Run />
                                                 <Run
                                                     FontFamily="{ThemeResource ContentControlThemeFontFamily}"
@@ -1107,12 +1107,12 @@
                                     </muxc:TabViewItem.Header>
                                     <core:Properties.Content>
                                         <TextBlock
-                                            core:Properties.PreviewStringTrigger="{x:Bind Font.DefaultVariant}"
-                                            FontFamily="{Binding Font.DefaultVariant.Source}"
+                                            core:Properties.PreviewStringTrigger="{x:Bind Font.DefaultFace}"
+                                            FontFamily="{Binding Font.DefaultFace.Source}"
                                             FontSize="18"
-                                            FontStretch="{Binding Font.DefaultVariant.DirectWriteProperties.Stretch}"
-                                            FontStyle="{Binding Font.DefaultVariant.DirectWriteProperties.Style}"
-                                            FontWeight="{Binding Font.DefaultVariant.DirectWriteProperties.Weight}"
+                                            FontStretch="{Binding Font.DefaultFace.DirectWriteProperties.Stretch}"
+                                            FontStyle="{Binding Font.DefaultFace.DirectWriteProperties.Style}"
+                                            FontWeight="{Binding Font.DefaultFace.DirectWriteProperties.Weight}"
                                             TextTrimming="CharacterEllipsis"
                                             TextWrapping="Wrap" />
                                     </core:Properties.Content>
