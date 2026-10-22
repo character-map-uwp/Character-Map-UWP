@@ -113,11 +113,11 @@ public static class Converters
             _userCollections = Ioc.Default.GetService<UserCollectionsService>();
         }
 
-        if (_settings.UseFontForPreview
+        if (variant != null
+            && _settings.UseFontForPreview
             && !variant.DirectWriteProperties.IsSymbolFont
             && !_userCollections.SymbolCollection.Fonts.Contains(variant.FamilyName))
             return new FontFamily(variant.Source);
-
 
         return Composition.GetCached<FontFamily>(Window.Current.Compositor, "PFS", () =>
         {
