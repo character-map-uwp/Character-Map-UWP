@@ -119,84 +119,108 @@
   </resheader>
   <data name="AddToCollectionHint.Text" xml:space="preserve">
     <value>நூலகத்தில் சேர்</value>
+    <comment>Button label to add current font to font library</comment>
   </data>
   <data name="AppName" xml:space="preserve">
     <value>எழுத்துக்குறி வரைபடம்</value>
+    <comment>Application title. Usually kept untranslated.</comment>
   </data>
   <data name="BlackFill.Text" xml:space="preserve">
     <value>கருப்பு நிரப்பு</value>
+    <comment>Preview background color option</comment>
   </data>
   <data name="BtnCopy.Text" xml:space="preserve">
     <value>உரையாக நகலெடு</value>
+    <comment>Context menu item to copy glyph character as plain text</comment>
   </data>
   <data name="BtnSelect.Content" xml:space="preserve">
     <value>தேர்ந்தெடு</value>
+    <comment>Button label - select item</comment>
   </data>
   <data name="ColoredGlyphLabel.Text" xml:space="preserve">
-    <value>வண்ணமிட்ட கிளிஃப்</value>
+    <value>வண்ண வரிவடிவம்</value>
+    <comment>Label indicating character contains multi-color glyph data</comment>
   </data>
   <data name="ColorGlyphToggle.OffContent" xml:space="preserve">
-    <value>ஒற்றைகுருமம் கிளிஃப்கள்</value>
+    <value>ஒற்றை நிறம்</value>
+    <comment>Toggle switch off-state label</comment>
   </data>
   <data name="ColorGlyphToggle.OnContent" xml:space="preserve">
-    <value>வண்ண கிளிஃப்கள்</value>
+    <value>வண்ணம்</value>
+    <comment>Toggle switch on-state label</comment>
   </data>
   <data name="FontDisplayHeader.Text" xml:space="preserve">
     <value>எழுத்துரு காட்சி விருப்பங்கள்</value>
   </data>
   <data name="FontOptionsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>எழுத்துரு வரைதல் விருப்பங்கள்</value>
+    <value>எழுத்துரு நடை அம்சங்கள்</value>
+    <comment>Button tooltip to show OpenType font features</comment>
   </data>
   <data name="FontPropertiesButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>எழுத்துரு முக பண்புகள்</value>
+    <value>எழுத்துரு நடைப் பண்புகள்</value>
+    <comment>Button tooltip to show font metadata and properties</comment>
   </data>
   <data name="FontPropFace.Text" xml:space="preserve">
-    <value>முகத்தின் பெயர்</value>
+    <value>நடையின் பெயர்</value>
+    <comment>Typography: Font face name (e.g. Regular, Bold, Italic)</comment>
   </data>
   <data name="FontPropFamily.Text" xml:space="preserve">
     <value>குடும்பப் பெயர்</value>
+    <comment>Typography: Font family name (e.g. Arial, Segoe UI)</comment>
   </data>
   <data name="FontPropMonospaced.Text" xml:space="preserve">
-    <value>ஒற்றையிடமுள்ள எழுத்துருவா</value>
+    <value>நிலையான அகலமா</value>
+    <comment>Typography: Whether font characters have fixed width</comment>
   </data>
   <data name="FontPropStretch.Text" xml:space="preserve">
     <value>விரி</value>
+    <comment>Typography: Font width/stretch (e.g. Condensed, Expanded)</comment>
   </data>
   <data name="FontPropStyle.Text" xml:space="preserve">
     <value>நடை</value>
+    <comment>Typography: Font slope style (e.g. Normal, Italic, Oblique)</comment>
   </data>
   <data name="FontPropSymbol.Text" xml:space="preserve">
     <value>சின்ன எழுத்துருவா</value>
+    <comment>Typography: Whether font is an icon/symbol font</comment>
   </data>
   <data name="FontPropTitle.Text" xml:space="preserve">
-    <value>எழுத்துரு முக பண்புகள்</value>
+    <value>எழுத்துரு நடைப் பண்புகள்</value>
   </data>
   <data name="FontPropType.Text" xml:space="preserve">
     <value>வகை</value>
+    <comment>Typography: Font outline format (e.g. TrueType, OpenType, CFF)</comment>
   </data>
   <data name="FontPropWeight.Text" xml:space="preserve">
     <value>எடை</value>
+    <comment>Typography: Font stroke thickness (e.g. Light, Regular, Bold)</comment>
   </data>
   <data name="InvalidFontMessage" xml:space="preserve">
     <value>மன்னிக்கவும், இந்த கோப்பில் ஆதரிக்கப்படும் எந்த எழுத்துரு தரவை எங்களால் கண்டுபிடிக்க முடியவில்லை.</value>
+    <comment>Error dialog message</comment>
   </data>
   <data name="InvalidFontTitle" xml:space="preserve">
-    <value>ஆதரவளிக்கப்படாத கோப்பு</value>
+    <value>ஆதரிக்கப்படாத கோப்பு</value>
+    <comment>Error dialog title</comment>
   </data>
   <data name="OpenInNewWindow.Text" xml:space="preserve">
-    <value>புதியச் சாளரத்தில் திற</value>
+    <value>புதிய சாளரத்தில் திற</value>
+    <comment>Context menu item to open font in a new window</comment>
   </data>
   <data name="RemoveFontFlyout.Text" xml:space="preserve">
     <value>எழுத்துருவை நீக்கு</value>
+    <comment>Context menu item to delete font from library</comment>
   </data>
   <data name="RestartButton.Content" xml:space="preserve">
-    <value>பயன்பாட்டை மறுதொடக்கம் செய்</value>
+    <value>மறுதொடக்கம் செய்</value>
+    <comment>Button to restart the application</comment>
   </data>
   <data name="RestartHeader.Text" xml:space="preserve">
-    <value>செயற்படுத்து பயன்பாட்டு மறுதொடக்கம் தேவை.</value>
+    <value>செயல்பட பயன்பாட்டு மறுதொடக்கம் தேவை.</value>
   </data>
   <data name="SearchBox.PlaceholderText" xml:space="preserve">
-    <value>எழுத்து பெயர் அல்லது Unicode Hexஐ தேடு</value>
+    <value>பெயர் அல்லது யூனிகோட் ஹெக்ஸ் தேடு</value>
+    <comment>Placeholder text in main search box</comment>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
     <value>இந்தப் பயன்பாட்டை பற்றி</value>
@@ -206,6 +230,7 @@
   </data>
   <data name="TxtCopiedMessage.Text" xml:space="preserve">
     <value>நகலெடுக்கப்பட்டது</value>
+    <comment>In-app flyout message confirming character was copied</comment>
   </data>
   <data name="TxtFontIcon.Header" xml:space="preserve">
     <value>எழுத்துரு படவுரு</value>
@@ -217,18 +242,23 @@
   </data>
   <data name="TxtTitle.Text" xml:space="preserve">
     <value>எழுத்துக்குறி வரைபடம்</value>
+    <comment>Application title in header</comment>
   </data>
   <data name="TxtUnicode.Header" xml:space="preserve">
-    <value>Unicode</value>
+    <value>யூனிகோட்</value>
+    <comment>Header for Unicode codepoint value. Does not need translation.</comment>
   </data>
   <data name="TxtXamlCode.Header" xml:space="preserve">
-    <value>கிளிஃப் குறியீடு</value>
+    <value>வரிவடிவக் குறியீடு</value>
+    <comment>Header for XAML glyph hex code value</comment>
   </data>
   <data name="TypographyVariantsHeader.Text" xml:space="preserve">
     <value>கிளிஃப் வகைகள்</value>
+    <comment>Header for OpenType typography features panel</comment>
   </data>
   <data name="WhiteFill.Text" xml:space="preserve">
     <value>வெள்ளை நிரப்பு</value>
+    <comment>Preview background color option</comment>
   </data>
   <data name="ImportNotAFile" xml:space="preserve">
     <value>கோப்பில்லை</value>
@@ -240,13 +270,13 @@
     <value>கோப்பு கிடைக்கவில்லை</value>
   </data>
   <data name="ImportUnsupportedFileType" xml:space="preserve">
-    <value>ஆதரவளிக்கப்படாத கோப்பு வகை</value>
+    <value>ஆதரிக்கப்படாத கோப்பு வகை</value>
   </data>
   <data name="ImportUnsupportedFontType" xml:space="preserve">
-    <value>ஆதரவளிக்கப்படாதக் எழுத்துரு வகை</value>
+    <value>ஆதரிக்கப்படாத எழுத்துரு வகை</value>
   </data>
   <data name="FontsClearedOnNextLaunchNotice" xml:space="preserve">
-    <value>Some fonts could not be completely removed right now. These fonts will not show in the application and will be completely removed next time the app is launched.</value>
+    <value>சில எழுத்துருக்களை இப்போது முழுமையாக நீக்க முடியவில்லை. அவை பயன்பாட்டில் காட்டப்படாது, அடுத்த முறை பயன்பாடு தொடங்கும் போது முழுமையாக நீக்கப்படும்.</value>
   </data>
   <data name="SaveImageError" xml:space="preserve">
     <value>மன்னிக்கவும், நாங்கள் படத்தை சேமிக்கும் போது ஏதோ தவறு நடந்தது.</value>
@@ -265,138 +295,182 @@
   </data>
   <data name="FontPropXaml.Text" xml:space="preserve">
     <value>XAML FontFamily மூலம்</value>
+    <comment>XAML syntax string. 'FontFamily' and 'XAML' do not need translation.</comment>
   </data>
   <data name="FilePickerConfirm" xml:space="preserve">
     <value>இறக்குமதி</value>
+    <comment>File picker dialog commit button label</comment>
   </data>
   <data name="ImportFontsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>எழுத்துருக்களை இறக்குமதி செய்</value>
+    <comment>Button tooltip to import fonts</comment>
   </data>
   <data name="OpenFontButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>எழுத்துருகவை திற</value>
+    <value>எழுத்துருவைத் திற</value>
+    <comment>Button tooltip to open font file</comment>
   </data>
   <data name="OpenFontPickerConfirm" xml:space="preserve">
     <value>திற</value>
+    <comment>File picker dialog commit button label</comment>
   </data>
   <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
     <value>தொகுப்புப் பெயர்</value>
+    <comment>Input field header for naming a collection</comment>
   </data>
   <data name="DigCreateCollection.PrimaryButtonText" xml:space="preserve">
     <value>உருவாக்கு</value>
+    <comment>Dialog confirmation button</comment>
   </data>
   <data name="DigCreateCollection.Title" xml:space="preserve">
     <value>தொகுப்பை உருவாக்கு</value>
+    <comment>Dialog title</comment>
   </data>
   <data name="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>தொகுப்பை நீக்கு</value>
+    <comment>Button tooltip to delete selected collection</comment>
   </data>
   <data name="Delete" xml:space="preserve">
     <value>நீக்கு</value>
+    <comment>Dialog button label - confirm deletion</comment>
   </data>
   <data name="DigDeleteCollection.Title" xml:space="preserve">
     <value>இந்தத் தொகுப்பை நிச்சயமாக நீக்க விரும்புகிறீர்களா?</value>
+    <comment>Confirmation dialog title</comment>
   </data>
   <data name="DigRenameCollection.PrimaryButtonText" xml:space="preserve">
     <value>மறுபெயரிடு</value>
+    <comment>Dialog confirmation button</comment>
   </data>
   <data name="DigRenameCollection.Title" xml:space="preserve">
     <value>தொகுப்பை மறுபெயரிடு</value>
+    <comment>Dialog title</comment>
   </data>
   <data name="OptionAllFonts.Text" xml:space="preserve">
     <value>அனைத்து எழுத்துருக்கள்</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionImportedFonts.Text" xml:space="preserve">
-    <value>இறக்குமதி செய்யப்பட்ட எழுத்துருக்கள்</value>
+    <value>இறக்குமதி செய்த எழுத்துருக்கள்</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionSymbolFonts.Text" xml:space="preserve">
     <value>சின்ன எழுத்துருக்கள்</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="RenameCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>தொகுப்பை மறுபெயரிடு</value>
+    <comment>Button tooltip to rename collection</comment>
   </data>
   <data name="FontListDisplayHeader.Text" xml:space="preserve">
     <value>எழுத்துருக்கள் பட்டியல் காட்சி</value>
   </data>
   <data name="FontPropCount.Text" xml:space="preserve">
-    <value>கிளிஃப் எண்ணிக்கை</value>
+    <value>வரிவடிவ எண்ணிக்கை</value>
+    <comment>Typography: Count of glyphs in font face</comment>
   </data>
   <data name="OptionMonospacedFonts.Text" xml:space="preserve">
-    <value>Choose the label to show under each character. May have a minor effect on scrolling performance.</value>
+    <value>நிலையான அகல எழுத்துருக்கள்</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionSansSerifFonts.Text" xml:space="preserve">
-    <value>Sans Serif எழுத்துருக்கள்</value>
+    <value>செரிஃப் அற்ற எழுத்துருக்கள்</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionSerifFonts.Text" xml:space="preserve">
-    <value>Serif எழுத்துருக்கள்</value>
+    <value>செரிஃப் எழுத்துருக்கள்</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="NewCollectionItem.Text" xml:space="preserve">
-    <value>புதியத் தொகுப்பு</value>
+    <value>புதிய தொகுப்பு</value>
+    <comment>Context menu item to create a new collection</comment>
   </data>
   <data name="RemoveFromCollectionItem.Text" xml:space="preserve">
     <value>தொகுப்பிலிருந்து அகற்று</value>
+    <comment>Context menu item to remove font from collection</comment>
   </data>
   <data name="AddToCollectionFlyout.Text" xml:space="preserve">
     <value>தொகுப்பில் சேர்</value>
+    <comment>Context menu item / submenu header to add font to collection</comment>
   </data>
   <data name="InstantSearchToggle.OffContent" xml:space="preserve">
-    <value>உடனடித் தேடல் முடக்கப்பட்டுள்ளது</value>
+    <value>முடக்கப்பட்டது</value>
+    <comment>Toggle switch off-state label</comment>
   </data>
   <data name="InstantSearchToggle.OnContent" xml:space="preserve">
-    <value>உடனடித் தேடல் இயக்கப்பட்டுள்ளது</value>
+    <value>இயக்கப்பட்டது</value>
+    <comment>Toggle switch on-state label</comment>
   </data>
   <data name="SearchResultsSlider.Header" xml:space="preserve">
     <value>அதிகபட்ச தேடல் முடிவுகள்</value>
   </data>
   <data name="FontPropCharCount.Text" xml:space="preserve">
     <value>எழுத்துக்குறி எண்ணிக்கை</value>
+    <comment>Typography: Count of Unicode characters supported in font face</comment>
   </data>
   <data name="FontPropFilePath.Text" xml:space="preserve">
     <value>கோப்புப் பாதை</value>
   </data>
+  <data name="DWriteSourceAppxPackage" xml:space="preserve">
+    <value>Microsoft Store</value>
+    <comment>DirectWrite font source: installed via Microsoft Store package</comment>
+  </data>
   <data name="DWriteSourcePerMachine" xml:space="preserve">
     <value>அனைத்து பயனர்கள்</value>
+    <comment>DirectWrite font source: installed system-wide for all users</comment>
   </data>
   <data name="DWriteSourcePerUser" xml:space="preserve">
     <value>நடப்புப் பயனர் மட்டும்</value>
+    <comment>DirectWrite font source: installed for current user only</comment>
   </data>
   <data name="DWriteSourceRemoteFontProvider" xml:space="preserve">
-    <value>மேக வழங்குநர்</value>
+    <value>மேகக்கணி வழங்குநர்</value>
+    <comment>DirectWrite font source: downloaded from cloud provider</comment>
   </data>
   <data name="DWriteSourceUnknown" xml:space="preserve">
-    <value>விளக்கப்படாதவை</value>
+    <value>வரையறுக்கப்படாதது</value>
+    <comment>DirectWrite font source: unspecified or unknown source</comment>
   </data>
   <data name="FontPropInstallType.Text" xml:space="preserve">
     <value>நிறுவல் வகை</value>
   </data>
   <data name="OptionAppxFonts.Text" xml:space="preserve">
     <value>Microsoft Store இலிருந்து</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionCloudFonts.Text" xml:space="preserve">
-    <value>Cloud-சார்ந்த எழுத்துருக்கள்</value>
+    <value>மேகக்கணி எழுத்துருக்கள்</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionColorFonts.Text" xml:space="preserve">
     <value>வண்ண எழுத்துருக்கள்</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionDecorativeFonts.Text" xml:space="preserve">
     <value>அலங்கார எழுத்துருக்கள்</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionMoreFilters.Text" xml:space="preserve">
     <value>மேலும்</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionScriptFonts.Text" xml:space="preserve">
     <value>அரிச்சுவடி எழுத்துருக்கள்</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="StatusBarFontCount" xml:space="preserve">
     <value>{0} எழுத்துரு குடும்பங்கள்</value>
+    <comment>{0} = number of font families</comment>
   </data>
   <data name="FontPropFileSize.Text" xml:space="preserve">
     <value>கோப்பின் அளவு</value>
   </data>
   <data name="InstallTypeImported" xml:space="preserve">
-    <value>நிறுவப்படவில்லை (இறக்குமதி செய்யபட்டது)</value>
+    <value>நிறுவப்படவில்லை (இறக்குமதி செய்யப்பட்டது)</value>
+    <comment>Font source: loaded into application without installing in Windows</comment>
   </data>
   <data name="StatusBarCharacterCount" xml:space="preserve">
     <value>{0} எழுத்துக்குறிகள்</value>
+    <comment>{0} = number of characters in font face</comment>
   </data>
   <data name="SearchDelaySelector.Header" xml:space="preserve">
     <value>தேடல் முன்பு தாமதம் (ms)</value>
@@ -406,51 +480,67 @@
   </data>
   <data name="CharacterSavedMessage.Text" xml:space="preserve">
     <value>இதில் சேமிக்கப்பட்டது</value>
+    <comment>Precedes folder path: 'Saved to [folder path]'</comment>
   </data>
   <data name="NotificationAddedToCollection" xml:space="preserve">
     <value>"{1}" தொகுப்பில் {0} சேர்க்கப்பட்டது</value>
+    <comment>{0} = font name, {1} = collection name</comment>
   </data>
   <data name="BtnOpenFile.Content" xml:space="preserve">
     <value>கோப்பைத் திற</value>
+    <comment>Button label to open exported file</comment>
   </data>
   <data name="BtnOpenFolder.Content" xml:space="preserve">
     <value>கோப்புறையில் காண்பி</value>
+    <comment>Button label to open folder in File Explorer</comment>
   </data>
   <data name="BtnHidePane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>எழுத்துரு பலகையை மறை</value>
+    <value>எழுத்துருப் பலகையை மறை (Ctrl+L)</value>
+    <comment>Tooltip to collapse the font list pane</comment>
   </data>
   <data name="NotificationImportFailed" xml:space="preserve">
     <value>இறக்குமதி தோல்வியடைந்தது</value>
+    <comment>Notification header when font import fails</comment>
   </data>
   <data name="NotificationMultipleFontsAdded" xml:space="preserve">
     <value>{0} கோப்புகள் உங்கள் தொகுப்பில் சேர்க்கப்பட்டன</value>
+    <comment>{0} = number of font files added</comment>
   </data>
   <data name="NotificationSingleFontAdded" xml:space="preserve">
     <value>{0} உங்கள் தொகுப்பில் சேர்க்கப்பட்டது</value>
+    <comment>{0} = font name</comment>
   </data>
   <data name="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>எழுத்துரு பலகையைக் காண்பி</value>
+    <value>எழுத்துருப் பலகையைக் காட்டு (Ctrl+L)</value>
+    <comment>Tooltip to expand the font list pane</comment>
   </data>
   <data name="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>மேலும்</value>
+    <comment>Tooltip for overflow menu button</comment>
   </data>
   <data name="FontListFilter.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>எழுத்துருக்களை வடிகட்டவும்</value>
+    <value>எழுத்துருக்களை வடிகட்டு</value>
+    <comment>Tooltip for font list filter flyout button</comment>
   </data>
   <data name="ToggleFullScreenModeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>முழுத் திரைக்கு செல் அல்லது முழுத் திரையிலிருந்து வெளியேறு</value>
+    <value>முழுத்திரை நிலைமாற்று</value>
+    <comment>Tooltip to toggle fullscreen mode</comment>
   </data>
   <data name="DlgDeleteFont.Title" xml:space="preserve">
     <value>உங்கள் நூலகத்திலிருந்து இந்த எழுத்துருவை நீக்க நிச்சயமாக விரும்புகிறீர்களா?</value>
+    <comment>Confirmation dialog title</comment>
   </data>
   <data name="NotificationCollectionDeleted" xml:space="preserve">
     <value>"{0}" தொகுப்பு நீக்கப்பட்டது</value>
+    <comment>{0} = collection name</comment>
   </data>
   <data name="DlgException.PrimaryButtonText" xml:space="preserve">
     <value>சரி</value>
+    <comment>Dialog button</comment>
   </data>
   <data name="DlgException.Title" xml:space="preserve">
     <value>ஏதோ தவறாகிவிட்டது</value>
+    <comment>Unhandled error dialog title</comment>
   </data>
   <data name="DlgExceptionCopyMessage.Text" xml:space="preserve">
     <value>பிழையை நகலகத்திற்கு நகலெடுத்து GitHubஐ திற</value>
@@ -459,118 +549,142 @@
     <value>முழு பிழை விவரங்களைக் காண்க</value>
   </data>
   <data name="DlgExceptionMessage.Text" xml:space="preserve">
-    <value>To help us debug and fix this for you, please consider opening an issue on our GitHub page and posting the details. We'll try and fix it right away!</value>
+    <value>இதை நாங்கள் சரிசெய்ய உதவ, தயவுசெய்து எங்கள் GitHub பக்கத்தில் விவரங்களுடன் சிக்கலைப் பதிவுசெய்யவும். நாங்கள் உடனடியாக அதைச் சரிசெய்ய முயற்சிப்போம்!</value>
   </data>
   <data name="BtnClose.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>மூடு</value>
+    <comment>Tooltip to close pane or dialog</comment>
   </data>
   <data name="BtnCopyDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>நகலெடு</value>
+    <comment>Tooltip to copy code snippet to clipboard</comment>
   </data>
   <data name="BtnRateAndReview.Content" xml:space="preserve">
-    <value>தரமதிப்பிட்டு &amp; மதிப்பாய்வு</value>
+    <value>மதிப்பீடு &amp; கருத்துரை</value>
+    <comment>Button label - open Microsoft Store rating page</comment>
   </data>
   <data name="BtnXAMLGeometry.Content" xml:space="preserve">
-    <value>பார்க்க கிளிக் செய்க</value>
+    <value>காண்க</value>
+    <comment>Button label - show full XAML path geometry</comment>
   </data>
   <data name="RbThemeDark.Content" xml:space="preserve">
     <value>இருள்</value>
+    <comment>Theme option: dark mode</comment>
   </data>
   <data name="RbThemeLight.Content" xml:space="preserve">
     <value>வெளிச்சம்</value>
+    <comment>Theme option: light mode</comment>
   </data>
   <data name="RbThemeSystem.Content" xml:space="preserve">
     <value>Windows இயல்புநிலை</value>
+    <comment>Theme option: follow Windows default theme</comment>
   </data>
   <data name="RbUseActualFont.Content" xml:space="preserve">
-    <value>உண்மையான எழுத்துருவை பயன்படுத்து
-</value>
+    <value>அசல் எழுத்துருவைப் பயன்படுத்து</value>
+    <comment>Setting option: render font names in the font list using each font's own typeface</comment>
   </data>
   <data name="RbUseSystemFont.Content" xml:space="preserve">
-    <value>முறைமை எழுத்துருவை பயன்படுத்து</value>
+    <value>முறைமை எழுத்துருவைப் பயன்படுத்து</value>
+    <comment>Setting option: render font names in the font list using the system font</comment>
   </data>
   <data name="SettingsCharacterSearchDescription.Text" xml:space="preserve">
     <value>உடனடி தேடலை இயக்கு/அணை. முடக்கப்பட்டிருந்தால், நீங்கள் தேடலை enter விசை அல்லது தேடல் படவுரு மூலம் துவங்கலாம்.</value>
   </data>
   <data name="SettingsCharacterSearchHeader.Text" xml:space="preserve">
     <value>எழுத்துக்குறி தேடல்</value>
+    <comment>Settings section header for search settings</comment>
   </data>
   <data name="SettingsCharGridDescription.Text" xml:space="preserve">
     <value>எழுத்துக்குறிகள் கட்டத்திற்குள் உள்ள தனிப்பட்ட எழுத்துக்குறியின் அளவு. சிறிய அளவுகள் செயல்திறனை பாதிக்கலாம்.</value>
   </data>
   <data name="SettingsCharGridHeader.Text" xml:space="preserve">
     <value>எழுத்துக்குறி கட்ட அளவு</value>
+    <comment>Settings header for character grid size slider</comment>
   </data>
   <data name="SettingsCharPreviewHint.Text" xml:space="preserve">
     <value>எழுத்துக்குறி கட்ட முன்னோட்டம்</value>
+    <comment>Label for character grid preview box</comment>
   </data>
   <data name="SettingsDevToolsDescription.Text" xml:space="preserve">
     <value>சின்ன படவுரு மற்றும் எழுத்துரு படவுரு போன்ற XAML உருவாக்குநர்களுக்கான கருவிகளைக் காண்பி.</value>
   </data>
   <data name="SettingsDevToolsGroupHeader.Text" xml:space="preserve">
     <value>உருவாக்குநர் அம்சங்கள்</value>
+    <comment>Settings header for developer tools options</comment>
   </data>
   <data name="SettingsDevToolsHeader.Text" xml:space="preserve">
-    <value>உருவாக்குநர்கள் அமைப்புகளைக் காண்பி</value>
+    <value>உருவாக்குநர் கருவிகளைக் காட்டு</value>
+    <comment>Setting toggle header to enable developer features</comment>
   </data>
   <data name="SettingsDevToolsLangDescription.Text" xml:space="preserve">
     <value>உருவாக்குநர்கள் அம்சங்கள் உள்ளடக்கதிற்கான Dev மொழியைத் தேர்வுசெய்க.</value>
   </data>
   <data name="SettingsDevToolsLangHeader.Text" xml:space="preserve">
     <value>மொழி</value>
+    <comment>Dropdown header for choosing developer code preview language</comment>
   </data>
   <data name="SettingsExpensiveAnimationDescription.Text" xml:space="preserve">
     <value>சாளரத்தை மறுஅளவிடும் போது எழுத்துக்குறி கட்டத்தை அசைவூட்டம் செய்யும்.
-இதை இயக்கினால், சாளரத்தை மறுஅளவிடும் போது ஒரு பெரிய செயல்திறன் அபராதம் ஏற்படலாம்.</value>
+இதை இயக்கினால், சாளரத்தை மறுஅளவிடும்போது செயல்திறன் கணிசமாகக் குறையலாம்.</value>
   </data>
   <data name="SettingsExpensiveAnimationHeader.Text" xml:space="preserve">
-    <value>சாளர மறுஅளவாக்கல் அசைவூட்டங்களை செயற்படுத்து</value>
+    <value>மறுஅளவிடும் அசைவூட்டங்களை இயக்கு</value>
+    <comment>Setting toggle header</comment>
   </data>
   <data name="SettingsExportHeader.Text" xml:space="preserve">
-    <value>ஏற்றுமதிசெய்</value>
+    <value>ஏற்றுமதி</value>
+    <comment>Settings section header for export options</comment>
   </data>
   <data name="SettingsFontListDescription.Text" xml:space="preserve">
     <value>எழுத்துரு பட்டியலில் எழுத்துருக்களின் பெயர்களைக் காட்ட பயன்படுத்தப்படும் எழுத்துருவைத் தேர்வுசெய்க.</value>
   </data>
   <data name="SettingsFontListPreviewHint.Text" xml:space="preserve">
     <value>எழுத்துருக்கள் பட்டியல் முன்னோட்டம்</value>
+    <comment>Label for font list preview box</comment>
   </data>
   <data name="SettingsHeader.Text" xml:space="preserve">
     <value>அமைப்புகள்</value>
+    <comment>Settings page title</comment>
   </data>
   <data name="SettingsLanguageDescription.Text" xml:space="preserve">
     <value>பயன்பாட்டிலுள்ள மொழியை மாற்றவும்.
-செயற்படுத்து மறுதொடக்கம் தேவை.</value>
+செயல்பட பயன்பாட்டு மறுதொடக்கம் தேவை.</value>
   </data>
   <data name="SettingsLanguageHeader.Text" xml:space="preserve">
     <value>மொழி மேலெழுதல்</value>
+    <comment>Dropdown header to override application language</comment>
   </data>
   <data name="SettingsPNGExportDescription.Text" xml:space="preserve">
     <value>ஏற்றுமதி செய்யப்பட்ட PNG படங்களின் அளவு.</value>
   </data>
   <data name="SettingsPNGExportHeader.Text" xml:space="preserve">
     <value>PNG ஏற்றுமதி அளவு</value>
+    <comment>Dropdown header for exported PNG image resolution</comment>
   </data>
   <data name="SettingsShadowsDescription.Text" xml:space="preserve">
     <value>UI இல் நுட்பமான ஆழ நிழல்களை இயக்கும். வெளிச்சப் பயன்முறையை பயன்படுத்தும் போது மட்டுமே குறிப்பிடத்தக்கது.
 இதை இயக்குவது பலவீனமான சாதனங்களில் ஒரு சிறிய செயல்திறன் தாக்கத்தை ஏற்படுத்தலாம்.
-செயற்படுத்த மறுதொடக்கம் தேவை.</value>
+செயல்பட பயன்பாட்டு மறுதொடக்கம் தேவை.</value>
   </data>
   <data name="SettingsShadowsHeader.Text" xml:space="preserve">
-    <value>நிழல்களை செயற்படுத்து</value>
+    <value>நிழல்களை இயக்கு</value>
+    <comment>Setting toggle header for light theme depth shadows</comment>
   </data>
   <data name="SettingsSimpleAnimationDescription.Text" xml:space="preserve">
     <value>எழுத்துரு பட்டியலை ஏற்றுதல், எழுத்துருக்களை மாற்றுதல் மற்றும் எழுத்துக்குறிகளை மாற்றுதல் ஆகிய அசைவூட்டத்தை கட்டுப்படுத்துகிறது.
 இதை இயக்குவதன் மூலம் செயல்திறன் பாதிப்பு மிகவும் குறைவாக இருக்கும்.</value>
   </data>
   <data name="SettingsSimpleAnimationHeader.Text" xml:space="preserve">
-    <value>எளிய அசைவூட்டங்களை செயற்படுத்து</value>
+    <value>எளிய அசைவூட்டங்களை இயக்கு</value>
+    <comment>Setting toggle header for UI animations</comment>
   </data>
   <data name="SettingsThemeHeader.Text" xml:space="preserve">
     <value>கருப்பொருள்</value>
+    <comment>Settings section header for theme selection</comment>
   </data>
   <data name="SettingsUIHeader.Text" xml:space="preserve">
     <value>தளவமைப்பு</value>
+    <comment>Settings section header for layout and sizing</comment>
   </data>
   <data name="TxtPathGeometry.Text" xml:space="preserve">
     <value>பாதை வடிவியல்</value>
@@ -581,148 +695,205 @@
   </data>
   <data name="SettingsNeedRestart.Text" xml:space="preserve">
     <value>மறுதொடக்கம் செய்த பின் மாற்றம் செயற்படுத்தப்படும்</value>
+    <comment>Notice shown when a setting requires restarting the app to take effect</comment>
   </data>
   <data name="BtnContributors.Content" xml:space="preserve">
     <value>பங்களிப்பாளர்கள்</value>
+    <comment>Button label - view GitHub project contributors</comment>
   </data>
   <data name="TxtLoadingFonts.Text" xml:space="preserve">
-    <value>எழுத்துருக்களை ஏற்றுகிறது
-</value>
+    <value>எழுத்துருக்களை ஏற்றுகிறது</value>
+    <comment>Loading indicator text while scanning font files</comment>
   </data>
   <data name="AppBtnClear.Label" xml:space="preserve">
     <value>அழி</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="AppBtnReset.Label" xml:space="preserve">
     <value>மீட்டமை</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="AppBtnSelectAll.Label" xml:space="preserve">
     <value>எல்லாம் தேர்ந்தெடு</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="BtnApply.Content" xml:space="preserve">
     <value>செயற்படுத்து</value>
+    <comment>Button label - apply changes</comment>
   </data>
   <data name="Cancel" xml:space="preserve">
     <value>இரத்து</value>
+    <comment>Dialog button label - cancel operation</comment>
   </data>
   <data name="BtnContinue.Content" xml:space="preserve">
     <value>தொடரவும்</value>
+    <comment>Button label - proceed to next step</comment>
   </data>
   <data name="BtnPrint.Content" xml:space="preserve">
     <value>அச்சிடு</value>
+    <comment>Button label - print character catalog</comment>
   </data>
   <data name="CbCharacterLabel.Header" xml:space="preserve">
-    <value>எழுத்துக்குறி பெயர் பலகை</value>
+    <value>எழுத்துக் குறிச்சொல்</value>
+    <comment>Print settings dropdown header for label printed under characters</comment>
   </data>
   <data name="CbiPageOrientationLandscape.Content" xml:space="preserve">
     <value>நிலைபரப்பு</value>
+    <comment>Print page orientation option</comment>
   </data>
   <data name="CbiPageOrientationPortrait.Content" xml:space="preserve">
     <value>நிலைபதிப்பு</value>
+    <comment>Print page orientation option</comment>
   </data>
   <data name="CbListStyle.Header" xml:space="preserve">
     <value>பட்டியல் நடை</value>
+    <comment>Print settings dropdown header for list style</comment>
   </data>
   <data name="CbShowMargins.Content" xml:space="preserve">
     <value>ஓரங்களை காட்டு</value>
+    <comment>Print settings checkbox to show printable page margins</comment>
   </data>
   <data name="ChkBxHideWhitespace.Content" xml:space="preserve">
     <value>வெள்ளையிடம் மற்றும் கட்டுப்பாட்டு எழுத்துக்குறிகளை மறை</value>
+    <comment>Print settings checkbox</comment>
   </data>
   <data name="ChkBxShowBorders.Content" xml:space="preserve">
     <value>எல்லைகளைக் காட்டு</value>
+    <comment>Print settings checkbox to draw grid cell borders</comment>
   </data>
   <data name="GlyphAnnotation_None" xml:space="preserve">
     <value>ஏதுமில்லை</value>
+    <comment>Character label option: show no text under character in grid</comment>
+  </data>
+  <data name="GlyphAnnotation_UnicodeHex" xml:space="preserve">
+    <value>யூனிகோட் ஹெக்ஸ்</value>
+    <comment>Character label option: show hex code (e.g. 0041) under character</comment>
+  </data>
+  <data name="GlyphAnnotation_UnicodeIndex" xml:space="preserve">
+    <value>யூனிகோட் குறியீடு</value>
+    <comment>Character label option: show decimal index under character</comment>
   </data>
   <data name="PrintCharacterFilterContent.Text" xml:space="preserve">
     <value>காண்பிக்க எழுத்துக்குறி குழுக்களைத் தேர்வுசெய்க</value>
+    <comment>Print settings button text to open category selector</comment>
   </data>
   <data name="PrintDataHeader.Text" xml:space="preserve">
     <value>தரவு</value>
+    <comment>Print configuration section header for character data to include</comment>
   </data>
   <data name="PrintViewCharSize.Text" xml:space="preserve">
     <value>எழுத்துக்குறி அளவு</value>
+    <comment>Print settings header for character font size slider</comment>
   </data>
   <data name="PrintViewHorizontalMarginHeader.Text" xml:space="preserve">
     <value>கிடைமட்ட ஓரம்</value>
+    <comment>Print settings slider header</comment>
   </data>
   <data name="PrintViewLayoutHeader.Text" xml:space="preserve">
     <value>தளவமைப்பு</value>
+    <comment>Print settings section header for page layout</comment>
+  </data>
+  <data name="PrintViewOfLabel.Text" xml:space="preserve">
+    <value>/</value>
+    <comment>Page number separator in 'Page X of Y'</comment>
   </data>
   <data name="PrintViewPageOrientation.Header" xml:space="preserve">
     <value>பக்கத் திசை</value>
+    <comment>Print settings dropdown header for orientation</comment>
   </data>
   <data name="PrintViewPageRange.Text" xml:space="preserve">
     <value>பக்க வரம்பு</value>
+    <comment>Print settings section header for page range</comment>
   </data>
   <data name="PrintViewPageRangeDesc.Text" xml:space="preserve">
     <value>ஒரு நேரத்தில் 50 பக்கங்கள் வரை அச்சிட முடியும். இங்கு அச்சிட வேண்டிய பக்கங்களின் வரம்பைத் தேர்ந்தெடுக்கவும்.</value>
   </data>
   <data name="PrintViewPageRangeSelector.Header" xml:space="preserve">
     <value>அச்சிட வேண்டிய பக்கங்கள்:</value>
+    <comment>Print settings dropdown header for page count</comment>
   </data>
   <data name="PrintViewPageSelector.Header" xml:space="preserve">
     <value>பக்கத்திலிருந்து தொடங்கு:</value>
+    <comment>Print settings dropdown header for first page to print</comment>
   </data>
   <data name="PrintViewPageSetupHeader.Text" xml:space="preserve">
     <value>பக்க அமைவு</value>
+    <comment>Print settings section header for margins and orientation</comment>
   </data>
   <data name="PrintViewPreviewingLabel.Text" xml:space="preserve">
-    <value>முன்னோட்டமிடும் பக்கம்</value>
+    <value>முன்னோட்டப் பக்கம்</value>
+    <comment>Status label in print preview, e.g. 'Previewing page 1 of 5'</comment>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>முன்னோட்டம்</value>
+    <comment>Tab or button label to preview print layout</comment>
   </data>
   <data name="PrintViewPreviewOutOfBoundsLabel.Text" xml:space="preserve">
     <value>இந்தப் பக்கம் நடப்புப் பக்க வரம்பிற்கு வெளியே உள்ளது, அதனால் அச்சிடப்படாது.
-பக்க வரம்பை நீங்கள் பக்க அமைவு பகுதியில் மாற்றலாம்..</value>
+பக்க வரம்பை நீங்கள் பக்க அமைவு பகுதியில் மாற்றலாம்.</value>
   </data>
   <data name="PrintViewPrintingLabel" xml:space="preserve">
-    <value>பக்கங்களை அச்சிடுதல் {0} - {1}</value>
+    <value>அச்சிடுகிறது: {0} - {1}</value>
+    <comment>{0} = start page number, {1} = end page number</comment>
   </data>
   <data name="PrintViewTitle.Text" xml:space="preserve">
-    <value>Print Configuration
-</value>
+    <value>அச்சு உள்ளமைவு</value>
+    <comment>Print configuration view title</comment>
   </data>
   <data name="PrintViewVerticalMarginHeader.Text" xml:space="preserve">
     <value>செங்குத்து ஓரம்</value>
+    <comment>Print settings slider header</comment>
   </data>
   <data name="SettingsCharLabel.Text" xml:space="preserve">
-    <value>எழுத்துக்குறி பெயர் பலகை</value>
+    <value>எழுத்துக் குறிச்சொல்</value>
+    <comment>Setting dropdown header for label shown under characters</comment>
   </data>
   <data name="SettingsCharLabelDesc.Text" xml:space="preserve">
-    <value>Choose the label to show under each character. May have a minor effect on scrolling performance.</value>
+    <value>ஒவ்வொரு எழுத்தின் கீழும் காட்ட வேண்டிய லேபிளைத் தேர்வுசெய்க. இது உருளல் செயல்திறனில் சிறிய தாக்கத்தை ஏற்படுத்தலாம்.</value>
   </data>
   <data name="SettingsManageSystemFonts.Content" xml:space="preserve">
     <value>நிறுவப்பட்ட எழுத்துருக்களை நிர்வகி</value>
+    <comment>Button to open Windows Settings font management page</comment>
   </data>
   <data name="SettingsSystemFontHeader.Text" xml:space="preserve">
-    <value>நிறுவப்பட்ட எழுத்துரு</value>
+    <value>நிறுவப்பட்ட எழுத்துருக்கள்</value>
+    <comment>Settings section header for installed system fonts</comment>
   </data>
   <data name="SettingsWindowsThemeSettings.Content" xml:space="preserve">
     <value>Windows கருப்பொருள் அமைப்புகள்</value>
+    <comment>Button to open Windows Settings theme page</comment>
   </data>
   <data name="UnicodeFiltersTitle.Text" xml:space="preserve">
-    <value>Unicode வகை வடிகட்டிகள்</value>
+    <value>யூனிகோட் வகை வடிகட்டிகள்</value>
+    <comment>Header for Unicode category filter list</comment>
   </data>
   <data name="PrintLayout_Grid" xml:space="preserve">
     <value>கட்டம்</value>
+    <comment>Print layout option: characters arranged in grid cells</comment>
   </data>
   <data name="PrintLayout_List" xml:space="preserve">
     <value>பட்டியல்</value>
+    <comment>Print layout option: single column list with details</comment>
   </data>
   <data name="PrintLayout_TwoColumn" xml:space="preserve">
     <value>இரண்டு பத்திகள்</value>
+    <comment>Print layout option: two column list with details</comment>
   </data>
   <data name="SettingsTransparencyDescription.Text" xml:space="preserve">
     <value>UI இல் வெளிப்படைத்தன்மை விளைவுகளை செயல்படுத்தும். Windows அமைப்புகளில் வெளிப்படைத்தன்மை முடக்கப்பட்டால், இது எந்த விளைவையும் ஏற்படுத்தாது.
 பழைய அல்லது பலவீனமான சாதனங்களில் செயல்திறன் மீது ஒரு சிறிய விளைவை ஏற்படுத்தலாம்.</value>
   </data>
   <data name="SettingsTransparencyHeader.Text" xml:space="preserve">
-    <value>வெளிப்படைத்தன்மையை செயற்படுத்து</value>
+    <value>வெளிப்படைத்தன்மையை இயக்கு</value>
+    <comment>Setting toggle header for acrylic transparency effects</comment>
   </data>
   <data name="StartupFailedButton.Content" xml:space="preserve">
     <value>விவரங்களைக் காண்பி</value>
+    <comment>Button on startup failure screen to display stack trace</comment>
   </data>
   <data name="StartupFailedHeader.Text" xml:space="preserve">
     <value>அட டா</value>
+    <comment>Header on catastrophic startup failure screen</comment>
   </data>
   <data name="StartupFailedMessage.Text" xml:space="preserve">
     <value>ஏதோ தவறு நடந்தது, தற்போது பயன்பாட்டை தொடங்க முடியவில்லை.
@@ -730,63 +901,82 @@
   </data>
   <data name="CharacterKeystrokeLabel" xml:space="preserve">
     <value>விசைத்தட்டு: Alt + {0:0000}</value>
+    <comment>{0:0000} = 4-digit Windows Alt code</comment>
   </data>
   <data name="ExportSVGLabel.Text" xml:space="preserve">
     <value>SVG படிமமாகச் சேமி</value>
+    <comment>Menu item to save glyph as SVG file</comment>
   </data>
   <data name="ExportPNGLabel.Text" xml:space="preserve">
     <value>PNG படிமமாகச் சேமி</value>
+    <comment>Menu item to save glyph as PNG file</comment>
   </data>
   <data name="ExportSVGGlyphLabel.Text" xml:space="preserve">
-    <value>SVG கிளிஃப்</value>
+    <value>SVG வரிவடிவம்</value>
+    <comment>Menu header for exporting SVG glyph</comment>
   </data>
   <data name="BtnCopyGlyph.Label" xml:space="preserve">
     <value>நகலெடு</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="BtnCopyGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>நகலகத்திற்கு நகலெடு</value>
+    <comment>Tooltip to copy character to clipboard</comment>
   </data>
   <data name="BtnSaveGlyph.Label" xml:space="preserve">
-    <value>இவ்வாறு சேமி</value>
+    <value>சேமி</value>
+    <comment>Labels must be as short as possible</comment>
   </data>
   <data name="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>இவ்வாறு சேமி</value>
+    <comment>Tooltip to export character as image</comment>
   </data>
   <data name="BtnFit.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>எழுத்துக்குறியைப் பொருத்து</value>
+    <comment>Tooltip to fit character inside preview bounds</comment>
   </data>
   <data name="NotificationFontRemovedBody.Text" xml:space="preserve">
-    <value>இருந்து அகற்றப்பட்டது</value>
+    <value>இலிருந்து அகற்றப்பட்டது</value>
+    <comment>Sentence fragment: '[Font Name] was removed from [Collection Name]'</comment>
   </data>
   <data name="NotificationFontAddedBody.Text" xml:space="preserve">
     <value>இல் சேர்க்கப்பட்டது</value>
+    <comment>Sentence fragment: '[Font Name] was added to [Collection Name]'</comment>
   </data>
   <data name="ExportFontFile.Text" xml:space="preserve">
     <value>எழுத்துரு கோப்பு</value>
+    <comment>Export option to save raw font file</comment>
   </data>
   <data name="ExportFontFileLabel.Text" xml:space="preserve">
-    <value>எழுத்துரு கோப்பை இவ்வாறு சேமி</value>
+    <value>எழுத்துருக் கோப்பைச் சேமி</value>
+    <comment>File picker dialog title when exporting font file</comment>
   </data>
   <data name="FontExportedMessage" xml:space="preserve">
     <value>{0} ஏற்றுமதி செய்யப்பட்டது</value>
+    <comment>{0} = exported font file name</comment>
   </data>
   <data name="CollectionExportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>எழுத்துருக்களை ஏற்றுமதி செய்</value>
+    <comment>Button tooltip to export fonts in collection</comment>
   </data>
   <data name="CollectionExportFolder.Text" xml:space="preserve">
     <value>கோப்புறைக்கு</value>
+    <comment>Export option: export font files to folder</comment>
   </data>
   <data name="CollectionExportHeader.Text" xml:space="preserve">
     <value>எழுத்துருக்களை ஏற்றுமதி செய்</value>
+    <comment>Collection export flyout header</comment>
   </data>
   <data name="CollectionExportZip.Text" xml:space="preserve">
     <value>Zip காப்பகமாக</value>
+    <comment>Export option: export font files as zip archive</comment>
   </data>
   <data name="SystemFontsExpiredMessage.Text" xml:space="preserve">
     <value>எழுத்துரு பட்டியல்கள் காலாவதியாகிவிட்டது. மீண்டும் ஏற்ற கிளிக் செய்க.</value>
   </data>
   <data name="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>உருவாக்குநர் கருவிகளைக் காண்பி/மறை</value>
+    <value>உருவாக்குநர் கருவிகள்</value>
+    <comment>Tooltip to toggle developer features panel</comment>
   </data>
   <data name="TxtPathIcon.Text" xml:space="preserve">
     <value>பாதை படவுரு</value>
@@ -794,48 +984,71 @@
   </data>
   <data name="OptionAllEmoji.Text" xml:space="preserve">
     <value>எல்லா வகைகளும்</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="OptionAllEmojiTitle.Text" xml:space="preserve">
     <value>எல்லா ஈமோஜிக்கள்</value>
+    <comment>Font filter flyout option</comment>
+  </data>
+  <data name="OptionEmojiDingbats.Text" xml:space="preserve">
+    <value>டிங்பாட்கள்</value>
+    <comment>Font filter flyout: emoji category option</comment>
   </data>
   <data name="OptionEmojiEmoticons.Text" xml:space="preserve">
     <value>ஈமோஜிக்கள்</value>
+    <comment>Font filter flyout: emoji category option</comment>
   </data>
   <data name="OptionEmojiSymbols.Text" xml:space="preserve">
     <value>சின்னங்கள் &amp; உருவப்படங்கள்</value>
+    <comment>Font filter flyout: emoji category option</comment>
   </data>
   <data name="OptionScriptArabic.Text" xml:space="preserve">
     <value>அரபிக்</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="OptionScriptBasicLatin.Text" xml:space="preserve">
     <value>லத்தீன்</value>
+    <comment>Font filter flyout: script/writing system option</comment>
+  </data>
+  <data name="OptionScriptCJKUnifiedIdeographs.Text" xml:space="preserve">
+    <value>சிஜேகே (சீனம்/ஜப்பானியம்/கொரியம்)</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="OptionScriptCyrillic.Text" xml:space="preserve">
     <value>சிரில்லிக்</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="OptionScriptGreekAndCoptic.Text" xml:space="preserve">
     <value>கிரேக்கம் &amp; காப்டிக்</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="OptionScriptHebrew.Text" xml:space="preserve">
     <value>ஹீப்ரு</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="OptionScriptThai.Text" xml:space="preserve">
     <value>தாய்</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="CultureSpecificPangram.Text" xml:space="preserve">
     <value>எவ்வளவு மிகவேகமாக வரிக்குதிரைகள் குதிக்கிறது! 1234567890</value>
+    <comment>Provide a pangram (sentence containing every letter) and digits for the target language.</comment>
   </data>
   <data name="LblSwitchToCharMap.Text" xml:space="preserve">
-    <value>எழுத்துக்குறி வரைபடம் காட்சிக்கு மாறு</value>
+    <value>வரைபடக் காட்சிக்கு மாறு (Ctrl+T)</value>
+    <comment>Button label to switch from Type Ramp to Character Map view</comment>
   </data>
   <data name="LblSwitchToTypeRamp.Text" xml:space="preserve">
-    <value>வகை ராம்ப் காட்சிக்கு மாறு</value>
+    <value>அளவு முன்னோட்டக் காட்சிக்கு மாறு (Ctrl+T)</value>
+    <comment>Button label to switch from Character Map to Type Ramp view</comment>
   </data>
   <data name="TypeRampInputBox.PlaceholderText" xml:space="preserve">
     <value>உள்ளிடு அல்லது கீழ்பட்டியலிலிருந்து உரையைத் தேர்ந்தெடு</value>
+    <comment>Placeholder text in Type Ramp custom preview text box</comment>
   </data>
   <data name="ExportedToFolderMessage" xml:space="preserve">
     <value>{0} இற்கு ஏற்றுமதி செய்யப்பட்டது</value>
+    <comment>{0} = destination folder name</comment>
   </data>
   <data name="ImportDragDropDescriptionLabel.Text" xml:space="preserve">
     <value>இங்கு இறக்குமதி செய்ய கோப்பு உலவி அல்லது உங்கள் திரைப்பலகத்தில் கோப்புகளை இழுத்து விடவும்.</value>
@@ -845,60 +1058,1491 @@
   </data>
   <data name="SettingsAboutLabel.Text" xml:space="preserve">
     <value>பற்றி</value>
+    <comment>Settings navigation tab label</comment>
   </data>
   <data name="SettingsAdvancedUILabel.Text" xml:space="preserve">
-    <value>
-மேம்பட்ட பயனர் இடைமுகம்</value>
+    <value>தோற்றம் &amp; உணர்வு</value>
+    <comment>Settings navigation tab label for appearance and themes</comment>
   </data>
   <data name="SettingsExportImportedLabel.Text" xml:space="preserve">
-    <value>Export all imported fonts
-</value>
+    <value>இறக்குமதி செய்த எழுத்துருக்களை ஏற்றுமதி செய்</value>
   </data>
   <data name="SettingsFontExportOptimizedLabel.Text" xml:space="preserve">
     <value>உகந்ததாக்கியவை</value>
+    <comment>Font export naming option: smart name based on family and face</comment>
   </data>
   <data name="SettingsFontExportSystemLabel.Text" xml:space="preserve">
     <value>முறைமை</value>
+    <comment>Font export naming option: exact uppercase Windows font file name</comment>
   </data>
   <data name="SettingsFontImportDescription.Text" xml:space="preserve">
-    <value>You can import fonts into the application to view them without installing them in Windows. 
+    <value>Windows இல் நிறுவமலே எழுத்துருக்களைப் பார்க்க அவற்றை நீங்கள் பயன்பாட்டில் இறக்குமதி செய்யலாம்.
 
-Imported font files are copied into the app's private storage, so will still show if you delete the original file on your computer.</value>
+இறக்குமதி செய்த எழுத்துருக் கோப்புகள் பயன்பாட்டின் தனிப்பட்ட சேமிப்பகத்தில் நகலெடுக்கப்படுவதால், உங்கள் கணினியிலுள்ள அசல் கோப்பை நீக்கினாலும் அவை தொடர்ந்து காட்டப்படும்.</value>
   </data>
   <data name="SettingsFontManagementLabel.Text" xml:space="preserve">
     <value>எழுத்துரு மேலாண்மை</value>
+    <comment>Settings navigation tab label for managing fonts</comment>
   </data>
   <data name="SettingsFontNameExportDescription.Text" xml:space="preserve">
-    <value>Font File Export Naming</value>
+    <value>எழுத்துருக் கோப்புகளை ஏற்றுமதி செய்யும்போது அவற்றுக்குப் பெயரிடும் முறையைத் தேர்வுசெய்க.
+
+கணினி அமைப்பு (System) முறை Windows பயன்படுத்தும் பெயரைப் பேரெழுத்துகளில் தரும்.
+மேம்படுத்தப்பட்ட (Optimized) முறை குடும்பப் பெயர் மற்றும் எழுத்துருப் பெயரைக் கொண்டு பொருத்தமான பெயரை உருவாக்கும்.</value>
   </data>
   <data name="SettingsFontNameExportLabel.Text" xml:space="preserve">
     <value>எழுத்துரு கோப்பு ஏற்றுமதி பெயரிடல்</value>
   </data>
   <data name="SettingsImportedFontsLabel.Text" xml:space="preserve">
-    <value>இறக்குமதி செய்யப்பட்ட எழுத்துருக்கள்</value>
+    <value>இறக்குமதி செய்த எழுத்துருக்கள்</value>
   </data>
   <data name="SettingsLicensesDescriptionLabel.Text" xml:space="preserve">
     <value>இந்த பயன்பாடு பின்வரும் திற மூல மென்பொருள்களைப் பயன்படுத்துகிறது</value>
   </data>
   <data name="SettingsLicensesLabel.Text" xml:space="preserve">
     <value>உரிமங்கள்</value>
+    <comment>Settings navigation tab label for open source software licenses</comment>
   </data>
   <data name="BtnReset.Content" xml:space="preserve">
     <value>மீட்டமை</value>
   </data>
   <data name="OptionVariableFonts.Text" xml:space="preserve">
     <value>மாறி எழுத்துருக்கள்</value>
+    <comment>Font filter flyout option</comment>
   </data>
   <data name="VariableFeaturesMessage.Text" xml:space="preserve">
-    <value>இந்த எழுத்துருவில் மாறி அம்சங்கள் உள்ளன. அவற்றை ஆராய, மேலே உள்ள காட்சி பொத்தானை பயன்படுத்தி, வகை ராம்ப் காட்சிக்கு மாறவும்.</value>
+    <value>இந்த எழுத்துருவில் மாறி அம்சங்கள் உள்ளன. அவற்றை ஆராய, மேலே உள்ள காட்சி பொத்தானை பயன்படுத்தி, அளவு முன்னோட்டக் காட்சிக்கு மாறவும்.</value>
+    <comment>Deprecated. Do not use.</comment>
   </data>
   <data name="VariableFeaturesMessage1.Text" xml:space="preserve">
-    <value>இந்த எழுத்துருவில் மாறி அம்சங்கள் உள்ளன. அவற்றை ஆராய, மேலே உள்ள காட்சி பொத்தானை பயன்படுத்தி, வகை ராம்ப் காட்சிக்கு மாறவும்.</value>
+    <value>இந்த எழுத்துரு மாறி அம்சங்களைக் கொண்டுள்ளது. அவற்றை ஆராய, மேலே உள்ள பொத்தானைக் கொண்டு மாறி எழுத்துரு அச்சுப் பலகையைத் திறக்கவும்.</value>
+    <comment>Notice explaining variable features can be adjusted in Variable Font Axis panel</comment>
+  </data>
+  <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
+    <value>திரையின் வலதுபுறத்தில் முன்னோட்டப் பலகையைக் காட்டுகிறது அல்லது மறைக்கிறது. முடக்கப்பட்டாலும், எழுத்துக்குறி கட்டத்தின் மீது வலது கிளிக் செய்வதன் மூலம் பல செயல்பாடுகளை அணுகலாம்.</value>
+  </data>
+  <data name="SettingsEnablePaneHeader.Text" xml:space="preserve">
+    <value>முன்னோட்டப் பலகைக் காட்சி</value>
+  </data>
+  <data name="CopyFontIconCode.Text" xml:space="preserve">
+    <value>FontIcon குறியீட்டை நகலெடு</value>
+    <comment>Context menu item to copy XAML FontIcon markup</comment>
+  </data>
+  <data name="CopyGlyphCode.Text" xml:space="preserve">
+    <value>வரிவடிவக் குறியீட்டை நகலெடு</value>
+    <comment>Context menu item to copy glyph code markup</comment>
+  </data>
+  <data name="CopyPathIconCode.Text" xml:space="preserve">
+    <value>PathIcon குறியீட்டை நகலெடு</value>
+    <comment>Context menu item to copy XAML PathIcon markup</comment>
+  </data>
+  <data name="SearchBoxShorter" xml:space="preserve">
+    <value>தேடு...</value>
+    <comment>Compact search box placeholder text when window is narrow</comment>
+  </data>
+  <data name="CopyUnicodeValue.Text" xml:space="preserve">
+    <value>யூனிகோட் மதிப்பை நகலெடு</value>
+    <comment>Context menu item to copy Unicode hex value (e.g. U+0041)</comment>
+  </data>
+  <data name="DecreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>எழுத்து அளவைக் குறை (Ctrl+-)</value>
+    <comment>Tooltip to zoom out character grid</comment>
+  </data>
+  <data name="IncreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>எழுத்து அளவை அதிகரி (Ctrl++)</value>
+    <comment>Tooltip to zoom in character grid</comment>
+  </data>
+  <data name="SwitchViewButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>காட்சியை மாற்று (Ctrl+T)</value>
+    <comment>Tooltip to switch between Character Map and Type Ramp views</comment>
+  </data>
+  <data name="TogglePaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>முன்னோட்டப் பலகை நிலைமாற்று (Ctrl+R)</value>
+    <comment>Tooltip to toggle character preview side-pane</comment>
+  </data>
+  <data name="NotificationCopied" xml:space="preserve">
+    <value>நகலெடுக்கப்பட்டது</value>
+    <comment>Notification message shown when text is copied to clipboard</comment>
+  </data>
+  <data name="AddButton.Label" xml:space="preserve">
+    <value>சேர்</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="AddSelectionItem.Text" xml:space="preserve">
+    <value>தேர்வில் சேர்</value>
+    <comment>Context menu item to add character to copy sequence</comment>
+  </data>
+  <data name="CopySequencePlaceholder.Text" xml:space="preserve">
+    <value>எழுத்துக்குறியை இருமுறை கிளிக் செய்யவும் அல்லது சேர் பொத்தானைப் பயன்படுத்தவும்</value>
+    <comment>Placeholder text in bottom copy sequence bar</comment>
+  </data>
+  <data name="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>நகல் பலகை நிலைமாற்று (Ctrl+B)</value>
+    <comment>Tooltip to toggle bottom copy sequence pane</comment>
+  </data>
+  <data name="CompactOverlayButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>மேலே வைத்திரு</value>
+    <comment>Enters Picture-in-Picture / Compact Overlay mode</comment>
+  </data>
+  <data name="TypographyVariationsSelectorRun.Text" xml:space="preserve">
+    <value>அச்சுக்கலை மாறுபாடுகள்</value>
+    <comment>Appears after count: '{count} Typography Variations'</comment>
+  </data>
+  <data name="ToggleDevDefaultLabel" xml:space="preserve">
+    <value>கருவிகள்</value>
+    <comment>Default label for developer tools toggle button. Keep short.</comment>
+  </data>
+  <data name="BtnFit.Label" xml:space="preserve">
+    <value>பொருத்து</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="TxtCopiedVariantMessage.Text" xml:space="preserve">
+    <value>வரிவடிவ மாறுபாடுகளை நகலெடுக்க முடியாது.
+இயல்புநிலை வடிவம் நகலெடுக்கப்பட்டது.</value>
+    <comment>Notice when attempting to copy a variable font instance</comment>
+  </data>
+  <data name="CollectionFontHelpBlock.Text" xml:space="preserve">
+    <value>இந்தத் தொகுப்பில் இன்னும் எழுத்துருக்கள் இல்லை.</value>
+    <comment>Empty state message for empty font collections</comment>
+  </data>
+  <data name="SearchFontHelpBlock.Text" xml:space="preserve">
+    <value>இந்தத் தேடலுக்கு முடிவுகள் எதுவும் கிடைக்கவில்லை. வேறு தேடலை முயற்சிக்கவும்.</value>
+    <comment>Empty state message when font search yields no results</comment>
+  </data>
+  <data name="FontListSearchBox.PlaceholderText" xml:space="preserve">
+    <value>எழுத்துரு குடும்பத்தைத் தேடு</value>
+    <comment>Placeholder text in font list search box</comment>
+  </data>
+  <data name="BtnToggleDev.Label" xml:space="preserve">
+    <value>கருவிகள்</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="DevPopupHeader.Text" xml:space="preserve">
+    <value>உருவாக்குநர் கருவிகளைக் காட்டு</value>
+    <comment>Header for developer tools flyout</comment>
+  </data>
+  <data name="ContextMenuDevCopyCommand" xml:space="preserve">
+    <value>{0} ஐ நகலெடு</value>
+    <comment>Examples: "Copy Font Icon" or "Copy Glyph Code"</comment>
+  </data>
+  <data name="ProviderNone" xml:space="preserve">
+    <value>எதுவுமில்லை</value>
+    <comment>Option in developer features to disable developer code preview</comment>
+  </data>
+  <data name="SettingsChangelogLabel.Text" xml:space="preserve">
+    <value>மாற்றங்களின் பதிவு</value>
+    <comment>Settings navigation tab label</comment>
+  </data>
+  <data name="TxtFontImageSource.Text" xml:space="preserve">
+    <value>எழுத்துரு பட மூலம்</value>
+    <comment>Xamarin FontImageSource. Does not need translation.</comment>
+  </data>
+  <data name="ImportFailedWoff" xml:space="preserve">
+    <value>WOFF எழுத்துருவை சரியான OTF எழுத்துருவாக மாற்ற முடியவில்லை.</value>
+  </data>
+  <data name="ImportWOFF2NotSupported" xml:space="preserve">
+    <value>WOFF2 கோப்புகள் ஆதரிக்கப்படவில்லை</value>
+  </data>
+  <data name="CharacterFilterButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>எழுத்துக்குறிகளை வடிகட்டு</value>
+    <comment>Button tooltip to filter characters by category</comment>
+  </data>
+  <data name="CompareFontsTitle.Text" xml:space="preserve">
+    <value>எழுத்துருக்களை ஒப்பிடு</value>
+    <comment>Font comparison view title</comment>
+  </data>
+  <data name="LayoutGridToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>கட்ட அமைப்பு</value>
+    <comment>Tooltip to switch comparison view to grid layout</comment>
+  </data>
+  <data name="LayoutListToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>பட்டியல் அமைப்பு</value>
+    <comment>Tooltip to switch comparison view to list layout</comment>
+  </data>
+  <data name="QuickCompareTitle.Text" xml:space="preserve">
+    <value>விரைவு ஒப்பீடு</value>
+    <comment>Quick comparison window title</comment>
+  </data>
+  <data name="AddToQuickCompare.Text" xml:space="preserve">
+    <value>விரைவு ஒப்பீட்டில் சேர்</value>
+    <comment>Menu item to add font face to quick compare window</comment>
+  </data>
+  <data name="AddMultiToQuickCompare.Text" xml:space="preserve">
+    <value>குடும்பத்தை விரைவு ஒப்பீட்டில் சேர்</value>
+    <comment>Menu item to add all faces in font family to quick compare</comment>
+  </data>
+  <data name="CompareFontsButton.Text" xml:space="preserve">
+    <value>அனைத்து எழுத்துருக்களையும் ஒப்பிடு</value>
+    <comment>Button label to open font comparison view</comment>
+  </data>
+  <data name="BtnGithubCommits.Content" xml:space="preserve">
+    <value>GitHub மாற்றங்களைக் காண்க</value>
+    <comment>Button label - view GitHub commit history</comment>
+  </data>
+  <data name="ExportGlyphsHeader.Text" xml:space="preserve">
+    <value>எழுத்துக்குறிகளை ஏற்றுமதி செய்</value>
+    <comment>Export dialog header</comment>
+  </data>
+  <data name="SelectedGlyphs.Text" xml:space="preserve">
+    <value>{0} வரிவடிவங்கள் தேர்ந்தெடுக்கப்பட்டன</value>
+    <comment>{0} = number of selected glyphs</comment>
+  </data>
+  <data name="ExportGlyphsSummary.Text" xml:space="preserve">
+    <value>{0} எழுத்துக்குறிகளை {1} வடிவில் ஏற்றுமதி செய்யத் தயார்</value>
+    <comment>{0} = character count, {1} = export format (e.g. SVG or PNG)</comment>
+  </data>
+  <data name="ExportCharactersLabel.Text" xml:space="preserve">
+    <value>எழுத்துக்குறிகளை ஏற்றுமதி செய்</value>
+    <comment>Menu item to open character export dialog</comment>
+  </data>
+  <data name="ExportGlyphsResultMessage.Text" xml:space="preserve">
+    <value>{0} எழுத்துக்குறிகள் ஏற்றுமதி செய்யப்பட்டன</value>
+    <comment>{0} = number of exported characters</comment>
+  </data>
+  <data name="ExportGlyphsProgressMessage.Text" xml:space="preserve">
+    <value>{1} இல் {0} எழுத்துக்குறி ஏற்றுமதியாகிறது</value>
+    <comment>{0} = current character index, {1} = total character count</comment>
+  </data>
+  <data name="ExportAllowColor.Content" xml:space="preserve">
+    <value>எழுத்துரு வரையறுக்கப்பட்டிருந்தால் அதன் சொந்த வண்ணங்களைப் பயன்படுத்த அனுமதி</value>
+    <comment>Export dialog checkbox</comment>
+  </data>
+  <data name="ExportColorHeader.Text" xml:space="preserve">
+    <value>இயல்புநிலை வண்ணம்</value>
+    <comment>Export dialog color picker header</comment>
+  </data>
+  <data name="ExportGlyphFormatDescription.Text" xml:space="preserve">
+    <value>பைனரி வடிவங்களில் சேமிக்கப்பட்ட வரிவடிவங்கள் இந்தத் தேர்விற்குப் பொருட்படுத்தாமல் அவற்றின் அசல் வடிவமாகவே ஏற்றுமதி செய்யப்படும்.</value>
+  </data>
+  <data name="ExportGlyphSelectedCharacters.Text" xml:space="preserve">
+    <value>{1} இல் {0} எழுத்துக்குறிகள் தேர்ந்தெடுக்கப்பட்டன</value>
+    <comment>{0} = selected characters count, {1} = total characters count</comment>
+  </data>
+  <data name="ExportFileOptionsHeader.Text" xml:space="preserve">
+    <value>கோப்பு விருப்பங்கள்</value>
+    <comment>Export dialog section header</comment>
+  </data>
+  <data name="ExportSkipBlank.Content" xml:space="preserve">
+    <value>காணக்கூடிய உள்ளடக்கம் இல்லாத வரிவடிவங்களை ஏற்றுமதி செய்வதைத் தவிர்</value>
+    <comment>Export dialog checkbox</comment>
+  </data>
+  <data name="CharacterFilterButton.Label" xml:space="preserve">
+    <value>வடிகட்டி</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="CollectionExportButton.Label" xml:space="preserve">
+    <value>ஏற்றுமதி</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="DeleteCollectionButton.Label" xml:space="preserve">
+    <value>நீக்கு</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="FontOptionsButton.Label" xml:space="preserve">
+    <value>விருப்பங்கள்</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="FontPropertiesButton.Label" xml:space="preserve">
+    <value>தகவல்</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="OpenFontButton.Label" xml:space="preserve">
+    <value>திற</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="RenameCollectionButton.Label" xml:space="preserve">
+    <value>மறுபெயரிடு</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="SettingsDesignStyle.Description" xml:space="preserve">
+    <value>பயன்பாட்டின் வடிவமைப்பு நடையை மாற்றவும்.
+செயல்பட பயன்பாட்டை மறுதொடக்கம் செய்ய வேண்டும்.</value>
+  </data>
+  <data name="SettingsDesignStyle.Title" xml:space="preserve">
+    <value>வடிவமைப்பு நடை</value>
+    <comment>Setting title for switching application design theme</comment>
+  </data>
+  <data name="ViewToggleButton.Label" xml:space="preserve">
+    <value>மாற்று</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="AddToButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>தொகுப்பில் சேர்</value>
+    <comment>Button tooltip to add selected fonts to collection</comment>
+  </data>
+  <data name="ClearSelectionLabel" xml:space="preserve">
+    <value>தேர்வை அழி</value>
+    <comment>Action label to deselect all selected fonts or glyphs</comment>
+  </data>
+  <data name="CreateNewButton.Content" xml:space="preserve">
+    <value>புதிதாக உருவாக்கு</value>
+    <comment>Button label - create a new font collection</comment>
+  </data>
+  <data name="OrLabel.Text" xml:space="preserve">
+    <value>அல்லது</value>
+    <comment>Separator between 'choose existing collection' and 'create new'</comment>
+  </data>
+  <data name="RemoveFromButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>தொகுப்பிலிருந்து நீக்கு</value>
+    <comment>Button tooltip to remove selected fonts from collection</comment>
+  </data>
+  <data name="SelectCollectionLabel" xml:space="preserve">
+    <value>தொகுப்பைத் தேர்ந்தெடு</value>
+    <comment>Dropdown placeholder or header to choose a font collection</comment>
+  </data>
+  <data name="SettingsCollectionsHeader" xml:space="preserve">
+    <value>தொகுப்புகள்</value>
+    <comment>Navigation header for Collections view</comment>
+  </data>
+  <data name="DigOpenFolder.PrimaryButtonText" xml:space="preserve">
+    <value>எழுத்துருக்களைத் திற</value>
+    <comment>Dialog button to open and scan selected folder for fonts</comment>
+  </data>
+  <data name="DigOpenFolder.Title" xml:space="preserve">
+    <value>எழுத்துரு கோப்புறையைத் திற</value>
+    <comment>Dialog title for opening a folder containing font files</comment>
+  </data>
+  <data name="DigOpenFolderContent.CheckRecursiveContent" xml:space="preserve">
+    <value>துணை கோப்புறைகளுக்குள் எழுத்துருக்களைத் தேடு</value>
+    <comment>Open Folder dialog checkbox to scan subdirectories</comment>
+  </data>
+  <data name="DigOpenFolderContent.CheckZipContent" xml:space="preserve">
+    <value>.ZIP காப்பகங்களுக்குள் எழுத்துருக்களைத் தேடு</value>
+    <comment>Open Folder dialog checkbox to scan zip files</comment>
+  </data>
+  <data name="DigOpenFolderContent.FindDescription" xml:space="preserve">
+    <value>விருப்பங்களை இயக்குவது கோப்புறையைத் திறக்கத் தேவையான நேரத்தை கணிசமாக அதிகரிக்கலாம்</value>
+  </data>
+  <data name="DigOpenFolderContent.FindHeader" xml:space="preserve">
+    <value>தேடல் விருப்பங்கள்</value>
+    <comment>Open Folder dialog options header</comment>
+  </data>
+  <data name="DigOpenFolderContent.FindingFontsLabel" xml:space="preserve">
+    <value>எழுத்துருக்கள் தேடப்படுகின்றன...</value>
+    <comment>Progress label while scanning folder for font files</comment>
+  </data>
+  <data name="DigOpenFolderContent.PrefixLabel" xml:space="preserve">
+    <value>கண்டுபிடிக்கப்பட்டது</value>
+    <comment>Sentence fragment: '[Found] {count} [font files]'</comment>
+  </data>
+  <data name="DigOpenFolderContent.SelectHeader" xml:space="preserve">
+    <value>தேர்ந்தெடுக்கப்பட்ட கோப்புறை (மாற்ற கிளிக் செய்யவும்)</value>
+    <comment>Header above folder path button in Open Folder dialog</comment>
+  </data>
+  <data name="DigOpenFolderContent.SuffixLabel" xml:space="preserve">
+    <value>எழுத்துரு கோப்புகள்</value>
+    <comment>Sentence fragment: '[Found] {count} [font files]'</comment>
+  </data>
+  <data name="FontFileMenuItem.Text" xml:space="preserve">
+    <value>எழுத்துரு கோப்பைத் திற</value>
+    <comment>Menu item to open a single font file</comment>
+  </data>
+  <data name="FontFolderMenuItem.Text" xml:space="preserve">
+    <value>எழுத்துரு கோப்புறையைத் திற</value>
+    <comment>Menu item to scan and open a folder of fonts</comment>
+  </data>
+  <data name="AddHistoryButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>வரலாற்றில் சேர்</value>
+    <comment>Save current calligraphy drawing to history</comment>
+  </data>
+  <data name="CalligraphyLabel.Text" xml:space="preserve">
+    <value>அழகெழுத்துக் கலை</value>
+    <comment>Side menu navigation item for calligraphy feature</comment>
+  </data>
+  <data name="ClearAllButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>அனைத்தையும் அழி</value>
+    <comment>Clear calligraphy canvas</comment>
+  </data>
+  <data name="ClearAllItem.Text" xml:space="preserve">
+    <value>அனைத்தையும் அழி</value>
+    <comment>Menu item to clear calligraphy canvas</comment>
+  </data>
+  <data name="GuideToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>வழிகாட்டியைக் காட்டு</value>
+    <comment>Toggle handwriting guide lines in calligraphy view</comment>
+  </data>
+  <data name="HistoryLabel.Text" xml:space="preserve">
+    <value>வரலாறு</value>
+    <comment>Header for saved calligraphy drawings history list</comment>
+  </data>
+  <data name="RedoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>மீண்டும் செய் (Ctrl+Y)</value>
+    <comment>Button tooltip for redo in calligraphy view</comment>
+  </data>
+  <data name="RemoveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>நீக்கு</value>
+    <comment>Button tooltip to remove saved calligraphy drawing</comment>
+  </data>
+  <data name="SaveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>சேமி (Ctrl+S)</value>
+    <comment>Button tooltip to save calligraphy drawing</comment>
+  </data>
+  <data name="SideBySideToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>பக்கவாட்டில்</value>
+    <comment>Calligraphy comparison mode</comment>
+  </data>
+  <data name="UndoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>செயல்தவிர் (Ctrl+Z)</value>
+    <comment>Button tooltip for undo in calligraphy view</comment>
+  </data>
+  <data name="GuideFontSlider.Header" xml:space="preserve">
+    <value>வழிகாட்டி அளவு</value>
+    <comment>Slider header for calligraphy guide text font size</comment>
+  </data>
+  <data name="CharacterPickerButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>எழுத்துக்குறி தேர்வியைத் திற</value>
+    <comment>Open character picker to select glyph to practice</comment>
+  </data>
+  <data name="GuideHeaderLabel.Text" xml:space="preserve">
+    <value>வழிகாட்டி உரை</value>
+    <comment>Header for guide text input in calligraphy view</comment>
+  </data>
+  <data name="GuideSizeLabel.Text" xml:space="preserve">
+    <value>வழிகாட்டி அளவு</value>
+    <comment>Header for guide size slider in calligraphy view</comment>
+  </data>
+  <data name="MenuToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>எழுத்துருப் பலகை (Ctrl+L)</value>
+    <comment>Toggle visibility of font navigation pane</comment>
+  </data>
+  <data name="OpenInNewTab.Text" xml:space="preserve">
+    <value>புதிய தத்தலில் திற</value>
+    <comment>Menu item to open font in a new tab</comment>
+  </data>
+  <data name="OptionScriptKorean.Text" xml:space="preserve">
+    <value>கொரியம்</value>
+    <comment>Font filter flyout: script/writing system option</comment>
+  </data>
+  <data name="AddActiveToCollectionItem.Text" xml:space="preserve">
+    <value>தத்தலைத் தொகுப்பில் சேர்</value>
+    <comment>Menu item to add currently displayed font to collection</comment>
+  </data>
+  <data name="CompareActiveItem.Text" xml:space="preserve">
+    <value>நடப்பு நடைகளை ஒப்பிடு</value>
+    <comment>Menu item to compare font faces of currently opened fonts</comment>
+  </data>
+  <data name="OptionEmoji.Text" xml:space="preserve">
+    <value>எமோஜி</value>
+    <comment>Font filter flyout: emoji category option</comment>
+  </data>
+  <data name="OptionSupportedScripts.Text" xml:space="preserve">
+    <value>ஆதரிக்கப்படும் எழுத்துமுறைகள்</value>
+    <comment>Font filter flyout option</comment>
+  </data>
+  <data name="CompareFontFaceTitle.Text" xml:space="preserve">
+    <value>எழுத்துரு நடைகளை ஒப்பிடு</value>
+    <comment>Font face comparison view title</comment>
+  </data>
+  <data name="CompareFacesCountLabel.Text" xml:space="preserve">
+    <value>குடும்பத்தை ஒப்பிடு</value>
+    <comment>Label removed</comment>
+  </data>
+  <data name="CompareFamilyTitle.Text" xml:space="preserve">
+    <value>{0} ஐ ஒப்பிடு</value>
+    <comment>{0} = font family name</comment>
+  </data>
+  <data name="MenuButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>மெனுவைத் திற</value>
+    <comment>Open main menu flyout</comment>
+  </data>
+  <data name="FontsSelectedCountLabel" xml:space="preserve">
+    <value>{0} எழுத்துருக்கள், {1} தேர்ந்தெடுக்கப்பட்டது</value>
+    <comment>{0} = total fonts in collection, {1} = number of selected fonts</comment>
+  </data>
+  <data name="CompareShortLabel" xml:space="preserve">
+    <value>ஒப்பிடு</value>
+    <comment>Short button label for font comparison. Keep short.</comment>
+  </data>
+  <data name="AllFontsLabel.Text" xml:space="preserve">
+    <value>அனைத்து எழுத்துருக்கள்</value>
+    <comment>Navigation item to show all fonts library</comment>
+  </data>
+  <data name="ImportLabel.Text" xml:space="preserve">
+    <value>இறக்குமதி</value>
+    <comment>Navigation item or button to import fonts</comment>
+  </data>
+  <data name="PreferredFormatGroup.Text" xml:space="preserve">
+    <value>விருப்பமான வடிவம்</value>
+    <comment>Preferred export format</comment>
+  </data>
+  <data name="RemoveLabel.Text" xml:space="preserve">
+    <value>நீக்கு</value>
+    <comment>Action label to remove font or item</comment>
+  </data>
+  <data name="UndoLabel" xml:space="preserve">
+    <value>செயல்தவிர்</value>
+    <comment>Notification action button - undo last operation</comment>
+  </data>
+  <data name="CalligraphyDescription.Text" xml:space="preserve">
+    <value>தற்போதைய எழுத்துருவின் நடையில் எழுதிப் பயிற்சி செய்யுங்கள்</value>
+    <comment>Feature description for calligraphy</comment>
+  </data>
+  <data name="CompareFontsDescription.Text" xml:space="preserve">
+    <value>அனைத்து எழுத்துருக்களையும் பக்கவாட்டிலோ அல்லது பட்டியலாகவோ ஒப்பிட்டுக் காண்க</value>
+    <comment>Feature description for font comparison</comment>
+  </data>
+  <data name="DoMoreLabel.Text" xml:space="preserve">
+    <value>மேலும் செய்ய</value>
+    <comment>Section header in side menu for extra tools and features</comment>
+  </data>
+  <data name="FullscreenLabel.Text" xml:space="preserve">
+    <value>முழுத்திரை</value>
+    <comment>Button label to enter fullscreen mode. Opposite of Restore.</comment>
+  </data>
+  <data name="OpenFolderDescription.Text" xml:space="preserve">
+    <value>கோப்புறையில் காணப்படும் அனைத்து எழுத்துரு கோப்புகளையும் திறக்கவும்</value>
+    <comment>Feature description for opening font folder</comment>
+  </data>
+  <data name="OpenFontDescription.Text" xml:space="preserve">
+    <value>TTF, OTF, OTC, TTC, WOFF, WOFF2 அல்லது ZIP கோப்புகளைத் திறக்கவும்</value>
+    <comment>Feature description listing supported font formats</comment>
+  </data>
+  <data name="SettingsPointerOverAnimation.Description" xml:space="preserve">
+    <value>சுட்டியின் குறி சில பொத்தான்களின் மேல் செல்லும்போது நுட்பமான அசைவூட்டங்களை இயக்குகிறது.</value>
+  </data>
+  <data name="SettingsPointerOverAnimation.Title" xml:space="preserve">
+    <value>சுட்டி நகர்வு அசைவூட்டங்களை இயக்கு</value>
+    <comment>Setting title</comment>
+  </data>
+  <data name="SettingsCustomSuggestions.Description" xml:space="preserve">
+    <value>அளவு முன்னோட்டக் காட்சி மற்றும் ஒப்பீட்டு சாளர உரைப் பரிந்துரைகளில் காட்ட தனிப்பயன் விருப்பங்களைச் சேர்த்து நிர்வகிக்கவும்.
+வரிசைப்படுத்த அழுத்திப் பிடிக்கவும்.</value>
+  </data>
+  <data name="SettingsCustomSuggestions.Title" xml:space="preserve">
+    <value>தனிப்பயன் விருப்பங்கள்</value>
+    <comment>Setting title for custom preview text suggestions</comment>
+  </data>
+  <data name="SettingsSuggestionsHeader.Text" xml:space="preserve">
+    <value>முன்னோட்டப் பரிந்துரைகள்</value>
+    <comment>Settings section header for Type Ramp text suggestions</comment>
+  </data>
+  <data name="SettingsSuggestionTextBox.PlaceholderText" xml:space="preserve">
+    <value>உங்கள் பரிந்துரையை இங்கே உள்ளிடவும்</value>
+    <comment>Placeholder text in custom suggestion text input</comment>
+  </data>
+  <data name="FontPropPanoseTitle.Text" xml:space="preserve">
+    <value>PANOSE மதிப்புகள்</value>
+    <comment>PANOSE classification system values header</comment>
+  </data>
+  <data name="CharacterGroupingToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>வரம்பின்படி குழுவாக்கு (Ctrl+G)</value>
+    <comment>Tooltip to group characters by Unicode range</comment>
+  </data>
+  <data name="PixelUnits.Text" xml:space="preserve">
+    <value>px</value>
+    <comment>Pixel unit abbreviation. Usually kept as 'px'.</comment>
+  </data>
+  <data name="SettingsCharGrouping.Description" xml:space="preserve">
+    <value>இயக்கப்பட்டால், எழுத்துக்கள் யூனிகோட் வரம்பின்படி குழுவாக்கப்படும், இல்லையெனில் அனைத்து எழுத்துக்களும் ஒரே பட்டியலாகக் காட்டப்படும்.</value>
+  </data>
+  <data name="SettingsCharGrouping.Title" xml:space="preserve">
+    <value>எழுத்துக்குறி குழுவாக்கம்</value>
+    <comment>Setting title for grouping characters by Unicode range</comment>
+  </data>
+  <data name="CopyAsImageItem.Text" xml:space="preserve">
+    <value>படமாக நகலெடு</value>
+    <comment>Menu item to copy character as image to clipboard</comment>
+  </data>
+  <data name="CopyAsPngItem.Text" xml:space="preserve">
+    <value>PNG ஆக நகலெடு</value>
+    <comment>Menu item to copy character as PNG image to clipboard</comment>
+  </data>
+  <data name="CopyAsSvgItem.Text" xml:space="preserve">
+    <value>SVG ஆக நகலெடு</value>
+    <comment>Menu item to copy character as SVG image to clipboard</comment>
+  </data>
+  <data name="NotificationCopiedPNG" xml:space="preserve">
+    <value>PNG ஆக நகலெடுக்கப்பட்டது</value>
+    <comment>Notification message shown when PNG image is copied to clipboard</comment>
+  </data>
+  <data name="NotificationCopiedSVG" xml:space="preserve">
+    <value>SVG ஆக நகலெடுக்கப்பட்டது</value>
+    <comment>Notification message shown when SVG vector is copied to clipboard</comment>
+  </data>
+  <data name="ColrV1SupportMessage.Text" xml:space="preserve">
+    <value>இந்த எழுத்துரு COLRv1 வரிவடிவங்களைக் கொண்டுள்ளது. சரியான வண்ண வழங்கலுடன் அவற்றைப் பார்க்க, மேலே உள்ள பொத்தானைப் பயன்படுத்தி அளவு முன்னோட்டக் காட்சிக்கு மாறவும்.</value>
+    <comment>Notice explaining COLRv1 vector color font preview requires Type Ramp view</comment>
+  </data>
+  <data name="FontPropCOLRVersion.Text" xml:space="preserve">
+    <value>COLR பதிப்பு</value>
+    <comment>Typography: Version of OpenType COLR table (e.g. 0 or 1). Keep COLR untranslated.</comment>
+  </data>
+  <data name="FontPropColourFormats.Text" xml:space="preserve">
+    <value>வண்ண வரிவடிவ வடிவங்கள்</value>
+    <comment>Typography: Color font formats supported (e.g. COLRv0, COLRv1, SVG, CBDT)</comment>
+  </data>
+  <data name="GlyphTypeBitmap" xml:space="preserve">
+    <value>பிட்மேப்</value>
+    <comment>Typography: Indicates glyph is stored as a raster bitmap</comment>
+  </data>
+  <data name="TypeRampFlowButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ஓட்டத் திசையை மாற்று</value>
+    <comment>Toggle text reading direction (left-to-right vs right-to-left)</comment>
+  </data>
+  <data name="TxtUniCodepoint.Header" xml:space="preserve">
+    <value>யூனிகோட் குறியீட்டுப்புள்ளி</value>
+    <comment>Header for Unicode codepoint value (e.g. U+0041)</comment>
+  </data>
+  <data name="TxtUTF16.Header" xml:space="preserve">
+    <value>UTF-16 மதிப்பு</value>
+    <comment>UTF-16 encoding value. Does not need translation.</comment>
+  </data>
+  <data name="EditSuggestionsItem.Text" xml:space="preserve">
+    <value>பரிந்துரைகளைத் திருத்து</value>
+    <comment>Menu item to edit preview text suggestions</comment>
+  </data>
+  <data name="OptionScriptHiraganaAndKatakana.Text" xml:space="preserve">
+    <value>ஹிரகனா &amp; கடகனா</value>
+    <comment>Font filter flyout: script/writing system option</comment>
+  </data>
+  <data name="OptionsScriptBengali.Text" xml:space="preserve">
+    <value>வங்காளி</value>
+    <comment>Font filter flyout: script/writing system option</comment>
+  </data>
+  <data name="OptionsScriptDevanagari.Text" xml:space="preserve">
+    <value>தேவநாகரி</value>
+    <comment>Font filter flyout: script/writing system option</comment>
   </data>
   <data name="BtnTextClose.Content" xml:space="preserve">
     <value>மூடு</value>
+    <comment>Button label - close dialog</comment>
+  </data>
+  <data name="EditSuggestionsLabel.Text" xml:space="preserve">
+    <value>தனிப்பயன் பரிந்துரைகளைத் திருத்து</value>
+    <comment>Title for dialog or pane to edit preview text suggestions</comment>
+  </data>
+  <data name="ShowSuggestionsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>பரிந்துரைகளைக் காட்டு</value>
+    <comment>Button tooltip to show Type Ramp sample text suggestions</comment>
+  </data>
+  <data name="SuggestOptionArabic.Text" xml:space="preserve">
+    <value>அரபு</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionBengali.Text" xml:space="preserve">
+    <value>வங்காளி</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionBulgarian.Text" xml:space="preserve">
+    <value>பல்கேரியம்</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionChineseTraditional.Text" xml:space="preserve">
+    <value>சீனம் (பாரம்பரியம்)</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionCultureSpecific.Text" xml:space="preserve">
+    <value>தமிழ்</value>
+    <comment>Name of the target language for the culture-specific pangram (e.g. Spanish, German).</comment>
+  </data>
+  <data name="SuggestOptionCustom.Text" xml:space="preserve">
+    <value>தனிப்பயன்</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionCyrillicAlpha.Text" xml:space="preserve">
+    <value>சிரிலிக் எழுத்துக்கள்</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionEmoji.Text" xml:space="preserve">
+    <value>எமோஜி</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionEnglish.Text" xml:space="preserve">
+    <value>ஆங்கிலம்</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionGreek.Text" xml:space="preserve">
+    <value>கிரேக்கம்</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionHebrew.Text" xml:space="preserve">
+    <value>ஹீப்ரு</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionHindi.Text" xml:space="preserve">
+    <value>இந்தி</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionJapanese.Text" xml:space="preserve">
+    <value>ஜப்பானியம்</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionKorean.Text" xml:space="preserve">
+    <value>கொரியம்</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionLatinAlpha.Text" xml:space="preserve">
+    <value>லத்தீன் எழுத்துக்கள்</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionLatinSymbols.Text" xml:space="preserve">
+    <value>லத்தீன் எண்கள் &amp; குறியீடுகள்</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionSample.Text" xml:space="preserve">
+    <value>எழுத்துரு மாதிரி உரை</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionThai.Text" xml:space="preserve">
+    <value>தாய்</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="SuggestOptionVietnamese.Text" xml:space="preserve">
+    <value>வியட்நாமியம்</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="InstallCountLabel" xml:space="preserve">
+    <value>உங்கள் கணினியில் {0} எழுத்துரு குடும்பங்கள், {1} எழுத்துரு நடைகள் நிறுவப்பட்டுள்ளன</value>
+    <comment>{0} = count of font families, {1} = count of font faces</comment>
+  </data>
+  <data name="OptionSystemFonts.Text" xml:space="preserve">
+    <value>நிறுவப்பட்ட எழுத்துருக்கள்</value>
+    <comment>Font filter flyout option</comment>
+  </data>
+  <data name="SettingsExportInstalledLabel.Text" xml:space="preserve">
+    <value>நிறுவப்பட்ட எழுத்துருக்களை ஏற்றுமதி செய்</value>
+  </data>
+  <data name="OptionDesignTag.Text" xml:space="preserve">
+    <value>வடிவமைப்பு மொழியின்படி</value>
+    <comment>Font filter flyout option</comment>
+  </data>
+  <data name="HiddenGlyphsMessage.Text" xml:space="preserve">
+    <value>உங்கள் அமைப்புகளின் அடிப்படையில் நிராகரிக்கப்பட்ட ஐகான்கள் முன்னிருப்பாக மறைக்கப்பட்டுள்ளன. மேலே உள்ள வடிகட்டி பொத்தானைப் பயன்படுத்தி அவற்றைக் காட்டலாம்.</value>
+  </data>
+  <data name="InstallDialog.Title" xml:space="preserve">
+    <value>எழுத்துருவை நிறுவு</value>
+    <comment>Font installation dialog title</comment>
+  </data>
+  <data name="InstallFontInstructions.Text" xml:space="preserve">
+    <value>உங்கள் எழுத்துருவை நிறுவத் தொடர்வதற்கு முன் அனைத்து வழிமுறைகளையும் படிக்கவும்
+
+1. கீழே உள்ள 'தொடங்கு' என்பதை அழுத்தவும்
+2. 'Windows Font Viewer' என்பதைத் தேர்ந்தெடுத்து 'ஒரு முறை மட்டும்' அல்லது 'திற' என்பதைத் தேர்ந்தெடுக்கவும்
+3. எழுத்துரு பார்வை சாளரத்தின் மேல் பகுதியில் உள்ள 'நிறுவு' என்பதை அழுத்தவும்
+
+நிறுவுவதற்கு உங்கள் இணைய எழுத்துரு OTF வடிவத்திற்கு மாற்றப்படும்.</value>
+    <comment>Word in such a way that encourages the user to read all the steps before continuing</comment>
+  </data>
+  <data name="InstallLabel.Text" xml:space="preserve">
+    <value>நிறுவு</value>
+    <comment>Button label in font viewer window (referenced in InstallFontInstructions)</comment>
+  </data>
+  <data name="OptionUnicodeRange/Text" xml:space="preserve">
+    <value>யூனிகோட் வரம்பின்படி</value>
+    <comment>Font filter option to group/filter characters by Unicode range</comment>
+  </data>
+  <data name="SettingsAdvancedOptionsLabel.Text" xml:space="preserve">
+    <value>மேம்பட்டவை</value>
+    <comment>Settings navigation tab label</comment>
+  </data>
+  <data name="SettingsDeprecatedIconsPresenter.Description" xml:space="preserve">
+    <value>இயக்கப்பட்டால், Segoe MDL2 மற்றும் Segoe Fluent Icon எழுத்துருக்களில் நிராகரிக்கப்பட்ட ஐகான்களை முன்னிருப்பாக மறைக்கும். வடிகட்டி மெனுவைப் பயன்படுத்தி ஐகான்களைக் காட்டலாம்.</value>
+  </data>
+  <data name="SettingsDeprecatedIconsPresenter.Title" xml:space="preserve">
+    <value>நிராகரிக்கப்பட்ட ஐகான்களை மறை</value>
+    <comment>Setting title for hiding deprecated MDL2 / Fluent icons</comment>
+  </data>
+  <data name="StartLabel.Text" xml:space="preserve">
+    <value>தொடங்கு</value>
+    <comment>Button label to start font installation (referenced in InstallFontInstructions)</comment>
+  </data>
+  <data name="TxtUniHexValue.Text" xml:space="preserve">
+    <value>ஹெக்ஸ் மதிப்பு</value>
+    <comment>Hexadecimal value of character</comment>
+  </data>
+  <data name="FileExplorerFileToolTip" xml:space="preserve">
+    <value>கோப்பு முன்னோட்டம்</value>
+    <comment>Tooltip for previewing a font file in file explorer</comment>
+  </data>
+  <data name="ImportCountLabel" xml:space="preserve">
+    <value>{0} எழுத்துரு குடும்பங்கள், {1} எழுத்துரு நடைகள் இறக்குமதி செய்யப்பட்டன</value>
+    <comment>{0} = count of font families, {1} = count of font faces</comment>
+  </data>
+  <data name="SettingsFontExportVersionLabel.Text" xml:space="preserve">
+    <value>கோப்புப் பெயரில் பதிப்பு எண்ணைச் சேர்</value>
+  </data>
+  <data name="HideUnihanLabel.Text" xml:space="preserve">
+    <value>Unihan தரவை மறை</value>
+    <comment>Button label to collapse Unihan ideograph data section</comment>
+  </data>
+  <data name="ShowUnihanLabel.Text" xml:space="preserve">
+    <value>Unihan தரவைக் காட்டு</value>
+    <comment>Button label to expand Unihan ideograph data section</comment>
+  </data>
+  <data name="UnihanDefinition.Text" xml:space="preserve">
+    <value>வரையறை</value>
+    <comment>Unicode Unihan database: English definition of CJK ideograph</comment>
+  </data>
+  <data name="UnihanPronunciations.Text" xml:space="preserve">
+    <value>உச்சரிப்புகள்</value>
+    <comment>Unicode Unihan database: Pronunciation readings section header</comment>
+  </data>
+  <data name="UnihanTypeDescriptionCantonese" xml:space="preserve">
+    <value>இந்த எழுத்துக்கான மிகவும் வழக்கமான ஜிவுத்பிங் (கான்டோனீஸ்) வாசிப்பு.</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionHangul" xml:space="preserve">
+    <value>ஹங்குலில் இந்த எழுத்தின் நவீன கொரிய உச்சரிப்பு(கள்), அடைப்புக்குறிக்குள் அதன் ஆதாரம்(கள்).</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionHanyuPinlu" xml:space="preserve">
+    <value>இந்த எழுத்தின் உச்சரிப்புகள் மற்றும் பயன்பாட்டு அதிர்வெண்.</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionHanyuPinyin" xml:space="preserve">
+    <value>ஹான்யு பின்யின் வாசிப்பு(கள்).</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionJapanese" xml:space="preserve">
+    <value>கானாவில் வெளிப்படுத்தப்பட்ட இந்த எழுத்துக்கான ஜப்பானிய வாசிப்பு(கள்). ஹிரகனாவில் உள்ளவை குன்-யோமி என்றும் கடகனாவில் உள்ளவை ஆன்-யோமி என்றும் கருதப்படுகின்றன.</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionJapaneseKun" xml:space="preserve">
+    <value>ஹெப்பர்ன் ரோமானியக்கலில் இந்த எழுத்தின் ஜப்பானிய உச்சரிப்பு(கள்).</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionJapaneseOn" xml:space="preserve">
+    <value>இந்த எழுத்தின் சீன-ஜப்பானிய உச்சரிப்பு(கள்).</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionKorean" xml:space="preserve">
+    <value>யேல் ரோமானியக்கலைப் பயன்படுத்தி இந்த எழுத்தின் கொரிய உச்சரிப்பு(கள்).</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionMandarin" xml:space="preserve">
+    <value>இந்த எழுத்துக்கான மிகவும் வழக்கமான பின்யின் வாசிப்பு.</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionSMSZD2003Readings" xml:space="preserve">
+    <value>சீன மற்றும் மண்டரின் வாசிப்புகள்.</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionTang" xml:space="preserve">
+    <value>டாங் வம்சத்தின் உச்சரிப்பு(கள்).</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionTGHZ2013" xml:space="preserve">
+    <value>டோங்யோங் குய்பான் ஹான்சி சிடியனில் கொடுக்கப்பட்டுள்ளபடி ஒன்று அல்லது அதற்கு மேற்பட்ட ஹான்யு பின்யின் வாசிப்புகள்.</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionVietnamese" xml:space="preserve">
+    <value>குவோக் ஙுவில் எழுத்தின் உச்சரிப்பு(கள்).</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeDescriptionXHC1983" xml:space="preserve">
+    <value>சியான்டாய் ஹான்யு சிடியனில் கொடுக்கப்பட்டுள்ளபடி ஒன்று அல்லது அதற்கு மேற்பட்ட ஹான்யு பின்யின் வாசிப்புகள்.</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeNameCantonese" xml:space="preserve">
+    <value>கான்டோனீஸ்</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameHangul" xml:space="preserve">
+    <value>ஹங்குல்</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameHanyuPinlu" xml:space="preserve">
+    <value>ஹான்யு பின்லு</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameHanyuPinyin" xml:space="preserve">
+    <value>ஹான்யு பின்யின்</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameJapanese" xml:space="preserve">
+    <value>ஜப்பானியம்</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameJapaneseKun" xml:space="preserve">
+    <value>ஜப்பானிய குன்</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameJapaneseOn" xml:space="preserve">
+    <value>ஜப்பானிய ஆன்</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameKorean" xml:space="preserve">
+    <value>கொரியம்</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameMandarin" xml:space="preserve">
+    <value>மாண்டரின்</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameSMSZD2003Readings" xml:space="preserve">
+    <value>SmSZ</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameTang" xml:space="preserve">
+    <value>டாங்</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameTGHZ2013" xml:space="preserve">
+    <value>ஹான்யு பின்யின் (TGHZ)</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameVietnamese" xml:space="preserve">
+    <value>வியட்நாமியம்</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="UnihanTypeNameXHC1983" xml:space="preserve">
+    <value>ஹான்யு பின்யின் (XHC)</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="HiddenSearchResultsLabel.Text" xml:space="preserve">
+    <value>மறைக்கப்பட்டது</value>
+    <comment>Header for search results that are hidden by current filters</comment>
+  </data>
+  <data name="NotificationSearchSelectedCharHidden" xml:space="preserve">
+    <value>தேர்ந்தெடுக்கப்பட்ட எழுத்துக்குறி தற்போதைய வடிகட்டிகளால் மறைக்கப்பட்டுள்ளது</value>
+    <comment>Notification banner when searching for a character that is excluded by current filters</comment>
+  </data>
+  <data name="SuggestOptionChineseSimplified.Text" xml:space="preserve">
+    <value>சீனம் (எளிமைப்படுத்தப்பட்டது)</value>
+    <comment>Type ramp preview text preset option</comment>
+  </data>
+  <data name="CanvasFontInformationDesignScriptLanguageTag" xml:space="preserve">
+    <value>வடிவமைக்கப்பட்ட மொழிகள்</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CollectionManagementHint.Text" xml:space="preserve">
+    <value>ஒரே நேரத்தில் பல எழுத்துருக்களை ஒப்பிட, ஏற்றுமதி செய்ய அல்லது நிர்வகிக்க தொகுப்புகளை உருவாக்கவும். தொடங்க, மேலே உள்ள ஏற்கனவே உள்ள தொகுப்பைத் தேர்ந்தெடுக்கவும் அல்லது புதிய ஒன்றை உருவாக்கவும்.</value>
+  </data>
+  <data name="CollectionSelector.PlaceholderText" xml:space="preserve">
+    <value>தொகுப்பைத் தேர்ந்தெடு</value>
+    <comment>Placeholder text in dropdown to pick an existing collection</comment>
+  </data>
+  <data name="FindCharButton.Text" xml:space="preserve">
+    <value>பிற எழுத்துருக்களில் காண்க</value>
+    <comment>Context menu action to search for current character in other installed fonts</comment>
+  </data>
+  <data name="FontFamilyFilterInput.PlaceholderText" xml:space="preserve">
+    <value>குடும்பத்தின்படி வடிகட்டு</value>
+    <comment>Placeholder text in font family filter search box</comment>
+  </data>
+  <data name="SettingsRememberFilter.Description" xml:space="preserve">
+    <value>இயக்கப்பட்டால், பயன்பாடு கடைசியாகத் தேர்ந்தெடுக்கப்பட்ட தொகுப்பு அல்லது வடிகட்டியை நினைவில் வைத்து மீட்டமைக்கும்.</value>
+  </data>
+  <data name="SettingsRememberFilter.Title" xml:space="preserve">
+    <value>அமர்வுகளுக்கு இடையே தேர்ந்தெடுக்கப்பட்ட எழுத்துரு வடிகட்டியை நினைவில் கொள்</value>
+    <comment>Setting title</comment>
+  </data>
+  <data name="GlyphNameToggleHeader.Text" xml:space="preserve">
+    <value>கோப்புப் பெயர் வார்ப்புரு</value>
+    <comment>Settings section header for exported glyph file naming template</comment>
+  </data>
+  <data name="GlyphNameToggleLabel.Text" xml:space="preserve">
+    <value>வார்ப்புரு பகுதிகளைக் காட்டு</value>
+    <comment>Toggle button label to show naming template tokens</comment>
+  </data>
+  <data name="FileNameWriterCharDescDesc" xml:space="preserve">
+    <value>வரிவடிவ யூனிகோட் விளக்கம்</value>
+    <comment>Description of file naming template variable</comment>
+  </data>
+  <data name="FileNameWriterExtensionDesc" xml:space="preserve">
+    <value>கோப்பு நீட்டிப்பு</value>
+    <comment>Description of file naming template variable</comment>
+  </data>
+  <data name="FileNameWriterFaceDesc" xml:space="preserve">
+    <value>தற்போதைய எழுத்துரு நடையின் பெயர்</value>
+    <comment>Description of file naming template variable</comment>
+  </data>
+  <data name="FileNameWriterFamilyDesc" xml:space="preserve">
+    <value>எழுத்துரு குடும்பத்தின் பெயர்</value>
+    <comment>Description of file naming template variable</comment>
+  </data>
+  <data name="FileNameWriterPixelSizeDesc" xml:space="preserve">
+    <value>பிக்சல்களில் அளவு</value>
+    <comment>Description of file naming template variable</comment>
+  </data>
+  <data name="FileNameWriterStringFormat" xml:space="preserve">
+    <value>{0}, எ.கா. {1}</value>
+    <comment>{0} = token description, {1} = example filename output</comment>
+  </data>
+  <data name="FileNameWriterUnicodeCPDesc" xml:space="preserve">
+    <value>யூனிகோட் குறியீடு/புள்ளி மதிப்பு</value>
+    <comment>Description of file naming template variable</comment>
+  </data>
+  <data name="FileNameWriterUnicodeHexDesc" xml:space="preserve">
+    <value>யூனிகோட் ஹெக்ஸ் மதிப்பு</value>
+    <comment>Description of file naming template variable</comment>
+  </data>
+  <data name="FileNameWriterXamlGlyphDesc" xml:space="preserve">
+    <value>XAML வரிவடிவக் குறியீடு</value>
+    <comment>Description of file naming template variable</comment>
+  </data>
+  <data name="SettingsGlyphNaming.Description" xml:space="preserve">
+    <value>ஏற்றுமதி செய்யப்படும் எழுத்துக்குறி கோப்புகள் எவ்வாறு பெயரிடப்பட வேண்டும் என்பதைத் தேர்ந்தெடுக்கவும்.</value>
+  </data>
+  <data name="SettingsGlyphNaming.Title" xml:space="preserve">
+    <value>வரிவடிவ ஏற்றுமதி பெயரிடல்</value>
+    <comment>Setting title for exported glyph file naming format</comment>
+  </data>
+  <data name="ExampleFormat" xml:space="preserve">
+    <value>எ.கா. {0}</value>
+    <comment>{0} = example filename or string</comment>
+  </data>
+  <data name="FileNameWriterFontVerDesc" xml:space="preserve">
+    <value>எழுத்துரு பதிப்பு எண்</value>
+    <comment>Description of file naming template variable</comment>
+  </data>
+  <data name="CanvasFontInformationCopyrightNotice" xml:space="preserve">
+    <value>பதிப்புரிமை அறிவிப்பு</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationDescription" xml:space="preserve">
+    <value>விளக்கம்</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationDesigner" xml:space="preserve">
+    <value>வடிவமைப்பாளர்</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationDesignerUrl" xml:space="preserve">
+    <value>வடிவமைப்பாளர் இணையப்பக்கம்</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationFontVendorUrl" xml:space="preserve">
+    <value>எழுத்துரு விற்பனையாளர் இணையப்பக்கம்</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationFullName" xml:space="preserve">
+    <value>முழுப் பெயர்</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationLicenseDescription" xml:space="preserve">
+    <value>உரிமம்</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationLicenseInfoUrl" xml:space="preserve">
+    <value>உரிமத் தகவல் இணையப்பக்கம்</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationManufacturer" xml:space="preserve">
+    <value>உற்பத்தியாளர்</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationTrademark" xml:space="preserve">
+    <value>வர்த்தக முத்திரை</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationVersionStrings" xml:space="preserve">
+    <value>பதிப்பு சரங்கள்</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="RestoreLabel.Text" xml:space="preserve">
+    <value>மீட்டமை</value>
+    <comment>Opposite of Fullscreen</comment>
+  </data>
+  <data name="CreateSmartCollectionCheck.Content" xml:space="preserve">
+    <value>நுண்ணறிவுத் தொகுப்பு</value>
+    <comment>Checkbox to save search criteria as a dynamic Smart Collection</comment>
+  </data>
+  <data name="CreateSmartCollectionHint.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>நுண்ணறிவுத் தொகுப்புகளுக்கான இணைய ஆவணங்களைக் காண்க</value>
+    <comment>Link to online documentation for Smart Collections</comment>
+  </data>
+  <data name="CharacterFilter" xml:space="preserve">
+    <value>எழுத்துக்குறி:</value>
+    <comment>Command used for character searches. Should be short.</comment>
+  </data>
+  <data name="DesignerFilter" xml:space="preserve">
+    <value>வடிவமைப்பாளர்:</value>
+    <comment>Command used for designer searches. Should be short.</comment>
+  </data>
+  <data name="FilePathFilter" xml:space="preserve">
+    <value>பாதை:</value>
+    <comment>Command used for file path searches. Should be short.</comment>
+  </data>
+  <data name="FoundryFilter" xml:space="preserve">
+    <value>நிறுவனம்:</value>
+    <comment>Command used for foundry searches. Should be short.</comment>
+  </data>
+  <data name="SmartCollectionDesignerFilter.Text" xml:space="preserve">
+    <value>வடிவமைப்பாளர் வடிகட்டி</value>
+    <comment>Filter criterion label in Smart Collections</comment>
+  </data>
+  <data name="SmartCollectionFilePathFilter.Text" xml:space="preserve">
+    <value>கோப்புப் பாதை வடிகட்டி</value>
+    <comment>Filter criterion label in Smart Collections</comment>
+  </data>
+  <data name="SmartCollectionFoundryFilter.Text" xml:space="preserve">
+    <value>நிறுவன வடிகட்டி</value>
+    <comment>Filter criterion label in Smart Collections</comment>
+  </data>
+  <data name="SmartCollectionCharacterFilter.Text" xml:space="preserve">
+    <value>எழுத்துக்குறி வடிகட்டி</value>
+    <comment>Filter criterion label in Smart Collections</comment>
+  </data>
+  <data name="DigEditCollection.PrimaryButtonText" xml:space="preserve">
+    <value>சேமி</value>
+    <comment>Dialog confirmation button to save edited collection</comment>
+  </data>
+  <data name="DigEditCollection.Title" xml:space="preserve">
+    <value>தொகுப்பைத் திருத்து</value>
+    <comment>Dialog title for editing an existing collection</comment>
+  </data>
+  <data name="EditCollectionButton.Label" xml:space="preserve">
+    <value>திருத்து</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="EditCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>தொகுப்பைத் திருத்து</value>
+    <comment>Button tooltip to edit collection</comment>
+  </data>
+  <data name="BtnHelpAndTips.Content" xml:space="preserve">
+    <value>உதவி &amp; குறிப்புகள்</value>
+    <comment>Button label - open documentation and tips</comment>
+  </data>
+  <data name="SmartCollectionEditHint.Text" xml:space="preserve">
+    <value>நுண்ணறிவுத் தொகுப்பை மாற்ற, மேலே உள்ள திருத்து பொத்தானைக் கிளிக் செய்யவும்.</value>
   </data>
   <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
     <value>கோப்புறையைத் தேர்ந்தெடு</value>
+    <comment>Button to open folder picker in Open Folder dialog</comment>
+  </data>
+  <data name="ChangeSortToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>வரிசையாக்கத்தை மாற்று</value>
+    <comment>Toggle between ascending and descending sort order</comment>
+  </data>
+  <data name="SortedByRangeLabel.Text" xml:space="preserve">
+    <value>வரம்பின்படி வரிசைப்படுத்தப்பட்டது</value>
+    <comment>Status label indicating character grid is sorted by Unicode range</comment>
+  </data>
+  <data name="RefreshResultsLabel.Text" xml:space="preserve">
+    <value>முடிவுகளைப் புதுப்பி</value>
+    <comment>Button label to re-run smart collection search filter</comment>
+  </data>
+  <data name="ResultsCountLabel" xml:space="preserve">
+    <value>{0} முடிவுகள்</value>
+    <comment>{0} = number of search results</comment>
+  </data>
+  <data name="SortedByNameLabel.Text" xml:space="preserve">
+    <value>பெயரின்படி வரிசைப்படுத்தப்பட்டது</value>
+    <comment>Status label indicating character grid is sorted alphabetically by name</comment>
+  </data>
+  <data name="SettingsFontListToolTip.Description" xml:space="preserve">
+    <value>எழுத்துரு பட்டியல் அல்லது தாவல்களின் மீது வட்டமிடும்போது காட்டப்படும் உதவிக்குறிப்புகளில் பயன்படுத்தப்படும் இயல்புநிலை உரை.</value>
+  </data>
+  <data name="SettingsFontListToolTip.Title" xml:space="preserve">
+    <value>எழுத்துரு பட்டியல் உதவிக்குறிப்பு முன்னோட்டம்</value>
+    <comment>Setting title for font list tooltip preview text</comment>
+  </data>
+  <data name="CalligraphyPenInkToolbarButtonToolTip" xml:space="preserve">
+    <value>அழகெழுத்துப் பேனா</value>
+    <comment>Calligraphy pen tool selection button</comment>
+  </data>
+  <data name="SettingsSimulatedFontFaces.Title" xml:space="preserve">
+    <value>உருவகப்படுத்தப்பட்ட எழுத்துரு நடைகளை மறை</value>
+    <comment>Setting title for hiding synthetic bold/oblique faces</comment>
+  </data>
+  <data name="SettingsSimulatedFontFaces.Description" xml:space="preserve">
+    <value>இயக்கப்பட்டால், Windows தானாக உருவாக்கும் உருவகப்படுத்தப்பட்ட எழுத்துரு நடைகள் தேர்வியில் காட்டப்படாது.
+
+தனித்தனி தடிமன் அல்லது சாய்வு இல்லாத எழுத்துருக்களுக்கு இவை பொதுவாக உருவாக்கப்படுகின்றன.
+
+செயல்பட பயன்பாட்டை மறுதொடக்கம் செய்ய வேண்டும்.</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value>இயக்கப்பட்டால், Windows தானாக உருவாக்கும் உருவகப்படுத்தப்பட்ட எழுத்துரு நடைகள் தேர்வியில் காட்டப்படாது. தனித்தனி தடிமன் அல்லது சாய்வு இல்லாத எழுத்துருக்களுக்கு இவை பொதுவாக உருவாக்கப்படுகின்றன.</value>
+    <comment>Deprecated or duplicate of SettingsSimulatedFontFaces.Description.</comment>
+  </data>
+  <data name="FontPropSimulated.Text" xml:space="preserve">
+    <value>உருவகப்படுத்தப்பட்ட நடை</value>
+    <comment>Typography: Whether face is synthetically generated by Windows</comment>
+  </data>
+  <data name="SimulatedHeader" xml:space="preserve">
+    <value>உருவகப்படுத்தப்பட்டது</value>
+    <comment>Simulated font faces descriptor</comment>
+  </data>
+  <data name="FontListSizeNormal" xml:space="preserve">
+    <value>இயல்பான</value>
+    <comment>Setting option: standard font size in font list</comment>
+  </data>
+  <data name="FontListSizeLarge" xml:space="preserve">
+    <value>பெரிய</value>
+    <comment>Setting option: large font size in font list</comment>
+  </data>
+  <data name="FontListSizeLarger" xml:space="preserve">
+    <value>மிகப் பெரிய</value>
+    <comment>Setting option: extra large font size in font list</comment>
+  </data>
+  <data name="CanvasFontInformationSupportedScriptLanguageTag" xml:space="preserve">
+    <value>ஆதரிக்கப்படும் மொழிகள்</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="CanvasFontInformationEmbeddingRights" xml:space="preserve">
+    <value>உட்பொதிக்கும் உரிமைகள்</value>
+    <comment>Font metadata property name</comment>
+  </data>
+  <data name="EmbeddingTypeInstallable" xml:space="preserve">
+    <value>நிறுவக்கூடிய உட்பொதிப்பு: எழுத்துருவை உட்பொதிக்கலாம் மற்றும் தொலைநிலை அமைப்புகளில் அல்லது பிற பயனர்களால் பயன்படுத்த நிரந்தரமாக நிறுவலாம்.</value>
+    <comment>Font embedding licensing permission description</comment>
+  </data>
+  <data name="EmbeddingTypeRestricted" xml:space="preserve">
+    <value>வரம்பிற்குட்பட்ட உரிமம்: சட்டப்பூர்வ உரிமையாளரின் வெளிப்படையான அனுமதியின்றி எழுத்துருவை மாற்றவோ, உட்பொதிக்கவோ அல்லது பகிரவோ கூடாது.</value>
+    <comment>Font embedding licensing permission description</comment>
+  </data>
+  <data name="EmbeddingTypePreviewPrint" xml:space="preserve">
+    <value>முன்னோட்டம் &amp; அச்சு உட்பொதிப்பு: ஆவணத்தைக் காண அல்லது அச்சிடும் நோக்கங்களுக்காக மட்டுமே எழுத்துருவை உட்பொதிக்கலாம் மற்றும் தற்காலிகமாக ஏற்றலாம். ஆவணங்கள் படிக்க மட்டுமே முடியும் வகையில் திறக்கப்பட வேண்டும்.</value>
+    <comment>Font embedding licensing permission description</comment>
+  </data>
+  <data name="EmbeddingTypeEditable" xml:space="preserve">
+    <value>திருத்தக்கூடிய உட்பொதிப்பு: எழுத்துருவை உட்பொதிக்கலாம் மற்றும் பிற கணினிகளில் தற்காலிகமாக ஏற்றலாம். ஆவணங்களைப் படிக்கவும் திருத்தவும் புதிய உரையை வடிவமைக்கவும் அனுமதிக்கப்படுகிறது.</value>
+    <comment>Font embedding licensing permission description</comment>
+  </data>
+  <data name="EmbeddingTypeNoSubsetting" xml:space="preserve">
+    <value>துணைக்குழுவாக்கம் இல்லை: உட்பொதிப்பதற்கு முன் எழுத்துருவை துணைக்குழுவாக்கக் கூடாது.</value>
+    <comment>Font embedding licensing permission description</comment>
+  </data>
+  <data name="EmbeddingTypeBitmapOnly" xml:space="preserve">
+    <value>பிட்மேப் உட்பொதிப்பு மட்டும்: எழுத்துருவில் உள்ள பிட்மேப்களை மட்டுமே உட்பொதிக்க முடியும். வெளிக்கோடு தரவை உட்பொதிக்க முடியாது.</value>
+    <comment>Font embedding licensing permission description</comment>
+  </data>
+  <data name="FilterEmbeddingInstallable.Text" xml:space="preserve">
+    <value>நிறுவக்கூடியது</value>
+    <comment>Font embedding rights filter option</comment>
+  </data>
+  <data name="FilterEmbeddingEditable.Text" xml:space="preserve">
+    <value>திருத்தக்கூடியது</value>
+    <comment>Font embedding rights filter option</comment>
+  </data>
+  <data name="FilterEmbeddingPreviewPrint.Text" xml:space="preserve">
+    <value>முன்னோட்டம் &amp; அச்சு</value>
+    <comment>Font embedding rights filter option</comment>
+  </data>
+  <data name="FilterEmbeddingRestricted.Text" xml:space="preserve">
+    <value>வரம்பிற்குட்பட்டது</value>
+    <comment>Font embedding rights filter option</comment>
+  </data>
+  <data name="FilterEmbeddingBitmap.Text" xml:space="preserve">
+    <value>பிட்மேப் மட்டும்</value>
+    <comment>Font embedding rights filter option</comment>
+  </data>
+  <data name="All.Text" xml:space="preserve">
+    <value>அனைத்தும்</value>
+    <comment>Filter option to show all items</comment>
+  </data>
+  <data name="UnihanTypeDescriptionZhuang" xml:space="preserve">
+    <value>இந்த எழுத்துக்கான மிகவும் வழக்கமான சுவாங் வாசிப்பு. நிலையான சுவாங் சொல்லகராதியின் பகுதியாக இல்லாத சொற்கள் நட்சத்திரக் குறியீட்டுடன் (*) காட்டப்பட்டுள்ளன.</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnicodeTypeNameZhuang" xml:space="preserve">
+    <value>சுவாங்</value>
+    <comment>Name of the Zhuang script/language</comment>
+  </data>
+  <data name="UnihanTypeDescriptionFanqie" xml:space="preserve">
+    <value>பண்டைய சீன அகராதிகளில் எழுத்தின் உச்சரிப்பைக் குறிக்கப் பயன்படுத்தப்படும் ஃபான்கியே முறை. இது இரண்டு எழுத்துக்களைப் பயன்படுத்துகிறது: முதலாவது தொடக்க ஒலியையும், இரண்டாவது இறுதி ஒலியையும் குறிக்கிறது.</value>
+    <comment>Unicode Unihan database reading description</comment>
+  </data>
+  <data name="UnihanTypeNameFanqie" xml:space="preserve">
+    <value>ஃபான்கியே</value>
+    <comment>Unicode Unihan database reading system name</comment>
+  </data>
+  <data name="SubsetterTitleBETA.Title" xml:space="preserve">
+    <value>Segoe ஐகான் துணைக்குழுவாக்கி (BETA)</value>
+    <comment>Tool name for creating custom subset font files</comment>
+  </data>
+  <data name="SubsetterTitleBETA.Description" xml:space="preserve">
+    <value>Segoe ஐகான் எழுத்துருக்களின் தனிப்பயன் துணைக்குழுவை உருவாக்கவும்.</value>
+  </data>
+  <data name="OutputPropertiesLabel.Text" xml:space="preserve">
+    <value>வெளியீட்டுப் பண்புகள்</value>
+    <comment>Section header for generated subset font file properties</comment>
+  </data>
+  <data name="FontVersion" xml:space="preserve">
+    <value>எழுத்துரு பதிப்பு</value>
+    <comment>Label for font version metadata field</comment>
+  </data>
+  <data name="FontFamilyName" xml:space="preserve">
+    <value>எழுத்துரு குடும்பப் பெயர்</value>
+    <comment>Label for font family name metadata field</comment>
+  </data>
+  <data name="SubSetterClashWarningDescription.Text" xml:space="preserve">
+    <value>எச்சரிக்கை: இந்த எழுத்துருவில் பல முரண்பட்ட குறியீடுகள் உள்ளன. முரண்படும் எழுத்துக்களை நீக்கவும்.</value>
+    <comment>Warning in Segoe Icons Subsetter when characters share the same glyph index</comment>
+  </data>
+  <data name="SubSetterChosenGlyphsHeader.Text" xml:space="preserve">
+    <value>தேர்ந்தெடுக்கப்பட்ட எழுத்துக்கள்</value>
+    <comment>Header for selected characters list in Subsetter</comment>
+  </data>
+  <data name="SubSetterChosenGlyphsLabel" xml:space="preserve">
+    <value>{0} தேர்ந்தெடுக்கப்பட்டது</value>
+    <comment>{0} = number of selected characters</comment>
+  </data>
+  <data name="SubsetSuccessMessage" xml:space="preserve">
+    <value>எழுத்துரு துணைக்குழு உருவாக்கம் வெற்றிகரமானது</value>
+    <comment>Notification message shown after successfully generating a font subset</comment>
+  </data>
+  <data name="SettingsSubsetterBETA.Title" xml:space="preserve">
+    <value>Segoe ஐகான் துணைக்குழுவாக்கியை இயக்கு (BETA)</value>
+    <comment>Setting title for icon subsetter feature</comment>
+  </data>
+  <data name="SettingsSubsetterBETA.Description" xml:space="preserve">
+    <value>இயக்கப்பட்டால், முதன்மை பயன்பாட்டு மெனுவிலிருந்து Segoe ஐகான் துணைக்குழுவாக்கியைப் பயன்படுத்த அனுமதிக்கிறது.</value>
+  </data>
+  <data name="AddSVGHint.Text" xml:space="preserve">
+    <value>SVG ஐச் சேர்</value>
+    <comment>Button/hint to import an SVG glyph into subset font</comment>
+  </data>
+  <data name="CharacterMapDescription.Title" xml:space="preserve">
+    <value>எழுத்துக்குறி வரைபடம்</value>
+    <comment>Main view showing characters mapped to Unicode code points</comment>
+  </data>
+  <data name="CharacterMapDescription.Description" xml:space="preserve">
+    <value>எழுத்துரு தோற்றத்தில் அணுகக்கூடிய எழுத்துக்குறிகளைக் காண்க. இந்த எழுத்துக்குறிகளை பெரும்பாலான பயன்பாடுகளில் பயன்படுத்தலாம்.</value>
+  </data>
+  <data name="GlyphMapDescription.Title" xml:space="preserve">
+    <value>வரிவடிவ வரைபடம்</value>
+    <comment>View showing internal font glyphs by index rather than character code</comment>
+  </data>
+  <data name="GlyphMapDescription.Description" xml:space="preserve">
+    <value>எழுத்துக்குறிகளை உருவாக்க எழுத்துரு தோற்றத்தால் பயன்படுத்தப்படும் உள் வரிவடிவங்களைக் காண்க. இவை வழக்கமாக பிற பயன்பாடுகளில் அணுக முடியாது.</value>
+  </data>
+  <data name="TypeRampDescription.Title" xml:space="preserve">
+    <value>அளவு முன்னோட்டம்</value>
+    <comment>Typography: Preview of text at progressively increasing font sizes</comment>
+  </data>
+  <data name="TypeRampDescription.Description" xml:space="preserve">
+    <value>எழுத்துருவை வெவ்வேறு அளவுகளில் முன்னோட்டமிட்டு மாறி எழுத்துரு அச்சுகளை ஆராயுங்கள்.</value>
+  </data>
+  <data name="FaceSelectorDescription.Title" xml:space="preserve">
+    <value>செயலில் உள்ள எழுத்துரு நடை</value>
+    <comment>Font face selection header</comment>
+  </data>
+  <data name="FaceSelectorDescription.Description" xml:space="preserve">
+    <value>ஒரே எழுத்துரு குடும்பத்தில் உள்ள பல்வேறு நடைகள் வெவ்வேறு எழுத்துக்குறிகளைக் கொண்டிருக்கலாம்.
+
+தடிமன் அல்லது சாய்வு நடைகளை வழங்காத எழுத்துருக்களுக்கு Windows உருவகப்படுத்தப்பட்ட பதிப்புகளை வழங்கும்.</value>
+  </data>
+  <data name="FaceMetadataDescription.Description" xml:space="preserve">
+    <value>இந்த எழுத்துரு தோற்றத்திற்கான பொதுவான எழுத்துரு மீத்தரவைக் காண்க.</value>
+  </data>
+  <data name="FaceOpenTypeFeaturesDescription.Description" xml:space="preserve">
+    <value>OpenType எழுத்துரு அம்சங்கள் மற்றும் வண்ண வரிவடிவங்களை நிலைமாற்றுங்கள்.</value>
+  </data>
+  <data name="CharacterFilterDescription.Description" xml:space="preserve">
+    <value>யூனிகோட் வகைப்படி காட்டப்படும் எழுத்துக்குறிகளை வடிகட்டவும்.</value>
+  </data>
+  <data name="GlyphsCount" xml:space="preserve">
+    <value>{0} வரிவடிவங்கள்</value>
+    <comment>{0} = count of glyphs in font face</comment>
+  </data>
+  <data name="SimulatedFacesGlyphsMessage.Content" xml:space="preserve">
+    <value>உருவகப்படுத்தப்பட்ட எழுத்துரு நடைகள் அவற்றின் அசல் நடையின் வரிவடிவங்களை மட்டுமே காண்பிக்கும்</value>
+    <comment>Warning banner in glyph map view for simulated font faces</comment>
+  </data>
+  <data name="OptionOutlineTypes.Text" xml:space="preserve">
+    <value>வெளிக்கோடு வகைகள்</value>
+    <comment>Font filter flyout option</comment>
+  </data>
+  <data name="FilterColorBitmap.Text" xml:space="preserve">
+    <value>வண்ண பிட்மேப்</value>
+    <comment>Font filter option for color bitmap fonts (e.g. CBDT, sbix)</comment>
+  </data>
+  <data name="FilterLegacyBitmap.Text" xml:space="preserve">
+    <value>பழைய பிட்மேப்</value>
+    <comment>Font filter option for legacy non-color bitmap fonts</comment>
+  </data>
+  <data name="OutlineFilter" xml:space="preserve">
+    <value>வெளிக்கோடு:</value>
+    <comment>Command used for font outline type searches. Should be short.</comment>
+  </data>
+  <data name="SmartCollectionOutlineFilter.Text" xml:space="preserve">
+    <value>வெளிக்கோடு வடிகட்டி</value>
+    <comment>Label for outline type filter in Smart Collections dialog</comment>
+  </data>
+  <data name="SupportedValuesHint" xml:space="preserve">
+    <value>ஆதரிக்கப்படும் மதிப்புகள்: {0}</value>
+    <comment>{0} = comma-separated list of supported outline types</comment>
+  </data>
+  <data name="ClassNameInput.Header" xml:space="preserve">
+    <value>வகுப்புப் பெயர்</value>
+    <comment>Input field header for generating a C# helper class</comment>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>குறியீடு</value>
+    <comment>Tab header for generated C# code preview</comment>
+  </data>
+  <data name="PlusMore" xml:space="preserve">
+    <value>+ மேலும் {0}</value>
+    <comment>{0} = count of remaining items</comment>
+  </data>
+  <data name="OnlineDocumentationHint.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>இணைய ஆவணங்களைக் காண்க</value>
+    <comment>Link to online documentation</comment>
+  </data>
+  <data name="SettingsCopyTypographicVariantsAsMappedCharacters.Description" xml:space="preserve">
+    <value>இயக்கப்பட்டால், எழுத்துருவில் யூனிகோட் எழுத்தாக ஒதுக்கப்பட்ட அச்சுக்கலை மாறுபாடு இருந்தால், அது யூனிகோட் எழுத்தாக நகலெடுக்கப்படும்.
+
+இது எழுத்துரு மாற்றும்போது மற்றும் எழுத்துப் பிழை சரிபார்ப்பில் வரைபடத்தை உடைக்கும், ஆனால் பிற பயன்பாடுகளுக்கு நகலெடுக்க இதுவே ஒரே வழி.</value>
+  </data>
+  <data name="SettingsCopyTypographicVariantsAsMappedCharacters.Title" xml:space="preserve">
+    <value>அச்சுக்கலை மாறுபாடுகளை யூனிகோட் எழுத்துக்களாக நகலெடு</value>
+    <comment>Setting title</comment>
+  </data>
+  <data name="TxtGlyphHeader" xml:space="preserve">
+    <value>வரிவடிவம்:</value>
+    <comment>Label for glyph identifier</comment>
+  </data>
+  <data name="TxtGlyphsHeader" xml:space="preserve">
+    <value>வரிவடிவங்கள்:</value>
+    <comment>Label for glyph identifiers list</comment>
+  </data>
+  <data name="TxtGlyphIndex.Header" xml:space="preserve">
+    <value>வரிவடிவக் குறியீடு</value>
+    <comment>Typography: Internal font glyph index</comment>
+  </data>
+  <data name="NoLigaturesMessage" xml:space="preserve">
+    <value>இந்த எழுத்துருவில் OpenType இணைப்பெழுத்துகள் எதுவும் இல்லை.</value>
+    <comment>Message shown in ligature view when font has no OpenType ligatures</comment>
+  </data>
+  <data name="LigaturesSummaryString" xml:space="preserve">
+    <value>{1} OpenType அம்சங்களில் {0} இணைப்பெழுத்துகள் உள்ளன</value>
+    <comment>{0} = total ligatures count, {1} = number of OpenType features</comment>
+  </data>
+  <data name="CopySequenceMessage" xml:space="preserve">
+    <value>உரை வரிசையை நகலெடு</value>
+    <comment>Tooltip or message for copying the sequence of selected characters</comment>
+  </data>
+  <data name="ViewInGlyphMapMessage" xml:space="preserve">
+    <value>{0} ஐ வரிவடிவ வரைபடத்தில் காண்க</value>
+    <comment>{0} = glyph name or index</comment>
+  </data>
+  <data name="LigatureMapDescription.Title" xml:space="preserve">
+    <value>இணைப்பெழுத்து வரைபடம்</value>
+    <comment>Typography: Combinations where multiple characters form a single glyph</comment>
+  </data>
+  <data name="LigatureMapDescription.Description" xml:space="preserve">
+    <value>எழுத்துரு தோற்றத்தால் ஆதரிக்கப்படும் இணைப்பெழுத்துச் சேர்க்கைகளையும் அவற்றின் கூறுகளையும் காண்க</value>
+  </data>
+  <data name="GlyphsSummary.Text" xml:space="preserve">
+    <value>{1} எழுத்துக்குறிகளுக்கு ஒதுக்கப்பட்ட {0} வரிவடிவங்கள் உள்ளன</value>
+    <comment>{0} = glyph count, {1} = character count</comment>
+  </data>
+  <data name="FaceVariationsDescription.Title" xml:space="preserve">
+    <value>மாறி எழுத்துரு அச்சு</value>
+    <comment>Typography: OpenType Variable Font design axes (e.g. weight, width, slant)</comment>
+  </data>
+  <data name="FaceVariationsDescription.Description" xml:space="preserve">
+    <value>எழுத்துரு நடைக்கான OpenType எழுத்துரு மாறுபாடு அச்சுகளைச் சரிசெய்யவும்.
+
+மாறுபாடுகளை உரையாக நகலெடுக்க முடியாது, ஆனால் PNG அல்லது SVG ஆக ஏற்றுமதி செய்யலாம்.</value>
+  </data>
+  <data name="AllColorTitle.Text" xml:space="preserve">
+    <value>அனைத்து வண்ண எழுத்துருக்கள்</value>
+    <comment>Filter title to show all color fonts</comment>
+  </data>
+  <data name="HiddenAxisHintLabel" xml:space="preserve">
+    <value>மறைக்கப்பட்ட அச்சு - பயனரின் கட்டுப்பாட்டிற்கானது அல்ல</value>
+    <comment>Variable font design axis marked as hidden in font metadata</comment>
+  </data>
+  <data name="ExportImageLabel.Text" xml:space="preserve">
+    <value>படமாகச் சேமி</value>
+    <comment>Context menu item to save glyph as image file</comment>
+  </data>
+  <data name="FaceCountLabel" xml:space="preserve">
+    <value>{0} நடை(கள்)</value>
+    <comment>The amount of real font, non-simulated font faces for a font family. Includes optional plural verbiage.</comment>
   </data>
 </root>
