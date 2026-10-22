@@ -7,6 +7,7 @@
 #include "PostTableReader.h"
 #include "FontPalette.h"
 #include "CpalTableReader.h"
+#include "DWriteOpenType.h"
 //#include "CmapTableReader.h"
 
 using namespace Microsoft::WRL;
@@ -82,6 +83,19 @@ namespace CharacterMapCX
 		/// </summary>
 		property IMapView<int, String^>^ GlyphNameMappings { IMapView<int, String^>^ get() { ReadTables(); return m_mappings; } }
 
+		/// <summary>
+		/// OpenType features with alternates or substitutes.
+		/// Lazily parsed on demand from GSUB table.
+		/// </summary>
+		property IVectorView<DWriteOpenTypeFeatureGroup^>^ OpenTypeFeatures
+		{
+			IVectorView<DWriteOpenTypeFeatureGroup^>^ get()
+			{
+				ReadOpenTypeFeatures();
+				return m_openTypeFeatures;
+			}
+		}
+
 		FontAnalysis()
 		{
 		}
@@ -114,6 +128,17 @@ namespace CharacterMapCX
 
 		bool m_tables = false;
 		bool m_var = false;
+		bool m_otLoaded = false;
+		IVectorView<DWriteOpenTypeFeatureGroup^>^ m_openTypeFeatures;
+
+		void ReadOpenTypeFeatures()
+		{
+			if (m_otLoaded)
+				return;
+
+			m_otLoaded = true;
+			m_openTypeFeatures = DirectWrite::GetOpenTypeFeatures(m_ref);
+		}
 
 		void ReadTables()
 		{

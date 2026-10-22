@@ -600,6 +600,21 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
             GoToState(LigatureMapState.Name, animate);
         }
+        else if (ViewModel.DisplayMode == FontDisplayMode.OpenTypeState)
+        {
+            //if (animate)
+            //{
+            //    this.FindName(nameof(LigaturesRoot));
+            //    if (MapDisplayStates.CurrentState == CharacterMapState)
+            //        UpdateXToXTransition(CharGrid, LigaturesRepeater, GridToLigaturesTransition);
+            //    else if (MapDisplayStates.CurrentState == GlyphMapState)
+            //        UpdateXToXTransition(GlyphRepeater, LigaturesRepeater, GlyphToLigaturesTransition);
+            //    else if (MapDisplayStates.CurrentState == TypeRampState)
+            //        UpdateRampToGridTransition(LigaturesRepeater, RampToLigaturesTransition);
+            //}
+
+            GoToState(OpenTypeMapState.Name, animate);
+        }
         else if (ViewModel.DisplayMode == FontDisplayMode.TypeRampState)
         {
             if (animate)
@@ -1483,32 +1498,31 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 break;
 
             case FontDisplayMode.GlyphMapState:
-                if (GlyphRepeater?.SelectedItem is uint glyphIndex)
-                {
-                    DWriteTextLayoutAnalysis analysis = Utils.GetInterop().AnalyzeGlyphLayout(ViewModel.SelectedFace.Face, (ushort)glyphIndex);
-                    (bool hasOptions, ItemsSelectionModel items) = CharacterAnalysisModel.CreateColorOptions(analysis, ViewModel.ShowColorGlyphs, currentTag);
-                    ColrSelector.SelectedItemsSource = items;
-                    ColrSelector.Visibility = hasOptions ? Visibility.Visible : Visibility.Collapsed;
-                }
-                else
-                    ColrSelector.Visibility = Visibility.Collapsed;
+                    UpdateForIndex(GlyphRepeater?.SelectedItem as uint?);
                 break;
 
             case FontDisplayMode.LigaturesState:
-                if (LigaturesRepeater?.SelectedItem is LigatureModel ligature)
-                {
-                    DWriteTextLayoutAnalysis analysis = Utils.GetInterop().AnalyzeGlyphLayout(ViewModel.SelectedFace.Face, (ushort)ligature.LigatureGlyph);
-                    (bool hasOptions, ItemsSelectionModel items) = CharacterAnalysisModel.CreateColorOptions(analysis, ViewModel.ShowColorGlyphs, currentTag);
-                    ColrSelector.SelectedItemsSource = items;
-                    ColrSelector.Visibility = hasOptions ? Visibility.Visible : Visibility.Collapsed;
-                }
-                else
-                    ColrSelector.Visibility = Visibility.Collapsed;
+                    UpdateForIndex((LigaturesRepeater?.SelectedItem as LigatureModel)?.LigatureGlyph);
                 break;
 
             default:
                 ColrSelector.Visibility = Visibility.Collapsed;
                 break;
+        }
+
+        void UpdateForIndex(uint? idx)
+        {
+            if (idx.HasValue)
+            {
+                DWriteTextLayoutAnalysis analysis = Utils.GetInterop().AnalyzeGlyphLayout(ViewModel.SelectedFace.Face, (ushort)idx.Value);
+                (bool hasOptions, ItemsSelectionModel items) = CharacterAnalysisModel.CreateColorOptions(analysis, ViewModel.ShowColorGlyphs, currentTag);
+                ColrSelector.SelectedItemsSource = items;
+                ColrSelector.SetVisible(hasOptions);
+            }
+            else
+            {
+                ColrSelector.SetVisible(false);
+            }
         }
     }
 
@@ -1686,7 +1700,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void LigaturesRepeater_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (LigaturesRepeater.SelectedItem is LigatureModel model)
+        if (LigaturesRepeater?.SelectedItem is LigatureModel model)
         {
             CompositionFactory.SetWithoutReposition(TxtPreview, _resizerBouncer, () =>
             {

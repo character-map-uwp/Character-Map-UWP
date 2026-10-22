@@ -37,6 +37,8 @@ public partial class FontItem : ObservableObject
 
     public bool IsLigatures => DisplayMode == FontDisplayMode.LigaturesState;
 
+    public bool IsOpenType => DisplayMode == FontDisplayMode.OpenTypeState;
+
     public int Index => (int)_displayMode;
 
     private CMFontFace _selected;

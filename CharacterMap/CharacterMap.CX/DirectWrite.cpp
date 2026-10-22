@@ -275,6 +275,59 @@ String^ DirectWrite::GetFeatureName(String^ tag)
 	return GetTagName(tag);
 }
 
+String^ DirectWrite::GetFeatureDescription(UINT32 tag)
+{
+	return GetFeatureDescription(GetFeatureTag(tag));
+}
+
+String^ DirectWrite::GetFeatureDescription(String^ tag)
+{
+	if (tag == "aalt") return "Only used by layout applications like InDesign to show/access the alternate characters.";
+	if (tag == "dnom") return "Replaces default figures with denominator figures.";
+	if (tag == "frac") return "Creating fractions can be complex, the results you see might not make any sense...";
+	if (tag == "locl") return "These substitutes work in combination with language settings of the browser or system. So the effect might not be visible.";
+	if (tag == "numr") return "Replaces default figures with numerator figures.";
+	if (tag == "ordn") return "Replaces default alphabetic glyphs with the corresponding ordinal forms.";
+	if (tag == "salt") return "Replaces default glyphs with stylistic alternate glyphs.";
+	if (tag == "smcp") return "Turns lowercase characters into small capitals.";
+	if (tag == "c2sc") return "Turns capital letters into small capitals.";
+	if (tag == "c2pc") return "Turns capital letters into petite capitals.";
+	if (tag == "pcap") return "Turns lowercase characters into petite capitals.";
+	if (tag == "unic") return "Substitutes uppercase or lowercase glyphs with unicase forms.";
+	if (tag == "titl") return "Replaces standard characters with forms designed for display and titling sizes.";
+	if (tag == "swsh") return "Replaces default glyphs with swash glyphs.";
+	if (tag == "cswh") return "Replaces default character glyphs with contextual swash glyphs.";
+	if (tag == "calt") return "Substitutes alternate glyphs in specified contexts for better typography.";
+	if (tag == "hist") return "Substitutes historical forms for standard glyphs.";
+	if (tag == "onum") return "Replaces lining figures with numbers varying in height and alignment.";
+	if (tag == "lnum") return "Replaces oldstyle figures with full-height lining figures.";
+	if (tag == "pnum") return "Replaces tabular figures with proportional glyphs of varying widths.";
+	if (tag == "tnum") return "Replaces proportional figures with fixed-width tabular figures.";
+	if (tag == "zero") return "Substitutes slashed zero glyphs for default zero glyphs.";
+	if (tag == "subs") return "Replaces default glyphs with subscript glyphs.";
+	if (tag == "sups") return "Replaces default glyphs with superscript glyphs.";
+	if (tag == "sinf") return "Replaces default glyphs with inferiors for chemical and mathematical formulas.";
+	if (tag == "case") return "Shifts various punctuation marks up to align better with all-capital text.";
+	if (tag == "ornm") return "Replaces default glyphs with ornamental forms.";
+	if (tag == "nalt") return "Replaces default glyphs with circled, parenthesized, or boxed numbers/letters.";
+	if (tag == "liga") return "Replaces character sequences with standard ligatures.";
+	if (tag == "dlig") return "Replaces character sequences with discretionary ligatures.";
+	if (tag == "hlig") return "Replaces character sequences with historical ligatures.";
+	if (tag == "clig") return "Replaces character sequences with contextual ligatures.";
+	if (tag == "rlig") return "Replaces character sequences with required ligatures.";
+
+	if (tag != nullptr && tag->Length() >= 4)
+	{
+		auto d = tag->Data();
+		if (d[0] == 'c' && d[1] == 'v')
+			return "Replaces default glyphs with character variant " + d[2] + d[3] + " forms.";
+		if (d[0] == 's' && d[1] == 's')
+			return "Replaces default glyphs with stylistic set " + d[2] + d[3] + " variants.";
+	}
+
+	return "";
+}
+
 /// <summary>
 /// Opposite of DWRITE_MAKE_OPENTYPE_TAG, returns String
 /// representation of OpenType tag.
@@ -365,6 +418,48 @@ IVectorView<DWriteLigatureFeature^>^ DirectWrite::GetLigatures(ComPtr<IDWriteFon
 	else
 	{
 		list = (ref new Vector<DWriteLigatureFeature^>())->GetView();
+	}
+
+	return list;
+}
+
+IVectorView<DWriteOpenTypeFeatureGroup^>^ DirectWrite::GetOpenTypeFeatures(DWriteFontFace^ canvasFontFace)
+{
+	ComPtr<IDWriteFontFaceReference> faceRef = canvasFontFace->GetReference();
+	return GetOpenTypeFeatures(faceRef);
+}
+
+IVectorView<DWriteOpenTypeFeatureGroup^>^ DirectWrite::GetOpenTypeFeatures(ComPtr<IDWriteFontFaceReference> faceRef)
+{
+	ComPtr<IDWriteFontFace3> f3;
+	HRESULT hr = faceRef->CreateFontFace(&f3);
+	if (FAILED(hr) || f3 == nullptr)
+		return (ref new Vector<DWriteOpenTypeFeatureGroup^>())->GetView();
+
+	ComPtr<IDWriteFontFace5> face;
+	hr = f3.As(&face);
+	if (FAILED(hr) || face == nullptr)
+		return (ref new Vector<DWriteOpenTypeFeatureGroup^>())->GetView();
+
+	const void* tableData;
+	UINT32 tableSize;
+	BOOL exists;
+	void* context;
+	face->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('G', 'S', 'U', 'B'), &tableData, &tableSize, &context, &exists);
+
+	IVectorView<DWriteOpenTypeFeatureGroup^>^ list = nullptr;
+
+	if (exists)
+	{
+		auto reader = ref new GsubTableReader(tableData, tableSize);
+		list = reader->OpenTypeFeatures;
+		delete reader;
+
+		face->ReleaseFontTable(context);
+	}
+	else
+	{
+		list = (ref new Vector<DWriteOpenTypeFeatureGroup^>())->GetView();
 	}
 
 	return list;

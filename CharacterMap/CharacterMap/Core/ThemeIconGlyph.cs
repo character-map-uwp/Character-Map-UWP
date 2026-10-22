@@ -61,6 +61,7 @@ public enum ThemeIcon
     TypeRampView,
     GlyphMapView,
     LigatureMapView,
+    OpenTypeView,
     Calligraphy,
     RenderingOptions,
     CompareFonts,
@@ -161,6 +162,7 @@ public class ThemeIconGlyph : MarkupExtension
         [ThemeIcon.About] = V(0xE946),
         [ThemeIcon.Back] = V(0xE72B),
         [ThemeIcon.VariableAxis] = V(0xE9E9),
+        [ThemeIcon.OpenTypeView] = V(63162),
 
         [ThemeIcon.Fullscreen] = V(0xE740),
         [ThemeIcon.ExitFullscreen] = V(0xE73F),

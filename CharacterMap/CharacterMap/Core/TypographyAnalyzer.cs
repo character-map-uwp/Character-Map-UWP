@@ -71,6 +71,96 @@ public static class TypographyAnalyzer
         return groups;
     }
 
+    public static List<OpenTypeFeatureGroup> GetOpenTypeFeatures(FaceAnalysisModel model)
+    {
+        if (model?.Face is null)
+            return [];
+
+        // Accessing model.Analysis.OpenTypeFeatures triggers the on-demand GSUB parsing
+        IReadOnlyList<DWriteOpenTypeFeatureGroup> rawFeatures = model.Analysis.OpenTypeFeatures;
+        if (rawFeatures is null || rawFeatures.Count == 0)
+            return [];
+
+        CMFontFace fontFace = model.Face;
+        List<OpenTypeFeatureGroup> groups = [];
+
+        OpenTypeGlyphInfo CreateGlyphInfo(ushort glyphId)
+        {
+            bool hasChar = fontFace.TryGetCharacterForGlyph(glyphId, out Character mappedChar);
+            string ch = hasChar ? mappedChar.Char : null;
+            uint? uniIndex = hasChar ? mappedChar.UnicodeIndex : null;
+
+            string tip = null;
+            if (hasChar)
+            {
+                string desc = GlyphService.GetCharacterDescription(mappedChar.UnicodeIndex, fontFace);
+                tip = !string.IsNullOrWhiteSpace(desc)
+                    ? $"{desc}\r\nUnicode: U+{mappedChar.UnicodeIndex:X4}\r\nGlyph #{glyphId}"
+                    : $"Unicode: U+{mappedChar.UnicodeIndex:X4}\r\nGlyph #{glyphId}";
+            }
+            else
+            {
+                string definedName = null;
+                if (model.Analysis.HasGlyphNames && model.Analysis.GlyphNameMappings.TryGetValue(glyphId, out string postName))
+                    definedName = postName;
+
+                tip = !string.IsNullOrWhiteSpace(definedName)
+                    ? $"{definedName}\r\nGlyph #{glyphId}"
+                    : $"Glyph #{glyphId}";
+            }
+
+            return new(glyphId, ch, uniIndex, tip);
+        }
+
+        foreach (DWriteOpenTypeFeatureGroup rawGroup in rawFeatures)
+        {
+            string tag = rawGroup.Tag;
+            string title = string.IsNullOrEmpty(rawGroup.FeatureName) || rawGroup.FeatureName == tag
+                ? tag
+                : $"{rawGroup.FeatureName} ({tag})";
+            DWriteTypographyFeatureName feature = (DWriteTypographyFeatureName)rawGroup.FeatureTag;
+
+            List<OpenTypeSubstitutionModel> substitutions = [];
+
+            foreach (DWriteOpenTypeSubstitution rawSub in rawGroup.Substitutions)
+            {
+                if (rawSub.InputSequence is { Count: > 1 } || rawSub.TargetSequence is { Count: > 1 })
+                {
+                    List<OpenTypeGlyphInfo> inSeq = [];
+                    if (rawSub.InputSequence is not null)
+                    {
+                        foreach (ushort g in rawSub.InputSequence)
+                            inSeq.Add(CreateGlyphInfo(g));
+                    }
+                    else
+                        inSeq.Add(CreateGlyphInfo(rawSub.InputGlyph));
+
+                    List<OpenTypeGlyphInfo> targetSeq = [];
+                    if (rawSub.TargetSequence is not null)
+                    {
+                        foreach (ushort g in rawSub.TargetSequence)
+                            targetSeq.Add(CreateGlyphInfo(g));
+                    }
+                    else
+                        targetSeq.Add(CreateGlyphInfo(rawSub.TargetGlyph));
+
+                    substitutions.Add(new(inSeq, targetSeq, feature, tag));
+                }
+                else
+                {
+                    OpenTypeGlyphInfo inGlyph = CreateGlyphInfo(rawSub.InputGlyph);
+                    OpenTypeGlyphInfo targetGlyph = CreateGlyphInfo(rawSub.TargetGlyph);
+                    substitutions.Add(new(inGlyph, targetGlyph, feature, tag));
+                }
+            }
+
+            if (substitutions.Count > 0)
+                groups.Add(new(title, tag, rawGroup.FeatureName, rawGroup.Description, feature, substitutions));
+        }
+
+        return groups;
+    }
+
     /// <summary>
     /// Returns a list of Typographic Variations for a character supported by the font,
     /// including whether the variation glyph is mapped to a character in the font face.

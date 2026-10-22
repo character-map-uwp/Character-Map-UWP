@@ -13,7 +13,8 @@ public enum FontDisplayMode
     CharacterMapState = 0,
     GlyphMapState = 1,
     LigaturesState = 2,
-    TypeRampState = 3
+    OpenTypeState = 3,
+    TypeRampState = 4
 }
 
 public partial class RampOption : ObservableObject

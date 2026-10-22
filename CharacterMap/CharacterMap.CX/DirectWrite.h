@@ -11,6 +11,7 @@
 #include "DWriteKnownFontAxisValues.h"
 
 #include "DWriteLigature.h"
+#include "DWriteOpenType.h"
 #include "GlyphOutline.h"
 
 using namespace Microsoft::Graphics::Canvas::Text;
@@ -45,6 +46,11 @@ namespace CharacterMapCX
 
 		[Windows::Foundation::Metadata::DefaultOverload] // Avoid warnings
 		static String^ GetFeatureName(UINT32 tag);
+
+		static String^ GetFeatureDescription(String^ tag);
+
+		[Windows::Foundation::Metadata::DefaultOverload]
+		static String^ GetFeatureDescription(UINT32 tag);
 
 		/// <summary>
 		/// Get a buffer representing an SVG or Bitmap image glyph. SVG glyphs may be compressed.
@@ -97,6 +103,8 @@ namespace CharacterMapCX
 
 		static IVectorView<DWriteLigatureFeature^>^ GetLigatures(DWriteFontFace^ fontFace);
 
+		static IVectorView<DWriteOpenTypeFeatureGroup^>^ GetOpenTypeFeatures(DWriteFontFace^ fontFace);
+
 		static bool CheckTypographicFeature(
 			DWriteFontFace^ fontFace,
 			Platform::String^ text,
@@ -121,6 +129,8 @@ namespace CharacterMapCX
 		static IMapView<UINT32, UINT32>^ GetSupportedTypography(ComPtr<IDWriteFontFaceReference> faceRef);
 
 		static IVectorView<DWriteLigatureFeature^>^ GetLigatures(ComPtr<IDWriteFontFaceReference> faceRef);
+
+		static IVectorView<DWriteOpenTypeFeatureGroup^>^ GetOpenTypeFeatures(ComPtr<IDWriteFontFaceReference> faceRef);
 
 		//static __inline DWriteFontSet^ GetFonts(ComPtr<IDWriteFontSet3> fontSet);
 
