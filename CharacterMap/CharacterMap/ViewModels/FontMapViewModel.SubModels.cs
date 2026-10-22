@@ -48,7 +48,9 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
     public StyleSimulations StyleSimulation { get; }
 
     public bool ShouldUseDWriteRendering => 
-        (Analysis.COLRVersion == 1 && Utils.SupportsColrV1) || Analysis.HasVariationAxis;
+        (Analysis.COLRVersion == 1 && Utils.SupportsColrV1) 
+        || Analysis.HasVariationAxis
+        || Face.DirectWriteProperties.HasBrokenItalics;
 
     private Task<Uri> _loadingTask = null;
 

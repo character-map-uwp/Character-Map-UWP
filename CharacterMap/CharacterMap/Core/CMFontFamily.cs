@@ -5,58 +5,70 @@ namespace CharacterMap.Core;
 /// </summary>
 public class CMFontFamily : IComparable, IEquatable<CMFontFamily>
 {
-    private List<CMFontFace> _variants;
+    private List<CMFontFace> _realFaces;
 
-    private List<CMFontFace> _simulatedVariants;
+    private List<CMFontFace> _simulatedFaces;
 
     private DWriteFontFamily _dwriteFamily;
 
 
     public string Name { get; }
 
-    public bool IsSymbolFont => Variants.Count > 0 && Variants[0].DirectWriteProperties.IsSymbolFont;
+    public bool IsSymbolFont => RealFaces.Count > 0 && RealFaces[0].DirectWriteProperties.IsSymbolFont;
 
-    public IList<CMFontFace> Variants
+    /// <summary>
+    /// True if a family contains atleast ONE face
+    /// </summary>
+    public bool HasAnyFaces => _dwriteFamily is not null
+        ? _dwriteFamily.FontCount > 0
+        : (_realFaces?.Count > 0 || _simulatedFaces?.Count > 0);
+
+    /// <summary>
+    /// Real, non-simulated Font Faces of this family
+    /// </summary>
+    public IList<CMFontFace> RealFaces
     {
         get
         {
             EnsureInflated();
-            return _variants;
+            return _realFaces;
         }
     }
 
     /// <summary>
     /// Identifies if a font family has any REAL different font faces
     /// </summary>
-    public bool HasVariants
+    public bool HasMultipleRealFaces
     {
         get
         {
-            if (_dwriteFamily is not null && _variants.Count == 0)
+            if (_dwriteFamily is not null && _realFaces.Count == 0)
                 return _dwriteFamily.FontCount > 1;
-            return _variants.Count > 1;
+            return _realFaces.Count > 1;
         }
     }
+
+
 
     /// <summary>
     /// Identifies if a font family has any other font faces, included
     /// simulated faces
     /// </summary>
-    public bool HasAnyVariants => AllVariants.Count > 1;
+    public bool HasMultipleFaces => AllFacesSource.Count > 1;
 
     public bool HasImportedFiles { get; private set; }
 
-    public CMFontFace DefaultVariant => field ??= Utils.GetDefaultVariant(Variants);
+    public CMFontFace DefaultFace => field ??= Utils.GetDefaultFace(RealFaces.Count > 0 ? RealFaces : _simulatedFaces);
 
-    public List<object> AllVariants => field ??= CreateVariants();
+    public List<object> AllFacesSource => field ??= CreateFaceList();
 
-    public List<object> NonSimulatedVariants => field ??= CreateVariants(true);
+    public List<object> NonSimulatedFacesSource => field ??= CreateFaceList(true);
 
 
     private CMFontFamily(string name)
     {
         Name = name;
-        _variants = [];
+        _realFaces = [];
     }
 
     public CMFontFamily(string name, DWriteFontFace face) : this(name, face, (string)null) { }
@@ -65,7 +77,7 @@ public class CMFontFamily : IComparable, IEquatable<CMFontFamily>
 
     public CMFontFamily(string name, DWriteFontFace face, string filePath) : this(name)
     {
-        AddVariant(face, filePath);
+        AddFace(face, filePath);
     }
 
     public CMFontFamily(string name, DWriteFontFamily family) : this(name)
@@ -75,20 +87,20 @@ public class CMFontFamily : IComparable, IEquatable<CMFontFamily>
 
     public void EnsureInflated()
     {
-        if (_dwriteFamily is not null && _variants.Count == 0)
+        if (_dwriteFamily is not null && _realFaces.Count == 0)
         {
             lock (_dwriteFamily)
             {
-                if (_variants.Count == 0)
+                if (_realFaces.Count == 0)
                 {
                     bool hideSimulated = ResourceHelper.AppSettings.HideSimulatedFontFaces;
                     foreach (DWriteFontFace font in _dwriteFamily.Fonts)
                     {
                         if (font.Properties.IsSimulated && hideSimulated)
                             continue;
-                        AddVariant(font);
+                        AddFace(font);
                     }
-                    SortVariants();
+                    SortFaces();
                     _dwriteFamily = null;
                 }
             }
@@ -96,40 +108,40 @@ public class CMFontFamily : IComparable, IEquatable<CMFontFamily>
     }
 
 
-    public void AddVariant(DWriteFontFace fontFace) => AddVariant(fontFace, (string)null);
+    public void AddFace(DWriteFontFace fontFace) => AddFace(fontFace, (string)null);
 
-    public void AddVariant(DWriteFontFace fontFace, StorageFile file) => AddVariant(fontFace, file?.Path);
+    public void AddFace(DWriteFontFace fontFace, StorageFile file) => AddFace(fontFace, file?.Path);
 
-    public void AddVariant(DWriteFontFace fontFace, string filePath)
+    public void AddFace(DWriteFontFace fontFace, string filePath)
     {
         if (fontFace.Properties.IsSimulated is false)
-            _variants.Add(new(fontFace, filePath));
+            _realFaces.Add(new(fontFace, filePath));
         else
         {
-            _simulatedVariants ??= [];
-            _simulatedVariants.Add(new(fontFace, filePath));
+            _simulatedFaces ??= [];
+            _simulatedFaces.Add(new(fontFace, filePath));
         }
 
         if (!string.IsNullOrEmpty(filePath))
             HasImportedFiles = true;
     }
 
-    List<object> CreateVariants(bool excludeSimulated = false)
+    List<object> CreateFaceList(bool excludeSimulated = false)
     {
-        List<object> objs = new(Variants);
-        if (_simulatedVariants is not null && _simulatedVariants.Count > 0 && !excludeSimulated)
+        List<object> objs = new(RealFaces);
+        if (_simulatedFaces is not null && _simulatedFaces.Count > 0 && !excludeSimulated)
         {
             objs.Add(Localization.Get("SimulatedHeader"));
-            objs.AddRange(_simulatedVariants);
+            objs.AddRange(_simulatedFaces);
         }
 
         return objs;
     }
 
-    public void SortVariants()
+    public void SortFaces()
     {
-        if (_variants.Count > 1)
-            _variants.Sort((a, b) => a.DirectWriteProperties.Weight.Weight.CompareTo(b.DirectWriteProperties.Weight.Weight));
+        if (_realFaces.Count > 1)
+            _realFaces.Sort((a, b) => a.DirectWriteProperties.Weight.Weight.CompareTo(b.DirectWriteProperties.Weight.Weight));
     }
 
     public void PrepareForDelete()
@@ -142,7 +154,7 @@ public class CMFontFamily : IComparable, IEquatable<CMFontFamily>
         EnsureInflated();
         return new(this.Name)
         {
-            _variants = this._variants.ToList(),
+            _realFaces = this._realFaces.ToList(),
             HasImportedFiles = this.HasImportedFiles
         };
     }
@@ -150,7 +162,7 @@ public class CMFontFamily : IComparable, IEquatable<CMFontFamily>
     public static CMFontFamily CreateDefault(DWriteFontFace face)
     {
         CMFontFamily font = new(face.Properties.FamilyName);
-        font._variants.Add(CMFontFace.CreateDefault(face));
+        font._realFaces.Add(CMFontFace.CreateDefault(face));
         return font;
     }
 
@@ -182,9 +194,9 @@ public class CMFontFamily : IComparable, IEquatable<CMFontFamily>
     {
         int hashCode = -1425556920;
         hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
-        hashCode = hashCode * -1521134295 + EqualityComparer<IList<CMFontFace>>.Default.GetHashCode(Variants);
+        hashCode = hashCode * -1521134295 + EqualityComparer<IList<CMFontFace>>.Default.GetHashCode(RealFaces);
         hashCode = hashCode * -1521134295 + HasImportedFiles.GetHashCode();
-        hashCode = hashCode * -1521134295 + EqualityComparer<CMFontFace>.Default.GetHashCode(DefaultVariant);
+        hashCode = hashCode * -1521134295 + EqualityComparer<CMFontFace>.Default.GetHashCode(DefaultFace);
         return hashCode;
     }
 

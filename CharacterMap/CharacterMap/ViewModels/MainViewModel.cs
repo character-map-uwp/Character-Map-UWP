@@ -392,7 +392,7 @@ public partial class MainViewModel : ViewModelBase
                 Settings.LastOpenFonts = Fonts.SelectMany(f =>
                     new List<String> {
                         f.Font.Name,
-                        f.Font.Variants.IndexOf(f.Selected).ToString(),
+                        f.Font.RealFaces.IndexOf(f.Selected).ToString(),
                         ((int)f.DisplayMode).ToString()
                     }).ToList();
                 Settings.LastTabIndex = TabIndex;
@@ -428,11 +428,11 @@ public partial class MainViewModel : ViewModelBase
                     //      deleted making the stored index invalid. Make sure the index is
                     //      still within a valid range.
                     int faceIdx = Math.Max(0, Convert.ToInt32(list[++i]));
-                    if ((faceIdx < font.AllVariants.Count) is false)
-                        faceIdx = font.AllVariants.IndexOf(font.DefaultVariant);
+                    if ((faceIdx < font.AllFacesSource.Count) is false)
+                        faceIdx = font.AllFacesSource.IndexOf(font.DefaultFace);
 
-                    CMFontFace sel = font.AllVariants[faceIdx] as CMFontFace;
-                    sel ??= font.DefaultVariant;
+                    CMFontFace sel = font.AllFacesSource[faceIdx] as CMFontFace;
+                    sel ??= font.DefaultFace;
 
                     Fonts.Add(new(font)
                     {
@@ -619,7 +619,7 @@ public partial class MainViewModel : ViewModelBase
         StorageFile file = result.Imported.FirstOrDefault() ?? result.Existing.FirstOrDefault();
         if (file != null
             && FontList.FirstOrDefault(f =>
-            f.HasImportedFiles && f.DefaultVariant.FileName == file.Name) is CMFontFamily font)
+            f.HasImportedFiles && f.DefaultFace.FileName == file.Name) is CMFontFamily font)
         {
             SelectedFont = font;
             FontListCreated?.Invoke(this, EventArgs.Empty);

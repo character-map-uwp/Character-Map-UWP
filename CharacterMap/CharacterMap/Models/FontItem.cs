@@ -56,7 +56,7 @@ public partial class FontItem : ObservableObject
     public FontItem(CMFontFamily font)
     {
         _font = font;
-        _selected = font.DefaultVariant;
+        _selected = font.DefaultFace;
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ public partial class FontItem : ObservableObject
         if (font != Font && font is not null)
         {
             Font = font;
-            Selected = font.DefaultVariant;
+            Selected = font.DefaultFace;
 
             // This is an assumption but works for the current UI flow.
             IsCompact = false;
@@ -91,7 +91,7 @@ public partial class FontItem : ObservableObject
         base.OnPropertyChanged(e);
         if (e.PropertyName == nameof(Selected))
         {
-            if (Selected != Font.DefaultVariant)
+            if (Selected != Font.DefaultFace)
                 SubTitle = Selected.PreferredName;
             else
                 SubTitle = "";

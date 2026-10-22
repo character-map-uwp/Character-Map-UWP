@@ -3727,6 +3727,7 @@
                             FontStretch="{TemplateBinding FontStretch}"
                             FontWeight="{TemplateBinding FontWeight}"
                             Header="{TemplateBinding Header}"
+                            IsSpellCheckEnabled="False"
                             PlaceholderText="{TemplateBinding PlaceholderText}"
                             ScrollViewer.BringIntoViewOnFocusChange="False"
                             Style="{TemplateBinding TextBoxStyle}"

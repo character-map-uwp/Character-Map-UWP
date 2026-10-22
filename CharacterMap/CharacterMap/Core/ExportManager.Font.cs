@@ -9,8 +9,8 @@ public static partial class ExportManager
 {
     public static void RequestExportFont(CharacterRenderingOptions ops, bool family = true)
     {
-        if (family && ops.Family is { HasVariants: true } fam)
-            _ = ExportFontsToFolderAsync(fam.Variants.ToList());
+        if (family && ops.Family is { HasMultipleRealFaces: true } fam)
+            _ = ExportFontsToFolderAsync(fam.RealFaces.ToList());
         else
             RequestExportFontFile(ops.Face);
     }
@@ -51,7 +51,7 @@ public static partial class ExportManager
         IFontCollection selectedCollection,
         Action<string> callback = null)
     {
-        var fonts = selectedCollection.GetFontFamilies().SelectMany(f => f.Variants).ToList();
+        var fonts = selectedCollection.GetFontFamilies().SelectMany(f => f.RealFaces).ToList();
         return ExportFontsAsZipAsync(fonts, selectedCollection.Name, callback);
     }
 
@@ -97,7 +97,7 @@ public static partial class ExportManager
         IFontCollection selectedCollection,
         Action<string> callback = null)
     {
-        var fonts = selectedCollection.GetFontFamilies().SelectMany(f => f.Variants).ToList();
+        var fonts = selectedCollection.GetFontFamilies().SelectMany(f => f.RealFaces).ToList();
         return ExportFontsToFolderAsync(fonts, callback);
     }
 
@@ -184,7 +184,7 @@ public static partial class ExportManager
             ext = ".otf";
 
         // Get the default font for the group
-        CMFontFace font = Utils.GetDefaultVariant(group.ToList());
+        CMFontFace font = Utils.GetDefaultFace(group.ToList());
 
         // If we don't have a file name, get one from our default font
         if (string.IsNullOrWhiteSpace(fileName))

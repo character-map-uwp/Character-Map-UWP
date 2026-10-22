@@ -81,6 +81,11 @@ public partial class CMFontFace : IDisposable
 
     public string Version => field ??= TryGetInfo(DWriteFontInformation.VersionStrings)?.Value ?? string.Empty;
 
+    public bool PreferNativeRender => 
+            DirectWriteProperties.HasVariations
+            || DirectWriteProperties.HasBrokenItalics
+            || SupportsCOLRv1Rendering;
+
 
     public CMFontFace(DWriteFontFace face) : this(face, (string)null) { }
 

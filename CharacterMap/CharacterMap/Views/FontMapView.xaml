@@ -748,8 +748,8 @@
                             controls:PreviewTip.VerticalTranslation="2"
                             FontSize="12"
                             FontWeight="SemiBold"
-                            IsEnabled="{Binding SelectedFont.Font.HasAnyVariants}"
-                            ItemsSource="{Binding SelectedFont.Font.AllVariants}"
+                            IsEnabled="{Binding SelectedFont.Font.HasMultipleFaces}"
+                            ItemsSource="{Binding SelectedFont.Font.AllFacesSource}"
                             SelectedItem="{Binding SelectedFont.Selected, Mode=TwoWay}"
                             Style="{StaticResource VariantComboBoxStyle}"
                             ToolTipMemberPath="PreferredName">

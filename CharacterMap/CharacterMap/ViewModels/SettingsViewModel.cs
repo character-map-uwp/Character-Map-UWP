@@ -289,7 +289,7 @@ public partial class SettingsViewModel : ViewModelBase
         try
         {
             await ExportManager.ExportFontsAsZipAsync(
-                FontFinder.GetSystemVariants(),
+                FontFinder.GetSystemFaces(),
                 Localization.Get("OptionSystemFonts/Text"),
                 p => OnSyncContext(() => SystemExportProgress = p));
         }
@@ -302,7 +302,7 @@ public partial class SettingsViewModel : ViewModelBase
         try
         {
             await ExportManager.ExportFontsToFolderAsync(
-                FontFinder.GetSystemVariants(),
+                FontFinder.GetSystemFaces(),
                 p => OnSyncContext(() => SystemExportProgress = p));
         }
         finally { IsSystemExportEnabled = true; }
@@ -314,7 +314,7 @@ public partial class SettingsViewModel : ViewModelBase
         try
         {
             await ExportManager.ExportFontsAsZipAsync(
-                FontFinder.GetImportedVariants(),
+                FontFinder.GetImportedFaces(),
                 Localization.Get("OptionImportedFonts/Text"),
                 p => OnSyncContext(() => ImportedExportProgress = p));
         }
@@ -327,7 +327,7 @@ public partial class SettingsViewModel : ViewModelBase
         try
         {
             await ExportManager.ExportFontsToFolderAsync(
-                FontFinder.GetImportedVariants(),
+                FontFinder.GetImportedFaces(),
                 p => OnSyncContext(() => ImportedExportProgress = p));
         }
         finally { IsCollectionExportEnabled = true; }
