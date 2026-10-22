@@ -30,6 +30,7 @@ DependencyProperty^ FontGlyphs::_StyleSimulationsProperty = nullptr;
 DependencyProperty^ FontGlyphs::_StretchProperty = nullptr;
 DependencyProperty^ FontGlyphs::_StretchDirectionProperty = nullptr;
 DependencyProperty^ FontGlyphs::_TypographyProperty = nullptr;
+DependencyProperty^ FontGlyphs::_IsTextShapingEnabledProperty = nullptr;
 
 static std::atomic<int32> s_activeSurfaceCount{ 0 };
 static std::atomic<uint64> s_activeSurfaceBytes{ 0 };
@@ -233,6 +234,9 @@ void FontGlyphs::RegisterDependencyProperties()
 
     if (_TypographyProperty == nullptr)
         _TypographyProperty = DependencyProperty::Register("Typography", DWriteTypographyCollection::typeid, FontGlyphs::typeid, ref new PropertyMetadata(nullptr, layoutCallback));
+
+    if (_IsTextShapingEnabledProperty == nullptr)
+        _IsTextShapingEnabledProperty = DependencyProperty::Register("IsTextShapingEnabled", bool::typeid, FontGlyphs::typeid, ref new PropertyMetadata((bool)false, layoutCallback));
 }
 
 void FontGlyphs::OnLoaded(Platform::Object^ sender, RoutedEventArgs^ e)
@@ -545,34 +549,66 @@ void FontGlyphs::ParseAndLayoutGlyphs()
     else if (UnicodeString != nullptr && UnicodeString->Length() > 0)
     {
         auto typography = Typography;
+        bool shouldShape = IsTextShapingEnabled || (typography != nullptr && typography->FeatureCount > 0);
         bool shaped = false;
 
-        if (typography != nullptr && typography->FeatureCount > 0)
+        if (shouldShape)
         {
-            shaped = TypographyAnalyzer::ShapeGlyphs(
-                rawFace.Get(),
-                UnicodeString->Data(),
-                UnicodeString->Length(),
-                static_cast<FLOAT>(emSize),
-                typography->GetDWriteFontFeatures(),
-                m_heapIndices,
-                m_heapAdvances,
-                m_heapOffsets);
+            std::vector<DWRITE_FONT_FEATURE> features;
+            if (typography != nullptr && typography->FeatureCount > 0)
+                features = typography->GetDWriteFontFeatures();
 
-            if (shaped)
+            UINT32 len = UnicodeString->Length();
+            const wchar_t* strData = UnicodeString->Data();
+
+            // Zero-allocation stack fast path for single code point (single character or surrogate pair)
+            if (len == 1 || (len == 2 && strData[0] >= 0xD800 && strData[0] <= 0xDBFF && strData[1] >= 0xDC00 && strData[1] <= 0xDFFF))
             {
-                m_glyphCount = m_heapIndices.size();
-                if (m_glyphCount <= SBO_GLYPH_CAPACITY)
+                size_t actualCount = 0;
+                if (TypographyAnalyzer::ShapeSingleCodePoint(
+                    rawFace.Get(),
+                    strData,
+                    len,
+                    static_cast<FLOAT>(emSize),
+                    features,
+                    m_inlineIndices,
+                    m_inlineAdvances,
+                    m_inlineOffsets,
+                    SBO_GLYPH_CAPACITY,
+                    actualCount))
                 {
-                    for (size_t i = 0; i < m_glyphCount; i++)
+                    m_glyphCount = actualCount;
+                    shaped = true;
+                }
+            }
+
+            if (!shaped)
+            {
+                shaped = TypographyAnalyzer::ShapeGlyphs(
+                    rawFace.Get(),
+                    UnicodeString->Data(),
+                    UnicodeString->Length(),
+                    static_cast<FLOAT>(emSize),
+                    features,
+                    m_heapIndices,
+                    m_heapAdvances,
+                    m_heapOffsets);
+
+                if (shaped)
+                {
+                    m_glyphCount = m_heapIndices.size();
+                    if (m_glyphCount <= SBO_GLYPH_CAPACITY)
                     {
-                        m_inlineIndices[i] = m_heapIndices[i];
-                        m_inlineAdvances[i] = m_heapAdvances[i];
-                        m_inlineOffsets[i] = m_heapOffsets[i];
+                        for (size_t i = 0; i < m_glyphCount; i++)
+                        {
+                            m_inlineIndices[i] = m_heapIndices[i];
+                            m_inlineAdvances[i] = m_heapAdvances[i];
+                            m_inlineOffsets[i] = m_heapOffsets[i];
+                        }
+                        m_heapIndices.clear();
+                        m_heapAdvances.clear();
+                        m_heapOffsets.clear();
                     }
-                    m_heapIndices.clear();
-                    m_heapAdvances.clear();
-                    m_heapOffsets.clear();
                 }
             }
         }

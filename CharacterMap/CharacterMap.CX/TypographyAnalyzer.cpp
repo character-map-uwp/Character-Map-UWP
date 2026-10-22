@@ -77,6 +77,95 @@ namespace
 		IFACEMETHOD(SetNumberSubstitution)(UINT32, UINT32, _In_ IDWriteNumberSubstitution*) override { return S_OK; }
 	};
 
+	class StackTextAnalysisSource : public IDWriteTextAnalysisSource
+	{
+		const WCHAR* m_text;
+		UINT32 m_length;
+	public:
+		StackTextAnalysisSource(const WCHAR* text, UINT32 length) : m_text(text), m_length(length) {}
+
+		ULONG STDMETHODCALLTYPE AddRef() override { return 1; }
+		ULONG STDMETHODCALLTYPE Release() override { return 1; }
+		HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppv) override
+		{
+			if (riid == __uuidof(IUnknown) || riid == __uuidof(IDWriteTextAnalysisSource))
+			{
+				*ppv = this;
+				return S_OK;
+			}
+			*ppv = nullptr;
+			return E_NOINTERFACE;
+		}
+
+		IFACEMETHOD(GetTextAtPosition)(UINT32 textPosition, _Outptr_result_buffer_(*textLength) const WCHAR** textString, _Out_ UINT32* textLength) override
+		{
+			if (textPosition >= m_length)
+			{
+				*textString = nullptr;
+				*textLength = 0;
+				return S_OK;
+			}
+			*textString = m_text + textPosition;
+			*textLength = m_length - textPosition;
+			return S_OK;
+		}
+
+		IFACEMETHOD(GetTextBeforePosition)(UINT32, _Outptr_result_buffer_(*textLength) const WCHAR** textString, _Out_ UINT32* textLength) override
+		{
+			*textString = nullptr;
+			*textLength = 0;
+			return S_OK;
+		}
+
+		virtual DWRITE_READING_DIRECTION STDMETHODCALLTYPE GetParagraphReadingDirection() override
+		{
+			return DWRITE_READING_DIRECTION_LEFT_TO_RIGHT;
+		}
+
+		IFACEMETHOD(GetLocaleName)(UINT32 textPosition, _Out_ UINT32* textLength, _Outptr_result_z_ const WCHAR** localeName) override
+		{
+			*localeName = L"en-us";
+			*textLength = m_length - textPosition;
+			return S_OK;
+		}
+
+		IFACEMETHOD(GetNumberSubstitution)(UINT32 textPosition, _Out_ UINT32* textLength, _COM_Outptr_ IDWriteNumberSubstitution** numberSubstitution) override
+		{
+			*numberSubstitution = nullptr;
+			*textLength = m_length - textPosition;
+			return S_OK;
+		}
+	};
+
+	class StackTextAnalysisSink : public IDWriteTextAnalysisSink
+	{
+	public:
+		DWRITE_SCRIPT_ANALYSIS ScriptAnalysis{};
+
+		ULONG STDMETHODCALLTYPE AddRef() override { return 1; }
+		ULONG STDMETHODCALLTYPE Release() override { return 1; }
+		HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppv) override
+		{
+			if (riid == __uuidof(IUnknown) || riid == __uuidof(IDWriteTextAnalysisSink))
+			{
+				*ppv = this;
+				return S_OK;
+			}
+			*ppv = nullptr;
+			return E_NOINTERFACE;
+		}
+
+		IFACEMETHOD(SetScriptAnalysis)(UINT32, UINT32, _In_ const DWRITE_SCRIPT_ANALYSIS* scriptAnalysis) override
+		{
+			if (scriptAnalysis != nullptr)
+				ScriptAnalysis = *scriptAnalysis;
+			return S_OK;
+		}
+		IFACEMETHOD(SetLineBreakpoints)(UINT32, UINT32, _In_ const DWRITE_LINE_BREAKPOINT*) override { return S_OK; }
+		IFACEMETHOD(SetBidiLevel)(UINT32, UINT32, UINT8, UINT8) override { return S_OK; }
+		IFACEMETHOD(SetNumberSubstitution)(UINT32, UINT32, _In_ IDWriteNumberSubstitution*) override { return S_OK; }
+	};
+
 	ComPtr<IDWriteTextAnalyzer2> GetDirectWriteTextAnalyzer()
 	{
 		static ComPtr<IDWriteTextAnalyzer2> s_analyzer;
@@ -277,9 +366,6 @@ bool TypographyAnalyzer::ShapeGlyphs(
 			validFeatures.push_back(f);
 	}
 
-	if (validFeatures.empty())
-		return false;
-
 	auto textAnalyzer = GetDirectWriteTextAnalyzer();
 	if (!textAnalyzer)
 		return false;
@@ -290,14 +376,20 @@ bool TypographyAnalyzer::ShapeGlyphs(
 		return false;
 
 	DWRITE_TYPOGRAPHIC_FEATURES typoFeatures{};
-	typoFeatures.features = validFeatures.data();
-	typoFeatures.featureCount = static_cast<UINT32>(validFeatures.size());
-
 	const DWRITE_TYPOGRAPHIC_FEATURES* typoList[] = { &typoFeatures };
 	UINT32 rangeLengths[] = { textLength };
-	const DWRITE_TYPOGRAPHIC_FEATURES** pTypoList = typoList;
-	const UINT32* pRangeLengths = rangeLengths;
-	UINT32 featureRangeCount = 1;
+	const DWRITE_TYPOGRAPHIC_FEATURES** pTypoList = nullptr;
+	const UINT32* pRangeLengths = nullptr;
+	UINT32 featureRangeCount = 0;
+
+	if (!validFeatures.empty())
+	{
+		typoFeatures.features = validFeatures.data();
+		typoFeatures.featureCount = static_cast<UINT32>(validFeatures.size());
+		pTypoList = typoList;
+		pRangeLengths = rangeLengths;
+		featureRangeCount = 1;
+	}
 
 	UINT32 maxGlyphs = textLength * 3 / 2 + 16;
 	glyphIndices.resize(maxGlyphs);
@@ -394,6 +486,140 @@ bool TypographyAnalyzer::ShapeGlyphs(
 				glyphOffsets[i] = DWRITE_GLYPH_OFFSET{};
 			}
 		}
+	}
+
+	return true;
+}
+
+bool TypographyAnalyzer::ShapeSingleCodePoint(
+	IDWriteFontFace* face,
+	const wchar_t* text,
+	UINT32 textLength,
+	FLOAT fontSize,
+	const std::vector<DWRITE_FONT_FEATURE>& features,
+	UINT16* outGlyphIndices,
+	FLOAT* outGlyphAdvances,
+	DWRITE_GLYPH_OFFSET* outGlyphOffsets,
+	size_t maxGlyphCapacity,
+	size_t& actualGlyphCount)
+{
+	actualGlyphCount = 0;
+	if (face == nullptr || text == nullptr || textLength == 0 || outGlyphIndices == nullptr || outGlyphAdvances == nullptr || outGlyphOffsets == nullptr)
+		return false;
+
+	if (fontSize <= 0.0f)
+		fontSize = 24.0f;
+
+	auto textAnalyzer = GetDirectWriteTextAnalyzer();
+	if (!textAnalyzer)
+		return false;
+
+	StackTextAnalysisSource source(text, textLength);
+	StackTextAnalysisSink sink;
+	if (FAILED(textAnalyzer->AnalyzeScript(&source, 0, textLength, &sink)))
+		return false;
+
+	std::vector<DWRITE_FONT_FEATURE> validFeatures;
+	for (const auto& f : features)
+	{
+		if (f.nameTag != 0)
+			validFeatures.push_back(f);
+	}
+
+	DWRITE_TYPOGRAPHIC_FEATURES typoFeatures{};
+	const DWRITE_TYPOGRAPHIC_FEATURES* typoList[] = { &typoFeatures };
+	UINT32 rangeLengths[] = { textLength };
+	const DWRITE_TYPOGRAPHIC_FEATURES** pTypoList = nullptr;
+	const UINT32* pRangeLengths = nullptr;
+	UINT32 featureRangeCount = 0;
+
+	if (!validFeatures.empty())
+	{
+		typoFeatures.features = validFeatures.data();
+		typoFeatures.featureCount = static_cast<UINT32>(validFeatures.size());
+		pTypoList = typoList;
+		pRangeLengths = rangeLengths;
+		featureRangeCount = 1;
+	}
+
+	constexpr UINT32 STACK_CAPACITY = 8;
+	UINT16 clusterMap[STACK_CAPACITY] = {};
+	DWRITE_SHAPING_TEXT_PROPERTIES textProps[STACK_CAPACITY] = {};
+	UINT16 glyphIndices[STACK_CAPACITY] = {};
+	DWRITE_SHAPING_GLYPH_PROPERTIES glyphProps[STACK_CAPACITY] = {};
+	FLOAT glyphAdvances[STACK_CAPACITY] = {};
+	DWRITE_GLYPH_OFFSET glyphOffsets[STACK_CAPACITY] = {};
+	UINT32 count = 0;
+
+	HRESULT hr = textAnalyzer->GetGlyphs(
+		text,
+		textLength,
+		face,
+		FALSE,
+		FALSE,
+		&sink.ScriptAnalysis,
+		nullptr,
+		nullptr,
+		pTypoList,
+		pRangeLengths,
+		featureRangeCount,
+		STACK_CAPACITY,
+		clusterMap,
+		textProps,
+		glyphIndices,
+		glyphProps,
+		&count);
+
+	if (FAILED(hr) || count == 0 || count > maxGlyphCapacity || count > STACK_CAPACITY)
+		return false;
+
+	hr = textAnalyzer->GetGlyphPlacements(
+		text,
+		clusterMap,
+		textProps,
+		textLength,
+		glyphIndices,
+		glyphProps,
+		count,
+		face,
+		fontSize,
+		FALSE,
+		FALSE,
+		&sink.ScriptAnalysis,
+		nullptr,
+		pTypoList,
+		pRangeLengths,
+		featureRangeCount,
+		glyphAdvances,
+		glyphOffsets);
+
+	if (FAILED(hr))
+	{
+		DWRITE_FONT_METRICS fontMetrics;
+		face->GetMetrics(&fontMetrics);
+		float emScale = fontSize / (fontMetrics.designUnitsPerEm > 0 ? fontMetrics.designUnitsPerEm : 2048.0f);
+
+		std::vector<DWRITE_GLYPH_METRICS> metrics(count);
+		if (SUCCEEDED(face->GetDesignGlyphMetrics(glyphIndices, count, metrics.data(), FALSE)))
+		{
+			for (UINT32 i = 0; i < count; ++i)
+			{
+				glyphAdvances[i] = metrics[i].advanceWidth * emScale;
+				glyphOffsets[i] = DWRITE_GLYPH_OFFSET{};
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	actualGlyphCount = count;
+	for (size_t i = 0; i < count; ++i)
+	{
+		outGlyphIndices[i] = glyphIndices[i];
+		outGlyphAdvances[i] = glyphAdvances[i];
+		outGlyphOffsets[i] = glyphOffsets[i];
 	}
 
 	return true;

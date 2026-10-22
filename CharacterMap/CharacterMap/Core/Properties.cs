@@ -295,6 +295,7 @@ public partial class Properties : DependencyObject
                 f.ClearValue(FontGlyphs.StyleSimulationsProperty);
                 f.ClearValue(FontGlyphs.IsColorFontEnabledProperty);
                 f.ClearValue(FontGlyphs.TypographyProperty);
+                f.ClearValue(FontGlyphs.IsTextShapingEnabledProperty);
             }
         }
     }

@@ -225,3 +225,4 @@ CharacterMap/enc_temp_folder
 lfs
 .vscode
 /state
+/scratch

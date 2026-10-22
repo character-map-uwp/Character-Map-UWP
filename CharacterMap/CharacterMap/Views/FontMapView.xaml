@@ -1442,7 +1442,8 @@
                                     x:Name="Glyph"
                                     x:Load="False"
                                     Margin="0 -2 0 8"
-                                    Foreground="{ThemeResource ApplicationForegroundThemeBrush}" />
+                                    Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                    IsTextShapingEnabled="True" />
                                 <TextBlock Style="{StaticResource CharItemUnicodeStyle}" />
                             </Grid>
                         </DataTemplate>

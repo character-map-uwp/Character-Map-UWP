@@ -83,6 +83,11 @@ namespace CharacterMapCX
                 Windows::UI::Xaml::DependencyProperty^ get() { return _TypographyProperty; }
             }
 
+            static property Windows::UI::Xaml::DependencyProperty^ IsTextShapingEnabledProperty
+            {
+                Windows::UI::Xaml::DependencyProperty^ get() { return _IsTextShapingEnabledProperty; }
+            }
+
             #pragma endregion
 
             #pragma region Properties
@@ -149,6 +154,12 @@ namespace CharacterMapCX
                 void set(DWriteTypographyCollection^ value) { SetValue(TypographyProperty, value); }
             }
 
+            property bool IsTextShapingEnabled
+            {
+                bool get() { return (bool)GetValue(IsTextShapingEnabledProperty); }
+                void set(bool value) { SetValue(IsTextShapingEnabledProperty, value); }
+            }
+
             #pragma endregion
 
             virtual Windows::Foundation::Size MeasureOverride(Windows::Foundation::Size availableSize) override;
@@ -169,6 +180,7 @@ namespace CharacterMapCX
             static Windows::UI::Xaml::DependencyProperty^ _StretchProperty;
             static Windows::UI::Xaml::DependencyProperty^ _StretchDirectionProperty;
             static Windows::UI::Xaml::DependencyProperty^ _TypographyProperty;
+            static Windows::UI::Xaml::DependencyProperty^ _IsTextShapingEnabledProperty;
 
             static void OnPropertyChanged(Windows::UI::Xaml::DependencyObject^ d, Windows::UI::Xaml::DependencyPropertyChangedEventArgs^ e);
             static void OnFontSizeChanged(Windows::UI::Xaml::DependencyObject^ d, Windows::UI::Xaml::DependencyPropertyChangedEventArgs^ e);
