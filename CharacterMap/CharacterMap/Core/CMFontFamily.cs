@@ -96,7 +96,7 @@ public class CMFontFamily : IComparable, IEquatable<CMFontFamily>
                     bool hideSimulated = ResourceHelper.AppSettings.HideSimulatedFontFaces;
                     foreach (DWriteFontFace font in _dwriteFamily.Fonts)
                     {
-                        if (font.Properties.IsSimulated && hideSimulated)
+                        if (hideSimulated && font.Properties.IsSimulated)
                             continue;
                         AddFace(font);
                     }

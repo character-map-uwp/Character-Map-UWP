@@ -24,13 +24,17 @@ namespace CharacterMapCX
 		{
 			int get();
 		}
-
 	internal:
 		DWriteFontFamily(ComPtr<IDWriteFontFamily2> family)
 		{
 			m_family = family;
 			InitializeSRWLock(&m_lock);
 		}
+
+
+
+		bool HasLocalFaces();
+
 
 		Platform::String^ m_name = nullptr;
 		IVectorView<DWriteFontFace^>^ m_fonts = nullptr;

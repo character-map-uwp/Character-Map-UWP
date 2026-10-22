@@ -552,7 +552,11 @@ DWriteFontSet^ DirectWrite::GetFonts(ComPtr<IDWriteFontCollection3> fontSet)
 		fontSet->GetFontFamily(i, &family);
 
 		if (family != nullptr)
-			vec->Append(ref new DWriteFontFamily(family));
+		{
+			auto dwriteFamily = ref new DWriteFontFamily(family);
+			if (dwriteFamily->HasLocalFaces())
+				vec->Append(dwriteFamily);
+		}
 	}
 
 	return ref new DWriteFontSet(vec->GetView());
