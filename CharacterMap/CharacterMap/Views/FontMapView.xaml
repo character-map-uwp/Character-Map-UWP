@@ -1100,6 +1100,7 @@
                                                         x:Name="ColorHeader"
                                                         x:Load="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.ContainsVectorColorGlyphs, Mode=OneWay}"
                                                         x:Uid="FontDisplayHeader"
+                                                        Margin="0,12,0,0"
                                                         FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                                         FontSize="14"
                                                         FontWeight="Bold"
