@@ -130,10 +130,20 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
     if (DesignMode::DesignModeEnabled)
         return size;
 
-    bool hasText = GlyphIndex >= 0 || UnicodeIndex > 0 || FontFace != nullptr;
+    try
+    {
+        bool hasText = FontFace != nullptr && (GlyphIndex >= 0 || (Text != nullptr && Text->Length() > 0));
 
-    if (!hasText || Typography == nullptr || m_canvas == nullptr || !m_canvas->ReadyToDraw)
-        return Size(this->MinWidth, this->MinHeight);
+        if (!hasText || Typography == nullptr || m_canvas == nullptr || !m_canvas->ReadyToDraw)
+        {
+            if (!hasText)
+            {
+                m_textLayout = nullptr;
+                m_drawFontFace = nullptr;
+                m_render = false;
+            }
+            return Size(this->MinWidth, this->MinHeight);
+        }
 
     auto dpi = m_canvas->Dpi / 96.0f;
     auto m = m_canvas->Device->MaximumBitmapSizeInPixels / dpi;
@@ -278,7 +288,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         if (Axis != nullptr && Axis->Size > 0)
         {
             ComPtr<IDWriteFontFaceReference1> faceRef1;
-            if (SUCCEEDED(faceRef.As(&faceRef1)))
+            if (faceRef != nullptr && SUCCEEDED(faceRef.As(&faceRef1)))
             {
                 ComPtr<IDWriteFontFace5> face5;
                 if (SUCCEEDED(faceRef1->CreateFontFace(&face5)))
@@ -318,11 +328,17 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
         if (GlyphIndex >= 0)
         {
+            if (dwriteFontFace == nullptr || fontFace == nullptr)
+                return Size(this->MinWidth, this->MinHeight);
+
             UINT16 gIndex = static_cast<UINT16>(GlyphIndex);
-            DWRITE_GLYPH_METRICS glyphMetrics;
-            ThrowIfFailed(dwriteFontFace->GetDesignGlyphMetrics(&gIndex, 1, &glyphMetrics, FALSE));
+            DWRITE_GLYPH_METRICS glyphMetrics{};
+            if (FAILED(dwriteFontFace->GetDesignGlyphMetrics(&gIndex, 1, &glyphMetrics, FALSE)))
+                return Size(this->MinWidth, this->MinHeight);
 
             DWRITE_FONT_METRICS1 fontMetrics = fontFace->GetMetrics();
+            if (fontMetrics.designUnitsPerEm == 0)
+                return Size(this->MinWidth, this->MinHeight);
             double scale = fontSize / fontMetrics.designUnitsPerEm;
 
             // Compute logical layout bounds
@@ -344,39 +360,54 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             glyphRun.bidiLevel = 0;
 
             ComPtr<ID2D1PathGeometry> pathGeometry;
-            ThrowIfFailed(NativeInterop::_Current->m_d2dFactory->CreatePathGeometry(&pathGeometry));
-
-            ComPtr<ID2D1GeometrySink> sink;
-            ThrowIfFailed(pathGeometry->Open(&sink));
-
-            ThrowIfFailed(dwriteFontFace->GetGlyphRunOutline(
-                static_cast<FLOAT>(fontSize),
-                &gIndex,
-                &advanceWidthF,
-                nullptr,
-                1,
-                FALSE,
-                FALSE,
-                sink.Get()
-            ));
-
-            ThrowIfFailed(sink->Close());
-
-            D2D1_RECT_F bounds;
-            ThrowIfFailed(pathGeometry->GetBounds(nullptr, &bounds));
-
-            if (!(bounds.left <= bounds.right) || !(bounds.top <= bounds.bottom) || (bounds.right - bounds.left <= 0) || (bounds.bottom - bounds.top <= 0))
+            if (NativeInterop::_Current == nullptr || NativeInterop::_Current->m_d2dFactory == nullptr ||
+                FAILED(NativeInterop::_Current->m_d2dFactory->CreatePathGeometry(&pathGeometry)))
             {
                 drawBounds = layoutBounds;
             }
             else
             {
-                drawBounds = Rect(
-                    bounds.left,
-                    bounds.top,
-                    bounds.right - bounds.left,
-                    bounds.bottom - bounds.top
-                );
+                ComPtr<ID2D1GeometrySink> sink;
+                if (SUCCEEDED(pathGeometry->Open(&sink)))
+                {
+                    if (SUCCEEDED(dwriteFontFace->GetGlyphRunOutline(
+                        static_cast<FLOAT>(fontSize),
+                        &gIndex,
+                        &advanceWidthF,
+                        nullptr,
+                        1,
+                        FALSE,
+                        FALSE,
+                        sink.Get()
+                    )) && SUCCEEDED(sink->Close()))
+                    {
+                        D2D1_RECT_F bounds;
+                        if (SUCCEEDED(pathGeometry->GetBounds(nullptr, &bounds)) &&
+                            bounds.left <= bounds.right && bounds.top <= bounds.bottom &&
+                            (bounds.right - bounds.left > 0) && (bounds.bottom - bounds.top > 0))
+                        {
+                            drawBounds = Rect(
+                                bounds.left,
+                                bounds.top,
+                                bounds.right - bounds.left,
+                                bounds.bottom - bounds.top
+                            );
+                        }
+                        else
+                        {
+                            drawBounds = layoutBounds;
+                        }
+                    }
+                    else
+                    {
+                        sink->Close();
+                        drawBounds = layoutBounds;
+                    }
+                }
+                else
+                {
+                    drawBounds = layoutBounds;
+                }
             }
 
             m_render = true;
@@ -386,6 +417,11 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             // Standard TextLayout path
             Platform::String^ text = Text;
             textLength = text != nullptr ? text->Length() : 0;
+            if (textLength == 0)
+            {
+                m_textLayout = nullptr;
+                return Size(this->MinWidth, this->MinHeight);
+            }
 
             float lwidth = IsTextWrappingEnabled ? size.Width : m;
             float lheight = IsTextWrappingEnabled ? size.Height : m;
@@ -411,15 +447,27 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             params.MaxHeight = lheight;
 
             ComPtr<IDWriteTextLayout> textLayout;
-            ThrowIfFailed(CoreDWTextServices::CreateLayout(params, &textLayout, &m_drawFontFace));
+            HRESULT hr = CoreDWTextServices::CreateLayout(params, &textLayout, &m_drawFontFace);
+            if (FAILED(hr) || textLayout == nullptr)
+            {
+                m_textLayout = nullptr;
+                return Size(this->MinWidth, this->MinHeight);
+            }
 
             // Calculate LayoutBounds
-            ThrowIfFailed(CoreDWTextServices::MeasureLayoutBounds(textLayout.Get(), &layoutBounds));
+            hr = CoreDWTextServices::MeasureLayoutBounds(textLayout.Get(), &layoutBounds);
+            if (FAILED(hr))
+            {
+                m_textLayout = nullptr;
+                return Size(this->MinWidth, this->MinHeight);
+            }
 
             // Calculate DrawBounds
             if (IsCharacterFitEnabled)
             {
-                ThrowIfFailed(CoreDWTextServices::MeasureInkBounds(textLayout.Get(), m_drawFontFace.Get(), &drawBounds));
+                hr = CoreDWTextServices::MeasureInkBounds(textLayout.Get(), m_drawFontFace.Get(), &drawBounds);
+                if (FAILED(hr))
+                    drawBounds = layoutBounds;
             }
             else
             {
@@ -499,7 +547,15 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         m_targetScale = 1;
     }
 
-    return targetsize;
+        return targetsize;
+    }
+    catch (...)
+    {
+        m_textLayout = nullptr;
+        m_drawFontFace = nullptr;
+        m_render = false;
+        return Size(this->MinWidth, this->MinHeight);
+    }
 }
 
 void CharacterMapCX::Controls::DirectText::EnsureCanvas()
