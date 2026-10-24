@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Views;
+using System.Runtime.InteropServices;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
@@ -191,6 +192,7 @@ public static class WindowService
 
             GC.Collect();
 
+            CoreWindowCleanupHelper.PrepareForClose(Window.Current.CoreWindow);
             Window.Current.Close();
         });
     }
@@ -322,3 +324,82 @@ public static class WindowService
         return Task.WhenAll(t);
     }
 }
+
+// Workaround for Windowing bug noted in 
+// https://github.com/microsoft/microsoft-ui-xaml/issues/12384
+public static class CoreWindowCleanupHelper
+{
+    private const int GWLP_WNDPROC = -4;
+    private const uint WM_NULL = 0x0000;
+
+    [ComImport]
+    [Guid("45D64A29-A63E-4CB6-B498-5781D298CB4F")]
+    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    private interface ICoreWindowInterop
+    {
+        IntPtr WindowHandle { get; }
+        bool MessageHandled { set; }
+    }
+
+    private delegate IntPtr WndProcDelegate(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+    [ThreadStatic]
+    private static WndProcDelegate _hookProc;
+
+    [ThreadStatic]
+    private static IntPtr _prevWndProc;
+
+    [ThreadStatic]
+    private static int _nestingDepth;
+
+    [DllImport("user32.dll", EntryPoint = "SetWindowLongPtrW", SetLastError = true)]
+    private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+    [DllImport("user32.dll", EntryPoint = "SetWindowLongW", SetLastError = true)]
+    private static extern IntPtr SetWindowLong32(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+    [DllImport("user32.dll", EntryPoint = "CallWindowProcW")]
+    private static extern IntPtr CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+    private static IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
+    {
+        if (IntPtr.Size == 8)
+            return SetWindowLongPtr64(hWnd, nIndex, dwNewLong);
+
+        return SetWindowLong32(hWnd, nIndex, dwNewLong);
+    }
+
+    /// <summary>
+    /// Installs a CoreWindow subclass proc directly in front of XAML's subclass before Window.Close().
+    /// After each message at the outermost level, it sends WM_NULL down the chain so XAML clears
+    /// slot 0x18, allowing DefWindowProc to process WM_UAHDESTROYWINDOW and avoiding the RoUninitialize hang.
+    /// </summary>
+    public static void PrepareForClose(CoreWindow coreWindow)
+    {
+        if (coreWindow == null)
+            return;
+
+        ICoreWindowInterop interop = (ICoreWindowInterop)(object)coreWindow;
+        IntPtr hwnd = interop.WindowHandle;
+        if (hwnd == IntPtr.Zero)
+            return;
+
+        _nestingDepth = 0;
+        _hookProc = SubclassWndProc;
+        IntPtr hookPtr = Marshal.GetFunctionPointerForDelegate(_hookProc);
+        _prevWndProc = SetWindowLongPtr(hwnd, GWLP_WNDPROC, hookPtr);
+    }
+
+    private static IntPtr SubclassWndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
+    {
+        _nestingDepth++;
+        IntPtr result = CallWindowProc(_prevWndProc, hWnd, msg, wParam, lParam);
+        _nestingDepth--;
+
+        if (_nestingDepth == 0 && _prevWndProc != IntPtr.Zero)
+            CallWindowProc(_prevWndProc, hWnd, WM_NULL, IntPtr.Zero, IntPtr.Zero);
+
+        return result;
+    }
+}
+
