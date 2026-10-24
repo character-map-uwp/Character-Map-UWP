@@ -638,29 +638,55 @@ public partial class FontMapViewModel : ViewModelBase
     public void HideCopyPane() => Settings.EnableCopyPane = false;
     public void ToggleUnihan() => ShowingUnihan = !ShowingUnihan;
 
-    public void AddCharToSequence(int start, int length, CharacterAnalysisModel c, TypographyVariation typography = null)
+    public int AddCharToSequence(int start, int length, CharacterAnalysisModel c, Character fallback = null, TypographyVariation typography = null)
     {
-        if (c is null)
-            return;
-
         typography ??= SelectedTypography;
 
-        var s = Sequence ?? string.Empty;
-        start = Math.Min(start, s.Length);
-        if (s.Length > 0)
-            s = s.Remove(start, length);
+        string character = null;
 
-        string character = c.Char.Char;
+        if (c is not null)
+        {
+            character = c.Char.Char;
 
-        // If we have typography applied, check to see in the glyph exists as a mapped character,
-        // and if so use that instead.
-        if (Settings.CopyTypographicVariantsAsMappedChars 
-            && typography != TypographyVariation.None 
-            && c.Variations.FirstOrDefault(v => v.Feature == typography.Feature) 
-                is TypographyVariation { IsVariationMapped: true } variation)
-            character = (Character.Get(variation.FaceCharacterMapping)).Char;
-        
+            // If we have typography applied, check to see in the glyph exists as a mapped character,
+            // and if so use that instead.
+            if (Settings.CopyTypographicVariantsAsMappedChars 
+                && typography != TypographyVariation.None 
+                && c.Variations.FirstOrDefault(v => v.Feature == typography.Feature) 
+                    is TypographyVariation { IsVariationMapped: true } variation)
+                character = (Character.Get(variation.FaceCharacterMapping)).Char;
+        }
+        else if (fallback is not null)
+            character = fallback.Char;
+
+        if (string.IsNullOrEmpty(character))
+            return 0;
+
+        string s = Sequence ?? string.Empty;
+        start = Math.Clamp(start, 0, s.Length);
+        if (s.Length > 0 && length > 0)
+        {
+            length = Math.Min(length, s.Length - start);
+
+            // Avoid splitting existing surrogate pairs when removing
+            if (start > 0 && start < s.Length && char.IsLowSurrogate(s[start]) && char.IsHighSurrogate(s[start - 1]))
+            {
+                start--;
+                length++;
+            }
+            int end = start + length;
+            if (end > 0 && end < s.Length && char.IsLowSurrogate(s[end]) && char.IsHighSurrogate(s[end - 1]))
+                length++;
+
+            s = s.Remove(start, Math.Min(length, s.Length - start));
+        }
+
+        // Avoid splitting an existing surrogate pair when inserting
+        if (start > 0 && start < s.Length && char.IsLowSurrogate(s[start]) && char.IsHighSurrogate(s[start - 1]))
+            start++;
+
         Sequence = s.Insert(start, character);
+        return character.Length;
     }
 
 }

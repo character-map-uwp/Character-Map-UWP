@@ -1,3 +1,5 @@
+#pragma once
+
 using namespace Platform::Metadata;
 
 namespace CharacterMapCX

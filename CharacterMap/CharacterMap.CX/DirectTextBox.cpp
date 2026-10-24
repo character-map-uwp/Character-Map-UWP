@@ -4,6 +4,7 @@
 #include "TypographyAnalyzer.h"
 #include "DirectWrite.h"
 #include "DWHelpers.h"
+#include "CoreDWTextServices.h"
 #include "Utils.h"
 
 #include <cwctype>
@@ -318,6 +319,10 @@ void DirectTextBox::OnSelectionChangedCallback(DependencyObject^ d, DependencyPr
     int len = box->Text != nullptr ? box->Text->Length() : 0;
     int start = (std::max)(0, (std::min)(box->SelectionStart, len));
     int length = (std::max)(0, (std::min)(box->SelectionLength, len - start));
+
+    start = box->SnapToClusterBoundary(start, true);
+    int end = box->SnapToClusterBoundary(start + length, true);
+    length = (std::max)(0, end - start);
 
     if (start != box->SelectionStart || length != box->SelectionLength)
     {
@@ -1221,8 +1226,9 @@ void DirectTextBox::InsertText(Platform::String^ str)
     Platform::String^ current = Text != nullptr ? Text : L"";
     std::wstring s(current->Data());
 
-    int start = (std::max)(0, (std::min)(SelectionStart, (int)s.length()));
-    int len = (std::max)(0, (std::min)(SelectionLength, (int)s.length() - start));
+    int start = SnapToClusterBoundary((std::max)(0, (std::min)(SelectionStart, (int)s.length())), true);
+    int end = SnapToClusterBoundary(start + (std::max)(0, (std::min)(SelectionLength, (int)s.length() - start)), true);
+    int len = end - start;
 
     s.replace(start, len, str->Data());
 
@@ -1268,16 +1274,10 @@ void DirectTextBox::DeleteSelectionOrChar(bool forward, bool byWord)
         {
             if (start < (int)s.length())
             {
-                int delCount = 1;
-                if (byWord)
-                {
-                    int endPos = FindWordBoundary(start, true);
-                    delCount = endPos - start;
-                }
-                else if (start + 1 < (int)s.length() && s[start] >= 0xD800 && s[start] <= 0xDBFF)
-                {
-                    delCount = 2; // Surrogate pair
-                }
+                int endPos = byWord ? FindWordBoundary(start, true) : SnapToClusterBoundary((std::min)((int)s.length(), start + 1), true);
+                if (endPos <= start)
+                    endPos = (std::min)((int)s.length(), start + 1);
+                int delCount = (std::max)(1, endPos - start);
 
                 s.erase(start, delCount);
                 m_internalTextUpdating = true;
@@ -1290,18 +1290,10 @@ void DirectTextBox::DeleteSelectionOrChar(bool forward, bool byWord)
         {
             if (start > 0)
             {
-                int delCount = 1;
-                int erasePos = start - 1;
-                if (byWord)
-                {
-                    erasePos = FindWordBoundary(start, false);
-                    delCount = start - erasePos;
-                }
-                else if (start >= 2 && s[start - 2] >= 0xD800 && s[start - 2] <= 0xDBFF)
-                {
-                    erasePos = start - 2;
-                    delCount = 2; // Surrogate pair
-                }
+                int erasePos = byWord ? FindWordBoundary(start, false) : SnapToClusterBoundary((std::max)(0, start - 1), false);
+                if (erasePos >= start)
+                    erasePos = (std::max)(0, start - 1);
+                int delCount = (std::max)(1, start - erasePos);
 
                 s.erase(erasePos, delCount);
                 m_internalTextUpdating = true;
@@ -1338,17 +1330,11 @@ void DirectTextBox::MoveCaret(int offset, bool extendSelection, bool byWord)
     {
         if (offset < 0)
         {
-            if (activeEnd >= 2 && current->Data()[activeEnd - 2] >= 0xD800 && current->Data()[activeEnd - 2] <= 0xDBFF)
-                newPos = activeEnd - 2;
-            else
-                newPos = (std::max)(0, activeEnd - 1);
+            newPos = SnapToClusterBoundary((std::max)(0, activeEnd - 1), false);
         }
         else
         {
-            if (activeEnd + 1 < textLen && current->Data()[activeEnd] >= 0xD800 && current->Data()[activeEnd] <= 0xDBFF)
-                newPos = activeEnd + 2;
-            else
-                newPos = (std::min)(textLen, activeEnd + 1);
+            newPos = SnapToClusterBoundary((std::min)(textLen, activeEnd + 1), true);
         }
     }
 
@@ -1372,6 +1358,10 @@ void DirectTextBox::SetSelectionInternal(int start, int length, bool notifyEditC
     int textLen = Text != nullptr ? Text->Length() : 0;
     start = (std::max)(0, (std::min)(start, textLen));
     length = (std::max)(0, (std::min)(length, textLen - start));
+
+    start = SnapToClusterBoundary(start, true);
+    int end = SnapToClusterBoundary(start + length, true);
+    length = (std::max)(0, end - start);
 
     if (SelectionStart != start || SelectionLength != length)
     {
@@ -1414,6 +1404,41 @@ int DirectTextBox::FindWordBoundary(int position, bool forward)
         if (p == position && p > 0) p--;
         return (std::max)(0, p);
     }
+}
+
+int DirectTextBox::SnapToClusterBoundary(int position, bool forward)
+{
+    if (Text == nullptr)
+        return 0;
+
+    int textLen = Text->Length();
+    if (position <= 0)
+        return 0;
+    if (position >= textLen)
+        return textLen;
+
+    // 1. Fast check for UTF-16 surrogate pairs
+    const wchar_t* str = Text->Data();
+    if (str[position] >= 0xDC00 && str[position] <= 0xDFFF && str[position - 1] >= 0xD800 && str[position - 1] <= 0xDBFF)
+    {
+        return forward ? position + 1 : position - 1;
+    }
+
+    // 2. DirectWrite cluster check for multi-codepoint grapheme clusters (emojis with skin tones, ZWJ sequences, etc.)
+    if (m_textLayout != nullptr)
+    {
+        DWRITE_HIT_TEST_METRICS metrics{};
+        float x = 0.0f, y = 0.0f;
+        if (SUCCEEDED(m_textLayout->HitTestTextPosition(position, FALSE, &x, &y, &metrics)))
+        {
+            if (position > (int)metrics.textPosition && position < (int)(metrics.textPosition + metrics.length))
+            {
+                return forward ? (int)(metrics.textPosition + metrics.length) : (int)metrics.textPosition;
+            }
+        }
+    }
+
+    return position;
 }
 
 int DirectTextBox::HitTestPointToTextPosition(Point point)
@@ -1632,190 +1657,46 @@ void DirectTextBox::Paste()
 
 void DirectTextBox::CreateTextLayout()
 {
-    auto factory = CompositionDeviceManager::GetDWriteFactory();
-    if (factory == nullptr)
-        return;
-
     m_textLayout = nullptr;
     m_placeholderLayout = nullptr;
     m_simulatedFontFace = nullptr;
 
     double size = FontSize > 0.0 ? FontSize : 15.0;
-    Platform::String^ textToFormat = Text != nullptr ? Text : L"";
-
-    // Handle StyleSimulations
-    auto simulations = StyleSimulations;
-    if (FontFace != nullptr)
-    {
-        if (simulations != Windows::UI::Xaml::Media::StyleSimulations::None)
-        {
-            auto faceRef = FontFace->GetReference();
-            if (faceRef != nullptr)
-            {
-                ComPtr<IDWriteFontFace3> simFace;
-                if (SUCCEEDED(faceRef->CreateFontFaceWithSimulations(ToDWriteFontSimulations(simulations), &simFace)))
-                    m_simulatedFontFace = simFace;
-            }
-        }
-        if (m_simulatedFontFace == nullptr)
-            m_simulatedFontFace = FontFace->GetFontFace();
-    }
-
-    // Prepare format
-    ComPtr<IDWriteTextFormat> tempFormat;
-    HRESULT hr = S_OK;
-
-    if (FontFace != nullptr)
-    {
-        const auto& axisValues = FontFace->GetAxisValues();
-        if (!axisValues.empty())
-        {
-            ComPtr<IDWriteTextFormat3> format3;
-            hr = factory->CreateTextFormat(
-                FontFace->Properties->FamilyName->Data(),
-                FontFace->GetFontCollection().Get(),
-                axisValues.data(),
-                static_cast<UINT32>(axisValues.size()),
-                static_cast<FLOAT>(size),
-                L"en-us",
-                &format3);
-            if (SUCCEEDED(hr))
-                tempFormat = format3;
-        }
-
-        if (tempFormat == nullptr)
-        {
-            auto weight = FontFace->Properties->Weight;
-            auto style = FontFace->Properties->Style;
-            auto stretch = FontFace->Properties->Stretch;
-
-            if (simulations == Windows::UI::Xaml::Media::StyleSimulations::BoldSimulation ||
-                simulations == Windows::UI::Xaml::Media::StyleSimulations::BoldItalicSimulation)
-            {
-                weight.Weight = (std::max)(weight.Weight, static_cast<unsigned short>(700));
-            }
-            if (simulations == Windows::UI::Xaml::Media::StyleSimulations::ItalicSimulation ||
-                simulations == Windows::UI::Xaml::Media::StyleSimulations::BoldItalicSimulation)
-            {
-                style = Windows::UI::Text::FontStyle::Italic;
-            }
-
-            hr = factory->CreateTextFormat(
-                FontFace->Properties->FamilyName->Data(),
-                FontFace->GetFontCollection().Get(),
-                static_cast<DWRITE_FONT_WEIGHT>(weight.Weight),
-                static_cast<DWRITE_FONT_STYLE>(style),
-                static_cast<DWRITE_FONT_STRETCH>(stretch),
-                static_cast<FLOAT>(size),
-                L"en-us",
-                &tempFormat);
-        }
-    }
-
-    if (tempFormat == nullptr)
-    {
-        hr = factory->CreateTextFormat(
-            L"Segoe UI",
-            nullptr,
-            DWRITE_FONT_WEIGHT_NORMAL,
-            DWRITE_FONT_STYLE_NORMAL,
-            DWRITE_FONT_STRETCH_NORMAL,
-            static_cast<FLOAT>(size),
-            L"en-us",
-            &tempFormat);
-    }
-
-    if (tempFormat == nullptr)
-        return;
-
-    // Reading direction (RTL support)
-    if (this->FlowDirection == Windows::UI::Xaml::FlowDirection::RightToLeft)
-        tempFormat->SetReadingDirection(DWRITE_READING_DIRECTION_RIGHT_TO_LEFT);
-    else
-        tempFormat->SetReadingDirection(DWRITE_READING_DIRECTION_LEFT_TO_RIGHT);
-
-    // Text alignment
-    switch (TextAlignment)
-    {
-    case Windows::UI::Xaml::TextAlignment::Center:
-        tempFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-        break;
-    case Windows::UI::Xaml::TextAlignment::Right:
-        tempFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
-        break;
-    case Windows::UI::Xaml::TextAlignment::Justify:
-        tempFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_JUSTIFIED);
-        break;
-    default:
-        tempFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-        break;
-    }
-
     FLOAT maxLayoutWidth = TextWrapping == Windows::UI::Xaml::TextWrapping::Wrap
         ? static_cast<FLOAT>((std::max)(1.0, ActualWidth - Padding.Left - Padding.Right))
         : 100000.0f;
     FLOAT maxLayoutHeight = 100000.0f;
 
-    // Create main text layout
-    if (textToFormat->Length() > 0)
+    TextLayoutParameters params;
+    params.FontFace = FontFace;
+    params.FontSize = static_cast<float>(size);
+    params.FontWeight = FontWeight;
+    params.FontStyle = FontStyle;
+    params.FontStretch = FontStretch;
+    params.Simulations = StyleSimulations;
+    params.TypographyCollection = Typography;
+    params.FlowDirection = this->FlowDirection;
+    params.TextAlignment = TextAlignment;
+    params.WordWrapping = TextWrapping == Windows::UI::Xaml::TextWrapping::Wrap;
+    params.MaxWidth = maxLayoutWidth;
+    params.MaxHeight = maxLayoutHeight;
+
+    if (Text != nullptr && Text->Length() > 0)
     {
-        hr = factory->CreateTextLayout(
-            textToFormat->Data(),
-            textToFormat->Length(),
-            tempFormat.Get(),
-            maxLayoutWidth,
-            maxLayoutHeight,
-            &m_textLayout);
-
-        if (SUCCEEDED(hr) && m_textLayout != nullptr)
-        {
-            // Apply variable font axis values
-            if (FontFace != nullptr)
-            {
-                const auto& axisValues = FontFace->GetAxisValues();
-                if (!axisValues.empty())
-                {
-                    ComPtr<IDWriteTextLayout4> layout4;
-                    if (SUCCEEDED(m_textLayout.As(&layout4)))
-                    {
-                        layout4->SetFontAxisValues(
-                            axisValues.data(),
-                            static_cast<UINT32>(axisValues.size()),
-                            DWRITE_TEXT_RANGE{ 0, textToFormat->Length() });
-                    }
-                }
-            }
-
-            // Apply Typography
-            auto typo = Typography;
-            if (typo != nullptr && typo->FeatureCount > 0)
-            {
-                ComPtr<IDWriteTypography> dwriteTypo;
-                if (SUCCEEDED(factory->CreateTypography(&dwriteTypo)))
-                {
-                    for (const auto& f : typo->GetDWriteFontFeatures())
-                        dwriteTypo->AddFontFeature(f);
-
-                    m_textLayout->SetTypography(dwriteTypo.Get(), DWRITE_TEXT_RANGE{ 0, textToFormat->Length() });
-                }
-            }
-
-            m_textLayout->SetWordWrapping(TextWrapping == Windows::UI::Xaml::TextWrapping::Wrap
-                ? DWRITE_WORD_WRAPPING_WRAP
-                : DWRITE_WORD_WRAPPING_NO_WRAP);
-        }
+        params.Text = Text;
+        CoreDWTextServices::CreateLayout(params, &m_textLayout, &m_simulatedFontFace);
+    }
+    else
+    {
+        m_simulatedFontFace = CoreDWTextServices::GetSimulatedFontFace(
+            FontFace,
+            CoreDWTextServices::ResolveSimulations(StyleSimulations, FontFace));
     }
 
-    // Create placeholder layout if placeholder exists
     if (PlaceholderText != nullptr && PlaceholderText->Length() > 0)
     {
-        factory->CreateTextLayout(
-            PlaceholderText->Data(),
-            PlaceholderText->Length(),
-            tempFormat.Get(),
-            maxLayoutWidth,
-            maxLayoutHeight,
-            &m_placeholderLayout);
+        params.Text = PlaceholderText;
+        CoreDWTextServices::CreateLayout(params, &m_placeholderLayout);
     }
 }
 
@@ -1983,16 +1864,13 @@ void DirectTextBox::RenderToSurface()
                 ComPtr<ID2D1SolidColorBrush> d2dBrush;
                 d2dContext->CreateSolidColorBrush(fgColor, &d2dBrush);
 
-                GlyphImageFormat preferredFormat = IsColorFontEnabled ? GlyphImageFormat::None : GlyphImageFormat::TrueType;
+                TextRenderParameters renderParams;
+                renderParams.ForegroundBrush = d2dBrush.Get();
+                renderParams.EnableColor = IsColorFontEnabled;
+                renderParams.PreferredFormat = IsColorFontEnabled ? GlyphImageFormat::None : GlyphImageFormat::TrueType;
+                renderParams.OverrideFace = m_simulatedFontFace.Get();
 
-                CustomColorTextRenderer renderer(
-                    d2dContext.Get(),
-                    CompositionDeviceManager::GetDWriteFactory().Get(),
-                    d2dBrush.Get(),
-                    preferredFormat,
-                    m_simulatedFontFace.Get());
-
-                m_textLayout->Draw(nullptr, &renderer, originX, originY);
+                CoreDWTextServices::DrawTextLayout(d2dContext.Get(), m_textLayout.Get(), D2D1::Point2F(originX, originY), renderParams);
             }
             else if (!hasText && m_placeholderLayout != nullptr)
             {
@@ -2007,14 +1885,13 @@ void DirectTextBox::RenderToSurface()
                 ComPtr<ID2D1SolidColorBrush> phBrush;
                 d2dContext->CreateSolidColorBrush(phColor, &phBrush);
 
-                CustomColorTextRenderer renderer(
-                    d2dContext.Get(),
-                    CompositionDeviceManager::GetDWriteFactory().Get(),
-                    phBrush.Get(),
-                    GlyphImageFormat::TrueType,
-                    m_simulatedFontFace.Get());
+                TextRenderParameters phParams;
+                phParams.ForegroundBrush = phBrush.Get();
+                phParams.EnableColor = false;
+                phParams.PreferredFormat = GlyphImageFormat::TrueType;
+                phParams.OverrideFace = m_simulatedFontFace.Get();
 
-                m_placeholderLayout->Draw(nullptr, &renderer, originX, originY);
+                CoreDWTextServices::DrawTextLayout(d2dContext.Get(), m_placeholderLayout.Get(), D2D1::Point2F(originX, originY), phParams);
             }
 
             // Draw Caret

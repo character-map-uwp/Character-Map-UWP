@@ -59,6 +59,28 @@ int DWriteFontFamily::FontCount::get()
 	return m_family ? (int)m_family->GetFontCount() : 0;
 }
 
+bool DWriteFontFamily::HasLocalFaces()
+{
+	if (m_fonts != nullptr)
+		return m_fonts->Size > 0;
+
+	if (m_family == nullptr)
+		return false;
+
+	auto fontCount = m_family->GetFontCount();
+	for (uint32_t j = 0; j < fontCount; ++j)
+	{
+		ComPtr<IDWriteFont3> font;
+		if (SUCCEEDED(m_family->GetFont(j, &font)) && font != nullptr)
+		{
+			if (font->GetLocality() == DWRITE_LOCALITY::DWRITE_LOCALITY_LOCAL)
+				return true;
+		}
+	}
+
+	return false;
+}
+
 void DWriteFontFamily::Inflate()
 {
 	if (m_fonts != nullptr)

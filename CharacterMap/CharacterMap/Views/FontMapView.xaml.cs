@@ -1186,7 +1186,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     private void AddClick(object sender, RoutedEventArgs e)
     {
         if (sender is MenuFlyoutItem { DataContext: Character c })
-            ViewModel.Sequence += c.Char;
+            AddCharToSequence(c);
     }
 
     private void OpenCalligraphyClick(object sender, RoutedEventArgs e)
@@ -1228,32 +1228,44 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         if (CopySequenceText == null)
             return;
 
+        CharacterAnalysisModel model = ViewModel.SelectedChar;
+        if (c is not null && (model is null || model.Char != c) && ViewModel.SelectedFace is not null)
+            model = new(ViewModel.SelectedFace, c, ViewModel);
+
+        int addedLength = 0;
+
         if (((object)CopySequenceText) is TextBox t)
         {
             int selection = t.SelectionStart;
-            ViewModel.AddCharToSequence(
+            addedLength = ViewModel.AddCharToSequence(
                 t.SelectionStart,
                 t.SelectionLength,
-                ViewModel.SelectedChar);
-            t.SelectionStart = selection + 1;
+                model,
+                c);
+            t.SelectionStart = selection + addedLength;
+            t.SelectionLength = 0;
         }
         else if (((object)CopySequenceText) is DirectTextBox d)
         {
             int selection = d.SelectionStart;
-            ViewModel.AddCharToSequence(
+            addedLength = ViewModel.AddCharToSequence(
                 d.SelectionStart,
                 d.SelectionLength,
-                ViewModel.SelectedChar);
-            d.SelectionStart = selection + 1;
+                model,
+                c);
+            d.SelectionStart = selection + addedLength;
+            d.SelectionLength = 0;
         }
         else if (((object)CopySequenceText) is RichEditBox r)
         {
-            int selection =  r.Document.Selection.StartPosition;
-            ViewModel.AddCharToSequence(
-              selection,
-              r.Document.Selection.Length,
-              ViewModel.SelectedChar);
-            r.Document.Selection.MoveStart(Windows.UI.Text.TextRangeUnit.Character, selection + 1);
+            int selection = r.Document.Selection.StartPosition;
+            addedLength = ViewModel.AddCharToSequence(
+                selection,
+                r.Document.Selection.Length,
+                model,
+                c);
+            r.Document.Selection.StartPosition = selection + addedLength;
+            r.Document.Selection.EndPosition = selection + addedLength;
         }
 
         await Task.Delay(64);
