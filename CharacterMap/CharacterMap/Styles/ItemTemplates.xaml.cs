@@ -8,11 +8,50 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Styles;
 
+public class TextResizeHelper
+{
+    long token = 0;
+    public TextResizeHelper(TextBlock textBlock)
+    {
+        TextBlock = textBlock;
+        token = textBlock.RegisterPropertyChangedCallback(TextBlock.TextProperty, callback);
+    }
+
+    private async void callback(DependencyObject sender, DP dp)
+    {
+        var v = Properties.GetEnableAutoScaleAnimation(sender);
+        if (v)
+        {
+            Properties.SetEnableAutoScaleAnimation(sender, false);
+            await Task.Delay(16);
+            Properties.SetEnableAutoScaleAnimation(sender, true);
+        }
+    }
+
+    public TextBlock TextBlock { get; }
+}
+
+[AttachedProperty<bool>("TextChangeBlock")]
+[AttachedProperty<TextResizeHelper>("TextResizeHelper")]
 public sealed partial class ItemTemplates : ResourceDictionary
 {
+    private Debouncer _textBlocker = new(16);
+
     public ItemTemplates()
     {
         this.InitializeComponent();
+    }
+
+    static partial async void OnTextChangeBlockChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is TextBlock t && GetTextResizeHelper(t) is null)
+        {
+            if (e.NewValue is bool b && b)
+            {
+                var helper = new TextResizeHelper(t);
+                SetTextResizeHelper(t, helper);
+            }
+        }
     }
 
     private async void OpenFolderButton_Click(object sender, RoutedEventArgs e)
@@ -92,16 +131,17 @@ public sealed partial class ItemTemplates : ResourceDictionary
             //    character map view
             MainViewModel main = Ioc.Default.GetService<MainViewModel>();
 
-            if (MainPage.MainDispatcher.HasThreadAccess)
+            var svc = Ioc.Default.ViewService();
+            if (svc.MainView.HasThreadAccess)
             {
                 main.Settings.LastSelectedFontName = result.Fonts.FirstOrDefault()?.Name;
                 main.SelectedCollection = result.Collection;
             }
             else
             {
-                MainPage.MainDispatcher.Enqueue(async () =>
+                _ = svc.MainView.RunOnAsync(async () =>
                 {
-                    await WindowService.TrySwitchToWindowAsync(WindowService.MainWindow, true);
+                    await svc.TrySwitchToViewAsync(svc.MainView, true);
                     main.Settings.LastSelectedFontName = result.Font.Name;
                     main.SelectedCollection = result.Collection;
                 });

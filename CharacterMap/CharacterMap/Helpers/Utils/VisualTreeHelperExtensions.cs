@@ -266,13 +266,13 @@ public static class VisualTreeHelperExtensions
     public static bool IsInVisualTree(this DependencyObject dob)
     {
         //TODO: consider making it work with Popups too.
-        if (Window.Current == null)
+        if (ViewService.Current == null)
         {
             // This may happen when a picker or CameraCaptureUI etc. is open.
             return false;
         }
 
-        return Window.Current.Content != null && dob.GetAncestors().Contains(Window.Current.Content);
+        return ViewService.Current.Content != null && dob.GetAncestors().Contains(ViewService.Current.Content);
     }
 
     /// <summary>
@@ -284,7 +284,7 @@ public static class VisualTreeHelperExtensions
     public static bool IsInViewport(this FrameworkElement element, FrameworkElement relativeTo = null)
     {
         if (relativeTo == null)
-            relativeTo = (FrameworkElement)Window.Current.Content;
+            relativeTo = (FrameworkElement)ViewService.Current.Content;
 
         var rectContainer = GetBoundingRect(element, relativeTo);
 

@@ -28,11 +28,13 @@ internal class ActivationService
     {
         if (IsActivation(activationArgs))
         {
+            IViewService windowService = Ioc.Default.ViewService();
+
             // We spawn a separate Window for files.
             if (activationArgs is FileActivatedEventArgs fileArgs)
             {
                 bool mainView = Window.Current.Content == null;
-                void CreateView()
+                FrameworkElement CreateView()
                 {
                     FontMapView map = new FontMapView
                     {
@@ -40,46 +42,37 @@ internal class ActivationService
                         RequestedTheme = ResourceHelper.GetEffectiveTheme()
                     };
                     _ = map.ViewModel.LoadFromFileArgsAsync(fileArgs);
-
-                    // You have to activate the window in order to show it later.
-                    Window.Current.Content = map;
-                    Window.Current.Activate();
+                    return map;
                 }
 
-                var view = await WindowService.CreateViewAsync(CreateView, false);
-                await WindowService.TrySwitchToWindowAsync(view, mainView);
-
+                await windowService.CreateViewAsync(CreateView, false);
                 return;
             }
 
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
-            if (WindowService.MainWindow == null)
+            if (windowService.MainView == null)
             {
-                void CreateMainView()
+                Frame CreateMainView()
                 {
                     // Create a Frame to act as the navigation context and navigate to the first page
-                    Window.Current.Content = new Frame();
+                    Frame frame = NavigationService.Frame = new Frame();
                     NavigationService.Frame.NavigationFailed += (sender, e) => throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
                     NavigationService.Frame.Navigated += OnFrameNavigated;
 
                     if (SystemNavigationManager.GetForCurrentView() != null)
                         SystemNavigationManager.GetForCurrentView().BackRequested += OnAppViewBackButtonRequested;
 
-                    Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().Consolidated += ActivationService_Consolidated;
-
+                    return frame;
                 }
 
-                var view = await WindowService.CreateViewAsync(CreateMainView, true);
-                await WindowService.TrySwitchToWindowAsync(view, true);
-
-
+                var view = await windowService.CreateViewAsync(CreateMainView, true);
+                await windowService.TrySwitchToViewAsync(view, true);
             }
             else
             {
                 /* Main Window exists, make it show */
-                _ = ApplicationViewSwitcher.TryShowAsStandaloneAsync(WindowService.MainWindow.View.Id);
-                WindowService.MainWindow.CoreView.CoreWindow.Activate();
+                _ = windowService.TryShowAsync(windowService.MainView);
             }
 
             // Screenshots

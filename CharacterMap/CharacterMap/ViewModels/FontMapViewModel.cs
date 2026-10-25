@@ -320,12 +320,12 @@ public partial class FontMapViewModel : ViewModelBase
             IsLoadingCharacters = false;
 
             if (allowRetry)
-                Window.Current.Dispatcher.Enqueue(async () =>
+                ViewService.Current.Enqueue(async () =>
                 {
                     await Task.Delay(100);
                     if (variant == SelectedFace)
                         LoadVariant(variant, false);
-                }, Windows.UI.Core.CoreDispatcherPriority.Low);
+                });
         }
     }
  
@@ -554,7 +554,7 @@ public partial class FontMapViewModel : ViewModelBase
                 Localization.Get("InvalidFontMessage"),
                 Localization.Get("InvalidFontTitle"));
 
-            WindowService.CloseForCurrentView();
+            Ioc.Default.ViewService().CloseCurrentView();
 
             return false;
         }
@@ -575,12 +575,12 @@ public partial class FontMapViewModel : ViewModelBase
             if (await FontImporter.ImportFontsAsync(items) is { } result
                 && (result.Imported.Count > 0 || result.Existing.Count > 0))
             {
-                await WindowService.ActivateMainWindowAsync();
+                await Ioc.Default.ViewService().ActivateMainWindowAsync();
                 await Task.Delay(100);
-                await CoreApplication.MainView.Dispatcher.ExecuteAsync(() =>
+                await Ioc.Default.ViewService().MainView.RunOnAsync(() =>
                 {
                     Messenger.Send(new ImportMessage(result));
-                }, Windows.UI.Core.CoreDispatcherPriority.Low);
+                });
             }
         }
         finally

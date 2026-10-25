@@ -69,7 +69,7 @@ public partial class ZoomHelper : DependencyObject, IAttached
     private void _target_PointerWheelChanged(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
     {
         // Check if the Ctrl key is pressed
-        var ctrlState = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+        var ctrlState = ViewService.Current.GetKeyState(VirtualKey.Control);
         bool isCtrlPressed = (ctrlState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down;
 
         if (isCtrlPressed 

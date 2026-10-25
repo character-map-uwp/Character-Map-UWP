@@ -2,8 +2,12 @@
 using System.Runtime.InteropServices;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
+using Windows.System;
+using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
+using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -27,30 +31,165 @@ public interface IWindowContent
     void Cleanup();
 }
 
-public class WindowInformation
+public interface IViewInformation
 {
-    private WindowInformation(CoreApplicationView coreView, ApplicationView view)
+    Task RunOnAsync(Action a);
+    WeakReferenceMessenger Messenger { get; }
+    bool HasThreadAccess { get; }
+    Compositor Compositor { get; }
+    UIElement Content { get; }
+    CoreVirtualKeyStates GetKeyState(VirtualKey key);
+    CoreCursor PointerCursor { get; set; }
+    Rect Bounds { get; }
+}
+
+
+public class UWPWindowInformation : IViewInformation
+{
+    private UWPWindowInformation(CoreApplicationView coreView, ApplicationView view, Window window)
     {
         CoreView = coreView;
         View = view;
+        Window = window;
         Manager = ViewLifetimeManager.CreateForCurrentView();
     }
 
-    public static WindowInformation CreateForCurrentView()
+    public static UWPWindowInformation CreateForCurrentView()
     {
-        return new WindowInformation(
+        var info = new UWPWindowInformation(
             CoreApplication.GetCurrentView(),
-            ApplicationView.GetForCurrentView());
+            ApplicationView.GetForCurrentView(),
+            Window.Current);
+
+        info.CoreView.CoreWindow.CustomProperties["Info"] = info;
+        return info;
     }
 
     public CoreApplicationView CoreView { get; }
 
     public ApplicationView View { get; }
-
+    public Window Window { get; }
     public ViewLifetimeManager Manager { get; }
+
+    public UIElement Content => Window.Content;
+    public Compositor Compositor => Window.Current.Compositor;
+
+    public Task RunOnAsync(Action a) => CoreView.Dispatcher.ExecuteAsync(a);
+    public CoreVirtualKeyStates GetKeyState(VirtualKey key) => CoreView.CoreWindow.GetKeyState(key);
+    public WeakReferenceMessenger Messenger => field ??= CoreView.CoreWindow.GetMessenger();
+    public bool HasThreadAccess => CoreView.Dispatcher.HasThreadAccess;
+
+    public CoreCursor PointerCursor
+    {
+        get => CoreView.CoreWindow.PointerCursor;
+        set => CoreView.CoreWindow.PointerCursor = value;
+    }
+    public Rect Bounds => CoreView.CoreWindow.Bounds;
 }
 
-public static class WindowService
+public static class ViewService
+{
+    /// <summary>
+    /// The current View
+    /// </summary>
+    public static IViewInformation Current => Ioc.Default.ViewService().CurrentView;
+
+    public static IViewService Service => Ioc.Default.ViewService();
+}
+
+public interface IViewService
+{
+    /// <summary>
+    /// Create and show a new window
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="mainView"></param>
+    /// <returns></returns>
+    Task<IViewInformation> CreateViewAsync(Func<FrameworkElement> a, bool mainView);
+    
+    /// <summary>
+    /// Attempt to bring an existing window to the forefront
+    /// </summary>
+    /// <param name="iinfo"></param>
+    /// <param name="main"></param>
+    /// <returns></returns>
+    Task TrySwitchToViewAsync(IViewInformation iinfo, bool main);
+
+    /// <summary>
+    /// Reopen the primary CharacterMap window view
+    /// </summary>
+    /// <returns></returns>
+    Task ReactivateMainAsync();
+
+    //Task RunOnViewsAsync(Action<UIElement> a);
+
+    IViewInformation MainView { get; }
+
+    Task TryShowAsync(IViewInformation info);
+
+    void CloseCurrentView();
+
+    IViewInformation CurrentView { get; }
+
+    Dictionary<int, IViewInformation> ChildViews { get; }
+}
+
+public static class ViewServiceExtensions
+{
+    extension (IViewInformation view)
+    {
+        public void Enqueue(Action a)
+        {
+            view.Content.Dispatcher.Enqueue(a);
+        }
+    }
+
+    extension (CoreWindow window)
+    {
+        public IViewInformation GetViewInformation()
+        {
+            return (IViewInformation)window.CustomProperties["Info"];
+        }
+    }
+
+    extension(IViewService service)
+    {
+        public Task ActivateMainWindowAsync()
+        {
+            return service.MainView.RunOnAsync(async () =>
+            {
+                await App.Current.ActivationService.ActivateAsync(new FacadeLaunchArgs());
+            });
+        }
+
+        public Task RunOnViewsAsync(Action<UIElement> a)
+        {
+            List<Task> t = new();
+
+            if (service.MainView is IViewInformation wi)
+                t.Add(wi.RunOnAsync(() => a(wi.Content)));
+
+            List<Task> tasks = new();
+            foreach (var info in service.ChildViews.ToList())
+            {
+                try
+                {
+                    tasks.Add(info.Value.RunOnAsync(() => a(info.Value.Content)));
+                }
+                catch (Exception ex)
+                {
+                    Utils.AppendDiagnostics("WindowService RunOnViewsAsync", ex);
+                    service.ChildViews.Remove(info.Key);
+                }
+            }
+
+            t.AddRange(tasks);
+            return Task.WhenAll(t);
+        }
+    }
+}
+
+public class UWPWindowService : IViewService
 {
     /*
      * Our multi-window logic is based upon that of the Windows Photo app.
@@ -62,21 +201,23 @@ public static class WindowService
      *     created in step 1. That original view is now killed off.
      */
 
-    public static WindowInformation MainWindow { get; private set; }
+    public IViewInformation MainView { get; private set; }
 
-    private static Dictionary<int, WindowInformation> _childWindows { get; } = new Dictionary<int, WindowInformation>();
+    public Dictionary<int, IViewInformation> ChildViews => _childWindows;
 
-    public static bool HasWindows => MainWindow != null || _childWindows.Count > 0;
+    private Dictionary<int, IViewInformation> _childWindows { get; } = [];
 
-    public static void AddChildWindow(WindowInformation information)
+    public bool HasWindows => MainView != null || _childWindows.Count > 0;
+
+    public void AddChildWindow(UWPWindowInformation information)
     {
         if (!information.CoreView.IsMain)
             _childWindows.Add(information.View.Id, information);
     }
 
-    public static async Task<WindowInformation> CreateViewAsync(Action a, bool mainView)
+    public async Task<IViewInformation> CreateViewAsync(Func<FrameworkElement> a, bool mainView)
     {
-        WindowInformation info = null;
+        UWPWindowInformation info = null;
         CoreApplicationView view = null;
         if (mainView)
         {
@@ -91,7 +232,7 @@ public static class WindowService
             await CoreApplication.MainView.Dispatcher.ExecuteAsync(() =>
             {
                 if (CoreApplication.MainView.Dispatcher.HasThreadAccess &&
-                    CoreApplication.MainView.Properties.ContainsKey(nameof(MainWindow)))
+                    CoreApplication.MainView.Properties.ContainsKey(nameof(MainView)))
                     tcs.SetResult(CoreApplication.CreateNewView());
                 else
                     tcs.SetResult(CoreApplication.MainView);
@@ -100,10 +241,10 @@ public static class WindowService
             view = await tcs.Task;
         }
 
-        void Create()
+        FrameworkElement Create()
         {
-            a();
-            info = WindowInformation.CreateForCurrentView();
+            FrameworkElement content = a();
+            info = UWPWindowInformation.CreateForCurrentView();
 
             if (!mainView)
                 info.View.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible);
@@ -116,37 +257,42 @@ public static class WindowService
             }
             else
             {
-                view.Properties[nameof(MainWindow)] = info;
+                view.Properties[nameof(MainView)] = info;
 
                 if (mainView)
-                    MainWindow = info;
+                    MainView = info;
             }
 
             var settings = ResourceHelper.AppSettings;
             settings.UpdateTransparency(settings.IsTransparencyEnabled);
+            return content;
         }
 
-        void DoCreate()
+        async Task DoCreateAsync()
         {
-            Create();
+            Window.Current.Content = Create();
+            Window.Current.Activate();
+
             if (Window.Current.Content is FrameworkElement f)
                 f.RequestedTheme = ResourceHelper.GetEffectiveTheme();
+
+            await TrySwitchToViewAsync(info, mainView);
         }
 
         if (view.Dispatcher.HasThreadAccess)
-            DoCreate();
+            await DoCreateAsync();
         else
-            await view.Dispatcher.ExecuteAsync(DoCreate, CoreDispatcherPriority.High);
+            await view.Dispatcher.ExecuteAsync(DoCreateAsync, CoreDispatcherPriority.High);
 
         return info;
     }
 
-    private static void Manager_Released(object sender, EventArgs e)
+    private void Manager_Released(object sender, EventArgs e)
     {
         ViewLifetimeManager manager = (ViewLifetimeManager)sender;
         manager.Released -= Manager_Released;
 
-        WindowInformation info = _childWindows[manager.Id];
+        UWPWindowInformation info = (UWPWindowInformation)_childWindows[manager.Id];
         _childWindows.Remove(manager.Id);
 
         info.CoreView.Activated -= CoreView_Activated;
@@ -203,7 +349,7 @@ public static class WindowService
             window.GetMessenger().Send(new WindowResizingMessage(window.Dispatcher));
     }
 
-    public static async Task ReactivateMainAsync()
+    public async Task ReactivateMainAsync()
     {
         if (!CoreApplication.MainView.Dispatcher.HasThreadAccess)
         {
@@ -214,25 +360,26 @@ public static class WindowService
             await Task.Delay(250);
             return;
         }
-
-        await ApplicationViewSwitcher.TryShowAsStandaloneAsync(WindowService.MainWindow.View.Id);
+        var info = ((UWPWindowInformation)MainView);
+        await ApplicationViewSwitcher.TryShowAsStandaloneAsync(info.View.Id);
         await Task.Delay(100);
-        await ApplicationViewSwitcher.TryShowAsStandaloneAsync(WindowService.MainWindow.View.Id);
+        await ApplicationViewSwitcher.TryShowAsStandaloneAsync(info.View.Id);
         await Task.Delay(100);
-        WindowService.MainWindow.CoreView.CoreWindow.Activate();
 
-        WindowService.MainWindow.CoreView.CoreWindow.SizeChanged -= Current_SizeChanged;
-        WindowService.MainWindow.CoreView.CoreWindow.SizeChanged += Current_SizeChanged;
-
+        info.CoreView.CoreWindow.Activate();
+        info.CoreView.CoreWindow.SizeChanged -= Current_SizeChanged;
+        info.CoreView.CoreWindow.SizeChanged += Current_SizeChanged;
     }
 
-    public static async Task TrySwitchToWindowAsync(WindowInformation info, bool main)
+    public async Task TrySwitchToViewAsync(IViewInformation iinfo, bool main)
     {
+        UWPWindowInformation info = ((UWPWindowInformation)iinfo);
+
         if (main && !CoreApplication.MainView.Dispatcher.HasThreadAccess)
         {
             // Awaiter here is screwed without a *PROPER* dispatcher awaiter
             await CoreApplication.MainView.Dispatcher.ExecuteAsync(
-                () => TrySwitchToWindowAsync(info, main));
+                () => TrySwitchToViewAsync(info, main));
 
             return;
         }
@@ -241,14 +388,14 @@ public static class WindowService
         {
             await ApplicationViewSwitcher.SwitchAsync(
                 info.View.Id,
-                ((WindowInformation)CoreApplication.MainView.Properties[nameof(MainWindow)]).View.Id,
+                ((UWPWindowInformation)CoreApplication.MainView.Properties[nameof(MainView)]).View.Id,
                 ApplicationViewSwitchingOptions.ConsolidateViews).AsTask();
 
             return;
         }
 
-        if (info == MainWindow)
-            await ActivateMainWindowAsync();
+        if (iinfo == MainView)
+            await this.ActivateMainWindowAsync();
 
         //await info.CoreView.Dispatcher.ExecuteAsync(() =>
         //{
@@ -263,6 +410,13 @@ public static class WindowService
         });
     }
 
+    public async Task TryShowAsync(IViewInformation info)
+    {
+        UWPWindowInformation window = ((UWPWindowInformation)info);
+        _ = ApplicationViewSwitcher.TryShowAsStandaloneAsync(window.View.Id);
+        window.CoreView.CoreWindow.Activate();
+    }
+
     private static void CoreView_Activated(CoreApplicationView sender, IActivatedEventArgs args)
     {
         sender.Activated -= CoreView_Activated;
@@ -274,15 +428,7 @@ public static class WindowService
         });
     }
 
-    public static Task ActivateMainWindowAsync()
-    {
-        return CoreApplication.MainView.Dispatcher.ExecuteAsync(async () =>
-        {
-            await App.Current.ActivationService.ActivateAsync(new FacadeLaunchArgs());
-        });
-    }
-
-    internal static void CloseForCurrentView()
+    public void CloseCurrentView()
     {
         var view = CoreApplication.GetCurrentView();
 
@@ -299,30 +445,7 @@ public static class WindowService
         }, CoreDispatcherPriority.High);
     }
 
-    public static Task RunOnViewsAsync(DispatchedHandler a)
-    {
-        List<Task> t = new();
-
-        if (MainWindow != null)
-            t.Add(MainWindow.CoreView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, a).AsTask());
-
-        List<Task> tasks = new();
-        foreach (var window in _childWindows.ToList())
-        {
-            try
-            {
-                tasks.Add(window.Value.CoreView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, a).AsTask());
-            }
-            catch (Exception ex)
-            {
-                Utils.AppendDiagnostics("WindowService RunOnViewsAsync", ex);
-                _childWindows.Remove(window.Key);
-            }
-        }
-
-        t.AddRange(tasks);
-        return Task.WhenAll(t);
-    }
+    public IViewInformation CurrentView => Window.Current.CoreWindow.GetViewInformation();
 }
 
 // Workaround for Windowing bug noted in 

@@ -681,13 +681,13 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         {
             if (ViewModel.Settings.DisableTabs
                 || ResourceHelper.SupportsTabs is false
-                || Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
+                || ViewService.Current.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
                 _ = FontMapView.CreateNewViewForFontAsync(font);
             else
             {
                 ViewModel.Fonts.Insert(ViewModel.TabIndex + 1, new(font));
 
-                if (Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down))
+                if (ViewService.Current.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down))
                     ViewModel.TabIndex += 1;
             }
         }
@@ -1054,17 +1054,11 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
 public partial class MainPage
 {
-    public static async Task<WindowInformation> CreateWindowAsync(MainViewModelArgs args)
+    public static Task CreateWindowAsync(MainViewModelArgs args)
     {
-        static void CreateView(MainViewModelArgs a)
-        {
-            MainPage view = new(a);
-            Window.Current.Content = view;
-            Window.Current.Activate();
-        }
+        static FrameworkElement CreateView(MainViewModelArgs a) 
+            => new MainPage (a);
 
-        var view = await WindowService.CreateViewAsync(() => CreateView(args), false);
-        await WindowService.TrySwitchToWindowAsync(view, false);
-        return view;
+        return Ioc.Default.ViewService().CreateViewAsync(() => CreateView(args), false);
     }
 }

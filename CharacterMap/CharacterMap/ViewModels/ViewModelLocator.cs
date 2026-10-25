@@ -37,6 +37,7 @@ public class ViewModelLocator
         }
 
         ServiceCollection services = new ServiceCollection();
+        services.AddSingleton<IViewService, UWPWindowService>();
         services.AddSingleton<IDialogService, DialogService>();
         services.AddSingleton(s => _navigationService);
         services.AddSingleton(s => ResourceHelper.AppSettings);

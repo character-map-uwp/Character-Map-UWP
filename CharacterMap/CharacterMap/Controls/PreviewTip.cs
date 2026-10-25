@@ -255,7 +255,7 @@ public partial class PreviewTip : ContentControl
         
         if (Placement == PreviewPlacement.RightEdgeTopAligned)
         {
-            var rect = item.GetBoundingRect((FrameworkElement)Window.Current.Content);
+            var rect = item.GetBoundingRect((FrameworkElement)ViewService.Current.Content);
 
             // Let CenterPoint animation know item size
             _rv.Properties.InsertVector2("ItemSize", new Vector2((float)rect.Value.Width, (float)rect.Value.Height));

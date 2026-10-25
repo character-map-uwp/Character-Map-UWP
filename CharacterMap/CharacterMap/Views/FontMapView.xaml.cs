@@ -1740,9 +1740,9 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
 public partial class FontMapView
 {
-    public static async Task CreateNewViewForFontAsync(CMFontFamily font, StorageFile sourceFile = null, CharacterRenderingOptions options = null)
+    public static Task CreateNewViewForFontAsync(CMFontFamily font, StorageFile sourceFile = null, CharacterRenderingOptions options = null)
     {
-        void CreateView()
+        FrameworkElement CreateView()
         {
             FontItem item = new FontItem(font);
             item.Selected = options?.Face ?? font.DefaultFace;
@@ -1760,11 +1760,9 @@ public partial class FontMapView
                     map.ViewModel.SelectedTypography = new(options.DefaultTypography);
             }
 
-            Window.Current.Content = map;
-            Window.Current.Activate();
+            return map;
         }
 
-        var view = await WindowService.CreateViewAsync(CreateView, false);
-        await WindowService.TrySwitchToWindowAsync(view, false);
+        return ViewService.Service.CreateViewAsync(CreateView, false);
     }
 }

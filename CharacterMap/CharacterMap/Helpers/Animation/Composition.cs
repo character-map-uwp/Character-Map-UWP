@@ -38,7 +38,7 @@ public static class Composition
         return default;
     }
 
-    public static Compositor Compositor { get; set; } = Window.Current.Compositor;
+    public static Compositor Compositor => ViewService.Current?.Compositor;
 
     public static void CreateScopedBatch(this Compositor compositor,
         CompositionBatchTypes batchType,
@@ -1006,7 +1006,7 @@ public static class Composition
         if (ease is null)
             return null;
 
-        c ??= Window.Current.Compositor;
+        c ??= Compositor;
 
         if (ease is BackEase back)
         {
@@ -1082,7 +1082,7 @@ public static class Composition
         if (spline is null)
             return null;
 
-        c ??= Window.Current.Compositor;
+        c ??= Compositor;
         return c.CreateCubicBezierEasingFunction(spline);
     }
 
@@ -1158,7 +1158,7 @@ public static class Composition
 [DependencyProperty<KeySpline>("Spline")]
 public partial class CompositionTransition : DependencyObject
 {
-    private Compositor _c => field ??= Window.Current.Compositor;
+    private Compositor _c => field ??= Composition.Compositor;
 
     public CompositionEasingFunction GetEasingFunction()
     {

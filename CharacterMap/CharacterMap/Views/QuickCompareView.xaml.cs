@@ -512,22 +512,14 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
 
 public partial class QuickCompareView
 {
-    public static async Task<WindowInformation> CreateWindowAsync(QuickCompareArgs args)
+    public static async Task<IViewInformation> CreateWindowAsync(QuickCompareArgs args)
     {
         // 1. If QuickCompare (rather than FontCompare), return the existing window
         //    if we have one. (QuickCompare is ALWAYS single window)
         if (args.IsQuickCompare && QuickCompareViewModel.QuickCompareWindow is not null)
             return QuickCompareViewModel.QuickCompareWindow;
 
-        static void CreateView(QuickCompareArgs a)
-        {
-            QuickCompareView view = new(a);
-            Window.Current.Content = view;
-            Window.Current.Activate();
-        }
-
-        var view = await WindowService.CreateViewAsync(() => CreateView(args), false);
-        await WindowService.TrySwitchToWindowAsync(view, false);
+        var view = await ViewService.Service.CreateViewAsync(() => new QuickCompareView(args), false);
 
         if (args.IsQuickCompare)
             QuickCompareViewModel.QuickCompareWindow = view;
@@ -541,7 +533,7 @@ public partial class QuickCompareView
         var window = await CreateWindowAsync(new(true));
 
         // 2. Add selected font to QuickCompare
-        await QuickCompareViewModel.QuickCompareWindow.CoreView.Dispatcher.ExecuteAsync(() =>
+        await QuickCompareViewModel.QuickCompareWindow.RunOnAsync(() =>
         {
             WeakReferenceMessenger.Default.Send(options, 
                 wholeFamily 
@@ -552,6 +544,6 @@ public partial class QuickCompareView
         // 3. Try switch to view.
         //    Task.Delay is required as TrySwitchToWindow may fail.
         await Task.Delay(64);
-        await WindowService.TrySwitchToWindowAsync(QuickCompareViewModel.QuickCompareWindow, false);
+        await ViewService.Service.TrySwitchToViewAsync(QuickCompareViewModel.QuickCompareWindow, false);
     }
 }

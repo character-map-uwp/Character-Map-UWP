@@ -330,7 +330,7 @@
     <Compile Include="Services\ToastNotificationsService.cs" />
     <Compile Include="Services\UserFontCollection.cs" />
     <Compile Include="Services\ViewLifetimeManager.cs" />
-    <Compile Include="Services\WindowService.cs" />
+    <Compile Include="Services\UWPWindowService.cs" />
     <Compile Include="Styles\ItemTemplates.xaml.cs">
       <DependentUpon>ItemTemplates.xaml</DependentUpon>
     </Compile>

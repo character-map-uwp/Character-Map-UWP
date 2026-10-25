@@ -355,20 +355,16 @@ public sealed partial class CalligraphyView : ViewBase, IInAppNotificationPresen
 
 public partial class CalligraphyView
 {
-    public static async Task<WindowInformation> CreateWindowAsync(CharacterRenderingOptions options, string text = null)
+    public static async Task CreateWindowAsync(CharacterRenderingOptions options, string text = null)
     {
-        static void CreateView(CharacterRenderingOptions v, string t = null)
+        static FrameworkElement CreateView(CharacterRenderingOptions v, string t = null)
         {
             CalligraphyView view = new(v);
             view.ViewModel.Text = String.IsNullOrWhiteSpace(t) ? "Hello" : t;
-            Window.Current.Content = view;
-            Window.Current.Activate();
+            return view;
         }
 
-        var view = await WindowService.CreateViewAsync(() => CreateView(options, text), false);
-        await WindowService.TrySwitchToWindowAsync(view, false);
-
-        return view;
+        await ViewService.Service.CreateViewAsync(() => CreateView(options, text), false);
     }
 }
 

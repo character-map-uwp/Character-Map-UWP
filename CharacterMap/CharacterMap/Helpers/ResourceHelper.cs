@@ -137,7 +137,7 @@ public static class ResourceHelper
     public static Task SetTransparencyAsync(bool enable)
     {
         // Disable transparency on relevant brushes
-        return WindowService.RunOnViewsAsync(() =>
+        return Ioc.Default.ViewService().RunOnViewsAsync(u =>
         {
             if (Get<AcrylicBrush>("DefaultHostBrush") is AcrylicBrush def)
                 def.AlwaysUseFallback = !enable;

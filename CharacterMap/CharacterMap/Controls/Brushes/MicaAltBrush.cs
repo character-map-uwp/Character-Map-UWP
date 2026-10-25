@@ -34,7 +34,7 @@ public class MicaAltBrush : XamlCompositionBrushBase, IXamlCompositionBrush
 
         if (this.CompositionBrush is null)
         {
-            Compositor c = Window.Current?.Compositor ?? Composition.Compositor;
+            Compositor c = Composition.Compositor;
             if (c is not null)
                 BuildBrush(c);
         }
@@ -68,7 +68,7 @@ public class MicaAltBrush : XamlCompositionBrushBase, IXamlCompositionBrush
     {
         if (this.CompositionBrush is null)
         {
-            Compositor c = compositor ?? Window.Current?.Compositor ?? Composition.Compositor;
+            Compositor c = compositor ?? Composition.Compositor;
             if (c is not null)
             {
                 BuildBrush(c);

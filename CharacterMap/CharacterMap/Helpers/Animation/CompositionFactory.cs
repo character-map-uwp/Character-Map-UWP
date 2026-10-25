@@ -380,7 +380,7 @@ public partial class CompositionFactory : DependencyObject
         target.GetElementVisual().StartAnimationGroup(animation);
     }
 
-    public static void PlayTabEntrace(UIElement target, double ratio)
+    public static void PlayTabEntrance(UIElement target, double ratio)
     {
         if (!UISettings.AnimationsEnabled || target == null)
             return;
@@ -857,9 +857,10 @@ public partial class CompositionFactory : DependencyObject
 
         // OUT ELEMENT
         {
+            var view = ViewService.Current;
             outVisual.CenterPoint = outVisual.Size.X > 0
                ? new Vector3(outVisual.Size / 2f, 0f)
-               : new Vector3((float)Window.Current.Bounds.Width / 2f, (float)Window.Current.Bounds.Height / 2f, 0f);
+               : new Vector3((float)view.Bounds.Width / 2f, (float)view.Bounds.Height / 2f, 0f);
 
             // SCALE OUT
             var sout = compositor.CreateVector3KeyFrameAnimation();
@@ -1033,31 +1034,45 @@ public class ResizeHelper : IDisposable
     private FrameworkElement _target;
     Debouncer _debouncer = new(250);
 
-    public WeakReferenceMessenger Messenger => field ??= Window.Current.GetMessenger();
+    public WeakReferenceMessenger Messenger => field ??= ViewService.Current.Messenger;
 
     public ResizeHelper(FrameworkElement target)
     {
+        if (target is null)
+            return;
+
         CompositionFactory.SetUseSynchronisedReposition(target, true);
-
-        Messenger.Register<WindowResizingMessage>(this, (o, m) =>
-            {
-                if (m.Dispatcher != target.Dispatcher)
-                    return;
-
-                CompositionFactory.SetUseSynchronisedReposition(target, false);
-                _debouncer.Debounce(() =>
-                {
-                    CompositionFactory.SetUseSynchronisedReposition(target, true);
-                });
-            });
+        target.Loading -= Target_Loading;
+        target.Loading += Target_Loading;
         _target = target;
+    }
+
+    private void Target_Loading(FrameworkElement sender, object args)
+    {
+        sender.Loading -= Target_Loading;
+        Messenger.Register<WindowResizingMessage>(this, (o, m) =>
+        {
+            if (m.Dispatcher != _target.Dispatcher)
+                return;
+
+            CompositionFactory.SetUseSynchronisedReposition(_target, false);
+            _debouncer.Debounce(() =>
+            {
+                CompositionFactory.SetUseSynchronisedReposition(_target, true);
+            });
+        });
     }
 
     public void Dispose()
     {
         _debouncer.Cancel();
         Messenger.UnregisterAll(this);
-        CompositionFactory.SetUseSynchronisedReposition(_target, false);
-        _target = null;
+
+        if (_target is not null)
+        {
+            _target.Loading -= Target_Loading;
+            CompositionFactory.SetUseSynchronisedReposition(_target, false);
+            _target = null;
+        }
     }
 }

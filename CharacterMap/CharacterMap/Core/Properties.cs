@@ -111,6 +111,7 @@ public enum MaterialCornerStyle
 [AttachedProperty<HorizontalAlignment>("HeaderHorizontalAlignment")]
 [AttachedProperty<Uri>("FontUri")] // Sets Glyphs.FontUri which cannot be set in XAML
 [AttachedProperty<bool>("CloseOnInvoke")]
+[AttachedProperty<bool>("EnableAutoScaleAnimation")]
 [AttachedProperty<Color>] // Generic property store
 [AttachedProperty<Double>] // Generic property store
 [AttachedProperty<Boolean>] // Generic property store
@@ -1655,7 +1656,7 @@ public partial class Properties : DependencyObject
         static void Element_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
             CoreCursorType cursor = GetCursor((FrameworkElement)sender);
-            Window.Current.CoreWindow.PointerCursor = Cursors[cursor];
+            ViewService.Current.PointerCursor = Cursors[cursor];
         }
 
         static void Element_PointerExited(object sender, PointerRoutedEventArgs e)
@@ -1667,14 +1668,14 @@ public partial class Properties : DependencyObject
             else
                 cursor = _defaultCursor;
 
-            Window.Current.CoreWindow.PointerCursor = cursor;
+            ViewService.Current?.PointerCursor = cursor;
         }
 
         static void ElementOnUnloaded(object sender, RoutedEventArgs routedEventArgs)
         {
             // when the element is programatically unloaded, reset the cursor back to default
             // this is necessary when click triggers immediate change in layout and PointerExited is not called
-            Window.Current.CoreWindow.PointerCursor = _defaultCursor;
+            ViewService.Current?.PointerCursor = _defaultCursor;
         }
     }
 
@@ -2045,6 +2046,57 @@ public partial class Properties : DependencyObject
     {
         if (d is FrameworkElement f)
             CompositionFactory.SetStandardFadeInOut(f, null);
+    }
+
+    static partial void OnEnableAutoScaleAnimationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement f)
+        {
+            f.SizeChanged -= Container_SizeChanged;
+
+            if (e.NewValue is bool b && b)
+                f.SizeChanged += Container_SizeChanged;
+        }
+
+        static void Container_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (ResourceHelper.AllowAnimation is false)
+                return;
+
+            // 0. Don't animate on initial layout/zero sizes
+            if (e.PreviousSize.Width <= 0 || e.PreviousSize.Height <= 0 ||
+                e.NewSize.Width <= 0 || e.NewSize.Height <= 0)
+                return;
+            var visual = ((FrameworkElement)sender).GetElementVisual();
+            var compositor = visual.Compositor;
+
+            // 1. Calculate the starting scale factor relative to the new final size
+            float startScaleX = (float)(e.PreviousSize.Width / e.NewSize.Width);
+            float startScaleY = (float)(e.PreviousSize.Height / e.NewSize.Height);
+            var startScale = new Vector3(startScaleX, startScaleY, 1f);
+            visual.Properties.InsertVector3("StartScale", startScale);
+
+            // 2. Configure the Scale animation
+            //    Ensure the scale animation scales from the center of the element
+            //visual.CenterPoint = new Vector3(
+            //    (float)(e.NewSize.Width / 2),
+            //    (float)(e.NewSize.Height / 2),
+            //    0f);
+            //visual.CenterPoint = Vector3.Zero;
+
+            // 3. Get a cache scale animation to play
+            Vector3KeyFrameAnimation _scaleAni = visual.GetCached("__Aut0ScAlE", () =>
+            {
+                return ViewService.Current.Compositor.CreateVector3KeyFrameAnimation()
+                    .SetTarget(nameof(Visual.Scale))
+                    .AddKeyFrame(0, "Props.StartScale")
+                    .AddScaleKeyFrame(1, 1)
+                    .SetDuration(0.4);
+            });
+
+            // 5. Start the animation with this element's property set
+            visual.StartAnimation(_scaleAni.SetParameter("Props", visual.Properties));
+        }
     }
 
     #endregion

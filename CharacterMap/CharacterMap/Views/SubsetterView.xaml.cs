@@ -185,17 +185,8 @@ public partial class SubsetterView
         _ = CreateWindowAsync(new());
     }
 
-    public static async Task<WindowInformation> CreateWindowAsync(SubsetterArgs args)
+    public static Task CreateWindowAsync(SubsetterArgs args)
     {
-        static void CreateView(SubsetterArgs a)
-        {
-            SubsetterView view = new(a);
-            Window.Current.Content = view;
-            Window.Current.Activate();
-        }
-
-        var view = await WindowService.CreateViewAsync(() => CreateView(args), false);
-        await WindowService.TrySwitchToWindowAsync(view, false);
-        return view;
+        return ViewService.Service.CreateViewAsync(() => new SubsetterView(args), false);
     }
 }

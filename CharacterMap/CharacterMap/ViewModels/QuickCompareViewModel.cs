@@ -27,7 +27,7 @@ public partial class QuickCompareViewModel : ViewModelBase
 {
     public const string MultiToken = $"{nameof(QuickCompareViewModel)}Multi";
 
-    public static WindowInformation QuickCompareWindow { get; set; }
+    public static IViewInformation QuickCompareWindow { get; set; }
 
     protected override bool TrackAnimation => true;
 

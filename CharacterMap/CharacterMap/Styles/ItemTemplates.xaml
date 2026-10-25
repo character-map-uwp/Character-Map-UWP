@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:CharacterMap.Models"
     xmlns:services="using:CharacterMap.Services"
+    xmlns:styles="using:CharacterMap.Styles"
     xmlns:viewmodels="using:CharacterMap.ViewModels"
     mc:Ignorable="d">
 
@@ -111,7 +112,11 @@
             </Grid.ColumnDefinitions>
             <TextBlock
                 Padding="5"
+                HorizontalAlignment="Left"
                 VerticalAlignment="Center"
+                core:Properties.EnableAutoScaleAnimation="True"
+                h:CompositionFactory.RelativeCenterPoint="0 0.5"
+                styles:ItemTemplates.TextChangeBlock="True"
                 FontFamily="{x:Bind core:Converters.GetPreviewFontSource(DefaultFace)}"
                 FontSize="{Binding ElementName=LstFontFamily, Path=FontSize, TargetNullValue={ThemeResource FontListFontSize}, FallbackValue={ThemeResource FontListFontSize}}"
                 Text="{x:Bind Name}"

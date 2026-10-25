@@ -471,9 +471,9 @@ public class AppSettings : INotifyPropertyChanged
 
     public void UpdateTheme()
     {
-        _ = WindowService.RunOnViewsAsync(() =>
+        _ = Ioc.Default.ViewService().RunOnViewsAsync(u =>
         {
-            if (Window.Current.Content is FrameworkElement e)
+            if (u is FrameworkElement e)
                 e.RequestedTheme = ResourceHelper.GetEffectiveTheme();
         });
     }

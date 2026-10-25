@@ -19,7 +19,9 @@ public abstract partial class ViewBase : Page
 
     protected virtual ViewModelBase GetViewModel() => null;
 
-    public Compositor Compositor => field ??= Window.Current.Compositor;
+    public Compositor Compositor => field ??= Composition.Compositor;
+
+    public IViewService WindowService => Ioc.Default.ViewService();
 
     public ViewBase()
     {

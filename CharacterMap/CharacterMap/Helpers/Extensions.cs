@@ -19,6 +19,8 @@ namespace CharacterMap.Helpers;
 
 public static class Extensions
 {
+    public static IViewService ViewService(this Ioc ioc) => ioc.GetService<IViewService>();
+
     public static IEnumerable<T> GetActiveContainers<T>(this ListViewBase g) where T : SelectorItem
     {
         // Recycled containers are at -10000 usually
@@ -56,6 +58,8 @@ public static class Extensions
 
         return messenger;
     }
+
+
 
     public static bool Has(this IEnumerable<GlyphImageFormat> formats, GlyphImageFormat format) =>
         formats?.Any(f => f== format || (f & format) == format) ?? false;

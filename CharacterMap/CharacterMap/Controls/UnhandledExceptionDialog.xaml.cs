@@ -8,12 +8,12 @@ public sealed partial class UnhandledExceptionDialog
 {
     public static void Show(Exception ex)
     {
-        if (Window.Current is not null)
+        if (ViewService.Current is { } view)
         {
-            if (Window.Current.Dispatcher.HasThreadAccess)
+            if (view.HasThreadAccess)
                 Show();
             else
-                Window.Current.Dispatcher.Enqueue(Show);
+                view.Enqueue(Show);
         }
 
         void Show()

@@ -119,7 +119,7 @@ public static class Converters
             && !_userCollections.SymbolCollection.Fonts.Contains(variant.FamilyName))
             return new FontFamily(variant.Source);
 
-        return Composition.GetCached<FontFamily>(Window.Current.Compositor, "PFS", () =>
+        return Composition.GetCached<FontFamily>(Composition.Compositor, "PFS", () =>
         {
             return ResourceHelper.Get<FontFamily>("ContentControlThemeFontFamily");
         });

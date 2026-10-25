@@ -449,7 +449,7 @@ public partial class GridSplitter : Control
     protected override void OnKeyDown(KeyRoutedEventArgs e)
     {
         var step = 1;
-        var ctrl = Window.Current.CoreWindow.GetKeyState(VirtualKey.Control);
+        var ctrl =  ViewService.Current.GetKeyState(VirtualKey.Control);
         if (ctrl.HasFlag(CoreVirtualKeyStates.Down))
         {
             step = 5;
@@ -499,18 +499,15 @@ public partial class GridSplitter : Control
     protected override void OnManipulationStarted(ManipulationStartedRoutedEventArgs e)
     {
         // saving the previous state
-        PreviousCursor = Window.Current.CoreWindow.PointerCursor;
+        var view = ViewService.Current;
+        PreviousCursor = view.PointerCursor;
         _resizeDirection = GetResizeDirection();
         _resizeBehavior = GetResizeBehavior();
 
         if (_resizeDirection == GridResizeDirection.Columns)
-        {
-            Window.Current.CoreWindow.PointerCursor = ColumnsSplitterCursor;
-        }
+            view.PointerCursor = ColumnsSplitterCursor;
         else if (_resizeDirection == GridResizeDirection.Rows)
-        {
-            Window.Current.CoreWindow.PointerCursor = RowSplitterCursor;
-        }
+            view.PointerCursor = RowSplitterCursor;
 
         base.OnManipulationStarted(e);
     }
@@ -518,7 +515,7 @@ public partial class GridSplitter : Control
     /// <inheritdoc />
     protected override void OnManipulationCompleted(ManipulationCompletedRoutedEventArgs e)
     {
-        Window.Current.CoreWindow.PointerCursor = PreviousCursor;
+        ViewService.Current.PointerCursor = PreviousCursor;
 
         base.OnManipulationCompleted(e);
     }
@@ -1224,7 +1221,7 @@ internal class GripperHoverWrapper
         }
         else
         {
-            Window.Current.CoreWindow.PointerCursor = _previousCursor;
+            ViewService.Current.PointerCursor = _previousCursor;
         }
     }
 
@@ -1233,7 +1230,7 @@ internal class GripperHoverWrapper
         // if not dragging
         if (!_isDragging)
         {
-            _previousCursor = _splitterPreviousPointer = Window.Current.CoreWindow.PointerCursor;
+            _previousCursor = _splitterPreviousPointer = ViewService.Current.PointerCursor;
             UpdateDisplayCursor();
         }
 
@@ -1250,11 +1247,11 @@ internal class GripperHoverWrapper
         {
             if (_gridSplitterDirection == GridSplitter.GridResizeDirection.Columns)
             {
-                Window.Current.CoreWindow.PointerCursor = GridSplitter.ColumnsSplitterCursor;
+                ViewService.Current.PointerCursor = GridSplitter.ColumnsSplitterCursor;
             }
             else if (_gridSplitterDirection == GridSplitter.GridResizeDirection.Rows)
             {
-                Window.Current.CoreWindow.PointerCursor = GridSplitter.RowSplitterCursor;
+                ViewService.Current.PointerCursor = GridSplitter.RowSplitterCursor;
             }
         }
         else
@@ -1264,12 +1261,12 @@ internal class GripperHoverWrapper
             {
                 if (_gripperCustomCursorResource > GridSplitter.GripperCustomCursorDefaultResource)
                 {
-                    Window.Current.CoreWindow.PointerCursor = new CoreCursor(coreCursor, (uint)_gripperCustomCursorResource);
+                    ViewService.Current.PointerCursor = new CoreCursor(coreCursor, (uint)_gripperCustomCursorResource);
                 }
             }
             else
             {
-                Window.Current.CoreWindow.PointerCursor = new CoreCursor(coreCursor, 1);
+                ViewService.Current.PointerCursor = new CoreCursor(coreCursor, 1);
             }
         }
     }
@@ -1294,7 +1291,7 @@ internal class GripperHoverWrapper
             return;
         }
 
-        Window.Current.CoreWindow.PointerCursor = splitter.PreviousCursor = _splitterPreviousPointer;
+        ViewService.Current.PointerCursor = splitter.PreviousCursor = _splitterPreviousPointer;
         _isDragging = false;
     }
 
