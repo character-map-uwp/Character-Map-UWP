@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 
@@ -14,7 +15,7 @@ public delegate void ViewReleasedHandler(Object sender, EventArgs e);
 public sealed class ViewLifetimeManager : INotifyPropertyChanged
 {
     // Dispatcher for this view. Kept here for sending messages between this view and the main view.
-    readonly CoreDispatcher dispatcher;
+    readonly DispatcherQueue dispatcher;
 
     // Window for this particular view. Used to register and unregister for events
     readonly CoreWindow window;
@@ -51,7 +52,7 @@ public sealed class ViewLifetimeManager : INotifyPropertyChanged
     // Instantiate views using "CreateForCurrentView"
     private ViewLifetimeManager(CoreWindow newWindow)
     {
-        dispatcher = newWindow.Dispatcher;
+        dispatcher = newWindow.DispatcherQueue;
         window = newWindow;
         viewId = ApplicationView.GetApplicationViewIdForWindow(window);
 
@@ -131,7 +132,7 @@ public sealed class ViewLifetimeManager : INotifyPropertyChanged
 
     // Necessary to communicate with the window
     // This property never changes, so there's no need to lock
-    public CoreDispatcher Dispatcher => dispatcher;
+    public DispatcherQueue Dispatcher => dispatcher;
 
     // Each view has a unique Id, found using the ApplicationView.Id property or
     // ApplicationView.GetApplicationViewIdForCoreWindow method. This id is used in all of the ApplicationViewSwitcher

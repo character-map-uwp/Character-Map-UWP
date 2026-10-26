@@ -13,7 +13,7 @@ public static class InAppNotificationHelper
     public static void OnMessage<T>(T presenter, AppNotificationMessage msg)
         where T : FrameworkElement, IInAppNotificationPresenter
     {
-        if (msg.Local && !presenter.Dispatcher.HasThreadAccess)
+        if (msg.Local && !presenter.HasThreadAccess())
             return;
 
         if (msg.Data is ExportResult result)

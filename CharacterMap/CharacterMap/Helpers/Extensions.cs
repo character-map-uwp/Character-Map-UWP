@@ -4,6 +4,7 @@ using SQLite;
 using System.Collections;
 using System.Diagnostics.Contracts;
 using System.IO.Compression;
+using Windows.ApplicationModel.Core;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -19,6 +20,8 @@ namespace CharacterMap.Helpers;
 
 public static class Extensions
 {
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IViewService ViewService(this Ioc ioc) => ioc.GetService<IViewService>();
 
     public static IEnumerable<T> GetActiveContainers<T>(this ListViewBase g) where T : SelectorItem
@@ -26,6 +29,9 @@ public static class Extensions
         // Recycled containers are at -10000 usually
         return g.ItemsPanelRoot?.Children.OfType<T>().Where(c => c.ActualOffset.X >= -1000);
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool HasThreadAccess(this DependencyObject o) => o.GetDispatcherQueue().HasThreadAccess;
 
     public static void SetFontSize(this DependencyObject f, double size)
     {
@@ -42,24 +48,6 @@ public static class Extensions
         else if (f is Glyphs x)
             x.FontRenderingEmSize = size;
     }
-
-    public static WeakReferenceMessenger GetMessenger(this Window window)
-    {
-        return GetMessenger(window.CoreWindow);
-    }
-
-    public static WeakReferenceMessenger GetMessenger(this CoreWindow window)
-    {
-        if ((window.CustomProperties.TryGetValue("Messenger", out object value) && value is WeakReferenceMessenger messenger) is false)
-        {
-            messenger = new WeakReferenceMessenger();
-            window.CustomProperties["Messenger"] = messenger;
-        }
-
-        return messenger;
-    }
-
-
 
     public static bool Has(this IEnumerable<GlyphImageFormat> formats, GlyphImageFormat format) =>
         formats?.Any(f => f== format || (f & format) == format) ?? false;
@@ -325,3 +313,61 @@ public static class Extensions
         return Matrix3x2.Identity;
     }
 }
+
+public static class DispatcherQueueExtensions
+{
+    [ThreadStatic]
+    private static DispatcherQueue _threadQueue;
+
+    // Maps CoreDispatcher -> DispatcherQueue across secondary windows without leaking memory
+    private static readonly ConditionalWeakTable<CoreDispatcher, DispatcherQueue> _dispatcherMap = [];
+
+    /// <summary>
+    /// Gets the DispatcherQueue for the given DependencyObject.
+    /// Fast-paths to a ThreadStatic cache when called from the UI thread, 
+    /// or retrieves the mapped queue if called from a background thread.
+    /// </summary>
+    public static DispatcherQueue GetDispatcherQueue(this DependencyObject element)
+    {
+        if (element?.Dispatcher is not CoreDispatcher dispatcher)
+            return null;
+
+        // 1. Ultra-fast path: on the owning UI thread (TLS lookup, zero allocation)
+        if (dispatcher.HasThreadAccess)
+        {
+            if (_threadQueue != null)
+                return _threadQueue;
+
+            _threadQueue = DispatcherQueue.GetForCurrentThread();
+            _dispatcherMap.AddOrUpdate(dispatcher, _threadQueue);
+            return _threadQueue;
+        }
+
+        // 2. Cross-thread path: called from a background thread
+        if (_dispatcherMap.TryGetValue(dispatcher, out DispatcherQueue queue))
+            return queue;
+
+        return null;
+    }
+
+    /// <summary>
+    /// Pre-registers the current thread's DispatcherQueue for its CoreDispatcher.
+    /// Call this once when a window/view is initialized.
+    /// </summary>
+    public static void RegisterCurrentThread(CoreDispatcher dispatcher)
+    {
+        if (dispatcher == null)
+            return;
+
+        _threadQueue ??= DispatcherQueue.GetForCurrentThread();
+        _dispatcherMap.AddOrUpdate(dispatcher, _threadQueue);
+    }
+
+    public static void RegisterCurrentThread(CoreApplicationView view)
+    {
+        if (view == null)
+            return;
+        _dispatcherMap.AddOrUpdate(view.Dispatcher, view.DispatcherQueue);
+    }
+}
+

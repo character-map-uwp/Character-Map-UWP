@@ -12,7 +12,7 @@ public sealed partial class SubsetterView : ViewBase, IInAppNotificationPresente
 
     public SubsetterView() : this(new()) { }
 
-    private NavigationHelper _navHelper { get; } = new();
+    private UWPNavigationHelper _navHelper { get; } = new();
 
     private Debouncer _collectionDebouncer {  get; } = new();
 
@@ -124,7 +124,7 @@ public sealed partial class SubsetterView : ViewBase, IInAppNotificationPresente
 
     void OnNotificationMessage(AppNotificationMessage msg)
     {
-        if (!Dispatcher.HasThreadAccess)
+        if (!HasThreadAccess)
             return;
 
         InAppNotificationHelper.OnMessage(this, msg);

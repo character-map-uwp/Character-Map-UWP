@@ -396,7 +396,7 @@ public static class FlyoutHelper
 
     public static void PrintRequested()
     {
-        WeakReferenceMessenger.Default.Send(new PrintRequestedMessage());
+        ViewService.Current.Messenger.Send(new PrintRequestedMessage());
     }
 
 
@@ -452,7 +452,7 @@ public static class FlyoutHelper
             if (sender is FrameworkElement { Tag: CMFontFamily fnt } f
                 && Properties.GetTag(f) is CharacterRenderingOptions o)
             {
-                WeakReferenceMessenger.Default.Send(new ExportRequestedMessage());
+                ViewService.Current.Messenger.Send(new ExportRequestedMessage());
             }
         }
 

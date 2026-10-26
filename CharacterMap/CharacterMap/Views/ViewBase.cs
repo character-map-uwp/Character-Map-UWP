@@ -1,4 +1,5 @@
-﻿using Windows.UI.Composition;
+﻿using Windows.System;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
@@ -9,6 +10,7 @@ namespace CharacterMap.Views;
 public abstract partial class ViewBase : Page
 {
     protected IMessenger Messenger => WeakReferenceMessenger.Default;
+    protected IMessenger ViewMessenger => field ??= ViewService.Current.Messenger;
 
     /// <summary>
     /// Returns true if the process is running within the VS designer
@@ -22,6 +24,10 @@ public abstract partial class ViewBase : Page
     public Compositor Compositor => field ??= Composition.Compositor;
 
     public IViewService WindowService => Ioc.Default.ViewService();
+
+    public bool HasThreadAccess => DispatcherQueue.HasThreadAccess;
+
+    public DispatcherQueue DispatcherQueue => field ?? this.GetDispatcherQueue();
 
     public ViewBase()
     {
@@ -75,6 +81,7 @@ public abstract partial class ViewBase : Page
     protected virtual void OnUnloaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
     {
         Messenger.UnregisterAll(this);
+        ViewMessenger.UnregisterAll(this);
     }
 
     protected void Register<T>(Action<T> handler) where T : class
@@ -82,9 +89,19 @@ public abstract partial class ViewBase : Page
         Messenger.Register<T>(this, (o, m) => handler(m));
     }
 
+    protected void RegisterOnView<T>(Action<T> handler) where T : class
+    {
+        ViewMessenger.Register<T>(this, (o, m) => handler(m));
+    }
+
     protected void Unregister<T>() where T : class
     {
         Messenger.Unregister<T>(this);
+    }
+
+    protected void UnregisterOnView<T>() where T : class
+    {
+        ViewMessenger.Unregister<T>(this);
     }
 
     protected void RunOnUI(Action a)

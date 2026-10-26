@@ -18,7 +18,7 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
 
     public QuickCompareView() : this(new(false)) { }
 
-    private NavigationHelper _navHelper { get; } = new();
+    private UWPNavigationHelper _navHelper { get; } = new();
 
     public QuickCompareView(QuickCompareArgs args)
     {
@@ -470,7 +470,7 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
 
     private void HandleMessage(CollectionRequestedMessage obj)
     {
-        if (Dispatcher.HasThreadAccess)
+        if (HasThreadAccess)
         {
             obj.Handled = true;
             ViewModel.SelectedCollection = obj.Collection;
@@ -492,14 +492,14 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
             && result.Success
             && result.Collection is not null
             && result.Collection == ViewModel.SelectedCollection
-            && Dispatcher.HasThreadAccess == false)
+            && HasThreadAccess == false)
         {
             // If we don't have thread access, it means another window has added an item to
             // the collection we're currently viewing, and we should refresh our view
             RunOnUI(() => ViewModel.RefreshFontList(ViewModel.SelectedCollection));
         }
 
-        if (!Dispatcher.HasThreadAccess)
+        if (!HasThreadAccess)
             return;
 
         InAppNotificationHelper.OnMessage(this, msg);

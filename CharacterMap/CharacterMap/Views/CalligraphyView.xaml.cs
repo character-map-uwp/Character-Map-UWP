@@ -60,7 +60,7 @@ public sealed partial class CalligraphyView : ViewBase, IInAppNotificationPresen
 
         // This needs to be done on the dispatcher or the 
         // InkButton will not go into the correct VisualState
-        Dispatcher.Enqueue(() =>
+        this.Enqueue(() =>
         {
             Toolbar.ActiveTool = calligraphyPen;
         }, CoreDispatcherPriority.Low);
@@ -189,7 +189,7 @@ public sealed partial class CalligraphyView : ViewBase, IInAppNotificationPresen
 
     void OnNotificationMessage(AppNotificationMessage msg)
     {
-        if (!Dispatcher.HasThreadAccess)
+        if (!HasThreadAccess)
             return;
 
         InAppNotificationHelper.OnMessage(this, msg);
@@ -242,7 +242,7 @@ public sealed partial class CalligraphyView : ViewBase, IInAppNotificationPresen
         if (_addHistoryAnim is not null && args.Item == ViewModel.Histories.Last())
         {
             args.ItemContainer.Opacity = 0;
-            Dispatcher.Enqueue(() =>
+            this.Enqueue(() =>
             {
                 args.ItemContainer.Opacity = 1;
                 HistoryList.ScrollIntoView(ViewModel.Histories.Last());

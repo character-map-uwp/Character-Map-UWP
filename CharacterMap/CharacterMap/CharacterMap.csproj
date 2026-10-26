@@ -259,7 +259,7 @@
     <Compile Include="Helpers\Animation\CompositionProperty.cs" />
     <Compile Include="Helpers\Animation\CompositionNaturalMotion.cs" />
     <Compile Include="Helpers\Animation\FluentAnimation.cs" />
-    <Compile Include="Helpers\NavigationHelper.cs" />
+    <Compile Include="Helpers\UWPNavigationHelper.cs" />
     <Compile Include="Helpers\SystemInformation.cs" />
     <Compile Include="Helpers\Utils\Throttler.cs" />
     <Compile Include="Models\UnicodeRanges.cs" />

@@ -74,10 +74,10 @@ public class UWPWindowInformation : IViewInformation
     public UIElement Content => Window.Content;
     public Compositor Compositor => Window.Current.Compositor;
 
-    public Task RunOnAsync(Action a) => CoreView.Dispatcher.ExecuteAsync(a);
+    public Task RunOnAsync(Action a) => CoreView.DispatcherQueue.EnqueueAsync(a);
     public CoreVirtualKeyStates GetKeyState(VirtualKey key) => CoreView.CoreWindow.GetKeyState(key);
     public WeakReferenceMessenger Messenger => field ??= CoreView.CoreWindow.GetMessenger();
-    public bool HasThreadAccess => CoreView.Dispatcher.HasThreadAccess;
+    public bool HasThreadAccess => CoreView.DispatcherQueue.HasThreadAccess;
 
     public CoreCursor PointerCursor
     {
@@ -140,7 +140,7 @@ public static class ViewServiceExtensions
     {
         public void Enqueue(Action a)
         {
-            view.Content.Dispatcher.Enqueue(a);
+            view.Content.Enqueue(a);
         }
     }
 
@@ -149,6 +149,17 @@ public static class ViewServiceExtensions
         public IViewInformation GetViewInformation()
         {
             return (IViewInformation)window.CustomProperties["Info"];
+        }
+
+        public WeakReferenceMessenger GetMessenger()
+        {
+            if ((window.CustomProperties.TryGetValue("__Messenger", out object value) && value is WeakReferenceMessenger messenger) is false)
+            {
+                messenger = new WeakReferenceMessenger();
+                window.CustomProperties["__Messenger"] = messenger;
+            }
+
+            return messenger;
         }
     }
 
@@ -229,9 +240,9 @@ public class UWPWindowService : IViewService
         {
             TaskCompletionSource<CoreApplicationView> tcs = new();
 
-            await CoreApplication.MainView.Dispatcher.ExecuteAsync(() =>
+            await CoreApplication.MainView.DispatcherQueue.EnqueueAsync(() =>
             {
-                if (CoreApplication.MainView.Dispatcher.HasThreadAccess &&
+                if (CoreApplication.MainView.DispatcherQueue.HasThreadAccess &&
                     CoreApplication.MainView.Properties.ContainsKey(nameof(MainView)))
                     tcs.SetResult(CoreApplication.CreateNewView());
                 else
@@ -245,6 +256,7 @@ public class UWPWindowService : IViewService
         {
             FrameworkElement content = a();
             info = UWPWindowInformation.CreateForCurrentView();
+            DispatcherQueueExtensions.RegisterCurrentThread(info.CoreView);
 
             if (!mainView)
                 info.View.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible);
@@ -273,18 +285,129 @@ public class UWPWindowService : IViewService
             Window.Current.Content = Create();
             Window.Current.Activate();
 
+
             if (Window.Current.Content is FrameworkElement f)
                 f.RequestedTheme = ResourceHelper.GetEffectiveTheme();
 
             await TrySwitchToViewAsync(info, mainView);
         }
 
-        if (view.Dispatcher.HasThreadAccess)
+        if (view.DispatcherQueue.HasThreadAccess)
             await DoCreateAsync();
         else
-            await view.Dispatcher.ExecuteAsync(DoCreateAsync, CoreDispatcherPriority.High);
+            await view.DispatcherQueue.EnqueueAsync(DoCreateAsync, CoreDispatcherPriority.High);
 
         return info;
+    }
+
+    public async Task ReactivateMainAsync()
+    {
+        if (!CoreApplication.MainView.DispatcherQueue.HasThreadAccess)
+        {
+            // Awaiter here is screwed without a *PROPER* dispatcher awaiter
+            await CoreApplication.MainView.DispatcherQueue.EnqueueAsync(
+                () => ReactivateMainAsync());
+
+            await Task.Delay(250);
+            return;
+        }
+        var info = ((UWPWindowInformation)MainView);
+        await ApplicationViewSwitcher.TryShowAsStandaloneAsync(info.View.Id);
+        await Task.Delay(100);
+        await ApplicationViewSwitcher.TryShowAsStandaloneAsync(info.View.Id);
+        await Task.Delay(100);
+
+        info.CoreView.CoreWindow.Activate();
+        info.CoreView.CoreWindow.SizeChanged -= Current_SizeChanged;
+        info.CoreView.CoreWindow.SizeChanged += Current_SizeChanged;
+    }
+
+    public async Task TrySwitchToViewAsync(IViewInformation iinfo, bool main)
+    {
+        UWPWindowInformation info = ((UWPWindowInformation)iinfo);
+
+        if (main && !CoreApplication.MainView.DispatcherQueue.HasThreadAccess)
+        {
+            // Awaiter here is screwed without a *PROPER* dispatcher awaiter
+            await CoreApplication.MainView.DispatcherQueue.EnqueueAsync(
+                () => TrySwitchToViewAsync(info, main));
+
+            return;
+        }
+
+        if (main && CoreApplication.MainView.CoreWindow.Visible)
+        {
+            await ApplicationViewSwitcher.SwitchAsync(
+                info.View.Id,
+                ((UWPWindowInformation)CoreApplication.MainView.Properties[nameof(MainView)]).View.Id,
+                ApplicationViewSwitchingOptions.ConsolidateViews).AsTask();
+
+            return;
+        }
+
+        if (iinfo == MainView)
+            await this.ActivateMainWindowAsync();
+
+        //await info.CoreView.Dispatcher.ExecuteAsync(() =>
+        //{
+        //    info.CoreView.Activated -= CoreView_Activated;
+        //    info.CoreView.Activated += CoreView_Activated;
+        //});
+
+        var view = CoreApplication.Views.FirstOrDefault(v => v != CoreApplication.MainView) ?? CoreApplication.MainView;
+        await view.DispatcherQueue.EnqueueAsync(async () =>
+        {
+            await ApplicationViewSwitcher.TryShowAsStandaloneAsync(info.View.Id, ViewSizePreference.Default);
+        });
+    }
+
+    public async Task TryShowAsync(IViewInformation info)
+    {
+        UWPWindowInformation window = ((UWPWindowInformation)info);
+        _ = ApplicationViewSwitcher.TryShowAsStandaloneAsync(window.View.Id);
+        window.CoreView.CoreWindow.Activate();
+    }
+
+
+    public void CloseCurrentView()
+    {
+        var view = CoreApplication.GetCurrentView();
+
+        CoreApplication.MainView.DispatcherQueue.Enqueue(() =>
+        {
+            if (CoreApplication.Views.Count == 1)
+                Application.Current.Exit();
+            else if (CoreApplication.Views.Count == 2 && !CoreApplication.MainView.CoreWindow.Visible)
+                Application.Current.Exit();
+            else
+            {
+                view.DispatcherQueue.Enqueue(Window.Current.Close, CoreDispatcherPriority.High);
+            }
+        }, CoreDispatcherPriority.High);
+    }
+
+    public IViewInformation CurrentView => Window.Current.CoreWindow.GetViewInformation();
+
+
+
+
+
+
+    private static void CoreView_Activated(CoreApplicationView sender, IActivatedEventArgs args)
+    {
+        sender.Activated -= CoreView_Activated;
+        sender.CoreWindow.DispatcherQueue.EnqueueAsync(async () =>
+        {
+            sender.CoreWindow.SizeChanged -= Current_SizeChanged;
+            sender.CoreWindow.SizeChanged += Current_SizeChanged;
+            await ApplicationViewSwitcher.SwitchAsync(ApplicationView.GetForCurrentView().Id);
+        });
+    }
+
+    private static void Current_SizeChanged(object sender, WindowSizeChangedEventArgs e)
+    {
+        if (sender is CoreWindow window)
+            window.GetMessenger().Send(new WindowResizingMessage(window.DispatcherQueue));
     }
 
     private void Manager_Released(object sender, EventArgs e)
@@ -310,9 +433,9 @@ public class UWPWindowService : IViewService
             finalizer.Start();
         };
 
-        info.CoreView.Dispatcher.ExecuteAsync(async () =>
+        info.CoreView.DispatcherQueue.EnqueueAsync(async () =>
         {
-            info.CoreView.CoreWindow.GetMessenger().Reset();
+            info.Messenger.Reset();
 
             if (Window.Current.Content is IWindowContent c)
                 c.Cleanup();
@@ -342,110 +465,6 @@ public class UWPWindowService : IViewService
             Window.Current.Close();
         });
     }
-
-    private static void Current_SizeChanged(object sender, WindowSizeChangedEventArgs e)
-    {
-        if (sender is CoreWindow window)
-            window.GetMessenger().Send(new WindowResizingMessage(window.Dispatcher));
-    }
-
-    public async Task ReactivateMainAsync()
-    {
-        if (!CoreApplication.MainView.Dispatcher.HasThreadAccess)
-        {
-            // Awaiter here is screwed without a *PROPER* dispatcher awaiter
-            await CoreApplication.MainView.Dispatcher.ExecuteAsync(
-                () => ReactivateMainAsync());
-
-            await Task.Delay(250);
-            return;
-        }
-        var info = ((UWPWindowInformation)MainView);
-        await ApplicationViewSwitcher.TryShowAsStandaloneAsync(info.View.Id);
-        await Task.Delay(100);
-        await ApplicationViewSwitcher.TryShowAsStandaloneAsync(info.View.Id);
-        await Task.Delay(100);
-
-        info.CoreView.CoreWindow.Activate();
-        info.CoreView.CoreWindow.SizeChanged -= Current_SizeChanged;
-        info.CoreView.CoreWindow.SizeChanged += Current_SizeChanged;
-    }
-
-    public async Task TrySwitchToViewAsync(IViewInformation iinfo, bool main)
-    {
-        UWPWindowInformation info = ((UWPWindowInformation)iinfo);
-
-        if (main && !CoreApplication.MainView.Dispatcher.HasThreadAccess)
-        {
-            // Awaiter here is screwed without a *PROPER* dispatcher awaiter
-            await CoreApplication.MainView.Dispatcher.ExecuteAsync(
-                () => TrySwitchToViewAsync(info, main));
-
-            return;
-        }
-
-        if (main && CoreApplication.MainView.CoreWindow.Visible)
-        {
-            await ApplicationViewSwitcher.SwitchAsync(
-                info.View.Id,
-                ((UWPWindowInformation)CoreApplication.MainView.Properties[nameof(MainView)]).View.Id,
-                ApplicationViewSwitchingOptions.ConsolidateViews).AsTask();
-
-            return;
-        }
-
-        if (iinfo == MainView)
-            await this.ActivateMainWindowAsync();
-
-        //await info.CoreView.Dispatcher.ExecuteAsync(() =>
-        //{
-        //    info.CoreView.Activated -= CoreView_Activated;
-        //    info.CoreView.Activated += CoreView_Activated;
-        //});
-
-        var view = CoreApplication.Views.FirstOrDefault(v => v != CoreApplication.MainView) ?? CoreApplication.MainView;
-        await view.Dispatcher.ExecuteAsync(async () =>
-        {
-            await ApplicationViewSwitcher.TryShowAsStandaloneAsync(info.View.Id, ViewSizePreference.Default);
-        });
-    }
-
-    public async Task TryShowAsync(IViewInformation info)
-    {
-        UWPWindowInformation window = ((UWPWindowInformation)info);
-        _ = ApplicationViewSwitcher.TryShowAsStandaloneAsync(window.View.Id);
-        window.CoreView.CoreWindow.Activate();
-    }
-
-    private static void CoreView_Activated(CoreApplicationView sender, IActivatedEventArgs args)
-    {
-        sender.Activated -= CoreView_Activated;
-        sender.CoreWindow.Dispatcher.ExecuteAsync(async () =>
-        {
-            sender.CoreWindow.SizeChanged -= Current_SizeChanged;
-            sender.CoreWindow.SizeChanged += Current_SizeChanged;
-            await ApplicationViewSwitcher.SwitchAsync(ApplicationView.GetForCurrentView().Id);
-        });
-    }
-
-    public void CloseCurrentView()
-    {
-        var view = CoreApplication.GetCurrentView();
-
-        CoreApplication.MainView.Dispatcher.Enqueue(() =>
-        {
-            if (CoreApplication.Views.Count == 1)
-                Application.Current.Exit();
-            else if (CoreApplication.Views.Count == 2 && !CoreApplication.MainView.CoreWindow.Visible)
-                Application.Current.Exit();
-            else
-            {
-                view.Dispatcher.Enqueue(Window.Current.Close, CoreDispatcherPriority.High);
-            }
-        }, CoreDispatcherPriority.High);
-    }
-
-    public IViewInformation CurrentView => Window.Current.CoreWindow.GetViewInformation();
 }
 
 // Workaround for Windowing bug noted in 

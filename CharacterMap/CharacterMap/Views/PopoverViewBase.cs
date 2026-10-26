@@ -19,7 +19,7 @@ public partial class PopoverViewBase : ViewBase
 
     protected FontMapView _fontMap = null;
 
-    protected NavigationHelper _navHelper { get; } = new NavigationHelper();
+    protected UWPNavigationHelper _navHelper { get; } = new UWPNavigationHelper();
 
     public PopoverViewBase()
     {
@@ -43,6 +43,6 @@ public partial class PopoverViewBase : ViewBase
         _fontMap = null;
 
         TitleBarHelper.RestoreDefaultTitleBar();
-        Messenger.Send(new ModalClosedMessage());
+        ViewMessenger.Send(new ModalClosedMessage());
     }
 }

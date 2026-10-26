@@ -90,10 +90,20 @@ public static class Utils
 
     public static void RunOnDispatcher(this DependencyObject d, Action a)
     {
-        if (d.Dispatcher.HasThreadAccess)
+        if (d.HasThreadAccess())
             a();
         else
-            _ = d.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => a());
+            d.Enqueue(a);
+    }
+
+    public static DispatcherQueuePriority AsQueuePriority(this CoreDispatcherPriority p)
+    {
+        return p switch
+        {
+            CoreDispatcherPriority.High => DispatcherQueuePriority.High,
+            CoreDispatcherPriority.Normal => DispatcherQueuePriority.Normal,
+            _ => DispatcherQueuePriority.Low
+        };
     }
 
     /// <summary>
@@ -103,12 +113,63 @@ public static class Utils
     /// <param name="a"></param>
     public static void Enqueue(this DependencyObject d, Action a, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
     {
-        d.Dispatcher.Enqueue(a, priority);
+        d.GetDispatcherQueue().Enqueue(a, priority);
     }
 
-    public static void Enqueue(this CoreDispatcher d, Action a, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
+    public static void Enqueue(this DispatcherQueue d, Action a, CoreDispatcherPriority priority = CoreDispatcherPriority.Normal)
     {
-        _ = d.RunAsync(priority, () => a());
+        d.TryEnqueue(priority.AsQueuePriority(), a.Invoke);
+    }
+
+    public static Task EnqueueAsync(this DependencyObject d, Action action, CoreDispatcherPriority p = CoreDispatcherPriority.Normal)
+    {
+        return d.GetDispatcherQueue().EnqueueAsync(action, p);
+    }
+
+    public static Task EnqueueAsync(this DispatcherQueue q, Action action, CoreDispatcherPriority p = CoreDispatcherPriority.Normal)
+    {
+        TaskCompletionSource<bool> tcs = new();
+
+        var b = q.TryEnqueue(p.AsQueuePriority(), () =>
+        {
+            try
+            {
+                action();
+                tcs.SetResult(true);
+            }
+            catch (Exception e)
+            {
+                tcs.SetException(e);
+            }
+        });
+
+        if (b is false)
+            tcs.TrySetResult(false);
+
+        return tcs.Task;
+    }
+
+    public static Task EnqueueAsync(this DispatcherQueue d, Func<Task> action, CoreDispatcherPriority p = CoreDispatcherPriority.Normal)
+    {
+        TaskCompletionSource<bool> tcs = new();
+
+        var b = d.TryEnqueue(p.AsQueuePriority(), async () =>
+        {
+            try
+            {
+                await action();
+                tcs.SetResult(true);
+            }
+            catch (Exception e)
+            {
+                tcs.SetException(e);
+            }
+        });
+
+        if (b is false)
+            tcs.TrySetResult(false);
+
+        return tcs.Task;
     }
 
     public static void ToggleFullScreenMode()
@@ -122,7 +183,7 @@ public static class Utils
 
     public static bool IsKeyDown(VirtualKey key)
     {
-        var state = CoreWindow.GetForCurrentThread().GetKeyState(key);
+        var state = ViewService.Current.GetKeyState(key);
         return (state & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down;
     }
 

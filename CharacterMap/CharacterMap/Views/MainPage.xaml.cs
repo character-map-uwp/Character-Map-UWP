@@ -22,7 +22,7 @@ namespace CharacterMap.Views;
 [DependencyProperty<double>("FontListFontSize", 12d)]
 public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IPopoverPresenter
 {
-    public static CoreDispatcher MainDispatcher { get; private set; }
+    public static DispatcherQueue MainDispatcher { get; private set; }
 
     public MainViewModel ViewModel { get; }
 
@@ -49,7 +49,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         if (args is null)
         {
             ViewModel = Ioc.Default.GetService<MainViewModel>();
-            MainDispatcher = Dispatcher;
+            MainDispatcher = this.GetDispatcherQueue();
             Register<EditSuggestionsRequested>(m => ShowEditSuggestions());
             Register<AdvancedOptionsRequested>(m => ShowAdvancedOptions());
         }
@@ -71,31 +71,24 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
         Register<CollectionsUpdatedMessage>(OnCollectionsUpdated);
         Register<AppSettingsChangedMessage>(OnAppSettingsChanged);
-        Register<ModalClosedMessage>(m =>
+        RegisterOnView<ModalClosedMessage>(m =>
         {
-            if (Dispatcher.HasThreadAccess)
-                OnModalClosed();
+            OnModalClosed();
         });
-        Register<PrintRequestedMessage>(m =>
+        RegisterOnView<PrintRequestedMessage>(m =>
         {
-            if (Dispatcher.HasThreadAccess)
-            {
-                PrintView.Show(this);
+            PrintView.Show(this);
 
-                // NB: Printing works by using an off-screen canvas inside
-                //     the FontMapView. OnModelOpened hides this canvas
-                //     preventing printing from working. So in the case of 
-                //     printing, we do *not* hide the FontMap
-                OnModalOpened(false);
-            }
+            // NB: Printing works by using an off-screen canvas inside
+            //     the FontMapView. OnModelOpened hides this canvas
+            //     preventing printing from working. So in the case of 
+            //     printing, we do *not* hide the FontMap
+            OnModalOpened(false);
         });
-        Register<ExportRequestedMessage>(m =>
+        RegisterOnView<ExportRequestedMessage>(m =>
         {
-            if (Dispatcher.HasThreadAccess)
-            {
-                ExportView.Show(this);
-                OnModalOpened();
-            }
+            ExportView.Show(this);
+            OnModalOpened();
         });
 
         this.SizeChanged += MainPage_SizeChanged;
@@ -317,7 +310,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             // Allow initial layout, animations, and first frame to settle
             // then run some post-launch memory cleanup
             await Task.Delay(3000);
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            this.Enqueue(() =>
             {
                 // 1. Reclaim managed startup garbage
                 GC.Collect(2, GCCollectionMode.Forced, true, true);
@@ -325,7 +318,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
                 GC.Collect(2, GCCollectionMode.Forced, true, true);
                 // 2. Trim DirectX driver buffers and working set
                 CharacterMapCX.CompositionDeviceManager.Trim();
-            });
+            }, CoreDispatcherPriority.Low);
         }
     }
 
@@ -339,7 +332,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         object target = _blockRefreshScroll;
         _blockRefreshScroll = null;
 
-        Dispatcher.Enqueue(async () =>
+        this.Enqueue(async () =>
         {
             await Task.Delay(50);
             if (target is null)
@@ -581,7 +574,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
     {
         if (ViewModel.InitialLoad.IsCompleted)
         {
-            if (Dispatcher.HasThreadAccess)
+            if (HasThreadAccess)
                 ViewModel.RefreshFontList(ViewModel.SelectedCollection);
             else
                 RunOnUI(() => ViewModel.RefreshFontList(ViewModel.SelectedCollection));
@@ -897,7 +890,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
     void OnFontImportRequest(ImportMessage msg)
     {
-        CoreApplication.MainView.Dispatcher.Enqueue(async () =>
+        MainDispatcher.Enqueue(async () =>
         {
             ViewModel.IsLoadingFonts = true;
             try

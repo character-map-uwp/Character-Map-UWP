@@ -148,7 +148,7 @@ public sealed partial class XamlTitleBar : ContentControl
         TemplateSettings.Messenger.Register<AppSettingsChangedMessage>(this, (o, m) => OnAppSettingsChanged(m));
         TemplateSettings.Messenger.Register<string, string>(this, "TitleUpdated", (o, m) =>
         {
-            if (Dispatcher.HasThreadAccess)
+            if (this.HasThreadAccess())
                 UpdateTitle();
         });
 

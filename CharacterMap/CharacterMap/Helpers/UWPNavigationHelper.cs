@@ -4,7 +4,7 @@ using Windows.UI.Xaml;
 
 namespace CharacterMap.Helpers;
 
-public class NavigationHelper
+public class UWPNavigationHelper
 {
     public event EventHandler BackRequested;
 

@@ -127,7 +127,7 @@ public class MicaAltBrush : XamlCompositionBrushBase, IXamlCompositionBrush
 
     private void OnColorValuesChanged(UISettings sender, object args)
     {
-        _ = Dispatcher?.RunAsync(CoreDispatcherPriority.Normal, () => UpdateTheme());
+        this.Enqueue(UpdateTheme);
     }
 
     private void UpdateTheme()

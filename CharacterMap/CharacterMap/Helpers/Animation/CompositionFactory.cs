@@ -3,6 +3,7 @@
 using Microsoft.Graphics.Canvas.Effects;
 using System.Globalization;
 using Windows.Graphics.Effects;
+using Windows.System;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
@@ -1027,7 +1028,7 @@ public partial class CompositionFactory : DependencyObject
     //}
 }
 
-public record WindowResizingMessage(CoreDispatcher Dispatcher);
+public record WindowResizingMessage(DispatcherQueue Dispatcher);
 
 public class ResizeHelper : IDisposable
 {
@@ -1052,7 +1053,7 @@ public class ResizeHelper : IDisposable
         sender.Loading -= Target_Loading;
         Messenger.Register<WindowResizingMessage>(this, (o, m) =>
         {
-            if (m.Dispatcher != _target.Dispatcher)
+            if (m.Dispatcher != _target.GetDispatcherQueue())
                 return;
 
             CompositionFactory.SetUseSynchronisedReposition(_target, false);

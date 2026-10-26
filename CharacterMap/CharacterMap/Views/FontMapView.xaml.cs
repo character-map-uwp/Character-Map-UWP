@@ -112,19 +112,17 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
         Register<AppNotificationMessage>(OnNotificationMessage);
         Register<AppSettingsChangedMessage>(OnAppSettingsChanged);
-        Register<PrintRequestedMessage>(m =>
+        RegisterOnView<PrintRequestedMessage>(m =>
         {
-            if (Dispatcher.HasThreadAccess)
-                TryPrint();
+            TryPrint();
         });
-        Register<ExportRequestedMessage>(m =>
+        RegisterOnView<ExportRequestedMessage>(m =>
         {
-            if (Dispatcher.HasThreadAccess)
-                TryExport();
+            TryExport();
         });
-        Register<CopyToClipboardMessage>(async m =>
+        RegisterOnView<CopyToClipboardMessage>(async m =>
         {
-            if (Dispatcher.HasThreadAccess)
+            if (HasThreadAccess)
                 await ViewModel.RequestCopyToClipboardAsync(m);
         });
 
@@ -457,7 +455,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                     ExportManager.RequestExportFontFile(v);
                     break;
                 case VirtualKey.E when ViewModel.SelectedFace is CMFontFace:
-                    Messenger.Send(new ExportRequestedMessage());
+                    ViewMessenger.Send(new ExportRequestedMessage());
                     break;
                 case VirtualKey.Add:
                 case (VirtualKey)187:
@@ -521,7 +519,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             VisualStateManager.GoToState(this, FlatListState.Name, false);
         }
 
-        Dispatcher.Enqueue(() =>
+        this.Enqueue(() =>
         {
             if (item is not null)
                 CharGrid.SelectedItem = item;
@@ -1082,7 +1080,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private Task SetCharacterSelectionAsync()
     {
-        return Dispatcher.ExecuteAsync(() =>
+        return this.EnqueueAsync(() =>
         {
             if (null != CharGrid.SelectedItem)
             {
@@ -1417,7 +1415,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     void OnNotificationMessage(AppNotificationMessage msg)
     {
-        if (Dispatcher.HasThreadAccess && !this.IsStandalone)
+        if (this.HasThreadAccess && !this.IsStandalone)
             return;
 
         InAppNotificationHelper.OnMessage(this, msg);

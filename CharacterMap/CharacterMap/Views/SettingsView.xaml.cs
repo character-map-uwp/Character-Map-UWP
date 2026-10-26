@@ -23,7 +23,7 @@ public sealed partial class SettingsView : ViewBase
 
     private bool _themeSupportsDark = false;
 
-    private NavigationHelper _navHelper { get; } = new();
+    private UWPNavigationHelper _navHelper { get; } = new();
 
     private int _requested = 0;
 
@@ -106,7 +106,7 @@ public sealed partial class SettingsView : ViewBase
         TitleBarHelper.RestoreDefaultTitleBar();
         IsOpen = false;
         this.Visibility = Visibility.Collapsed;
-        Messenger.Send(new ModalClosedMessage());
+        ViewMessenger.Send(new ModalClosedMessage());
     }
 
     void OnAppSettingsUpdated(AppSettingsChangedMessage msg)

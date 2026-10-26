@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Runtime.ConstrainedExecution;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation.Diagnostics;
+using Windows.System;
 
 namespace CharacterMap.ViewModels;
 

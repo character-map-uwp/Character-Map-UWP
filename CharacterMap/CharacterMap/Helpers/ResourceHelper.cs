@@ -208,7 +208,7 @@ public static class ResourceHelper
 
         foreach (var element in items)
         {
-            if (element.Dispatcher.HasThreadAccess)
+            if (element.HasThreadAccess())
                 TryResolveThemeStyle2(element);
             else
             {
