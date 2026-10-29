@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <set>
+#include <unordered_map>
 #include <algorithm>
 #include "DWriteLigature.h"
 #include "DWriteOpenType.h"
@@ -33,6 +33,11 @@ namespace CharacterMapCX
 				return LigatureGlyph < other.LigatureGlyph;
 			return Components < other.Components;
 		}
+
+		bool operator==(const RawLigature& other) const
+		{
+			return LigatureGlyph == other.LigatureGlyph && Components == other.Components;
+		}
 	};
 
 	struct RawSubstitution
@@ -51,6 +56,14 @@ namespace CharacterMapCX
 			if (InputSequence != other.InputSequence)
 				return InputSequence < other.InputSequence;
 			return TargetSequence < other.TargetSequence;
+		}
+
+		bool operator==(const RawSubstitution& other) const
+		{
+			return InputGlyph == other.InputGlyph &&
+				TargetGlyph == other.TargetGlyph &&
+				InputSequence == other.InputSequence &&
+				TargetSequence == other.TargetSequence;
 		}
 	};
 
@@ -121,6 +134,7 @@ namespace CharacterMapCX
 	private:
 		const BYTE* m_data = nullptr;
 		uint32 m_size = 0;
+		bool m_featureListPopulated = false;
 		std::vector<std::pair<uint32, std::vector<uint16>>> m_featureList;
 		IVectorView<DWriteLigatureFeature^>^ m_ligatureFeatures = nullptr;
 		IVectorView<DWriteOpenTypeFeatureGroup^>^ m_openTypeFeatures = nullptr;
@@ -145,7 +159,6 @@ namespace CharacterMapCX
 		void ParseFeatures()
 		{
 			Map<UINT32, UINT32>^ map = ref new Map<UINT32, UINT32>();
-			std::map<uint32, size_t> featureTagIndices;
 
 			if (FeatureOffset > 0 && (size_t)FeatureOffset + 2 <= m_size)
 			{
@@ -170,22 +183,63 @@ namespace CharacterMapCX
 
 					uint32 dwriteTag = DWRITE_MAKE_OPENTYPE_TAG(c0, c1, c2, c3);
 
-					uint16 featOffset = 0;
-					ReadUInt16(recOffset + 4, featOffset);
-
 					if (!map->HasKey(dwriteTag))
 						map->Insert(dwriteTag, dwriteTag);
+				}
+			}
 
-					// Read Feature Table
-					size_t featTableOffset = (size_t)FeatureOffset + featOffset;
-					if (featTableOffset + 4 <= m_size)
+			FeatureMap = map->GetView();
+		}
+
+		void EnsureFeatureList()
+		{
+			if (m_featureListPopulated)
+				return;
+			m_featureListPopulated = true;
+
+			if (FeatureOffset == 0 || (size_t)FeatureOffset + 2 > m_size)
+				return;
+
+			uint16 featureCount = 0;
+			ReadUInt16(FeatureOffset, featureCount);
+
+			std::unordered_map<uint32, size_t> featureTagIndices;
+			featureTagIndices.reserve(featureCount);
+
+			size_t recordsStart = (size_t)FeatureOffset + 2;
+			for (uint16 i = 0; i < featureCount; i++)
+			{
+				size_t recOffset = recordsStart + (size_t)i * 6;
+				if (recOffset + 6 > m_size)
+					break;
+
+				BYTE c0 = m_data[recOffset];
+				BYTE c1 = m_data[recOffset + 1];
+				BYTE c2 = m_data[recOffset + 2];
+				BYTE c3 = m_data[recOffset + 3];
+
+				// Check not a design-time feature
+				if (c0 == 'z' && c1 == '0')
+					continue;
+
+				uint32 dwriteTag = DWRITE_MAKE_OPENTYPE_TAG(c0, c1, c2, c3);
+
+				uint16 featOffset = 0;
+				ReadUInt16(recOffset + 4, featOffset);
+
+				// Read Feature Table
+				size_t featTableOffset = (size_t)FeatureOffset + featOffset;
+				if (featTableOffset + 4 <= m_size)
+				{
+					uint16 lookupCount = 0;
+					ReadUInt16(featTableOffset + 2, lookupCount);
+
+					size_t indicesStart = featTableOffset + 4;
+					auto it = featureTagIndices.find(dwriteTag);
+					if (it == featureTagIndices.end())
 					{
-						uint16 lookupCount = 0;
-						ReadUInt16(featTableOffset + 2, lookupCount);
-
 						std::vector<uint16> lookups;
 						lookups.reserve(lookupCount);
-						size_t indicesStart = featTableOffset + 4;
 						for (uint16 li = 0; li < lookupCount; li++)
 						{
 							uint16 lIdx = 0;
@@ -193,28 +247,28 @@ namespace CharacterMapCX
 								lookups.push_back(lIdx);
 						}
 
-						auto it = featureTagIndices.find(dwriteTag);
-						if (it == featureTagIndices.end())
+						featureTagIndices[dwriteTag] = m_featureList.size();
+						m_featureList.push_back({ dwriteTag, std::move(lookups) });
+					}
+					else
+					{
+						auto& existing = m_featureList[it->second].second;
+						for (uint16 li = 0; li < lookupCount; li++)
 						{
-							featureTagIndices[dwriteTag] = m_featureList.size();
-							m_featureList.push_back({ dwriteTag, std::move(lookups) });
-						}
-						else
-						{
-							auto& existing = m_featureList[it->second].second;
-							for (auto l : lookups)
-								existing.push_back(l);
+							uint16 lIdx = 0;
+							if (ReadUInt16(indicesStart + (size_t)li * 2, lIdx))
+								existing.push_back(lIdx);
 						}
 					}
 				}
 			}
-
-			FeatureMap = map->GetView();
 		}
 
 		IVectorView<DWriteLigatureFeature^>^ ParseLigatures()
 		{
-			std::map<uint16, std::vector<RawLigature>> lookupLigaturesCache;
+			EnsureFeatureList();
+
+			std::unordered_map<uint16, std::vector<RawLigature>> lookupLigaturesCache;
 			Vector<DWriteLigatureFeature^>^ featuresVector = ref new Vector<DWriteLigatureFeature^>();
 
 			for (const auto& feat : m_featureList)
@@ -222,7 +276,7 @@ namespace CharacterMapCX
 				uint32 tag = feat.first;
 				const auto& lookups = feat.second;
 
-				std::set<RawLigature> uniqueLigatures;
+				std::vector<RawLigature> uniqueLigatures;
 
 				for (uint16 lookupIdx : lookups)
 				{
@@ -231,15 +285,18 @@ namespace CharacterMapCX
 					{
 						std::vector<RawLigature> ligs;
 						ParseLookupForLigatures(lookupIdx, ligs);
-						it = lookupLigaturesCache.insert({ lookupIdx, std::move(ligs) }).first;
+						it = lookupLigaturesCache.emplace(lookupIdx, std::move(ligs)).first;
 					}
 
-					for (const auto& lig : it->second)
-						uniqueLigatures.insert(lig);
+					const auto& cachedLigs = it->second;
+					uniqueLigatures.insert(uniqueLigatures.end(), cachedLigs.begin(), cachedLigs.end());
 				}
 
 				if (!uniqueLigatures.empty())
 				{
+					std::sort(uniqueLigatures.begin(), uniqueLigatures.end());
+					uniqueLigatures.erase(std::unique(uniqueLigatures.begin(), uniqueLigatures.end()), uniqueLigatures.end());
+
 					DWriteLigatureFeature^ feature = ref new DWriteLigatureFeature();
 					feature->FeatureTag = tag;
 					feature->FeatureName = DirectWrite::GetFeatureName(tag);
@@ -417,7 +474,9 @@ namespace CharacterMapCX
 
 		IVectorView<DWriteOpenTypeFeatureGroup^>^ ParseOpenTypeSubstitutions()
 		{
-			std::map<uint16, std::vector<RawSubstitution>> lookupSubstitutionsCache;
+			EnsureFeatureList();
+
+			std::unordered_map<uint16, std::vector<RawSubstitution>> lookupSubstitutionsCache;
 			Vector<DWriteOpenTypeFeatureGroup^>^ featuresVector = ref new Vector<DWriteOpenTypeFeatureGroup^>();
 
 			for (const auto& feat : m_featureList)
@@ -425,7 +484,7 @@ namespace CharacterMapCX
 				uint32 tag = feat.first;
 				const auto& lookups = feat.second;
 
-				std::set<RawSubstitution> uniqueSubs;
+				std::vector<RawSubstitution> uniqueSubs;
 
 				for (uint16 lookupIdx : lookups)
 				{
@@ -433,17 +492,20 @@ namespace CharacterMapCX
 					if (it == lookupSubstitutionsCache.end())
 					{
 						std::vector<RawSubstitution> subs;
-						std::set<uint16> visited;
+						std::vector<uint16> visited;
 						ParseLookupForSubstitutions(lookupIdx, subs, visited);
-						it = lookupSubstitutionsCache.insert({ lookupIdx, std::move(subs) }).first;
+						it = lookupSubstitutionsCache.emplace(lookupIdx, std::move(subs)).first;
 					}
 
-					for (const auto& s : it->second)
-						uniqueSubs.insert(s);
+					const auto& cachedSubs = it->second;
+					uniqueSubs.insert(uniqueSubs.end(), cachedSubs.begin(), cachedSubs.end());
 				}
 
 				if (!uniqueSubs.empty())
 				{
+					std::sort(uniqueSubs.begin(), uniqueSubs.end());
+					uniqueSubs.erase(std::unique(uniqueSubs.begin(), uniqueSubs.end()), uniqueSubs.end());
+
 					DWriteOpenTypeFeatureGroup^ group = ref new DWriteOpenTypeFeatureGroup();
 					group->FeatureTag = tag;
 					group->Tag = DirectWrite::GetFeatureTag(tag);
@@ -482,11 +544,11 @@ namespace CharacterMapCX
 			return featuresVector->GetView();
 		}
 
-		void ParseLookupForSubstitutions(uint16 lookupIndex, std::vector<RawSubstitution>& outSubstitutions, std::set<uint16>& visitedLookups)
+		void ParseLookupForSubstitutions(uint16 lookupIndex, std::vector<RawSubstitution>& outSubstitutions, std::vector<uint16>& visitedLookups)
 		{
-			if (visitedLookups.find(lookupIndex) != visitedLookups.end())
+			if (std::find(visitedLookups.begin(), visitedLookups.end(), lookupIndex) != visitedLookups.end())
 				return;
-			visitedLookups.insert(lookupIndex);
+			visitedLookups.push_back(lookupIndex);
 
 			if (LookupOffset == 0 || (size_t)LookupOffset + 2 > m_size)
 				return;
@@ -523,7 +585,7 @@ namespace CharacterMapCX
 			}
 		}
 
-		void ParseSubtableForSubstitutions(uint16 lookupType, size_t subTableOffset, std::vector<RawSubstitution>& outSubstitutions, std::set<uint16>& visitedLookups)
+		void ParseSubtableForSubstitutions(uint16 lookupType, size_t subTableOffset, std::vector<RawSubstitution>& outSubstitutions, std::vector<uint16>& visitedLookups)
 		{
 			if (lookupType == 7)
 			{
@@ -653,7 +715,7 @@ namespace CharacterMapCX
 						RawSubstitution sub;
 						sub.InputGlyph = coverageGlyphs[i];
 						sub.TargetGlyph = targetSeq[0];
-						sub.TargetSequence = targetSeq;
+						sub.TargetSequence = std::move(targetSeq);
 						outSubstitutions.push_back(std::move(sub));
 					}
 				}
@@ -824,13 +886,14 @@ namespace CharacterMapCX
 					}
 
 					// Parse nested lookups to build substitution map per sequence index
-					std::map<uint16, std::map<uint16, uint16>> seqSubstMaps;
+					std::unordered_map<uint16, std::unordered_map<uint16, uint16>> seqSubstMaps;
 					for (const auto& rec : substRecords)
 					{
 						std::vector<RawSubstitution> nestedSubs;
 						ParseLookupForSubstitutions(rec.lookupIndex, nestedSubs, visitedLookups);
+						auto& subMap = seqSubstMaps[rec.seqIndex];
 						for (const auto& ns : nestedSubs)
-							seqSubstMaps[rec.seqIndex][ns.InputGlyph] = ns.TargetGlyph;
+							subMap[ns.InputGlyph] = ns.TargetGlyph;
 					}
 
 					if (inputGlyphCount == 1)
@@ -900,7 +963,7 @@ namespace CharacterMapCX
 									sub.InputGlyph = inSeq[0];
 									sub.TargetGlyph = tgtSeq[0];
 									sub.InputSequence = inSeq;
-									sub.TargetSequence = tgtSeq;
+									sub.TargetSequence = std::move(tgtSeq);
 									outSubstitutions.push_back(std::move(sub));
 								}
 							}

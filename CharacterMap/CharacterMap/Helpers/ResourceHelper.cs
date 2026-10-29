@@ -12,6 +12,7 @@ public enum DesignStyle : int
     Fluent11 = 1,
     ClassicWindows = 2,
     ZuneDesktop = 3,
+    Material = 4
 }
 
 public enum FontListFontSize

@@ -194,9 +194,6 @@ public partial class CMFontFace : IDisposable
 
     public uint[] GetGlyphUnicodeIndexes()
     {
-        if (Characters is not null)
-            return Characters.Select(c => c.UnicodeIndex).ToArray();
-
         DWriteUnicodeRange[] ranges = UnicodeRanges;
         int count = 0;
         for (int i = 0; i < ranges.Length; i++)

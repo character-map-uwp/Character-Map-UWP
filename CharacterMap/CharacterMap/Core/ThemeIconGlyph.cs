@@ -16,7 +16,7 @@ public class OptionalResource : MarkupExtension
         if (ResourceHelper.TryGet(Key, out object t))
             return t;
 
-        return null;
+        return DependencyProperty.UnsetValue;
     }
 }
 

@@ -1,3 +1,4 @@
+using CharacterMapCX;
 using SQLite;
 
 namespace CharacterMap.Services;
@@ -14,6 +15,207 @@ public class SQLReaderMappingAttribute<T>(string Property, Type readType = null,
 
 public static class SQLite3Extensions
 {
+    /// <summary>
+    /// Ranges separated by at most this many codepoints are coalesced into a single
+    /// PRIMARY KEY B-tree scan (likely on the same leaf page) and filtered in memory,
+    /// while larger gaps trigger a new B-tree seek to skip unmapped table regions.
+    /// </summary>
+    private const uint COALESCE_GAP_THRESHOLD = 128;
+
+    public static bool ContainsCodepoint(DWriteUnicodeRange[] ranges, uint cp)
+    {
+        if (ranges is null || ranges.Length == 0)
+            return false;
+
+        int low = 0;
+        int high = ranges.Length - 1;
+
+        while (low <= high)
+        {
+            int mid = (low + high) >>> 1;
+            DWriteUnicodeRange r = ranges[mid];
+
+            if (cp < r.First)
+                high = mid - 1;
+            else if (cp > r.Last)
+                low = mid + 1;
+            else
+                return true;
+        }
+
+        return false;
+    }
+
+    private static bool ContainsUnicodeIndex(List<IGlyphData> list, int countToCheck, int unicodeIndex)
+    {
+        for (int i = 0; i < countToCheck; i++)
+        {
+            if (list[i].UnicodeIndex == unicodeIndex)
+                return true;
+        }
+
+        return false;
+    }
+
+    public static void SearchGlyphDescriptions(
+        this SQLiteConnection c,
+        string table,
+        DWriteUnicodeRange[] ranges,
+        string likeQuery,
+        int targetTotalCount,
+        List<IGlyphData> results)
+    {
+        if (ranges is null || ranges.Length == 0 || results.Count >= targetTotalCount)
+            return;
+
+        int existingCount = results.Count;
+        bool isUnicodeTable = table == nameof(UnicodeGlyphData);
+
+        string sql = $"SELECT Ix, Hx, Description FROM \"{table}\" WHERE Ix BETWEEN ? AND ? AND Description LIKE ?";
+        SQLiteCommand cmd = c.CreateCommand(sql, 0, 0, likeQuery);
+        SQLitePCL.sqlite3_stmt stmt = cmd.Prepare();
+        try
+        {
+            int rIdx = 0;
+            while (rIdx < ranges.Length && results.Count < targetTotalCount)
+            {
+                uint spanFirst = ranges[rIdx].First;
+                uint spanLast = ranges[rIdx].Last;
+                bool hasInternalGaps = false;
+
+                while (rIdx + 1 < ranges.Length && ranges[rIdx + 1].First <= spanLast + COALESCE_GAP_THRESHOLD)
+                {
+                    rIdx++;
+                    spanLast = ranges[rIdx].Last;
+                    hasInternalGaps = true;
+                }
+                rIdx++;
+
+                SQLite3.Reset(stmt);
+                SQLite3.BindInt(stmt, 1, (int)spanFirst);
+                SQLite3.BindInt(stmt, 2, (int)spanLast);
+
+                while (SQLite3.Step(stmt) == SQLite3.Result.Row)
+                {
+                    int ix = SQLite3.ColumnInt(stmt, 0);
+                    if (hasInternalGaps && !ContainsCodepoint(ranges, (uint)ix))
+                        continue;
+
+                    if (existingCount > 0 && ContainsUnicodeIndex(results, existingCount, ix))
+                        continue;
+
+                    string hx = SQLite3.ColumnString(stmt, 1);
+                    string desc = SQLite3.ColumnString(stmt, 2);
+
+                    if (isUnicodeTable)
+                    {
+                        results.Add(new UnicodeGlyphData
+                        {
+                            UnicodeIndex = ix,
+                            UnicodeHex = hx,
+                            Description = desc
+                        });
+                    }
+                    else
+                    {
+                        results.Add(new GlyphDescription
+                        {
+                            UnicodeIndex = ix,
+                            UnicodeHex = hx,
+                            Description = desc
+                        });
+                    }
+
+                    if (results.Count >= targetTotalCount)
+                        break;
+                }
+            }
+        }
+        finally
+        {
+            stmt.Dispose();
+        }
+    }
+
+    public static void SearchUnihanDefinitions(
+        this SQLiteConnection c,
+        DWriteUnicodeRange[] ranges,
+        string likeQuery,
+        int targetTotalCount,
+        List<IGlyphData> results)
+    {
+        if (ranges is null || ranges.Length == 0 || results.Count >= targetTotalCount)
+            return;
+
+        if (ranges[^1].Last < Unicode.UNIHAN_IDX)
+            return;
+
+        int existingCount = results.Count;
+
+        // Binary search to find the first range that reaches Unicode.UNIHAN_IDX
+        int low = 0;
+        int high = ranges.Length - 1;
+        while (low < high)
+        {
+            int mid = (low + high) >>> 1;
+            if (ranges[mid].Last < Unicode.UNIHAN_IDX)
+                low = mid + 1;
+            else
+                high = mid;
+        }
+
+        const string sql = "SELECT Ix, Definition FROM UnihanReading WHERE Ix BETWEEN ? AND ? AND Definition LIKE ?";
+        SQLiteCommand cmd = c.CreateCommand(sql, 0, 0, likeQuery);
+        SQLitePCL.sqlite3_stmt stmt = cmd.Prepare();
+        try
+        {
+            int rIdx = low;
+            while (rIdx < ranges.Length && results.Count < targetTotalCount)
+            {
+                uint spanFirst = Math.Max(ranges[rIdx].First, Unicode.UNIHAN_IDX);
+                uint spanLast = ranges[rIdx].Last;
+                bool hasInternalGaps = false;
+
+                while (rIdx + 1 < ranges.Length && ranges[rIdx + 1].First <= spanLast + COALESCE_GAP_THRESHOLD)
+                {
+                    rIdx++;
+                    spanLast = ranges[rIdx].Last;
+                    hasInternalGaps = true;
+                }
+                rIdx++;
+
+                SQLite3.Reset(stmt);
+                SQLite3.BindInt(stmt, 1, (int)spanFirst);
+                SQLite3.BindInt(stmt, 2, (int)spanLast);
+
+                while (SQLite3.Step(stmt) == SQLite3.Result.Row)
+                {
+                    int ix = SQLite3.ColumnInt(stmt, 0);
+                    if (hasInternalGaps && !ContainsCodepoint(ranges, (uint)ix))
+                        continue;
+
+                    if (existingCount > 0 && ContainsUnicodeIndex(results, existingCount, ix))
+                        continue;
+
+                    string desc = SQLite3.ColumnString(stmt, 1);
+                    results.Add(new GlyphDescription
+                    {
+                        UnicodeIndex = ix,
+                        UnicodeHex = ix.ToString("X"),
+                        Description = desc
+                    });
+
+                    if (results.Count >= targetTotalCount)
+                        break;
+                }
+            }
+        }
+        finally
+        {
+            stmt.Dispose();
+        }
+    }
+
     public static List<GlyphDescription> GetGlyphData(this SQLiteConnection c, string table, string sql, string query)
     {
         var cmd = c.CreateCommand(sql, query);

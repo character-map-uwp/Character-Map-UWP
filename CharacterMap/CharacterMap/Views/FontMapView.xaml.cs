@@ -247,6 +247,12 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         if (LigaturesRoot != null)
             LigaturesRoot.Children.Clear();
 
+        if (OpenTypeRepeater != null)
+            OpenTypeRepeater.ItemsSource = null;
+
+        if (OpenTypeRoot != null)
+            OpenTypeRoot.Children.Clear();
+
         if (OptionsList != null)
             OptionsList.ItemsSource = null;
 
@@ -769,6 +775,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         return ViewModel.DisplayMode switch
         {
             FontDisplayMode.LigaturesState => LigaturesRoot,
+            FontDisplayMode.OpenTypeState => OpenTypeRoot,
             FontDisplayMode.GlyphMapState => GlyphsRoot,
             FontDisplayMode.TypeRampState => TypeRampRoot,
             _ => CharGrid

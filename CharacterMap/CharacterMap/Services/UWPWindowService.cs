@@ -1,5 +1,6 @@
 ﻿using CharacterMap.Views;
 using System.Runtime.InteropServices;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.System;
@@ -89,10 +90,15 @@ public class UWPWindowInformation : IViewInformation
 
 public static class ViewService
 {
+#if DEBUG
     /// <summary>
     /// The current View
     /// </summary>
+    public static IViewInformation Current => DesignMode.DesignModeEnabled ? null : Ioc.Default.ViewService().CurrentView;
+#else
     public static IViewInformation Current => Ioc.Default.ViewService().CurrentView;
+#endif
+
 
     public static IViewService Service => Ioc.Default.ViewService();
 }
@@ -254,9 +260,9 @@ public class UWPWindowService : IViewService
 
         FrameworkElement Create()
         {
-            FrameworkElement content = a();
             info = UWPWindowInformation.CreateForCurrentView();
             DispatcherQueueExtensions.RegisterCurrentThread(info.CoreView);
+            FrameworkElement content = a();
 
             if (!mainView)
                 info.View.SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible);
