@@ -7,12 +7,12 @@ public static class TypographyAnalyzer
 {
     public static List<TypographyFeatureInfo> GetSupportedTypographyFeatures(CMFontFace variant)
     {
-        var features = DirectWrite.GetSupportedTypography(variant.Face)?.Values?.ToList();
+        List<uint> features = DirectWrite.GetSupportedTypography(variant.Face)?.Values?.ToList();
 
         if (features is null)
             return [];
 
-        var list = features.Select(f => new TypographyFeatureInfo((DWriteTypographyFeatureName)f)).OrderBy(f => f.DisplayName).ToList();
+        List<TypographyFeatureInfo> list = features.Select(f => new TypographyFeatureInfo((DWriteTypographyFeatureName)f)).OrderBy(f => f.DisplayName).ToList();
         return list;
     }
 
@@ -23,45 +23,37 @@ public static class TypographyAnalyzer
             return [];
 
         List<LigatureGroup> groups = [];
+        Dictionary<ushort, LigatureComponent> componentCache = [];
+
+        LigatureComponent GetOrCreateComponent(ushort compGlyphId)
+        {
+            if (componentCache.TryGetValue(compGlyphId, out LigatureComponent cached))
+                return cached;
+
+            bool hasChar = fontFace.TryGetCharacterForGlyph(compGlyphId, out Character mappedChar);
+            string ch = hasChar ? mappedChar.Char : null;
+            uint? uniIndex = hasChar ? mappedChar.UnicodeIndex : null;
+
+            LigatureComponent comp = new(compGlyphId, ch, uniIndex, null, fontFace);
+            componentCache[compGlyphId] = comp;
+            return comp;
+        }
 
         foreach (DWriteLigatureFeature rawFeature in rawFeatures)
         {
             string tag = DirectWrite.GetFeatureTag(rawFeature.FeatureTag);
             string title = string.IsNullOrEmpty(rawFeature.FeatureName) || rawFeature.FeatureName == tag ? tag : $"{rawFeature.FeatureName} ({tag})";
             DWriteTypographyFeatureName feature = (DWriteTypographyFeatureName)rawFeature.FeatureTag;
-            List<LigatureModel> ligatures = [];
+            List<LigatureModel> ligatures = new(rawFeature.Ligatures.Count);
 
             foreach (DWriteLigature rawLig in rawFeature.Ligatures)
             {
-                List<LigatureComponent> components = [];
+                List<LigatureComponent> components = new(rawLig.ComponentGlyphs.Count);
                 foreach (ushort compGlyphId in rawLig.ComponentGlyphs)
-                {
-                    bool hasChar = fontFace.TryGetCharacterForGlyph(compGlyphId, out Character mappedChar);
-                    string ch = hasChar ? mappedChar.Char : null;
-                    uint? uniIndex = hasChar ? mappedChar.UnicodeIndex : null;
+                    components.Add(GetOrCreateComponent(compGlyphId));
 
-                    string tip = null;
-                    if (hasChar)
-                    {
-                        string desc = GlyphService.GetCharacterDescription(mappedChar.UnicodeIndex, fontFace);
-                        tip = !string.IsNullOrWhiteSpace(desc)
-                            ? $"{desc}\r\nUnicode: U+{mappedChar.UnicodeIndex:X4}\r\nGlyph #{compGlyphId}"
-                            : $"Unicode: U+{mappedChar.UnicodeIndex:X4}\r\nGlyph #{compGlyphId}";
-                    }
-                    else
-                        tip = $"Glyph #{compGlyphId}";
-
-                    components.Add(new(compGlyphId, ch, uniIndex, tip));
-                }
-
-                string ligName = null;
-                if (fontFace.TryGetCharacterForGlyph((ushort)rawLig.LigatureGlyph, out Character ligChar))
-                {
-                    string desc = GlyphService.GetCharacterDescription(ligChar.UnicodeIndex, fontFace);
-                    ligName = !string.IsNullOrWhiteSpace(desc) ? desc : ligChar.Char;
-                }
-
-                ligatures.Add(new(rawLig.LigatureGlyph, components, feature, ligName));
+                fontFace.TryGetCharacterForGlyph((ushort)rawLig.LigatureGlyph, out Character ligChar);
+                ligatures.Add(new(rawLig.LigatureGlyph, components, feature, null, fontFace, ligChar));
             }
 
             if (ligatures.Count > 0)
@@ -83,33 +75,20 @@ public static class TypographyAnalyzer
 
         CMFontFace fontFace = model.Face;
         List<OpenTypeFeatureGroup> groups = [];
+        Dictionary<ushort, OpenTypeGlyphInfo> glyphCache = [];
 
-        OpenTypeGlyphInfo CreateGlyphInfo(ushort glyphId)
+        OpenTypeGlyphInfo GetOrCreateGlyphInfo(ushort glyphId)
         {
+            if (glyphCache.TryGetValue(glyphId, out OpenTypeGlyphInfo cached))
+                return cached;
+
             bool hasChar = fontFace.TryGetCharacterForGlyph(glyphId, out Character mappedChar);
             string ch = hasChar ? mappedChar.Char : null;
             uint? uniIndex = hasChar ? mappedChar.UnicodeIndex : null;
 
-            string tip = null;
-            if (hasChar)
-            {
-                string desc = GlyphService.GetCharacterDescription(mappedChar.UnicodeIndex, fontFace);
-                tip = !string.IsNullOrWhiteSpace(desc)
-                    ? $"{desc}\r\nUnicode: U+{mappedChar.UnicodeIndex:X4}\r\nGlyph #{glyphId}"
-                    : $"Unicode: U+{mappedChar.UnicodeIndex:X4}\r\nGlyph #{glyphId}";
-            }
-            else
-            {
-                string definedName = null;
-                if (model.Analysis.HasGlyphNames && model.Analysis.GlyphNameMappings.TryGetValue(glyphId, out string postName))
-                    definedName = postName;
-
-                tip = !string.IsNullOrWhiteSpace(definedName)
-                    ? $"{definedName}\r\nGlyph #{glyphId}"
-                    : $"Glyph #{glyphId}";
-            }
-
-            return new(glyphId, ch, uniIndex, tip);
+            OpenTypeGlyphInfo info = new(glyphId, ch, uniIndex, null, model);
+            glyphCache[glyphId] = info;
+            return info;
         }
 
         foreach (DWriteOpenTypeFeatureGroup rawGroup in rawFeatures)
@@ -120,7 +99,7 @@ public static class TypographyAnalyzer
                 : $"{rawGroup.FeatureName} ({tag})";
             DWriteTypographyFeatureName feature = (DWriteTypographyFeatureName)rawGroup.FeatureTag;
 
-            List<OpenTypeSubstitutionModel> substitutions = [];
+            List<OpenTypeSubstitutionModel> substitutions = new(rawGroup.Substitutions.Count);
 
             foreach (DWriteOpenTypeSubstitution rawSub in rawGroup.Substitutions)
             {
@@ -130,26 +109,26 @@ public static class TypographyAnalyzer
                     if (rawSub.InputSequence is not null)
                     {
                         foreach (ushort g in rawSub.InputSequence)
-                            inSeq.Add(CreateGlyphInfo(g));
+                            inSeq.Add(GetOrCreateGlyphInfo(g));
                     }
                     else
-                        inSeq.Add(CreateGlyphInfo(rawSub.InputGlyph));
+                        inSeq.Add(GetOrCreateGlyphInfo(rawSub.InputGlyph));
 
                     List<OpenTypeGlyphInfo> targetSeq = [];
                     if (rawSub.TargetSequence is not null)
                     {
                         foreach (ushort g in rawSub.TargetSequence)
-                            targetSeq.Add(CreateGlyphInfo(g));
+                            targetSeq.Add(GetOrCreateGlyphInfo(g));
                     }
                     else
-                        targetSeq.Add(CreateGlyphInfo(rawSub.TargetGlyph));
+                        targetSeq.Add(GetOrCreateGlyphInfo(rawSub.TargetGlyph));
 
                     substitutions.Add(new(inSeq, targetSeq, feature, tag));
                 }
                 else
                 {
-                    OpenTypeGlyphInfo inGlyph = CreateGlyphInfo(rawSub.InputGlyph);
-                    OpenTypeGlyphInfo targetGlyph = CreateGlyphInfo(rawSub.TargetGlyph);
+                    OpenTypeGlyphInfo inGlyph = GetOrCreateGlyphInfo(rawSub.InputGlyph);
+                    OpenTypeGlyphInfo targetGlyph = GetOrCreateGlyphInfo(rawSub.TargetGlyph);
                     substitutions.Add(new(inGlyph, targetGlyph, feature, tag));
                 }
             }

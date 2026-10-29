@@ -29,12 +29,12 @@ public static class XamlDirectExtensions
         {
             if (d.GetXamlDirectObjectFromCollectionAt(collection, index) is { } x)
                 return new XamlDirectWrapper(x, d) { Source = source };
-            return null;
+            return XamlDirectWrapper.Invalid;
         }
     }
 }
 
-public class XamlDirectWrapper
+public struct XamlDirectWrapper
 {
     public XamlDirect X { get; }
     public IXamlDirectObject Object { get; }
@@ -44,6 +44,8 @@ public class XamlDirectWrapper
     /// Forces XamlDirect to use TextBlock properties, rather than generic UIElement properties
     /// </summary>
     public bool IsTextBlock { get; set; }
+
+    public static XamlDirectWrapper Invalid { get; } = new XamlDirectWrapper(d: null, x: null);
 
     public XamlDirectWrapper(UIElement element, XamlDirect x)
     {
@@ -59,7 +61,7 @@ public class XamlDirectWrapper
         if (Source is Windows.UI.Xaml.Controls.Panel p)
             return X.GetWrapperForChild(p, index);
 
-        return null;
+        return XamlDirectWrapper.Invalid;
     }
 
     public XamlDirectWrapper(IXamlDirectObject d, XamlDirect x)
@@ -70,31 +72,31 @@ public class XamlDirectWrapper
 
     public XamlDirectWrapper SetDouble(XamlPropertyIndex index, double value)
     {
-        X.SetDoubleProperty(Object, index, value);
+        X?.SetDoubleProperty(Object, index, value);
         return this;
     }
 
     public XamlDirectWrapper SetEnum(XamlPropertyIndex index, uint value)
     {
-        X.SetEnumProperty(Object, index, value);
+        X?.SetEnumProperty(Object, index, value);
         return this;
     }
 
     public XamlDirectWrapper SetObject(XamlPropertyIndex index, object value)
     {
-        X.SetObjectProperty(Object, index, value);
+        X?.SetObjectProperty(Object, index, value);
         return this;
     }
 
     public XamlDirectWrapper SetString(XamlPropertyIndex index, string value)
     {
-        X.SetStringProperty(Object, index, value);
+        X?.SetStringProperty(Object, index, value);
         return this;
     }
 
     public XamlDirectWrapper SetBoolean(XamlPropertyIndex index, bool value)
     {
-        X.SetBooleanProperty(Object, index, value);
+        X?.SetBooleanProperty(Object, index, value);
         return this;
     }
 

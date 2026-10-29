@@ -449,7 +449,7 @@ public partial class MainViewModel : ViewModelBase
                         // without tabs enabled into Ligatures view BREAKS ligatures
                         // for the rest of the session, and there doesn't seem to be 
                         // any discernible reason for this.
-                        if (!t && mode == (int)FontDisplayMode.LigaturesState)
+                        if (!t && (mode == (int)FontDisplayMode.LigaturesState || mode == (int)FontDisplayMode.OpenTypeState))
                             mode = (int)FontDisplayMode.CharacterMapState;
                         return mode;
                     }

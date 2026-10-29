@@ -415,6 +415,43 @@ public partial class FontMapViewModel : ViewModelBase
             ramp.Option = ops;
     }
 
+    private Character FindCharacterByUnicodeIndex(uint unicodeIndex)
+    {
+        if (Chars is FontCharacterList fcl)
+            return fcl.TryGetCharacter(unicodeIndex, out Character c) ? c : null;
+
+        int low = 0;
+        int high = Chars.Count - 1;
+        while (low <= high)
+        {
+            int mid = (low + high) >>> 1;
+            Character cur = Chars[mid];
+            if (unicodeIndex < cur.UnicodeIndex)
+                high = mid - 1;
+            else if (unicodeIndex > cur.UnicodeIndex)
+                low = mid + 1;
+            else
+                return cur;
+        }
+
+        return null;
+    }
+
+    private Character GetFirstDefaultCharacter()
+    {
+        if (Chars is FontCharacterList fcl)
+            return fcl.GetFirstNonWhitespaceCharacter();
+
+        for (int i = 0; i < Chars.Count; i++)
+        {
+            Character c = Chars[i];
+            if (!Windows.Data.Text.UnicodeCharacters.IsWhitespace(c.UnicodeIndex))
+                return c;
+        }
+
+        return Chars.Count > 0 ? Chars[0] : null;
+    }
+
     public void SetDefaultChar(int idx = -1)
     {
         if (Chars == null)
@@ -424,9 +461,9 @@ public partial class FontMapViewModel : ViewModelBase
         if (idx < 0)
             idx = Settings.LastSelectedCharIndex;
 
-        if (Chars.FirstOrDefault(i => i.UnicodeIndex == idx)
-            is Character lastSelectedChar
-            && SelectedFace.Face.HasCharacter((uint)lastSelectedChar.UnicodeIndex))
+        if (idx >= 0
+            && FindCharacterByUnicodeIndex((uint)idx) is Character lastSelectedChar
+            && SelectedFace.Face.HasCharacter(lastSelectedChar.UnicodeIndex))
         {
             SelectedChar = new(SelectedFace, lastSelectedChar, this);
         }
@@ -434,8 +471,7 @@ public partial class FontMapViewModel : ViewModelBase
         {
             // Fonts with out a CMAP table will have no Characters
             // e.g. Rohingya Gonya Leyka Noories
-            var c = Chars?.FirstOrDefault(
-                c => !Windows.Data.Text.UnicodeCharacters.IsWhitespace((uint)c.UnicodeIndex)) ?? Chars.FirstOrDefault();
+            Character c = GetFirstDefaultCharacter();
             SelectedChar = c is not null ? new(SelectedFace, c, this) : null;
         }
 

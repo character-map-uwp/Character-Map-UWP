@@ -597,7 +597,7 @@ public partial class CharacterGridView : GridView
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static void SetGlyphProperties(XamlDirectWrapper o, CharacterGridViewTemplateSettings templateSettings, Character c, Brush foreground = null)
     {
-        if (o == null || templateSettings.FontFace is null)
+        if (o.Object == null || templateSettings.FontFace is null)
             return;
 
         if (o.Source is FontGlyphs g)

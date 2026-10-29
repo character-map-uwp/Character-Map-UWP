@@ -1,3 +1,4 @@
+using CharacterMapCX;
 using SQLite;
 using System.Globalization;
 using Windows.ApplicationModel;
@@ -151,13 +152,15 @@ public partial class SQLiteGlyphProvider : IGlyphDataProvider
         {
             /* 
              * Step 1: Perform single-result Hex Search if hex
-             * Step 2: Perform FTS search if not hex or ambiguous
-             * Step 3: Perform LIKE search if still space for results
+             * Step 2: Perform local SearchMap search if present
+             * Step 3: Perform streaming LIKE search filtered by binary search over UnicodeRanges
              */
 
+            DWriteUnicodeRange[] ranges = variant.Face.UnicodeRanges;
+            if (ranges.Length == 0)
+                return GlyphService.EMPTY_SEARCH;
 
-
-            // 1. Decide if hex or FTS4 search
+            // 1. Decide if hex or text search
             //    If hex, search the main table (UnicodeIndex column is indexed)
             GlyphDescription hexResult = null;
 
@@ -168,156 +171,65 @@ public partial class SQLiteGlyphProvider : IGlyphDataProvider
             bool ambiguous = !variant.Face.DirectWriteProperties.IsSymbolFont && IsAmbiguousQuery(query);
             if (hexResult == null && Utils.TryParseHexString(query, out int hex))
             {
-                // 1.2. To be more efficient, first check if the font actually contains the UnicodeIndex.
-                //      If it does then we ask the database, otherwise we can return without query.
-                foreach (var range in variant.Face.UnicodeRanges)
+                // 1.2. First check if the font actually contains the UnicodeIndex via binary search.
+                //      If it does then we ask the database, otherwise we can skip querying.
+                if (SQLite3Extensions.ContainsCodepoint(ranges, (uint)hex))
                 {
-                    if (hex >= range.First && hex <= range.Last)
+                    string hexsql = $"SELECT * FROM {table} WHERE Ix == {hex} LIMIT 1";
+                    List<GlyphDescription> hexresults = _connection.GetGlyphData(table, hexsql, query);
+                    if (hexresults == null || hexresults.Count == 0)
                     {
-                        string hexsql = $"SELECT * FROM {table} WHERE Ix == {hex} LIMIT 1";
-                        var hexresults = _connection.GetGlyphData(table, hexsql, query);
-                        if (hexresults == null || hexresults.Count == 0)
-                        {
-                            var label = hex.ToString("x4");
-                            hexresults = new()
+                        string label = hex.ToString("x4");
+                        hexresults =
+                        [
+                            new GlyphDescription
                             {
-                                new GlyphDescription
-                                {
-                                     UnicodeIndex = hex,
-                                     UnicodeHex = label,
-                                     Description = label
-                                }
-                            };
-                        }
-
-                        // 1.3. If the search is ambiguous we should still search for description matches,
-                        //      otherwise we can return right now
-                        //if (!ambiguous)
-                        //    return hexresults;
-                        //else
-                        {
-                            hexResult = hexresults.Cast<GlyphDescription>().FirstOrDefault();
-                            break;
-                        }
+                                UnicodeIndex = hex,
+                                UnicodeHex = label,
+                                Description = label
+                            }
+                        ];
                     }
-                }
 
-                // 1.4. If the search is ambiguous we should still search for description matches,
-                //      otherwise we can return right now with no hex results
-                //      If we are a generic symbol font, that's all folks. Time to leave.
-                //if (!ambiguous)
-                //{
-                //    return GlyphService.EMPTY_SEARCH;
-                //}
-            }
-
-            // 2. If we're performing SQL, create the base query filter
-            StringBuilder sb = new();
-            bool next = false;
-
-            /// Note: SQLite only supports expression trees up to 1000 items, so we need to limit the range
-            /// of Unicode ranges we search through. Very rare for any font to hit this - especially one with
-            /// any useful search results. MS Office Symbol is an example of such a font (with no useful search
-            /// results anyway). Certain complex Asian script fonts **may** theoretically hit this limit.
-            /// We don't want to throw an exception if we ever hit this case, we'll just do our best.
-            foreach (var range in variant.Face.UnicodeRanges.Take(990))
-            {
-                if (next)
-                    sb.AppendFormat(range.First != range.Last
-                    ? " OR Ix BETWEEN {0} AND {1}"
-                    : " OR Ix == {0}", range.First, range.Last);
-                else
-                {
-                    next = true;
-                    sb.AppendFormat(range.First != range.Last
-                    ? "WHERE (Ix BETWEEN {0} AND {1}"
-                    : "WHERE (Ix == {0}", range.First, range.Last);
+                    hexResult = hexresults[0];
                 }
             }
-            sb.Append(")");
 
-            List<IGlyphData> results = new();
+            List<IGlyphData> results = [];
+            int searchLimit = SEARCH_LIMIT;
 
-            // 3. If the font has a local search map, we should do a text search inside that
+            // 2. If the font has a local search map, we should do a text search inside that
             if (variant.SearchMap != null)
             {
-                results = variant.SearchMap
-                    .Where(c => c.Value.Contains(query, StringComparison.OrdinalIgnoreCase))
-                    .Take(SEARCH_LIMIT)
-                    .Select(g => new GlyphDescription { UnicodeIndex = (int)g.Key.UnicodeIndex, UnicodeHex = g.Key.UnicodeString, Description = g.Value })
-                    .Cast<IGlyphData>()
-                    .ToList();
+                foreach (KeyValuePair<Character, string> kvp in variant.SearchMap)
+                {
+                    if (kvp.Value.Contains(query, StringComparison.OrdinalIgnoreCase))
+                    {
+                        results.Add(new GlyphDescription
+                        {
+                            UnicodeIndex = (int)kvp.Key.UnicodeIndex,
+                            UnicodeHex = kvp.Key.UnicodeString,
+                            Description = kvp.Value
+                        });
+
+                        if (results.Count >= searchLimit)
+                            goto End;
+                    }
+                }
             }
 
-            if (results.Count == SEARCH_LIMIT)
+            // 3. Stream matching rows from the main table and filter candidate Ix values in C#
+            //    using binary search over variant.Face.UnicodeRanges instead of building a massive
+            //    990-branch WHERE (Ix BETWEEN ...) SQL expression tree on every keystroke.
+            string likeQuery = $"%{query}%";
+            _connection.SearchGlyphDescriptions(table, ranges, likeQuery, searchLimit, results);
+
+            if (results.Count >= searchLimit)
                 goto End;
 
-            // 3.1. Otherwise, perform a multi-step text search. First perform an FTS4 search
-            int limit = SEARCH_LIMIT - results.Count;
-
-            // 3.2. We need to exclude anything already found above
-            string extra = string.Empty;
-            if (limit != SEARCH_LIMIT)
-            {
-                extra = string.Format(" AND Ix NOT IN ({0})", string.Join(", ", results.Select(r => r.UnicodeIndex)));
-            }
-
-            /// BENCHMARKING FOR FTFS VS NORMAL TABLES
-#if BENCHMARK
-            Stopwatch sw = Stopwatch.StartNew();
-            object res = null;
-            for (int i = 0; i < 100; i++)
-            {
-                string bsql2 = $"SELECT * FROM {table} {sb.ToString()} AND Description LIKE ? LIMIT {limit}";
-                res = _connection.GetGlyphData(table, bsql2, $"%{query}%");
-            }
-            var time = sw.ElapsedMilliseconds;
-            sw.Restart();
-            for (int i = 0; i < 100; i++)
-            {
-                string bsql = $"SELECT * FROM {ftsTable} {sb}{extra} AND Description MATCH ? LIMIT {limit}";
-                res = _connection.GetGlyphData(ftsTable, bsql, $"{query}*");
-            }
-            var time2 = sw.ElapsedMilliseconds;
-            Debugger.Break();
-#endif
-
-
-#if USE_FTS
-            // 3.3. Execute!
-            string sql = $"SELECT * FROM {ftsTable} {sb}{extra} AND Description MATCH ? LIMIT {limit}";
-            results.AddRange(_connection.GetGlyphData(ftsTable, sql, $"{query}*"));
-
-            // 4. If we have SEARCH_LIMIT matches, we don't need to perform a partial search and can go home early
-            if (results != null && results.Count == SEARCH_LIMIT)
-                return InsertHex(results);
-#endif
-
-            // 5. Perform a partial search on non-FTS table. Only search for what we need.
-            //    This means limit the amount of results, and exclude anything we've already matched.
-            limit = SEARCH_LIMIT - results.Count;
-            if (limit != SEARCH_LIMIT)
-            {
-                // 5.1. We need to exclude anything already found above
-                sb.AppendFormat("AND Ix NOT IN ({0})",
-                    string.Join(", ", results.Select(r => r.UnicodeIndex)));
-            }
-
-            // 6. Execute on the non FTS tables
-            string sql2 = $"SELECT * FROM {table} {sb.ToString()} AND Description LIKE ? LIMIT {limit}";
-            var results2 = _connection.GetGlyphData(table, sql2, $"%{query}%");
-            results.AddRange(results2);
-            limit = SEARCH_LIMIT - results.Count;
-
-            if (limit <= 0)
-                goto End;
-
-            // 7. Check Unihan data
+            // 4. Check Unihan data
             if (variant.Face.CouldContainUnihan())
-            {
-                string sql3 = $"SELECT Ix, Definition FROM {nameof(UnihanReading)} {sb} AND Definition LIKE ? LIMIT {limit}";
-                results.AddRange(_connection.GetUnihanDefinitionsByDescription(sql3, $"%{query}%"));
-            }
+                _connection.SearchUnihanDefinitions(ranges, likeQuery, searchLimit, results);
 
         End:
             if (hexResult is not null)

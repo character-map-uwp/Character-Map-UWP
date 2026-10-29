@@ -61,6 +61,7 @@ public class FontCharacterList : IReadOnlyList<Character>, IList
             return Character.Get((int)codepoint);
         }
     }
+
     private int FindRangeIndex(int index)
     {
         int low = 0;
@@ -83,6 +84,81 @@ public class FontCharacterList : IReadOnlyList<Character>, IList
         return low;
     }
 
+    private int FindRangeForCodepoint(uint cp)
+    {
+        int low = 0;
+        int high = _ranges.Length - 1;
+
+        while (low <= high)
+        {
+            int mid = (low + high) >>> 1;
+            DWriteUnicodeRange r = _ranges[mid];
+
+            if (cp < r.First)
+                high = mid - 1;
+            else if (cp > r.Last)
+                low = mid + 1;
+            else
+                return mid;
+        }
+
+        return -1;
+    }
+
+    public bool TryGetCharacter(uint codepoint, out Character character)
+    {
+        if (_explicitList != null)
+        {
+            for (int i = 0; i < _explicitList.Count; i++)
+            {
+                if (_explicitList[i].UnicodeIndex == codepoint)
+                {
+                    character = _explicitList[i];
+                    return true;
+                }
+            }
+
+            character = null;
+            return false;
+        }
+
+        if (FindRangeForCodepoint(codepoint) >= 0)
+        {
+            character = Character.Get((int)codepoint);
+            return true;
+        }
+
+        character = null;
+        return false;
+    }
+
+    public Character GetFirstNonWhitespaceCharacter()
+    {
+        if (_explicitList != null)
+        {
+            for (int i = 0; i < _explicitList.Count; i++)
+            {
+                Character c = _explicitList[i];
+                if (!Windows.Data.Text.UnicodeCharacters.IsWhitespace(c.UnicodeIndex))
+                    return c;
+            }
+
+            return _explicitList.Count > 0 ? _explicitList[0] : null;
+        }
+
+        for (int i = 0; i < _ranges.Length; i++)
+        {
+            DWriteUnicodeRange r = _ranges[i];
+            for (uint cp = r.First; cp <= r.Last; cp++)
+            {
+                if (!Windows.Data.Text.UnicodeCharacters.IsWhitespace(cp))
+                    return Character.Get((int)cp);
+            }
+        }
+
+        return _count > 0 ? this[0] : null;
+    }
+
     public bool Contains(Character item)
     {
         if (item is null)
@@ -91,12 +167,7 @@ public class FontCharacterList : IReadOnlyList<Character>, IList
         if (_explicitList != null)
             return _explicitList.Contains(item);
 
-        uint cp = item.UnicodeIndex;
-        for (int i = 0; i < _ranges.Length; i++)
-            if (cp >= _ranges[i].First && cp <= _ranges[i].Last)
-                return true;
-
-        return false;
+        return FindRangeForCodepoint(item.UnicodeIndex) >= 0;
     }
 
     public int IndexOf(Character item)
@@ -114,11 +185,9 @@ public class FontCharacterList : IReadOnlyList<Character>, IList
         }
 
         uint cp = item.UnicodeIndex;
-        for (int i = 0; i < _ranges.Length; i++)
-        {
-            if (cp >= _ranges[i].First && cp <= _ranges[i].Last)
-                return _prefixOffsets[i] + (int)(cp - _ranges[i].First);
-        }
+        int rangeIdx = FindRangeForCodepoint(cp);
+        if (rangeIdx >= 0)
+            return _prefixOffsets[rangeIdx] + (int)(cp - _ranges[rangeIdx].First);
 
         return -1;
     }
