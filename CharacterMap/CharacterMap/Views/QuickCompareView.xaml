@@ -1,4 +1,5 @@
-﻿<views:ViewBase
+
+<views:ViewBase
     x:Class="CharacterMap.Views.QuickCompareView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -18,6 +19,7 @@
     xmlns:views="using:CharacterMap.Views"
     x:Name="ViewRoot"
     Background="Transparent"
+    DataContext="{x:Bind}"
     TabFocusNavigation="Cycle"
     mc:Ignorable="d"
     d:DesignHeight="720"
@@ -170,14 +172,6 @@
                 d:Text="{core:Localizer Key=OpenInNewWindow/Text}" />
         </MenuFlyout>
 
-        <muxc:UniformGridLayout
-            x:Name="GridLayout"
-            ItemsStretch="Fill"
-            MinColumnSpacing="12"
-            MinItemHeight="250"
-            MinItemWidth="422"
-            MinRowSpacing="12" />
-
         <muxc:StackLayout
             x:Name="StackLayout"
             Orientation="Vertical"
@@ -189,90 +183,52 @@
 
         <Style BasedOn="{StaticResource CompareCardStyle}" TargetType="controls:ContentGroup" />
 
-        <DataTemplate x:Key="GridTemplate" x:DataType="core:CMFontFamily">
-
-            <!--  Canvas is required for maximum performance when updating properties  -->
-            <controls:ContentGroup Width="400" Height="250">
-                <controls:ContentGroup.Text>
-                    <TextBlock
-                        Canvas.Top="4"
-                        Width="400"
-                        Foreground="{ThemeResource TextControlPlaceholderForeground}">
-                        <Run Text="{x:Bind Name}" />
-                        <Run Text="{x:Bind DefaultFace.PreferredName}" />
-                    </TextBlock>
-                </controls:ContentGroup.Text>
-                <TextBlock
-                    x:Name="SystemRender"
-                    x:Phase="1"
-                    Canvas.Top="24"
-                    Width="400"
-                    MaxHeight="226"
-                    sdk17_x:Load="{x:Bind core:Converters.False(DefaultFace.SupportsColourRendering), FallbackValue=False, TargetNullValue=False}"
-                    FontFamily="{x:Bind DefaultFace.DisplaySource}"
-                    FontStretch="{x:Bind DefaultFace.DirectWriteProperties.Stretch}"
-                    FontStyle="{x:Bind DefaultFace.DirectWriteProperties.Style}"
-                    FontWeight="{x:Bind DefaultFace.DirectWriteProperties.Weight}"
-                    IsColorFontEnabled="True"
-                    TextTrimming="CharacterEllipsis"
-                    TextWrapping="Wrap" />
-                <sdk17_cx:DirectText
-                    x:Name="NativeRender"
-                    x:Load="{x:Bind DefaultFace.SupportsColourRendering, FallbackValue=False, TargetNullValue=False}"
-                    x:Phase="1"
-                    Canvas.Top="24"
-                    Width="400"
-                    MaxHeight="226"
-                    FallbackFont="{x:Bind core:FontFinder.Fallback}"
-                    FontFace="{x:Bind DefaultFace.Face}"
-                    FontFamily="{Binding DefaultFace.Source}"
-                    FontStretch="{x:Bind DefaultFace.DirectWriteProperties.Stretch}"
-                    FontStyle="{x:Bind DefaultFace.DirectWriteProperties.Style}"
-                    FontWeight="{x:Bind DefaultFace.DirectWriteProperties.Weight}"
-                    IsColorFontEnabled="True"
-                    IsTextWrappingEnabled="True"
-                    Typography="{x:Bind core:TypographyFeatureInfo.None}" />
-            </controls:ContentGroup>
-        </DataTemplate>
-
-        <DataTemplate x:Key="StackTemplate" x:DataType="core:CMFontFamily">
-            <controls:ContentGroup VerticalAlignment="Stretch">
+        <DataTemplate x:Key="GridTemplate">
+            <controls:ContentGroup>
                 <controls:ContentGroup.Text>
                     <TextBlock>
-                        <Run Text="{x:Bind Name}" />
-                        <Run Foreground="{ThemeResource TextControlPlaceholderForegroundDisabled}" Text="{x:Bind core:Converters.GetFormat('FaceCountLabel', RealFaces.Count)}" />
+                        <Run />
+                        <Run Foreground="{ThemeResource TextControlPlaceholderForegroundDisabled}" />
                     </TextBlock>
                 </controls:ContentGroup.Text>
                 <controls:ContentGroup.SecondaryContent>
-                    <Grid>
-                        <TextBlock
-                            x:Name="ContentRender"
-                            x:Phase="2"
-                            Margin="0 0 0 0"
-                            sdk17_x:Load="{x:Bind core:Converters.False(DefaultFace.SupportsColourRendering), FallbackValue=False, TargetNullValue=False}"
-                            FontFamily="{x:Bind DefaultFace.DisplaySource}"
-                            FontStretch="{x:Bind DefaultFace.DirectWriteProperties.Stretch}"
-                            FontStyle="{x:Bind DefaultFace.DirectWriteProperties.Style}"
-                            FontWeight="{x:Bind DefaultFace.DirectWriteProperties.Weight}"
+                    <sdk17_cx:DirectText
+                        x:Name="NativeRender"
+                        MaxHeight="226"
+                        Margin="-16 -14"
+                        Padding="16 14"
+                        FallbackFont="{core:DefaultFallback}"
+                        IsBackgroundRenderEnabled="True"
+                        IsColorFontEnabled="True"
+                        IsTextWrappingEnabled="True"
+                        Typography="{core:DefaultTypography}" />
+                </controls:ContentGroup.SecondaryContent>
+            </controls:ContentGroup>
+        </DataTemplate>
+
+        <DataTemplate x:Key="StackTemplate">
+            <controls:ContentGroup VerticalAlignment="Stretch">
+                <controls:ContentGroup.Text>
+                    <TextBlock>
+                        <Run />
+                        <Run Foreground="{ThemeResource TextControlPlaceholderForegroundDisabled}" />
+                    </TextBlock>
+                </controls:ContentGroup.Text>
+                <controls:ContentGroup.SecondaryContent>
+                    <!--<TextBlock
+                            x:Name="SystemRender"
+                            x:Load="False"
                             IsColorFontEnabled="True"
                             MaxLines="5"
                             TextTrimming="CharacterEllipsis"
-                            TextWrapping="Wrap" />
-                        <sdk17_cx:DirectText
-                            x:Name="NativeRender"
-                            x:Load="{x:Bind DefaultFace.SupportsColourRendering, FallbackValue=False, TargetNullValue=False}"
-                            x:Phase="2"
-                            Margin="0 0 0 0"
-                            FallbackFont="{x:Bind core:FontFinder.Fallback}"
-                            FontFace="{x:Bind DefaultFace.Face}"
-                            FontFamily="{Binding DefaultFace.Source}"
-                            FontStretch="{x:Bind DefaultFace.DirectWriteProperties.Stretch}"
-                            FontStyle="{x:Bind DefaultFace.DirectWriteProperties.Style}"
-                            FontWeight="{x:Bind DefaultFace.DirectWriteProperties.Weight}"
-                            IsColorFontEnabled="True"
-                            IsTextWrappingEnabled="True"
-                            Typography="{x:Bind core:TypographyFeatureInfo.None}" />
-                    </Grid>
+                            TextWrapping="Wrap" />-->
+                    <sdk17_cx:DirectText
+                        x:Name="NativeRender"
+                        FallbackFont="{core:DefaultFallback}"
+                        IsBackgroundRenderEnabled="True"
+                        IsColorFontEnabled="True"
+                        IsTextWrappingEnabled="True"
+                        Typography="{core:DefaultTypography}" />
                 </controls:ContentGroup.SecondaryContent>
             </controls:ContentGroup>
         </DataTemplate>
@@ -287,23 +243,13 @@
                         TextTrimming="CharacterEllipsis" />
                 </controls:ContentGroup.Text>
                 <controls:ContentGroup.SecondaryContent>
-                    <Grid>
-                        <cx:DirectText
-                            x:Name="NativeRender"
-                            x:Load="{x:Bind RequiresNativeRender, FallbackValue=False, TargetNullValue=False}"
-                            x:Phase="1"
-                            core:Properties.Options="{x:Bind}"
-                            IsTextWrappingEnabled="True"
-                            Typography="{x:Bind DXTypography}" />
-                        <TextBlock
-                            x:Name="XAMLRender"
-                            x:Load="{x:Bind core:Converters.False(RequiresNativeRender), FallbackValue=False, TargetNullValue=False}"
-                            x:Phase="1"
-                            core:Properties.Options="{x:Bind}"
-                            MaxLines="5"
-                            TextTrimming="CharacterEllipsis"
-                            TextWrapping="Wrap" />
-                    </Grid>
+                    <cx:DirectText
+                        x:Name="NativeRender"
+                        x:Load="{x:Bind RequiresNativeRender, FallbackValue=False, TargetNullValue=False}"
+                        x:Phase="1"
+                        core:Properties.Options="{x:Bind}"
+                        IsTextWrappingEnabled="True"
+                        Typography="{x:Bind DXTypography}" />
                 </controls:ContentGroup.SecondaryContent>
             </controls:ContentGroup>
 
@@ -412,11 +358,14 @@
             x:Name="Presenter"
             Title="{x:Bind ViewModel.Title}"
             CloseButtonVisibility="Collapsed"
-            IsWindowRoot="True"
+            IsWindowRoot="{x:Bind IsStandalone, Mode=OneWay}"
             d:Title="{core:Localizer Key=CompareFontsTitle/Text}">
             <controls:ModalPagePresenter.TitleBarContent>
                 <Grid>
-                    <controls:XamlTitleBar VerticalAlignment="Top" IsDragTarget="False">
+                    <controls:XamlTitleBar
+                        x:Name="TitleBar"
+                        VerticalAlignment="Top"
+                        IsDragTarget="False">
                         <Button
                             x:Name="BackButton"
                             Width="40"
@@ -621,64 +570,44 @@
                         <Border
                             x:Name="ListingViewRoot"
                             Margin="0 0 -24 0"
-                            RenderTransformOrigin="0.5,0.5">
-                            <Border.RenderTransform>
-                                <CompositeTransform />
-                            </Border.RenderTransform>
-                            <toolkit:AdaptiveGridView
+                            core:Properties.CompositeTransform="True">
+                            <controls:ExtendedGridView
                                 x:Name="Repeater"
-                                Margin="-8 0 0 0"
+                                Margin="-10 0 0 0"
                                 Padding="8 0 10 48"
                                 ContainerContentChanging="Repeater_ContainerContentChanging"
+                                IsItemClickEnabled="True"
                                 ItemClick="Repeater_ItemClick"
-                                ItemTemplate="{StaticResource StackTemplate}"
-                                ItemsSource="{x:Bind ViewModel.ItemsSource, Mode=OneWay}">
-                                <GridView.ItemsPanel>
+                                ItemTemplate="{StaticResource GridTemplate}"
+                                ItemsSource="{x:Bind ViewModel.ItemsSource, Mode=OneWay}"
+                                SelectionMode="None">
+                                <ListViewBase.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <ItemsWrapGrid
                                             x:Name="RepeaterPanel"
                                             CacheLength="1"
+                                            ItemHeight="250"
                                             Orientation="Horizontal" />
                                     </ItemsPanelTemplate>
-                                </GridView.ItemsPanel>
-                                <GridView.ItemContainerStyle>
-                                    <Style TargetType="GridViewItem">
-                                        <Setter Property="Margin" Value="0 0 12 0" />
+                                </ListViewBase.ItemsPanel>
+                                <ListViewBase.ItemContainerStyle>
+                                    <Style BasedOn="{StaticResource QuickCompareContainerStyle}" TargetType="controls:ExtendedGridViewItem">
+                                        <Setter Property="Margin" Value="0 0 12 12" />
                                         <Setter Property="VerticalAlignment" Value="Stretch" />
                                         <Setter Property="VerticalContentAlignment" Value="Stretch" />
                                         <Setter Property="HorizontalAlignment" Value="Stretch" />
                                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="GridViewItem">
-                                                    <Button
-                                                        VerticalAlignment="Stretch"
-                                                        HorizontalContentAlignment="Stretch"
-                                                        VerticalContentAlignment="Stretch"
-                                                        AutomationProperties.AccessibilityView="Raw"
-                                                        Click="ItemClick"
-                                                        Content="{TemplateBinding Content}"
-                                                        ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                        ContextRequested="ItemContextRequested"
-                                                        PointerPressed="Button_PointerPressed"
-                                                        Style="{StaticResource QuickCompareContainerStyle}" />
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
                                     </Style>
-                                </GridView.ItemContainerStyle>
-                            </toolkit:AdaptiveGridView>
+                                </ListViewBase.ItemContainerStyle>
+                            </controls:ExtendedGridView>
                         </Border>
 
                         <Grid
                             x:Name="DetailsViewRoot"
                             RowSpacing="12"
-                            RenderTransformOrigin="0.5,0.5"
+                            core:Properties.CompositeTransform="True"
                             Visibility="Collapsed"
                             d:Visibility="Visible">
-                            <Grid.RenderTransform>
-                                <CompositeTransform />
-                            </Grid.RenderTransform>
 
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -709,16 +638,27 @@
                                     Style="{StaticResource ThemeTextBlockButtonStyle}" />
                             </Grid>
 
-                            <ScrollViewer
+                            <Border
                                 x:Name="DetailsViewContent"
                                 Grid.Row="1"
                                 Margin="0 0 -24 0"
-                                Padding="0 0 24 0"
                                 RenderTransformOrigin="0.5,0.5">
                                 <FrameworkElement.RenderTransform>
                                     <CompositeTransform />
                                 </FrameworkElement.RenderTransform>
-                                <muxc:ItemsRepeater
+
+                                <controls:ExtendedGridView
+                                    x:Name="DetailsRepeater"
+                                    Margin="-10 0 0 0"
+                                    Padding="8 0 10 48"
+                                    ContainerContentChanging="Repeater_ContainerContentChanging"
+                                    ItemContainerStyle="{Binding ElementName=Repeater, Path=ItemContainerStyle}"
+                                    ItemTemplate="{Binding ElementName=Repeater, Path=ItemTemplate}"
+                                    ItemsPanel="{Binding ElementName=Repeater, Path=ItemsPanel}"
+                                    ItemsSource="{x:Bind ViewModel.SelectedFont.RealFaces, Mode=OneWay}"
+                                    SelectionMode="None" />
+
+                                <!--<muxc:ItemsRepeater
                                     x:Name="DetailsRepeater"
                                     ElementClearing="DetailsRepeater_ElementClearing"
                                     ElementPrepared="Repeater_ElementPrepared"
@@ -774,8 +714,8 @@
                                             </Border>
                                         </DataTemplate>
                                     </muxc:ItemsRepeater.ItemTemplate>
-                                </muxc:ItemsRepeater>
-                            </ScrollViewer>
+                                </muxc:ItemsRepeater>-->
+                            </Border>
                         </Grid>
                     </Grid>
                 </Grid>
@@ -854,6 +794,9 @@
                     </VisualTransition>
                     <VisualTransition From="*" To="NormalState">
                         <Storyboard>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackButton" Storyboard.TargetProperty="(UIElement.Visibility)">
+                                <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="Collapsed" />
+                            </ObjectAnimationUsingKeyFrames>
                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DetailsViewRoot" Storyboard.TargetProperty="(UIElement.Visibility)">
                                 <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="Visible" />
                                 <DiscreteObjectKeyFrame KeyTime="00:00:00.3" Value="Collapsed" />
@@ -929,14 +872,15 @@
             <VisualStateGroup x:Name="LayoutModeStates" CurrentStateChanging="LayoutModeStates_CurrentStateChanging">
                 <VisualState x:Name="GridLayoutState">
                     <VisualState.Setters>
-                        <Setter Target="Repeater.DesiredWidth" Value="500" />
-                        <Setter Target="Repeater.ItemHeight" Value="262" />
+                        <Setter Target="Repeater.DesiredItemWidth" Value="500" />
+                        <Setter Target="DetailsRepeater.DesiredItemWidth" Value="500" />
+                        <!--<Setter Target="Repeater.ItemHeight" Value="262" />-->
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="StackLayoutState">
                     <VisualState.Setters>
                         <Setter Target="Repeater.ItemsPanel" Value="{StaticResource StackingPanelTemplate}" />
-                        <Setter Target="DetailsRepeater.Layout" Value="{StaticResource StackLayout}" />
+                        <!--<Setter Target="DetailsRepeater.Layout" Value="{StaticResource StackLayout}" />-->
                         <Setter Target="FontSizeSlider.Maximum" Value="128" />
                     </VisualState.Setters>
                 </VisualState>

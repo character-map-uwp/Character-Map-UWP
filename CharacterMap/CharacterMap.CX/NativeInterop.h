@@ -16,7 +16,6 @@
 #include "DWriteFallbackFont.h"
 
 using namespace Microsoft::Graphics::Canvas;
-using namespace Microsoft::Graphics::Canvas::Text;
 using namespace Microsoft::Graphics::Canvas::Geometry;
 using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
@@ -36,7 +35,7 @@ namespace CharacterMapCX
 		virtual ~NativeInterop();
 		event SystemFontSetInvalidated^ FontSetInvalidated;
 
-        NativeInterop(CanvasDevice^ device);
+        NativeInterop();
 
 		DWriteTextLayoutAnalysis^ AnalyzeCharacterLayout(DWriteTextLayoutDefinition^ layoutDef);
 		DWriteTextLayoutAnalysis^ AnalyzeGlyphLayout(DWriteFontFace^ fontFace, UINT16 glyphIndex);
@@ -65,18 +64,11 @@ namespace CharacterMapCX
 
 		IVectorView<DWriteFontSet^>^ GetFonts(IVectorView<StorageFile^>^ files);
 
-		IAsyncOperation<bool>^ UnpackWOFF2Async(IBuffer^ buffer, IOutputStream^ stream);
+		IAsyncOperation<bool>^ UnpackWOFFAsync(IBuffer^ buffer, IOutputStream^ stream);
 
 		DWriteFontSet^ GetFonts(Uri^ uri);
 
 		IVectorView<DWriteFontSet^>^ GetFonts(IVectorView<Uri^>^ uris);
-
-		CanvasTextFormat^ CreateTextFormat(
-			DWriteFontFace^ fontFace,
-			FontWeight weight,
-			FontStyle style,
-			FontStretch stretch,
-			float fontSize);
 
 		INT32 GetTypographicGlyph(
 			DWriteFontFace^ fontFace,

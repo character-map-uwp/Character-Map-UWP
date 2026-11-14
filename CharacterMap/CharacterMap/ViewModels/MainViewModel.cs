@@ -55,6 +55,8 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty] ObservableCollection<AlphaKeyGroup<CMFontFamily>> _groupedFontList;
     [ObservableProperty] BasicFontFilter _fontListFilter = BasicFontFilter.All;
     [ObservableProperty] List<CMFontFamily> _fontList;
+    [ObservableProperty] bool _showVortex = false;
+    [ObservableProperty] List<CMFontFace> _vortexFaces = null;
 
     public FontItem CurrentFont => 
         Fonts?.Count > 0 
@@ -328,6 +330,7 @@ public partial class MainViewModel : ViewModelBase
                 IsSearchResults = false;
 
             FontList = fontList.ToList();
+            VortexFaces = FontList.OrderBy(f => Utils.Random.NextDouble()).Take(40).Select(f => f.DefaultFace).ToList();
         }
         catch (Exception e)
         {

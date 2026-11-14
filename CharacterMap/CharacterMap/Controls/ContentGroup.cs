@@ -1,11 +1,11 @@
 ﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Markup;
 
 namespace CharacterMap.Controls;
 
 [DependencyProperty("Text")]
 [DependencyProperty("SecondaryContent")]
-
 public sealed partial class ContentGroup : ItemsControl
 {
     public ContentGroup()

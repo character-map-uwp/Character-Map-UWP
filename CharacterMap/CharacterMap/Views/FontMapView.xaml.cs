@@ -153,6 +153,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         LayoutRoot.KeyDown -= LayoutRoot_KeyDown;
 
         Messenger.UnregisterAll(this);
+        ViewMessenger.UnregisterAll(this);
         ViewModel?.Deactivated();
 
 #if DIAGNOSTIC
@@ -587,6 +588,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                     UpdateRepeaterToXTransition(LigaturesRepeater, GlyphRepeater, LigatureToGlyphTransition);
             }
 
+            this.FindName(nameof(GlyphsRoot));
             GoToState(GlyphMapState.Name, animate);
         }
         else if (ViewModel.DisplayMode == FontDisplayMode.LigaturesState)
@@ -602,6 +604,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                     UpdateRampToGridTransition(LigaturesRepeater, RampToLigaturesTransition);
             }
 
+            this.FindName(nameof(LigaturesRoot));
             GoToState(LigatureMapState.Name, animate);
         }
         else if (ViewModel.DisplayMode == FontDisplayMode.OpenTypeState)
@@ -617,6 +620,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             //        UpdateRampToGridTransition(LigaturesRepeater, RampToLigaturesTransition);
             //}
 
+            this.FindName(nameof(OpenTypeRoot));
             GoToState(OpenTypeMapState.Name, animate);
         }
         else if (ViewModel.DisplayMode == FontDisplayMode.TypeRampState)
@@ -1661,11 +1665,13 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
         if (g.Children[0] is FontGlyphs f)
         {
+            f.BlockUpdates = true;
             f.FontFace = options.ActiveFontFace;
             f.FontSize = options.FontSize;
             f.IsColorFontEnabled = options.IsColorRenderingEnabled;
             f.StyleSimulations = options.ActiveFontFace.Properties.Simulations;
             f.Indices = item.ToString();
+            f.Update();
         }
 
         if (g.Children[1] is TextBlock t)

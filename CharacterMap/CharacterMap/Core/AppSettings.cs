@@ -46,6 +46,12 @@ public class AppSettings : INotifyPropertyChanged
         set => Set(value);
     }
 
+    public bool UseMenuNavigationBar
+    {
+        get => Get(true);
+        set => BroadcastSet(value);
+    }
+
     public int SettingsVersion
     {
         get => Get(0);
@@ -108,7 +114,7 @@ public class AppSettings : INotifyPropertyChanged
 
     public int ApplicationDesignTheme
     {
-        get => Get(0);
+        get => Math.Min(4, Get(0));
         set => BroadcastSet(value);
     }
 

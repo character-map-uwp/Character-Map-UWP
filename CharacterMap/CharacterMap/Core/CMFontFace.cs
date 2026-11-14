@@ -72,7 +72,7 @@ public partial class CMFontFace : IDisposable
     /// <summary>
     /// Font source that external applications should use to display this font in XAML
     /// </summary>
-    public string XamlFontSource => field ??=
+    public string XamlFontSource =>
         (IsImported ? $"/Assets/Fonts/{FileName}#{FamilyName}" : Source);
 
     public DWriteFontFace Face { get; }

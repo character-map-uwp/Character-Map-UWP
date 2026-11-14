@@ -1,4 +1,4 @@
-﻿using CharacterMapCX.Controls;
+using CharacterMapCX.Controls;
 using Microsoft.UI.Xaml.Controls;
 using SQLite;
 using System.Collections;
@@ -57,6 +57,27 @@ public static class Extensions
     {
         Core.Properties.SetThemeIcon(f, icon);
         return f;
+    }
+
+    public static IEnumerable<SelectorItem> GetActiveContainers(this ListViewBase listView)
+    {
+        if (listView?.ItemsPanelRoot is not { } panel)
+            return Enumerable.Empty<SelectorItem>();
+
+        return panel.Children.OfType<SelectorItem>().Where(c => c.ActualOffset.X > -5000);
+    }
+
+    public static void TearDown(this ListViewBase listView)
+    {
+        if (listView is null)
+            return;
+
+        listView.ItemsSource = null;
+        if (listView.ItemsPanelRoot is { } panel)
+            panel.Children.Clear();
+
+        listView.ItemsPanel = null;
+        listView.Items?.Clear();
     }
 
     /// <summary>
@@ -177,12 +198,12 @@ public static class Extensions
         return new List<UIElement> { control };
     }
 
-    public static T Realize<T>(this T list, double width = 100, double height = 100) where T : ItemsControl
+    public static T Realize<T>(this T item, double width = 50, double height = 50) where T : FrameworkElement
     {
-        if (list.ItemsPanelRoot == null)
-            list.Measure(new(width, height));
+        if (item is ItemsControl { ItemsPanelRoot: null } || (item.DesiredSize.IsEmpty || item.DesiredSize.Width == 0))
+            item.Measure(new(width, height));
 
-        return list;
+        return item;
     }
 
     public static T Merge<T>(this T dictionary, ResourceDictionary d) where T : ResourceDictionary
@@ -227,6 +248,14 @@ public static class Extensions
     }
 
     public static int ItemsCount(this RadioButtons b)
+    {
+        if (b.ItemsSource is IList l)
+            return l.Count;
+
+        return b.Items.Count;
+    }
+
+    public static int ItemsCount(this Windows.UI.Xaml.Controls.Primitives.Selector b)
     {
         if (b.ItemsSource is IList l)
             return l.Count;

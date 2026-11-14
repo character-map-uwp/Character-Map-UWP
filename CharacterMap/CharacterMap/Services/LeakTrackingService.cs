@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using Windows.System;
 using Windows.UI.Xaml;
 
@@ -61,6 +61,8 @@ public static class LeakTrackingService
         _sb.AppendLine("\n*********************************");
         _sb.AppendLine("*** START LEAK TRACKING ********\n\n");
 
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
         GC.Collect();
         ProcessMemoryReport report = MemoryManager.GetProcessMemoryReport();
 

@@ -256,6 +256,11 @@ public abstract class BaseNotifyingModel
             Messenger.Register<T>(this, (r, m) => { action(m); });
     }
 
+    public void UnregisterAll()
+    {
+        Messenger.UnregisterAll(this);
+    }
+
     public bool AllowAnimation => ResourceHelper.AllowAnimation;
     public bool AllowExpensiveAnimation => ResourceHelper.AllowExpensiveAnimation;
     public bool AllowFluentAnimation => ResourceHelper.AllowFluentAnimation;

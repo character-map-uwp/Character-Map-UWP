@@ -187,6 +187,10 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             case nameof(AppSettings.FontListFontSizeIndex):
                 RunOnUI(() => FontListFontSize = ResourceHelper.GetFontListFontSize());
                 break;
+
+            case nameof(AppSettings.UseMenuNavigationBar):
+                RunOnUI(() => UpdateMenuBar());
+                break;
         }
     }
 
@@ -233,6 +237,9 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
     void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
     {
+        if (e.NewSize.Width == 0)
+            return;
+
         if (e.NewSize.Width < 900)
             GoToState(nameof(CompactViewState));
         else if (ViewStates.CurrentState == CompactViewState)
@@ -263,7 +270,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         });
     }
 
-    async void UpdateLoadingStates()
+    public async void UpdateLoadingStates()
     {
         TitleBar.TryUpdateMetrics();
 
@@ -273,6 +280,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             GoToState(nameof(FontsFailedState));
         else
         {
+            UpdateMenuBar(false);
             GoToState(nameof(FontsLoadedState), false);
             FontListFontSize = ResourceHelper.GetFontListFontSize();
             if (ResourceHelper.AllowAnimation)
@@ -319,6 +327,19 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
                 // 2. Trim DirectX driver buffers and working set
                 CharacterMapCX.CompositionDeviceManager.Trim();
             }, CoreDispatcherPriority.Low);
+        }
+    }
+
+    void UpdateMenuBar(bool animate = true)
+    {
+        if (ViewModel.Settings.UseMenuNavigationBar)
+            GoToState(nameof(MenuBarVisibleState), animate);
+        else
+        {
+            GoToState(nameof(MenuBarHiddenState), animate);
+
+            if (animate)
+                ShowSettings(0);
         }
     }
 
@@ -385,14 +406,19 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             ViewModel.TryCloseTab(FontsTabBar.TabItems.IndexOf(item));
     }
 
-    void BtnSettings_OnClick(object sender, RoutedEventArgs e)
-    {
-        ShowSettings();
-    }
+    void BtnSettings_OnClick(object sender, RoutedEventArgs e) => ShowSettings();
 
     void ShowAbout() => ShowSettings(10);
 
-    void ShowSettings(int idx = 0)
+    public void ShowSettings(int idx= 0)
+    {
+        if (idx == 0)
+            NavPresenter.Target = nameof(SettingsView);
+        else
+            NavPresenter.Target = $"{nameof(SettingsView)}{idx}";
+    }
+
+    public void ShowSettingsInternal(int idx = 0)
     {
         // Zune theme shows settings button early right now, so to avoid
         // crashing do nothing until fonts are loaded
@@ -780,6 +806,35 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         this.FindName(nameof(ZoomGridView));
     }
 
+    private void UXRadioButtons_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (NavSelector.SelectedItem is RadioButton { Content: NamedIcon icon })
+            NavPresenter.Target = icon.Id;
+    }
+
+    private void SettingsView_Closed(object sender, EventArgs e)
+    {
+        if (ViewModel.Settings.UseMenuNavigationBar is false)
+            NavPresenter.Target = nameof(MainPage);
+    }
+
+    private void OnPresenterNavigated(object sender, string e)
+    {
+        // Ensure correct target is selected on NavBar
+        if (ViewModel.Settings.UseMenuNavigationBar is false || NavSelector is null)
+            return;
+
+        var items = NavSelector.GetFirstLevelDescendantsOfType<RadioButton>().ToList();
+        if (e.StartsWith(nameof(SettingsView)))
+        {
+            NavSelector.SelectedIndex = items.IndexOf(items.FirstOrDefault(r => r.Tag is string s && s == "SettingsView"));
+        }
+        else
+        {
+            NavSelector.SelectedIndex = items.IndexOf(items.FirstOrDefault(r => r.Tag is string s && s == e));
+        }
+    }
+
 
 
 
@@ -1053,5 +1108,75 @@ public partial class MainPage
             => new MainPage (a);
 
         return Ioc.Default.ViewService().CreateViewAsync(() => CreateView(args), false);
+    }
+}
+
+[DependencyProperty<string>("Target")]
+[DependencyProperty<MainViewModel>("ViewModel")]
+public partial class MainPresenter : ContentControl
+{
+    public ICommand SettingsRequestedCommand;
+
+    private FrameworkElement _mainContent = null;
+
+    private MainPage MainPage => field ??= this.GetAncestorsOfType<MainPage>().FirstOrDefault();
+
+    public event EventHandler<string> Navigated;
+
+    public MainPresenter()
+    {
+        HorizontalContentAlignment = HorizontalAlignment.Stretch;
+        VerticalContentAlignment = VerticalAlignment.Stretch;
+        Properties.SetClipToBounds(this, true);
+    }
+
+    partial void OnTargetChanged(string oldValue, string newValue)
+    {
+        if (newValue == nameof(MainPage))
+        {
+            Content = _mainContent;
+            CompositionFactory.PlayEntrance([_mainContent], 0, 200);
+        }
+        else if (newValue == nameof(QuickCompareView))
+        {
+            var vm = MainPage.ViewModel;
+            Content = new QuickCompareView(new(false, vm.Folder)) { IsStandalone = vm.IsSecondaryView };
+        }
+        else if (newValue == nameof(CalligraphyView))
+        {
+            Content = new CalligraphyView(MainPage.GetFontMap().ViewModel.RenderingOptions);
+        }
+        else if (newValue.StartsWith(nameof(SettingsView)) && oldValue.StartsWith(nameof(SettingsView)) is false)
+        {
+            if (MainPage is not MainPage main)
+                return;
+
+            Content = null;
+            int idx = 0;
+            if (newValue != nameof(SettingsView))
+                idx = Convert.ToInt32(newValue.Remove(0, nameof(SettingsView).Length));
+
+            main.ShowSettingsInternal(idx);
+        }
+
+        if (oldValue is not null && oldValue.StartsWith(nameof(SettingsView)) && !newValue.StartsWith(nameof(SettingsView)))
+            MainPage.SettingsView?.Hide();
+
+        Navigated?.Invoke(this, newValue);
+    }
+
+    protected override void OnContentChanged(object oldContent, object newContent)
+    {
+        if (oldContent is null && newContent is ExtendedSplitView nc)
+        {
+            _mainContent = nc;
+        }
+
+        if (oldContent is ExtendedSplitView esv)
+        {
+            esv.UpdateAnimationStates(false);
+        }
+
+        base.OnContentChanged(oldContent, newContent);
     }
 }

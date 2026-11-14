@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.UI.Composition;
@@ -173,20 +173,17 @@ public partial class PreviewTip : ContentControl
             buttons.ElementPrepared -= Buttons_ElementPrepared;
             buttons.ElementPrepared += Buttons_ElementPrepared;
 
-            if (buttons.InnerRepeater is not null)
+            for (int i = 0; i < buttons.Items.Count; i++)
             {
-                for (int i = 0; i < buttons.InnerRepeater.ItemsSourceView.Count; i++)
+                if (buttons.ContainerFromIndex(i) is FrameworkElement item)
                 {
-                    if (buttons.InnerRepeater.ItemsSourceView.GetAt(i) is FrameworkElement item)
-                    {
-                        if (item is not RadioButton b)
-                            b = item.GetFirstAncestorOfType<RadioButton>() ?? null;
-
-                        item = b ?? item;
-
-                        item.PointerEntered -= Item_PointerEntered;
-                        item.PointerEntered += Item_PointerEntered;
-                    }
+                    item.PointerEntered -= Item_PointerEntered;
+                    item.PointerEntered += Item_PointerEntered;
+                }
+                else if (buttons.Items[i] is FrameworkElement fe)
+                {
+                    fe.PointerEntered -= Item_PointerEntered;
+                    fe.PointerEntered += Item_PointerEntered;
                 }
             }
         }
@@ -383,7 +380,7 @@ public partial class PreviewTip : ContentControl
 
     #region Internal Events
 
-    private void Buttons_ElementPrepared(UXRadioButtons sender, ItemsRepeaterElementPreparedEventArgs args)
+    private void Buttons_ElementPrepared(UXRadioButtons sender, UXRadioButtonsElementPreparedEventArgs args)
     {
         args.Element.PointerEntered -= Item_PointerEntered;
         args.Element.PointerEntered += Item_PointerEntered;

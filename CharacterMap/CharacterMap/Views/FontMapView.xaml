@@ -2353,11 +2353,11 @@
                                 <Setter Property="VerticalAlignment" Value="Stretch" />
                             </Style>
                         </Control.Resources>
-                        <muxc:RadioButtons.ItemTemplate>
+                        <controls:UXRadioButtons.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding DisplayName}" />
                             </DataTemplate>
-                        </muxc:RadioButtons.ItemTemplate>
+                        </controls:UXRadioButtons.ItemTemplate>
                     </controls:UXRadioButtons>
 
                     <!--  Character Preview  -->

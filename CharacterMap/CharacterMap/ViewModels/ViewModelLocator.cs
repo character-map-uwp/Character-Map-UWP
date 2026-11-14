@@ -41,7 +41,7 @@ public class ViewModelLocator
         services.AddSingleton<IDialogService, DialogService>();
         services.AddSingleton(s => _navigationService);
         services.AddSingleton(s => ResourceHelper.AppSettings);
-        services.AddSingleton(s => new NativeInterop(Utils.CanvasDevice));
+        services.AddSingleton(s => new NativeInterop());
         services.AddSingleton<UserCollectionsService>();
         services.AddSingleton<MainViewModel>();
         Register<MainViewModel, MainPage>(services);

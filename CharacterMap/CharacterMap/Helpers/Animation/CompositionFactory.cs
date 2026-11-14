@@ -2,6 +2,7 @@
 
 using Microsoft.Graphics.Canvas.Effects;
 using System.Globalization;
+using Windows.ApplicationModel;
 using Windows.Graphics.Effects;
 using Windows.System;
 using Windows.UI;
@@ -227,7 +228,7 @@ public partial class CompositionFactory : DependencyObject
             var g = c.CreateAnimationGroup();
             g.Add(c.CreateVector3KeyFrameAnimation()
                         .SetTarget(nameof(Visual.Offset))
-                        .AddKeyFrame(1f, FINAL_VALUE)
+                        .AddKeyFrame(1f, FINAL_VALUE, CubicBezierPoints.FluentStandard)
                         .SetDuration(CompositionFactory.DefaultOffsetDuration));
 
             var s = c.CreateImplicitAnimationCollection();
@@ -294,14 +295,12 @@ public partial class CompositionFactory : DependencyObject
         }
     }
 
-    public static void SetupOverlayPanelAnimation(UIElement e)
+    public static void SetupOverlayPanelAnimation(UIElement e, bool hideOnly = false)
     {
         if (!UISettings.AnimationsEnabled)
             return;
 
         Visual v = e.EnableTranslation(true).GetElementVisual();
-
-
         if (ResourceHelper.IsMaterialTheme)
         {
             var g = v.GetCached("MTOPH", () =>
@@ -329,7 +328,9 @@ public partial class CompositionFactory : DependencyObject
             });
 
             e.SetHideAnimation(g);
-            e.SetShowAnimation(CompositionFactory.CreateEntranceAnimation(e, new Vector3(0, 200, 0), 0, 550));
+
+            if (!hideOnly)
+                e.SetShowAnimation(CompositionFactory.CreateEntranceAnimation(e, new Vector3(0, 200, 0), 0, 550));
         }
         
     }
@@ -1039,7 +1040,7 @@ public class ResizeHelper : IDisposable
 
     public ResizeHelper(FrameworkElement target)
     {
-        if (target is null)
+        if (target is null || DesignMode.DesignModeEnabled)
             return;
 
         CompositionFactory.SetUseSynchronisedReposition(target, true);

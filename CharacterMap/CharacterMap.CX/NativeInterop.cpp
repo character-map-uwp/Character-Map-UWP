@@ -21,26 +21,13 @@ using namespace concurrency;
 
 NativeInterop^ NativeInterop::_Current = nullptr;
 
-NativeInterop::NativeInterop(CanvasDevice^ device)
+NativeInterop::NativeInterop()
 {
-	DWriteCreateFactory(DWRITE_FACTORY_TYPE::DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory7), &m_dwriteFactory);
-
-	// Initialize Direct2D resources.
-	D2D1_FACTORY_OPTIONS options;
-	ZeroMemory(&options, sizeof(D2D1_FACTORY_OPTIONS));
-
-	D2D1CreateFactory(
-		D2D1_FACTORY_TYPE_MULTI_THREADED,
-		__uuidof(ID2D1Factory5),
-		&options,
-		&m_d2dFactory
-	);
-
-	ComPtr<ID2D1Device1> d2ddevice = GetWrappedResource<ID2D1Device1>(device);
-	d2ddevice->CreateDeviceContext(
-		D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS,
-		&m_d2dContext);
-
+	m_dwriteFactory = CompositionDeviceManager::GetDWriteFactory();
+	m_d2dFactory = CompositionDeviceManager::GetD2DFactory();
+	ComPtr<ID2D1DeviceContext> ctx;
+	ThrowIfFailed(CompositionDeviceManager::GetD2DDevice()->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS, &ctx));
+	ThrowIfFailed(ctx.As(&m_d2dContext));
 	m_fontManager = new CustomFontManager(m_dwriteFactory);
 	_Current = this;
 }
@@ -603,25 +590,26 @@ byte* GetPointerToPixelData(IBuffer^ pixelBuffer, unsigned int* length)
 	return pixels;
 }
 
-IAsyncOperation<bool>^ NativeInterop::UnpackWOFF2Async(IBuffer^ buffer, IOutputStream^ stream)
+IAsyncOperation<bool>^ NativeInterop::UnpackWOFFAsync(IBuffer^ buffer, IOutputStream^ stream)
 {
-	// 1. Unpack the WOFF2 data
-	unsigned int length;
+	// 1. Unpack the WOFF / WOFF2 data
+	unsigned int length = 0;
 	auto bytes = GetPointerToPixelData(buffer, &length);
-	ComPtr<IDWriteFactory7> factory = m_fontManager->GetIsolatedFactory();
-	ComPtr<IDWriteFontFileStream> fileStream;
-	auto result = factory->UnpackFontFile(DWRITE_CONTAINER_TYPE_WOFF2, bytes, length, &fileStream);
+	if (bytes == nullptr || length == 0)
+		return create_async([] { return task_from_result(false); });
 
-	if (result != S_OK)
+	ComPtr<IDWriteFactory7> factory = m_fontManager->GetIsolatedFactory();
+	DWRITE_CONTAINER_TYPE containerType = factory->AnalyzeContainerType(bytes, length);
+	if (containerType != DWRITE_CONTAINER_TYPE_WOFF && containerType != DWRITE_CONTAINER_TYPE_WOFF2)
+		return create_async([] { return task_from_result(false); });
+
+	ComPtr<IDWriteFontFileStream> fileStream;
+	auto result = factory->UnpackFontFile(containerType, bytes, length, &fileStream);
+
+	if (result != S_OK || fileStream == nullptr)
 		return create_async([] { return task_from_result(false); });
 	else
 		return DirectWrite::SaveFontStreamAsync(fileStream, stream);
-}
-
-CanvasTextFormat^ CharacterMapCX::NativeInterop::CreateTextFormat(DWriteFontFace^ fontFace, FontWeight weight, FontStyle style, FontStretch stretch, float fontSize)
-{
-	ComPtr<IDWriteTextFormat3> idFormat = CreateIDWriteTextFormat(fontFace, weight, style, stretch, fontSize);
-	return GetOrCreate<CanvasTextFormat>(idFormat.Get());
 }
 
 ComPtr<IDWriteTextFormat3> CharacterMapCX::NativeInterop::CreateIDWriteTextFormat(DWriteFontFace^ fontFace, FontWeight weight, FontStyle style, FontStretch stretch, float fontSize)

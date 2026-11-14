@@ -1,4 +1,5 @@
 using CharacterMap.Core;
+using CharacterMap.ViewModels;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,7 +12,8 @@ public record OpenTypeGlyphInfo(
     uint GlyphIndex,
     string Character,
     uint? UnicodeIndex = null,
-    string TooltipText = null)
+    string TooltipText = null,
+    FaceAnalysisModel FaceModel = null)
 {
     public bool HasCharacter => !string.IsNullOrEmpty(Character);
 
@@ -23,13 +25,39 @@ public record OpenTypeGlyphInfo(
         _ => $"#{GlyphIndex}"
     };
 
-    public string Tooltip => TooltipText ?? (UnicodeIndex switch
+    public string Tooltip => field ??= BuildTooltip();
+
+    private string BuildTooltip()
     {
-        0x00A0 => $"No-Break Space (NBSP)\r\nUnicode: U+00A0\r\nGlyph #{GlyphIndex}",
-        0x0020 => $"Space\r\nUnicode: U+0020\r\nGlyph #{GlyphIndex}",
-        _ when HasCharacter => $"Unicode: U+{UnicodeIndex:X4}\r\nGlyph #{GlyphIndex}",
-        _ => $"Glyph #{GlyphIndex}"
-    });
+        if (TooltipText is not null)
+            return TooltipText;
+
+        if (HasCharacter && UnicodeIndex is uint cp)
+        {
+            if (FaceModel?.Face is not null)
+            {
+                string desc = GlyphService.GetCharacterDescription(cp, FaceModel.Face);
+                if (!string.IsNullOrWhiteSpace(desc))
+                    return $"{desc}\r\nUnicode: U+{cp:X4}\r\nGlyph #{GlyphIndex}";
+            }
+
+            return cp switch
+            {
+                0x00A0 => $"No-Break Space (NBSP)\r\nUnicode: U+00A0\r\nGlyph #{GlyphIndex}",
+                0x0020 => $"Space\r\nUnicode: U+0020\r\nGlyph #{GlyphIndex}",
+                _ => $"Unicode: U+{cp:X4}\r\nGlyph #{GlyphIndex}"
+            };
+        }
+
+        if (FaceModel?.Analysis is { HasGlyphNames: true } analysis
+            && analysis.GlyphNameMappings.TryGetValue((int)GlyphIndex, out string postName)
+            && !string.IsNullOrWhiteSpace(postName))
+        {
+            return $"{postName}\r\nGlyph #{GlyphIndex}";
+        }
+
+        return $"Glyph #{GlyphIndex}";
+    }
 }
 
 [DebuggerDisplay("OpenTypeSubstitutionModel Input: {InputDisplayText} -> {SubstituteDisplayText}")]

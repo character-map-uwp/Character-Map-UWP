@@ -78,6 +78,20 @@ namespace CharacterMapCX
         static Microsoft::WRL::ComPtr<ID2D1Device> GetD2DDevice();
         static Windows::UI::Composition::CompositionGraphicsDevice^ GetGraphicsDevice(Windows::UI::Composition::Compositor^ compositor);
         static Windows::UI::Composition::CompositionColorBrush^ GetColorBrush(Windows::UI::Composition::Compositor^ compositor, Windows::UI::Color color);
+        static float GetDpiScale(Windows::UI::Core::CoreDispatcher^ dispatcher);
+        static Windows::UI::Color ExtractSolidColor(Windows::UI::Xaml::Media::Brush^ brush, Windows::UI::Color fallback);
+        static void EnsureSurfaceBrush(
+            Windows::UI::Composition::Compositor^ compositor,
+            Windows::UI::Composition::CompositionSurfaceBrush^& surfaceBrush,
+            Windows::UI::Composition::ICompositionSurface^ surface);
+        static void ApplySurfaceOrMaskBrush(
+            Windows::UI::Composition::Compositor^ compositor,
+            Windows::UI::Composition::SpriteVisual^ spriteVisual,
+            Windows::UI::Composition::CompositionSurfaceBrush^ surfaceBrush,
+            Windows::UI::Composition::CompositionMaskBrush^& maskBrush,
+            Windows::UI::Composition::CompositionColorBrush^& colorBrush,
+            bool useMask,
+            Windows::UI::Color maskColor);
         static void ReleaseGraphicsDevice(Windows::UI::Composition::Compositor^ compositor);
         static std::mutex& GetRenderMutex();
         static void HandleDeviceLost();

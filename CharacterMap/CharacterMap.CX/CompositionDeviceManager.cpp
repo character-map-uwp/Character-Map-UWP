@@ -1,7 +1,9 @@
 #include "pch.h"
 #include "CompositionDeviceManager.h"
+#include "CoreDWTextServices.h"
 #include "GlyphAtlasManager.h"
 #include "FontGlyphs.h"
+#include <memoryapi.h>
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d2d1.lib")
@@ -47,7 +49,7 @@ std::mutex& CompositionDeviceManager::GetRenderMutex()
 void CompositionDeviceManager::EnsureDevices()
 {
     if (s_dwriteFactory == nullptr)
-        DWriteCreateFactory(DWRITE_FACTORY_TYPE_ISOLATED, __uuidof(IDWriteFactory7), &s_dwriteFactory);
+        DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory7), &s_dwriteFactory);
 
     if (s_d3dDevice != nullptr)
     {
@@ -119,8 +121,6 @@ void CompositionDeviceManager::EnsureDevices()
         }
     }
 
-    if (s_dwriteFactory == nullptr)
-        DWriteCreateFactory(DWRITE_FACTORY_TYPE_ISOLATED, __uuidof(IDWriteFactory7), &s_dwriteFactory);
 }
 
 ComPtr<ID2D1Factory5> CompositionDeviceManager::GetD2DFactory()
@@ -515,7 +515,7 @@ void CompositionDeviceManager::Trim()
     // only clears D2D's rasterised texture atlases — it does NOT reach into DWrite.
     // Because the factory is ISOLATED (not SHARED), releasing it here is safe and
     // does not affect any other component. EnsureDevices() will recreate it lazily.
-    s_dwriteFactory = nullptr;
+    //s_dwriteFactory = nullptr;
 }
 
 void CompositionDeviceManager::TrimD2DResources()
@@ -531,6 +531,14 @@ void CompositionDeviceManager::TrimWorkingSet()
 {
     Trim(); // Trims DXGI device and graphics devices
     HeapCompact(GetProcessHeap(), 0);
+    
+    // Forces Windows to flush all dead working set pages out of the process commit (same as minimize):
+    typedef BOOL(WINAPI* PFN_SetProcessWorkingSetSize)(HANDLE, SIZE_T, SIZE_T);
+    static PFN_SetProcessWorkingSetSize s_pfnSetProcessWorkingSetSize = reinterpret_cast<PFN_SetProcessWorkingSetSize>(
+        GetProcAddress(GetModuleHandleW(L"kernel32.dll"), "SetProcessWorkingSetSize"));
+
+    if (s_pfnSetProcessWorkingSetSize != nullptr)
+        s_pfnSetProcessWorkingSetSize(GetCurrentProcess(), (SIZE_T)-1, (SIZE_T)-1);
 }
 
 uint64 CompositionDeviceManager::GetProcessHeapUsage()
@@ -625,32 +633,27 @@ bool CompositionDeviceManager::RenderGlyphToSurface(
 
             D2D1_POINT_2F baselineOrigin = D2D1::Point2F(padLeft, baseline + padTop);
 
-            if (preferredFormat == GlyphImageFormat::TrueType)
+            bool isMask = (preferredFormat == GlyphImageFormat::TrueType);
+            D2D1_COLOR_F brushColor = D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f);
+            if (!isMask)
             {
-                ComPtr<ID2D1SolidColorBrush> alphaBrush;
-                d2dContext->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f), &alphaBrush);
-                d2dContext->DrawGlyphRun(baselineOrigin, &glyphRun, alphaBrush.Get(), DWRITE_MEASURING_MODE_NATURAL);
-            }
-            else
-            {
-                D2D1_COLOR_F brushColor = D2D1::ColorF(D2D1::ColorF::White);
                 if (auto scb = dynamic_cast<Windows::UI::Xaml::Media::SolidColorBrush^>(foreground))
                 {
                     auto c = scb->Color;
                     brushColor = D2D1::ColorF(c.R / 255.0f, c.G / 255.0f, c.B / 255.0f, (c.A / 255.0f) * static_cast<float>(scb->Opacity));
                 }
-
-                ComPtr<ID2D1SolidColorBrush> d2dBrush;
-                d2dContext->CreateSolidColorBrush(brushColor, &d2dBrush);
-
-                DrawGlyphRunWithColorSupport(
-                    d2dContext.Get(),
-                    GetDWriteFactory().Get(),
-                    baselineOrigin,
-                    &glyphRun,
-                    d2dBrush.Get(),
-                    preferredFormat);
             }
+
+            ComPtr<ID2D1SolidColorBrush> d2dBrush;
+            d2dContext->CreateSolidColorBrush(brushColor, &d2dBrush);
+
+            TextRenderParameters renderParams;
+            renderParams.ForegroundBrush = d2dBrush.Get();
+            renderParams.EnableColor = !isMask;
+            renderParams.PreferredFormat = preferredFormat;
+            renderParams.IsMaskSurface = isMask;
+
+            CoreDWTextServices::DrawGlyphRun(d2dContext.Get(), baselineOrigin, &glyphRun, renderParams);
 
             HRESULT hrEnd = surfaceInterop->EndDraw();
             if (FAILED(hrEnd))
@@ -663,5 +666,86 @@ bool CompositionDeviceManager::RenderGlyphToSurface(
     }
 
     return true;
+}
+
+float CompositionDeviceManager::GetDpiScale(Windows::UI::Core::CoreDispatcher^ dispatcher)
+{
+    float dpiScale = 1.0f;
+    try
+    {
+        if (dispatcher != nullptr)
+        {
+            auto displayInfo = Windows::Graphics::Display::DisplayInformation::GetForCurrentView();
+            if (displayInfo != nullptr)
+                dpiScale = displayInfo->LogicalDpi / 96.0f;
+        }
+    }
+    catch (...) {}
+    return dpiScale;
+}
+
+Windows::UI::Color CompositionDeviceManager::ExtractSolidColor(Windows::UI::Xaml::Media::Brush^ brush, Windows::UI::Color fallback)
+{
+    Windows::UI::Color clr = fallback;
+    if (auto scb = dynamic_cast<Windows::UI::Xaml::Media::SolidColorBrush^>(brush))
+    {
+        clr = scb->Color;
+        clr.A = static_cast<uint8_t>(clr.A * scb->Opacity);
+    }
+    return clr;
+}
+
+void CompositionDeviceManager::EnsureSurfaceBrush(
+    Compositor^ compositor,
+    CompositionSurfaceBrush^& surfaceBrush,
+    ICompositionSurface^ surface)
+{
+    if (surfaceBrush == nullptr)
+    {
+        surfaceBrush = compositor->CreateSurfaceBrush(surface);
+        surfaceBrush->Stretch = CompositionStretch::None;
+        surfaceBrush->HorizontalAlignmentRatio = 0.0f;
+        surfaceBrush->VerticalAlignmentRatio = 0.0f;
+    }
+    else if (surfaceBrush->Surface != surface)
+    {
+        surfaceBrush->Surface = surface;
+    }
+}
+
+void CompositionDeviceManager::ApplySurfaceOrMaskBrush(
+    Compositor^ compositor,
+    SpriteVisual^ spriteVisual,
+    CompositionSurfaceBrush^ surfaceBrush,
+    CompositionMaskBrush^& maskBrush,
+    CompositionColorBrush^& colorBrush,
+    bool useMask,
+    Windows::UI::Color maskColor)
+{
+    if (useMask)
+    {
+        colorBrush = GetColorBrush(compositor, maskColor);
+        if (maskBrush == nullptr)
+        {
+            maskBrush = compositor->CreateMaskBrush();
+            maskBrush->Mask = surfaceBrush;
+            maskBrush->Source = colorBrush;
+        }
+        else
+        {
+            if (maskBrush->Mask != surfaceBrush)
+                maskBrush->Mask = surfaceBrush;
+            if (maskBrush->Source != colorBrush)
+                maskBrush->Source = colorBrush;
+        }
+
+        if (spriteVisual->Brush != maskBrush)
+            spriteVisual->Brush = maskBrush;
+    }
+    else
+    {
+        if (spriteVisual->Brush != surfaceBrush)
+            spriteVisual->Brush = surfaceBrush;
+    }
 }
 

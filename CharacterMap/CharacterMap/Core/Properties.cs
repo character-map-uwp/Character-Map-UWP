@@ -1878,7 +1878,7 @@ public partial class Properties : DependencyObject
                 ZoomHelper helper = new() { TriggerWhenFocused = true };
                 SetZoomHelper(element, helper);
 
-                if (element is RadioButtons)
+                if (element is RadioButtons || element is Windows.UI.Xaml.Controls.Primitives.Selector)
                 {
                     helper.ZoomInRequested += ZoomIn;
                     helper.ZoomOutRequested += ZoomOut;
@@ -1910,7 +1910,9 @@ public partial class Properties : DependencyObject
                 if (z.Target is RadioButtons r
                     && r.SelectedIndex < r.ItemsCount() - 1)
                     r.SelectedIndex++;
-
+                else if (z.Target is Windows.UI.Xaml.Controls.Primitives.Selector s
+                    && s.SelectedIndex < s.ItemsCount() - 1)
+                    s.SelectedIndex++;
             }
             static void ZoomOut(object sender, EventArgs e)
             {
@@ -1920,6 +1922,9 @@ public partial class Properties : DependencyObject
                 if (z.Target is RadioButtons r
                     && r.SelectedIndex > 0)
                     r.SelectedIndex--;
+                else if (z.Target is Windows.UI.Xaml.Controls.Primitives.Selector s
+                    && s.SelectedIndex > 0)
+                    s.SelectedIndex--;
             }
 
             static void Zoom(object sender, double e)
@@ -1997,6 +2002,16 @@ public partial class Properties : DependencyObject
 
                 if (prop.StartsWith("CompositeTransform."))
                     prop = $"(UIElement.RenderTransform).({prop})";
+                else if (prop =="TranslateX")
+                    prop = "(UIElement.RenderTransform).(CompositeTransform.TranslateX)";
+                else if (prop == "TranslateY")
+                    prop = "(UIElement.RenderTransform).(CompositeTransform.TranslateY)";
+                else if (prop == "ScaleX")
+                    prop = "(UIElement.RenderTransform).(CompositeTransform.ScaleX)";
+                else if (prop == "ScaleY")
+                    prop = "(UIElement.RenderTransform).(CompositeTransform.ScaleY)";
+                else if (prop == "Rotation")
+                    prop = "(UIElement.RenderTransform).(CompositeTransform.Rotation)";
 
                 Storyboard.SetTargetProperty(t, prop);
             }

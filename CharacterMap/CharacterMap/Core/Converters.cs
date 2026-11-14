@@ -12,7 +12,7 @@ public static class Converters
     private static AppSettings _settings;
     private static UserCollectionsService _userCollections;
 
-
+    public static Visibility IsTrue(bool? b) => b.HasValue && b.Value ? Visibility.Visible : Visibility.Collapsed;
 
     public static bool False(bool b) => !b;
     public static bool FalseFalse(bool b, bool c) => !b && !c;

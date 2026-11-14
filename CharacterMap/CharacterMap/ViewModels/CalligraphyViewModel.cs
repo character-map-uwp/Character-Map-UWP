@@ -14,7 +14,7 @@ public partial class CalligraphyViewModel : ViewModelBase
 
     [ObservableProperty] private bool _isOverlayVisible = true;
 
-    [ObservableProperty] private string _text;
+    [ObservableProperty] private string _text = "Hello";
 
     [ObservableProperty] private double _fontSize = 220d;
 
@@ -47,7 +47,7 @@ public partial class CalligraphyViewModel : ViewModelBase
     /// <param name="container"></param>
     public void Clear()
     {
-        _inkManager.Clear();
+        _inkManager?.Clear();
     }
 
     internal void OnStrokesErased(InkStrokeContainer container, IReadOnlyList<InkStroke> strokes)

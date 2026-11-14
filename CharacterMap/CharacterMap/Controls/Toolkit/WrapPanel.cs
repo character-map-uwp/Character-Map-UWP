@@ -34,6 +34,7 @@ public enum StretchChild
 [DependencyProperty<Orientation>("Orientation", Windows.UI.Xaml.Controls.Orientation.Horizontal, nameof(OnLayoutPropertyChanged))]
 [DependencyProperty<Thickness>("Padding", "new Thickness(0d)", nameof(OnLayoutPropertyChanged))]
 [DependencyProperty<StretchChild>("StretchChild", StretchChild.None, nameof(OnLayoutPropertyChanged))]
+[DependencyProperty<int>("MaxColumns", 0, nameof(OnLayoutPropertyChanged))]
 public partial class WrapPanel : Panel
 {
     void OnLayoutPropertyChanged()
@@ -52,6 +53,7 @@ public partial class WrapPanel : Panel
         var spacingMeasure = new UvMeasure(Orientation, HorizontalSpacing, VerticalSpacing);
         var lineMeasure = UvMeasure.Zero;
 
+        int itemsInCurrentLine = 0;
         foreach (var child in Children)
         {
             child.Measure(availableSize);
@@ -65,10 +67,11 @@ public partial class WrapPanel : Panel
             double uChange = lineMeasure.U == 0
                 ? currentMeasure.U
                 : currentMeasure.U + spacingMeasure.U;
-            if (parentMeasure.U >= uChange + lineMeasure.U)
+            if (parentMeasure.U >= uChange + lineMeasure.U && (MaxColumns <= 0 || itemsInCurrentLine < MaxColumns))
             {
                 lineMeasure.U += uChange;
                 lineMeasure.V = Math.Max(lineMeasure.V, currentMeasure.V);
+                itemsInCurrentLine++;
             }
             else
             {
@@ -78,10 +81,11 @@ public partial class WrapPanel : Panel
                 totalMeasure.V += lineMeasure.V + spacingMeasure.V;
 
                 // if the next new row still can handle more controls
-                if (parentMeasure.U > currentMeasure.U)
+                if (parentMeasure.U > currentMeasure.U && (MaxColumns <= 0 || 1 < MaxColumns))
                 {
                     // set lineMeasure initial values to the currentMeasure to be calculated later on the new loop
                     lineMeasure = currentMeasure;
+                    itemsInCurrentLine = 1;
                 }
 
                 // the control will take one row alone
@@ -93,6 +97,7 @@ public partial class WrapPanel : Panel
 
                     // add new empty line
                     lineMeasure = UvMeasure.Zero;
+                    itemsInCurrentLine = 0;
                 }
             }
         }
@@ -196,7 +201,8 @@ public partial class WrapPanel : Panel
 
                 // Determine if the child fits in the current row
                 double projectedU = currentRowU + (rowChildren.Count > 0 ? spacingMeasure.U : 0) + desired.U + paddingEnd.U;
-                if (projectedU > parentMeasure.U && rowChildren.Count > 0)
+                bool exceedsMax = MaxColumns > 0 && rowChildren.Count >= MaxColumns;
+                if (((projectedU > parentMeasure.U && rowChildren.Count > 0) || exceedsMax) && rowChildren.Count > 0)
                 {
                     // Arrange existing row before starting a new one
                     ArrangeRow(rowChildren, rowMeasures, currentRowHeight, false);

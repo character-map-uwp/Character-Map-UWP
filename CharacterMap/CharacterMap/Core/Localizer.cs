@@ -32,3 +32,16 @@ public class Localizer : MarkupExtension
         return text;
     }
 }
+
+
+[MarkupExtensionReturnType(ReturnType = typeof(DWriteFontFace))]
+public class DefaultFallback : MarkupExtension
+{
+    protected override object ProvideValue() => FontFinder.Fallback;
+}
+
+[MarkupExtensionReturnType(ReturnType = typeof(TypographyFeatureInfo))]
+public class DefaultTypography : MarkupExtension
+{
+    protected override object ProvideValue() => TypographyFeatureInfo.None;
+}

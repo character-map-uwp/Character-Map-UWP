@@ -20,6 +20,8 @@ namespace CharacterMapCX
             FontGlyphs();
             virtual ~FontGlyphs();
 
+            property bool BlockUpdates;
+
             static void Trim();
             static void ReleaseGraphicsDevice(Windows::UI::Composition::Compositor^ compositor);
             static void ClearAtlases(Windows::UI::Composition::Compositor^ compositor);
@@ -166,6 +168,7 @@ namespace CharacterMapCX
             virtual Windows::Foundation::Size ArrangeOverride(Windows::Foundation::Size finalSize) override;
 
             void InvalidateLayoutAndRender();
+            void Update();
 
         private:
             static void EnsureDependencyProperties();

@@ -373,7 +373,7 @@ void DirectTextBox::OnLoaded(Platform::Object^, RoutedEventArgs^)
     if (m_hitContainer == nullptr)
     {
         Platform::String^ templateXaml =
-            L"<ControlTemplate xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\">"
+            L"<ControlTemplate xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\" xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">"
             L"<Border x:Name=\"RootElement\" Background=\"Transparent\">"
             L"<Grid x:Name=\"HitContainer\" Background=\"Transparent\" />"
             L"</Border>"
@@ -1732,17 +1732,7 @@ void DirectTextBox::RenderToSurface()
         ElementCompositionPreview::SetElementChildVisual(target, m_spriteVisual);
     }
 
-    float dpiScale = 1.0f;
-    try
-    {
-        if (this->Dispatcher != nullptr)
-        {
-            auto displayInfo = Windows::Graphics::Display::DisplayInformation::GetForCurrentView();
-            if (displayInfo != nullptr)
-                dpiScale = displayInfo->LogicalDpi / 96.0f;
-        }
-    }
-    catch (...) {}
+    float dpiScale = CompositionDeviceManager::GetDpiScale(this->Dispatcher);
 
     LONG requiredWidth = (std::max)(1L, static_cast<LONG>(std::ceil(actualW * dpiScale)));
     LONG requiredHeight = (std::max)(1L, static_cast<LONG>(std::ceil(actualH * dpiScale)));

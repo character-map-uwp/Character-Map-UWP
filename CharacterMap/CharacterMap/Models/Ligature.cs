@@ -5,7 +5,12 @@ using System.Linq;
 
 namespace CharacterMap.Models;
 
-public record LigatureComponent(uint GlyphIndex, string Character, uint? UnicodeIndex = null, string TooltipText = null)
+public record LigatureComponent(
+    uint GlyphIndex,
+    string Character,
+    uint? UnicodeIndex = null,
+    string TooltipText = null,
+    CMFontFace FontFace = null)
 {
     public bool HasCharacter => !string.IsNullOrEmpty(Character);
     public bool IsZWJ => UnicodeIndex is uint i ? Unicode.IsZWJ(i) : Unicode.IsZWJ(Character);
@@ -27,31 +32,75 @@ public record LigatureComponent(uint GlyphIndex, string Character, uint? Unicode
         _ => $"#{GlyphIndex}"
     };
 
-    public string Tooltip => TooltipText ?? (UnicodeIndex switch
+    public string Tooltip => field ??= BuildTooltip();
+
+    private string BuildTooltip()
     {
-        0x200D => $"Zero Width Joiner (ZWJ)\r\nUnicode: U+200D\r\nGlyph #{GlyphIndex}",
-        0x200C => $"Zero Width Non-Joiner (ZWNJ)\r\nUnicode: U+200C\r\nGlyph #{GlyphIndex}",
-        0x200B => $"Zero Width Space (ZWSP)\r\nUnicode: U+200B\r\nGlyph #{GlyphIndex}",
-        0xFE0F => $"Variation Selector-16 (VS16, Emoji)\r\nUnicode: U+FE0F\r\nGlyph #{GlyphIndex}",
-        0xFE0E => $"Variation Selector-15 (VS15, Text)\r\nUnicode: U+FE0E\r\nGlyph #{GlyphIndex}",
-        0x00A0 => $"No-Break Space (NBSP)\r\nUnicode: U+00A0\r\nGlyph #{GlyphIndex}",
-        0x0020 => $"Space\r\nUnicode: U+0020\r\nGlyph #{GlyphIndex}",
-        _ when HasCharacter => $"Unicode: U+{UnicodeIndex:X4}\r\nGlyph #{GlyphIndex}",
-        _ => $"Glyph #{GlyphIndex}"
-    });
+        if (TooltipText is not null)
+            return TooltipText;
+
+        return UnicodeIndex switch
+        {
+            0x200D => $"Zero Width Joiner (ZWJ)\r\nUnicode: U+200D\r\nGlyph #{GlyphIndex}",
+            0x200C => $"Zero Width Non-Joiner (ZWNJ)\r\nUnicode: U+200C\r\nGlyph #{GlyphIndex}",
+            0x200B => $"Zero Width Space (ZWSP)\r\nUnicode: U+200B\r\nGlyph #{GlyphIndex}",
+            0xFE0F => $"Variation Selector-16 (VS16, Emoji)\r\nUnicode: U+FE0F\r\nGlyph #{GlyphIndex}",
+            0xFE0E => $"Variation Selector-15 (VS15, Text)\r\nUnicode: U+FE0E\r\nGlyph #{GlyphIndex}",
+            0x00A0 => $"No-Break Space (NBSP)\r\nUnicode: U+00A0\r\nGlyph #{GlyphIndex}",
+            0x0020 => $"Space\r\nUnicode: U+0020\r\nGlyph #{GlyphIndex}",
+            uint cp when HasCharacter => BuildCharacterTooltip(cp),
+            _ => $"Glyph #{GlyphIndex}"
+        };
+    }
+
+    private string BuildCharacterTooltip(uint cp)
+    {
+        if (FontFace is not null)
+        {
+            string desc = GlyphService.GetCharacterDescription(cp, FontFace);
+            if (!string.IsNullOrWhiteSpace(desc))
+                return $"{desc}\r\nUnicode: U+{cp:X4}\r\nGlyph #{GlyphIndex}";
+        }
+
+        return $"Unicode: U+{cp:X4}\r\nGlyph #{GlyphIndex}";
+    }
 }
 
 [DebuggerDisplay("LigatureModel Glyph: {LigatureGlyph}, {Components.Count} components")]
-public record LigatureModel(uint LigatureGlyph, IReadOnlyList<LigatureComponent> Components, DWriteTypographyFeatureName Feature, string Name = null)
+public record LigatureModel(
+    uint LigatureGlyph,
+    IReadOnlyList<LigatureComponent> Components,
+    DWriteTypographyFeatureName Feature,
+    string Name = null,
+    CMFontFace FontFace = null,
+    Character MappedCharacter = null)
 {
     // PROPERTIES
     public string CombinedString => field ??= NormalizeEmojiSequence(string.Join(string.Empty, Components.Select(c => c.Character)));
     
     // ON-DEMAND PROPERTIES
     public bool ContainsZwj => Components.Any(c => c.IsZWJ);
-    public string GlyphName => !string.IsNullOrWhiteSpace(Name) ? Name : $"#{LigatureGlyph}";
-    public string ComponentMakeupString => string.Join(" + ", Components.Select(c => c.DisplayText));
+    public string GlyphName => field ??= BuildGlyphName();
+    public string ComponentMakeupString => field ??= string.Join(" + ", Components.Select(c => c.DisplayText));
     public string ClipboardText => !string.IsNullOrEmpty(CombinedString) ? CombinedString : $"#{LigatureGlyph}";
+
+    private string BuildGlyphName()
+    {
+        if (!string.IsNullOrWhiteSpace(Name))
+            return Name;
+
+        if (MappedCharacter is not null)
+        {
+            string desc = FontFace is not null
+                ? GlyphService.GetCharacterDescription(MappedCharacter.UnicodeIndex, FontFace)
+                : null;
+            string resolved = !string.IsNullOrWhiteSpace(desc) ? desc : MappedCharacter.Char;
+            if (!string.IsNullOrWhiteSpace(resolved))
+                return resolved;
+        }
+
+        return $"#{LigatureGlyph}";
+    }
 
     private static string NormalizeEmojiSequence(string s)
     {

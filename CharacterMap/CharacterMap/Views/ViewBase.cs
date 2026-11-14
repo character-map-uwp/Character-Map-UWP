@@ -31,6 +31,7 @@ public abstract partial class ViewBase : Page
 
     public ViewBase()
     {
+        this.Loading += ViewBase_Loading;
         this.Loaded += OnLoadedBase;
         this.Unloaded += OnUnloadedBase;
 
@@ -40,6 +41,16 @@ public abstract partial class ViewBase : Page
             return;
 
         LeakTrackingService.Register(this);
+    }
+
+    private void ViewBase_Loading(FrameworkElement sender, object args)
+    {
+        OnLoading();
+    }
+
+    protected virtual void OnLoading()
+    {
+
     }
 
     private void OnLoadedBase(object sender, Windows.UI.Xaml.RoutedEventArgs e)
@@ -81,6 +92,9 @@ public abstract partial class ViewBase : Page
     protected virtual void OnUnloaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
     {
         Messenger.UnregisterAll(this);
+
+        if (DesignMode) 
+            return;
         ViewMessenger.UnregisterAll(this);
     }
 
@@ -91,6 +105,7 @@ public abstract partial class ViewBase : Page
 
     protected void RegisterOnView<T>(Action<T> handler) where T : class
     {
+        if (DesignMode) return;
         ViewMessenger.Register<T>(this, (o, m) => handler(m));
     }
 
@@ -101,6 +116,7 @@ public abstract partial class ViewBase : Page
 
     protected void UnregisterOnView<T>() where T : class
     {
+        if (DesignMode) return;
         ViewMessenger.Unregister<T>(this);
     }
 
@@ -156,4 +172,6 @@ public abstract partial class ViewBase : Page
             ? ResourceHelper.Get<TransitionCollection>(this, key)
             : ResourceHelper.Get<TransitionCollection>("NoTransitions");
     }
+
+    public bool False(bool b) => !b;
 }

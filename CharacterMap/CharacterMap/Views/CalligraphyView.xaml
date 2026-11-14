@@ -17,7 +17,9 @@
     DataContext="{x:Bind}"
     TabFocusNavigation="Cycle"
     mc:Ignorable="d"
-    d:DataContext="{d:DesignInstance Type=view:CalligraphyView}">
+    d:DataContext="{d:DesignInstance Type=view:CalligraphyView}"
+    d:DesignHeight="800"
+    d:DesignWidth="1200">
 
     <Control.Resources>
         <view:CalligraphicPen x:Key="CalligraphyPen" />

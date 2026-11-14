@@ -33,6 +33,13 @@ public sealed partial class FilterFlyout : MenuFlyout, IEnumerable<MenuFlyoutIte
         this.Opening += FilterFlyout_Opening;
     }
 
+    public void Destroy()
+    {
+        this.Opening -= FilterFlyout_Opening;
+        this.Items.Clear();
+
+    }
+
     private void FilterFlyout_Opening(object sender, object e)
     {
         OnOpening();

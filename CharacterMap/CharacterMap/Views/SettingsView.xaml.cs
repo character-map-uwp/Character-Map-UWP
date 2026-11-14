@@ -14,6 +14,8 @@ public sealed partial class SettingsView : ViewBase
 
     public SettingsViewModel ViewModel { get; }
 
+    public event EventHandler Closed;
+
     public bool IsOpen { get; private set; }
 
     [ObservableProperty]
@@ -51,7 +53,13 @@ public sealed partial class SettingsView : ViewBase
         _themeSupportsShadows = ResourceHelper.SupportsShadows();
         _themeSupportsDark = ResourceHelper.Get<Boolean>("SupportsDarkTheme");
 
-        _navHelper.BackRequested += (s, e) => Hide();
+        _navHelper.BackRequested += (s, e) =>
+        {
+            if (Settings.UseMenuNavigationBar)
+                return;
+
+            Hide();
+        };
     }
 
     public void Show(CharacterRenderingOptions options, CMFontFamily font, int idx = 0)
@@ -107,6 +115,7 @@ public sealed partial class SettingsView : ViewBase
         IsOpen = false;
         this.Visibility = Visibility.Collapsed;
         ViewMessenger.Send(new ModalClosedMessage());
+        Closed?.Invoke(this, EventArgs.Empty);
     }
 
     void OnAppSettingsUpdated(AppSettingsChangedMessage msg)

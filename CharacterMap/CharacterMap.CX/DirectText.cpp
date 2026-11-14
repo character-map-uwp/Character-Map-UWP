@@ -7,14 +7,22 @@
 #include "pch.h"
 #include "DWriteFallbackFont.h"
 #include "NativeInterop.h"
+#include "CompositionDeviceManager.h"
 #include "CoreDWTextServices.h"
 #include <cfloat>
+#include <cmath>
+#include <algorithm>
+#include <array>
+#include <atomic>
+#include <deque>
+#include <thread>
 
 using namespace CharacterMapCX;
 using namespace CharacterMapCX::Controls;
 using namespace Platform;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
+using namespace Windows::Foundation::Numerics;
 using namespace Windows::UI::Composition;
 using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Controls;
@@ -25,12 +33,9 @@ using namespace Windows::UI::Xaml::Input;
 using namespace Windows::UI::Xaml::Interop;
 using namespace Windows::UI::Xaml::Media;
 using namespace Microsoft::WRL;
-using namespace Microsoft::Graphics::Canvas::UI;
-using namespace Microsoft::Graphics::Canvas::UI::Xaml;
 using namespace Windows::Graphics;
 using namespace Windows::Graphics::DirectX;
 using namespace Windows::Graphics::DirectX::Direct3D11;
-using namespace Microsoft::Graphics::Canvas::UI::Composition;
 using namespace Windows::ApplicationModel;
 
 DependencyProperty^ DirectText::_FallbackFontProperty = nullptr;
@@ -46,12 +51,39 @@ DependencyProperty^ DirectText::_TypographyProperty = nullptr;
 DependencyProperty^ DirectText::_IsTextWrappingEnabledProperty = nullptr;
 DependencyProperty^ DirectText::_IsCharacterFitEnabledProperty = nullptr;
 DependencyProperty^ DirectText::_StyleSimulationsProperty = nullptr;
+DependencyProperty^ DirectText::_IsBackgroundRenderEnabledProperty = nullptr;
+DependencyProperty^ DirectText::_SurfaceSizeProperty = nullptr;
+
+// Caches the background-created IDWriteTextLayout across size-only updates (e.g., FontSize slider
+// or container resize) so layout properties can be mutated in-place via SetFontSize/SetMaxWidth/etc.
+// instead of recreating the layout from scratch. Guarded by Mutex against concurrent background draws.
+struct CharacterMapCX::Controls::DeferredLayoutCache
+{
+    std::mutex Mutex;
+    ComPtr<IDWriteTextLayout> TextLayout;
+    ComPtr<IDWriteFontFace3> DrawFontFace;
+    Platform::String^ Text = nullptr;
+    DWriteFontFace^ FontFace = nullptr;
+    ITypographyInfo^ TypographyInfo = nullptr;
+    DWriteFallbackFont^ FallbackFont = nullptr;
+    Windows::UI::Xaml::FlowDirection FlowDirection = Windows::UI::Xaml::FlowDirection::LeftToRight;
+    bool WordWrapping = false;
+    Windows::UI::Text::FontWeight FontWeight = Windows::UI::Text::FontWeights::Normal;
+    Windows::UI::Text::FontStyle FontStyle = Windows::UI::Text::FontStyle::Normal;
+    Windows::UI::Text::FontStretch FontStretch = Windows::UI::Text::FontStretch::Normal;
+    Windows::UI::Xaml::Media::StyleSimulations Simulations = Windows::UI::Xaml::Media::StyleSimulations::None;
+    std::vector<DWRITE_FONT_AXIS_VALUE> AxisValues;
+    float FontSize = 0.0f;
+    float MaxWidth = 0.0f;
+    float MaxHeight = 0.0f;
+};
 
 DirectText::DirectText()
 {
     RegisterDependencyProperties();
 
 	DefaultStyleKey = "CharacterMapCX.Controls.DirectText";
+    m_deferredLayoutCache = std::make_shared<DeferredLayoutCache>();
     m_isStale = true;
     m_isAxisOnlyStale = false;
     m_lastFamilyName = nullptr;
@@ -66,62 +98,213 @@ DirectText::DirectText()
             pThis->OnPropChanged(d, p);
     });
 
-    this->RegisterPropertyChangedCallback(DirectText::FontSizeProperty, c);
-    this->RegisterPropertyChangedCallback(DirectText::ForegroundProperty, c);
-    this->RegisterPropertyChangedCallback(DirectText::FlowDirectionProperty, c);
-    this->RegisterPropertyChangedCallback(DirectText::RequestedThemeProperty, c);
+    m_fontSizeToken = this->RegisterPropertyChangedCallback(DirectText::FontSizeProperty, c);
+    m_foregroundToken = this->RegisterPropertyChangedCallback(DirectText::ForegroundProperty, c);
+    m_flowDirectionToken = this->RegisterPropertyChangedCallback(DirectText::FlowDirectionProperty, c);
+    m_requestedThemeToken = this->RegisterPropertyChangedCallback(DirectText::RequestedThemeProperty, c);
+    m_paddingToken = this->RegisterPropertyChangedCallback(DirectText::PaddingProperty, c);
 
-    this->Loaded += ref new Windows::UI::Xaml::RoutedEventHandler([weakThis](Platform::Object^ sender, RoutedEventArgs^ e) {
+    m_loadedToken = this->Loaded += ref new Windows::UI::Xaml::RoutedEventHandler([weakThis](Platform::Object^ sender, RoutedEventArgs^ e) {
         if (auto pThis = weakThis.Resolve<DirectText>())
             pThis->OnLoaded(sender, e);
     });
 
-    this->Unloaded += ref new Windows::UI::Xaml::RoutedEventHandler([weakThis](Platform::Object^ sender, RoutedEventArgs^ e) {
+    m_unloadedToken = this->Unloaded += ref new Windows::UI::Xaml::RoutedEventHandler([weakThis](Platform::Object^ sender, RoutedEventArgs^ e) {
         if (auto pThis = weakThis.Resolve<DirectText>())
             pThis->OnUnloaded(sender, e);
     });
 }
 
+DirectText::~DirectText()
+{
+    try
+    {
+        this->UnregisterPropertyChangedCallback(DirectText::FontSizeProperty, m_fontSizeToken);
+        this->UnregisterPropertyChangedCallback(DirectText::ForegroundProperty, m_foregroundToken);
+        this->UnregisterPropertyChangedCallback(DirectText::FlowDirectionProperty, m_flowDirectionToken);
+        this->UnregisterPropertyChangedCallback(DirectText::RequestedThemeProperty, m_requestedThemeToken);
+        this->UnregisterPropertyChangedCallback(DirectText::PaddingProperty, m_paddingToken);
+        this->Loaded -= m_loadedToken;
+        this->Unloaded -= m_unloadedToken;
+    }
+    catch (...) {}
+
+    ReleaseDrawingSurface();
+
+    if (m_spriteVisual != nullptr)
+    {
+        try
+        {
+            if (Dispatcher != nullptr && Dispatcher->HasThreadAccess)
+                ElementCompositionPreview::SetElementChildVisual(this, nullptr);
+            m_spriteVisual->Brush = nullptr;
+        }
+        catch (...) {}
+        m_spriteVisual = nullptr;
+    }
+
+    if (m_maskBrush != nullptr)
+    {
+        try
+        {
+            m_maskBrush->Mask = nullptr;
+            m_maskBrush->Source = nullptr;
+        }
+        catch (...) {}
+        m_maskBrush = nullptr;
+    }
+
+    m_colorBrush = nullptr;
+    m_surfaceBrush = nullptr;
+    ClearLayoutCache();
+}
+
+void CharacterMapCX::Controls::DirectText::ClearLayoutCache()
+{
+    m_textLayout = nullptr;
+    m_drawFontFace = nullptr;
+    m_lastFontFace = nullptr;
+    m_lastTypography = nullptr;
+    m_lastFallbackFont = nullptr;
+    m_lastText = nullptr;
+    m_lastFamilyName = nullptr;
+    m_lastFaceName = nullptr;
+    m_lastAxisValues.clear();
+    m_lastShownFontFace = nullptr;
+    m_deferredLayoutCache = std::make_shared<DeferredLayoutCache>();
+}
+
 void DirectText::OnPropChanged(DependencyObject^ d, DependencyProperty^ p)
 {
     DirectText^ c = (DirectText^)d;
+    if (p == DirectText::ForegroundProperty && !c->ShouldRenderColor() && c->m_drawingSurface != nullptr && !c->m_renderedColor)
+    {
+        if (c->m_maskBrush != nullptr && c->m_spriteVisual != nullptr)
+        {
+            c->m_colorBrush = CompositionDeviceManager::GetColorBrush(c->m_spriteVisual->Compositor, c->GetForegroundColor());
+            c->m_maskBrush->Source = c->m_colorBrush;
+            return;
+        }
+    }
+
+    if (p != DirectText::ForegroundProperty)
+        c->m_forceColorSurface = false;
+
     if (!c->BlockUpdates)
         c->Update();
 }
 
 void CharacterMapCX::Controls::DirectText::OnLoaded(Platform::Object^ sender, RoutedEventArgs^ e)
 {
-    EnsureCanvas();
+    if (m_isStale || m_needsRender || m_drawingSurface == nullptr)
+    {
+        this->InvalidateMeasure();
+        this->InvalidateArrange();
+    }
 }
 
 void CharacterMapCX::Controls::DirectText::OnUnloaded(Platform::Object^ sender, RoutedEventArgs^ e)
 {
-    DestroyCanvas(m_canvas);
+    ReleaseDrawingSurface();
+
+    if (m_spriteVisual != nullptr)
+    {
+        ElementCompositionPreview::SetElementChildVisual(this, nullptr);
+        m_spriteVisual->Brush = nullptr;
+        m_spriteVisual = nullptr;
+    }
+
+    if (m_maskBrush != nullptr)
+    {
+        m_maskBrush->Mask = nullptr;
+        m_maskBrush->Source = nullptr;
+        m_maskBrush = nullptr;
+    }
+
+    m_colorBrush = nullptr;
+    m_surfaceBrush = nullptr;
+    ClearLayoutCache();
+    m_isStale = true;
+    m_needsRender = true;
+}
+
+Windows::UI::Color DirectText::GetForegroundColor()
+{
+    return CompositionDeviceManager::ExtractSolidColor(this->Foreground, Windows::UI::Colors::White);
+}
+
+namespace
+{
+    // Lightweight IDWriteTextRenderer that probes whether any fallback run resolves to a color font.
+    // Returns E_ABORT as soon as one color run is found so we don't walk the rest of the layout.
+    class RunColorChecker final : public IDWriteTextRenderer
+    {
+    public:
+        bool HasColorFont = false;
+
+        IFACEMETHODIMP_(unsigned long) AddRef() override { return 1; }
+        IFACEMETHODIMP_(unsigned long) Release() override { return 1; }
+        IFACEMETHODIMP QueryInterface(IID const& riid, void** ppvObject) override
+        {
+            if (riid == __uuidof(IDWriteTextRenderer) || riid == __uuidof(IDWritePixelSnapping) || riid == __uuidof(IUnknown))
+            {
+                *ppvObject = this;
+                return S_OK;
+            }
+            *ppvObject = nullptr;
+            return E_NOINTERFACE;
+        }
+        IFACEMETHODIMP IsPixelSnappingDisabled(void*, BOOL* isDisabled) override { *isDisabled = TRUE; return S_OK; }
+        IFACEMETHODIMP GetCurrentTransform(void*, DWRITE_MATRIX* transform) override { *transform = { 1, 0, 0, 1, 0, 0 }; return S_OK; }
+        IFACEMETHODIMP GetPixelsPerDip(void*, FLOAT* pixelsPerDip) override { *pixelsPerDip = 1.0f; return S_OK; }
+        IFACEMETHODIMP DrawUnderline(void*, FLOAT, FLOAT, DWRITE_UNDERLINE const*, IUnknown*) override { return S_OK; }
+        IFACEMETHODIMP DrawStrikethrough(void*, FLOAT, FLOAT, DWRITE_STRIKETHROUGH const*, IUnknown*) override { return S_OK; }
+        IFACEMETHODIMP DrawInlineObject(void*, FLOAT, FLOAT, IDWriteInlineObject*, BOOL, BOOL, IUnknown*) override { return S_OK; }
+        IFACEMETHODIMP DrawGlyphRun(void*, FLOAT, FLOAT, DWRITE_MEASURING_MODE, DWRITE_GLYPH_RUN const* glyphRun, DWRITE_GLYPH_RUN_DESCRIPTION const*, IUnknown*) override
+        {
+            if (HasColorFont)
+                return E_ABORT;
+
+            if (glyphRun != nullptr && glyphRun->fontFace != nullptr)
+            {
+                ComPtr<IDWriteFontFace2> face2;
+                if (SUCCEEDED(glyphRun->fontFace->QueryInterface(IID_PPV_ARGS(&face2))) && face2->IsColorFont())
+                {
+                    HasColorFont = true;
+                    return E_ABORT;
+                }
+            }
+            return S_OK;
+        }
+    };
+}
+
+bool DirectText::ShouldRenderColor()
+{
+    if (!IsColorFontEnabled || ColorRenderOption == DWriteColorRenderOption::Monochrome)
+        return false;
+
+    if (m_forceColorSurface)
+        return true;
+
+    if (FontFace != nullptr && FontFace->Properties != nullptr && FontFace->Properties->IsColorFont)
+        return true;
+
+    if (GlyphIndex < 0 && FallbackFont != nullptr && m_textLayout != nullptr)
+    {
+        RunColorChecker checker;
+        m_textLayout->Draw(nullptr, &checker, 0.0f, 0.0f);
+        return checker.HasColorFont;
+    }
+
+    return false;
 }
 
 void DirectText::OnApplyTemplate()
 {
-   /* if (gd == nullptr)
-    {
-        dpi = Display::DisplayInformation::GetForCurrentView()->LogicalDpi;
-        auto device = CanvasDevice::GetSharedDevice();
-        auto v = Windows::UI::Xaml::Hosting::ElementCompositionPreview::GetElementVisual(this);
-        gd = CanvasComposition::CreateCompositionGraphicsDevice(
-            v->Compositor, device);
-            
-        auto size = SizeInt32();
-        size.Width = 2;
-        size.Height = 2;
-        surface = gd->CreateDrawingSurface2(
-            size,
-            DirectXPixelFormat::B8G8R8A8UIntNormalized,
-            DirectXAlphaMode::Premultiplied);
-    }*/
-
     if (DesignMode::DesignModeEnabled)
         return;
-   
-    EnsureCanvas();
+
     Update();
 }
 
@@ -134,36 +317,71 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
     {
         bool hasText = FontFace != nullptr && (GlyphIndex >= 0 || (Text != nullptr && Text->Length() > 0));
 
-        if (!hasText || Typography == nullptr || m_canvas == nullptr || !m_canvas->ReadyToDraw)
+        if (!hasText || Typography == nullptr)
         {
             if (!hasText)
             {
-                m_textLayout = nullptr;
-                m_drawFontFace = nullptr;
+                ClearLayoutCache();
                 m_render = false;
             }
             return Size(this->MinWidth, this->MinHeight);
         }
 
-    auto dpi = m_canvas->Dpi / 96.0f;
-    auto m = m_canvas->Device->MaximumBitmapSizeInPixels / dpi;
+    float dpiScale = CompositionDeviceManager::GetDpiScale(this->Dispatcher);
 
-    m_canvas->Measure(size);
+    double m = 8192.0 / dpiScale;
+
+    Thickness padding = this->Padding;
+    double padL = (std::max)(0.0, padding.Left);
+    double padT = (std::max)(0.0, padding.Top);
+    double padR = (std::max)(0.0, padding.Right);
+    double padB = (std::max)(0.0, padding.Bottom);
+    double padW = padL + padR;
+    double padH = padT + padB;
+
+    float availW = std::isinf(size.Width) ? static_cast<float>(m) : static_cast<float>((std::max)(1.0, static_cast<double>(size.Width) - padW));
+    float availH = std::isinf(size.Height) ? static_cast<float>(m) : static_cast<float>((std::max)(1.0, static_cast<double>(size.Height) - padH));
+
+    Windows::Foundation::Size fixedSurfaceSize = SurfaceSize;
+    if (IsBackgroundRenderEnabled && !IsCharacterFitEnabled && GlyphIndex < 0 &&
+        fixedSurfaceSize.Width > 0.0f && fixedSurfaceSize.Height > 0.0f)
+    {
+        m_deferredLayout = true;
+        m_textLayout = nullptr;
+        m_drawFontFace = nullptr;
+        m_isStale = false;
+        m_render = true;
+        textLength = Text != nullptr ? Text->Length() : 0;
+
+        float targetW = std::isinf(size.Width) ? fixedSurfaceSize.Width : (std::min)(size.Width, fixedSurfaceSize.Width);
+        float targetH = std::isinf(size.Height) ? fixedSurfaceSize.Height : (std::min)(size.Height, fixedSurfaceSize.Height);
+        m_deferredAvailW = IsTextWrappingEnabled ? min(availW, static_cast<float>(m)) : static_cast<float>(m);
+        m_deferredAvailH = IsTextWrappingEnabled ? min(availH, static_cast<float>(m)) : static_cast<float>(m);
+        return Size((std::max)(static_cast<float>(this->MinWidth), targetW), (std::max)(static_cast<float>(this->MinHeight), targetH));
+    }
+    m_deferredLayout = false;
 
     bool needsRebuild = m_isStale || (GlyphIndex >= 0 ? (m_drawFontFace == nullptr) : (m_textLayout == nullptr));
+    bool sizeChangedForWrap = false;
+    if (!needsRebuild && GlyphIndex < 0 && m_textLayout != nullptr && IsTextWrappingEnabled)
+    {
+        float lwidth = min(availW, static_cast<float>(m));
+        float lheight = min(availH, static_cast<float>(m));
+        if (lwidth != m_lastMaxWidth || lheight != m_lastMaxHeight)
+            sizeChangedForWrap = true;
+    }
 
-    // Fast path: in CharacterFit mode, if only the axis values changed (same family/face/text/size/weights),
-    // reuse the existing IDWriteTextLayout rather than rebuilding from scratch.
-    // Just update axis values and recompute ink bounds.
-    if (needsRebuild && IsCharacterFitEnabled && GlyphIndex < 0 && m_textLayout != nullptr && FontFace != nullptr)
+    // Fast path: reuse existing IDWriteTextLayout when only FontSize, MaxWidth/MaxHeight, or variable font Axis changed.
+    if ((needsRebuild || sizeChangedForWrap) && GlyphIndex < 0 && m_textLayout != nullptr && FontFace != nullptr)
     {
         auto fontFace = FontFace;
         auto fontSize = 8.0 > FontSize ? 8.0 : FontSize;
-        auto simulations = StyleSimulations;
-        if (simulations == Windows::UI::Xaml::Media::StyleSimulations::None && fontFace != nullptr && fontFace->Properties != nullptr)
-        {
-            simulations = fontFace->Properties->Simulations;
-        }
+        auto simulations = CoreDWTextServices::ResolveSimulations(StyleSimulations, fontFace);
+
+        float lwidth = IsTextWrappingEnabled ? availW : static_cast<float>(m);
+        float lheight = IsTextWrappingEnabled ? availH : static_cast<float>(m);
+        lwidth = min(lwidth, static_cast<float>(m));
+        lheight = min(lheight, static_cast<float>(m));
 
         Platform::String^ currentFamily = fontFace->Properties != nullptr ? fontFace->Properties->FamilyName : nullptr;
         Platform::String^ currentFaceName = fontFace->Properties != nullptr ? fontFace->Properties->FaceName : nullptr;
@@ -177,18 +395,21 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
              wcscmp(m_lastFaceName->Data(), currentFaceName->Data()) == 0);
         bool sameFontFace = (m_lastFontFace == fontFace);
         bool sameTypography = (m_lastTypography == Typography);
+        bool sameFallback = (m_lastFallbackFont == FallbackFont);
+        bool sameFlow = (m_lastFlowDirection == this->FlowDirection);
+        bool sameWrap = (m_lastWordWrapping == IsTextWrappingEnabled);
+        bool sameFit = (m_lastIsCharacterFit == IsCharacterFitEnabled);
         bool sameText = (m_lastText == currentText) ||
             (m_lastText != nullptr && currentText != nullptr &&
              wcscmp(m_lastText->Data(), currentText->Data()) == 0);
-        bool sameSize = (m_lastFontSize == fontSize);
         bool sameWeight = (m_lastFontWeight == FontWeight.Weight);
         bool sameStyle = (m_lastFontStyle == FontStyle);
         bool sameStretch = (m_lastFontStretch == FontStretch);
         bool sameSimulations = (m_lastSimulations == simulations);
 
-        if (sameFontFace && sameTypography && sameFamily && sameFaceName && sameText && sameSize && sameWeight && sameStyle && sameStretch && sameSimulations)
+        if (sameFontFace && sameTypography && sameFallback && sameFlow && sameWrap && sameFit &&
+            sameFamily && sameFaceName && sameText && sameWeight && sameStyle && sameStretch && sameSimulations)
         {
-            // Build current axis values
             std::vector<DWRITE_FONT_AXIS_VALUE> newAxisValues;
             if (Axis != nullptr && Axis->Size > 0)
             {
@@ -199,60 +420,64 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             else if (fontFace != nullptr && !fontFace->GetAxisValues().empty())
                 newAxisValues = fontFace->GetAxisValues();
 
-            // Fast path is only valid when there are variable font axis values to update
-            if (!newAxisValues.empty())
+            bool axisChanged = (newAxisValues.size() != m_lastAxisValues.size());
+            if (!axisChanged)
             {
-                // Check if axis values actually changed
-                bool axisChanged = (newAxisValues.size() != m_lastAxisValues.size());
-                if (!axisChanged)
+                for (size_t i = 0; i < newAxisValues.size() && !axisChanged; ++i)
                 {
-                    for (size_t i = 0; i < newAxisValues.size() && !axisChanged; ++i)
-                    {
-                        if (newAxisValues[i].axisTag != m_lastAxisValues[i].axisTag ||
-                            newAxisValues[i].value != m_lastAxisValues[i].value)
-                            axisChanged = true;
-                    }
+                    if (newAxisValues[i].axisTag != m_lastAxisValues[i].axisTag ||
+                        newAxisValues[i].value != m_lastAxisValues[i].value)
+                        axisChanged = true;
+                }
+            }
+
+            // Can update axis values in-place only if newAxisValues is non-empty (clearing axes requires rebuild)
+            if (!axisChanged || !newAxisValues.empty())
+            {
+                if (fontSize != m_lastFontSize)
+                {
+                    m_textLayout->SetFontSize(static_cast<FLOAT>(fontSize), DWRITE_TEXT_RANGE{ 0, textLength });
+                    m_lastFontSize = fontSize;
+                }
+
+                if (lwidth != m_lastMaxWidth)
+                {
+                    m_textLayout->SetMaxWidth(lwidth);
+                    m_lastMaxWidth = lwidth;
+                }
+
+                if (lheight != m_lastMaxHeight)
+                {
+                    m_textLayout->SetMaxHeight(lheight);
+                    m_lastMaxHeight = lheight;
                 }
 
                 if (axisChanged)
                 {
-                    // The new fontFace already encapsulates the variant axis, so use its internal face for drawing
                     m_drawFontFace = fontFace->GetFontFace();
+                    CoreDWTextServices::UpdateAxisValues(m_textLayout.Get(), newAxisValues, textLength);
+                    m_lastAxisValues = newAxisValues;
+                }
 
-                // Update axis values on the existing layout
-                CoreDWTextServices::UpdateAxisValues(m_textLayout.Get(), newAxisValues, textLength);
-                m_lastAxisValues = newAxisValues;
+                if (SUCCEEDED(CoreDWTextServices::MeasureLayoutBounds(m_textLayout.Get(), &layoutBounds)))
+                {
+                    if (IsCharacterFitEnabled)
+                    {
+                        if (FAILED(CoreDWTextServices::MeasureInkBounds(m_textLayout.Get(), m_drawFontFace.Get(), &drawBounds)))
+                            drawBounds = layoutBounds;
+                    }
+                    else
+                    {
+                        drawBounds = layoutBounds;
+                    }
+
+                    needsRebuild = false;
+                    m_isStale = false;
+                    m_render = true;
+                }
             }
-
-            // Recompute drawBounds from outline (axis may have changed ink extent)
-            CoreDWTextServices::MeasureInkBounds(m_textLayout.Get(), m_drawFontFace.Get(), &drawBounds);
-
-            // Skip full rebuild — just return the updated target size
-            auto db = drawBounds;
-            bool hasConstrainedW = !std::isinf(size.Width);
-            bool hasConstrainedH = !std::isinf(size.Height);
-            
-            needsRebuild = false; // Fast path successful
-            m_isStale = false; // Prevent full rebuild on next pass
-            
-            if (hasConstrainedW || hasConstrainedH)
-            {
-                m_minWidth = FontSize / 2.2;
-                auto dHeight = max(1.0, (double)db.Height);
-                auto dWidth  = max(m_minWidth, (double)db.Width);
-                double scaleW = hasConstrainedW ? (size.Width / dWidth) : 1.0;
-                double scaleH = hasConstrainedH ? (size.Height / dHeight) : 1.0;
-                auto scale = (hasConstrainedW && hasConstrainedH) ? min(scaleW, scaleH) : (hasConstrainedW ? scaleW : scaleH);
-                if (scale <= 0) scale = 1;
-                m_targetScale = scale;
-                m_render = true;
-                return Size(static_cast<float>(dWidth * scale), static_cast<float>(dHeight * scale));
-            }
-            m_render = true;
-            return Size(static_cast<float>(ceil(db.Width)), static_cast<float>(ceil(db.Height)));
         }
     }
-}
 
     if (needsRebuild)
     {
@@ -262,152 +487,34 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         if (m_textLayout != nullptr)
         {
             m_textLayout = nullptr;
-            m_lastFamilyName = nullptr;  // invalidate axis-only fast path cache
+            m_lastFamilyName = nullptr;  // invalidate fast path cache
             m_lastFaceName = nullptr;
             m_lastFontFace = nullptr;
             m_lastTypography = nullptr;
+            m_lastFallbackFont = nullptr;
             m_lastText = nullptr;
             m_lastAxisValues.clear();
         }
 
         auto fontFace = FontFace;
         auto fontSize = 8.0 > FontSize ? 8.0 : FontSize;
-
-        auto simulations = StyleSimulations;
-        if (simulations == Windows::UI::Xaml::Media::StyleSimulations::None && fontFace != nullptr && fontFace->Properties != nullptr)
-        {
-            simulations = fontFace->Properties->Simulations;
-        }
-
-        // Resolve font face with axis values (for variable fonts)
-        ComPtr<IDWriteFontFaceReference> faceRef = fontFace->GetReference();
-        ComPtr<IDWriteFontFace3> dwriteFontFace;
-
-        DWRITE_FONT_SIMULATIONS dwriteSimulations = ToDWriteFontSimulations(simulations);
-
-        if (Axis != nullptr && Axis->Size > 0)
-        {
-            ComPtr<IDWriteFontFaceReference1> faceRef1;
-            if (faceRef != nullptr && SUCCEEDED(faceRef.As(&faceRef1)))
-            {
-                ComPtr<IDWriteFontFace5> face5;
-                if (SUCCEEDED(faceRef1->CreateFontFace(&face5)))
-                {
-                    ComPtr<IDWriteFontResource> fontResource;
-                    if (SUCCEEDED(face5->GetFontResource(&fontResource)))
-                    {
-                        std::vector<DWRITE_FONT_AXIS_VALUE> values;
-                        values.reserve(Axis->Size);
-                        for (unsigned int i = 0; i < Axis->Size; ++i)
-                            values.push_back(Axis->GetAt(i)->GetDWriteValue());
-
-                        ComPtr<IDWriteFontFace5> face5_var;
-                        if (SUCCEEDED(fontResource->CreateFontFace(dwriteSimulations, values.data(), static_cast<UINT32>(values.size()), &face5_var)))
-                        {
-                            dwriteFontFace = face5_var;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (dwriteFontFace == nullptr && fontFace != nullptr)
-        {
-            if (dwriteSimulations != DWRITE_FONT_SIMULATIONS_NONE && faceRef != nullptr)
-            {
-                ComPtr<IDWriteFontFace3> simFace;
-                if (SUCCEEDED(faceRef->CreateFontFaceWithSimulations(dwriteSimulations, &simFace)))
-                    dwriteFontFace = simFace;
-            }
-
-            if (dwriteFontFace == nullptr)
-                dwriteFontFace = fontFace->GetFontFace();
-        }
-
-        m_drawFontFace = dwriteFontFace;
+        auto simulations = CoreDWTextServices::ResolveSimulations(StyleSimulations, fontFace);
 
         if (GlyphIndex >= 0)
         {
-            if (dwriteFontFace == nullptr || fontFace == nullptr)
+            m_drawFontFace = CoreDWTextServices::ResolveFontFace(fontFace, simulations, Axis);
+            if (m_drawFontFace == nullptr || fontFace == nullptr)
                 return Size(this->MinWidth, this->MinHeight);
 
-            UINT16 gIndex = static_cast<UINT16>(GlyphIndex);
-            DWRITE_GLYPH_METRICS glyphMetrics{};
-            if (FAILED(dwriteFontFace->GetDesignGlyphMetrics(&gIndex, 1, &glyphMetrics, FALSE)))
-                return Size(this->MinWidth, this->MinHeight);
-
-            DWRITE_FONT_METRICS1 fontMetrics = fontFace->GetMetrics();
-            if (fontMetrics.designUnitsPerEm == 0)
-                return Size(this->MinWidth, this->MinHeight);
-            double scale = fontSize / fontMetrics.designUnitsPerEm;
-
-            // Compute logical layout bounds
-            double advanceWidth = glyphMetrics.advanceWidth * scale;
-            double ascent = fontMetrics.ascent * scale;
-            double descent = fontMetrics.descent * scale;
-            layoutBounds = Rect(0, -ascent, advanceWidth, ascent + descent);
-
-            // Compute visual bounds
-            DWRITE_GLYPH_RUN glyphRun{};
-            glyphRun.fontFace = dwriteFontFace.Get();
-            glyphRun.fontEmSize = static_cast<FLOAT>(fontSize);
-            glyphRun.glyphCount = 1;
-            glyphRun.glyphIndices = &gIndex;
-            FLOAT advanceWidthF = static_cast<FLOAT>(advanceWidth);
-            glyphRun.glyphAdvances = &advanceWidthF;
-            glyphRun.glyphOffsets = nullptr;
-            glyphRun.isSideways = FALSE;
-            glyphRun.bidiLevel = 0;
-
-            ComPtr<ID2D1PathGeometry> pathGeometry;
-            if (NativeInterop::_Current == nullptr || NativeInterop::_Current->m_d2dFactory == nullptr ||
-                FAILED(NativeInterop::_Current->m_d2dFactory->CreatePathGeometry(&pathGeometry)))
+            if (FAILED(CoreDWTextServices::MeasureGlyphBounds(
+                m_drawFontFace.Get(),
+                fontFace,
+                static_cast<UINT16>(GlyphIndex),
+                static_cast<float>(fontSize),
+                &layoutBounds,
+                &drawBounds)))
             {
-                drawBounds = layoutBounds;
-            }
-            else
-            {
-                ComPtr<ID2D1GeometrySink> sink;
-                if (SUCCEEDED(pathGeometry->Open(&sink)))
-                {
-                    if (SUCCEEDED(dwriteFontFace->GetGlyphRunOutline(
-                        static_cast<FLOAT>(fontSize),
-                        &gIndex,
-                        &advanceWidthF,
-                        nullptr,
-                        1,
-                        FALSE,
-                        FALSE,
-                        sink.Get()
-                    )) && SUCCEEDED(sink->Close()))
-                    {
-                        D2D1_RECT_F bounds;
-                        if (SUCCEEDED(pathGeometry->GetBounds(nullptr, &bounds)) &&
-                            bounds.left <= bounds.right && bounds.top <= bounds.bottom &&
-                            (bounds.right - bounds.left > 0) && (bounds.bottom - bounds.top > 0))
-                        {
-                            drawBounds = Rect(
-                                bounds.left,
-                                bounds.top,
-                                bounds.right - bounds.left,
-                                bounds.bottom - bounds.top
-                            );
-                        }
-                        else
-                        {
-                            drawBounds = layoutBounds;
-                        }
-                    }
-                    else
-                    {
-                        sink->Close();
-                        drawBounds = layoutBounds;
-                    }
-                }
-                else
-                {
-                    drawBounds = layoutBounds;
-                }
+                return Size(this->MinWidth, this->MinHeight);
             }
 
             m_render = true;
@@ -423,10 +530,10 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
                 return Size(this->MinWidth, this->MinHeight);
             }
 
-            float lwidth = IsTextWrappingEnabled ? size.Width : m;
-            float lheight = IsTextWrappingEnabled ? size.Height : m;
-            lwidth = min(lwidth, m);
-            lheight = min(lheight, m);
+            float lwidth = IsTextWrappingEnabled ? availW : static_cast<float>(m);
+            float lheight = IsTextWrappingEnabled ? availH : static_cast<float>(m);
+            lwidth = min(lwidth, static_cast<float>(m));
+            lheight = min(lheight, static_cast<float>(m));
 
             TextLayoutParameters params;
             params.Text = text;
@@ -477,31 +584,34 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             m_textLayout = textLayout;
             m_render = true;
 
-            // Cache layout key so the axis-only fast path can detect future axis-only updates
-            if (IsCharacterFitEnabled)
+            // Cache layout key so future FontSize / MaxSize / Axis updates reuse m_textLayout
+            m_lastFamilyName = fontFace->Properties != nullptr ? fontFace->Properties->FamilyName : nullptr;
+            m_lastFaceName = fontFace->Properties != nullptr ? fontFace->Properties->FaceName : nullptr;
+            m_lastFontFace = fontFace;
+            m_lastTypography = Typography;
+            m_lastFallbackFont = FallbackFont;
+            m_lastFlowDirection = this->FlowDirection;
+            m_lastWordWrapping = IsTextWrappingEnabled;
+            m_lastIsCharacterFit = IsCharacterFitEnabled;
+            m_lastText = text;
+            m_lastFontSize = fontSize;
+            m_lastMaxWidth = lwidth;
+            m_lastMaxHeight = lheight;
+            m_lastFontWeight = FontWeight.Weight;
+            m_lastFontStyle = FontStyle;
+            m_lastFontStretch = FontStretch;
+            m_lastSimulations = simulations;
+            if (Axis != nullptr && Axis->Size > 0)
             {
-                m_lastFamilyName = fontFace->Properties != nullptr ? fontFace->Properties->FamilyName : nullptr;
-                m_lastFaceName = fontFace->Properties != nullptr ? fontFace->Properties->FaceName : nullptr;
-                m_lastFontFace = fontFace;
-                m_lastTypography = Typography;
-                m_lastText = text;
-                m_lastFontSize = fontSize;
-                m_lastFontWeight = FontWeight.Weight;
-                m_lastFontStyle = FontStyle;
-                m_lastFontStretch = FontStretch;
-                m_lastSimulations = simulations;
-                if (Axis != nullptr && Axis->Size > 0)
-                {
-                    m_lastAxisValues.clear();
-                    m_lastAxisValues.reserve(Axis->Size);
-                    for (unsigned int i = 0; i < Axis->Size; ++i)
-                        m_lastAxisValues.push_back(Axis->GetAt(i)->GetDWriteValue());
-                }
-                else if (fontFace != nullptr && !fontFace->GetAxisValues().empty())
-                    m_lastAxisValues = fontFace->GetAxisValues();
-                else
-                    m_lastAxisValues.clear();
+                m_lastAxisValues.clear();
+                m_lastAxisValues.reserve(Axis->Size);
+                for (unsigned int i = 0; i < Axis->Size; ++i)
+                    m_lastAxisValues.push_back(Axis->GetAt(i)->GetDWriteValue());
             }
+            else if (fontFace != nullptr && !fontFace->GetAxisValues().empty())
+                m_lastAxisValues = fontFace->GetAxisValues();
+            else
+                m_lastAxisValues.clear();
         }
     }
 
@@ -517,7 +627,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
     if (h <= 0) h = layoutBounds.Height > 0 ? layoutBounds.Height : 1.0;
     if (w <= 0) w = layoutBounds.Width > 0 ? layoutBounds.Width : 1.0;
 
-    auto targetsize = Size(min(m, ceil(w)), min(m, ceil(h)));
+    auto targetsize = Size(min(m, ceil(w + padW)), min(m, ceil(h + padH)));
 
     if (IsCharacterFitEnabled)
     {
@@ -558,254 +668,856 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
     }
 }
 
-void CharacterMapCX::Controls::DirectText::EnsureCanvas()
+Windows::Foundation::Size CharacterMapCX::Controls::DirectText::ArrangeOverride(Windows::Foundation::Size finalSize)
 {
-    if (m_canvas == nullptr && GetTemplateChild("Root") != nullptr)
-    {
-        auto root = (Border^)GetTemplateChild("Root");
+    Control::ArrangeOverride(finalSize);
 
-        if (root->Child != nullptr && static_cast<CanvasControl^>(root->Child) != nullptr)
-        {
-            // This shouldn't ever get called, but just in case...
-            DestroyCanvas(static_cast<CanvasControl^>(root->Child));
-        }
+    if (DesignMode::DesignModeEnabled)
+        return finalSize;
 
-        m_canvas = ref new CanvasControl();
-        m_canvas->HorizontalAlignment = Windows::UI::Xaml::HorizontalAlignment::Stretch;
-        m_canvas->VerticalAlignment = Windows::UI::Xaml::VerticalAlignment::Stretch;
-        m_canvas->UseSharedDevice = false;
-        root->Child = m_canvas;
-
-        auto weakThis = Platform::WeakReference(this);
-
-        m_drawToken = m_canvas->Draw +=
-            ref new TypedEventHandler<CanvasControl^, CanvasDrawEventArgs^>([weakThis](CanvasControl^ sender, CanvasDrawEventArgs^ args) {
-                if (auto pThis = weakThis.Resolve<DirectText>())
-                    pThis->OnDraw(sender, args);
-            });
-            
-        m_createToken = m_canvas->CreateResources +=
-            ref new TypedEventHandler<CanvasControl^, CanvasCreateResourcesEventArgs^>([weakThis](CanvasControl^ sender, CanvasCreateResourcesEventArgs^ args) {
-                if (auto pThis = weakThis.Resolve<DirectText>())
-                    pThis->OnCreateResources(sender, args);
-            });
-    }
+    RenderToSurface(finalSize);
+    return finalSize;
 }
 
-void CharacterMapCX::Controls::DirectText::DestroyCanvas(CanvasControl^ control)
+void CharacterMapCX::Controls::DirectText::ReleaseDrawingSurface()
 {
-    if (control != nullptr)
+    // Invalidate any in-flight background render before detaching the surface.
+    ++m_renderGeneration;
+
+    std::lock_guard<std::mutex> lock(m_surfaceMutex);
+    try
     {
-        auto parent = VisualTreeHelper::GetParent(control);
+        if (m_surfaceBrush != nullptr)
+            m_surfaceBrush->Surface = nullptr;
 
-        control->Draw -= m_drawToken;
-        control->CreateResources -= m_createToken;
-
-        control->RemoveFromVisualTree();
-        control = nullptr;
-
-        if (parent != nullptr)
+        if (m_drawingSurface != nullptr)
         {
-            auto b = static_cast<Border^>(parent);
-            VisualTreeHelper::DisconnectChildrenRecursive(b);
-            b->Child = nullptr;
+            // Only delete the WinRT surface wrapper on the UI thread when no background task
+            // is holding/drawing to it; otherwise let COM ref-counting release it safely.
+            if (m_activeBackgroundDraws.load() == 0 && Dispatcher != nullptr && Dispatcher->HasThreadAccess)
+                delete m_drawingSurface;
+            m_drawingSurface = nullptr;
         }
     }
+    catch (...) {}
 
-    m_canvas = nullptr;
+    m_renderedWidth = 0;
+    m_renderedHeight = 0;
 }
 
-
-
-
-
-void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
+namespace
 {
-    if (m_textLayout == nullptr && GlyphIndex < 0)
-        return;
-
-    // Useful for debugging to see which textboxes are DX
-  /*  if (Windows::UI::Xaml::Application::Current->DebugSettings->IsTextPerformanceVisualizationEnabled)
-        args->DrawingSession->Clear(Windows::UI::Colors::DarkRed);*/
-
-    auto db = drawBounds;
-    auto lb = layoutBounds;
-    auto left = -min(db.Left, lb.Left);
-    auto top = -min(db.Top, lb.Top);
-
-    if (IsCharacterFitEnabled)
+    struct DirectTextRenderSnapshot
     {
-        auto rs = this->RenderSize;
-        if (rs.Width <= 0 || rs.Height <= 0)
-            return;
+        ComPtr<ICompositionDrawingSurfaceInterop> SurfaceInterop;
+        ComPtr<IDWriteTextLayout> TextLayout;
+        ComPtr<IDWriteFontFace3> DrawFontFace;
+        Rect DrawBounds{};
+        Rect LayoutBounds{};
+        float ActualW = 0.0f;
+        float ActualH = 0.0f;
+        float DpiScale = 1.0f;
+        UINT32 SurfaceWidth = 0;
+        UINT32 SurfaceHeight = 0;
+        double MinWidth = 1.0;
+        double FontSize = 12.0;
+        double PadLeft = 0.0;
+        double PadTop = 0.0;
+        double PadRight = 0.0;
+        double PadBottom = 0.0;
+        int GlyphIndex = -1;
+        bool IsCharacterFitEnabled = false;
+        bool RenderColor = true;
+        bool DeferredLayout = false;
+        bool IsColorFontEnabled = true;
+        Windows::UI::Xaml::FlowDirection FlowDirection = Windows::UI::Xaml::FlowDirection::LeftToRight;
+        DWriteColorRenderOption ColorRenderOption = DWriteColorRenderOption::Default;
+        D2D1_COLOR_F ForegroundColor = D2D1::ColorF(D2D1::ColorF::White);
+        D2D1_COLOR_F ActualForegroundColor = D2D1::ColorF(D2D1::ColorF::White);
+        Windows::UI::Composition::CompositionGraphicsDevice^ GraphicsDevice = nullptr;
+        TextLayoutParameters LayoutParams;
+        std::shared_ptr<DeferredLayoutCache> LayoutCache;
+    };
 
-        double padX = (std::max)(6.0, rs.Width * 0.04);
-        double padY = (std::max)(6.0, rs.Height * 0.04);
-        double availW = (std::max)(1.0, rs.Width - padX * 2.0);
-        double availH = (std::max)(1.0, rs.Height - padY * 2.0);
+    void RenderSnapshotToContext(ID2D1DeviceContext* ctx, const DirectTextRenderSnapshot& snap, FLOAT offsetX, FLOAT offsetY)
+    {
+        auto db = snap.DrawBounds;
+        auto lb = snap.LayoutBounds;
+        double left = -min(db.Left, lb.Left) + snap.PadLeft;
+        double top = -min(db.Top, lb.Top) + snap.PadTop;
+        double scale = 1.0;
 
-        double totalW = (std::max)({ m_minWidth, static_cast<double>(lb.Width), static_cast<double>(db.Width), static_cast<double>(db.Right - (std::min)(0.0f, db.Left)) });
-        double totalTop = (std::min)(static_cast<double>(lb.Top), static_cast<double>(db.Top));
-        double totalBottom = (std::max)(static_cast<double>(lb.Bottom), static_cast<double>(db.Bottom));
-        double totalH = (std::max)(1.0, totalBottom - totalTop);
-
-        // Glyphs scale to fit available size (both scaling up and down) while maintaining baseline positioning
-        double scale = (std::min)(availW / totalW, availH / totalH);
-        if (scale <= 0.0)
-            scale = 1.0;
-
-        args->DrawingSession->Transform = Windows::Foundation::Numerics::make_float3x2_scale(static_cast<float>(scale));
-
-        double boxW = rs.Width / scale;
-        double boxH = rs.Height / scale;
-
-        // Horizontal positioning:
-        // Center within advance width for regular characters.
-        // Center ink bounds for zero-advance characters (combining marks / diacritics).
-        if (lb.Width > 0)
+        if (snap.IsCharacterFitEnabled)
         {
-            left = static_cast<float>((boxW - lb.Width) / 2.0 - lb.Left);
-            if (left + db.Left < 0)
-                left = -db.Left;
-            if (left + db.Right > boxW)
-                left = static_cast<float>(boxW - db.Right);
+            double padX = (std::max)(6.0, snap.ActualW * 0.04);
+            double padY = (std::max)(6.0, snap.ActualH * 0.04);
+            double availW = (std::max)(1.0, snap.ActualW - padX * 2.0);
+            double availH = (std::max)(1.0, snap.ActualH - padY * 2.0);
+
+            double totalW = (std::max)({ snap.MinWidth, static_cast<double>(lb.Width), static_cast<double>(db.Width), static_cast<double>(db.Right - (std::min)(0.0f, db.Left)) });
+            double totalTop = (std::min)(static_cast<double>(lb.Top), static_cast<double>(db.Top));
+            double totalBottom = (std::max)(static_cast<double>(lb.Bottom), static_cast<double>(db.Bottom));
+            double totalH = (std::max)(1.0, totalBottom - totalTop);
+
+            // Glyphs scale to fit available size (both scaling up and down) while maintaining baseline positioning
+            scale = (std::min)(availW / totalW, availH / totalH);
+            if (scale <= 0.0)
+                scale = 1.0;
+
+            double boxW = snap.ActualW / scale;
+            double boxH = snap.ActualH / scale;
+
+            // Horizontal positioning:
+            // Center within advance width for regular characters.
+            // Center ink bounds for zero-advance characters (combining marks / diacritics).
+            if (lb.Width > 0)
+            {
+                left = (boxW - lb.Width) / 2.0 - lb.Left;
+                if (left + db.Left < 0)
+                    left = -db.Left;
+                if (left + db.Right > boxW)
+                    left = boxW - db.Right;
+            }
+            else
+            {
+                left = -db.Left + (boxW - db.Width) / 2.0;
+            }
+
+            // Vertical positioning:
+            // Center the font line box so all characters share the exact same baseline.
+            top = (boxH - lb.Height) / 2.0 - lb.Top;
+
+            // Prevent clipping if extreme ascenders/descenders extend outside box
+            if (top + db.Top < 0)
+                top = -db.Top;
+            if (top + db.Bottom > boxH)
+                top = boxH - db.Bottom;
+        }
+        else if (snap.FlowDirection == Windows::UI::Xaml::FlowDirection::RightToLeft)
+        {
+            left = -min(db.Left, lb.Left) + snap.ActualW - db.Width - 4 - snap.PadRight;
+        }
+
+        D2D1::Matrix3x2F transform =
+            D2D1::Matrix3x2F::Scale(static_cast<float>(scale * snap.DpiScale), static_cast<float>(scale * snap.DpiScale)) *
+            D2D1::Matrix3x2F::Translation(offsetX, offsetY);
+        ctx->SetTransform(transform);
+
+        bool color = snap.RenderColor && snap.ColorRenderOption != DWriteColorRenderOption::Monochrome;
+        GlyphImageFormat preferredFormat = snap.RenderColor
+            ? CoreDWTextServices::ToPreferredFormat(color, snap.ColorRenderOption)
+            : GlyphImageFormat::TrueType;
+
+        ComPtr<ID2D1SolidColorBrush> brush;
+        ctx->CreateSolidColorBrush(snap.RenderColor ? snap.ForegroundColor : D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f), &brush);
+
+        TextRenderParameters renderParams;
+        renderParams.ForegroundBrush = brush.Get();
+        renderParams.EnableColor = color;
+        renderParams.PreferredFormat = preferredFormat;
+        renderParams.OverrideFace = snap.DrawFontFace.Get();
+        renderParams.IsMaskSurface = !snap.RenderColor;
+
+        if (snap.GlyphIndex >= 0)
+        {
+            if (snap.DrawFontFace != nullptr)
+            {
+                UINT16 gIndex = static_cast<UINT16>(snap.GlyphIndex);
+                FLOAT advance = static_cast<FLOAT>(lb.Width);
+
+                DWRITE_GLYPH_RUN glyphRun{};
+                glyphRun.fontFace = snap.DrawFontFace.Get();
+                glyphRun.fontEmSize = static_cast<FLOAT>(snap.FontSize < 8 ? 8 : snap.FontSize);
+                glyphRun.glyphCount = 1;
+                glyphRun.glyphIndices = &gIndex;
+                glyphRun.glyphAdvances = &advance;
+                glyphRun.glyphOffsets = nullptr;
+                glyphRun.isSideways = FALSE;
+                glyphRun.bidiLevel = 0;
+
+                CoreDWTextServices::DrawGlyphRun(ctx, { static_cast<float>(left), static_cast<float>(top) }, &glyphRun, renderParams);
+            }
         }
         else
         {
-            left = static_cast<float>(-db.Left + (boxW - db.Width) / 2.0);
+            CoreDWTextServices::DrawTextLayout(ctx, snap.TextLayout.Get(), { static_cast<float>(left), static_cast<float>(top) }, renderParams);
+        }
+    }
+
+    // Isolated D3D11/D2D1 device used off-thread for heavy color/SVG rasterization so slow
+    // glyphs don't hold CompositionDeviceManager::GetRenderMutex() and block other UI draws.
+    struct OffDeviceD2DRenderer
+    {
+        std::mutex Mutex;
+        ComPtr<ID3D11Device> D3DDevice;
+        ComPtr<ID2D1Factory5> D2DFactory;
+        ComPtr<ID2D1Device> D2DDevice;
+        ComPtr<ID2D1DeviceContext> D2DContext;
+
+        bool RenderLocked(const DirectTextRenderSnapshot& snap, std::vector<uint8_t>& outPixels, UINT32& outPitch)
+        {
+            if (D3DDevice != nullptr && FAILED(D3DDevice->GetDeviceRemovedReason()))
+            {
+                D2DContext.Reset();
+                D2DDevice.Reset();
+                D3DDevice.Reset();
+            }
+
+            if (D2DContext == nullptr)
+            {
+                UINT flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+                D3D_FEATURE_LEVEL levels[] = {
+                    D3D_FEATURE_LEVEL_11_1,
+                    D3D_FEATURE_LEVEL_11_0,
+                    D3D_FEATURE_LEVEL_10_1,
+                    D3D_FEATURE_LEVEL_10_0
+                };
+                D3D_FEATURE_LEVEL level{};
+                HRESULT hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, flags, levels, ARRAYSIZE(levels), D3D11_SDK_VERSION, &D3DDevice, &level, nullptr);
+                if (FAILED(hr))
+                    hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_WARP, nullptr, flags, levels, ARRAYSIZE(levels), D3D11_SDK_VERSION, &D3DDevice, &level, nullptr);
+                if (FAILED(hr) || D3DDevice == nullptr)
+                    return false;
+
+                ComPtr<IDXGIDevice> dxgiDevice;
+                if (FAILED(D3DDevice.As(&dxgiDevice)))
+                    return false;
+
+                if (D2DFactory == nullptr)
+                {
+                    D2D1_FACTORY_OPTIONS opts{};
+                    if (FAILED(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory5), &opts, &D2DFactory)))
+                        return false;
+                }
+
+                if (FAILED(D2DFactory->CreateDevice(dxgiDevice.Get(), &D2DDevice)) || D2DDevice == nullptr)
+                    return false;
+
+                if (FAILED(D2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &D2DContext)) || D2DContext == nullptr)
+                    return false;
+            }
+
+            // Always use BGRA8 off-device even if the final surface were A8: D2D1DeviceContext
+            // does not support A8_UNORM with D2D1_BITMAP_OPTIONS_TARGET on many drivers.
+            D2D1_PIXEL_FORMAT pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED);
+
+            D2D1_BITMAP_PROPERTIES1 targetProps = D2D1::BitmapProperties1(
+                D2D1_BITMAP_OPTIONS_TARGET,
+                pixelFormat);
+
+            ComPtr<ID2D1Bitmap1> targetBitmap;
+            HRESULT hr = D2DContext->CreateBitmap(D2D1::SizeU(snap.SurfaceWidth, snap.SurfaceHeight), nullptr, 0, &targetProps, &targetBitmap);
+            if (FAILED(hr) || targetBitmap == nullptr)
+                return false;
+
+            D2D1_BITMAP_PROPERTIES1 stagingProps = D2D1::BitmapProperties1(
+                D2D1_BITMAP_OPTIONS_CPU_READ | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+                pixelFormat);
+
+            ComPtr<ID2D1Bitmap1> stagingBitmap;
+            hr = D2DContext->CreateBitmap(D2D1::SizeU(snap.SurfaceWidth, snap.SurfaceHeight), nullptr, 0, &stagingProps, &stagingBitmap);
+            if (FAILED(hr) || stagingBitmap == nullptr)
+                return false;
+
+            D2DContext->SetTarget(targetBitmap.Get());
+            D2DContext->BeginDraw();
+            D2DContext->Clear(D2D1::ColorF(0, 0, 0, 0));
+            RenderSnapshotToContext(D2DContext.Get(), snap, 0.0f, 0.0f);
+            hr = D2DContext->EndDraw();
+            D2DContext->SetTarget(nullptr);
+            if (FAILED(hr))
+            {
+                if (hr == D2DERR_RECREATE_TARGET)
+                {
+                    D2DContext.Reset();
+                    D2DDevice.Reset();
+                    D3DDevice.Reset();
+                }
+                return false;
+            }
+
+            hr = stagingBitmap->CopyFromBitmap(nullptr, targetBitmap.Get(), nullptr);
+            if (FAILED(hr))
+                return false;
+
+            D2D1_MAPPED_RECT mapped{};
+            hr = stagingBitmap->Map(D2D1_MAP_OPTIONS_READ, &mapped);
+            if (FAILED(hr) || mapped.bits == nullptr)
+                return false;
+
+            outPitch = mapped.pitch;
+            size_t totalBytes = static_cast<size_t>(mapped.pitch) * snap.SurfaceHeight;
+            outPixels.resize(totalBytes);
+            memcpy(outPixels.data(), mapped.bits, totalBytes);
+            stagingBitmap->Unmap();
+
+            return true;
+        }
+    };
+
+    template <size_t N>
+    class OffDeviceRendererPool
+    {
+    public:
+        bool Render(const DirectTextRenderSnapshot& snap, std::vector<uint8_t>& outPixels, UINT32& outPitch)
+        {
+            // Fast path: grab the first idle slot without blocking on a busy/stalled font.
+            for (size_t i = 0; i < N; ++i)
+            {
+                std::unique_lock<std::mutex> lock(m_slots[i].Mutex, std::try_to_lock);
+                if (lock.owns_lock())
+                    return m_slots[i].RenderLocked(snap, outPixels, outPitch);
+            }
+
+            // Fallback if all N slots are currently busy (e.g. deferred mono->color upgrade).
+            size_t idx = m_next.fetch_add(1, std::memory_order_relaxed) % N;
+            std::lock_guard<std::mutex> lock(m_slots[idx].Mutex);
+            return m_slots[idx].RenderLocked(snap, outPixels, outPitch);
         }
 
-        // Vertical positioning:
-        // Center the font line box so all characters share the exact same baseline.
-        // For textLayout (lb.Top == 0), top is line box top: (boxH - lb.Height) / 2.0.
-        // For GlyphRun (lb.Top == -ascent), top is baseline origin: (boxH - lb.Height) / 2.0 + ascent.
-        // Both equal (boxH - lb.Height) / 2.0 - lb.Top.
-        top = static_cast<float>((boxH - lb.Height) / 2.0 - lb.Top);
+    private:
+        std::array<OffDeviceD2DRenderer, N> m_slots;
+        std::atomic<size_t> m_next{ 0 };
+    };
 
-        // Prevent clipping if extreme ascenders/descenders extend outside box
-        if (top + db.Top < 0)
-            top = -db.Top;
-        if (top + db.Bottom > boxH)
-            top = static_cast<float>(boxH - db.Bottom);
-    }
-
-    bool drawMetrics = false;
-    if (drawMetrics)
+    bool RenderSnapshotOffDevice(const DirectTextRenderSnapshot& snap, std::vector<uint8_t>& outPixels, UINT32& outPitch)
     {
-        args->DrawingSession->DrawRectangle(left + lb.Left, top + lb.Top, lb.Width, lb.Height, Windows::UI::Colors::DarkGreen);
-        args->DrawingSession->DrawRectangle(left + db.Left, top + db.Top, db.Width, db.Height, Windows::UI::Colors::DarkBlue);
-        
-        // Fix later - removed Win2D TextLayout
-        // 
-        //auto metrics = this->FontFace->GetMetrics();
-        //double capRatio = (double)metrics.capHeight / (double)metrics.designUnitsPerEm;
-        //auto capHeight = FontSize * capRatio;
+        if (snap.SurfaceWidth == 0 || snap.SurfaceHeight == 0)
+            return false;
 
-        //auto base = m_layout->LineMetrics[0].Baseline + lb.Top + top;
-        //auto cap = base - capHeight;
-        //args->DrawingSession->DrawLine(left + db.Left, base, left + db.Right, base, Windows::UI::Colors::DarkGoldenrod);
-        //args->DrawingSession->DrawLine(left + db.Left, cap, left + db.Right, cap, Windows::UI::Colors::DarkMagenta);
+        // Separate pools (4 monochrome, 2 color) so slow/difficult fonts never block the entire queue.
+        static OffDeviceRendererPool<4> s_monoPool;
+        static OffDeviceRendererPool<2> s_colorPool;
 
-        //// --- Draw a green line along the baseline ---
-        //if (m_layout->LineMetrics != nullptr && m_layout->LineMetrics->Length > 0)
-        //{
-        //    // Baseline is relative to the layout bounds
-        //    float baseline = m_layout->LineMetrics[0].Baseline + lb.Top + top;
-        //    args->DrawingSession->DrawLine(
-        //        left + db.Left, baseline,
-        //        left + db.Right, baseline,
-        //        Windows::UI::Colors::HotPink
-        //    );
-        //}
+        return snap.RenderColor
+            ? s_colorPool.Render(snap, outPixels, outPitch)
+            : s_monoPool.Render(snap, outPixels, outPitch);
     }
 
-   
-
-    m_canvas->Margin = ThicknessHelper::FromUniformLength(0);
-
-    //if (IsOverwriteCompensationEnabled && (m_layout->DrawBounds.Left < 0 || m_layout->DrawBounds.Top < 0))
-    //{
-    //    auto b = db.Left;
-    //    auto t = db.Top;
-
-    //    m_canvas->Margin = ThicknessHelper::FromLengths(b, t, 0, 0);
-    //    left -= b;
-    //    top -= t;
-    //}
-    //else if (IsOverwriteCompensationEnabled && m_layout->DrawBounds.Left > 0)
-    //{
-    //    //m_canvas->Margin = ThicknessHelper::FromLengths(-db.Left, 0, 0, 0);
-    //    left += db.Left;
-    //}
-    //else
-        //m_canvas->Margin = ThicknessHelper::FromUniformLength(0);
-
-    if (!IsCharacterFitEnabled && this->FlowDirection == Windows::UI::Xaml::FlowDirection::RightToLeft)
+    bool DrawSnapshotToSurface(DirectTextRenderSnapshot snap, bool offDevice = false, Platform::WeakReference weakThis = nullptr, uint64_t gen = 0)
     {
-        // Note: something is wrong here causing the right hand side to clip slightly.
-        //       currently we use 4 as a magic number to avoid this in 90% of cases.
-        //       need to figure out what's up at some point.
+        if (snap.SurfaceInterop == nullptr)
+            return false;
 
-        // NB: Win2D Sample gallery actually has a note on this, remember to look
-        // at it sometime
-        left += m_canvas->ActualWidth - db.Width - 4; 
+        std::unique_lock<std::mutex> layoutLock;
+        if (snap.DeferredLayout)
+        {
+            if (snap.LayoutParams.Text == nullptr || snap.LayoutParams.Text->Length() == 0 || snap.LayoutParams.FontFace == nullptr)
+                return false;
+
+            if (snap.LayoutCache != nullptr)
+                layoutLock = std::unique_lock<std::mutex>(snap.LayoutCache->Mutex);
+
+            auto& p = snap.LayoutParams;
+            bool reused = false;
+            if (snap.LayoutCache != nullptr && snap.LayoutCache->TextLayout != nullptr)
+            {
+                auto& c = *snap.LayoutCache;
+                bool sameText = (c.Text == p.Text) ||
+                    (c.Text != nullptr && p.Text != nullptr && wcscmp(c.Text->Data(), p.Text->Data()) == 0);
+                if (sameText &&
+                    c.FontFace == p.FontFace &&
+                    c.TypographyInfo == p.TypographyInfo &&
+                    c.FallbackFont == p.FallbackFont &&
+                    c.FlowDirection == p.FlowDirection &&
+                    c.WordWrapping == p.WordWrapping &&
+                    c.FontWeight.Weight == p.FontWeight.Weight &&
+                    c.FontStyle == p.FontStyle &&
+                    c.FontStretch == p.FontStretch &&
+                    c.Simulations == p.Simulations)
+                {
+                    bool axisChanged = (c.AxisValues.size() != p.ExplicitAxisValues.size());
+                    for (size_t i = 0; i < c.AxisValues.size() && !axisChanged; ++i)
+                    {
+                        if (c.AxisValues[i].axisTag != p.ExplicitAxisValues[i].axisTag ||
+                            c.AxisValues[i].value != p.ExplicitAxisValues[i].value)
+                            axisChanged = true;
+                    }
+
+                    if (!axisChanged || !p.ExplicitAxisValues.empty())
+                    {
+                        UINT32 len = p.Text->Length();
+                        if (c.FontSize != p.FontSize)
+                        {
+                            c.TextLayout->SetFontSize(p.FontSize, DWRITE_TEXT_RANGE{ 0, len });
+                            c.FontSize = p.FontSize;
+                        }
+                        if (c.MaxWidth != p.MaxWidth)
+                        {
+                            c.TextLayout->SetMaxWidth(p.MaxWidth);
+                            c.MaxWidth = p.MaxWidth;
+                        }
+                        if (c.MaxHeight != p.MaxHeight)
+                        {
+                            c.TextLayout->SetMaxHeight(p.MaxHeight);
+                            c.MaxHeight = p.MaxHeight;
+                        }
+                        if (axisChanged)
+                        {
+                            CoreDWTextServices::UpdateAxisValues(c.TextLayout.Get(), p.ExplicitAxisValues, len);
+                            c.AxisValues = p.ExplicitAxisValues;
+                        }
+
+                        snap.TextLayout = c.TextLayout;
+                        snap.DrawFontFace = c.DrawFontFace;
+                        reused = true;
+                    }
+                }
+            }
+
+            if (!reused)
+            {
+                HRESULT layoutHr = CoreDWTextServices::CreateLayout(p, &snap.TextLayout, &snap.DrawFontFace);
+                if (FAILED(layoutHr) || snap.TextLayout == nullptr)
+                    return false;
+
+                if (snap.LayoutCache != nullptr)
+                {
+                    auto& c = *snap.LayoutCache;
+                    c.TextLayout = snap.TextLayout;
+                    c.DrawFontFace = snap.DrawFontFace;
+                    c.Text = p.Text;
+                    c.FontFace = p.FontFace;
+                    c.TypographyInfo = p.TypographyInfo;
+                    c.FallbackFont = p.FallbackFont;
+                    c.FlowDirection = p.FlowDirection;
+                    c.WordWrapping = p.WordWrapping;
+                    c.FontWeight = p.FontWeight;
+                    c.FontStyle = p.FontStyle;
+                    c.FontStretch = p.FontStretch;
+                    c.Simulations = p.Simulations;
+                    c.AxisValues = p.ExplicitAxisValues;
+                    c.FontSize = p.FontSize;
+                    c.MaxWidth = p.MaxWidth;
+                    c.MaxHeight = p.MaxHeight;
+                }
+            }
+
+            if (FAILED(CoreDWTextServices::MeasureLayoutBounds(snap.TextLayout.Get(), &snap.LayoutBounds)))
+                return false;
+
+            snap.DrawBounds = snap.LayoutBounds;
+
+            // Deferred layouts bypass the UI-thread ShouldRenderColor() check, so probe fallback
+            // runs here and upgrade the A8 mask surface to BGRA8 if a fallback glyph is colored.
+            if (!snap.RenderColor && snap.IsColorFontEnabled &&
+                snap.ColorRenderOption != DWriteColorRenderOption::Monochrome &&
+                snap.LayoutParams.FallbackFont != nullptr)
+            {
+                RunColorChecker checker;
+                snap.TextLayout->Draw(nullptr, &checker, 0.0f, 0.0f);
+                if (checker.HasColorFont && snap.GraphicsDevice != nullptr && snap.SurfaceWidth > 0 && snap.SurfaceHeight > 0)
+                {
+                    auto pThis = weakThis.Resolve<DirectText>();
+                    if (pThis == nullptr || !pThis->IsGenerationCurrent(gen))
+                        return false;
+
+                    auto colorSurface = snap.GraphicsDevice->CreateDrawingSurface(
+                        Size(static_cast<float>(snap.SurfaceWidth), static_cast<float>(snap.SurfaceHeight)),
+                        Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized,
+                        Windows::Graphics::DirectX::DirectXAlphaMode::Premultiplied);
+                    if (colorSurface == nullptr)
+                        return false;
+
+                    ComPtr<ICompositionDrawingSurfaceInterop> colorInterop;
+                    if (FAILED(reinterpret_cast<IUnknown*>(colorSurface)->QueryInterface(IID_PPV_ARGS(&colorInterop))) || colorInterop == nullptr)
+                        return false;
+
+                    if (!pThis->UpgradeToColorSurface(gen, colorSurface))
+                        return false;
+
+                    snap.SurfaceInterop = colorInterop;
+                    snap.RenderColor = true;
+                    snap.ForegroundColor = snap.ActualForegroundColor;
+                }
+            }
+
+            if (gen != 0)
+            {
+                auto pThis = weakThis.Resolve<DirectText>();
+                if (pThis == nullptr || !pThis->IsGenerationCurrent(gen))
+                    return false;
+            }
+        }
+        else if (gen != 0)
+        {
+            auto pThis = weakThis.Resolve<DirectText>();
+            if (pThis == nullptr || !pThis->IsGenerationCurrent(gen))
+                return false;
+        }
+
+        // Rasterize off-device (using separate mono/color lanes) so background threads never hold
+        // CompositionDeviceManager::GetRenderMutex() during DrawTextLayout.
+        std::vector<uint8_t> offDevicePixels;
+        UINT32 offDevicePitch = 0;
+        bool hasOffDevicePixels = offDevice && RenderSnapshotOffDevice(snap, offDevicePixels, offDevicePitch);
+
+        if (hasOffDevicePixels && gen != 0)
+        {
+            auto pThis = weakThis.Resolve<DirectText>();
+            if (pThis == nullptr || !pThis->IsGenerationCurrent(gen))
+                return false;
+        }
+
+        POINT updateOffset{};
+        ComPtr<ID2D1DeviceContext> ctx;
+
+        std::lock_guard<std::mutex> renderLock(CompositionDeviceManager::GetRenderMutex());
+
+        HRESULT hr = snap.SurfaceInterop->BeginDraw(nullptr, IID_PPV_ARGS(&ctx), &updateOffset);
+        if (FAILED(hr))
+        {
+            if (CompositionDeviceManager::IsDeviceLostHResult(hr))
+                CompositionDeviceManager::HandleDeviceLost();
+            return false;
+        }
+
+        if (ctx != nullptr)
+        {
+            ctx->Clear(D2D1::ColorF(0, 0, 0, 0));
+
+            if (hasOffDevicePixels)
+            {
+                D2D1_BITMAP_PROPERTIES1 uploadProps = D2D1::BitmapProperties1(
+                    D2D1_BITMAP_OPTIONS_NONE,
+                    D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED));
+
+                ComPtr<ID2D1Bitmap1> uploadBitmap;
+                if (SUCCEEDED(ctx->CreateBitmap(D2D1::SizeU(snap.SurfaceWidth, snap.SurfaceHeight), offDevicePixels.data(), offDevicePitch, &uploadProps, &uploadBitmap)) && uploadBitmap != nullptr)
+                {
+                    ctx->SetTransform(D2D1::Matrix3x2F::Translation(static_cast<FLOAT>(updateOffset.x), static_cast<FLOAT>(updateOffset.y)));
+                    ctx->DrawBitmap(uploadBitmap.Get(), D2D1::RectF(0.0f, 0.0f, static_cast<FLOAT>(snap.SurfaceWidth), static_cast<FLOAT>(snap.SurfaceHeight)));
+                }
+                else
+                {
+                    RenderSnapshotToContext(ctx.Get(), snap, static_cast<FLOAT>(updateOffset.x), static_cast<FLOAT>(updateOffset.y));
+                }
+            }
+            else
+            {
+                RenderSnapshotToContext(ctx.Get(), snap, static_cast<FLOAT>(updateOffset.x), static_cast<FLOAT>(updateOffset.y));
+            }
+
+            snap.SurfaceInterop->EndDraw();
+        }
+
+        return false;
     }
 
-   /* auto fam = m_layout->DefaultFontFamily;
-    auto fam2 = m_layout->GetFontFamily(0);
-    auto loc = m_layout->DefaultLocaleName;*/
-
-	bool color = ColorRenderOption != DWriteColorRenderOption::Monochrome;
-    GlyphImageFormat preferredFormat = CoreDWTextServices::ToPreferredFormat(color, ColorRenderOption);
-
-    ComPtr<ID2D1DeviceContext> ctx = GetWrappedResource<ID2D1DeviceContext>(args->DrawingSession);
-    if (m_brush == nullptr)
+    struct BackgroundRenderJob
     {
-        ctx->CreateSolidColorBrush(ToD2DColor(((SolidColorBrush^)this->Foreground)->Color), &m_brush);
-    }
-    else
+        Platform::WeakReference WeakThis;
+        uint64_t Generation = 0;
+        DirectTextRenderSnapshot Snapshot;
+        bool WasHidden = false;
+    };
+
+    // Bounded worker pool that pops from the middle of the queue so visible items in
+    // ItemsWrapGrid's realized cache window (above + visible + below) render before
+    // off-screen cache items, without flooding D2D/Composition during fast scrolls.
+    class BackgroundRenderQueue
     {
-        m_brush->SetColor(ToD2DColor(((SolidColorBrush^)this->Foreground)->Color));
-    }
+    public:
+        static BackgroundRenderQueue& MonoInstance()
+        {
+            static BackgroundRenderQueue s_instance(4);
+            return s_instance;
+        }
 
-    TextRenderParameters renderParams;
-    renderParams.ForegroundBrush = m_brush.Get();
-    renderParams.EnableColor = color;
-    renderParams.PreferredFormat = preferredFormat;
-    renderParams.OverrideFace = m_drawFontFace.Get();
+        static BackgroundRenderQueue& ColorInstance()
+        {
+            static BackgroundRenderQueue s_instance(2);
+            return s_instance;
+        }
 
-    if (GlyphIndex >= 0)
-    {
-        if (m_drawFontFace == nullptr)
-            return;
+        explicit BackgroundRenderQueue(size_t maxWorkers)
+            : m_maxWorkers(maxWorkers)
+        {
+        }
 
-        UINT16 gIndex = static_cast<UINT16>(GlyphIndex);
-        FLOAT advance = static_cast<FLOAT>(layoutBounds.Width);
+        void Enqueue(BackgroundRenderJob&& job)
+        {
+            bool spawnWorker = false;
+            {
+                std::lock_guard<std::mutex> lock(m_mutex);
+                m_queue.push_back(std::move(job));
+                if (m_activeWorkers < m_maxWorkers)
+                {
+                    ++m_activeWorkers;
+                    spawnWorker = true;
+                }
+            }
 
-        DWRITE_GLYPH_RUN glyphRun{};
-        glyphRun.fontFace = m_drawFontFace.Get();
-        glyphRun.fontEmSize = static_cast<FLOAT>(FontSize < 8 ? 8 : FontSize);
-        glyphRun.glyphCount = 1;
-        glyphRun.glyphIndices = &gIndex;
-        glyphRun.glyphAdvances = &advance;
-        glyphRun.glyphOffsets = nullptr;
-        glyphRun.isSideways = FALSE;
-        glyphRun.bidiLevel = 0;
+            if (spawnWorker)
+                SpawnWorker();
+        }
 
-        CoreDWTextServices::DrawGlyphRun(ctx.Get(), { static_cast<float>(left), static_cast<float>(top) }, &glyphRun, renderParams);
-    }
-    else
-    {
-        CoreDWTextServices::DrawTextLayout(ctx.Get(), m_textLayout.Get(), { static_cast<float>(left), static_cast<float>(top) }, renderParams);
-    }
+    private:
 
-    m_render = false;
+        void SpawnWorker()
+        {
+            concurrency::create_task([this]()
+            {
+                for (;;)
+                {
+                    BackgroundRenderJob job;
+                    {
+                        std::lock_guard<std::mutex> lock(m_mutex);
+                        if (m_queue.empty())
+                        {
+                            --m_activeWorkers;
+                            return;
+                        }
+
+                        // Consume from the middle of the queue (visible viewport sits between
+                        // the leading and trailing ItemsWrapGrid cache buffers).
+                        size_t mid = m_queue.size() / 2;
+                        job = std::move(m_queue[mid]);
+                        m_queue.erase(m_queue.begin() + mid);
+                    }
+
+                    struct DrawCounterGuard
+                    {
+                        Platform::WeakReference WeakThis;
+                        ~DrawCounterGuard()
+                        {
+                            if (auto p = WeakThis.Resolve<DirectText>())
+                                p->DecrementActiveBackgroundDraws();
+                        }
+                    } guard{ job.WeakThis };
+
+                    auto pThis = job.WeakThis.Resolve<DirectText>();
+                    if (pThis == nullptr || !pThis->IsGenerationCurrent(job.Generation))
+                        continue;
+
+                    DrawSnapshotToSurface(job.Snapshot, true, job.WeakThis, job.Generation);
+                    if (!job.WasHidden)
+                        continue;
+
+                    // Composition properties (like IsVisible) are thread-safe and commit directly without Dispatcher.
+                    if (auto pThis2 = job.WeakThis.Resolve<DirectText>())
+                        pThis2->ShowVisualIfCurrent(job.Generation);
+                }
+            });
+        }
+
+        std::mutex m_mutex;
+        std::deque<BackgroundRenderJob> m_queue;
+        size_t m_activeWorkers = 0;
+        size_t m_maxWorkers = 1;
+    };
 }
 
-void DirectText::OnCreateResources(CanvasControl^ sender, CanvasCreateResourcesEventArgs^ args)
+void DirectText::RenderToSurface(Windows::Foundation::Size finalSize)
 {
-    Update();
-};
+    if (!m_render || (!m_deferredLayout && m_textLayout == nullptr && GlyphIndex < 0))
+    {
+        if (m_spriteVisual != nullptr)
+            m_spriteVisual->Brush = nullptr;
+        ReleaseDrawingSurface();
+        m_needsRender = false;
+        return;
+    }
+
+    float actualW = finalSize.Width > 0.0f ? finalSize.Width : static_cast<float>(ActualWidth);
+    float actualH = finalSize.Height > 0.0f ? finalSize.Height : static_cast<float>(ActualHeight);
+    if (actualW <= 0.0f || actualH <= 0.0f)
+        return;
+
+    auto visual = ElementCompositionPreview::GetElementVisual(this);
+    auto compositor = visual != nullptr ? visual->Compositor : nullptr;
+    if (compositor == nullptr)
+        return;
+
+    if (m_spriteVisual == nullptr)
+    {
+        m_spriteVisual = compositor->CreateSpriteVisual();
+        ElementCompositionPreview::SetElementChildVisual(this, m_spriteVisual);
+    }
+
+    float dpiScale = CompositionDeviceManager::GetDpiScale(this->Dispatcher);
+
+    Windows::Foundation::Size fixedSurfaceSize = SurfaceSize;
+    float surfaceW = (fixedSurfaceSize.Width > 0.0f) ? fixedSurfaceSize.Width : actualW;
+    float surfaceH = (fixedSurfaceSize.Height > 0.0f) ? fixedSurfaceSize.Height : actualH;
+
+    LONG requiredWidth = (std::max)(1L, (std::min)(8192L, static_cast<LONG>(std::ceil(surfaceW * dpiScale))));
+    LONG requiredHeight = (std::max)(1L, (std::min)(8192L, static_cast<LONG>(std::ceil(surfaceH * dpiScale))));
+
+    bool renderColor = ShouldRenderColor();
+
+    auto wireBrushes = [&]()
+    {
+        if (m_surfaceBrush != nullptr)
+            m_surfaceBrush->Scale = float2(1.0f / dpiScale, 1.0f / dpiScale);
+        m_spriteVisual->Size = float2(actualW, actualH);
+
+        CompositionDeviceManager::ApplySurfaceOrMaskBrush(
+            compositor,
+            m_spriteVisual,
+            m_surfaceBrush,
+            m_maskBrush,
+            m_colorBrush,
+            !renderColor,
+            GetForegroundColor());
+    };
+
+    if (!m_needsRender && m_drawingSurface != nullptr && m_renderedColor == renderColor &&
+        m_renderedWidth >= requiredWidth && m_renderedHeight >= requiredHeight &&
+        m_renderedWidth <= requiredWidth + 64 && m_renderedHeight <= requiredHeight + 64)
+    {
+        wireBrushes();
+        return;
+    }
+
+    auto graphicsDevice = CompositionDeviceManager::GetGraphicsDevice(compositor);
+    if (graphicsDevice == nullptr)
+        return;
+
+    // Reuse the existing surface if it fits within a 64px slack window to avoid
+    // reallocating CompositionDrawingSurface on every FontSize slider tick.
+    bool needNewSurface = m_drawingSurface == nullptr ||
+        m_renderedColor != renderColor ||
+        m_renderedWidth < requiredWidth ||
+        m_renderedHeight < requiredHeight ||
+        m_renderedWidth > requiredWidth + 64 ||
+        m_renderedHeight > requiredHeight + 64;
+
+    if (needNewSurface)
+    {
+        ReleaseDrawingSurface();
+        LONG allocW = requiredWidth;
+        // Bucket height to 64px multiples (when not fixed) so growing text doesn't reallocate every step.
+        LONG allocH = (fixedSurfaceSize.Height > 0.0f)
+            ? requiredHeight
+            : (std::min)(8192L, ((requiredHeight + 63L) / 64L) * 64L);
+        // Monochrome text uses an A8 mask + CompositionMaskBrush (4x less VRAM, instant color changes);
+        // color/SVG/COLR fonts require full BGRA8.
+        auto pixelFormat = renderColor
+            ? Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized
+            : Windows::Graphics::DirectX::DirectXPixelFormat::A8UIntNormalized;
+        m_drawingSurface = graphicsDevice->CreateDrawingSurface(
+            Size(static_cast<float>(allocW), static_cast<float>(allocH)),
+            pixelFormat,
+            Windows::Graphics::DirectX::DirectXAlphaMode::Premultiplied);
+        m_renderedWidth = allocW;
+        m_renderedHeight = allocH;
+        m_renderedColor = renderColor;
+    }
+
+    if (m_drawingSurface == nullptr)
+        return;
+
+    ComPtr<ICompositionDrawingSurfaceInterop> surfaceInterop;
+    if (FAILED(reinterpret_cast<IUnknown*>(m_drawingSurface)->QueryInterface(IID_PPV_ARGS(&surfaceInterop))))
+        return;
+
+    CompositionDeviceManager::EnsureSurfaceBrush(compositor, m_surfaceBrush, m_drawingSurface);
+
+    wireBrushes();
+
+    D2D1_COLOR_F actualFgColor = D2D1::ColorF(D2D1::ColorF::White);
+    if (auto fgScb = dynamic_cast<SolidColorBrush^>(this->Foreground))
+    {
+        auto c = fgScb->Color;
+        actualFgColor = D2D1::ColorF(c.R / 255.0f, c.G / 255.0f, c.B / 255.0f, (c.A / 255.0f) * static_cast<float>(fgScb->Opacity));
+    }
+    D2D1_COLOR_F fgColor = renderColor ? actualFgColor : D2D1::ColorF(D2D1::ColorF::White);
+
+    Thickness padding = this->Padding;
+    DirectTextRenderSnapshot snapshot;
+    snapshot.SurfaceInterop = surfaceInterop;
+    snapshot.TextLayout = m_textLayout;
+    snapshot.DrawFontFace = m_drawFontFace;
+    snapshot.DrawBounds = drawBounds;
+    snapshot.LayoutBounds = layoutBounds;
+    snapshot.ActualW = actualW;
+    snapshot.ActualH = actualH;
+    snapshot.DpiScale = dpiScale;
+    snapshot.SurfaceWidth = static_cast<UINT32>(m_renderedWidth);
+    snapshot.SurfaceHeight = static_cast<UINT32>(m_renderedHeight);
+    snapshot.MinWidth = m_minWidth;
+    snapshot.FontSize = FontSize;
+    snapshot.PadLeft = (std::max)(0.0, padding.Left);
+    snapshot.PadTop = (std::max)(0.0, padding.Top);
+    snapshot.PadRight = (std::max)(0.0, padding.Right);
+    snapshot.PadBottom = (std::max)(0.0, padding.Bottom);
+    snapshot.GlyphIndex = GlyphIndex;
+    snapshot.IsCharacterFitEnabled = IsCharacterFitEnabled;
+    snapshot.RenderColor = renderColor;
+    snapshot.DeferredLayout = m_deferredLayout;
+    snapshot.IsColorFontEnabled = IsColorFontEnabled;
+    snapshot.FlowDirection = this->FlowDirection;
+    snapshot.ColorRenderOption = ColorRenderOption;
+    snapshot.ForegroundColor = fgColor;
+    snapshot.ActualForegroundColor = actualFgColor;
+
+    if (m_deferredLayout)
+    {
+        snapshot.GraphicsDevice = graphicsDevice;
+        snapshot.LayoutCache = m_deferredLayoutCache;
+        auto fontFace = FontFace;
+        auto fontSize = 8.0 > FontSize ? 8.0 : FontSize;
+        snapshot.LayoutParams.Text = Text;
+        snapshot.LayoutParams.FontFace = fontFace;
+        snapshot.LayoutParams.FontSize = static_cast<float>(fontSize);
+        snapshot.LayoutParams.FontWeight = FontWeight;
+        snapshot.LayoutParams.FontStyle = FontStyle;
+        snapshot.LayoutParams.FontStretch = FontStretch;
+        snapshot.LayoutParams.Simulations = CoreDWTextServices::ResolveSimulations(StyleSimulations, fontFace);
+        snapshot.LayoutParams.TypographyInfo = Typography;
+        snapshot.LayoutParams.FallbackFont = FallbackFont;
+        snapshot.LayoutParams.FlowDirection = this->FlowDirection;
+        snapshot.LayoutParams.WordWrapping = IsTextWrappingEnabled;
+        snapshot.LayoutParams.EnableTrimming = IsTextWrappingEnabled;
+        snapshot.LayoutParams.IsCharacterFit = false;
+        snapshot.LayoutParams.MaxWidth = m_deferredAvailW;
+        snapshot.LayoutParams.MaxHeight = m_deferredAvailH;
+        if (Axis != nullptr && Axis->Size > 0)
+        {
+            snapshot.LayoutParams.ExplicitAxisValues.reserve(Axis->Size);
+            for (unsigned int i = 0; i < Axis->Size; ++i)
+                snapshot.LayoutParams.ExplicitAxisValues.push_back(Axis->GetAt(i)->GetDWriteValue());
+        }
+        else if (fontFace != nullptr && !fontFace->GetAxisValues().empty())
+        {
+            snapshot.LayoutParams.ExplicitAxisValues = fontFace->GetAxisValues();
+        }
+    }
+
+    m_needsRender = false;
+
+    if (IsBackgroundRenderEnabled)
+    {
+        // Bump generation immediately so any in-flight background render for an older state
+        // aborts before touching the surface or flipping IsVisible back on.
+        uint64_t gen = ++m_renderGeneration;
+        ++m_activeBackgroundDraws;
+        // Only hide the visual when FontFace changes (prevents stale font flash on container recycle);
+        // keep it visible during Text/size updates for smooth updates without flashing.
+        bool hideVisual = HasContentChangedForVisibility();
+        if (hideVisual)
+            m_spriteVisual->IsVisible = false;
+        bool wasHidden = !m_spriteVisual->IsVisible;
+        m_lastShownFontFace = FontFace;
+        BackgroundRenderJob job;
+        job.WeakThis = Platform::WeakReference(this);
+        job.Generation = gen;
+        job.Snapshot = std::move(snapshot);
+        job.WasHidden = wasHidden;
+        auto& queue = job.Snapshot.RenderColor
+            ? BackgroundRenderQueue::ColorInstance()
+            : BackgroundRenderQueue::MonoInstance();
+        queue.Enqueue(std::move(job));
+    }
+    else
+    {
+        m_lastShownFontFace = FontFace;
+        DrawSnapshotToSurface(snapshot);
+        if (m_spriteVisual != nullptr)
+            m_spriteVisual->IsVisible = true;
+    }
+}
 
 
 

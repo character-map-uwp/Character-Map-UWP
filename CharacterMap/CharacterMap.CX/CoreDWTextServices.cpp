@@ -4,6 +4,7 @@
 #include "DWHelpers.h"
 #include "Utils.h"
 #include <algorithm>
+#include <mutex>
 
 using namespace Microsoft::WRL;
 using namespace CharacterMapCX;
@@ -168,6 +169,51 @@ ComPtr<IDWriteFontFace3> CoreDWTextServices::GetSimulatedFontFace(
     }
 
     return fontFace->GetFontFace();
+}
+
+ComPtr<IDWriteFontFace3> CoreDWTextServices::ResolveFontFace(
+    DWriteFontFace^ fontFace,
+    Windows::UI::Xaml::Media::StyleSimulations simulations,
+    Windows::Foundation::Collections::IVectorView<DWriteFontAxis^>^ axis)
+{
+    if (fontFace == nullptr)
+        return nullptr;
+
+    if (axis != nullptr && axis->Size > 0)
+    {
+        ComPtr<IDWriteFontFaceReference> faceRef = fontFace->GetReference();
+        ComPtr<IDWriteFontFaceReference1> faceRef1;
+        if (faceRef != nullptr && SUCCEEDED(faceRef.As(&faceRef1)))
+        {
+            ComPtr<IDWriteFontFace5> face5;
+            if (SUCCEEDED(faceRef1->CreateFontFace(&face5)))
+            {
+                ComPtr<IDWriteFontResource> fontResource;
+                if (SUCCEEDED(face5->GetFontResource(&fontResource)))
+                {
+                    std::vector<DWRITE_FONT_AXIS_VALUE> values;
+                    values.reserve(axis->Size);
+                    for (unsigned int i = 0; i < axis->Size; ++i)
+                        values.push_back(axis->GetAt(i)->GetDWriteValue());
+
+                    ComPtr<IDWriteFontFace5> face5_var;
+                    if (SUCCEEDED(fontResource->CreateFontFace(
+                        ToDWriteFontSimulations(simulations),
+                        values.data(),
+                        static_cast<UINT32>(values.size()),
+                        &face5_var)) && face5_var != nullptr)
+                    {
+                        ComPtr<IDWriteFontFace3> result;
+                        face5_var.As(&result);
+                        if (result != nullptr)
+                            return result;
+                    }
+                }
+            }
+        }
+    }
+
+    return GetSimulatedFontFace(fontFace, simulations);
 }
 
 HRESULT CoreDWTextServices::CreateLayout(
@@ -521,6 +567,155 @@ HRESULT CoreDWTextServices::MeasureInkBounds(
     return E_FAIL;
 }
 
+HRESULT CoreDWTextServices::MeasureGlyphBounds(
+    IDWriteFontFace3* dwriteFontFace,
+    DWriteFontFace^ fontFace,
+    UINT16 glyphIndex,
+    float fontSize,
+    Windows::Foundation::Rect* pLayoutBounds,
+    Windows::Foundation::Rect* pInkBounds)
+{
+    if (!dwriteFontFace || fontFace == nullptr || !pLayoutBounds || !pInkBounds)
+        return E_INVALIDARG;
+
+    DWRITE_GLYPH_METRICS glyphMetrics{};
+    HRESULT hr = dwriteFontFace->GetDesignGlyphMetrics(&glyphIndex, 1, &glyphMetrics, FALSE);
+    if (FAILED(hr))
+        return hr;
+
+    DWRITE_FONT_METRICS1 fontMetrics = fontFace->GetMetrics();
+    if (fontMetrics.designUnitsPerEm == 0)
+        return E_FAIL;
+
+    double scale = static_cast<double>(fontSize) / fontMetrics.designUnitsPerEm;
+    double advanceWidth = glyphMetrics.advanceWidth * scale;
+    double ascent = fontMetrics.ascent * scale;
+    double descent = fontMetrics.descent * scale;
+
+    Windows::Foundation::Rect layout(0, -ascent, advanceWidth, ascent + descent);
+    *pLayoutBounds = layout;
+    *pInkBounds = layout;
+
+    ComPtr<ID2D1Factory5> d2dFactory = CompositionDeviceManager::GetD2DFactory();
+    ComPtr<ID2D1PathGeometry> pathGeometry;
+    if (d2dFactory != nullptr && SUCCEEDED(d2dFactory->CreatePathGeometry(&pathGeometry)))
+    {
+        ComPtr<ID2D1GeometrySink> sink;
+        if (SUCCEEDED(pathGeometry->Open(&sink)))
+        {
+            FLOAT advanceWidthF = static_cast<FLOAT>(advanceWidth);
+            if (SUCCEEDED(dwriteFontFace->GetGlyphRunOutline(
+                fontSize,
+                &glyphIndex,
+                &advanceWidthF,
+                nullptr,
+                1,
+                FALSE,
+                FALSE,
+                sink.Get())) && SUCCEEDED(sink->Close()))
+            {
+                D2D1_RECT_F bounds{};
+                if (SUCCEEDED(pathGeometry->GetBounds(nullptr, &bounds)) &&
+                    bounds.left <= bounds.right && bounds.top <= bounds.bottom &&
+                    (bounds.right - bounds.left > 0) && (bounds.bottom - bounds.top > 0))
+                {
+                    *pInkBounds = Windows::Foundation::Rect(
+                        bounds.left,
+                        bounds.top,
+                        bounds.right - bounds.left,
+                        bounds.bottom - bounds.top);
+                }
+            }
+            else
+            {
+                sink->Close();
+            }
+        }
+    }
+
+    return S_OK;
+}
+
+namespace
+{
+    ComPtr<IDWriteRenderingParams> CreateSmoothRenderingParams(bool isMaskSurface)
+    {
+        auto factory = CompositionDeviceManager::GetDWriteFactory();
+        if (factory == nullptr)
+            return nullptr;
+
+        FLOAT gamma = 1.8f;
+        if (isMaskSurface)
+        {
+            // White-on-A8 masks get alpha-thinned at default gamma (~1.8) when tinted dark-on-light;
+            // 1.3 preserves thin script strokes without muddying dense line-art.
+            gamma = 1.3f;
+        }
+        else
+        {
+            ComPtr<IDWriteRenderingParams> defaultParams;
+            if (SUCCEEDED(factory->CreateRenderingParams(&defaultParams)) && defaultParams != nullptr)
+                gamma = defaultParams->GetGamma();
+        }
+
+        ComPtr<IDWriteFactory3> factory3;
+        if (SUCCEEDED(factory.As(&factory3)) && factory3 != nullptr)
+        {
+            ComPtr<IDWriteRenderingParams3> params3;
+            if (SUCCEEDED(factory3->CreateCustomRenderingParams(
+                gamma,
+                0.0f,                                     // enhancedContrast: none
+                0.0f,                                     // grayscaleEnhancedContrast: none
+                0.0f,                                     // clearTypeLevel: grayscale only
+                DWRITE_PIXEL_GEOMETRY_FLAT,               // no RGB subpixel geometry on transparent/mask surfaces
+                DWRITE_RENDERING_MODE1_NATURAL_SYMMETRIC, // supersampled glyph rasterizer + dropout control
+                DWRITE_GRID_FIT_MODE_DISABLED,            // disable pixel grid-fitting on thin curves
+                &params3)) && params3 != nullptr)
+            {
+                return params3;
+            }
+        }
+
+        ComPtr<IDWriteRenderingParams> params;
+        factory->CreateCustomRenderingParams(
+            gamma,
+            0.0f,
+            0.0f,
+            DWRITE_PIXEL_GEOMETRY_FLAT,
+            DWRITE_RENDERING_MODE_NATURAL_SYMMETRIC,
+            &params);
+        return params;
+    }
+}
+
+void CoreDWTextServices::ApplyTextRenderingParams(
+    ID2D1DeviceContext* context,
+    bool isMaskSurface)
+{
+    if (!context)
+        return;
+
+    context->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_GRAYSCALE);
+
+    static std::once_flag s_maskOnce;
+    static std::once_flag s_colorOnce;
+    static ComPtr<IDWriteRenderingParams> s_maskParams;
+    static ComPtr<IDWriteRenderingParams> s_colorParams;
+
+    if (isMaskSurface)
+    {
+        std::call_once(s_maskOnce, []() { s_maskParams = CreateSmoothRenderingParams(true); });
+        if (s_maskParams != nullptr)
+            context->SetTextRenderingParams(s_maskParams.Get());
+    }
+    else
+    {
+        std::call_once(s_colorOnce, []() { s_colorParams = CreateSmoothRenderingParams(false); });
+        if (s_colorParams != nullptr)
+            context->SetTextRenderingParams(s_colorParams.Get());
+    }
+}
+
 void CoreDWTextServices::DrawTextLayout(
     ID2D1DeviceContext* context,
     IDWriteTextLayout* layout,
@@ -529,6 +724,8 @@ void CoreDWTextServices::DrawTextLayout(
 {
     if (!context || !layout)
         return;
+
+    ApplyTextRenderingParams(context, params.IsMaskSurface);
 
     GlyphImageFormat format = params.PreferredFormat;
     if (!params.EnableColor && format == GlyphImageFormat::None)
@@ -552,6 +749,8 @@ void CoreDWTextServices::DrawGlyphRun(
 {
     if (!context || !run)
         return;
+
+    ApplyTextRenderingParams(context, params.IsMaskSurface);
 
     GlyphImageFormat format = params.PreferredFormat;
     if (!params.EnableColor && format == GlyphImageFormat::None)

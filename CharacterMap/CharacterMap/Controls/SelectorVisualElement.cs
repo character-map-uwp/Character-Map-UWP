@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -503,11 +503,17 @@ public partial class SelectorVisualElement : FrameworkElement
         if (o is RadioButtons oldRadios)
             OnRadioButtonsTargetChanged(oldRadios, null);
 
+        if (o is UXRadioButtons oldUX)
+            OnUXRadioButtonsTargetChanged(oldUX, null);
+
         if (n is ListViewBase newList)
             OnListViewTargetChanged(null, newList);
 
         if (n is RadioButtons newRadios)
             OnRadioButtonsTargetChanged(null, newRadios);
+
+        if (n is UXRadioButtons newUX)
+            OnUXRadioButtonsTargetChanged(null, newUX);
     }
 
     static partial void OnElementChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -713,6 +719,76 @@ partial class SelectorVisualElement // RADIOBUTTONS
 
         var items = b.GetFirstLevelDescendantsOfType<RadioButton>().ToList();
         var target = b.GetFirstLevelDescendantsOfType<RadioButton>().Skip(b.SelectedIndex).FirstOrDefault();
+        this.MoveTo(target, b);
+    }
+
+    void OnUXRadioButtonsTargetChanged(UXRadioButtons o, UXRadioButtons n)
+    {
+        if (o is UXRadioButtons old)
+        {
+            old.Loaded -= UXRadios_Loaded;
+            old.SelectionChanged -= UXRadios_Selection;
+            old.SizeChanged -= UXRadios_SizeChanged;
+            this.DisplayTarget = null;
+        }
+
+        if (n is UXRadioButtons nrb)
+        {
+            nrb.Loaded -= UXRadios_Loaded;
+            nrb.SizeChanged -= UXRadios_SizeChanged;
+
+            if (nrb.ActualSize().X <= 0)
+                nrb.Loaded += UXRadios_Loaded;
+            else
+            {
+                nrb.SizeChanged += UXRadios_SizeChanged;
+                RadioMoveTo(nrb, nrb.SelectedIndex);
+            }
+
+            if (nrb.GetFirstDescendantOfType<FrameworkElement>("BorderRoot") is { } b)
+                this.DisplayTarget = b;
+
+            nrb.SelectionChanged -= UXRadios_Selection;
+            nrb.SelectionChanged += UXRadios_Selection;
+        }
+
+        void UXRadios_Selection(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is UXRadioButtons rb)
+                RadioMoveTo(rb, rb.SelectedIndex);
+        }
+
+        void UXRadios_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is UXRadioButtons rb)
+            {
+                rb.SizeChanged -= UXRadios_SizeChanged;
+                rb.SizeChanged += UXRadios_SizeChanged;
+
+                if (rb.GetFirstDescendantOfType<FrameworkElement>("BorderRoot") is { } b)
+                    this.DisplayTarget = b;
+
+                RadioMoveTo(rb, rb.SelectedIndex);
+            }
+        }
+
+        void UXRadios_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (sender is UXRadioButtons rb)
+                RadioMoveTo(rb, rb.SelectedIndex);
+        }
+    }
+
+    public void RadioMoveTo(UXRadioButtons b, int index)
+    {
+        if (VisualTreeHelper.GetParent(b) is null)
+            return;
+
+        if (index < 0)
+            return;
+
+        List<RadioButton> items = b.GetFirstLevelDescendantsOfType<RadioButton>().ToList();
+        RadioButton target = b.GetFirstLevelDescendantsOfType<RadioButton>().Skip(b.SelectedIndex).FirstOrDefault();
         this.MoveTo(target, b);
     }
 }

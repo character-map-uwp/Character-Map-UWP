@@ -37,6 +37,8 @@ public partial class ZoomHelper : DependencyObject, IAttached
 
     public void Attach(FrameworkElement element)
     {
+        Detach(element);
+
         /* Note: At some point this will be extended to 
          * support Pinch-to-zoom gestures on trackpads */
 

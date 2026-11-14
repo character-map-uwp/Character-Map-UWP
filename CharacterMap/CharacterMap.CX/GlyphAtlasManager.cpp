@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "GlyphAtlasManager.h"
+#include "CoreDWTextServices.h"
 #include <algorithm>
 
 using namespace CharacterMapCX;
@@ -264,33 +265,26 @@ AtlasSlot GlyphAtlasManager::GetOrCreateGlyphSlot(
 
             D2D1_POINT_2F baselineOrigin = D2D1::Point2F(padLeft, baseline + padTop);
 
-            if (!isColor)
+            D2D1_COLOR_F brushColor = D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f);
+            if (isColor)
             {
-                // Render as pure alpha mask into A8 surface
-                ComPtr<ID2D1SolidColorBrush> alphaBrush;
-                d2dContext->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f), &alphaBrush);
-                d2dContext->DrawGlyphRun(baselineOrigin, &glyphRun, alphaBrush.Get(), DWRITE_MEASURING_MODE_NATURAL);
-            }
-            else
-            {
-                D2D1_COLOR_F brushColor = D2D1::ColorF(D2D1::ColorF::White);
                 if (auto scb = dynamic_cast<Windows::UI::Xaml::Media::SolidColorBrush^>(foreground))
                 {
                     auto c = scb->Color;
                     brushColor = D2D1::ColorF(c.R / 255.0f, c.G / 255.0f, c.B / 255.0f, (c.A / 255.0f) * static_cast<float>(scb->Opacity));
                 }
-
-                ComPtr<ID2D1SolidColorBrush> d2dBrush;
-                d2dContext->CreateSolidColorBrush(brushColor, &d2dBrush);
-
-                CompositionDeviceManager::DrawGlyphRunWithColorSupport(
-                    d2dContext.Get(),
-                    CompositionDeviceManager::GetDWriteFactory().Get(),
-                    baselineOrigin,
-                    &glyphRun,
-                    d2dBrush.Get(),
-                    GlyphImageFormat::None);
             }
+
+            ComPtr<ID2D1SolidColorBrush> d2dBrush;
+            d2dContext->CreateSolidColorBrush(brushColor, &d2dBrush);
+
+            TextRenderParameters renderParams;
+            renderParams.ForegroundBrush = d2dBrush.Get();
+            renderParams.EnableColor = isColor;
+            renderParams.PreferredFormat = isColor ? GlyphImageFormat::None : GlyphImageFormat::TrueType;
+            renderParams.IsMaskSurface = !isColor;
+
+            CoreDWTextServices::DrawGlyphRun(d2dContext.Get(), baselineOrigin, &glyphRun, renderParams);
 
             HRESULT hrEnd = surfaceInterop->EndDraw();
             if (FAILED(hrEnd))

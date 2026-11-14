@@ -7,10 +7,6 @@ namespace CharacterMap.Controls;
 [DependencyProperty<bool>("IsActualLoaded")]
 public abstract partial class ControlBase : Control
 {
-    public static PropertyMetadata NullMetadata { get; } = new(null);
-
-    public delegate void DPChangedCallback<V, T>(T source, V oldValue, V newValue);
-
     int _loadCount = 0;
 
     public ControlBase()
@@ -18,8 +14,6 @@ public abstract partial class ControlBase : Control
         this.Loaded += ControlBase_Loaded;
         this.Unloaded += ControlBase_Unloaded;
     }
-
-    #region Loaded
 
     private void ControlBase_Loaded(object sender, RoutedEventArgs e)
     {
@@ -29,7 +23,10 @@ public abstract partial class ControlBase : Control
             _loadCount = 0;
 
         if (_loadCount == 1)
+        {
+            IsActualLoaded = true;
             OnLoaded();
+        }
     }
 
     private void ControlBase_Unloaded(object sender, RoutedEventArgs e)
@@ -39,119 +36,13 @@ public abstract partial class ControlBase : Control
             _loadCount = 0;
 
         if (_loadCount == 0)
+        {
+            IsActualLoaded = false;
             OnUnloaded();
+        }
     }
 
     protected virtual void OnLoaded() { }
 
     protected virtual void OnUnloaded() { }
-
-
-    #endregion
-
-    #region DP
-    public static DependencyProperty DP<V, T>(V defaultValue, DPChangedCallback<V, T> callback = null, [CallerMemberName] string name = null) where T : DependencyObject
-    {
-        PropertyChangedCallback c = null;
-        if (callback != null)
-        {
-            c = (d, e) =>
-            {
-                callback.Invoke(
-                    (T)d,
-                    e.OldValue is V oldV ? oldV : default,
-                    e.NewValue is V newV ? newV : default);
-            };
-        }
-
-        return DependencyProperty.Register(name.Remove(name.Length - 8), typeof(V), typeof(T), new PropertyMetadata(defaultValue, c));
-    }
-
-    public static DependencyProperty DP<V, T>(V defaultValue, Action<T> callback, [CallerMemberName] string name = null) where T : DependencyObject
-    {
-        PropertyChangedCallback c = null;
-        if (callback != null)
-        {
-            c = (d, e) =>
-            {
-                callback.Invoke((T)d);
-            };
-        }
-
-        return DependencyProperty.Register(name.Remove(name.Length - 8), typeof(V), typeof(T), new PropertyMetadata(defaultValue, c));
-    }
-
-    public static DependencyProperty DP<V, T>(V defaultValue, PropertyChangedCallback callback, [CallerMemberName] string name = null) where T : DependencyObject
-    {
-        return DependencyProperty.Register(name.Remove(name.Length - 8), typeof(V), typeof(T), new PropertyMetadata(defaultValue, callback));
-    }
-
-    public static DependencyProperty DP<V, Y>(PropertyMetadata metadata = null, [CallerMemberName] string name = null)
-    {
-        return DependencyProperty.Register(name.Remove(name.Length - 8), typeof(V), typeof(Y), metadata ?? NullMetadata);
-    }
-
-
-
-    public static DependencyProperty DP<V, Y>(PropertyChangedCallback callback, [CallerMemberName] string name = null)
-    {
-        return DependencyProperty.Register(name.Remove(name.Length - 8), typeof(V), typeof(Y), new PropertyMetadata(null, callback));
-    }
-
-    #endregion
-
-    #region AP
-
-    /// <summary>
-    /// Registers an AttachedProperty
-    /// </summary>
-    /// <typeparam name="V">Property Type</typeparam>
-    /// <typeparam name="Y">Owner Type</typeparam>
-    /// <param name="metadata"></param>
-    /// <param name="name">Property Name. Leave blank.</param>
-    /// <returns></returns>
-    public static DependencyProperty AP<V, Y>(PropertyMetadata metadata = null, [CallerMemberName] string name = null)
-    {
-        return DependencyProperty.RegisterAttached(name[0..^8], typeof(V), typeof(Y), metadata ?? NullMetadata);
-    }
-
-    public static DependencyProperty AP<V, Y>(V defaultValue, PropertyChangedCallback callback, [CallerMemberName] string name = null)
-    {
-        return DependencyProperty.RegisterAttached(name[0..^8], typeof(V), typeof(Y), new PropertyMetadata(defaultValue, callback));
-    }
-
-    #endregion
-}
-
-public abstract class ControlBase<T> : ControlBase where T : DependencyObject
-{
-    protected static DP DP<V>(V defaultValue, Action<T> callback, [CallerMemberName] string name = null)
-    {
-        return DP<V, T>(defaultValue, callback, name);
-    }
-
-    protected static DP DP<V>(V defaultValue, DPChangedCallback<V, T> callback = null, [CallerMemberName] string name = null)
-    {
-        return DP<V, T>(defaultValue, callback, name);
-    }
-
-    protected static DP DP<V>(PropertyMetadata metadata = null, [CallerMemberName] string name = null)
-    {
-        return DP<V, T>(metadata, name);
-    }
-
-    public static DependencyProperty AP<V>(V defaultValue, [CallerMemberName] string name = null)
-    {
-        return AP<V, T>(new PropertyMetadata(defaultValue), name);
-    }
-
-    public static DependencyProperty AP<V>(PropertyMetadata metadata = null, [CallerMemberName] string name = null)
-    {
-        return AP<V, T>(metadata, name);
-    }
-
-    public static DP AP<V>(V defaultValue, PropertyChangedCallback callback, [CallerMemberName] string name = null)
-    {
-        return AP<V, T>(defaultValue, callback, name);
-    }
 }

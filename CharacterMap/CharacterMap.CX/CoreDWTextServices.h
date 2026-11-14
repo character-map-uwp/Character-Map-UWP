@@ -44,6 +44,7 @@ namespace CharacterMapCX
         bool EnableColor = true;
         GlyphImageFormat PreferredFormat = GlyphImageFormat::None;
         IDWriteFontFace* OverrideFace = nullptr;
+        bool IsMaskSurface = false;
     };
 
     class CoreDWTextServices
@@ -57,10 +58,24 @@ namespace CharacterMapCX
             Windows::UI::Xaml::Media::StyleSimulations controlSimulations,
             DWriteFontFace^ fontFace);
 
-        // Obtains or clones an IDWriteFontFace3 with simulations applied
+        // Obtains or clones an IDWriteFontFace3 with simulations and optional variable font axis values applied
         static Microsoft::WRL::ComPtr<IDWriteFontFace3> GetSimulatedFontFace(
             DWriteFontFace^ fontFace,
             Windows::UI::Xaml::Media::StyleSimulations simulations);
+
+        static Microsoft::WRL::ComPtr<IDWriteFontFace3> ResolveFontFace(
+            DWriteFontFace^ fontFace,
+            Windows::UI::Xaml::Media::StyleSimulations simulations,
+            Windows::Foundation::Collections::IVectorView<DWriteFontAxis^>^ axis);
+
+        // Measures layout and ink bounds for a single glyph run
+        static HRESULT MeasureGlyphBounds(
+            IDWriteFontFace3* dwriteFontFace,
+            DWriteFontFace^ fontFace,
+            UINT16 glyphIndex,
+            float fontSize,
+            Windows::Foundation::Rect* pLayoutBounds,
+            Windows::Foundation::Rect* pInkBounds);
 
         // Unified IDWriteTextLayout creation
         static HRESULT CreateLayout(
@@ -89,6 +104,12 @@ namespace CharacterMapCX
             IDWriteTextLayout* layout,
             IDWriteFontFace* overrideFace,
             Windows::Foundation::Rect* pInkBounds);
+
+        // Applies shared grayscale + un-grid-fitted NATURAL_SYMMETRIC rendering params.
+        // When isMaskSurface is true (white-on-A8 mask), uses gamma = 1.3 to compensate for alpha thinning.
+        static void ApplyTextRenderingParams(
+            ID2D1DeviceContext* context,
+            bool isMaskSurface = false);
 
         // Renders an IDWriteTextLayout using Direct2D and color font support
         static void DrawTextLayout(

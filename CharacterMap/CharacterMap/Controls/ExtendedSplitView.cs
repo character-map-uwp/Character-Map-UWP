@@ -36,7 +36,7 @@ public partial class ExtendedSplitView : SplitView
         UpdateAnimationStates(false);
     }
 
-    private void UpdateAnimationStates(bool allow = true)
+    public void UpdateAnimationStates(bool allow = true)
     {
         if (_contentRoot is not null)
             Core.Properties.SetUseStandardReposition(_contentRoot, allow && EnableAnimation);

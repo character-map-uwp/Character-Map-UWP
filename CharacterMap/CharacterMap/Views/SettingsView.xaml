@@ -96,6 +96,17 @@
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
+            <VisualStateGroup x:Name="MenuBarState">
+                <VisualState x:Name="MenuBarVisibleState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind Settings.UseMenuNavigationBar, Mode=OneWay}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="Presenter.Background" Value="{x:Null}" />
+                        <Setter Target="Presenter.CloseButtonVisibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
         <controls:ModalPagePresenter
@@ -115,15 +126,15 @@
                         Width="256"
                         Margin="0 24 0 24"
                         VerticalAlignment="Top"
-                        controls:SelectorVisualElement.ElementTemplate="{x:Null}"
                         Background="Transparent"
                         BorderThickness="0"
                         MaxColumns="1">
-                        <controls:UXRadioButtons.LayoutTemplate>
-                            <DataTemplate>
-                                <muxc:StackLayout Orientation="Vertical" Spacing="0" />
-                            </DataTemplate>
-                        </controls:UXRadioButtons.LayoutTemplate>
+                       
+                        <controls:UXRadioButtons.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </controls:UXRadioButtons.ItemsPanel>
 
                         <controls:MenuButton
                             Checked="MenuItem_Checked"
@@ -443,6 +454,10 @@
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsEnablePaneHeader/Text}" Description="{core:Localizer Key=SettingsEnablePaneDescription/Text}">
                                     <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.EnablePreviewPane, Mode=TwoWay}" />
+                                </controls:SettingsPresenter>
+
+                                <controls:SettingsPresenter Title="Navigation Menu Bar" Description="Toggle the application left navigation menu bar. Is disabled, Compare and Calligraphy can be accessed from the main application menu.">
+                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.UseMenuNavigationBar, Mode=TwoWay}" />
                                 </controls:SettingsPresenter>
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsLanguageHeader/Text}">

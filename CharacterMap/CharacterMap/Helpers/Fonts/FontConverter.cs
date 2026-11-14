@@ -31,7 +31,10 @@ public static class FontConverter
                 if (DirectWrite.HasValidFonts(newFile))
                     return (newFile, ConversionStatus.OK);
                 else
+                {
+                    await newFile.DeleteAsync(StorageDeleteOption.PermanentDelete).AsTask().ConfigureAwait(false);
                     return (default, ConversionStatus.UnspecifiedError);
+                }
             }
             else
             {
@@ -48,16 +51,17 @@ public static class FontConverter
         try
         {
             IBuffer buffer = null;
-            using (var stream = await file.OpenReadAsync())
+            using (var stream = await file.OpenReadAsync().AsTask().ConfigureAwait(false))
             using (DataReader reader = new(stream))
             {
-                await reader.LoadAsync((uint)stream.Size);
+                await reader.LoadAsync((uint)stream.Size).AsTask().ConfigureAwait(false);
                 buffer = reader.ReadBuffer(reader.UnconsumedBufferLength);
             }
 
             using (var os = await newFile.OpenAsync(FileAccessMode.ReadWrite))
             {
-                await Utils.GetInterop().UnpackWOFF2Async(buffer, os);
+                await Utils.GetInterop().UnpackWOFFAsync(buffer, os);
+                await os.FlushAsync().AsTask().ConfigureAwait(false);
             }
 
             return ConversionStatus.OK;

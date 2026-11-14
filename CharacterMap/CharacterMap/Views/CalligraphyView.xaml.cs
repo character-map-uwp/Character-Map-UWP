@@ -11,7 +11,9 @@ namespace CharacterMap.Views;
 
 public sealed partial class CalligraphyView : ViewBase, IInAppNotificationPresenter
 {
-    public CalligraphyViewModel ViewModel { get; }
+    public CalligraphyViewModel ViewModel { get; private set; }
+
+    public bool IsStandalone { get; set; } = true;
 
     private InkStrokeContainer _container => Ink.InkPresenter.StrokeContainer;
 
@@ -26,12 +28,27 @@ public sealed partial class CalligraphyView : ViewBase, IInAppNotificationPresen
         ContentRoot.Opacity = 0;
     }
 
+    protected override void OnLoading()
+    {
+        if (IsStandalone is false && ViewModel.Settings.UseMenuNavigationBar)
+        {
+            Presenter.Background = null;
+
+            if (ResourceHelper.AllowAnimation)
+                CompositionFactory.SetupOverlayPanelAnimation(this, true);
+        }
+    }
+
     protected override void OnLoaded(object sender, RoutedEventArgs e)
     {
         VisualStateManager.GoToState(this, "NormalState", false);
         VisualStateManager.GoToState(this, "OverlayState", false);
 
-        TitleBarHelper.SetTitle(Presenter.Title);
+        if (IsStandalone)
+        {
+            TitleBarHelper.SetTitle(Presenter.Title);
+            Register<AppNotificationMessage>(OnNotificationMessage);
+        }
 
         Ink.InkPresenter.StrokesCollected -= InkPresenter_StrokesCollected;
         Ink.InkPresenter.StrokesCollected += InkPresenter_StrokesCollected;
@@ -39,7 +56,6 @@ public sealed partial class CalligraphyView : ViewBase, IInAppNotificationPresen
         Ink.InkPresenter.StrokesErased -= InkPresenter_StrokesErased;
         Ink.InkPresenter.StrokesErased += InkPresenter_StrokesErased;
 
-        Register<AppNotificationMessage>(OnNotificationMessage);
 
         // Pre-create element visuals to ensure animations run
         // properly when requested later
@@ -48,6 +64,38 @@ public sealed partial class CalligraphyView : ViewBase, IInAppNotificationPresen
         CanvasContainer.GetElementVisual();
 
         AnimateIn();
+    }
+
+    protected override void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        base.OnUnloaded(sender, e);
+
+        this.Bindings.StopTracking();
+        Ink.InkPresenter.StrokesCollected -= InkPresenter_StrokesCollected;
+        Ink.InkPresenter.StrokesErased -= InkPresenter_StrokesErased;
+
+       
+
+        DataContext = null;
+
+        PresentationRoot.Children.Clear();
+        HistoryList.ItemsSource = null;
+
+        if (ViewModel is { } vm)
+        {
+            foreach (var item in vm.Histories)
+                item.Thumbnail = null;
+            vm.Histories.Clear();
+            vm.Clear();
+            vm.UnregisterAll();
+        }
+
+        ViewModel = null;
+
+        Toolbar.ActiveTool = null;
+        Toolbar.TargetInkCanvas = null;
+        ShimCanvas?.RemoveFromVisualTree();
+        ShimCanvas = null;
     }
 
     /// <summary>

@@ -9,6 +9,9 @@
 #include "DWriteFallbackFont.h"
 #include "DWriteFontFace.h"
 #include <vector>
+#include <atomic>
+#include <memory>
+#include <mutex>
 
 
 using namespace Platform;
@@ -19,22 +22,21 @@ using namespace Windows::UI::Xaml::Data;
 using namespace Windows::UI::Xaml::Documents;
 using namespace Windows::UI::Xaml::Input;
 using namespace Windows::UI::Xaml::Media;
-using namespace Microsoft::Graphics::Canvas;
-using namespace Microsoft::Graphics::Canvas::UI;
-using namespace Microsoft::Graphics::Canvas::UI::Xaml;
-using namespace Microsoft::Graphics::Canvas::Text;
 
 
 namespace CharacterMapCX
 {
 	namespace Controls
 	{
+		struct DeferredLayoutCache;
+
 		[Windows::Foundation::Metadata::WebHostHidden]
 		public ref class DirectText sealed : public Windows::UI::Xaml::Controls::Control
 		{
 		public:
 
 			DirectText();
+			virtual ~DirectText();
 
 			property bool BlockUpdates;
 
@@ -42,14 +44,52 @@ namespace CharacterMapCX
 
 			virtual Windows::Foundation::Size MeasureOverride(Windows::Foundation::Size size) override;
 
+			virtual Windows::Foundation::Size ArrangeOverride(Windows::Foundation::Size finalSize) override;
+
 			void Update()
 			{
 				BlockUpdates = false;
 				m_isStale = true;
+				m_needsRender = true;
+				m_forceColorSurface = false;
+				++m_renderGeneration;
+				if (m_spriteVisual != nullptr && IsBackgroundRenderEnabled && HasContentChangedForVisibility())
+					m_spriteVisual->IsVisible = false;
 				this->InvalidateMeasure();
-				if (m_canvas != nullptr)
-					m_canvas->Invalidate();
+				this->InvalidateArrange();
 			}
+
+			void CancelRender()
+			{
+				++m_renderGeneration;
+				if (m_spriteVisual != nullptr && IsBackgroundRenderEnabled)
+					m_spriteVisual->IsVisible = false;
+			}
+
+		internal:
+			bool IsGenerationCurrent(uint64_t gen) { return m_renderGeneration.load() == gen; }
+			void DecrementActiveBackgroundDraws() { --m_activeBackgroundDraws; }
+			void ShowVisualIfCurrent(uint64_t gen)
+			{
+				if (m_renderGeneration.load() == gen && m_spriteVisual != nullptr)
+					m_spriteVisual->IsVisible = true;
+			}
+			bool UpgradeToColorSurface(uint64_t gen, Windows::UI::Composition::CompositionDrawingSurface^ newSurface)
+			{
+				std::lock_guard<std::mutex> lock(m_surfaceMutex);
+				if (!IsGenerationCurrent(gen))
+					return false;
+				m_forceColorSurface = true;
+				m_renderedColor = true;
+				m_drawingSurface = newSurface;
+				if (m_surfaceBrush != nullptr)
+					m_surfaceBrush->Surface = newSurface;
+				if (m_spriteVisual != nullptr && m_surfaceBrush != nullptr)
+					m_spriteVisual->Brush = m_surfaceBrush;
+				return true;
+			}
+
+		public:
 
 			#pragma region Dependency Properties
 
@@ -118,6 +158,28 @@ namespace CharacterMapCX
 			static property DependencyProperty^ StyleSimulationsProperty
 			{
 				DependencyProperty^ get() { return _StyleSimulationsProperty; }
+			}
+
+			static property DependencyProperty^ IsBackgroundRenderEnabledProperty
+			{
+				DependencyProperty^ get() { return _IsBackgroundRenderEnabledProperty; }
+			}
+
+			static property DependencyProperty^ SurfaceSizeProperty
+			{
+				DependencyProperty^ get() { return _SurfaceSizeProperty; }
+			}
+
+			property bool IsBackgroundRenderEnabled
+			{
+				bool get() { return (bool)GetValue(IsBackgroundRenderEnabledProperty); }
+				void set(bool value) { SetValue(IsBackgroundRenderEnabledProperty, value); }
+			}
+
+			property Windows::Foundation::Size SurfaceSize
+			{
+				Windows::Foundation::Size get() { return (Windows::Foundation::Size)GetValue(SurfaceSizeProperty); }
+				void set(Windows::Foundation::Size value) { SetValue(SurfaceSizeProperty, value); }
 			}
 
 			property Windows::UI::Xaml::Media::StyleSimulations StyleSimulations
@@ -198,11 +260,6 @@ namespace CharacterMapCX
 				void set(bool value) { SetValue(IsTextWrappingEnabledProperty, value); }
 			}
 
-			property CanvasControl^ InternalCanvas
-			{
-				CanvasControl^ get() { return m_canvas; }
-			}
-
 #pragma endregion
 
 		private:
@@ -219,18 +276,40 @@ namespace CharacterMapCX
 			static DependencyProperty^ _IsTextWrappingEnabledProperty;
 			static DependencyProperty^ _IsCharacterFitEnabledProperty;
 			static DependencyProperty^ _StyleSimulationsProperty;
+			static DependencyProperty^ _IsBackgroundRenderEnabledProperty;
+			static DependencyProperty^ _SurfaceSizeProperty;
 
 			Microsoft::WRL::ComPtr<IDWriteFontFace3> m_drawFontFace;
 
-			Windows::Foundation::EventRegistrationToken m_drawToken;
-			Windows::Foundation::EventRegistrationToken m_createToken;
+			Windows::Foundation::EventRegistrationToken m_loadedToken{};
+			Windows::Foundation::EventRegistrationToken m_unloadedToken{};
+			int64 m_fontSizeToken = 0;
+			int64 m_foregroundToken = 0;
+			int64 m_flowDirectionToken = 0;
+			int64 m_requestedThemeToken = 0;
+			int64 m_paddingToken = 0;
 
-			ComPtr<ID2D1SolidColorBrush> m_brush;
 			ComPtr<IDWriteTextLayout> m_textLayout;
-			CanvasControl^ m_canvas;
+			std::shared_ptr<DeferredLayoutCache> m_deferredLayoutCache;
+			Windows::UI::Composition::SpriteVisual^ m_spriteVisual = nullptr;
+			Windows::UI::Composition::CompositionDrawingSurface^ m_drawingSurface = nullptr;
+			Windows::UI::Composition::CompositionSurfaceBrush^ m_surfaceBrush = nullptr;
+			Windows::UI::Composition::CompositionMaskBrush^ m_maskBrush = nullptr;
+			Windows::UI::Composition::CompositionColorBrush^ m_colorBrush = nullptr;
+			LONG m_renderedWidth = 0;
+			LONG m_renderedHeight = 0;
+			bool m_renderedColor = false;
 			bool m_isStale;
 			bool m_isAxisOnlyStale;  // only axis values changed — reuse existing IDWriteTextLayout
 			bool m_render;
+			bool m_needsRender = true;
+			bool m_deferredLayout = false;
+			bool m_forceColorSurface = false;
+			float m_deferredAvailW = 1.0f;
+			float m_deferredAvailH = 1.0f;
+			std::atomic<uint64_t> m_renderGeneration{ 0 };
+			std::atomic<int> m_activeBackgroundDraws{ 0 };
+			std::mutex m_surfaceMutex;
 			double m_minWidth = 1.0;
 			double m_targetScale = 1.0;
 			UINT32 textLength = 0;
@@ -238,18 +317,30 @@ namespace CharacterMapCX
 			Rect drawBounds;
 			Rect layoutBounds;
 
-			// Cached state for axis-only invalidation
+			// Cached state for layout reuse (FontSize / Axis / MaxSize fast path)
 			std::vector<DWRITE_FONT_AXIS_VALUE> m_lastAxisValues;
 			DWriteFontFace^ m_lastFontFace;
 			ITypographyInfo^ m_lastTypography;
+			DWriteFallbackFont^ m_lastFallbackFont;
 			Platform::String^ m_lastFamilyName;  // nullptr = no cached layout
 			Platform::String^ m_lastFaceName;
 			Platform::String^ m_lastText;
 			double m_lastFontSize = 0.0;
+			float m_lastMaxWidth = 0.0f;
+			float m_lastMaxHeight = 0.0f;
 			unsigned short m_lastFontWeight = 400;
 			Windows::UI::Text::FontStyle m_lastFontStyle = Windows::UI::Text::FontStyle::Normal;
 			Windows::UI::Text::FontStretch m_lastFontStretch = Windows::UI::Text::FontStretch::Normal;
 			Windows::UI::Xaml::Media::StyleSimulations m_lastSimulations = Windows::UI::Xaml::Media::StyleSimulations::None;
+			Windows::UI::Xaml::FlowDirection m_lastFlowDirection = Windows::UI::Xaml::FlowDirection::LeftToRight;
+			bool m_lastWordWrapping = false;
+			bool m_lastIsCharacterFit = false;
+			DWriteFontFace^ m_lastShownFontFace;
+
+			bool HasContentChangedForVisibility()
+			{
+				return m_lastShownFontFace != FontFace;
+			}
 
 
 			void OnPropChanged(DependencyObject^ d, DependencyProperty^ p);
@@ -262,14 +353,22 @@ namespace CharacterMapCX
 					c->Update();
 			}
 
-			void EnsureCanvas();
-			void DestroyCanvas(CanvasControl^ control);
+			static void OnSurfaceSizeChanged(DependencyObject^ d, DependencyPropertyChangedEventArgs^ e)
+			{
+				DirectText^ c = (DirectText^)d;
+				c->m_needsRender = true;
+				if (!c->BlockUpdates)
+					c->InvalidateArrange();
+			}
+
+			void RenderToSurface(Windows::Foundation::Size finalSize);
+			void ReleaseDrawingSurface();
+			void ClearLayoutCache();
+			bool ShouldRenderColor();
+			Windows::UI::Color GetForegroundColor();
 
 			void OnLoaded(Platform::Object^ sender, RoutedEventArgs^ e);
 			void OnUnloaded(Platform::Object^ sender, RoutedEventArgs^ e);
-
-			void OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args);
-			void OnCreateResources(CanvasControl^ sender, CanvasCreateResourcesEventArgs^ args);
 		};
 
 
@@ -362,6 +461,19 @@ namespace CharacterMapCX
 			{
 				_StyleSimulationsProperty = DependencyProperty::Register(
 					"StyleSimulations", Windows::UI::Xaml::Media::StyleSimulations::typeid, DirectText::typeid, ref new PropertyMetadata(Windows::UI::Xaml::Media::StyleSimulations::None, callback));
+			}
+
+			if (_IsBackgroundRenderEnabledProperty == nullptr)
+			{
+				_IsBackgroundRenderEnabledProperty = DependencyProperty::Register(
+					"IsBackgroundRenderEnabled", bool::typeid, DirectText::typeid, ref new PropertyMetadata(false, callback));
+			}
+
+			if (_SurfaceSizeProperty == nullptr)
+			{
+				_SurfaceSizeProperty = DependencyProperty::Register(
+					"SurfaceSize", Windows::Foundation::Size::typeid, DirectText::typeid,
+					ref new PropertyMetadata(Windows::Foundation::Size(0, 0), ref new PropertyChangedCallback(&DirectText::OnSurfaceSizeChanged)));
 			}
 		}
 	}

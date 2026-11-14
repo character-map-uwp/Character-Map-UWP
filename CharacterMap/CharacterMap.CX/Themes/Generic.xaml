@@ -10,9 +10,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:DirectText">
-                    <Border x:Name="Root">
-                        <!--  CanvasControl is injected at Runtime to prevent memory leaks  -->
-                    </Border>
+                    <Border x:Name="Root" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

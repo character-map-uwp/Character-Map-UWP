@@ -74,12 +74,20 @@ FontGlyphs::FontGlyphs()
 {
     m_loadedToken.Value = 0;
     m_unloadedToken.Value = 0;
+    BlockUpdates = false;
     EnsureDependencyProperties();
 
-    m_loadedToken = this->Loaded += ref new RoutedEventHandler(this, &FontGlyphs::OnLoaded);
-    m_unloadedToken = this->Unloaded += ref new RoutedEventHandler(this, &FontGlyphs::OnUnloaded);
-
     WeakReference weakThis(this);
+    m_loadedToken = this->Loaded += ref new RoutedEventHandler(
+        [weakThis](Platform::Object^ sender, RoutedEventArgs^ e) {
+            if (auto strongThis = weakThis.Resolve<FontGlyphs>())
+                strongThis->OnLoaded(sender, e);
+        });
+    m_unloadedToken = this->Unloaded += ref new RoutedEventHandler(
+        [weakThis](Platform::Object^ sender, RoutedEventArgs^ e) {
+            if (auto strongThis = weakThis.Resolve<FontGlyphs>())
+                strongThis->OnUnloaded(sender, e);
+        });
     m_themeChangedToken = this->ActualThemeChanged += ref new TypedEventHandler<FrameworkElement^, Platform::Object^>(
         [weakThis](FrameworkElement^, Platform::Object^) {
             if (auto strongThis = weakThis.Resolve<FontGlyphs>())
@@ -146,35 +154,45 @@ FontGlyphs::~FontGlyphs()
             LONG rendW = m_renderedWidth;
             LONG rendH = m_renderedHeight;
 
-            if (sprite != nullptr)
-                sprite->Brush = nullptr;
-
-            if (surfBrush != nullptr)
+            if (!isShared && surface != nullptr && rendW > 0 && rendH > 0)
             {
-                surfBrush->Surface = nullptr;
-                delete surfBrush;
+                uint64 bytes = static_cast<uint64>(rendW) * rendH * 4;
+                s_activeSurfaceCount.fetch_sub(1, std::memory_order_relaxed);
+                s_activeSurfaceBytes.fetch_sub(bytes, std::memory_order_relaxed);
             }
 
-            if (maskBrush != nullptr)
+            if (sprite != nullptr || surfBrush != nullptr || maskBrush != nullptr || (surface != nullptr && !isShared))
             {
-                maskBrush->Mask = nullptr;
-                maskBrush->Source = nullptr;
-                delete maskBrush;
+                Dispatcher->RunAsync(
+                    Windows::UI::Core::CoreDispatcherPriority::Low,
+                    ref new Windows::UI::Core::DispatchedHandler([sprite, surfBrush, maskBrush, surface, isShared]()
+                    {
+                        try
+                        {
+                            if (sprite != nullptr)
+                            {
+                                sprite->Brush = nullptr;
+                                delete sprite;
+                            }
+                            if (maskBrush != nullptr)
+                            {
+                                maskBrush->Mask = nullptr;
+                                maskBrush->Source = nullptr;
+                                delete maskBrush;
+                            }
+                            if (surfBrush != nullptr)
+                            {
+                                surfBrush->Surface = nullptr;
+                                delete surfBrush;
+                            }
+                            if (surface != nullptr && !isShared)
+                            {
+                                delete surface;
+                            }
+                        }
+                        catch (...) {}
+                    }));
             }
-
-            if (surface != nullptr && !isShared)
-            {
-                delete surface;
-                if (rendW > 0 && rendH > 0)
-                {
-                    uint64 bytes = static_cast<uint64>(rendW) * rendH * 4;
-                    s_activeSurfaceCount.fetch_sub(1, std::memory_order_relaxed);
-                    s_activeSurfaceBytes.fetch_sub(bytes, std::memory_order_relaxed);
-                }
-            }
-
-            if (sprite != nullptr)
-                delete sprite;
         }
     }
     catch (...)
@@ -250,11 +268,34 @@ void FontGlyphs::OnLoaded(Platform::Object^ sender, RoutedEventArgs^ e)
 
 void FontGlyphs::OnUnloaded(Platform::Object^ sender, RoutedEventArgs^ e)
 {
-    // Proactively release drawing surface so off-tree controls do not pin atlas pages or dedicated surfaces.
+    // Proactively release drawing surface and composition objects so off-tree controls
+    // do not pin atlas pages, dedicated surfaces, or visual/brush allocations.
     ReleaseDrawingSurface();
 
     if (m_spriteVisual != nullptr)
+    {
+        ElementCompositionPreview::SetElementChildVisual(this, nullptr);
         m_spriteVisual->Brush = nullptr;
+        delete m_spriteVisual;
+        m_spriteVisual = nullptr;
+    }
+
+    if (m_maskBrush != nullptr)
+    {
+        m_maskBrush->Mask = nullptr;
+        m_maskBrush->Source = nullptr;
+        delete m_maskBrush;
+        m_maskBrush = nullptr;
+    }
+
+    if (m_surfaceBrush != nullptr)
+    {
+        delete m_surfaceBrush;
+        m_surfaceBrush = nullptr;
+    }
+
+    m_colorBrush = nullptr;
+    m_isRenderDirty = true;
 }
 
 
@@ -321,25 +362,7 @@ void FontGlyphs::ReleaseDrawingSurface()
 
 Windows::UI::Color FontGlyphs::GetForegroundColor()
 {
-    Brush^ fg = Foreground;
-    if (auto scb = dynamic_cast<SolidColorBrush^>(fg))
-    {
-        auto c = scb->Color;
-        byte a = static_cast<byte>(c.A * scb->Opacity);
-        Windows::UI::Color clr;
-        clr.A = a;
-        clr.R = c.R;
-        clr.G = c.G;
-        clr.B = c.B;
-        return clr;
-    }
-
-    Windows::UI::Color clr;
-    clr.A = 255;
-    clr.R = 255;
-    clr.G = 255;
-    clr.B = 255;
-    return clr;
+    return CompositionDeviceManager::ExtractSolidColor(Foreground, Windows::UI::Colors::White);
 }
 
 UINT32 FontGlyphs::GetForegroundColorKey()
@@ -365,19 +388,28 @@ bool FontGlyphs::ShouldRenderColor()
 void FontGlyphs::OnPropertyChanged(DependencyObject^ d, DependencyPropertyChangedEventArgs^ e)
 {
     auto glyphs = (FontGlyphs^)d;
-    glyphs->InvalidateLayoutAndRender();
+    if (!glyphs->BlockUpdates)
+        glyphs->InvalidateLayoutAndRender();
 }
 
 void FontGlyphs::OnFontSizeChanged(DependencyObject^ d, DependencyPropertyChangedEventArgs^ e)
 {
     auto glyphs = (FontGlyphs^)d;
-    glyphs->InvalidateLayoutAndRender();
+    if (!glyphs->BlockUpdates)
+        glyphs->InvalidateLayoutAndRender();
 }
 
 void FontGlyphs::OnForegroundChanged(DependencyObject^ d, DependencyPropertyChangedEventArgs^ e)
 {
     auto glyphs = (FontGlyphs^)d;
-    glyphs->UpdateForground();
+    if (!glyphs->BlockUpdates)
+        glyphs->UpdateForground();
+}
+
+void FontGlyphs::Update()
+{
+    BlockUpdates = false;
+    InvalidateLayoutAndRender();
 }
 
 
@@ -1158,14 +1190,7 @@ void FontGlyphs::RenderGlyphs()
     m_renderedScaleX = scaleX;
     m_renderedScaleY = scaleY;
 
-    float dpiScale = 1.0f;
-    try {
-        if (this->Dispatcher != nullptr) {
-            auto displayInfo = Windows::Graphics::Display::DisplayInformation::GetForCurrentView();
-            if (displayInfo != nullptr)
-                dpiScale = displayInfo->LogicalDpi / 96.0f;
-        }
-    } catch (...) {}
+    float dpiScale = CompositionDeviceManager::GetDpiScale(this->Dispatcher);
 
     LONG logicalWidth = static_cast<LONG>((std::max)(1.0f, static_cast<float>(std::ceil(m_contentSize.Width + m_padLeft + m_padRight))));
     LONG logicalHeight = static_cast<LONG>((std::max)(1.0f, static_cast<float>(std::ceil(m_contentSize.Height + m_padTop + m_padBottom))));
@@ -1213,48 +1238,21 @@ void FontGlyphs::RenderGlyphs()
             m_renderedHeight = requiredHeight;
             m_renderedColor = renderColor;
 
-            if (m_surfaceBrush == nullptr)
-            {
-                m_surfaceBrush = compositor->CreateSurfaceBrush(m_drawingSurface);
-                m_surfaceBrush->Stretch = Windows::UI::Composition::CompositionStretch::None;
-                m_surfaceBrush->HorizontalAlignmentRatio = 0.0f;
-                m_surfaceBrush->VerticalAlignmentRatio = 0.0f;
-            }
-            else if (m_surfaceBrush->Surface != m_drawingSurface)
-                m_surfaceBrush->Surface = m_drawingSurface;
+            CompositionDeviceManager::EnsureSurfaceBrush(compositor, m_surfaceBrush, m_drawingSurface);
 
             m_surfaceBrush->Scale = float2(1.0f / dpiScale, 1.0f / dpiScale);
             // Offset the brush so the slot aligns with (0,0) of the sprite visual
             m_surfaceBrush->Offset = float2(static_cast<float>(-slot.X) / dpiScale, static_cast<float>(-slot.Y) / dpiScale);
             m_spriteVisual->Size = float2(static_cast<float>(scaledLogicalWidth), static_cast<float>(scaledLogicalHeight));
 
-            if (!renderColor)
-            {
-                Windows::UI::Color textColor = GetForegroundColor();
-                m_colorBrush = CompositionDeviceManager::GetColorBrush(compositor, textColor);
-
-                if (m_maskBrush == nullptr)
-                {
-                    m_maskBrush = compositor->CreateMaskBrush();
-                    m_maskBrush->Mask = m_surfaceBrush;
-                    m_maskBrush->Source = m_colorBrush;
-                }
-                else
-                {
-                    if (m_maskBrush->Mask != m_surfaceBrush)
-                        m_maskBrush->Mask = m_surfaceBrush;
-                    if (m_maskBrush->Source != m_colorBrush)
-                        m_maskBrush->Source = m_colorBrush;
-                }
-
-                if (m_spriteVisual->Brush != m_maskBrush)
-                    m_spriteVisual->Brush = m_maskBrush;
-            }
-            else
-            {
-                if (m_spriteVisual->Brush != m_surfaceBrush)
-                    m_spriteVisual->Brush = m_surfaceBrush;
-            }
+            CompositionDeviceManager::ApplySurfaceOrMaskBrush(
+                compositor,
+                m_spriteVisual,
+                m_surfaceBrush,
+                m_maskBrush,
+                m_colorBrush,
+                !renderColor,
+                GetForegroundColor());
 
             return;
         }
@@ -1393,45 +1391,18 @@ void FontGlyphs::RenderGlyphs()
             return;
     }
 
-    if (m_surfaceBrush == nullptr)
-    {
-        m_surfaceBrush = compositor->CreateSurfaceBrush(m_drawingSurface);
-        m_surfaceBrush->Stretch = Windows::UI::Composition::CompositionStretch::None;
-        m_surfaceBrush->HorizontalAlignmentRatio = 0.0f;
-        m_surfaceBrush->VerticalAlignmentRatio = 0.0f;
-    }
-    else if (m_surfaceBrush->Surface != m_drawingSurface)
-        m_surfaceBrush->Surface = m_drawingSurface;
+    CompositionDeviceManager::EnsureSurfaceBrush(compositor, m_surfaceBrush, m_drawingSurface);
 
     m_surfaceBrush->Scale = float2(1.0f / dpiScale, 1.0f / dpiScale);
     m_surfaceBrush->Offset = float2(0.0f, 0.0f);
     m_spriteVisual->Size = float2(static_cast<float>(scaledLogicalWidth), static_cast<float>(scaledLogicalHeight));
 
-    if (!renderColor)
-    {
-        Windows::UI::Color textColor = GetForegroundColor();
-        m_colorBrush = CompositionDeviceManager::GetColorBrush(compositor, textColor);
-
-        if (m_maskBrush == nullptr)
-        {
-            m_maskBrush = compositor->CreateMaskBrush();
-            m_maskBrush->Mask = m_surfaceBrush;
-            m_maskBrush->Source = m_colorBrush;
-        }
-        else
-        {
-            if (m_maskBrush->Mask != m_surfaceBrush)
-                m_maskBrush->Mask = m_surfaceBrush;
-            if (m_maskBrush->Source != m_colorBrush)
-                m_maskBrush->Source = m_colorBrush;
-        }
-
-        if (m_spriteVisual->Brush != m_maskBrush)
-            m_spriteVisual->Brush = m_maskBrush;
-    }
-    else
-    {
-        if (m_spriteVisual->Brush != m_surfaceBrush)
-            m_spriteVisual->Brush = m_surfaceBrush;
-    }
+    CompositionDeviceManager::ApplySurfaceOrMaskBrush(
+        compositor,
+        m_spriteVisual,
+        m_surfaceBrush,
+        m_maskBrush,
+        m_colorBrush,
+        !renderColor,
+        GetForegroundColor());
 }

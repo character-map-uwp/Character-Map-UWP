@@ -803,23 +803,30 @@ IAsyncOperation<bool>^ DirectWrite::SaveFontStreamAsync(ComPtr<IDWriteFontFileSt
 	return create_async([fileStream, stream]
 		{
 			uint64 fileSize = 0;
-			fileStream->GetFileSize(&fileSize);
+			if (fileStream == nullptr || stream == nullptr || FAILED(fileStream->GetFileSize(&fileSize)) || fileSize == 0)
+				return task_from_result(false);
 
 			// 1. Copy stream to byte array
-			void* context;
-			const void* fragment;
-			fileStream->ReadFileFragment(&fragment, 0, fileSize, &context);
+			void* context = nullptr;
+			const void* fragment = nullptr;
+			if (FAILED(fileStream->ReadFileFragment(&fragment, 0, fileSize, &context)) || fragment == nullptr)
+				return task_from_result(false);
+
 			auto b = (byte*)fragment;
 
 			// 2. Write the byte array to stream.
 			DataWriter^ w = ref new DataWriter(stream);
-			w->WriteBytes(Platform::ArrayReference<BYTE>(b, fileSize));
+			w->WriteBytes(Platform::ArrayReference<BYTE>(b, static_cast<unsigned int>(fileSize)));
 
-			return create_task(w->StoreAsync()).then([w, fileStream, context](bool result)
+			return create_task(w->StoreAsync()).then([w, fileStream, context](unsigned int bytesStored)
 				{
 					fileStream->ReleaseFileFragment(context);
-					delete w;
-					return task_from_result(result);
+					return create_task(w->FlushAsync()).then([w, bytesStored](bool flushed)
+						{
+							w->DetachStream();
+							delete w;
+							return bytesStored > 0 && flushed;
+						}, task_continuation_context::use_arbitrary());
 				}, task_continuation_context::use_arbitrary());
 		});
 }
