@@ -1,7 +1,6 @@
-﻿using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Geometry;
-using Microsoft.Graphics.Canvas.Svg;
+using CharacterMapCX;
 using Windows.ApplicationModel;
+using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Input.Inking;
 using Windows.UI.Xaml.Media.Imaging;
@@ -20,7 +19,7 @@ public partial class CalligraphyViewModel : ViewModelBase
 
     [ObservableProperty] InkStrokeManager _inkManager = null;
 
-    public CharacterRenderingOptions Options { get; }
+    [ObservableProperty] CharacterRenderingOptions _options = null;
 
     public ObservableCollection<CalligraphyHistoryItem> Histories { get; } = new();
 
@@ -37,7 +36,7 @@ public partial class CalligraphyViewModel : ViewModelBase
 
     public async Task AddToHistoryAsync()
     {
-        CalligraphyHistoryItem h = await InkManager.CreateHistoryItemAsync(FontSize, Text);
+        CalligraphyHistoryItem h = await InkManager.CreateHistoryItemAsync(Options, FontSize, Text);
         Histories.Add(h);
     }
 
@@ -61,34 +60,32 @@ public partial class CalligraphyViewModel : ViewModelBase
         InkManager.OnDrawn(strokes);
     }
 
-    public async Task SaveAsync(IReadOnlyList<InkStroke> strokes, ExportFormat format, ICanvasResourceCreatorWithDpi device, Rect bounds)
+    public async Task SaveAsync(IReadOnlyList<InkStroke> strokes, ExportFormat format, Rect bounds)
     {
         // 1. Setup and render ink strokes
         bool isPng = format == ExportFormat.Png;
-        using CanvasSvgDocument svgDocument = new(device);
-        using CanvasRenderTarget target = new CanvasRenderTarget(device, (float)bounds.Width, (float)bounds.Height);
-        using (var ds = target.CreateDrawingSession())
-        {
-            if (isPng)
-                RenderBitmap(strokes, ds, bounds);
-            else
-                RenderSVG(strokes, svgDocument, ds, bounds);
-        }
+        using D2DSvgDocument svgDocument = isPng ? null : new((float)bounds.Width, (float)bounds.Height);
+        using D2DRenderTarget target = isPng ? new((float)bounds.Width, (float)bounds.Height) : null;
+
+        if (isPng)
+            RenderBitmap(strokes, target, bounds);
+        else
+            RenderSVG(strokes, svgDocument, bounds);
 
         // 2. Pick save file
         string ext = isPng ? "png" : "svg";
 
         FileSavePicker picker = new();
         picker.DefaultFileExtension = $".{ext}";
-        picker.FileTypeChoices.Add(ext.ToUpper(), new List<String> { $".{ext}" });
+        picker.FileTypeChoices.Add(ext.ToUpper(), [$".{ext}"]);
 
         // 3. Write output to save file
         if (await picker.PickSaveFileAsync() is StorageFile file)
         {
-            using var stream = await file.OpenAsync(FileAccessMode.ReadWrite);
+            using IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.ReadWrite);
 
             if (isPng)
-                await target.SaveAsync(stream, CanvasBitmapFileFormat.Png);
+                await target.SaveAsync(stream);
             else
                 await svgDocument.SaveAsync(stream);
 
@@ -101,7 +98,7 @@ public partial class CalligraphyViewModel : ViewModelBase
         }
     }
 
-    private static void RenderBitmap(IReadOnlyList<InkStroke> sourceStrokes, CanvasDrawingSession ds, Rect bounds)
+    private static void RenderBitmap(IReadOnlyList<InkStroke> sourceStrokes, D2DRenderTarget target, Rect bounds)
     {
         // We only want to render the drawn parts of the canvas but our strokes are
         // relative to the entire size of the canvas, so we need to move them back.
@@ -110,16 +107,16 @@ public partial class CalligraphyViewModel : ViewModelBase
         Matrix3x2 translate = Matrix3x2.CreateTranslation((float)-bounds.X, (float)-bounds.Y);
 
         // 2. Clone the strokes and apply the translation to each of them
-        var strokes = sourceStrokes.Select(s => s.Clone()).ToList();
-        foreach (var st in strokes)
+        List<InkStroke> strokes = sourceStrokes.Select(s => s.Clone()).ToList();
+        foreach (InkStroke st in strokes)
             st.PointTransform *= translate;
 
         // 3. Render the transformed strokes
-        ds.Clear(Colors.Transparent);
-        ds.DrawInk(strokes);
+        target.Clear(Colors.Transparent);
+        target.DrawInk(strokes);
     }
 
-    private static void RenderSVG(IReadOnlyList<InkStroke> strokes, CanvasSvgDocument svgDocument, CanvasDrawingSession ds, Rect bounds)
+    private static void RenderSVG(IReadOnlyList<InkStroke> strokes, D2DSvgDocument svgDocument, Rect bounds)
     {
         // 1. We only want to render the drawn parts of the canvas but our strokes are
         //    relative to the entire size of the canvas, so set the viewBox to only
@@ -127,14 +124,10 @@ public partial class CalligraphyViewModel : ViewModelBase
         svgDocument.Root.SetRectangleAttribute("viewBox", bounds);
 
         // 2. Create an SVG path for each stroke
-        InkStroke[] s = new InkStroke[1];
         foreach (InkStroke stroke in strokes)
         {
-            s[0] = stroke;
-            SVGPathReciever pathReceiver = new(CanvasGeometry.CreateInk(ds, s));
-
-            CanvasSvgNamedElement element = svgDocument.Root.CreateAndAppendNamedChildElement("path");
-            element.SetStringAttribute("d", pathReceiver.GetPathData());
+            D2DSvgElement element = svgDocument.Root.CreateAndAppendNamedChildElement("path");
+            element.SetStringAttribute("d", D2DSvgDocument.GetInkPathData(stroke));
             element.SetColorAttribute("fill", stroke.DrawingAttributes.Color);
         }
     }
@@ -278,10 +271,10 @@ public partial class InkStrokeManager : ObservableObject
         return false;
     }
 
-    public async Task<CalligraphyHistoryItem> CreateHistoryItemAsync(double fontSize, string text)
+    public async Task<CalligraphyHistoryItem> CreateHistoryItemAsync(CharacterRenderingOptions options, double fontSize, string text)
     {
         // 1. Create a History Item
-        CalligraphyHistoryItem h = new(_container.GetStrokes(), fontSize, text, _container.BoundingRect);
+        CalligraphyHistoryItem h = new(_container.GetStrokes(), options, fontSize, text, _container.BoundingRect);
 
         // 2. Render a thumbnail of the drawing to a memory stream
         using MemoryStream m = new();
@@ -378,9 +371,10 @@ public class CalligraphyHistoryItem
             throw new InvalidOperationException("Only for use by VS Designer");
     }
 
-    public CalligraphyHistoryItem(IReadOnlyList<InkStroke> strokes, double fontSize, string text, Rect bounds)
+    public CalligraphyHistoryItem(IReadOnlyList<InkStroke> strokes, CharacterRenderingOptions options, double fontSize, string text, Rect bounds)
     {
         _strokes = strokes.Select(s => s.Clone()).ToList();
+        Options = options is null ? null : options with { Axis = options.Axis?.Copy() };
         FontSize = fontSize;
         Text = text;
         Bounds = bounds;
@@ -389,6 +383,8 @@ public class CalligraphyHistoryItem
     private IReadOnlyList<InkStroke> _strokes { get; }
 
     public BitmapImage Thumbnail { get; set; }
+
+    public CharacterRenderingOptions Options { get; }
 
     public double FontSize { get; }
 

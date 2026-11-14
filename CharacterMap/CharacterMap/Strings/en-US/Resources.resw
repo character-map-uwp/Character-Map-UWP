@@ -3470,4 +3470,8 @@ Variations cannot be copied as text, but can be exported as PNG or SVG.</value>
     <value>{0} face(s)</value>
     <comment>The amount of real font, non-simulated font faces for a font family. Includes optional plural verbiage.</comment>
   </data>
+  <data name="FontFaceLabel.Text" xml:space="preserve">
+    <value>Font Face</value>
+    <comment>Label for font face selector</comment>
+  </data>
 </root>

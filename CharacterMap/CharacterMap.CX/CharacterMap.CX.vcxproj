@@ -275,6 +275,8 @@
     <ClInclude Include="CustomFontManager.h" />
     <ClInclude Include="CompositionDeviceManager.h" />
     <ClInclude Include="CoreDWTextServices.h" />
+    <ClInclude Include="D2DRenderTarget.h" />
+    <ClInclude Include="D2DSvgDocument.h" />
     <ClInclude Include="DirectText.h" />
     <ClInclude Include="DirectWrite.h" />
     <ClInclude Include="DWHelpers.h" />
@@ -333,6 +335,8 @@
     <ClCompile Include="ColrV1Svg.cpp" />
     <ClCompile Include="CompositionDeviceManager.cpp" />
     <ClCompile Include="CoreDWTextServices.cpp" />
+    <ClCompile Include="D2DRenderTarget.cpp" />
+    <ClCompile Include="D2DSvgDocument.cpp" />
     <ClCompile Include="CustomFontManager.cpp" />
     <ClCompile Include="DirectText.cpp" />
     <ClCompile Include="DirectWrite.cpp" />

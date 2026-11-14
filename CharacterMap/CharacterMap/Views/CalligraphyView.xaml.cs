@@ -1,4 +1,4 @@
-﻿using Microsoft.Toolkit.Uwp.UI.Controls;
+using Microsoft.Toolkit.Uwp.UI.Controls;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Input.Inking;
@@ -94,8 +94,6 @@ public sealed partial class CalligraphyView : ViewBase, IInAppNotificationPresen
 
         Toolbar.ActiveTool = null;
         Toolbar.TargetInkCanvas = null;
-        ShimCanvas?.RemoveFromVisualTree();
-        ShimCanvas = null;
     }
 
     /// <summary>
@@ -177,6 +175,8 @@ public sealed partial class CalligraphyView : ViewBase, IInAppNotificationPresen
 
             // Restore History Item
             _container.AddStrokes(h.GetStrokes());
+            if (h.Options is not null)
+                ViewModel.Options = h.Options with { Axis = h.Options.Axis?.Copy() };
             ViewModel.FontSize = h.FontSize;
             ViewModel.Text = h.Text;
 
@@ -219,7 +219,7 @@ public sealed partial class CalligraphyView : ViewBase, IInAppNotificationPresen
 
     private Task SaveAsync(IReadOnlyList<InkStroke> strokes, ExportFormat format, Rect bounds)
     {
-        return ViewModel.SaveAsync(strokes, format, ShimCanvas, bounds);
+        return ViewModel.SaveAsync(strokes, format, bounds);
     }
 
 
@@ -266,9 +266,7 @@ public sealed partial class CalligraphyView : ViewBase, IInAppNotificationPresen
         CompositionFactory.PlayEntrance(Presenter.GetTitleContainerElement(), s + 30, o);
 
         // First Row
-        CompositionFactory.PlayEntrance(PickerButton, s + 113, o);
-        CompositionFactory.PlayEntrance(InputContainer, s + 113, o);
-        CompositionFactory.PlayEntrance(SliderContainer, s + 113, o);
+        CompositionFactory.PlayEntrance(TopRow, s + 113, o);
 
         // Second Row
         CompositionFactory.PlayEntrance(ContentGrid, s + 200, o);

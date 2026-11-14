@@ -1,4 +1,4 @@
-﻿<view:ViewBase
+<view:ViewBase
     x:Class="CharacterMap.Views.CalligraphyView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -11,7 +11,6 @@
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:view="using:CharacterMap.Views"
     xmlns:viewmodels="using:CharacterMap.ViewModels"
-    xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
     x:Name="ViewRoot"
     Background="Transparent"
     DataContext="{x:Bind}"
@@ -270,52 +269,64 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <xaml:CanvasControl x:Name="ShimCanvas" Visibility="Collapsed" />
-
-                <Grid ColumnSpacing="8">
+        
+                <Grid x:Name="TopRow" ColumnSpacing="8">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="2*" />
                     </Grid.ColumnDefinitions>
 
-                    <!--
-                        Button is ordered first in XAML to ensure it becomes
-                        the default focus target
-                    -->
-
-                    <controls:CharacterPickerButton
-                        x:Name="PickerButton"
-                        Grid.Column="1"
-                        Margin="-8 0 0 0"
-                        Options="{x:Bind ViewModel.Options}"
-                        Target="{x:Bind InputBox}" />
-
-                    <StackPanel
-                        x:Name="InputContainer"
-                        VerticalAlignment="Bottom"
-                        Spacing="6">
+                    <StackPanel VerticalAlignment="Bottom" Spacing="6">
                         <TextBlock
-                            x:Name="InputHeader"
                             x:Uid="GuideHeaderLabel"
                             FontWeight="{ThemeResource SliderHeaderThemeFontWeight}"
-                            d:Text="{core:Localizer Key=GuideHeaderLabel/Text}" />
-                        <TextBox
-                            x:Name="InputBox"
-                            x:Uid="GuidePreviewInput"
-                            Height="32"
+                            Text="Font Face" />
+
+                        <controls:FontOptionsButton
+                            Width="200"
                             VerticalAlignment="Bottom"
-                            BorderThickness="1 1 0 1"
-                            CornerRadius="4 0 0 4"
-                            Style="{StaticResource DefaultThemeTextBoxStyle}"
-                            Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            d:Text="Hello" />
+                            SelectedItem="{x:Bind ViewModel.Options, Mode=TwoWay}" />
                     </StackPanel>
 
+                    <Grid Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel
+                            x:Name="InputContainer"
+                            VerticalAlignment="Bottom"
+                            Spacing="6">
+                            <TextBlock
+                                x:Name="InputHeader"
+                                x:Uid="GuideHeaderLabel"
+                                FontWeight="{ThemeResource SliderHeaderThemeFontWeight}"
+                                d:Text="{core:Localizer Key=GuideHeaderLabel/Text}" />
+                            <TextBox
+                                x:Name="InputBox"
+                                x:Uid="GuidePreviewInput"
+                                Height="32"
+                                VerticalAlignment="Bottom"
+                                BorderThickness="1 1 0 1"
+                                CornerRadius="4 0 0 4"
+                                Style="{StaticResource DefaultThemeTextBoxStyle}"
+                                Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                d:Text="Hello" />
+                        </StackPanel>
+
+                        <controls:CharacterPickerButton
+                            x:Name="PickerButton"
+                            Grid.Column="1"
+                            Margin="-8 0 0 0"
+                            Options="{x:Bind ViewModel.Options, Mode=OneWay}"
+                            Target="{x:Bind InputBox}" />
+                    </Grid>
 
                     <StackPanel
                         x:Name="SliderContainer"
-                        Grid.Column="2"
+                        Grid.Column="3"
                         Spacing="6">
                         <TextBlock
                             x:Name="SliderHeader"
@@ -332,8 +343,6 @@
                             d:Margin="0 4 0 0"
                             d:Value="220" />
                     </StackPanel>
-
-
                 </Grid>
 
                 <Grid
@@ -595,7 +604,7 @@
                             Grid.ColumnSpan="2"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            core:Properties.Options="{x:Bind ViewModel.Options}"
+                            core:Properties.Options="{x:Bind ViewModel.Options, Mode=OneWay}"
                             h:CompositionFactory.OpacityDuration="0:0:0.15"
                             FontSize="{x:Bind ViewModel.FontSize, Mode=OneWay}"
                             IsOverwriteCompensationEnabled="True"

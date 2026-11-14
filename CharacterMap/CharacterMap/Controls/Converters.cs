@@ -133,3 +133,22 @@ public class IsNullConverter : IValueConverter
         throw new NotImplementedException();
     }
 }
+
+public class PreviewFontSourceConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is CMFontFamily family)
+            return Core.Converters.GetPreviewFontSource(family.DefaultFace);
+
+        if (value is CMFontFace face)
+            return Core.Converters.GetPreviewFontSource(face);
+
+        return Core.Converters.GetPreviewFontSource(null);
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+}

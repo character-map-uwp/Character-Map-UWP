@@ -183,6 +183,7 @@
       <DependentUpon>FilterFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\FlowAwareComboBox.cs" />
+    <Compile Include="Controls\FontOptionsButton.cs" />
     <Compile Include="Controls\GlyphNamingControl.cs" />
     <Compile Include="Controls\InfoBar.cs" />
     <Compile Include="Controls\InstallFontDialog.xaml.cs">

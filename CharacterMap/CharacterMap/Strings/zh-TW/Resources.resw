@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -2560,5 +2560,9 @@ Web 字型在安裝前將轉換為 OTF 格式。</value>
   <data name="FaceCountLabel" xml:space="preserve">
     <value>{0} 個字型外觀</value>
     <comment>The amount of real font, non-simulated font faces for a font family. Includes optional plural verbiage.</comment>
+  </data>
+  <data name="FontFaceLabel.Text" xml:space="preserve">
+    <value>字型外觀</value>
+    <comment>Label for font face selector</comment>
   </data>
 </root>

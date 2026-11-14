@@ -2,10 +2,14 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CharacterMap.Controls"
+    xmlns:converters="using:CharacterMap.Converters"
     xmlns:core="using:CharacterMap.Core"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:h="using:CharacterMap.Helpers"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:CharacterMap.Models"
-    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls">
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    mc:Ignorable="d">
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Default" />
@@ -1494,6 +1498,191 @@
                             ContentTemplate="{TemplateBinding ContentTemplate}"
                             ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}" />
                     </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:FontOptionsButton">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:FontOptionsButton">
+                    <Button
+                        x:Name="RootButton"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        Style="{StaticResource DefaultThemeButtonStyle}">
+                        <Grid ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Text="{TemplateBinding DisplayText}"
+                                TextTrimming="CharacterEllipsis" />
+                            <FontIcon
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                core:Properties.ThemeIcon="ChevronDown"
+                                FontSize="12"
+                                Opacity="0.7" />
+                        </Grid>
+
+                        <Button.Resources>
+                            <Style x:Key="FontOptionsFlyoutStyle" BasedOn="{StaticResource ThemeFlyoutStyle}" TargetType="FlyoutPresenter">
+                                <Setter Property="Padding" Value="16" />
+                                <Setter Property="MinWidth" Value="300" />
+                                <Setter Property="MaxWidth" Value="360" />
+                                <Setter Property="IsDefaultShadowEnabled" Value="True" />
+                            </Style>
+                        </Button.Resources>
+
+                        <Button.Flyout>
+                            <Flyout
+                                x:Name="OptionsFlyout"
+                                core:Properties.UseExpandContractAnimation="True"
+                                FlyoutPresenterStyle="{StaticResource FontOptionsFlyoutStyle}"
+                                Placement="BottomEdgeAlignedLeft"
+                                ShouldConstrainToRootBounds="True">
+                                <ContentControl
+                                    x:Name="FlyoutHost"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Stretch"
+                                    VerticalContentAlignment="Stretch">
+                                    <ContentControl.Template>
+                                        <ControlTemplate TargetType="ContentControl">
+                                            <ScrollViewer MaxHeight="520" VerticalScrollBarVisibility="Auto">
+                                                <VisualStateManager.VisualStateGroups>
+                                                    <VisualStateGroup x:Name="AxisStates">
+                                                        <VisualState x:Name="NoAxesState" />
+                                                        <VisualState x:Name="HasAxesState">
+                                                            <VisualState.Setters>
+                                                                <Setter Target="AxisPanel.Visibility" Value="Visible" />
+                                                            </VisualState.Setters>
+                                                        </VisualState>
+                                                    </VisualStateGroup>
+                                                    <VisualStateGroup x:Name="ColorStates">
+                                                        <VisualState x:Name="NoColorState" />
+                                                        <VisualState x:Name="HasColorState">
+                                                            <VisualState.Setters>
+                                                                <Setter Target="ColorGlyphToggle.Visibility" Value="Visible" />
+                                                            </VisualState.Setters>
+                                                        </VisualState>
+                                                    </VisualStateGroup>
+                                                    <VisualStateGroup x:Name="TypographyStates">
+                                                        <VisualState x:Name="NoTypographyState" />
+                                                        <VisualState x:Name="HasTypographyState">
+                                                            <VisualState.Setters>
+                                                                <Setter Target="TypographyComboBox.Visibility" Value="Visible" />
+                                                            </VisualState.Setters>
+                                                        </VisualState>
+                                                    </VisualStateGroup>
+                                                </VisualStateManager.VisualStateGroups>
+
+                                                <StackPanel Spacing="12">
+                                                    <ComboBox
+                                                        x:Name="FamilyComboBox"
+                                                        HorizontalAlignment="Stretch"
+                                                        Header="Font family">
+                                                        <ComboBox.Resources>
+                                                            <converters:PreviewFontSourceConverter x:Key="PreviewFontSourceConverter" />
+                                                        </ComboBox.Resources>
+                                                        <ComboBox.ItemTemplate>
+                                                            <DataTemplate>
+                                                                <TextBlock
+                                                                    FontFamily="{Binding DefaultFace, Converter={StaticResource PreviewFontSourceConverter}}"
+                                                                    Text="{Binding Name}"
+                                                                    TextTrimming="CharacterEllipsis" />
+                                                            </DataTemplate>
+                                                        </ComboBox.ItemTemplate>
+                                                    </ComboBox>
+
+                                                    <ComboBox
+                                                        x:Name="FaceComboBox"
+                                                        HorizontalAlignment="Stretch"
+                                                        DisplayMemberPath="PreferredName"
+                                                        Header="Font face" />
+
+                                                    <StackPanel
+                                                        x:Name="AxisPanel"
+                                                        Spacing="6"
+                                                        Visibility="Collapsed">
+                                                        <TextBlock
+                                                            FontSize="12"
+                                                            FontWeight="SemiBold"
+                                                            Opacity="0.75"
+                                                            Text="Variation axes" />
+                                                        <ItemsControl x:Name="AxisItemsControl">
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <Grid Margin="0 0 0 2">
+                                                                        <Grid.ColumnDefinitions>
+                                                                            <ColumnDefinition Width="*" />
+                                                                            <ColumnDefinition Width="Auto" />
+                                                                        </Grid.ColumnDefinitions>
+                                                                        <Slider
+                                                                            Maximum="{Binding Maximum, Mode=OneTime}"
+                                                                            Minimum="{Binding Minimum, Mode=OneTime}"
+                                                                            SmallChange="0.1"
+                                                                            StepFrequency="0.1"
+                                                                            Style="{StaticResource DefaultThemeSliderStyle}"
+                                                                            Value="{Binding Value, Mode=TwoWay}">
+                                                                            <Slider.Header>
+                                                                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                                                                    <TextBlock
+                                                                                        Margin="0 0 0 -8"
+                                                                                        FontSize="12"
+                                                                                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                                                        Text="{Binding Label}" />
+                                                                                    <FontIcon
+                                                                                        Margin="0 2 0 -6"
+                                                                                        core:Properties.ThemeIcon="Hidden"
+                                                                                        FontSize="12"
+                                                                                        Opacity="0.4"
+                                                                                        ToolTipService.ToolTip="{core:Localizer Key='HiddenAxisHintLabel'}"
+                                                                                        Visibility="{Binding HiddenIconVisibility}" />
+                                                                                </StackPanel>
+                                                                            </Slider.Header>
+                                                                        </Slider>
+                                                                        <Button
+                                                                            x:Uid="BtnReset"
+                                                                            Grid.Column="1"
+                                                                            Margin="6 0 0 4"
+                                                                            VerticalAlignment="Bottom"
+                                                                            Command="{Binding ResetCommand}"
+                                                                            FontSize="12"
+                                                                            Style="{StaticResource ThemeTextBlockButtonStyle}"
+                                                                            d:Content="{core:Localizer Key=BtnReset/Content}" />
+                                                                    </Grid>
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+                                                    </StackPanel>
+
+                                                    <ToggleSwitch
+                                                        x:Name="ColorGlyphToggle"
+                                                        x:Uid="ColorGlyphToggle"
+                                                        Header="Color display"
+                                                        Visibility="Collapsed"
+                                                        d:OffContent="{core:Localizer Key=ColorGlyphToggle/OffContent}"
+                                                        d:OnContent="{core:Localizer Key=ColorGlyphToggle/OnContent}" />
+
+                                                    <ComboBox
+                                                        x:Name="TypographyComboBox"
+                                                        HorizontalAlignment="Stretch"
+                                                        DisplayMemberPath="DisplayName"
+                                                        Header="Typography"
+                                                        Visibility="Collapsed" />
+                                                </StackPanel>
+                                            </ScrollViewer>
+                                        </ControlTemplate>
+                                    </ContentControl.Template>
+                                </ContentControl>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

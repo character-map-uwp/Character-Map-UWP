@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -2544,5 +2544,9 @@
   <data name="FaceCountLabel" xml:space="preserve">
     <value>{0} நடை(கள்)</value>
     <comment>The amount of real font, non-simulated font faces for a font family. Includes optional plural verbiage.</comment>
+  </data>
+  <data name="FontFaceLabel.Text" xml:space="preserve">
+    <value>எழுத்துரு நடை</value>
+    <comment>Label for font face selector</comment>
   </data>
 </root>
