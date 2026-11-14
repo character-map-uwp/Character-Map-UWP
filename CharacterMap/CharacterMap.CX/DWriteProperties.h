@@ -4,6 +4,7 @@
 #include "GlyphImageFormat.h"
 #include "DWriteFontSource.h"
 #include "DWriteFontSimulations.h"
+#include "SvgTableReader.h"
 
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
@@ -43,9 +44,11 @@ namespace CharacterMapCX
 		property bool HasCFFOutlines			{ bool get() { EnsureFontFacePropertiesLoaded(); return m_hasCFF; } }
 		property bool HasTTFOutlines			{ bool get() { EnsureFontFacePropertiesLoaded(); return m_hasTTF; } }
 		property bool HasSVGOutlines			{ bool get() { EnsureFontFacePropertiesLoaded(); return m_hasSVG; } }
+		property bool HasBitmapSVGGlyphs		{ bool get() { EnsureFontFacePropertiesLoaded(); return m_hasBitmapSVG; } }
 		property bool HasBrokenItalics			{ bool get() { EnsureFontFacePropertiesLoaded(); return m_hasBrokenItalics; } }
 		property bool HasColorBitmapOutlines	{ bool get() { EnsureFontFacePropertiesLoaded(); return m_hasColorBitmap; } }
 		property bool HasMonoBitmapOutlines		{ bool get() { EnsureFontFacePropertiesLoaded(); return m_hasMonoBitmap; } }
+		property bool IsExpensive				{ bool get() { EnsureFontFacePropertiesLoaded(); return m_isExpensive; } }
 
 		/// <summary>
 		/// If true, font is from a remote provider
@@ -170,8 +173,10 @@ namespace CharacterMapCX
 			p->m_hasCFF = m_hasCFF;
 			p->m_hasTTF = m_hasTTF;
 			p->m_hasSVG = m_hasSVG;
+			p->m_hasBitmapSVG = m_hasBitmapSVG;
 			p->m_hasColorBitmap = m_hasColorBitmap;
 			p->m_hasMonoBitmap = m_hasMonoBitmap;
+			p->m_isExpensive = m_isExpensive;
 			p->m_font = m_font;
 			p->m_source = m_source;
 			return p;
@@ -223,24 +228,34 @@ namespace CharacterMapCX
 				UINT32 size = 0;
 				void* ctx = nullptr;
 				BOOL exists = FALSE;
+				UINT32 outlineBytes = 0;
 
 				// Check CFF
 				if ((SUCCEEDED(fontFace->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('C', 'F', 'F', ' '), &data, &size, &ctx, &exists)) && exists) ||
 					(SUCCEEDED(fontFace->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('C', 'F', 'F', '2'), &data, &size, &ctx, &exists)) && exists))
 				{
 					m_hasCFF = true;
+					outlineBytes += size;
 					fontFace->ReleaseFontTable(ctx);
 				}
 				// Check TTF
 				if (SUCCEEDED(fontFace->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('g', 'l', 'y', 'f'), &data, &size, &ctx, &exists)) && exists)
 				{
 					m_hasTTF = true;
+					outlineBytes += size;
 					fontFace->ReleaseFontTable(ctx);
+				}
+				if (outlineBytes >= 128u * 1024u)
+				{
+					UINT32 glyphCount = fontFace->GetGlyphCount();
+					if (glyphCount == 0)
+						glyphCount = 1;
+					m_isExpensive = (outlineBytes / glyphCount) >= 2048u;
 				}
 				// Check SVG
 				if (SUCCEEDED(fontFace->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('S', 'V', 'G', ' '), &data, &size, &ctx, &exists)) && exists)
 				{
-					m_hasSVG = true;
+					SvgTableReader::InspectTable(data, size, m_hasSVG, m_hasBitmapSVG);
 					fontFace->ReleaseFontTable(ctx);
 				}
 				// Check Color Bitmaps (sbix, CBLC)
@@ -319,9 +334,11 @@ namespace CharacterMapCX
 		bool m_hasCFF    = false;
 		bool m_hasTTF    = false;
 		bool m_hasSVG    = false;
+		bool m_hasBitmapSVG = false;
 		bool m_hasColorBitmap = false;
 		bool m_hasMonoBitmap = false;
 		bool m_hasBrokenItalics = false;
+		bool m_isExpensive = false;
     
 	};
 }

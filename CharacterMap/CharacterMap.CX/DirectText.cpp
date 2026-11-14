@@ -241,6 +241,7 @@ namespace
     {
     public:
         bool HasColorFont = false;
+        IDWriteFontFace* IgnoreFontFace = nullptr;
 
         IFACEMETHODIMP_(unsigned long) AddRef() override { return 1; }
         IFACEMETHODIMP_(unsigned long) Release() override { return 1; }
@@ -265,7 +266,7 @@ namespace
             if (HasColorFont)
                 return E_ABORT;
 
-            if (glyphRun != nullptr && glyphRun->fontFace != nullptr)
+            if (glyphRun != nullptr && glyphRun->fontFace != nullptr && glyphRun->fontFace != IgnoreFontFace)
             {
                 ComPtr<IDWriteFontFace2> face2;
                 if (SUCCEEDED(glyphRun->fontFace->QueryInterface(IID_PPV_ARGS(&face2))) && face2->IsColorFont())
@@ -288,7 +289,11 @@ bool DirectText::ShouldRenderColor()
         return true;
 
     if (FontFace != nullptr && FontFace->Properties != nullptr && FontFace->Properties->IsColorFont)
+    {
+        if (FontFace->Properties->HasBitmapSVGGlyphs && !FontFace->Properties->HasColorBitmapOutlines)
+            return false;
         return true;
+    }
 
     if (GlyphIndex < 0 && FallbackFont != nullptr && m_textLayout != nullptr)
     {
@@ -725,6 +730,7 @@ namespace
         int GlyphIndex = -1;
         bool IsCharacterFitEnabled = false;
         bool RenderColor = true;
+        bool UseColorQueue = false;
         bool DeferredLayout = false;
         bool IsColorFontEnabled = true;
         Windows::UI::Xaml::FlowDirection FlowDirection = Windows::UI::Xaml::FlowDirection::LeftToRight;
@@ -850,15 +856,26 @@ namespace
         ComPtr<ID2D1Factory5> D2DFactory;
         ComPtr<ID2D1Device> D2DDevice;
         ComPtr<ID2D1DeviceContext> D2DContext;
+        ComPtr<ID2D1Bitmap1> TargetBitmap;
+        ComPtr<ID2D1Bitmap1> StagingBitmap;
+        UINT32 BitmapWidth = 0;
+        UINT32 BitmapHeight = 0;
+
+        void ResetDeviceResources()
+        {
+            TargetBitmap.Reset();
+            StagingBitmap.Reset();
+            BitmapWidth = 0;
+            BitmapHeight = 0;
+            D2DContext.Reset();
+            D2DDevice.Reset();
+            D3DDevice.Reset();
+        }
 
         bool RenderLocked(const DirectTextRenderSnapshot& snap, std::vector<uint8_t>& outPixels, UINT32& outPitch)
         {
             if (D3DDevice != nullptr && FAILED(D3DDevice->GetDeviceRemovedReason()))
-            {
-                D2DContext.Reset();
-                D2DDevice.Reset();
-                D3DDevice.Reset();
-            }
+                ResetDeviceResources();
 
             if (D2DContext == nullptr)
             {
@@ -896,57 +913,81 @@ namespace
 
             // Always use BGRA8 off-device even if the final surface were A8: D2D1DeviceContext
             // does not support A8_UNORM with D2D1_BITMAP_OPTIONS_TARGET on many drivers.
-            D2D1_PIXEL_FORMAT pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED);
+            // Reuse grow-only target and staging bitmaps per slot to avoid per-item D3D texture allocations.
+            if (TargetBitmap == nullptr || StagingBitmap == nullptr ||
+                snap.SurfaceWidth > BitmapWidth || snap.SurfaceHeight > BitmapHeight)
+            {
+                UINT32 allocW = (std::max)(BitmapWidth, snap.SurfaceWidth);
+                UINT32 allocH = (std::max)(BitmapHeight, snap.SurfaceHeight);
+                D2D1_PIXEL_FORMAT pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED);
 
-            D2D1_BITMAP_PROPERTIES1 targetProps = D2D1::BitmapProperties1(
-                D2D1_BITMAP_OPTIONS_TARGET,
-                pixelFormat);
+                D2D1_BITMAP_PROPERTIES1 targetProps = D2D1::BitmapProperties1(
+                    D2D1_BITMAP_OPTIONS_TARGET,
+                    pixelFormat);
 
-            ComPtr<ID2D1Bitmap1> targetBitmap;
-            HRESULT hr = D2DContext->CreateBitmap(D2D1::SizeU(snap.SurfaceWidth, snap.SurfaceHeight), nullptr, 0, &targetProps, &targetBitmap);
-            if (FAILED(hr) || targetBitmap == nullptr)
-                return false;
+                ComPtr<ID2D1Bitmap1> newTarget;
+                HRESULT hr = D2DContext->CreateBitmap(D2D1::SizeU(allocW, allocH), nullptr, 0, &targetProps, &newTarget);
+                if (FAILED(hr) || newTarget == nullptr)
+                    return false;
 
-            D2D1_BITMAP_PROPERTIES1 stagingProps = D2D1::BitmapProperties1(
-                D2D1_BITMAP_OPTIONS_CPU_READ | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
-                pixelFormat);
+                D2D1_BITMAP_PROPERTIES1 stagingProps = D2D1::BitmapProperties1(
+                    D2D1_BITMAP_OPTIONS_CPU_READ | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+                    pixelFormat);
 
-            ComPtr<ID2D1Bitmap1> stagingBitmap;
-            hr = D2DContext->CreateBitmap(D2D1::SizeU(snap.SurfaceWidth, snap.SurfaceHeight), nullptr, 0, &stagingProps, &stagingBitmap);
-            if (FAILED(hr) || stagingBitmap == nullptr)
-                return false;
+                ComPtr<ID2D1Bitmap1> newStaging;
+                hr = D2DContext->CreateBitmap(D2D1::SizeU(allocW, allocH), nullptr, 0, &stagingProps, &newStaging);
+                if (FAILED(hr) || newStaging == nullptr)
+                    return false;
 
-            D2DContext->SetTarget(targetBitmap.Get());
+                TargetBitmap = newTarget;
+                StagingBitmap = newStaging;
+                BitmapWidth = allocW;
+                BitmapHeight = allocH;
+            }
+
+            D2DContext->SetTarget(TargetBitmap.Get());
             D2DContext->BeginDraw();
+            D2DContext->PushAxisAlignedClip(
+                D2D1::RectF(0.0f, 0.0f, static_cast<FLOAT>(snap.SurfaceWidth), static_cast<FLOAT>(snap.SurfaceHeight)),
+                D2D1_ANTIALIAS_MODE_ALIASED);
             D2DContext->Clear(D2D1::ColorF(0, 0, 0, 0));
             RenderSnapshotToContext(D2DContext.Get(), snap, 0.0f, 0.0f);
-            hr = D2DContext->EndDraw();
+            D2DContext->PopAxisAlignedClip();
+            HRESULT hr = D2DContext->EndDraw();
             D2DContext->SetTarget(nullptr);
             if (FAILED(hr))
             {
                 if (hr == D2DERR_RECREATE_TARGET)
-                {
-                    D2DContext.Reset();
-                    D2DDevice.Reset();
-                    D3DDevice.Reset();
-                }
+                    ResetDeviceResources();
                 return false;
             }
 
-            hr = stagingBitmap->CopyFromBitmap(nullptr, targetBitmap.Get(), nullptr);
+            D2D1_POINT_2U destPoint = D2D1::Point2U(0, 0);
+            D2D1_RECT_U copyRect = D2D1::RectU(0, 0, snap.SurfaceWidth, snap.SurfaceHeight);
+            hr = StagingBitmap->CopyFromBitmap(&destPoint, TargetBitmap.Get(), &copyRect);
             if (FAILED(hr))
                 return false;
 
             D2D1_MAPPED_RECT mapped{};
-            hr = stagingBitmap->Map(D2D1_MAP_OPTIONS_READ, &mapped);
+            hr = StagingBitmap->Map(D2D1_MAP_OPTIONS_READ, &mapped);
             if (FAILED(hr) || mapped.bits == nullptr)
                 return false;
 
-            outPitch = mapped.pitch;
-            size_t totalBytes = static_cast<size_t>(mapped.pitch) * snap.SurfaceHeight;
-            outPixels.resize(totalBytes);
-            memcpy(outPixels.data(), mapped.bits, totalBytes);
-            stagingBitmap->Unmap();
+            UINT32 rowBytes = snap.SurfaceWidth * 4;
+            outPitch = rowBytes;
+            outPixels.resize(static_cast<size_t>(rowBytes) * snap.SurfaceHeight);
+            const uint8_t* src = static_cast<const uint8_t*>(mapped.bits);
+            uint8_t* dst = outPixels.data();
+            if (mapped.pitch == rowBytes)
+            {
+                memcpy(dst, src, outPixels.size());
+            }
+            else
+            {
+                for (UINT32 y = 0; y < snap.SurfaceHeight; ++y)
+                    memcpy(dst + static_cast<size_t>(y) * rowBytes, src + static_cast<size_t>(y) * mapped.pitch, rowBytes);
+            }
+            StagingBitmap->Unmap();
 
             return true;
         }
@@ -986,7 +1027,7 @@ namespace
         static OffDeviceRendererPool<4> s_monoPool;
         static OffDeviceRendererPool<2> s_colorPool;
 
-        return snap.RenderColor
+        return (snap.RenderColor || snap.UseColorQueue)
             ? s_colorPool.Render(snap, outPixels, outPitch)
             : s_monoPool.Render(snap, outPixels, outPitch);
     }
@@ -1102,6 +1143,15 @@ namespace
                 snap.LayoutParams.FallbackFont != nullptr)
             {
                 RunColorChecker checker;
+                ComPtr<IDWriteFontFace3> primaryFace;
+                if (snap.LayoutParams.FontFace != nullptr &&
+                    snap.LayoutParams.FontFace->Properties != nullptr &&
+                    snap.LayoutParams.FontFace->Properties->HasBitmapSVGGlyphs &&
+                    !snap.LayoutParams.FontFace->Properties->HasColorBitmapOutlines)
+                {
+                    primaryFace = snap.LayoutParams.FontFace->GetFontFace();
+                    checker.IgnoreFontFace = primaryFace.Get();
+                }
                 snap.TextLayout->Draw(nullptr, &checker, 0.0f, 0.0f);
                 if (checker.HasColorFont && snap.GraphicsDevice != nullptr && snap.SurfaceWidth > 0 && snap.SurfaceHeight > 0)
                 {
@@ -1203,6 +1253,7 @@ namespace
 
     struct BackgroundRenderJob
     {
+        const void* ControlKey = nullptr;
         Platform::WeakReference WeakThis;
         uint64_t Generation = 0;
         DirectTextRenderSnapshot Snapshot;
@@ -1237,7 +1288,22 @@ namespace
             bool spawnWorker = false;
             {
                 std::lock_guard<std::mutex> lock(m_mutex);
-                m_queue.push_back(std::move(job));
+                bool replaced = false;
+                if (job.ControlKey != nullptr)
+                {
+                    for (auto& existing : m_queue)
+                    {
+                        if (existing.ControlKey == job.ControlKey)
+                        {
+                            job.WasHidden = job.WasHidden || existing.WasHidden;
+                            existing = std::move(job);
+                            replaced = true;
+                            break;
+                        }
+                    }
+                }
+                if (!replaced)
+                    m_queue.push_back(std::move(job));
                 if (m_activeWorkers < m_maxWorkers)
                 {
                     ++m_activeWorkers;
@@ -1442,6 +1508,7 @@ void DirectText::RenderToSurface(Windows::Foundation::Size finalSize)
     snapshot.GlyphIndex = GlyphIndex;
     snapshot.IsCharacterFitEnabled = IsCharacterFitEnabled;
     snapshot.RenderColor = renderColor;
+    snapshot.UseColorQueue = renderColor || (FontFace != nullptr && FontFace->Properties != nullptr && FontFace->Properties->IsExpensive);
     snapshot.DeferredLayout = m_deferredLayout;
     snapshot.IsColorFontEnabled = IsColorFontEnabled;
     snapshot.FlowDirection = this->FlowDirection;
@@ -1498,11 +1565,12 @@ void DirectText::RenderToSurface(Windows::Foundation::Size finalSize)
         bool wasHidden = !m_spriteVisual->IsVisible;
         m_lastShownFontFace = FontFace;
         BackgroundRenderJob job;
+        job.ControlKey = reinterpret_cast<const void*>(this);
         job.WeakThis = Platform::WeakReference(this);
         job.Generation = gen;
         job.Snapshot = std::move(snapshot);
         job.WasHidden = wasHidden;
-        auto& queue = job.Snapshot.RenderColor
+        auto& queue = job.Snapshot.UseColorQueue
             ? BackgroundRenderQueue::ColorInstance()
             : BackgroundRenderQueue::MonoInstance();
         queue.Enqueue(std::move(job));

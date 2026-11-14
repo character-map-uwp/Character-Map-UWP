@@ -19,7 +19,8 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
 
     public bool HasFontOptions { get; }
 
-    public bool ShowColorGlyphs => Face.DirectWriteProperties.IsColorFont;
+    public bool ShowColorGlyphs => Face.DirectWriteProperties.IsColorFont
+        && !(Analysis.HasBitmapSVGGlyphs && !Analysis.HasCOLRGlyphs && !Analysis.HasBitmapGlyphs);
 
     public FontAnalysis Analysis { get; }
 

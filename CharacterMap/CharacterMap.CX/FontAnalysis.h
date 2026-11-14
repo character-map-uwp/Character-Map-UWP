@@ -28,6 +28,8 @@ namespace CharacterMapCX
 
 		property bool HasSVGGlyphs { bool get() { ReadTables(); return m_hasSVG; } }
 
+		property bool HasBitmapSVGGlyphs { bool get() { ReadTables(); return m_hasBitmapSVG; } }
+
 		property bool ContainsVectorColorGlyphs { bool get() { ReadTables(); return m_hasSVG || m_hasCOLR; } }
 		
 		property bool HasGlyphNames { bool get() { ReadTables(); return m_hasGlyphNames; } }
@@ -113,6 +115,7 @@ namespace CharacterMapCX
 		bool m_hasBitmap = false;
 		bool m_hasCOLR = false;
 		bool m_hasSVG = false;
+		bool m_hasBitmapSVG = false;
 		bool m_hasGlyphNames = false;
 		int m_colrVersion = -1;
 		String^ m_dlng = nullptr;
@@ -227,11 +230,7 @@ namespace CharacterMapCX
 			// Determines if a font contains SVG glyphs
 			face->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('S', 'V', 'G', ' '), &tableData, &tableSize, &context, &exists);
 			if (exists)
-			{
-				auto svgreader = ref new SvgTableReader(tableData, tableSize);
-				m_hasSVG = svgreader->EntryCount > 0;
-				delete svgreader;
-			}
+				SvgTableReader::InspectTable(tableData, tableSize, m_hasSVG, m_hasBitmapSVG);
 			face->ReleaseFontTable(context);
 
 			// COLR
