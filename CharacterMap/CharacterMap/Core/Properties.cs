@@ -1701,7 +1701,7 @@ public partial class Properties : DependencyObject
 
     static partial void OnPreviewStringTriggerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        if (d is TextBlock t)
+        if (d is FrameworkElement f && f is TextBlock or DirectText)
         {
             // Get the default preview string
             string text = ResourceHelper.AppSettings.GetFamilyPreviewString();
@@ -1710,7 +1710,7 @@ public partial class Properties : DependencyObject
             //var v = GetTag(l);
 
             // If we have an active "char" search we want to show this characters in the ToolTip instead
-            if (t.GetFirstAncestorOfType<PreviewTip>() is { } pt
+            if (f.GetFirstAncestorOfType<PreviewTip>() is { } pt
                 && GetTag(pt) is MainViewModel vm
                 && vm.FontSearch is { Length: > 4 } query
                 && FontFinder.IsQuery(query, Localization.Get("CharacterFilter"), "char:", out string q))
@@ -1722,8 +1722,7 @@ public partial class Properties : DependencyObject
             else if (e.NewValue is CMFontFace variant)
                 text = variant.TryGetSampleText() ?? text;
 
-            // Set TextBlock text
-            t.Text = text;
+            f.SetTextString(text);
         }
     }
 

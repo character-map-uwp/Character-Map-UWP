@@ -1144,7 +1144,7 @@ public partial class MainPresenter : ContentControl
         }
         else if (newValue == nameof(CalligraphyView))
         {
-            Content = new CalligraphyView(MainPage.GetFontMap().ViewModel.RenderingOptions);
+            Content = new CalligraphyView(MainPage.GetFontMap().ViewModel.RenderingOptions) { IsStandalone = false };
         }
         else if (newValue.StartsWith(nameof(SettingsView)) && (oldValue is null ||  oldValue?.StartsWith(nameof(SettingsView)) is false))
         {

@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:core="using:CharacterMap.Core"
+    xmlns:cx="using:CharacterMapCX.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:h="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -68,14 +69,20 @@
                 Opacity="0.71"
                 Text="{x:Bind Name}"
                 TextWrapping="Wrap" />
-            <TextBlock
+            <cx:DirectText
+                core:Properties.PreviewStringTrigger="{x:Bind DefaultFace}"
+                FontFace="{x:Bind DefaultFace.Face}"
+                FontSize="32"
+                IsBackgroundRenderEnabled="True"
+                IsTextWrappingEnabled="True" />
+            <!--<TextBlock
                 core:Properties.PreviewStringTrigger="{x:Bind DefaultFace}"
                 FontFamily="{x:Bind DefaultFace.Source}"
                 FontSize="32"
                 FontStretch="{x:Bind DefaultFace.DirectWriteProperties.Stretch}"
                 FontStyle="{x:Bind DefaultFace.DirectWriteProperties.Style}"
                 FontWeight="{x:Bind DefaultFace.DirectWriteProperties.Weight}"
-                TextWrapping="Wrap" />
+                TextWrapping="Wrap" />-->
         </StackPanel>
     </DataTemplate>
 

@@ -317,13 +317,10 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
     {
         bool hasText = FontFace != nullptr && (GlyphIndex >= 0 || (Text != nullptr && Text->Length() > 0));
 
-        if (!hasText || Typography == nullptr)
+        if (!hasText)
         {
-            if (!hasText)
-            {
-                ClearLayoutCache();
-                m_render = false;
-            }
+            ClearLayoutCache();
+            m_render = false;
             return Size(this->MinWidth, this->MinHeight);
         }
 

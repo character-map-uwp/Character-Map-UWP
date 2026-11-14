@@ -49,6 +49,20 @@ public static class Extensions
             x.FontRenderingEmSize = size;
     }
 
+    public static void SetTextString(this DependencyObject f, string text)
+    {
+        if (f is TextBlock tbk)
+            tbk.Text = text;
+        else if (f is DirectText dtx)
+            dtx.Text = text;
+        else if (f is DirectTextBox dtbx)
+            dtbx.Text = text;
+        else if (f is FontGlyphs fg)
+            fg.UnicodeString = text;
+        else if (f is Run run)
+            run.Text = text;
+    }
+
     public static bool Has(this IEnumerable<GlyphImageFormat> formats, GlyphImageFormat format) =>
         formats?.Any(f => f== format || (f & format) == format) ?? false;
 
