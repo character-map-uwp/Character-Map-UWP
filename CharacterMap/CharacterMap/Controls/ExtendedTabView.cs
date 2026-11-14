@@ -1,4 +1,4 @@
-﻿using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using System;
 using System.Collections.Generic;
@@ -29,6 +29,7 @@ public partial class ExtendedTabView : TabView
         if (_tabListView is not null)
         {
             _tabListView.ContainerContentChanging -= Tlv_ContainerContentChanging;
+            _tabListView.SelectionChanged -= Tlv_SelectionChanged;
             _tabListView = null;
         }
 
@@ -42,6 +43,8 @@ public partial class ExtendedTabView : TabView
             //tlv.ChoosingItemContainer += Tlv_ChoosingItemContainer;
             tlv.ContainerContentChanging -= Tlv_ContainerContentChanging;
             tlv.ContainerContentChanging += Tlv_ContainerContentChanging;
+            tlv.SelectionChanged -= Tlv_SelectionChanged;
+            tlv.SelectionChanged += Tlv_SelectionChanged;
         }
 
         if (this.GetTemplateChild("OtherButton") is Button b)
@@ -70,12 +73,61 @@ public partial class ExtendedTabView : TabView
         IsExpandedChanged?.Invoke(this, n);
     }
 
+    private void Tlv_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        UpdateTabSelectionStates();
+        this.GetDispatcherQueue().Enqueue(UpdateTabSelectionStates);
+    }
+
+    private void UpdateTabSelectionStates()
+    {
+        if (_tabListView is null)
+            return;
+
+        foreach (TabViewItem item in _tabListView.GetFirstLevelDescendantsOfType<TabViewItem>())
+            SyncSelectionState(item);
+    }
+
     private void Tlv_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
     {
-        if (args.ItemContainer is not { } container) return;
+        if (args.InRecycleQueue || args.ItemContainer is not { } container)
+            return;
 
         string state = IsExpanded ? "ExpandedState" : "NotExpandedState";
-        VisualStateManager.GoToState(args.ItemContainer, state, ResourceHelper.AllowAnimation);
+        VisualStateManager.GoToState(container, state, ResourceHelper.AllowAnimation);
+
+        if (container is TabViewItem tvi)
+            SyncSelectionState(tvi);
+    }
+
+    private void Tvi_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is TabViewItem tvi)
+        {
+            tvi.Loaded -= Tvi_Loaded;
+            SyncSelectionState(tvi, hookLoaded: false);
+        }
+    }
+
+    private void SyncSelectionState(TabViewItem tvi, bool hookLoaded = true)
+    {
+        VisualStateGroup group = tvi.GetVisualStateGroup("CommonStates");
+        string current = group?.CurrentState?.Name;
+        bool isSelectedState = current is "Selected" or "PointerOverSelected" or "PressedSelected";
+
+        if (tvi.IsSelected)
+        {
+            if (!isSelectedState && !VisualStateManager.GoToState(tvi, "Selected", false) && hookLoaded)
+            {
+                tvi.Loaded -= Tvi_Loaded;
+                tvi.Loaded += Tvi_Loaded;
+            }
+        }
+        else if (isSelectedState && !VisualStateManager.GoToState(tvi, "Normal", false) && hookLoaded)
+        {
+            tvi.Loaded -= Tvi_Loaded;
+            tvi.Loaded += Tvi_Loaded;
+        }
     }
 
     //private void Tlv_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)

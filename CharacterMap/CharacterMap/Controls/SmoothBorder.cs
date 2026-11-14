@@ -53,8 +53,8 @@ public partial class SmoothBorder : ContentControl
     {
         this.DefaultStyleKey = typeof(SmoothBorder);
         this.Loaded += SmoothBorder_Loaded;
-        this.Unloaded += SmoothBorder_Unloaded;
         this.SizeChanged += SmoothBorder_SizeChanged;
+        RegisterCallbacks();
     }
 
     protected override void OnApplyTemplate()
@@ -73,11 +73,6 @@ public partial class SmoothBorder : ContentControl
         UpdateAll();
     }
 
-    private void SmoothBorder_Unloaded(object sender, RoutedEventArgs e)
-    {
-        UnregisterCallbacks();
-    }
-
     private void RegisterCallbacks()
     {
         if (_tokens.Count > 0)
@@ -87,13 +82,6 @@ public partial class SmoothBorder : ContentControl
         _tokens.Add((BorderBrushProperty, RegisterPropertyChangedCallback(BorderBrushProperty, OnDependencyPropertyChanged)));
         _tokens.Add((BorderThicknessProperty, RegisterPropertyChangedCallback(BorderThicknessProperty, OnDependencyPropertyChanged)));
         _tokens.Add((CornerRadiusProperty, RegisterPropertyChangedCallback(CornerRadiusProperty, OnDependencyPropertyChanged)));
-    }
-
-    private void UnregisterCallbacks()
-    {
-        foreach ((DependencyProperty dp, long token) in _tokens)
-            UnregisterPropertyChangedCallback(dp, token);
-        _tokens.Clear();
     }
 
     private void OnDependencyPropertyChanged(DependencyObject sender, DependencyProperty dp)

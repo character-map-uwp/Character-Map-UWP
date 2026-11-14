@@ -1146,7 +1146,7 @@ public partial class MainPresenter : ContentControl
         {
             Content = new CalligraphyView(MainPage.GetFontMap().ViewModel.RenderingOptions);
         }
-        else if (newValue.StartsWith(nameof(SettingsView)) && oldValue.StartsWith(nameof(SettingsView)) is false)
+        else if (newValue.StartsWith(nameof(SettingsView)) && (oldValue is null ||  oldValue?.StartsWith(nameof(SettingsView)) is false))
         {
             if (MainPage is not MainPage main)
                 return;
