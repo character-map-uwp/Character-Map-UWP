@@ -137,9 +137,6 @@
     <PackageReference Include="SQLitePCLRaw.provider.winsqlite3.uwp10">
       <Version>1.1.14</Version>
     </PackageReference>
-    <PackageReference Include="Win2d.uwp">
-      <Version>1.28.2</Version>
-    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
@@ -241,7 +238,6 @@
     <Compile Include="Core\Index.cs" />
     <Compile Include="Core\Localizer.cs" />
     <Compile Include="Core\Properties.cs" />
-    <Compile Include="Core\SVGPathReciever.cs" />
     <Compile Include="Core\TypographyFeatureInfo.cs" />
     <Compile Include="Models\FontCharacterList.cs" />
     <Compile Include="Models\GlyphCharacter.cs" />

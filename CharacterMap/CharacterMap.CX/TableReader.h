@@ -3,8 +3,6 @@
 #include "DWriteFontAxisAttribute.h"
 #include "DWriteNamedFontAxisValue.h"
 
-using namespace Microsoft::Graphics::Canvas;
-using namespace Microsoft::Graphics::Canvas::Text;
 using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
@@ -34,7 +32,7 @@ namespace CharacterMapCX
 
 			writer->WriteBytes(Platform::ArrayReference<BYTE>(b, size));
 			m_buffer = writer->DetachBuffer();
-			// writer is a ref‑counted object; no manual delete needed
+			// writer is a refâ€‘counted object; no manual delete needed
 
 			reader = DataReader::FromBuffer(m_buffer);
 		};
@@ -151,7 +149,7 @@ namespace CharacterMapCX
 		{
 			if (i < (int)position)
 			{
-				reader = nullptr; // Release ref‑counted DataReader
+				reader = nullptr; // Release refâ€‘counted DataReader
 				reader = DataReader::FromBuffer(m_buffer);
 				position = 0;
 			}

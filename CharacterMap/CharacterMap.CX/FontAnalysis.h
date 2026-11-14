@@ -17,6 +17,7 @@ using namespace Platform;
 
 namespace CharacterMapCX
 {
+	[Windows::Foundation::Metadata::WebHostHidden]
 	public ref class FontAnalysis sealed
 	{
 	public:

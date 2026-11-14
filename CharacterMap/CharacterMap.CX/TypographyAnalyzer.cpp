@@ -3,7 +3,6 @@
 #include <vector>
 #include <mutex>
 
-using namespace Microsoft::Graphics::Canvas::Text;
 using namespace Microsoft::WRL;
 using namespace Windows::Foundation::Collections;
 using namespace Platform::Collections;

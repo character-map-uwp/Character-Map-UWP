@@ -153,8 +153,14 @@ namespace
 			String^ pd = svgSink->GetPathData();
 			if (pd == nullptr || pd->IsEmpty()) return {};
 
-			std::wstring wpath(pd->Data());
-			std::string path(wpath.begin(), wpath.end());
+			std::wstring wpath(pd->Data(), pd->Length());
+			std::string path;
+			int len = WideCharToMultiByte(CP_UTF8, 0, wpath.data(), static_cast<int>(wpath.size()), nullptr, 0, nullptr, nullptr);
+			if (len > 0)
+			{
+				path.resize(len);
+				WideCharToMultiByte(CP_UTF8, 0, wpath.data(), static_cast<int>(wpath.size()), &path[0], len, nullptr, nullptr);
+			}
 			bool evenOdd = false;
 			if (path.size() > 3 && path[0] == 'F')
 			{

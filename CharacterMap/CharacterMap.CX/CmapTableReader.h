@@ -4,8 +4,6 @@
 #include "DWriteFontAxisAttribute.h"
 #include "DWriteNamedFontAxisValue.h"
 
-using namespace Microsoft::Graphics::Canvas;
-using namespace Microsoft::Graphics::Canvas::Text;
 using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;

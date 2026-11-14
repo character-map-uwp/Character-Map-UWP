@@ -16,6 +16,7 @@ using namespace CharacterMapCX;
 
 namespace CharacterMapCX
 {
+	[Windows::Foundation::Metadata::WebHostHidden]
 	public ref class DWriteTextLayoutDefinition sealed
 	{
 	public:
@@ -34,6 +35,7 @@ namespace CharacterMapCX
 		property DWriteFontFace^ FontFace;
 	};
 
+	[Windows::Foundation::Metadata::WebHostHidden]
 	public ref class DWriteTextLayoutAnalysis sealed
 	{
 	public:

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Microsoft.Graphics.Canvas.native.h>
 #include <d2d1_2.h>
 #include <d2d1_3.h>
 #include <dwrite_3.h>
@@ -14,7 +13,6 @@
 #include "DWriteOpenType.h"
 #include "GlyphOutline.h"
 
-using namespace Microsoft::Graphics::Canvas::Text;
 using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
@@ -115,12 +113,10 @@ namespace CharacterMapCX
 			Platform::String^ text,
 			Windows::Foundation::Collections::IVectorView<DWriteTypographyFeatureName>^ features);
 
-		static CanvasFontSet^ CreateFontSet(String^ path);
-
 	internal:
-		static __inline String^ GetLocaleString(ComPtr<IDWriteLocalizedStrings> strings, int ls, wchar_t* locale);
+		static String^ GetLocaleString(ComPtr<IDWriteLocalizedStrings> strings, int ls, wchar_t* locale);
 
-		static __inline bool IsLocalFont(ComPtr<IDWriteFontFileLoader> loader, const void* refKey, uint32 size);
+		static bool IsLocalFont(ComPtr<IDWriteFontFileLoader> loader, const void* refKey, uint32 size);
 
 		static IVectorView<DWriteKnownFontAxisValues^>^ GetNamedAxisValues(ComPtr<IDWriteFontFaceReference> faceRef);
 
@@ -136,9 +132,9 @@ namespace CharacterMapCX
 
 		static ComPtr<IDWriteFontSet> DirectWrite::CreateIDWriteFontSet(String^ path);
 
-		static __inline DWriteFontSet^ GetFonts(ComPtr<IDWriteFontCollection3> fontSet);
+		static DWriteFontSet^ GetFonts(ComPtr<IDWriteFontCollection3> fontSet);
 
-		static __inline DWriteFontSet^ GetFonts(Uri^ uri, ComPtr<IDWriteFactory7> fac);
+		static DWriteFontSet^ GetFonts(Uri^ uri, ComPtr<IDWriteFactory7> fac);
 
 		static IVectorView<DWriteFontSet^>^ GetFonts(IVectorView<Uri^>^ uris, ComPtr<IDWriteFactory7> fac);
 

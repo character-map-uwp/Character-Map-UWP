@@ -9,6 +9,7 @@
 namespace CharacterMapCX
 {
     // C++/CX wrapper that we will return to C#
+    [Windows::Foundation::Metadata::WebHostHidden]
     public ref class MicaEffectFactory sealed
     {
     public:

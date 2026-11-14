@@ -1,5 +1,4 @@
 using System.IO.Compression;
-using Microsoft.Graphics.Canvas.Text;
 
 namespace CharacterMap.Core;
 

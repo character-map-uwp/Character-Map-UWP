@@ -1,7 +1,6 @@
 using CharacterMap.Controls.Brushes;
 using CharacterMap.Helpers;
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Geometry;
+using CharacterMapCX;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -303,7 +302,6 @@ public partial class SmoothBorder : ContentControl
         Thickness bt = this.BorderThickness;
         CornerRadius cr = this.CornerRadius;
         CornerRadius innerCr = GetInnerCornerRadius(cr, bt);
-        CanvasDevice device = CanvasDevice.GetSharedDevice();
         Compositor c = _shapeVisual.Compositor;
 
         // Target geometries for newSize
@@ -314,11 +312,11 @@ public partial class SmoothBorder : ContentControl
             Math.Max(0, newSize.X - bt.Left - bt.Right),
             Math.Max(0, newSize.Y - bt.Top - bt.Bottom));
 
-        using CanvasGeometry outerGeomNew = CreateRoundedRectGeometry(device, outerRectNew, cr);
-        using CanvasGeometry innerGeomNew = CreateRoundedRectGeometry(device, innerRectNew, innerCr);
+        using D2DPathGeometry outerGeomNew = D2DPathGeometry.CreateRoundedRectangle(outerRectNew, cr);
+        using D2DPathGeometry innerGeomNew = D2DPathGeometry.CreateRoundedRectangle(innerRectNew, innerCr);
 
-        CompositionPath outerPathNew = new(outerGeomNew);
-        CompositionPath innerPathNew = new(innerGeomNew);
+        CompositionPath outerPathNew = outerGeomNew.ToCompositionPath();
+        CompositionPath innerPathNew = innerGeomNew.ToCompositionPath();
 
         if (animate && oldSize.X > 0 && oldSize.Y > 0 && ResourceHelper.AllowAnimation)
         {
@@ -355,87 +353,6 @@ public partial class SmoothBorder : ContentControl
             Math.Max(0, cr.TopRight - Math.Max(bt.Right, bt.Top)),
             Math.Max(0, cr.BottomRight - Math.Max(bt.Right, bt.Bottom)),
             Math.Max(0, cr.BottomLeft - Math.Max(bt.Left, bt.Bottom)));
-    }
-
-    private static CanvasGeometry CreateRoundedRectGeometry(
-        ICanvasResourceCreator resourceCreator,
-        Rect rc,
-        CornerRadius cr)
-    {
-        float left = (float)rc.Left;
-        float top = (float)rc.Top;
-        float right = (float)rc.Right;
-        float bottom = (float)rc.Bottom;
-        float width = Math.Max(0.001f, (float)rc.Width);
-        float height = Math.Max(0.001f, (float)rc.Height);
-
-        float tl = Math.Max(0.0f, (float)cr.TopLeft);
-        float tr = Math.Max(0.0f, (float)cr.TopRight);
-        float br = Math.Max(0.0f, (float)cr.BottomRight);
-        float bl = Math.Max(0.0f, (float)cr.BottomLeft);
-
-        // Overlap resolution (CSS/XAML standard: compute single min scale factor across all 4 sides)
-        float factor = 1.0f;
-        if (tl + tr > width)
-            factor = Math.Min(factor, width / (tl + tr));
-        if (bl + br > width)
-            factor = Math.Min(factor, width / (bl + br));
-        if (tl + bl > height)
-            factor = Math.Min(factor, height / (tl + bl));
-        if (tr + br > height)
-            factor = Math.Min(factor, height / (tr + br));
-
-        if (factor < 1.0f)
-        {
-            tl *= factor;
-            tr *= factor;
-            br *= factor;
-            bl *= factor;
-        }
-
-        using CanvasPathBuilder builder = new(resourceCreator);
-
-        // Start at top edge before top-right corner
-        builder.BeginFigure(new Vector2(right - tr, top));
-
-        // Top-right corner
-        if (tr > 0)
-            builder.AddArc(new Vector2(right, top + tr), tr, tr, 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
-        else
-            builder.AddLine(new Vector2(right, top));
-
-        // Right edge line
-        builder.AddLine(new Vector2(right, bottom - br));
-
-        // Bottom-right corner
-        if (br > 0)
-            builder.AddArc(new Vector2(right - br, bottom), br, br, 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
-        else
-            builder.AddLine(new Vector2(right, bottom));
-
-        // Bottom edge line
-        builder.AddLine(new Vector2(left + bl, bottom));
-
-        // Bottom-left corner
-        if (bl > 0)
-            builder.AddArc(new Vector2(left, bottom - bl), bl, bl, 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
-        else
-            builder.AddLine(new Vector2(left, bottom));
-
-        // Left edge line
-        builder.AddLine(new Vector2(left, top + tl));
-
-        // Top-left corner
-        if (tl > 0)
-            builder.AddArc(new Vector2(left + tl, top), tl, tl, 0, CanvasSweepDirection.Clockwise, CanvasArcSize.Small);
-        else
-            builder.AddLine(new Vector2(left, top));
-
-        // Top edge line back to figure start
-        builder.AddLine(new Vector2(right - tr, top));
-
-        builder.EndFigure(CanvasFigureLoop.Closed);
-        return CanvasGeometry.CreatePath(builder);
     }
 
     private void UpdateShadow()

@@ -4,8 +4,6 @@
 #include "DWriteFontAxisAttribute.h"
 #include "DWriteNamedFontAxisValue.h"
 
-using namespace Microsoft::Graphics::Canvas;
-using namespace Microsoft::Graphics::Canvas::Text;
 using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
@@ -155,9 +153,9 @@ namespace CharacterMapCX
 			return size >= 4 && d[0] == 'a' && d[1] == 'f' && d[2] == 'i' && d[3] == 'i';
 		}
 
-		bool IsHex(char c)
+		bool IsHex(wchar_t c)
 		{
-			return c >= 0 && c <= 'F';
+			return c >= 0 && c <= L'F';
 		}
 
 		/*bool IsValid(string* str, UINT8 size)
@@ -190,9 +188,9 @@ namespace CharacterMapCX
 			return d->length() >= 4 && d->at(0) == 'a' && d->at(1) == 'f' && d->at(2) == 'i' && d->at(3) == 'i';
 		}
 
-		bool IsHex(char c)
+		bool IsHex(wchar_t c)
 		{
-			return c >= 0 && c <= 'F';
+			return c >= 0 && c <= L'F';
 		}
 
 		void Clean(string* d, UINT8 size)

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Microsoft.Graphics.Canvas.native.h>
 #include <d2d1_2.h>
 #include <d2d1_3.h>
 #include <dwrite_3.h>
@@ -12,8 +11,6 @@
 #include <vector>
 #include <algorithm>
 
-using namespace Microsoft::Graphics::Canvas;
-using namespace Microsoft::Graphics::Canvas::Text;
 using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
@@ -90,6 +87,7 @@ namespace CharacterMapCX
 
 
 
+	[Windows::Foundation::Metadata::WebHostHidden]
 	public ref class DWriteFontFace sealed
 	{
 	public:
@@ -135,11 +133,6 @@ namespace CharacterMapCX
 			UINT32 get() { return GetFontFace()->GetGlyphCount(); }
 		}
 
-		property CanvasFontFileFormatType FileFormatType
-		{
-			CanvasFontFileFormatType get() { return static_cast<CanvasFontFileFormatType>(GetFontFace()->GetType()); }
-		}
-
 		property DWriteProperties^ Properties
 		{
 			DWriteProperties^ get() { return m_dwProperties; }
@@ -159,11 +152,6 @@ namespace CharacterMapCX
 		}
 
 		[Windows::Foundation::Metadata::DefaultOverload]
-		IMapView<String^, String^>^ GetInformationalStrings(CanvasFontInformation fontInformation)
-		{
-			return GetInformationalStrings(static_cast<DWriteFontInformation>(fontInformation));
-		}
-
 		IMapView<String^, String^>^ GetInformationalStrings(DWriteFontInformation fontInformation)
 		{
 			auto map = ref new Map<String^, String^>();

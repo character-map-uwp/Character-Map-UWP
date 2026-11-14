@@ -1,10 +1,16 @@
 #pragma once
 
+#include <wrl.h>
+#include <wrl/wrappers/corewrappers.h>
+#include <roerrorapi.h>
+#include <windows.graphics.h>
+#include <windows.graphics.interop.h>
+#include <windows.graphics.effects.h>
+#include <windows.graphics.effects.interop.h>
 #include <collection.h>
 #include <ppltasks.h>
 #include <DWHelpers.h>
 #include <d2d1_2.h>
-#include <Microsoft.Graphics.Canvas.native.h>
 #include <d2d1_3.h>
 #include <dwrite_3.h>
 #include <wincodec.h>

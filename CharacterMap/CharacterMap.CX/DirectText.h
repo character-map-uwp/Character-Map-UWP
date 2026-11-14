@@ -418,7 +418,7 @@ namespace CharacterMapCX
 			if (_UnicodeIndexProperty == nullptr)
 			{
 				_UnicodeIndexProperty = DependencyProperty::Register(
-					"UnicodeIndex", UINT32::typeid, DirectText::typeid, ref new PropertyMetadata((UINT32)0, callback));
+					"UnicodeIndex", UINT32::typeid, DirectText::typeid, ref new PropertyMetadata(Windows::Foundation::PropertyValue::CreateUInt32(0), callback));
 			}
 
 			if (_TextProperty == nullptr)

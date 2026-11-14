@@ -1,6 +1,5 @@
 using CharacterMap.Models;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Graphics.Canvas.Text;
 using System.Collections;
 using Windows.UI;
 using Windows.UI.Xaml.Documents;

@@ -1,5 +1,4 @@
 #pragma once
-#include <Microsoft.Graphics.Canvas.native.h>
 #include <d2d1_2.h>
 #include <d2d1_3.h>
 #include <dwrite_3.h>
@@ -15,8 +14,6 @@
 #include "GlyphImageFormat.h"
 #include "DWriteFallbackFont.h"
 
-using namespace Microsoft::Graphics::Canvas;
-using namespace Microsoft::Graphics::Canvas::Geometry;
 using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
@@ -27,8 +24,10 @@ using namespace CharacterMapCX;
 namespace CharacterMapCX
 {
 	ref class NativeInterop;
+	[Windows::Foundation::Metadata::WebHostHidden]
 	public delegate void SystemFontSetInvalidated(NativeInterop^ sender, Platform::Object^ args);
 
+    [Windows::Foundation::Metadata::WebHostHidden]
     public ref class NativeInterop sealed
     {
     public:
@@ -47,11 +46,6 @@ namespace CharacterMapCX
 
 		PathData^ GetGlyphPath(DWriteFontFace^ fontFace, UINT16 glyphIndex, float fontSize);
 		PathData^ GetTextPath(DWriteFontFace^ fontFace, Platform::String^ text, float fontSize, DWriteTypographyFeatureName feature);
-
-		/// <summary>
-		/// Returns an SVG-Path syntax compatible representation of the Canvas Text Geometry.
-		/// </summary>
-		PathData^ GetPathData(CanvasGeometry^ geometry);
 
 		DWriteFontSet^ GetSystemFonts();
 

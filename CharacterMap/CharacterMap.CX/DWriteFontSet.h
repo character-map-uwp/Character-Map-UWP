@@ -8,6 +8,7 @@ using namespace Platform::Collections;
 
 namespace CharacterMapCX
 {
+	[Windows::Foundation::Metadata::WebHostHidden]
 	public ref class DWriteFontSet sealed
 	{
 	public:

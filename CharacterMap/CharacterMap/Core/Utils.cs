@@ -62,8 +62,6 @@ public class StringBuilderPool : Pool<StringBuilder>
 
 public static class Utils
 {
-    public static Microsoft.Graphics.Canvas.CanvasDevice CanvasDevice { get; } = Microsoft.Graphics.Canvas.CanvasDevice.GetSharedDevice();
-
     public static NativeInterop GetInterop() => Ioc.Default.GetService<NativeInterop>();
 
     public static StringBuilderPool BuilderPool { get; } = new();

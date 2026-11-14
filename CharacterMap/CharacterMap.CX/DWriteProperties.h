@@ -12,6 +12,7 @@ using namespace Platform;
 
 namespace CharacterMapCX
 {
+	[Windows::Foundation::Metadata::WebHostHidden]
 	public ref class DWriteProperties sealed
 	{
 	public:

@@ -12,8 +12,6 @@
 #include <shlwapi.h>
 #pragma comment(lib, "shlwapi.lib")
 
-using namespace Microsoft::Graphics::Canvas;
-using namespace Microsoft::Graphics::Canvas::Text;
 using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
@@ -24,27 +22,6 @@ using namespace Windows::Storage;
 using namespace Windows::Storage::Streams;
 using namespace concurrency;
 
-
-CanvasFontSet^ DirectWrite::CreateFontSet(String^ path)
-{
-	/*
-		We need to validate the font has a family name.
-		Although other platforms and font renderers can read and understand fonts
-		without a FamilyName set in the 'name' table (for example, WOFF fonts),
-		XAML font rendering engine does not support these types of fonts.
-		Our basic WOFF conversion may give us fonts that are perfectly fine
-		except for this missing field.
-
-		WOFF2 fonts may also give the same problem.
-	*/
-
-	ComPtr<IDWriteFontSet> dwFontSet = CreateIDWriteFontSet(path);
-	if (!dwFontSet)
-		ThrowHR(E_INVALIDARG);
-
-	CanvasFontSet^ fontSet = GetOrCreate<CanvasFontSet>(dwFontSet.Get());
-	return fontSet;
-}
 
 ComPtr<IDWriteFontSet> DirectWrite::CreateIDWriteFontSet(String^ path)
 {
@@ -612,8 +589,12 @@ IVectorView<DWriteKnownFontAxisValues^>^ DirectWrite::GetNamedAxisValues(ComPtr<
 
 DWriteFontSet^ DirectWrite::GetFonts(Uri^ uri, ComPtr<IDWriteFactory7> fac)
 {
-	CanvasFontSet^ set = CreateFontSet(uri->Path);
-	ComPtr<IDWriteFontSet3> fontSet = GetWrappedResource<IDWriteFontSet3>(set);
+	ComPtr<IDWriteFontSet> dwFontSet = CreateIDWriteFontSet(uri->Path);
+	if (!dwFontSet)
+		ThrowHR(E_INVALIDARG);
+
+	ComPtr<IDWriteFontSet3> fontSet;
+	dwFontSet.As(&fontSet);
 
 	ComPtr<IDWriteFontCollection1> f1;
 	ComPtr<IDWriteFontCollection3> f3;

@@ -5,6 +5,7 @@ using namespace Windows::Foundation::Collections;
 
 namespace CharacterMapCX
 {
+	[Windows::Foundation::Metadata::WebHostHidden]
 	public ref class DWriteFontFamily sealed
 	{
 	public:

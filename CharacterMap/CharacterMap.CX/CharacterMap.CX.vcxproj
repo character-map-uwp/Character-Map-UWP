@@ -132,7 +132,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <AdditionalOptions>/bigobj /GR- /Zm300 %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <DisableSpecificWarnings>28204;4244;4018</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -150,7 +150,7 @@
       <Optimization>MinSpace</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <StringPooling>true</StringPooling>
-      <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <DisableSpecificWarnings>28204;4244;4018</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -167,7 +167,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <AdditionalOptions>/bigobj /GR- /Zm300 %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <DisableSpecificWarnings>28204;4244;4018</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -185,7 +185,7 @@
       <Optimization>MinSpace</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <StringPooling>true</StringPooling>
-      <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <DisableSpecificWarnings>28204;4244;4018</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -202,7 +202,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <AdditionalOptions>/bigobj /GR- /Zm300 %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <DisableSpecificWarnings>28204;4244;4018</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -220,7 +220,7 @@
       <Optimization>MinSpace</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <StringPooling>true</StringPooling>
-      <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <DisableSpecificWarnings>28204;4244;4018</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -237,7 +237,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
       <AdditionalOptions>/bigobj /GR- /Zm300 %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <DisableSpecificWarnings>28204;4244;4018</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -255,7 +255,7 @@
       <Optimization>MinSpace</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <StringPooling>true</StringPooling>
-      <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <DisableSpecificWarnings>28204;4244;4018</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -275,6 +275,7 @@
     <ClInclude Include="CustomFontManager.h" />
     <ClInclude Include="CompositionDeviceManager.h" />
     <ClInclude Include="CoreDWTextServices.h" />
+    <ClInclude Include="D2DPathGeometry.h" />
     <ClInclude Include="D2DRenderTarget.h" />
     <ClInclude Include="D2DSvgDocument.h" />
     <ClInclude Include="DirectText.h" />
@@ -335,6 +336,7 @@
     <ClCompile Include="ColrV1Svg.cpp" />
     <ClCompile Include="CompositionDeviceManager.cpp" />
     <ClCompile Include="CoreDWTextServices.cpp" />
+    <ClCompile Include="D2DPathGeometry.cpp" />
     <ClCompile Include="D2DRenderTarget.cpp" />
     <ClCompile Include="D2DSvgDocument.cpp" />
     <ClCompile Include="CustomFontManager.cpp" />
@@ -362,17 +364,7 @@
   <ItemGroup>
     <Page Include="Themes\Generic.xaml" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\Win2D.uwp.1.28.2\build\native\Win2D.uwp.targets" Condition="Exists('..\packages\Win2D.uwp.1.28.2\build\native\Win2D.uwp.targets')" />
   </ImportGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Win2D.uwp.1.28.2\build\native\Win2D.uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Win2D.uwp.1.28.2\build\native\Win2D.uwp.targets'))" />
-  </Target>
 </Project>
