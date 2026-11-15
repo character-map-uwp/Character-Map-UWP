@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Media.Animation;
 
 namespace CharacterMap.Views;
 
+[DependencyProperty<bool>("IsStandalone", true)]
 public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPresenter
 {
     public QuickCompareViewModel ViewModel { get; private set; }
@@ -23,8 +24,6 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
     private UWPNavigationHelper _navHelper { get; } = new();
 
     private ConnectedAnimation _titleAnimation;
-
-    public bool IsStandalone { get; set; } = true;
 
     public QuickCompareView(QuickCompareArgs args)
     {
@@ -50,21 +49,22 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
         this.Opacity = 0;
     }
 
-    protected override void OnLoading()
+    partial void OnIsStandaloneChanged(bool o, bool n)
     {
-
-        if (IsStandalone)
+        if (!n && ViewModel.Settings.UseMenuNavigationBar)
         {
-            ApplicationView.GetForCurrentView().SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible);
-        }
-
-        if (IsStandalone is false && ViewModel.Settings.UseMenuNavigationBar)
-        {
+            Presenter.BackgroundTransition = null;
             Presenter.Background = null;
 
             if (ResourceHelper.AllowAnimation)
                 CompositionFactory.SetupOverlayPanelAnimation(this, true);
         }
+    }
+
+    protected override void OnLoading()
+    {
+        if (IsStandalone)
+            ApplicationView.GetForCurrentView().SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible);
     }
 
     protected override void OnLoaded(object sender, RoutedEventArgs e)

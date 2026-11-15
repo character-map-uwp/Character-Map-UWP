@@ -345,7 +345,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
     float availH = std::isinf(size.Height) ? static_cast<float>(m) : static_cast<float>((std::max)(1.0, static_cast<double>(size.Height) - padH));
 
     Windows::Foundation::Size fixedSurfaceSize = SurfaceSize;
-    if (IsBackgroundRenderEnabled && !IsCharacterFitEnabled && GlyphIndex < 0 &&
+    if (IsBackgroundRenderEnabled && !IsCharacterFitEnabled && !IsOverwriteCompensationEnabled && GlyphIndex < 0 &&
         fixedSurfaceSize.Width > 0.0f && fixedSurfaceSize.Height > 0.0f)
     {
         m_deferredLayout = true;
@@ -373,8 +373,12 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             sizeChangedForWrap = true;
     }
 
+    if (sizeChangedForWrap)
+        needsRebuild = true;
+
     // Fast path: reuse existing IDWriteTextLayout when only FontSize, MaxWidth/MaxHeight, or variable font Axis changed.
-    if ((needsRebuild || sizeChangedForWrap) && GlyphIndex < 0 && m_textLayout != nullptr && FontFace != nullptr)
+    // Never mutate m_textLayout in-place while a background draw is still reading it (IDWriteTextLayout is not thread-safe).
+    if (needsRebuild && GlyphIndex < 0 && m_textLayout != nullptr && FontFace != nullptr && m_activeBackgroundDraws.load() == 0)
     {
         auto fontFace = FontFace;
         auto fontSize = 8.0 > FontSize ? 8.0 : FontSize;
@@ -463,7 +467,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
                 if (SUCCEEDED(CoreDWTextServices::MeasureLayoutBounds(m_textLayout.Get(), &layoutBounds)))
                 {
-                    if (IsCharacterFitEnabled)
+                    if (IsCharacterFitEnabled || IsOverwriteCompensationEnabled)
                     {
                         if (FAILED(CoreDWTextServices::MeasureInkBounds(m_textLayout.Get(), m_drawFontFace.Get(), &drawBounds)))
                             drawBounds = layoutBounds;
@@ -572,7 +576,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             }
 
             // Calculate DrawBounds
-            if (IsCharacterFitEnabled)
+            if (IsCharacterFitEnabled || IsOverwriteCompensationEnabled)
             {
                 hr = CoreDWTextServices::MeasureInkBounds(textLayout.Get(), m_drawFontFace.Get(), &drawBounds);
                 if (FAILED(hr))
@@ -618,11 +622,17 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
     }
 
 
-    auto minh = min(drawBounds.Top, layoutBounds.Top);
-    auto maxh = max(drawBounds.Bottom, layoutBounds.Bottom);
-
-    auto minw = min(drawBounds.Left, layoutBounds.Left);
-    auto maxw = max(drawBounds.Right, layoutBounds.Right);
+    double minh = layoutBounds.Top;
+    double maxh = layoutBounds.Bottom;
+    double minw = layoutBounds.Left;
+    double maxw = layoutBounds.Right;
+    if (IsCharacterFitEnabled || GlyphIndex >= 0)
+    {
+        minh = min(drawBounds.Top, layoutBounds.Top);
+        maxh = max(drawBounds.Bottom, layoutBounds.Bottom);
+        minw = min(drawBounds.Left, layoutBounds.Left);
+        maxw = max(drawBounds.Right, layoutBounds.Right);
+    }
 
     double h = maxh - minh;
     double w = maxw - minw;
@@ -1400,9 +1410,18 @@ void DirectText::RenderToSurface(Windows::Foundation::Size finalSize)
 
     float dpiScale = CompositionDeviceManager::GetDpiScale(this->Dispatcher);
 
+    float overL = 0.0f, overT = 0.0f, overR = 0.0f, overB = 0.0f;
+    if (IsOverwriteCompensationEnabled && !IsCharacterFitEnabled && GlyphIndex < 0)
+    {
+        overL = (std::max)(0.0f, layoutBounds.Left - drawBounds.Left);
+        overT = (std::max)(0.0f, layoutBounds.Top - drawBounds.Top);
+        overR = (std::max)(0.0f, drawBounds.Right - layoutBounds.Right);
+        overB = (std::max)(0.0f, drawBounds.Bottom - layoutBounds.Bottom);
+    }
+
     Windows::Foundation::Size fixedSurfaceSize = SurfaceSize;
-    float surfaceW = (fixedSurfaceSize.Width > 0.0f) ? fixedSurfaceSize.Width : actualW;
-    float surfaceH = (fixedSurfaceSize.Height > 0.0f) ? fixedSurfaceSize.Height : actualH;
+    float surfaceW = ((fixedSurfaceSize.Width > 0.0f) ? fixedSurfaceSize.Width : actualW) + overL + overR;
+    float surfaceH = ((fixedSurfaceSize.Height > 0.0f) ? fixedSurfaceSize.Height : actualH) + overT + overB;
 
     LONG requiredWidth = (std::max)(1L, (std::min)(8192L, static_cast<LONG>(std::ceil(surfaceW * dpiScale))));
     LONG requiredHeight = (std::max)(1L, (std::min)(8192L, static_cast<LONG>(std::ceil(surfaceH * dpiScale))));
@@ -1413,7 +1432,8 @@ void DirectText::RenderToSurface(Windows::Foundation::Size finalSize)
     {
         if (m_surfaceBrush != nullptr)
             m_surfaceBrush->Scale = float2(1.0f / dpiScale, 1.0f / dpiScale);
-        m_spriteVisual->Size = float2(actualW, actualH);
+        m_spriteVisual->Size = float2(surfaceW, surfaceH);
+        m_spriteVisual->Offset = float3(-overL, -overT, 0.0f);
 
         CompositionDeviceManager::ApplySurfaceOrMaskBrush(
             compositor,

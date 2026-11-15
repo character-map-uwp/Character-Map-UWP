@@ -342,13 +342,14 @@
         <Setter Property="TitleBarHeight" Value="32" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="CloseGlyph" Value="{core:ThemeIconGlyph Icon=ViewClose}" />
+        <Setter Property="BackgroundTransition" Value="{StaticResource RootBackgroundTransition}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:ModalPagePresenter">
                     <Grid
                         x:Name="Root"
                         Background="{TemplateBinding Background}"
-                        BackgroundTransition="{StaticResource RootBackgroundTransition}"
+                        BackgroundTransition="{TemplateBinding BackgroundTransition}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
 
@@ -898,7 +899,6 @@
                             ItemMargin="4"
                             ItemSize="40"
                             ItemTypography="{Binding Options.DXTypography, RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                            ItemsSource="{Binding Options.Face.Characters, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                             SelectionMode="Single"
                             ShowColorGlyphs="{Binding Options.IsColorRenderingEnabled, RelativeSource={RelativeSource Mode=TemplatedParent}}">
                             <GridView.ItemsPanel>

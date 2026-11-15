@@ -32,6 +32,7 @@ public sealed partial class CalligraphyView : ViewBase, IInAppNotificationPresen
     {
         if (IsStandalone is false && ViewModel.Settings.UseMenuNavigationBar)
         {
+            Presenter.BackgroundTransition = null;
             Presenter.Background = null;
 
             if (ResourceHelper.AllowAnimation)

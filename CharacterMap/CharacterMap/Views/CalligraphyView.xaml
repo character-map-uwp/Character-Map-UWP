@@ -269,7 +269,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-        
+
                 <Grid x:Name="TopRow" ColumnSpacing="8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -279,9 +279,9 @@
 
                     <StackPanel VerticalAlignment="Bottom" Spacing="6">
                         <TextBlock
-                            x:Uid="GuideHeaderLabel"
+                            x:Uid="FontFaceLabel"
                             FontWeight="{ThemeResource SliderHeaderThemeFontWeight}"
-                            Text="Font Face" />
+                            d:Text="{core:Localizer Key=FontFaceLabel/Text}" />
 
                         <controls:FontOptionsButton
                             Width="200"
@@ -394,6 +394,7 @@
                             <Button
                                 x:Name="UndoButton"
                                 x:Uid="UndoButton"
+                                VerticalAlignment="Top"
                                 Click="{x:Bind ViewModel.InkManager.Undo}"
                                 Content="&#xE7A7;"
                                 IsEnabled="{x:Bind ViewModel.InkManager.CanUndo, Mode=OneWay, FallbackValue=False}"
@@ -408,6 +409,7 @@
                             <Button
                                 x:Name="RedoButton"
                                 x:Uid="RedoButton"
+                                VerticalAlignment="Top"
                                 Click="{x:Bind ViewModel.InkManager.Redo}"
                                 Content="&#xE7A6;"
                                 IsEnabled="{x:Bind ViewModel.InkManager.CanRedo, Mode=OneWay, FallbackValue=False}"
@@ -483,6 +485,7 @@
                             <Button
                                 x:Name="ClearAllButton"
                                 x:Uid="ClearAllButton"
+                                VerticalAlignment="Top"
                                 Content="&#xE74D;"
                                 IsEnabled="{x:Bind ViewModel.InkManager.HasStrokes, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}"
@@ -508,7 +511,7 @@
                             <InkToolbarCustomToggleButton
                                 x:Name="GuideCheck"
                                 x:Uid="GuideToggle"
-                                Margin="0 0 0 4"
+                                Margin="0 0 0 8"
                                 core:Properties.ClickAnimation="Content|Scale"
                                 core:Properties.ClickAnimationOffset="0.87"
                                 core:Properties.PointerOverAnimation="Content"
@@ -526,7 +529,7 @@
                             <InkToolbarCustomToggleButton
                                 x:Name="SwapButton"
                                 x:Uid="SideBySideToggle"
-                                Margin="0 0 0 4"
+                                Margin="0 0 0 8"
                                 core:Properties.ClickAnimation="Content|Scale"
                                 core:Properties.ClickAnimationOffset="0.87"
                                 core:Properties.PointerOverAnimation="Content"

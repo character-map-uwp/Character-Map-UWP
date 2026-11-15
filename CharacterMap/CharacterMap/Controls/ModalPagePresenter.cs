@@ -18,6 +18,8 @@ namespace CharacterMap.Controls;
 [DependencyProperty<Brush>("ContentBackground")]
 [DependencyProperty<string>("CloseGlyph")]
 [DependencyProperty<bool>("IsCloseAlignedLeft", false, nameof(UpdateClose))]
+[DependencyProperty<BrushTransition>("BackgroundTransition")]
+
 public sealed partial class ModalPagePresenter : ContentControl
 {
     public event RoutedEventHandler CloseClicked;

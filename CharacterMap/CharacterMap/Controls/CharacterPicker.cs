@@ -1,9 +1,9 @@
-﻿using Windows.UI.Xaml;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Controls;
 
-[DependencyProperty<CharacterRenderingOptions>("Options")]
+[DependencyProperty<CharacterRenderingOptions>("Options", null, nameof(OnOptionsChanged))]
 public sealed partial class CharacterPicker : Control
 {
     public event EventHandler<Character> CharacterSelected;
@@ -35,6 +35,7 @@ public sealed partial class CharacterPicker : Control
             _itemsGridView = g;
             g.ItemDoubleTapped -= ItemsGridView_ItemDoubleTapped;
             g.ItemDoubleTapped += ItemsGridView_ItemDoubleTapped;
+            g.ItemsSource = GroupedCharacterSource.Create(Options?.Face);
         }
 
         if (this.GetTemplateChild("AddButton") is Button b)
@@ -49,6 +50,12 @@ public sealed partial class CharacterPicker : Control
             c.Click += Close_Click;
         }
     }
+    private void OnOptionsChanged()
+    {
+        if (_itemsGridView is not null)
+            _itemsGridView.ItemsSource = GroupedCharacterSource.Create(Options?.Face);
+    }
+
     private void Add_Click(object sender, RoutedEventArgs e)
     {
         if (_itemsGridView.SelectedItem is Character c)
