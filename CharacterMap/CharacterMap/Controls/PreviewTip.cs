@@ -115,8 +115,8 @@ public partial class PreviewTip : ContentControl
     {
         FrameworkElement target = null;
 
-        if (Target is RadioButtons buttons)
-            target = buttons;
+        if (Target is UXRadioButtons or RadioButtons)
+            target = Target;
         else
         {
             ListViewBase listView = Target as ListViewBase;

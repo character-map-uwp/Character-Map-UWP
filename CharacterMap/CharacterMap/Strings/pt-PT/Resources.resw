@@ -2559,4 +2559,19 @@ As variações não podem ser copiadas como texto, mas podem ser exportadas como
     <value>Variante da fonte</value>
     <comment>Label for font face selector</comment>
   </data>
+  <data name="FontOptionsSelectFont" xml:space="preserve">
+    <value>Selecionar tipo de letra</value>
+  </data>
+  <data name="FontOptionsFamilyHeader" xml:space="preserve">
+    <value>Família de tipos de letra</value>
+  </data>
+  <data name="FontOptionsVariationAxesHeader" xml:space="preserve">
+    <value>Eixos de variação</value>
+  </data>
+  <data name="FontOptionsColorDisplayHeader" xml:space="preserve">
+    <value>Apresentação a cores</value>
+  </data>
+  <data name="FontOptionsTypographyHeader" xml:space="preserve">
+    <value>Tipografia</value>
+  </data>
 </root>

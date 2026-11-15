@@ -46,8 +46,8 @@ internal sealed partial class FontAxisEditorItem : ObservableObject
 [TemplatePart(Name = PartRootButton, Type = typeof(Button))]
 [TemplatePart(Name = PartFlyoutHost, Type = typeof(ContentControl))]
 [DependencyProperty<CharacterRenderingOptions>("SelectedItem", null, nameof(OnSelectedItemChanged))]
-[DependencyProperty<string>("PlaceholderText", "Select font", nameof(UpdateDisplayText))]
-[DependencyProperty<string>("DisplayText", "Select font")]
+[DependencyProperty<string>("PlaceholderText", null, nameof(UpdateDisplayText))]
+[DependencyProperty<string>("DisplayText", null)]
 public sealed partial class FontOptionsButton : Control
 {
     private const string PartRootButton = "RootButton";
@@ -155,7 +155,7 @@ public sealed partial class FontOptionsButton : Control
         else if (SelectedItem?.Face is { } face)
             DisplayText = face.FamilyName;
         else
-            DisplayText = PlaceholderText ?? "Select font";
+            DisplayText = PlaceholderText ?? Localization.Get("FontOptionsSelectFont");
     }
 
     private void OptionsFlyout_Opening(object sender, object e)

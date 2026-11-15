@@ -2563,4 +2563,19 @@ Wariacje nie mogą być kopiowane jako tekst, ale można je wyeksportować jako 
     <value>Odmiana czcionki</value>
     <comment>Label for font face selector</comment>
   </data>
+  <data name="FontOptionsSelectFont" xml:space="preserve">
+    <value>Wybierz czcionkę</value>
+  </data>
+  <data name="FontOptionsFamilyHeader" xml:space="preserve">
+    <value>Rodzina czcionek</value>
+  </data>
+  <data name="FontOptionsVariationAxesHeader" xml:space="preserve">
+    <value>Osie zmienności</value>
+  </data>
+  <data name="FontOptionsColorDisplayHeader" xml:space="preserve">
+    <value>Wyświetlanie kolorów</value>
+  </data>
+  <data name="FontOptionsTypographyHeader" xml:space="preserve">
+    <value>Typografia</value>
+  </data>
 </root>

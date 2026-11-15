@@ -868,7 +868,7 @@
                                         <Setter Target="CloseButton.Background" Value="{ThemeResource TabViewItemHeaderSelectedCloseButtonBackground}" />
                                         <Setter Target="CloseButton.Foreground" Value="{ThemeResource TabViewItemHeaderSelectedCloseButtonForeground}" />
                                         <Setter Target="LayoutRoot.Background" Value="Transparent" />
-                                        <Setter Target="ContentPresenter.FontWeight" Value="SemiBold" />
+                                        <!--<Setter Target="ContentPresenter.FontWeight" Value="SemiBold" />-->
                                     </VisualState.Setters>
                                 </VisualState>
 

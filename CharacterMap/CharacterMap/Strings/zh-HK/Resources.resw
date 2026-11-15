@@ -2565,4 +2565,19 @@ Web 字體在安裝前將轉換為 OTF 格式。</value>
     <value>字體外觀</value>
     <comment>Label for font face selector</comment>
   </data>
+  <data name="FontOptionsSelectFont" xml:space="preserve">
+    <value>選擇字型</value>
+  </data>
+  <data name="FontOptionsFamilyHeader" xml:space="preserve">
+    <value>字型系列</value>
+  </data>
+  <data name="FontOptionsVariationAxesHeader" xml:space="preserve">
+    <value>可變軸</value>
+  </data>
+  <data name="FontOptionsColorDisplayHeader" xml:space="preserve">
+    <value>色彩顯示</value>
+  </data>
+  <data name="FontOptionsTypographyHeader" xml:space="preserve">
+    <value>排版</value>
+  </data>
 </root>

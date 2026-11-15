@@ -146,7 +146,7 @@
     <comment>Toggle switch off-state label</comment>
   </data>
   <data name="ColorGlyphToggle.OnContent" xml:space="preserve">
-    <value>Color glyphs</value>
+    <value>Color Glyphs</value>
     <comment>Toggle switch on-state label</comment>
   </data>
   <data name="FontDisplayHeader.Text" xml:space="preserve">
@@ -3473,5 +3473,20 @@ Variations cannot be copied as text, but can be exported as PNG or SVG.</value>
   <data name="FontFaceLabel.Text" xml:space="preserve">
     <value>Font Face</value>
     <comment>Label for font face selector</comment>
+  </data>
+  <data name="FontOptionsSelectFont" xml:space="preserve">
+    <value>Select font</value>
+  </data>
+  <data name="FontOptionsFamilyHeader" xml:space="preserve">
+    <value>Font Family</value>
+  </data>
+  <data name="FontOptionsVariationAxesHeader" xml:space="preserve">
+    <value>Variation Axis</value>
+  </data>
+  <data name="FontOptionsColorDisplayHeader" xml:space="preserve">
+    <value>Color Display</value>
+  </data>
+  <data name="FontOptionsTypographyHeader" xml:space="preserve">
+    <value>Typography</value>
   </data>
 </root>

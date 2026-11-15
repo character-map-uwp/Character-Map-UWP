@@ -2553,4 +2553,19 @@ Variationen lassen sich nicht als Text kopieren, aber als PNG oder SVG exportier
     <value>Schriftschnitt</value>
     <comment>Label for font face selector</comment>
   </data>
+  <data name="FontOptionsSelectFont" xml:space="preserve">
+    <value>Schriftart auswählen</value>
+  </data>
+  <data name="FontOptionsFamilyHeader" xml:space="preserve">
+    <value>Schriftfamilie</value>
+  </data>
+  <data name="FontOptionsVariationAxesHeader" xml:space="preserve">
+    <value>Variationsachsen</value>
+  </data>
+  <data name="FontOptionsColorDisplayHeader" xml:space="preserve">
+    <value>Farbdarstellung</value>
+  </data>
+  <data name="FontOptionsTypographyHeader" xml:space="preserve">
+    <value>Typografie</value>
+  </data>
 </root>

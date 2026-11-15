@@ -2549,4 +2549,19 @@
     <value>எழுத்துரு நடை</value>
     <comment>Label for font face selector</comment>
   </data>
+  <data name="FontOptionsSelectFont" xml:space="preserve">
+    <value>எழுத்துருவைத் தேர்ந்தெடுக்கவும்</value>
+  </data>
+  <data name="FontOptionsFamilyHeader" xml:space="preserve">
+    <value>எழுத்துரு குடும்பம்</value>
+  </data>
+  <data name="FontOptionsVariationAxesHeader" xml:space="preserve">
+    <value>மாறுபாடு அச்சுகள்</value>
+  </data>
+  <data name="FontOptionsColorDisplayHeader" xml:space="preserve">
+    <value>வண்ணக் காட்சி</value>
+  </data>
+  <data name="FontOptionsTypographyHeader" xml:space="preserve">
+    <value>அச்சுக்கலை</value>
+  </data>
 </root>

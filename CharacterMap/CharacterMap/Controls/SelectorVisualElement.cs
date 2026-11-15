@@ -86,6 +86,8 @@ public partial class SelectorVisualElement : FrameworkElement
 
 
     private List<(DependencyProperty, long)> _tokens { get; } = [];
+    private FrameworkElement _pendingRadioTarget;
+    private UXRadioButtons _pendingRadioContainer;
 
     public SelectorVisualElement()
     {
@@ -395,6 +397,10 @@ public partial class SelectorVisualElement : FrameworkElement
     {
         Register();
         Update();
+
+        if (Target is UXRadioButtons ux && ux.SelectedIndex >= 0
+            && (_containerShapes is null || _containerShapes.Size.X <= 0 || _containerShapes.Size.Y <= 0))
+            RadioMoveTo(ux, ux.SelectedIndex);
     }
 
     private void SelectorVisual_Unloaded(object sender, RoutedEventArgs e)
@@ -724,6 +730,8 @@ partial class SelectorVisualElement // RADIOBUTTONS
 
     void OnUXRadioButtonsTargetChanged(UXRadioButtons o, UXRadioButtons n)
     {
+        ClearPendingRadioTarget();
+
         if (o is UXRadioButtons old)
         {
             old.Loaded -= UXRadios_Loaded;
@@ -736,17 +744,15 @@ partial class SelectorVisualElement // RADIOBUTTONS
         {
             nrb.Loaded -= UXRadios_Loaded;
             nrb.SizeChanged -= UXRadios_SizeChanged;
+            nrb.SizeChanged += UXRadios_SizeChanged;
+
+            if (nrb.GetFirstDescendantOfType<FrameworkElement>("BorderRoot") is { } b)
+                this.DisplayTarget = b;
 
             if (nrb.ActualSize().X <= 0)
                 nrb.Loaded += UXRadios_Loaded;
             else
-            {
-                nrb.SizeChanged += UXRadios_SizeChanged;
                 RadioMoveTo(nrb, nrb.SelectedIndex);
-            }
-
-            if (nrb.GetFirstDescendantOfType<FrameworkElement>("BorderRoot") is { } b)
-                this.DisplayTarget = b;
 
             nrb.SelectionChanged -= UXRadios_Selection;
             nrb.SelectionChanged += UXRadios_Selection;
@@ -781,15 +787,50 @@ partial class SelectorVisualElement // RADIOBUTTONS
 
     public void RadioMoveTo(UXRadioButtons b, int index)
     {
+        ClearPendingRadioTarget();
+
         if (VisualTreeHelper.GetParent(b) is null)
             return;
 
         if (index < 0)
             return;
 
-        List<RadioButton> items = b.GetFirstLevelDescendantsOfType<RadioButton>().ToList();
-        RadioButton target = b.GetFirstLevelDescendantsOfType<RadioButton>().Skip(b.SelectedIndex).FirstOrDefault();
+        RadioButton target = (b.ContainerFromIndex(index) as RadioButton)
+            ?? b.GetFirstLevelDescendantsOfType<RadioButton>().Skip(index).FirstOrDefault();
+
+        if (target is null)
+            return;
+
+        if (target.ActualSize().X <= 0 || target.ActualSize().Y <= 0)
+        {
+            _pendingRadioTarget = target;
+            _pendingRadioContainer = b;
+            target.SizeChanged += PendingRadioTarget_SizeChanged;
+            return;
+        }
+
         this.MoveTo(target, b);
+    }
+
+    private void ClearPendingRadioTarget()
+    {
+        if (_pendingRadioTarget is not null)
+        {
+            _pendingRadioTarget.SizeChanged -= PendingRadioTarget_SizeChanged;
+            _pendingRadioTarget = null;
+            _pendingRadioContainer = null;
+        }
+    }
+
+    private void PendingRadioTarget_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        if (sender is FrameworkElement target && target.ActualSize().X > 0 && target.ActualSize().Y > 0)
+        {
+            UXRadioButtons container = _pendingRadioContainer;
+            ClearPendingRadioTarget();
+            if (container is not null)
+                this.MoveTo(target, container, animate: false);
+        }
     }
 }
 

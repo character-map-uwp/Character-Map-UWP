@@ -132,6 +132,9 @@
   <data name="ExportColorHeader.Text" xml:space="preserve">
     <value>Default Colour</value>
   </data>
+  <data name="FontPropColourFormats.Text" xml:space="preserve">
+    <value>Colour Glyph Formats</value>
+  </data>
   <data name="FilterColorBitmap.Text" xml:space="preserve">
     <value>Colour Bitmap</value>
   </data>
@@ -141,5 +144,18 @@
   <data name="FontFaceLabel.Text" xml:space="preserve">
     <value>Font Face</value>
     <comment>Label for font face selector</comment>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="FontOptionsSelectFont" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="FontOptionsVariationAxesHeader" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="FontOptionsColorDisplayHeader" xml:space="preserve">
+    <value>Colour Display</value>
+  </data>
+  <data name="FontOptionsTypographyHeader" xml:space="preserve">
+    <value>Typography</value>
   </data>
 </root>

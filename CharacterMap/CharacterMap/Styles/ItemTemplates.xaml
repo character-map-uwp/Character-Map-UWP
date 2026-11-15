@@ -93,14 +93,12 @@
                 Opacity="0.7"
                 Text="{x:Bind Tooltip}"
                 TextWrapping="Wrap" />
-            <TextBlock
-                FontFamily="{x:Bind Selected.Source}"
+            <cx:DirectText
+                FontFace="{x:Bind Selected.Face}"
                 FontSize="32"
-                FontStretch="{x:Bind Selected.DirectWriteProperties.Stretch}"
-                FontStyle="{x:Bind Selected.DirectWriteProperties.Style}"
-                FontWeight="{x:Bind Selected.DirectWriteProperties.Weight}"
-                Text="{x:Bind h:ResourceHelper.AppSettings.GetFamilyPreviewString()}"
-                TextWrapping="Wrap" />
+                IsBackgroundRenderEnabled="True"
+                IsTextWrappingEnabled="True"
+                Text="{x:Bind h:ResourceHelper.AppSettings.GetFamilyPreviewString()}" />
         </StackPanel>
     </DataTemplate>
 

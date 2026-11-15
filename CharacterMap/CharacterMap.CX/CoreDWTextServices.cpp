@@ -168,7 +168,7 @@ ComPtr<IDWriteFontFace3> CoreDWTextServices::GetSimulatedFontFace(
         }
     }
 
-    return fontFace->GetFontFace();
+    return fontFace->GetTemporaryFontFace();
 }
 
 ComPtr<IDWriteFontFace3> CoreDWTextServices::ResolveFontFace(
@@ -275,10 +275,11 @@ HRESULT CoreDWTextServices::CreateLayout(
     {
         axisValues = params.FontFace->GetAxisValues();
     }
-    else if (params.FontFace != nullptr && params.FontFace->GetFontFace() != nullptr)
+    else if (params.FontFace != nullptr)
     {
+        ComPtr<IDWriteFontFace3> tempFace = params.FontFace->GetTemporaryFontFace();
         ComPtr<IDWriteFontFace5> face5;
-        if (SUCCEEDED(params.FontFace->GetFontFace().As(&face5)))
+        if (tempFace != nullptr && SUCCEEDED(tempFace.As(&face5)))
         {
             UINT32 count = face5->GetFontAxisValueCount();
             if (count > 0)

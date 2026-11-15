@@ -3474,4 +3474,19 @@ Las variaciones no se pueden copiar como texto, pero se pueden exportar como PNG
     <value>Variante de fuente</value>
     <comment>Label for font face selector</comment>
   </data>
+  <data name="FontOptionsSelectFont" xml:space="preserve">
+    <value>Seleccionar fuente</value>
+  </data>
+  <data name="FontOptionsFamilyHeader" xml:space="preserve">
+    <value>Familia de fuentes</value>
+  </data>
+  <data name="FontOptionsVariationAxesHeader" xml:space="preserve">
+    <value>Ejes de variación</value>
+  </data>
+  <data name="FontOptionsColorDisplayHeader" xml:space="preserve">
+    <value>Visualización en color</value>
+  </data>
+  <data name="FontOptionsTypographyHeader" xml:space="preserve">
+    <value>Tipografía</value>
+  </data>
 </root>

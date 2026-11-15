@@ -1,4 +1,4 @@
-﻿using CharacterMap.Controls;
+using CharacterMap.Controls;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using Microsoft.UI.Xaml.Controls;
@@ -333,7 +333,11 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
     void UpdateMenuBar(bool animate = true)
     {
         if (ViewModel.Settings.UseMenuNavigationBar)
+        {
             GoToState(nameof(MenuBarVisibleState), animate);
+            if (NavSelector is not null && NavSelector.SelectedIndex < 0)
+                NavSelector.SelectedIndex = 0;
+        }
         else
         {
             GoToState(nameof(MenuBarHiddenState), animate);

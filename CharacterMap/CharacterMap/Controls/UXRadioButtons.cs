@@ -1,4 +1,4 @@
-﻿using Microsoft.Toolkit.Uwp.UI.Controls;
+using Microsoft.Toolkit.Uwp.UI.Controls;
 using Microsoft.UI.Xaml.Controls;
 using System.Collections;
 using System.Windows.Input;
@@ -63,6 +63,12 @@ public partial class UXRadioButtons : ListBox
         this.Loaded += UXRadioButtons_Loaded;
         this.Unloaded += UXRadioButtons_Unloaded;
         this.SelectionChanged += UXRadioButtons_SelectionChanged;
+
+        this.AddHandler(PointerPressedEvent, new PointerEventHandler(OnAnyPointerPressed), true);
+        this.AddHandler(PointerMovedEvent, new PointerEventHandler(OnAnyPointerMoved), true);
+        this.AddHandler(PointerReleasedEvent, new PointerEventHandler(OnAnyPointerReleased), true);
+        this.AddHandler(PointerCanceledEvent, new PointerEventHandler(OnAnyPointerCanceled), true);
+        this.AddHandler(PointerCaptureLostEvent, new PointerEventHandler(OnAnyPointerCaptureLost), true);
     }
 
     partial void OnSelectedItemsSourceChanged(ItemsSelectionModel o, ItemsSelectionModel n)
@@ -104,23 +110,24 @@ public partial class UXRadioButtons : ListBox
         if (SelectorVisualElement.GetElement(this) is not { } selector)
             return;
 
+        UpdatePanelSpacing();
+
         selector.Target = null;
         selector.Target = this;
 
         FrameworkElement target = null;
-        
+
         if (this.SelectedIndex >= 0)
             target = this.ContainerFromIndex(this.SelectedIndex) as FrameworkElement;
 
         target ??= this.ItemsPanelRoot?.GetFirstLevelDescendantsOfType<RadioButton>().FirstOrDefault(r => r.IsChecked == true);
 
-        if (this.ItemsPanelRoot is WrapPanel p)
-            p.MaxColumns = MaxColumns;
-
-        if (target != null)
+        if (target != null && target.ActualSize().X > 0 && target.ActualSize().Y > 0)
             selector.MoveTo(
                 target,
                 this);
+        else if (this.SelectedIndex >= 0)
+            selector.RadioMoveTo(this, this.SelectedIndex);
 
 
         foreach (RadioButton rb in this.ItemsPanelRoot?.GetFirstLevelDescendantsOfType<RadioButton>() ?? Enumerable.Empty<RadioButton>())
@@ -349,13 +356,30 @@ public partial class UXRadioButtons : ListBox
         {
             int count = this.Items.Count;
             int selectedIndex = this.SelectedIndex;
-            for (int i = 0; i < count; i++)
+
+            if (selectedIndex < 0)
             {
-                if (this.ContainerFromIndex(i) is RadioButton rb)
+                for (int i = 0; i < count; i++)
                 {
-                    bool shouldBeChecked = (i == selectedIndex);
-                    if (rb.IsChecked != shouldBeChecked)
-                        rb.IsChecked = shouldBeChecked;
+                    if ((this.ContainerFromIndex(i) ?? this.Items[i]) is RadioButton checkedRb && checkedRb.IsChecked == true)
+                    {
+                        this.SelectedIndex = i;
+                        selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+
+            if (selectedIndex >= 0)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    if ((this.ContainerFromIndex(i) ?? this.Items[i]) is RadioButton rb)
+                    {
+                        bool shouldBeChecked = (i == selectedIndex);
+                        if (rb.IsChecked != shouldBeChecked)
+                            rb.IsChecked = shouldBeChecked;
+                    }
                 }
             }
         }
@@ -407,53 +431,104 @@ public partial class UXRadioButtons : ListBox
     //
     //------------------------------------------------------
 
+    bool _pointerPressed = false;
     bool _moving = false;
-    protected override void OnPointerPressed(PointerRoutedEventArgs e)
+    Vector2 _pressedPoint = Vector2.Zero;
+
+    private void OnAnyPointerPressed(object sender, PointerRoutedEventArgs e)
     {
-        if (SelectorVisualElement.GetElement(this) is not { } selector)
+        if (SelectorVisualElement.GetElement(this) is null)
             return;
 
-        // disable auto-animate
-        selector.StartMove();
-
-        _prevPoint = e.GetCurrentPoint(this).Position.ToVector2();
-        this.CapturePointer(e.Pointer);
-        _moving = true;
+        _pressedPoint = e.GetCurrentPoint(this).Position.ToVector2();
+        _prevPoint = _pressedPoint;
+        _pointerPressed = true;
+        _moving = false;
     }
 
-    protected override void OnPointerReleased(PointerRoutedEventArgs e)
+    private void OnAnyPointerReleased(object sender, PointerRoutedEventArgs e)
     {
+        if (!_pointerPressed)
+            return;
+
+        bool wasMoving = _moving;
+        _pointerPressed = false;
+        _moving = false;
         this.ReleasePointerCaptures();
 
+        if (wasMoving && SelectorVisualElement.GetElement(this) is { } selector)
+        {
+            // Re-enable auto-animate
+            selector.EndMove();
+
+            // See if our selection has changed
+            HandleIntersect(selector);
+            e.Handled = true;
+        }
+    }
+
+    private void OnAnyPointerCanceled(object sender, PointerRoutedEventArgs e)
+    {
+        if (!_pointerPressed)
+            return;
+
+        bool wasMoving = _moving;
+        _pointerPressed = false;
+        _moving = false;
+        this.ReleasePointerCaptures();
+
+        if (wasMoving && SelectorVisualElement.GetElement(this) is { } selector)
+        {
+            selector.EndMove();
+            HandleIntersect(selector);
+        }
+    }
+
+    private void OnAnyPointerCaptureLost(object sender, PointerRoutedEventArgs e)
+    {
+        if (!_moving || !ReferenceEquals(e.OriginalSource, this))
+            return;
+
+        _pointerPressed = false;
+        _moving = false;
+
+        if (SelectorVisualElement.GetElement(this) is { } selector)
+        {
+            selector.EndMove();
+            HandleIntersect(selector);
+        }
+    }
+
+    private void OnAnyPointerMoved(object sender, PointerRoutedEventArgs e)
+    {
+        if (!_pointerPressed)
+            return;
+
         if (SelectorVisualElement.GetElement(this) is not { } selector)
             return;
 
-        // Renable auto-animate
-        selector.EndMove();
+        Vector2 point = e.GetCurrentPoint(this).Position.ToVector2();
 
-        // see if our selection has changed
-        HandleIntersect(selector);
-    }
-
-    protected override void OnPointerMoved(PointerRoutedEventArgs e)
-    {
         if (!_moving)
         {
-            base.OnPointerMoved(e);
+            if (Vector2.DistanceSquared(point, _pressedPoint) < 16f)
+                return;
+
+            _moving = true;
+            // Disable auto-animate
+            selector.StartMove();
+            this.CapturePointer(e.Pointer);
+            _prevPoint = point;
+            e.Handled = true;
             return;
         }
 
-        if (SelectorVisualElement.GetElement(this) is not { } selector)
-            return;
-
-        // get current point
-        Vector2 point = e.GetCurrentPoint(this).Position.ToVector2();
-
-        // move container by delta
+        // Move container by delta
         selector.Move(point - _prevPoint);
 
-        // store current point for next delta calculation
+        // Store current point for next delta calculation
         _prevPoint = point;
+        e.Handled = true;
     }
 
     private void HandleIntersect(SelectorVisualElement selector)

@@ -622,11 +622,25 @@ namespace CharacterMapCX
 			return m_fontResource;
 		}
 
+		ComPtr<IDWriteFontFace3> GetTemporaryFontFace()
+		{
+			if (m_face != nullptr)
+				return m_face;
+
+			return CreateFontFaceCore();
+		}
+
 		ComPtr<IDWriteFontFace3> GetFontFace()
 		{
 			if (m_face != nullptr)
 				return m_face;
 
+			m_face = CreateFontFaceCore();
+			return m_face;
+		}
+
+		ComPtr<IDWriteFontFace3> CreateFontFaceCore()
+		{
 			ComPtr<IDWriteFontFaceReference> faceRef = GetReference();
 			if (faceRef != nullptr)
 			{
@@ -640,10 +654,7 @@ namespace CharacterMapCX
 						{
 							ComPtr<IDWriteFontFace3> f3;
 							if (SUCCEEDED(face5.As(&f3)))
-							{
-								m_face = f3;
-								return m_face;
-							}
+								return f3;
 						}
 					}
 				}
@@ -652,17 +663,11 @@ namespace CharacterMapCX
 				if (m_dwProperties != nullptr && m_dwProperties->Simulations != Windows::UI::Xaml::Media::StyleSimulations::None)
 				{
 					if (SUCCEEDED(faceRef->CreateFontFaceWithSimulations(ToDWriteFontSimulations(m_dwProperties->Simulations), &face)))
-					{
-						m_face = face;
-						return m_face;
-					}
+						return face;
 				}
 
 				if (SUCCEEDED(faceRef->CreateFontFace(&face)))
-				{
-					m_face = face;
-					return m_face;
-				}
+					return face;
 			}
 
 			return nullptr;

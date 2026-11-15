@@ -2555,4 +2555,19 @@
     <value>รูปแบบฟอนต์</value>
     <comment>Label for font face selector</comment>
   </data>
+  <data name="FontOptionsSelectFont" xml:space="preserve">
+    <value>เลือกแบบอักษร</value>
+  </data>
+  <data name="FontOptionsFamilyHeader" xml:space="preserve">
+    <value>ตระกูลแบบอักษร</value>
+  </data>
+  <data name="FontOptionsVariationAxesHeader" xml:space="preserve">
+    <value>แกนแปรผัน</value>
+  </data>
+  <data name="FontOptionsColorDisplayHeader" xml:space="preserve">
+    <value>การแสดงผลสี</value>
+  </data>
+  <data name="FontOptionsTypographyHeader" xml:space="preserve">
+    <value>การจัดรูปแบบตัวอักษร</value>
+  </data>
 </root>

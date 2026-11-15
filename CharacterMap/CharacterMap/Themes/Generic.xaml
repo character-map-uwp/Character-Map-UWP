@@ -1585,7 +1585,7 @@
                                                     <ComboBox
                                                         x:Name="FamilyComboBox"
                                                         HorizontalAlignment="Stretch"
-                                                        Header="Font family">
+                                                        Header="{core:Localizer Key=FontOptionsFamilyHeader}">
                                                         <ComboBox.Resources>
                                                             <converters:PreviewFontSourceConverter x:Key="PreviewFontSourceConverter" />
                                                         </ComboBox.Resources>
@@ -1603,7 +1603,7 @@
                                                         x:Name="FaceComboBox"
                                                         HorizontalAlignment="Stretch"
                                                         DisplayMemberPath="PreferredName"
-                                                        Header="Font face" />
+                                                        Header="{core:Localizer Key=FontFaceLabel/Text}" />
 
                                                     <StackPanel
                                                         x:Name="AxisPanel"
@@ -1613,7 +1613,7 @@
                                                             FontSize="12"
                                                             FontWeight="SemiBold"
                                                             Opacity="0.75"
-                                                            Text="Variation axes" />
+                                                            Text="{core:Localizer Key=FontOptionsVariationAxesHeader}" />
                                                         <ItemsControl x:Name="AxisItemsControl">
                                                             <ItemsControl.ItemTemplate>
                                                                 <DataTemplate>
@@ -1664,7 +1664,7 @@
                                                     <ToggleSwitch
                                                         x:Name="ColorGlyphToggle"
                                                         x:Uid="ColorGlyphToggle"
-                                                        Header="Color display"
+                                                        Header="{core:Localizer Key=FontOptionsColorDisplayHeader}"
                                                         Visibility="Collapsed"
                                                         d:OffContent="{core:Localizer Key=ColorGlyphToggle/OffContent}"
                                                         d:OnContent="{core:Localizer Key=ColorGlyphToggle/OnContent}" />
@@ -1673,7 +1673,7 @@
                                                         x:Name="TypographyComboBox"
                                                         HorizontalAlignment="Stretch"
                                                         DisplayMemberPath="DisplayName"
-                                                        Header="Typography"
+                                                        Header="{core:Localizer Key=FontOptionsTypographyHeader}"
                                                         Visibility="Collapsed" />
                                                 </StackPanel>
                                             </ScrollViewer>

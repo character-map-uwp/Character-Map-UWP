@@ -456,7 +456,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
                 if (axisChanged)
                 {
-                    m_drawFontFace = fontFace->GetFontFace();
+                    m_drawFontFace = fontFace->GetTemporaryFontFace();
                     CoreDWTextServices::UpdateAxisValues(m_textLayout.Get(), newAxisValues, textLength);
                     m_lastAxisValues = newAxisValues;
                 }
@@ -1149,7 +1149,7 @@ namespace
                     snap.LayoutParams.FontFace->Properties->HasBitmapSVGGlyphs &&
                     !snap.LayoutParams.FontFace->Properties->HasColorBitmapOutlines)
                 {
-                    primaryFace = snap.LayoutParams.FontFace->GetFontFace();
+                    primaryFace = snap.LayoutParams.FontFace->GetTemporaryFontFace();
                     checker.IgnoreFontFace = primaryFace.Get();
                 }
                 snap.TextLayout->Draw(nullptr, &checker, 0.0f, 0.0f);

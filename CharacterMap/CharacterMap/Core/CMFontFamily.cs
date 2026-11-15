@@ -54,7 +54,9 @@ public class CMFontFamily : IComparable, IEquatable<CMFontFamily>
     /// Identifies if a font family has any other font faces, included
     /// simulated faces
     /// </summary>
-    public bool HasMultipleFaces => AllFacesSource.Count > 1;
+    public bool HasMultipleFaces => _dwriteFamily is not null
+        ? _dwriteFamily.FontCount > 1
+        : (_realFaces.Count + (_simulatedFaces?.Count ?? 0)) > 1;
 
     public bool HasImportedFiles { get; private set; }
 
@@ -192,12 +194,7 @@ public class CMFontFamily : IComparable, IEquatable<CMFontFamily>
 
     public override int GetHashCode()
     {
-        int hashCode = -1425556920;
-        hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
-        hashCode = hashCode * -1521134295 + EqualityComparer<IList<CMFontFace>>.Default.GetHashCode(RealFaces);
-        hashCode = hashCode * -1521134295 + HasImportedFiles.GetHashCode();
-        hashCode = hashCode * -1521134295 + EqualityComparer<CMFontFace>.Default.GetHashCode(DefaultFace);
-        return hashCode;
+        return StringComparer.Ordinal.GetHashCode(Name ?? string.Empty);
     }
 
     public static bool operator ==(CMFontFamily left, CMFontFamily right)
