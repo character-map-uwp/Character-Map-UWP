@@ -16,7 +16,8 @@ public record SubsetOptions(
     string className,
     StorageFile OutputFile = null,
     string DesiredVersion = "Version 1.00",
-    bool generatePreviewString = true);
+    bool generatePreviewString = true,
+    SubsetMetadata Metadata = null);
 
 public record FontGlyphMetrics(
     float Scale = 1f,
@@ -117,7 +118,8 @@ public class FontSubsetter
         uint[] required = [32, 13, 0];
         List<CMFontFace> faces = null;
         CMFontFace fallbackFace = FontFinder.DefaultFont.DefaultFace;
-        foreach (var r in required)
+        bool hadFallbackFace = characters.Any(c => c.FontFace == fallbackFace);
+        foreach (uint r in required)
         {
             if (!characters.Any(c => c.Character.UnicodeIndex == r))
             {
@@ -166,9 +168,10 @@ public class FontSubsetter
             throw new InvalidOperationException("No base font available and default system font could not be loaded.");
         ushort unitsPerEm = templateFont.Face.DesignUnitsPerEm;
 
-        // 4.1. Remove the fallback now so it's metadata doesn't get merged in
-        faces.Remove(FontFinder.DefaultFont.DefaultFace);
-        uniqueFonts.Remove(FontFinder.DefaultFont.DefaultFace);
+        // 4.1. Remove the fallback now so its metadata doesn't get merged in unless it was actually selected
+        faces?.Remove(fallbackFace);
+        if (!hadFallbackFace)
+            uniqueFonts.Remove(fallbackFace);
 
         // 5. Figure out the final CMAP
         ushort outputNumGlyphs = (ushort)(characters.Count + 1);
@@ -297,6 +300,7 @@ public class FontSubsetter
 
             CMSVTable cmTable = CMSVTable.TryDecode(templateFont) ?? new();
             cmTable.ClassName = opts.className;
+            cmTable.MergeFontFaces(uniqueFonts);
 
             // 6.2. Merge OS/2 embedding rights and ranges
             OS2Metadata os2Meta = SfntWriter.CalculateMergedOS2(uniqueFonts, fontFsTypes, templateFont);

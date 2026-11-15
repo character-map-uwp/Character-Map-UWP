@@ -155,6 +155,15 @@ public partial class SubsetterViewModel : ViewModelBase
     [ObservableProperty] FontFamily _selectedXAMLFontFamily;
     [ObservableProperty] string _familyName = DEFAULT_FONT_NAME;
     [ObservableProperty] string _version = DEFAULT_VERSION;
+    [ObservableProperty] string _metaCopyright = string.Empty;
+    [ObservableProperty] string _metaDescription = string.Empty;
+    [ObservableProperty] string _metaDesigner = string.Empty;
+    [ObservableProperty] string _metaDesignerUrl = string.Empty;
+    [ObservableProperty] string _metaManufacturer = string.Empty;
+    [ObservableProperty] string _metaVendorUrl = string.Empty;
+    [ObservableProperty] string _metaTrademark = string.Empty;
+    [ObservableProperty] string _metaLicenseDescription = string.Empty;
+    [ObservableProperty] string _metaLicenseUrl = string.Empty;
     [ObservableProperty] bool _hasClashing = false;
     [ObservableProperty] GlyphCollection _previewList;
     [ObservableProperty] FontGlyph _svgPreview;
@@ -209,6 +218,7 @@ public partial class SubsetterViewModel : ViewModelBase
 
             OnPropertyChanged(nameof(IsPreviewable));
             OnPropertyChanged(nameof(IsExportable));
+            RefreshDefaultMetadata();
             _clashDebouncer.Debounce(UpdateClashing);
         });
     }
@@ -216,10 +226,73 @@ public partial class SubsetterViewModel : ViewModelBase
     
 
     bool _blockFace = false;
+    bool _isUpdatingMetadata = false;
+    readonly HashSet<string> _editedMetadataFields = [];
+
+    private static readonly HashSet<string> _metadataPropertyNames =
+    [
+        nameof(MetaCopyright),
+        nameof(MetaDescription),
+        nameof(MetaDesigner),
+        nameof(MetaDesignerUrl),
+        nameof(MetaManufacturer),
+        nameof(MetaVendorUrl),
+        nameof(MetaTrademark),
+        nameof(MetaLicenseDescription),
+        nameof(MetaLicenseUrl)
+    ];
+
+    void RefreshDefaultMetadata()
+    {
+        SubsetMetadata defaults = SelectedFaces.Count == 0
+            ? new(string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty, string.Empty)
+            : SfntWriter.BuildDefaultMetadata(SelectedFaces.Where(f => f.IsPhysical).Select(f => f.Face));
+
+        _isUpdatingMetadata = true;
+        try
+        {
+            if (!_editedMetadataFields.Contains(nameof(MetaCopyright)))
+                MetaCopyright = defaults.Copyright;
+            if (!_editedMetadataFields.Contains(nameof(MetaDescription)))
+                MetaDescription = defaults.Description;
+            if (!_editedMetadataFields.Contains(nameof(MetaDesigner)))
+                MetaDesigner = defaults.Designer;
+            if (!_editedMetadataFields.Contains(nameof(MetaDesignerUrl)))
+                MetaDesignerUrl = defaults.DesignerUrl;
+            if (!_editedMetadataFields.Contains(nameof(MetaManufacturer)))
+                MetaManufacturer = defaults.Manufacturer;
+            if (!_editedMetadataFields.Contains(nameof(MetaVendorUrl)))
+                MetaVendorUrl = defaults.VendorUrl;
+            if (!_editedMetadataFields.Contains(nameof(MetaTrademark)))
+                MetaTrademark = defaults.Trademark;
+            if (!_editedMetadataFields.Contains(nameof(MetaLicenseDescription)))
+                MetaLicenseDescription = defaults.LicenseDescription;
+            if (!_editedMetadataFields.Contains(nameof(MetaLicenseUrl)))
+                MetaLicenseUrl = defaults.LicenseUrl;
+        }
+        finally
+        {
+            _isUpdatingMetadata = false;
+        }
+    }
+
+    SubsetMetadata BuildSubsetMetadata() => new(
+        MetaCopyright,
+        MetaDescription,
+        MetaDesigner,
+        MetaDesignerUrl,
+        MetaManufacturer,
+        MetaVendorUrl,
+        MetaTrademark,
+        MetaLicenseDescription,
+        MetaLicenseUrl);
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
         base.OnPropertyChanged(e);
+
+        if (!_isUpdatingMetadata && e.PropertyName is not null && _metadataPropertyNames.Contains(e.PropertyName))
+            _editedMetadataFields.Add(e.PropertyName);
 
         if (e.PropertyName == nameof(FamilyName))
             OnPropertyChanged(nameof(IsPreviewable));
@@ -356,7 +429,7 @@ public partial class SubsetterViewModel : ViewModelBase
 
 
             // 3. Note: version string currently isn't supported by the subsetter table-re-writer
-            var file = await FontSubsetter.CreateSubsetAsync(new(fontName, PreviewList, _computedClassName, target, version));
+            StorageFile file = await FontSubsetter.CreateSubsetAsync(new(fontName, PreviewList, _computedClassName, target, version, Metadata: BuildSubsetMetadata()));
             if (file is not null && await FontImporter.LoadFromFileAsync(file) is CMFontFamily font)
                 Notify(new SubsetResultMessage(font, file));
             else

@@ -10,6 +10,7 @@
     xmlns:h="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:CharacterMap.Models"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:view="using:CharacterMap.Views"
     xmlns:vm="using:CharacterMap.ViewModels"
@@ -266,7 +267,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="8" />
-                            <ColumnDefinition Width="Auto" MinWidth="250" />
+                            <ColumnDefinition Width="250" MinWidth="250" />
                         </Grid.ColumnDefinitions>
 
                         <Grid.RowDefinitions>
@@ -505,15 +506,48 @@
                             Grid.Column="2"
                             Margin="0 0 0 0"
                             Padding="12 0 0 0"
-                            core:Properties.GridDefinitions="rAuto r rAuto rs16">
+                            core:Properties.GridDefinitions="rAuto r rAuto rs16"
+                            ChildrenTransitions="{StaticResource RepositionTransitions}">
 
-                            <StackPanel Spacing="16">
+                            <StackPanel ChildrenTransitions="{StaticResource RepositionTransitions}" Spacing="16">
                                 <TextBox Header="{core:Localizer Key=FontFamilyName}" Text="{x:Bind ViewModel.FamilyName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                                 <TextBox
                                     Grid.Row="1"
                                     Header="{core:Localizer Key=FontVersion}"
                                     Text="{x:Bind ViewModel.Version, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                                <muxc:Expander
+                                    Padding="8"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Stretch"
+                                    Header="{core:Localizer Key=SubsetterMetadataHeader}">
+                                    <ScrollViewer MaxHeight="280" VerticalScrollBarVisibility="Auto">
+                                        <StackPanel Padding="0 0 12 0" Spacing="12">
+                                            <TextBox Header="{core:Localizer Key=CanvasFontInformationDesigner}" Text="{x:Bind ViewModel.MetaDesigner, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBox Header="{core:Localizer Key=CanvasFontInformationDesignerUrl}" Text="{x:Bind ViewModel.MetaDesignerUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBox Header="{core:Localizer Key=CanvasFontInformationManufacturer}" Text="{x:Bind ViewModel.MetaManufacturer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBox Header="{core:Localizer Key=CanvasFontInformationFontVendorUrl}" Text="{x:Bind ViewModel.MetaVendorUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBox
+                                                AcceptsReturn="True"
+                                                Header="{core:Localizer Key=CanvasFontInformationCopyrightNotice}"
+                                                Text="{x:Bind ViewModel.MetaCopyright, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                TextWrapping="Wrap" />
+                                            <TextBox Header="{core:Localizer Key=CanvasFontInformationTrademark}" Text="{x:Bind ViewModel.MetaTrademark, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBox
+                                                AcceptsReturn="True"
+                                                Header="{core:Localizer Key=CanvasFontInformationLicenseDescription}"
+                                                Text="{x:Bind ViewModel.MetaLicenseDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                TextWrapping="Wrap" />
+                                            <TextBox Header="{core:Localizer Key=CanvasFontInformationLicenseInfoUrl}" Text="{x:Bind ViewModel.MetaLicenseUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBox
+                                                AcceptsReturn="True"
+                                                Header="{core:Localizer Key=CanvasFontInformationDescription}"
+                                                Text="{x:Bind ViewModel.MetaDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                TextWrapping="Wrap" />
+                                        </StackPanel>
+                                    </ScrollViewer>
+                                </muxc:Expander>
 
                                 <TextBlock
                                     x:Uid="SubSetterChosenGlyphsHeader"

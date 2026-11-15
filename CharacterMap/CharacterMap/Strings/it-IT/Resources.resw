@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -2567,5 +2567,8 @@ Le variazioni non possono essere copiate come testo, ma possono essere esportate
   </data>
   <data name="FontOptionsTypographyHeader" xml:space="preserve">
     <value>Tipografia</value>
+  </data>
+  <data name="SubsetterMetadataHeader" xml:space="preserve">
+    <value>Metadati</value>
   </data>
 </root>

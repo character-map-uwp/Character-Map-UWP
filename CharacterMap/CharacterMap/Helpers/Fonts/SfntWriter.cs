@@ -20,6 +20,17 @@ public class OS2Metadata
 
 public record CMSVFontInfo(string Name, string Version);
 
+public record SubsetMetadata(
+    string Copyright,
+    string Description,
+    string Designer,
+    string DesignerUrl,
+    string Manufacturer,
+    string VendorUrl,
+    string Trademark,
+    string LicenseDescription,
+    string LicenseUrl);
+
 public class CMSVTable
 {
     /*                        CMSV Table Spec
@@ -58,6 +69,32 @@ public class CMSVTable
     public List<CMSVFontInfo> FontFaces { get; set; } = [];
 
     public bool IsExisting => !string.IsNullOrEmpty(AppVersionString);
+
+    public void MergeFontFaces(IEnumerable<CMFontFace> uniqueFonts)
+    {
+        HashSet<(string Name, string Version)> seen = [.. FontFaces.Select(f => (f.Name ?? string.Empty, f.Version ?? string.Empty))];
+
+        void AddFace(string name, string version)
+        {
+            (string Name, string Version) key = (name ?? string.Empty, version ?? string.Empty);
+            if (seen.Add(key))
+                FontFaces.Add(new(key.Name, key.Version));
+        }
+
+        foreach (CMFontFace font in uniqueFonts)
+        {
+            if (font is null)
+                continue;
+
+            if (TryDecode(font) is { FontFaces.Count: > 0 } existing)
+            {
+                foreach (CMSVFontInfo info in existing.FontFaces)
+                    AddFace(info.Name, info.Version);
+            }
+            else
+                AddFace(font.FullName, font.Version);
+        }
+    }
 
     public CMSVTable UpdateVersion()
     {
@@ -541,21 +578,13 @@ public static class SfntWriter
         return headData;
     }
 
-    public static byte[] RebuildNameTable(SubsetOptions opts, CMFontFace templateFont, List<CMFontFace> uniqueFonts, CMSVTable cmTable)
+    public static SubsetMetadata BuildDefaultMetadata(IEnumerable<CMFontFace> uniqueFonts)
     {
         List<CMFontFace> metadataFonts = uniqueFonts
-              .GroupBy(f => f.FullName)
+              .Where(f => f is not null)
+              .GroupBy(f => f.Key)
               .Select(g => g.First())
               .ToList();
-
-        HashSet<string> existingFontKeys = [];
-        foreach (CMFontFace font in metadataFonts)
-        {
-            if (cmTable.FontFaces.Any(f => f.Name == font.FullName && f.Version == font.Version))
-                existingFontKeys.Add(font.Key);
-            else
-                cmTable.FontFaces.Add(new(font.FullName, font.Version));
-        }
 
         string MergeField(DWriteFontInformation info)
         {
@@ -572,18 +601,9 @@ public static class SfntWriter
             foreach (CMFontFace font in metadataFonts)
             {
                 string fontName = font.FullName;
-                string key = font.Key;
-
-                // If fontface name & version already exists inside existing cmTable data (already subsetted),
-                // don't apply it again
-                if (existingFontKeys.Contains(key))
-                    continue; ;
-
                 string valStr = font.TryGetInfo(info)?.Value;
                 if (!string.IsNullOrWhiteSpace(valStr))
                     lines.Add($"{fontName}:\n{valStr}\n");
-                //else
-                //    lines.Add($"{fontName}:\nNot specified\n");
             }
             return string.Join("\n", lines).Trim();
         }
@@ -597,20 +617,43 @@ public static class SfntWriter
         string finalLicenseDesc = MergeField(DWriteFontInformation.LicenseDescription);
         string finalLicenseUrl = MergeField(DWriteFontInformation.LicenseInfoUrl);
 
-        List<string> fontNames = metadataFonts.Select(f => $"{f.FullName} ({f.Version})".Trim()).ToList();
-        string firstLine = "";
+        List<string> fontNames = [];
+        HashSet<string> seenNames = [];
+        foreach (CMFontFace font in metadataFonts)
+        {
+            if (CMSVTable.TryDecode(font) is { FontFaces.Count: > 0 } existingCmsv)
+            {
+                foreach (CMSVFontInfo info in existingCmsv.FontFaces)
+                {
+                    string label = string.IsNullOrWhiteSpace(info.Version)
+                        ? info.Name
+                        : $"{info.Name} ({info.Version})".Trim();
+                    if (!string.IsNullOrWhiteSpace(label) && seenNames.Add(label))
+                        fontNames.Add(label);
+                }
+            }
+            else
+            {
+                string label = string.IsNullOrWhiteSpace(font.Version)
+                    ? font.FullName
+                    : $"{font.FullName} ({font.Version})".Trim();
+                if (!string.IsNullOrWhiteSpace(label) && seenNames.Add(label))
+                    fontNames.Add(label);
+            }
+        }
 
-        if (metadataFonts.Count > 1)
+        string firstLine;
+        if (fontNames.Count > 1)
             firstLine = $"This font was created as a merged subset of the following fonts:\n{string.Join("\n", fontNames)}\n";
-        else if (metadataFonts.Count == 1)
+        else if (fontNames.Count == 1)
             firstLine = $"This font is a subset of {fontNames[0]}";
         else
             firstLine = "This font was created from SVG files.";
 
-        List<string> descList = new();
+        List<string> descList = [];
         foreach (CMFontFace font in metadataFonts)
         {
-            string ds = font.TryGetInfo(DWriteFontInformation.Description)?.Value;
+            string ds = StripSubsetHeader(font.TryGetInfo(DWriteFontInformation.Description)?.Value);
             if (!string.IsNullOrEmpty(ds))
                 descList.Add($"{font.FamilyName} {font.PreferredName}: {ds}");
         }
@@ -618,7 +661,42 @@ public static class SfntWriter
         if (descList.Count > 0)
             finalDescription = firstLine + "\n\n" + string.Join("\n\n", descList);
 
-        finalDescription = finalDescription.Trim();
+        return new(
+            finalCopyright,
+            finalDescription.Trim(),
+            finalDesigner,
+            finalDesignerUrl,
+            finalManufacturer,
+            finalVendorUrl,
+            finalTrademark,
+            finalLicenseDesc,
+            finalLicenseUrl);
+    }
+
+    static string StripSubsetHeader(string description)
+    {
+        if (string.IsNullOrWhiteSpace(description))
+            return string.Empty;
+
+        const string singlePrefix = "This font is a subset of ";
+        const string mergedPrefix = "This font was created as a merged subset of the following fonts:";
+        const string svgPrefix = "This font was created from SVG files.";
+
+        string trimmed = description.Trim();
+        if (trimmed.StartsWith(singlePrefix, StringComparison.Ordinal)
+            || trimmed.StartsWith(mergedPrefix, StringComparison.Ordinal)
+            || trimmed.StartsWith(svgPrefix, StringComparison.Ordinal))
+        {
+            int idx = trimmed.IndexOf("\n\n", StringComparison.Ordinal);
+            return idx >= 0 ? trimmed[(idx + 2)..].Trim() : string.Empty;
+        }
+
+        return trimmed;
+    }
+
+    public static byte[] RebuildNameTable(SubsetOptions opts, CMFontFace templateFont, List<CMFontFace> uniqueFonts, CMSVTable cmTable)
+    {
+        SubsetMetadata meta = opts.Metadata ?? BuildDefaultMetadata(uniqueFonts);
 
         byte[] nameData = templateFont.Face.GetFontTable("name");
         byte[] newNameTable = null;
@@ -653,15 +731,15 @@ public static class SfntWriter
                 newNameTable = SfntWriter.RebuildNameTable(
                     nameData,
                     opts.DesiredName,
-                    finalCopyright,
-                    finalDescription,
-                    finalDesigner,
-                    finalManufacturer,
-                    finalTrademark,
-                    finalVendorUrl,
-                    finalDesignerUrl,
-                    finalLicenseDesc,
-                    finalLicenseUrl,
+                    meta.Copyright ?? string.Empty,
+                    meta.Description ?? string.Empty,
+                    meta.Designer ?? string.Empty,
+                    meta.Manufacturer ?? string.Empty,
+                    meta.Trademark ?? string.Empty,
+                    meta.VendorUrl ?? string.Empty,
+                    meta.DesignerUrl ?? string.Empty,
+                    meta.LicenseDescription ?? string.Empty,
+                    meta.LicenseUrl ?? string.Empty,
                     opts.DesiredVersion,
                     finalPreview);
             }
@@ -1111,6 +1189,10 @@ public static class SfntWriter
         }
 
         bool hasCopyright = records.Any(r => r.NameID == 0);
+        bool hasFamily = records.Any(r => r.NameID == 1);
+        bool hasSubfamily = records.Any(r => r.NameID == 2);
+        bool hasUniqueId = records.Any(r => r.NameID == 3);
+        bool hasFullName = records.Any(r => r.NameID == 4);
         bool hasDescription = records.Any(r => r.NameID == 10);
         bool hasDesigner = records.Any(r => r.NameID == 9);
         bool hasManufacturer = records.Any(r => r.NameID == 8);
@@ -1120,10 +1202,24 @@ public static class SfntWriter
         bool hasLicenseDesc = records.Any(r => r.NameID == 13);
         bool hasLicenseUrl = records.Any(r => r.NameID == 14);
         bool hasVersion = records.Any(r => r.NameID == 5);
+        bool hasPostScript = records.Any(r => r.NameID == 6);
         bool hasPreview = records.Any(r => r.NameID == 19);
+
+        string postScriptName = SanitizePostScriptName(mergedName);
+        string uniqueId = $"CharacterMapUWP;{postScriptName};{finalVersion};{DateTime.UtcNow:yyyyMMddHHmmss}";
 
         if (!hasCopyright && !string.IsNullOrEmpty(finalCopyright))
             records.Add((3, 1, 1033, 0, finalCopyright));
+        if (!hasFamily && !string.IsNullOrEmpty(mergedName))
+            records.Add((3, 1, 1033, 1, mergedName));
+        if (!hasSubfamily)
+            records.Add((3, 1, 1033, 2, "Regular"));
+        if (!hasUniqueId)
+            records.Add((3, 1, 1033, 3, uniqueId));
+        if (!hasFullName && !string.IsNullOrEmpty(mergedName))
+            records.Add((3, 1, 1033, 4, mergedName));
+        if (!hasPostScript && !string.IsNullOrEmpty(postScriptName))
+            records.Add((3, 1, 1033, 6, postScriptName));
         if (!hasDescription && !string.IsNullOrEmpty(finalDescription))
             records.Add((3, 1, 1033, 10, finalDescription));
         if (!hasDesigner && !string.IsNullOrEmpty(finalDesigner))
@@ -1145,11 +1241,43 @@ public static class SfntWriter
         if (!hasPreview && !string.IsNullOrEmpty(finalPreview))
             records.Add((3, 1, 1033, 19, finalPreview));
 
+        List<(ushort PlatformID, ushort EncodingID, ushort LanguageID, ushort NameID, string Value)> outputRecords = [];
+        foreach ((ushort PlatformID, ushort EncodingID, ushort LanguageID, ushort NameID, string Value) rec in records)
+        {
+            string newValue = rec.NameID switch
+            {
+                1 or 4 or 16 => mergedName,
+                3 => uniqueId,
+                6 => postScriptName,
+                0 => finalCopyright,
+                5 => finalVersion,
+                7 => finalTrademark,
+                8 => finalManufacturer,
+                9 => finalDesigner,
+                10 => finalDescription,
+                11 => finalVendorUrl,
+                12 => finalDesignerUrl,
+                13 => finalLicenseDesc,
+                14 => finalLicenseUrl,
+                19 => finalPreview,
+                _ => rec.Value
+            };
+
+            if (string.IsNullOrEmpty(newValue))
+                continue;
+
+            bool isUnicodePlatform = rec.PlatformID == 3 || rec.PlatformID == 0;
+            if (!isUnicodePlatform && newValue.Any(c => c > 127))
+                continue;
+
+            outputRecords.Add((rec.PlatformID, rec.EncodingID, rec.LanguageID, rec.NameID, newValue));
+        }
+
         using MemoryStream msOut = new();
         using BinaryWriter bw = new(msOut);
 
         WriteUInt16BE(bw, format);
-        WriteUInt16BE(bw, (ushort)records.Count);
+        WriteUInt16BE(bw, (ushort)outputRecords.Count);
 
         long stringOffsetPos = msOut.Position;
         WriteUInt16BE(bw, 0);
@@ -1157,40 +1285,12 @@ public static class SfntWriter
         using MemoryStream stringMs = new();
         using BinaryWriter stringBw = new(stringMs);
 
-        foreach ((ushort PlatformID, ushort EncodingID, ushort LanguageID, ushort NameID, string Value) rec in records)
+        foreach ((ushort PlatformID, ushort EncodingID, ushort LanguageID, ushort NameID, string Value) rec in outputRecords)
         {
-            string newValue = rec.Value;
-            if (rec.NameID == 1 || rec.NameID == 4 || rec.NameID == 16)
-                newValue = mergedName;
-            else if (rec.NameID == 6)
-                newValue = mergedName.Replace(" ", "");
-            else if (rec.NameID == 0)
-                newValue = finalCopyright;
-            else if (rec.NameID == 5)
-                newValue = finalVersion;
-            else if (rec.NameID == 7)
-                newValue = finalTrademark;
-            else if (rec.NameID == 8)
-                newValue = finalManufacturer;
-            else if (rec.NameID == 9)
-                newValue = finalDesigner;
-            else if (rec.NameID == 10)
-                newValue = finalDescription;
-            else if (rec.NameID == 11)
-                newValue = finalVendorUrl;
-            else if (rec.NameID == 12)
-                newValue = finalDesignerUrl;
-            else if (rec.NameID == 13)
-                newValue = finalLicenseDesc;
-            else if (rec.NameID == 14)
-                newValue = finalLicenseUrl;
-            else if (rec.NameID == 19)
-                newValue = finalPreview;
-
             byte[] bytes;
             if (rec.PlatformID == 3 || rec.PlatformID == 0)
             {
-                byte[] utf16 = Encoding.Unicode.GetBytes(newValue);
+                byte[] utf16 = Encoding.Unicode.GetBytes(rec.Value);
                 bytes = new byte[utf16.Length];
                 for (int j = 0; j < utf16.Length; j += 2)
                 {
@@ -1199,9 +1299,7 @@ public static class SfntWriter
                 }
             }
             else
-            {
-                bytes = Encoding.ASCII.GetBytes(newValue);
-            }
+                bytes = Encoding.ASCII.GetBytes(rec.Value);
 
             ushort length = (ushort)bytes.Length;
             ushort offset = (ushort)stringMs.Position;
@@ -1222,6 +1320,24 @@ public static class SfntWriter
         WriteUInt16BE(bw, finalStringOffset);
 
         return msOut.ToArray();
+    }
+
+    static string SanitizePostScriptName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return "SubsetFont";
+
+        StringBuilder sb = new(name.Length);
+        foreach (char c in name)
+        {
+            if (c > 32 && c < 127 && c is not ('[' or ']' or '(' or ')' or '{' or '}' or '<' or '>' or '/' or '%'))
+                sb.Append(c);
+
+            if (sb.Length >= 63)
+                break;
+        }
+
+        return sb.Length > 0 ? sb.ToString() : "SubsetFont";
     }
 
     #endregion

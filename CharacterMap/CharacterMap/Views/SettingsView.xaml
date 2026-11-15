@@ -129,7 +129,7 @@
                         Background="Transparent"
                         BorderThickness="0"
                         MaxColumns="1">
-                       
+
                         <controls:UXRadioButtons.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Vertical" />
@@ -1137,10 +1137,6 @@
 
                                 <controls:SettingsPresenter Title="WinUI">
                                     <controls:UXHyperlinkButton Content="MIT License" NavigateUri="https://github.com/microsoft/microsoft-ui-xaml/blob/master/LICENSE" />
-                                </controls:SettingsPresenter>
-
-                                <controls:SettingsPresenter Title="Win2D">
-                                    <controls:UXHyperlinkButton Content="MIT License" NavigateUri="https://github.com/microsoft/Win2D/blob/master/LICENSE.txt" />
                                 </controls:SettingsPresenter>
 
                                 <controls:SettingsPresenter Title="Windows Community Toolkit">

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -2579,5 +2579,8 @@
   </data>
   <data name="FontOptionsTypographyHeader" xml:space="preserve">
     <value>排版</value>
+  </data>
+  <data name="SubsetterMetadataHeader" xml:space="preserve">
+    <value>元数据</value>
   </data>
 </root>
