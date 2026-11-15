@@ -414,7 +414,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
     void ShowAbout() => ShowSettings(10);
 
-    public void ShowSettings(int idx= 0)
+    public void ShowSettings(int idx = 0)
     {
         if (idx == 0)
             NavPresenter.Target = nameof(SettingsView);

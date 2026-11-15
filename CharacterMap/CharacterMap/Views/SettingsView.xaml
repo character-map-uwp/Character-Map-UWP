@@ -129,7 +129,6 @@
                         Background="Transparent"
                         BorderThickness="0"
                         MaxColumns="1">
-
                         <controls:UXRadioButtons.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Vertical" />
