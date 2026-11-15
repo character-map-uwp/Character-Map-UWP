@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5" xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10" xmlns:desktop2="http://schemas.microsoft.com/appx/manifest/desktop/windows10/2" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" IgnorableNamespaces="uap uap5 mp com desktop2 rescap">
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5" xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10" xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10" xmlns:desktop2="http://schemas.microsoft.com/appx/manifest/desktop/windows10/2" xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities" IgnorableNamespaces="uap uap5 mp com desktop desktop2 rescap">
   <Identity Name="58027.265370AB8DB33" Publisher="CN=DB299AFD-CD90-4B49-8407-33F11AF0C784" Version="2026.8.2.0" />
   <mp:PhoneIdentity PhoneProductId="c3a59f67-c12f-4cd8-9d1e-2419f77ee8ae" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
@@ -50,6 +50,11 @@
             </com:SurrogateServer>
           </com:ComServer>
         </com:Extension>
+        <desktop:Extension Category="windows.fullTrustProcess" Executable="CharacterMap.exe">
+          <desktop:FullTrustProcess>
+            <desktop:ParameterGroup GroupId="FullTrustHost" Parameters="--fulltrust" />
+          </desktop:FullTrustProcess>
+        </desktop:Extension>
       </Extensions>
     </Application>
   </Applications>

@@ -106,6 +106,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Label="MultilingualAppToolkit">
     <MultilingualAppToolkitVersion>4.0</MultilingualAppToolkitVersion>
@@ -139,6 +140,11 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <SDKReference Include="WindowsDesktop, Version=10.0.26100.0">
+      <Name>Windows Desktop Extensions for the UWP</Name>
+    </SDKReference>
+  </ItemGroup>
+  <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Content Include="Assets\ColourIcon.png" />
     <Content Include="Assets\Data\GlyphData.db" />
@@ -163,6 +169,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Program.cs" />
     <Compile Include="Controls\AutoGrid.cs" />
     <Compile Include="Controls\Brushes\MicaAltBrush.cs" />
     <Compile Include="Controls\ButtonGroup.cs" />
@@ -320,6 +327,7 @@
     <Compile Include="Services\ActivationService.cs" />
     <Compile Include="Models\AddToCollectionResult.cs" />
     <Compile Include="Services\FontCacheService.cs" />
+    <Compile Include="Services\FullTrustHost.cs" />
     <Compile Include="Services\IDialogService.cs" />
     <Compile Include="Services\LeakTrackingService.cs" />
     <Compile Include="Provider\SQLiteCollectionProvider.cs" />

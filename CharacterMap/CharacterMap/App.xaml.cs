@@ -46,6 +46,7 @@ sealed partial class App : Application
 
     private void CoreApplication_Exiting(object sender, object e)
     {
+        FullTrustHost.RequestShutdown();
         CleanUp();
     }
 
