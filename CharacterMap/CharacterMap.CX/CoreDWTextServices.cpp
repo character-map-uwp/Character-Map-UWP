@@ -4,7 +4,11 @@
 #include "DWHelpers.h"
 #include "Utils.h"
 #include <algorithm>
+#include <array>
+#include <atomic>
 #include <mutex>
+#include <ppltasks.h>
+#include <d3d11_2.h>
 
 using namespace Microsoft::WRL;
 using namespace CharacterMapCX;
@@ -769,4 +773,407 @@ void CoreDWTextServices::DrawGlyphRun(
         params.ForegroundBrush,
         format,
         DWRITE_MEASURING_MODE_NATURAL);
+}
+
+namespace
+{
+    struct SharedOffDeviceD2DRenderer
+    {
+        std::mutex Mutex;
+        ComPtr<ID3D11Device> D3DDevice;
+        ComPtr<ID2D1Factory5> D2DFactory;
+        ComPtr<ID2D1Device> D2DDevice;
+        ComPtr<ID2D1DeviceContext> D2DContext;
+        ComPtr<ID2D1Bitmap1> TargetBitmap;
+        ComPtr<ID2D1Bitmap1> StagingBitmap;
+        UINT32 BitmapWidth = 0;
+        UINT32 BitmapHeight = 0;
+
+        void ResetBitmaps()
+        {
+            BitmapWidth = 0;
+            BitmapHeight = 0;
+            StagingBitmap.Reset();
+            TargetBitmap.Reset();
+        }
+
+        void ResetDeviceResources()
+        {
+            ResetBitmaps();
+            D2DContext.Reset();
+            D2DDevice.Reset();
+            D3DDevice.Reset();
+        }
+
+        bool RenderLocked(
+            UINT32 surfaceWidth,
+            UINT32 surfaceHeight,
+            const std::function<void(ID2D1DeviceContext*)>& drawCallback,
+            std::vector<uint8_t>& outPixels,
+            UINT32& outPitch)
+        {
+            if (D3DDevice != nullptr && FAILED(D3DDevice->GetDeviceRemovedReason()))
+                ResetDeviceResources();
+
+            if (D2DContext == nullptr)
+            {
+                UINT flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+                D3D_FEATURE_LEVEL levels[] = {
+                    D3D_FEATURE_LEVEL_11_1,
+                    D3D_FEATURE_LEVEL_11_0,
+                    D3D_FEATURE_LEVEL_10_1,
+                    D3D_FEATURE_LEVEL_10_0
+                };
+                D3D_FEATURE_LEVEL level{};
+                HRESULT hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, flags, levels, ARRAYSIZE(levels), D3D11_SDK_VERSION, &D3DDevice, &level, nullptr);
+                if (FAILED(hr))
+                    hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_WARP, nullptr, flags, levels, ARRAYSIZE(levels), D3D11_SDK_VERSION, &D3DDevice, &level, nullptr);
+                if (FAILED(hr) || D3DDevice == nullptr)
+                    return false;
+
+                ComPtr<IDXGIDevice> dxgiDevice;
+                if (FAILED(D3DDevice.As(&dxgiDevice)))
+                    return false;
+
+                if (D2DFactory == nullptr)
+                {
+                    D2D1_FACTORY_OPTIONS opts{};
+                    if (FAILED(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory5), &opts, &D2DFactory)))
+                        return false;
+                }
+
+                if (FAILED(D2DFactory->CreateDevice(dxgiDevice.Get(), &D2DDevice)) || D2DDevice == nullptr)
+                    return false;
+
+                if (FAILED(D2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &D2DContext)) || D2DContext == nullptr)
+                    return false;
+            }
+
+            // Always use BGRA8 off-device even if the final surface is A8: D2D1DeviceContext
+            // does not support A8_UNORM with D2D1_BITMAP_OPTIONS_TARGET on many drivers.
+            // Reuse grow-only target and staging bitmaps per slot to avoid per-item D3D texture allocations.
+            if (TargetBitmap == nullptr || StagingBitmap == nullptr ||
+                surfaceWidth > BitmapWidth || surfaceHeight > BitmapHeight)
+            {
+                UINT32 allocW = (std::max)(BitmapWidth, surfaceWidth);
+                UINT32 allocH = (std::max)(BitmapHeight, surfaceHeight);
+                D2D1_PIXEL_FORMAT pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED);
+
+                D2D1_BITMAP_PROPERTIES1 targetProps = D2D1::BitmapProperties1(D2D1_BITMAP_OPTIONS_TARGET, pixelFormat);
+                ComPtr<ID2D1Bitmap1> newTarget;
+                if (FAILED(D2DContext->CreateBitmap(D2D1::SizeU(allocW, allocH), nullptr, 0, &targetProps, &newTarget)) || newTarget == nullptr)
+                    return false;
+
+                D2D1_BITMAP_PROPERTIES1 stagingProps = D2D1::BitmapProperties1(
+                    D2D1_BITMAP_OPTIONS_CPU_READ | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
+                    pixelFormat);
+                ComPtr<ID2D1Bitmap1> newStaging;
+                if (FAILED(D2DContext->CreateBitmap(D2D1::SizeU(allocW, allocH), nullptr, 0, &stagingProps, &newStaging)) || newStaging == nullptr)
+                    return false;
+
+                TargetBitmap = newTarget;
+                StagingBitmap = newStaging;
+                BitmapWidth = allocW;
+                BitmapHeight = allocH;
+            }
+
+            D2DContext->SetTarget(TargetBitmap.Get());
+            D2DContext->BeginDraw();
+            D2DContext->SetTransform(D2D1::Matrix3x2F::Identity());
+            D2DContext->PushAxisAlignedClip(
+                D2D1::RectF(0.0f, 0.0f, static_cast<FLOAT>(surfaceWidth), static_cast<FLOAT>(surfaceHeight)),
+                D2D1_ANTIALIAS_MODE_ALIASED);
+            D2DContext->Clear(D2D1::ColorF(0, 0, 0, 0));
+            drawCallback(D2DContext.Get());
+            D2DContext->SetTransform(D2D1::Matrix3x2F::Identity());
+            D2DContext->PopAxisAlignedClip();
+            HRESULT hr = D2DContext->EndDraw();
+            D2DContext->SetTarget(nullptr);
+            if (FAILED(hr))
+            {
+                if (hr == D2DERR_RECREATE_TARGET)
+                    ResetDeviceResources();
+                return false;
+            }
+
+            D2D1_POINT_2U destPoint = D2D1::Point2U(0, 0);
+            D2D1_RECT_U copyRect = D2D1::RectU(0, 0, surfaceWidth, surfaceHeight);
+            if (FAILED(StagingBitmap->CopyFromBitmap(&destPoint, TargetBitmap.Get(), &copyRect)))
+                return false;
+
+            D2D1_MAPPED_RECT mapped{};
+            if (FAILED(StagingBitmap->Map(D2D1_MAP_OPTIONS_READ, &mapped)) || mapped.bits == nullptr)
+                return false;
+
+            UINT32 rowBytes = surfaceWidth * 4;
+            outPitch = rowBytes;
+            outPixels.resize(static_cast<size_t>(rowBytes) * surfaceHeight);
+            const uint8_t* src = static_cast<const uint8_t*>(mapped.bits);
+            uint8_t* dst = outPixels.data();
+            if (mapped.pitch == rowBytes)
+                memcpy(dst, src, outPixels.size());
+            else
+            {
+                for (UINT32 y = 0; y < surfaceHeight; ++y)
+                    memcpy(dst + static_cast<size_t>(y) * rowBytes, src + static_cast<size_t>(y) * mapped.pitch, rowBytes);
+            }
+            StagingBitmap->Unmap();
+            return true;
+        }
+    };
+
+    template <size_t N>
+    class SharedOffDeviceRendererPool
+    {
+    public:
+        bool Render(
+            UINT32 surfaceWidth,
+            UINT32 surfaceHeight,
+            const std::function<void(ID2D1DeviceContext*)>& drawCallback,
+            std::vector<uint8_t>& outPixels,
+            UINT32& outPitch)
+        {
+            for (size_t i = 0; i < N; ++i)
+            {
+                std::unique_lock<std::mutex> lock(m_slots[i].Mutex, std::try_to_lock);
+                if (lock.owns_lock())
+                    return m_slots[i].RenderLocked(surfaceWidth, surfaceHeight, drawCallback, outPixels, outPitch);
+            }
+
+            size_t idx = m_next.fetch_add(1, std::memory_order_relaxed) % N;
+            std::lock_guard<std::mutex> lock(m_slots[idx].Mutex);
+            return m_slots[idx].RenderLocked(surfaceWidth, surfaceHeight, drawCallback, outPixels, outPitch);
+        }
+
+        void Trim()
+        {
+            for (size_t i = 0; i < N; ++i)
+            {
+                std::lock_guard<std::mutex> lock(m_slots[i].Mutex);
+                m_slots[i].ResetBitmaps();
+                if (m_slots[i].D2DDevice != nullptr)
+                    m_slots[i].D2DDevice->ClearResources(0);
+            }
+        }
+
+    private:
+        std::array<SharedOffDeviceD2DRenderer, N> m_slots;
+        std::atomic<size_t> m_next{ 0 };
+    };
+
+    SharedOffDeviceRendererPool<4>& GetMonoOffDevicePool()
+    {
+        static SharedOffDeviceRendererPool<4> s_monoPool;
+        return s_monoPool;
+    }
+
+    SharedOffDeviceRendererPool<2>& GetColorOffDevicePool()
+    {
+        static SharedOffDeviceRendererPool<2> s_colorPool;
+        return s_colorPool;
+    }
+
+    struct SharedUploadBitmapCache
+    {
+        ComPtr<ID2D1Device> Device;
+        ComPtr<ID2D1Bitmap1> Bitmap;
+        UINT32 Width = 0;
+        UINT32 Height = 0;
+
+        void Reset()
+        {
+            Bitmap.Reset();
+            Device.Reset();
+            Width = 0;
+            Height = 0;
+        }
+    };
+
+    SharedUploadBitmapCache& GetUploadBitmapCache()
+    {
+        static SharedUploadBitmapCache s_cache;
+        return s_cache;
+    }
+}
+
+bool CoreDWTextServices::RenderOffDevice(
+    UINT32 surfaceWidth,
+    UINT32 surfaceHeight,
+    bool useColorPool,
+    const std::function<void(ID2D1DeviceContext*)>& drawCallback,
+    std::vector<uint8_t>& outPixels,
+    UINT32& outPitch)
+{
+    if (surfaceWidth == 0 || surfaceHeight == 0 || !drawCallback)
+        return false;
+
+    return useColorPool
+        ? GetColorOffDevicePool().Render(surfaceWidth, surfaceHeight, drawCallback, outPixels, outPitch)
+        : GetMonoOffDevicePool().Render(surfaceWidth, surfaceHeight, drawCallback, outPixels, outPitch);
+}
+
+void CoreDWTextServices::TrimOffDeviceRenderers()
+{
+    GetMonoOffDevicePool().Trim();
+    GetColorOffDevicePool().Trim();
+    std::lock_guard<std::mutex> renderLock(CompositionDeviceManager::GetRenderMutex());
+    GetUploadBitmapCache().Reset();
+}
+
+bool CoreDWTextServices::UploadOffDevicePixelsToSurface(
+    ICompositionDrawingSurfaceInterop* surfaceInterop,
+    UINT32 surfaceWidth,
+    UINT32 surfaceHeight,
+    const std::vector<uint8_t>& pixels,
+    UINT32 pitch)
+{
+    if (surfaceInterop == nullptr || surfaceWidth == 0 || surfaceHeight == 0 || pixels.empty())
+        return false;
+
+    POINT updateOffset{};
+    ComPtr<ID2D1DeviceContext> ctx;
+
+    std::lock_guard<std::mutex> renderLock(CompositionDeviceManager::GetRenderMutex());
+
+    HRESULT hr = surfaceInterop->BeginDraw(nullptr, IID_PPV_ARGS(&ctx), &updateOffset);
+    if (FAILED(hr))
+    {
+        if (CompositionDeviceManager::IsDeviceLostHResult(hr))
+        {
+            GetUploadBitmapCache().Reset();
+            CompositionDeviceManager::HandleDeviceLost();
+        }
+        return false;
+    }
+
+    bool uploaded = false;
+    if (ctx != nullptr)
+    {
+        ctx->Clear(D2D1::ColorF(0, 0, 0, 0));
+
+        ComPtr<ID2D1Device> dev;
+        ctx->GetDevice(&dev);
+        SharedUploadBitmapCache& cache = GetUploadBitmapCache();
+        if (cache.Device.Get() != dev.Get() || cache.Bitmap == nullptr ||
+            surfaceWidth > cache.Width || surfaceHeight > cache.Height)
+        {
+            UINT32 allocW = (cache.Device.Get() == dev.Get()) ? (std::max)(cache.Width, surfaceWidth) : surfaceWidth;
+            UINT32 allocH = (cache.Device.Get() == dev.Get()) ? (std::max)(cache.Height, surfaceHeight) : surfaceHeight;
+
+            D2D1_BITMAP_PROPERTIES1 uploadProps = D2D1::BitmapProperties1(
+                D2D1_BITMAP_OPTIONS_NONE,
+                D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED));
+
+            ComPtr<ID2D1Bitmap1> newBitmap;
+            if (SUCCEEDED(ctx->CreateBitmap(D2D1::SizeU(allocW, allocH), nullptr, 0, &uploadProps, &newBitmap)) && newBitmap != nullptr)
+            {
+                cache.Device = dev;
+                cache.Bitmap = newBitmap;
+                cache.Width = allocW;
+                cache.Height = allocH;
+            }
+        }
+
+        if (cache.Bitmap != nullptr)
+        {
+            D2D1_RECT_U destRect = D2D1::RectU(0, 0, surfaceWidth, surfaceHeight);
+            if (SUCCEEDED(cache.Bitmap->CopyFromMemory(&destRect, pixels.data(), pitch)))
+            {
+                D2D1_RECT_F rect = D2D1::RectF(0.0f, 0.0f, static_cast<FLOAT>(surfaceWidth), static_cast<FLOAT>(surfaceHeight));
+                ctx->SetTransform(D2D1::Matrix3x2F::Translation(static_cast<FLOAT>(updateOffset.x), static_cast<FLOAT>(updateOffset.y)));
+                ctx->DrawBitmap(cache.Bitmap.Get(), rect, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR, rect);
+                uploaded = true;
+            }
+        }
+
+        HRESULT hrEnd = surfaceInterop->EndDraw();
+        if (FAILED(hrEnd))
+        {
+            if (CompositionDeviceManager::IsDeviceLostHResult(hrEnd))
+            {
+                cache.Reset();
+                CompositionDeviceManager::HandleDeviceLost();
+            }
+            return false;
+        }
+    }
+
+    return uploaded;
+}
+
+BackgroundRenderQueue& BackgroundRenderQueue::MonoInstance()
+{
+    static BackgroundRenderQueue s_instance(4);
+    return s_instance;
+}
+
+BackgroundRenderQueue& BackgroundRenderQueue::ColorInstance()
+{
+    static BackgroundRenderQueue s_instance(2);
+    return s_instance;
+}
+
+BackgroundRenderQueue::BackgroundRenderQueue(size_t maxWorkers)
+    : m_maxWorkers(maxWorkers)
+{
+}
+
+void BackgroundRenderQueue::Enqueue(BackgroundRenderWorkItem&& item)
+{
+    bool spawnWorker = false;
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        bool replaced = false;
+        if (item.ControlKey != nullptr)
+        {
+            for (auto& existing : m_queue)
+            {
+                if (existing.ControlKey == item.ControlKey)
+                {
+                    item.WasHidden = item.WasHidden || existing.WasHidden;
+                    existing = std::move(item);
+                    replaced = true;
+                    break;
+                }
+            }
+        }
+        if (!replaced)
+            m_queue.push_back(std::move(item));
+        if (m_activeWorkers < m_maxWorkers)
+        {
+            ++m_activeWorkers;
+            spawnWorker = true;
+        }
+    }
+
+    if (spawnWorker)
+        SpawnWorker();
+}
+
+void BackgroundRenderQueue::SpawnWorker()
+{
+    concurrency::create_task([this]()
+    {
+        for (;;)
+        {
+            BackgroundRenderWorkItem item;
+            {
+                std::lock_guard<std::mutex> lock(m_mutex);
+                if (m_queue.empty())
+                {
+                    --m_activeWorkers;
+                    return;
+                }
+
+                // Consume from the middle of the queue (visible viewport sits between
+                // the leading and trailing ItemsWrapGrid cache buffers).
+                size_t mid = m_queue.size() / 2;
+                item = std::move(m_queue[mid]);
+                m_queue.erase(m_queue.begin() + mid);
+            }
+
+            if (item.Execute)
+                item.Execute(item.WasHidden);
+        }
+    });
 }

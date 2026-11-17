@@ -503,6 +503,8 @@ void CompositionDeviceManager::Trim()
     if (s_d2dDevice != nullptr)
         s_d2dDevice->ClearResources(0);
 
+    CoreDWTextServices::TrimOffDeviceRenderers();
+
     for (auto it = s_graphicsDevices.begin(); it != s_graphicsDevices.end();)
     {
         if (it->second != nullptr)
@@ -605,6 +607,29 @@ bool CompositionDeviceManager::RenderGlyphToSurface(
     LONG requiredWidth, LONG requiredHeight,
     float scaleX, float scaleY)
 {
+    Windows::UI::Color foregroundColor = ExtractSolidColor(foreground, Windows::UI::Colors::White);
+    return RenderGlyphToSurface(
+        surface, preferredFormat, padLeft, padTop, baseline, rawFace, fontSize,
+        glyphIndices, glyphAdvances, glyphOffsets, glyphCount,
+        foregroundColor, simulations, requiredWidth, requiredHeight, scaleX, scaleY);
+}
+
+bool CompositionDeviceManager::RenderGlyphToSurface(
+    CompositionDrawingSurface^ surface,
+    GlyphImageFormat preferredFormat,
+    float padLeft, float padTop, float baseline,
+    IDWriteFontFace* rawFace,
+    FLOAT fontSize,
+    const UINT16* glyphIndices,
+    const FLOAT* glyphAdvances,
+    const DWRITE_GLYPH_OFFSET* glyphOffsets,
+    UINT32 glyphCount,
+    Windows::UI::Color foregroundColor,
+    Windows::UI::Xaml::Media::StyleSimulations simulations,
+    LONG requiredWidth, LONG requiredHeight,
+    float scaleX, float scaleY,
+    float drawOffsetX, float drawOffsetY)
+{
     if (surface == nullptr || rawFace == nullptr || glyphIndices == nullptr || glyphCount == 0 || requiredWidth <= 0 || requiredHeight <= 0)
         return false;
 
@@ -631,7 +656,9 @@ bool CompositionDeviceManager::RenderGlyphToSurface(
             d2dContext->Clear(D2D1::ColorF(0, 0, 0, 0));
             d2dContext->SetTransform(
                 D2D1::Matrix3x2F::Scale(scaleX, scaleY) *
-                D2D1::Matrix3x2F::Translation(static_cast<FLOAT>(updateOffset.x), static_cast<FLOAT>(updateOffset.y)));
+                D2D1::Matrix3x2F::Translation(
+                    static_cast<FLOAT>(updateOffset.x) + drawOffsetX,
+                    static_cast<FLOAT>(updateOffset.y) + drawOffsetY));
 
             DWRITE_GLYPH_RUN glyphRun{};
             glyphRun.fontFace = rawFace;
@@ -649,11 +676,11 @@ bool CompositionDeviceManager::RenderGlyphToSurface(
             D2D1_COLOR_F brushColor = D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f);
             if (!isMask)
             {
-                if (auto scb = dynamic_cast<Windows::UI::Xaml::Media::SolidColorBrush^>(foreground))
-                {
-                    auto c = scb->Color;
-                    brushColor = D2D1::ColorF(c.R / 255.0f, c.G / 255.0f, c.B / 255.0f, (c.A / 255.0f) * static_cast<float>(scb->Opacity));
-                }
+                brushColor = D2D1::ColorF(
+                    foregroundColor.R / 255.0f,
+                    foregroundColor.G / 255.0f,
+                    foregroundColor.B / 255.0f,
+                    foregroundColor.A / 255.0f);
             }
 
             ComPtr<ID2D1SolidColorBrush> d2dBrush;

@@ -1608,6 +1608,7 @@
                     ContainerContentChanging="GlyphGrid_ContainerContentChanging"
                     ContextRequested="Grid_ContextRequested"
                     EnableRepositionAnimations="{x:Bind ViewModel.AllowExpensiveAnimation, Mode=OneWay}"
+                    ItemContainerTransitions="{StaticResource NoTransitions}"
                     ItemsSource="{x:Bind ViewModel.SelectedFaceAnalysis.Glyphs, Mode=OneWay}"
                     SelectionChanged="GlyphRepeater_SelectionChanged"
                     SelectionMode="Single"
@@ -1637,7 +1638,10 @@
                         <DataTemplate x:DataType="sys:UInt32">
                             <!--  Bindings in code due to memory leak  -->
                             <Grid x:Name="Target" Padding="4">
-                                <cxc:FontGlyphs x:Name="Text" Foreground="{ThemeResource ApplicationForegroundThemeBrush}" />
+                                <cxc:FontGlyphs
+                                    x:Name="Text"
+                                    Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                    IsBackgroundRenderEnabled="True" />
                                 <TextBlock Style="{StaticResource CharItemUnicodeStyle}" />
                             </Grid>
                         </DataTemplate>
@@ -2218,6 +2222,7 @@
                                                 FontSize="30"
                                                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                                                 Indices="{x:Bind Input.GlyphIndex}"
+                                                IsBackgroundRenderEnabled="True"
                                                 IsColorFontEnabled="{Binding ElementName=OpenTypeRepeater, Path=(core:Properties.Boolean)}"
                                                 Opacity="0.6"
                                                 StyleSimulations="{Binding ElementName=OpenTypeRepeater, Path=(core:Properties.Tag)}" />
@@ -2257,6 +2262,7 @@
                                                 FontSize="44"
                                                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                                                 Indices="{x:Bind Substitute.GlyphIndex}"
+                                                IsBackgroundRenderEnabled="True"
                                                 IsColorFontEnabled="{Binding ElementName=OpenTypeRepeater, Path=(core:Properties.Boolean)}"
                                                 StyleSimulations="{Binding ElementName=OpenTypeRepeater, Path=(core:Properties.Tag)}" />
                                         </Grid>

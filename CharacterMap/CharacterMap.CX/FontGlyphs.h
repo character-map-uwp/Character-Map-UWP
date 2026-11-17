@@ -5,6 +5,7 @@
 #include <dwrite_3.h>
 #include <wrl.h>
 #include <vector>
+#include <atomic>
 
 #include "DWriteFontFace.h"
 #include "DWriteTypographyCollection.h"
@@ -90,6 +91,11 @@ namespace CharacterMapCX
                 Windows::UI::Xaml::DependencyProperty^ get() { return _IsTextShapingEnabledProperty; }
             }
 
+            static property Windows::UI::Xaml::DependencyProperty^ IsBackgroundRenderEnabledProperty
+            {
+                Windows::UI::Xaml::DependencyProperty^ get() { return _IsBackgroundRenderEnabledProperty; }
+            }
+
             #pragma endregion
 
             #pragma region Properties
@@ -162,6 +168,12 @@ namespace CharacterMapCX
                 void set(bool value) { SetValue(IsTextShapingEnabledProperty, value); }
             }
 
+            property bool IsBackgroundRenderEnabled
+            {
+                bool get() { return (bool)GetValue(IsBackgroundRenderEnabledProperty); }
+                void set(bool value) { SetValue(IsBackgroundRenderEnabledProperty, value); }
+            }
+
             #pragma endregion
 
             virtual Windows::Foundation::Size MeasureOverride(Windows::Foundation::Size availableSize) override;
@@ -169,6 +181,11 @@ namespace CharacterMapCX
 
             void InvalidateLayoutAndRender();
             void Update();
+            void CancelRender();
+
+        internal:
+            bool IsGenerationCurrent(uint64_t gen) const { return m_renderGeneration.load() == gen; }
+            void ShowVisualIfCurrent(uint64_t gen);
 
         private:
             static void EnsureDependencyProperties();
@@ -184,6 +201,7 @@ namespace CharacterMapCX
             static Windows::UI::Xaml::DependencyProperty^ _StretchDirectionProperty;
             static Windows::UI::Xaml::DependencyProperty^ _TypographyProperty;
             static Windows::UI::Xaml::DependencyProperty^ _IsTextShapingEnabledProperty;
+            static Windows::UI::Xaml::DependencyProperty^ _IsBackgroundRenderEnabledProperty;
 
             static void OnPropertyChanged(Windows::UI::Xaml::DependencyObject^ d, Windows::UI::Xaml::DependencyPropertyChangedEventArgs^ e);
             static void OnFontSizeChanged(Windows::UI::Xaml::DependencyObject^ d, Windows::UI::Xaml::DependencyPropertyChangedEventArgs^ e);
@@ -194,6 +212,7 @@ namespace CharacterMapCX
             void ParseAndLayoutGlyphs();
             Windows::Foundation::Size ComputeScaleFactor(Windows::Foundation::Size availableSize, Windows::Foundation::Size contentSize);
             void RenderGlyphs();
+            void RenderGlyphsBackground(Windows::Foundation::Size finalSize);
             void ReleaseDrawingSurface();
             void OnLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
             void OnUnloaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
@@ -222,6 +241,9 @@ namespace CharacterMapCX
 
             bool m_isLayoutDirty;
             bool m_isRenderDirty;
+            float m_dpiScale = 0.0f;
+            Windows::Foundation::Size m_lastBgArrangeSize{ 0, 0 };
+            std::atomic<uint64_t> m_renderGeneration{ 0 };
             Windows::Foundation::EventRegistrationToken m_loadedToken;
             Windows::Foundation::EventRegistrationToken m_unloadedToken;
             Windows::Foundation::EventRegistrationToken m_themeChangedToken;

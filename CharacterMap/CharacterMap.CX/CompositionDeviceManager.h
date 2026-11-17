@@ -120,6 +120,21 @@ namespace CharacterMapCX
             Windows::UI::Xaml::Media::StyleSimulations simulations,
             LONG requiredWidth, LONG requiredHeight,
             float scaleX = 1.0f, float scaleY = 1.0f);
+        static bool RenderGlyphToSurface(
+            Windows::UI::Composition::CompositionDrawingSurface^ surface,
+            GlyphImageFormat preferredFormat,
+            float padLeft, float padTop, float baseline,
+            IDWriteFontFace* rawFace,
+            FLOAT fontSize,
+            const UINT16* glyphIndices,
+            const FLOAT* glyphAdvances,
+            const DWRITE_GLYPH_OFFSET* glyphOffsets,
+            UINT32 glyphCount,
+            Windows::UI::Color foregroundColor,
+            Windows::UI::Xaml::Media::StyleSimulations simulations,
+            LONG requiredWidth, LONG requiredHeight,
+            float scaleX = 1.0f, float scaleY = 1.0f,
+            float drawOffsetX = 0.0f, float drawOffsetY = 0.0f);
 
     private:
         static void EnsureDevices();

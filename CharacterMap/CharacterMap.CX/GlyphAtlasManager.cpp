@@ -100,6 +100,38 @@ void GlyphAtlasManager::Clear()
     s_colorAtlases.clear();
 }
 
+AtlasSlot GlyphAtlasManager::TryGetGlyphSlot(
+    IDWriteFontFace* rawFace,
+    UINT16 glyphIndex,
+    FLOAT fontSize,
+    Windows::UI::Xaml::Media::StyleSimulations simulations,
+    bool isColor,
+    float scaleX, float scaleY,
+    UINT32 typographyKey)
+{
+    AtlasSlot result{};
+    result.IsValid = false;
+    if (rawFace == nullptr)
+        return result;
+
+    AtlasKey key{};
+    key.FontFace = rawFace;
+    key.GlyphIndex = glyphIndex;
+    key.FontSizeInt = static_cast<UINT32>(fontSize * 100.0f);
+    key.Simulations = static_cast<UINT32>(simulations);
+    key.IsColor = isColor;
+    key.TypographyKey = typographyKey;
+    key.ScaleXInt = static_cast<UINT32>(std::round(scaleX * 1000.0f));
+    key.ScaleYInt = static_cast<UINT32>(std::round(scaleY * 1000.0f));
+
+    std::lock_guard<std::mutex> lock(s_atlasMutex);
+    auto it = s_slotCache.find(key);
+    if (it != s_slotCache.end() && it->second.IsValid && it->second.Surface != nullptr)
+        return it->second;
+
+    return result;
+}
+
 AtlasSlot GlyphAtlasManager::GetOrCreateGlyphSlot(
     Compositor^ compositor,
     IDWriteFontFace* rawFace,
@@ -111,6 +143,29 @@ AtlasSlot GlyphAtlasManager::GetOrCreateGlyphSlot(
     FLOAT glyphAdvance,
     DWRITE_GLYPH_OFFSET glyphOffset,
     Windows::UI::Xaml::Media::Brush^ foreground,
+    LONG requiredWidth, LONG requiredHeight,
+    float scaleX, float scaleY,
+    UINT32 typographyKey,
+    bool isRetry)
+{
+    Windows::UI::Color foregroundColor = CompositionDeviceManager::ExtractSolidColor(foreground, Windows::UI::Colors::White);
+    return GetOrCreateGlyphSlot(
+        compositor, rawFace, glyphIndex, fontSize, simulations, isColor,
+        padLeft, padTop, baseline, glyphAdvance, glyphOffset, foregroundColor,
+        requiredWidth, requiredHeight, scaleX, scaleY, typographyKey, isRetry);
+}
+
+AtlasSlot GlyphAtlasManager::GetOrCreateGlyphSlot(
+    Compositor^ compositor,
+    IDWriteFontFace* rawFace,
+    UINT16 glyphIndex,
+    FLOAT fontSize,
+    Windows::UI::Xaml::Media::StyleSimulations simulations,
+    bool isColor,
+    float padLeft, float padTop, float baseline,
+    FLOAT glyphAdvance,
+    DWRITE_GLYPH_OFFSET glyphOffset,
+    Windows::UI::Color foregroundColor,
     LONG requiredWidth, LONG requiredHeight,
     float scaleX, float scaleY,
     UINT32 typographyKey,
@@ -268,11 +323,11 @@ AtlasSlot GlyphAtlasManager::GetOrCreateGlyphSlot(
             D2D1_COLOR_F brushColor = D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f);
             if (isColor)
             {
-                if (auto scb = dynamic_cast<Windows::UI::Xaml::Media::SolidColorBrush^>(foreground))
-                {
-                    auto c = scb->Color;
-                    brushColor = D2D1::ColorF(c.R / 255.0f, c.G / 255.0f, c.B / 255.0f, (c.A / 255.0f) * static_cast<float>(scb->Opacity));
-                }
+                brushColor = D2D1::ColorF(
+                    foregroundColor.R / 255.0f,
+                    foregroundColor.G / 255.0f,
+                    foregroundColor.B / 255.0f,
+                    foregroundColor.A / 255.0f);
             }
 
             ComPtr<ID2D1SolidColorBrush> d2dBrush;
@@ -304,7 +359,7 @@ AtlasSlot GlyphAtlasManager::GetOrCreateGlyphSlot(
         {
             return GetOrCreateGlyphSlot(
                 compositor, rawFace, glyphIndex, fontSize, simulations, isColor,
-                padLeft, padTop, baseline, glyphAdvance, glyphOffset, foreground,
+                padLeft, padTop, baseline, glyphAdvance, glyphOffset, foregroundColor,
                 requiredWidth, requiredHeight, scaleX, scaleY, typographyKey, true);
         }
         return result;

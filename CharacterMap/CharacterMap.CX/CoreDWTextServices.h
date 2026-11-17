@@ -4,6 +4,12 @@
 #include <dwrite_3.h>
 #include <wrl.h>
 #include <vector>
+#include <deque>
+#include <mutex>
+#include <functional>
+#include <cstdint>
+
+struct ICompositionDrawingSurfaceInterop;
 
 #include "DWriteFontFace.h"
 #include "DWriteFallbackFont.h"
@@ -124,5 +130,52 @@ namespace CharacterMapCX
             D2D1_POINT_2F origin,
             const DWRITE_GLYPH_RUN* run,
             const TextRenderParameters& params);
+
+        // Rasterizes onto a pooled off-device D2D target (4 mono / 2 color lanes) without holding GetRenderMutex()
+        static bool RenderOffDevice(
+            UINT32 surfaceWidth,
+            UINT32 surfaceHeight,
+            bool useColorPool,
+            const std::function<void(ID2D1DeviceContext*)>& drawCallback,
+            std::vector<uint8_t>& outPixels,
+            UINT32& outPitch);
+
+        // Uploads off-device BGRA8 pixels to a CompositionDrawingSurface under GetRenderMutex()
+        static bool UploadOffDevicePixelsToSurface(
+            ICompositionDrawingSurfaceInterop* surfaceInterop,
+            UINT32 surfaceWidth,
+            UINT32 surfaceHeight,
+            const std::vector<uint8_t>& pixels,
+            UINT32 pitch);
+
+        // Releases cached off-device target/staging bitmaps across all pooled renderers
+        static void TrimOffDeviceRenderers();
+    };
+
+    struct BackgroundRenderWorkItem
+    {
+        const void* ControlKey = nullptr;
+        bool WasHidden = false;
+        std::function<void(bool wasHidden)> Execute;
+    };
+
+    // Shared bounded worker pool that pops from the middle of the queue so visible items
+    // in ItemsWrapGrid's realized cache window render before off-screen cache items.
+    class BackgroundRenderQueue
+    {
+    public:
+        static BackgroundRenderQueue& MonoInstance();
+        static BackgroundRenderQueue& ColorInstance();
+
+        explicit BackgroundRenderQueue(size_t maxWorkers);
+        void Enqueue(BackgroundRenderWorkItem&& item);
+
+    private:
+        void SpawnWorker();
+
+        std::mutex m_mutex;
+        std::deque<BackgroundRenderWorkItem> m_queue;
+        size_t m_activeWorkers = 0;
+        size_t m_maxWorkers = 1;
     };
 }

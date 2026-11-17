@@ -86,6 +86,15 @@ namespace CharacterMapCX
     class GlyphAtlasManager
     {
     public:
+        static AtlasSlot TryGetGlyphSlot(
+            IDWriteFontFace* rawFace,
+            UINT16 glyphIndex,
+            FLOAT fontSize,
+            Windows::UI::Xaml::Media::StyleSimulations simulations,
+            bool isColor,
+            float scaleX = 1.0f, float scaleY = 1.0f,
+            UINT32 typographyKey = 0);
+
         static AtlasSlot GetOrCreateGlyphSlot(
             Windows::UI::Composition::Compositor^ compositor,
             IDWriteFontFace* rawFace,
@@ -97,6 +106,22 @@ namespace CharacterMapCX
             FLOAT glyphAdvance,
             DWRITE_GLYPH_OFFSET glyphOffset,
             Windows::UI::Xaml::Media::Brush^ foreground,
+            LONG requiredWidth, LONG requiredHeight,
+            float scaleX = 1.0f, float scaleY = 1.0f,
+            UINT32 typographyKey = 0,
+            bool isRetry = false);
+
+        static AtlasSlot GetOrCreateGlyphSlot(
+            Windows::UI::Composition::Compositor^ compositor,
+            IDWriteFontFace* rawFace,
+            UINT16 glyphIndex,
+            FLOAT fontSize,
+            Windows::UI::Xaml::Media::StyleSimulations simulations,
+            bool isColor,
+            float padLeft, float padTop, float baseline,
+            FLOAT glyphAdvance,
+            DWRITE_GLYPH_OFFSET glyphOffset,
+            Windows::UI::Color foregroundColor,
             LONG requiredWidth, LONG requiredHeight,
             float scaleX = 1.0f, float scaleY = 1.0f,
             UINT32 typographyKey = 0,

@@ -205,6 +205,7 @@ void CharacterMapCX::Controls::DirectText::OnLoaded(Platform::Object^ sender, Ro
 
 void CharacterMapCX::Controls::DirectText::OnUnloaded(Platform::Object^ sender, RoutedEventArgs^ e)
 {
+    ++m_renderGeneration;
     ReleaseDrawingSurface();
 
     if (m_spriteVisual != nullptr)
@@ -857,189 +858,18 @@ namespace
         }
     }
 
-    // Isolated D3D11/D2D1 device used off-thread for heavy color/SVG rasterization so slow
-    // glyphs don't hold CompositionDeviceManager::GetRenderMutex() and block other UI draws.
-    struct OffDeviceD2DRenderer
-    {
-        std::mutex Mutex;
-        ComPtr<ID3D11Device> D3DDevice;
-        ComPtr<ID2D1Factory5> D2DFactory;
-        ComPtr<ID2D1Device> D2DDevice;
-        ComPtr<ID2D1DeviceContext> D2DContext;
-        ComPtr<ID2D1Bitmap1> TargetBitmap;
-        ComPtr<ID2D1Bitmap1> StagingBitmap;
-        UINT32 BitmapWidth = 0;
-        UINT32 BitmapHeight = 0;
-
-        void ResetDeviceResources()
-        {
-            TargetBitmap.Reset();
-            StagingBitmap.Reset();
-            BitmapWidth = 0;
-            BitmapHeight = 0;
-            D2DContext.Reset();
-            D2DDevice.Reset();
-            D3DDevice.Reset();
-        }
-
-        bool RenderLocked(const DirectTextRenderSnapshot& snap, std::vector<uint8_t>& outPixels, UINT32& outPitch)
-        {
-            if (D3DDevice != nullptr && FAILED(D3DDevice->GetDeviceRemovedReason()))
-                ResetDeviceResources();
-
-            if (D2DContext == nullptr)
-            {
-                UINT flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
-                D3D_FEATURE_LEVEL levels[] = {
-                    D3D_FEATURE_LEVEL_11_1,
-                    D3D_FEATURE_LEVEL_11_0,
-                    D3D_FEATURE_LEVEL_10_1,
-                    D3D_FEATURE_LEVEL_10_0
-                };
-                D3D_FEATURE_LEVEL level{};
-                HRESULT hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, flags, levels, ARRAYSIZE(levels), D3D11_SDK_VERSION, &D3DDevice, &level, nullptr);
-                if (FAILED(hr))
-                    hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_WARP, nullptr, flags, levels, ARRAYSIZE(levels), D3D11_SDK_VERSION, &D3DDevice, &level, nullptr);
-                if (FAILED(hr) || D3DDevice == nullptr)
-                    return false;
-
-                ComPtr<IDXGIDevice> dxgiDevice;
-                if (FAILED(D3DDevice.As(&dxgiDevice)))
-                    return false;
-
-                if (D2DFactory == nullptr)
-                {
-                    D2D1_FACTORY_OPTIONS opts{};
-                    if (FAILED(D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory5), &opts, &D2DFactory)))
-                        return false;
-                }
-
-                if (FAILED(D2DFactory->CreateDevice(dxgiDevice.Get(), &D2DDevice)) || D2DDevice == nullptr)
-                    return false;
-
-                if (FAILED(D2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &D2DContext)) || D2DContext == nullptr)
-                    return false;
-            }
-
-            // Always use BGRA8 off-device even if the final surface were A8: D2D1DeviceContext
-            // does not support A8_UNORM with D2D1_BITMAP_OPTIONS_TARGET on many drivers.
-            // Reuse grow-only target and staging bitmaps per slot to avoid per-item D3D texture allocations.
-            if (TargetBitmap == nullptr || StagingBitmap == nullptr ||
-                snap.SurfaceWidth > BitmapWidth || snap.SurfaceHeight > BitmapHeight)
-            {
-                UINT32 allocW = (std::max)(BitmapWidth, snap.SurfaceWidth);
-                UINT32 allocH = (std::max)(BitmapHeight, snap.SurfaceHeight);
-                D2D1_PIXEL_FORMAT pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED);
-
-                D2D1_BITMAP_PROPERTIES1 targetProps = D2D1::BitmapProperties1(
-                    D2D1_BITMAP_OPTIONS_TARGET,
-                    pixelFormat);
-
-                ComPtr<ID2D1Bitmap1> newTarget;
-                HRESULT hr = D2DContext->CreateBitmap(D2D1::SizeU(allocW, allocH), nullptr, 0, &targetProps, &newTarget);
-                if (FAILED(hr) || newTarget == nullptr)
-                    return false;
-
-                D2D1_BITMAP_PROPERTIES1 stagingProps = D2D1::BitmapProperties1(
-                    D2D1_BITMAP_OPTIONS_CPU_READ | D2D1_BITMAP_OPTIONS_CANNOT_DRAW,
-                    pixelFormat);
-
-                ComPtr<ID2D1Bitmap1> newStaging;
-                hr = D2DContext->CreateBitmap(D2D1::SizeU(allocW, allocH), nullptr, 0, &stagingProps, &newStaging);
-                if (FAILED(hr) || newStaging == nullptr)
-                    return false;
-
-                TargetBitmap = newTarget;
-                StagingBitmap = newStaging;
-                BitmapWidth = allocW;
-                BitmapHeight = allocH;
-            }
-
-            D2DContext->SetTarget(TargetBitmap.Get());
-            D2DContext->BeginDraw();
-            D2DContext->PushAxisAlignedClip(
-                D2D1::RectF(0.0f, 0.0f, static_cast<FLOAT>(snap.SurfaceWidth), static_cast<FLOAT>(snap.SurfaceHeight)),
-                D2D1_ANTIALIAS_MODE_ALIASED);
-            D2DContext->Clear(D2D1::ColorF(0, 0, 0, 0));
-            RenderSnapshotToContext(D2DContext.Get(), snap, 0.0f, 0.0f);
-            D2DContext->PopAxisAlignedClip();
-            HRESULT hr = D2DContext->EndDraw();
-            D2DContext->SetTarget(nullptr);
-            if (FAILED(hr))
-            {
-                if (hr == D2DERR_RECREATE_TARGET)
-                    ResetDeviceResources();
-                return false;
-            }
-
-            D2D1_POINT_2U destPoint = D2D1::Point2U(0, 0);
-            D2D1_RECT_U copyRect = D2D1::RectU(0, 0, snap.SurfaceWidth, snap.SurfaceHeight);
-            hr = StagingBitmap->CopyFromBitmap(&destPoint, TargetBitmap.Get(), &copyRect);
-            if (FAILED(hr))
-                return false;
-
-            D2D1_MAPPED_RECT mapped{};
-            hr = StagingBitmap->Map(D2D1_MAP_OPTIONS_READ, &mapped);
-            if (FAILED(hr) || mapped.bits == nullptr)
-                return false;
-
-            UINT32 rowBytes = snap.SurfaceWidth * 4;
-            outPitch = rowBytes;
-            outPixels.resize(static_cast<size_t>(rowBytes) * snap.SurfaceHeight);
-            const uint8_t* src = static_cast<const uint8_t*>(mapped.bits);
-            uint8_t* dst = outPixels.data();
-            if (mapped.pitch == rowBytes)
-            {
-                memcpy(dst, src, outPixels.size());
-            }
-            else
-            {
-                for (UINT32 y = 0; y < snap.SurfaceHeight; ++y)
-                    memcpy(dst + static_cast<size_t>(y) * rowBytes, src + static_cast<size_t>(y) * mapped.pitch, rowBytes);
-            }
-            StagingBitmap->Unmap();
-
-            return true;
-        }
-    };
-
-    template <size_t N>
-    class OffDeviceRendererPool
-    {
-    public:
-        bool Render(const DirectTextRenderSnapshot& snap, std::vector<uint8_t>& outPixels, UINT32& outPitch)
-        {
-            // Fast path: grab the first idle slot without blocking on a busy/stalled font.
-            for (size_t i = 0; i < N; ++i)
-            {
-                std::unique_lock<std::mutex> lock(m_slots[i].Mutex, std::try_to_lock);
-                if (lock.owns_lock())
-                    return m_slots[i].RenderLocked(snap, outPixels, outPitch);
-            }
-
-            // Fallback if all N slots are currently busy (e.g. deferred mono->color upgrade).
-            size_t idx = m_next.fetch_add(1, std::memory_order_relaxed) % N;
-            std::lock_guard<std::mutex> lock(m_slots[idx].Mutex);
-            return m_slots[idx].RenderLocked(snap, outPixels, outPitch);
-        }
-
-    private:
-        std::array<OffDeviceD2DRenderer, N> m_slots;
-        std::atomic<size_t> m_next{ 0 };
-    };
-
     bool RenderSnapshotOffDevice(const DirectTextRenderSnapshot& snap, std::vector<uint8_t>& outPixels, UINT32& outPitch)
     {
-        if (snap.SurfaceWidth == 0 || snap.SurfaceHeight == 0)
-            return false;
-
-        // Separate pools (4 monochrome, 2 color) so slow/difficult fonts never block the entire queue.
-        static OffDeviceRendererPool<4> s_monoPool;
-        static OffDeviceRendererPool<2> s_colorPool;
-
-        return (snap.RenderColor || snap.UseColorQueue)
-            ? s_colorPool.Render(snap, outPixels, outPitch)
-            : s_monoPool.Render(snap, outPixels, outPitch);
+        return CoreDWTextServices::RenderOffDevice(
+            snap.SurfaceWidth,
+            snap.SurfaceHeight,
+            snap.RenderColor || snap.UseColorQueue,
+            [&snap](ID2D1DeviceContext* ctx)
+            {
+                RenderSnapshotToContext(ctx, snap, 0.0f, 0.0f);
+            },
+            outPixels,
+            outPitch);
     }
 
     bool DrawSnapshotToSurface(DirectTextRenderSnapshot snap, bool offDevice = false, Platform::WeakReference weakThis = nullptr, uint64_t gen = 0)
@@ -1205,14 +1035,25 @@ namespace
 
         // Rasterize off-device (using separate mono/color lanes) so background threads never hold
         // CompositionDeviceManager::GetRenderMutex() during DrawTextLayout.
-        std::vector<uint8_t> offDevicePixels;
+        thread_local std::vector<uint8_t> offDevicePixels;
         UINT32 offDevicePitch = 0;
         bool hasOffDevicePixels = offDevice && RenderSnapshotOffDevice(snap, offDevicePixels, offDevicePitch);
 
-        if (hasOffDevicePixels && gen != 0)
+        if (hasOffDevicePixels)
         {
-            auto pThis = weakThis.Resolve<DirectText>();
-            if (pThis == nullptr || !pThis->IsGenerationCurrent(gen))
+            if (gen != 0)
+            {
+                auto pThis = weakThis.Resolve<DirectText>();
+                if (pThis == nullptr || !pThis->IsGenerationCurrent(gen))
+                    return false;
+            }
+
+            if (CoreDWTextServices::UploadOffDevicePixelsToSurface(
+                snap.SurfaceInterop.Get(),
+                snap.SurfaceWidth,
+                snap.SurfaceHeight,
+                offDevicePixels,
+                offDevicePitch))
                 return false;
         }
 
@@ -1232,153 +1073,12 @@ namespace
         if (ctx != nullptr)
         {
             ctx->Clear(D2D1::ColorF(0, 0, 0, 0));
-
-            if (hasOffDevicePixels)
-            {
-                D2D1_BITMAP_PROPERTIES1 uploadProps = D2D1::BitmapProperties1(
-                    D2D1_BITMAP_OPTIONS_NONE,
-                    D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED));
-
-                ComPtr<ID2D1Bitmap1> uploadBitmap;
-                if (SUCCEEDED(ctx->CreateBitmap(D2D1::SizeU(snap.SurfaceWidth, snap.SurfaceHeight), offDevicePixels.data(), offDevicePitch, &uploadProps, &uploadBitmap)) && uploadBitmap != nullptr)
-                {
-                    ctx->SetTransform(D2D1::Matrix3x2F::Translation(static_cast<FLOAT>(updateOffset.x), static_cast<FLOAT>(updateOffset.y)));
-                    ctx->DrawBitmap(uploadBitmap.Get(), D2D1::RectF(0.0f, 0.0f, static_cast<FLOAT>(snap.SurfaceWidth), static_cast<FLOAT>(snap.SurfaceHeight)));
-                }
-                else
-                {
-                    RenderSnapshotToContext(ctx.Get(), snap, static_cast<FLOAT>(updateOffset.x), static_cast<FLOAT>(updateOffset.y));
-                }
-            }
-            else
-            {
-                RenderSnapshotToContext(ctx.Get(), snap, static_cast<FLOAT>(updateOffset.x), static_cast<FLOAT>(updateOffset.y));
-            }
-
+            RenderSnapshotToContext(ctx.Get(), snap, static_cast<FLOAT>(updateOffset.x), static_cast<FLOAT>(updateOffset.y));
             snap.SurfaceInterop->EndDraw();
         }
 
         return false;
     }
-
-    struct BackgroundRenderJob
-    {
-        const void* ControlKey = nullptr;
-        Platform::WeakReference WeakThis;
-        uint64_t Generation = 0;
-        DirectTextRenderSnapshot Snapshot;
-        bool WasHidden = false;
-    };
-
-    // Bounded worker pool that pops from the middle of the queue so visible items in
-    // ItemsWrapGrid's realized cache window (above + visible + below) render before
-    // off-screen cache items, without flooding D2D/Composition during fast scrolls.
-    class BackgroundRenderQueue
-    {
-    public:
-        static BackgroundRenderQueue& MonoInstance()
-        {
-            static BackgroundRenderQueue s_instance(4);
-            return s_instance;
-        }
-
-        static BackgroundRenderQueue& ColorInstance()
-        {
-            static BackgroundRenderQueue s_instance(2);
-            return s_instance;
-        }
-
-        explicit BackgroundRenderQueue(size_t maxWorkers)
-            : m_maxWorkers(maxWorkers)
-        {
-        }
-
-        void Enqueue(BackgroundRenderJob&& job)
-        {
-            bool spawnWorker = false;
-            {
-                std::lock_guard<std::mutex> lock(m_mutex);
-                bool replaced = false;
-                if (job.ControlKey != nullptr)
-                {
-                    for (auto& existing : m_queue)
-                    {
-                        if (existing.ControlKey == job.ControlKey)
-                        {
-                            job.WasHidden = job.WasHidden || existing.WasHidden;
-                            existing = std::move(job);
-                            replaced = true;
-                            break;
-                        }
-                    }
-                }
-                if (!replaced)
-                    m_queue.push_back(std::move(job));
-                if (m_activeWorkers < m_maxWorkers)
-                {
-                    ++m_activeWorkers;
-                    spawnWorker = true;
-                }
-            }
-
-            if (spawnWorker)
-                SpawnWorker();
-        }
-
-    private:
-
-        void SpawnWorker()
-        {
-            concurrency::create_task([this]()
-            {
-                for (;;)
-                {
-                    BackgroundRenderJob job;
-                    {
-                        std::lock_guard<std::mutex> lock(m_mutex);
-                        if (m_queue.empty())
-                        {
-                            --m_activeWorkers;
-                            return;
-                        }
-
-                        // Consume from the middle of the queue (visible viewport sits between
-                        // the leading and trailing ItemsWrapGrid cache buffers).
-                        size_t mid = m_queue.size() / 2;
-                        job = std::move(m_queue[mid]);
-                        m_queue.erase(m_queue.begin() + mid);
-                    }
-
-                    struct DrawCounterGuard
-                    {
-                        Platform::WeakReference WeakThis;
-                        ~DrawCounterGuard()
-                        {
-                            if (auto p = WeakThis.Resolve<DirectText>())
-                                p->DecrementActiveBackgroundDraws();
-                        }
-                    } guard{ job.WeakThis };
-
-                    auto pThis = job.WeakThis.Resolve<DirectText>();
-                    if (pThis == nullptr || !pThis->IsGenerationCurrent(job.Generation))
-                        continue;
-
-                    DrawSnapshotToSurface(job.Snapshot, true, job.WeakThis, job.Generation);
-                    if (!job.WasHidden)
-                        continue;
-
-                    // Composition properties (like IsVisible) are thread-safe and commit directly without Dispatcher.
-                    if (auto pThis2 = job.WeakThis.Resolve<DirectText>())
-                        pThis2->ShowVisualIfCurrent(job.Generation);
-                }
-            });
-        }
-
-        std::mutex m_mutex;
-        std::deque<BackgroundRenderJob> m_queue;
-        size_t m_activeWorkers = 0;
-        size_t m_maxWorkers = 1;
-    };
 }
 
 void DirectText::RenderToSurface(Windows::Foundation::Size finalSize)
@@ -1584,16 +1284,40 @@ void DirectText::RenderToSurface(Windows::Foundation::Size finalSize)
             m_spriteVisual->IsVisible = false;
         bool wasHidden = !m_spriteVisual->IsVisible;
         m_lastShownFontFace = FontFace;
-        BackgroundRenderJob job;
-        job.ControlKey = reinterpret_cast<const void*>(this);
-        job.WeakThis = Platform::WeakReference(this);
-        job.Generation = gen;
-        job.Snapshot = std::move(snapshot);
-        job.WasHidden = wasHidden;
-        auto& queue = job.Snapshot.UseColorQueue
+        bool useColorQueue = snapshot.UseColorQueue;
+        Platform::WeakReference weakThis(this);
+        BackgroundRenderWorkItem workItem;
+        workItem.ControlKey = reinterpret_cast<const void*>(this);
+        workItem.WasHidden = wasHidden;
+        workItem.Execute = [weakThis, gen, snap = std::move(snapshot)](bool effectiveWasHidden) mutable
+        {
+            struct DrawCounterGuard
+            {
+                Platform::WeakReference WeakThis;
+                ~DrawCounterGuard()
+                {
+                    if (auto p = WeakThis.Resolve<DirectText>())
+                        p->DecrementActiveBackgroundDraws();
+                }
+            } guard{ weakThis };
+
+            auto pThis = weakThis.Resolve<DirectText>();
+            if (pThis == nullptr || !pThis->IsGenerationCurrent(gen))
+                return;
+
+            DrawSnapshotToSurface(std::move(snap), true, weakThis, gen);
+            if (!effectiveWasHidden)
+                return;
+
+            // Composition properties (like IsVisible) are thread-safe and commit directly without Dispatcher.
+            if (auto pThis2 = weakThis.Resolve<DirectText>())
+                pThis2->ShowVisualIfCurrent(gen);
+        };
+
+        auto& queue = useColorQueue
             ? BackgroundRenderQueue::ColorInstance()
             : BackgroundRenderQueue::MonoInstance();
-        queue.Enqueue(std::move(job));
+        queue.Enqueue(std::move(workItem));
     }
     else
     {

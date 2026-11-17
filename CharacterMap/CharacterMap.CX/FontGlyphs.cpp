@@ -1,12 +1,17 @@
 #include "pch.h"
 #include "FontGlyphs.h"
 #include "CompositionDeviceManager.h"
+#include "CoreDWTextServices.h"
 #include "GlyphAtlasManager.h"
 #include "TypographyAnalyzer.h"
 #include "DirectWrite.h"
 #include <cwctype>
 #include <algorithm>
+#include <array>
 #include <cmath>
+#include <deque>
+#include <mutex>
+#include <ppltasks.h>
 
 using namespace CharacterMapCX::Controls;
 using namespace Microsoft::WRL;
@@ -31,6 +36,7 @@ DependencyProperty^ FontGlyphs::_StretchProperty = nullptr;
 DependencyProperty^ FontGlyphs::_StretchDirectionProperty = nullptr;
 DependencyProperty^ FontGlyphs::_TypographyProperty = nullptr;
 DependencyProperty^ FontGlyphs::_IsTextShapingEnabledProperty = nullptr;
+DependencyProperty^ FontGlyphs::_IsBackgroundRenderEnabledProperty = nullptr;
 
 static std::atomic<int32> s_activeSurfaceCount{ 0 };
 static std::atomic<uint64> s_activeSurfaceBytes{ 0 };
@@ -99,6 +105,7 @@ FontGlyphs::FontGlyphs()
 
 FontGlyphs::~FontGlyphs()
 {
+    ++m_renderGeneration;
     try
     {
         if (m_unloadedToken.Value != 0)
@@ -156,7 +163,7 @@ FontGlyphs::~FontGlyphs()
 
             if (!isShared && surface != nullptr && rendW > 0 && rendH > 0)
             {
-                uint64 bytes = static_cast<uint64>(rendW) * rendH * 4;
+                uint64 bytes = static_cast<uint64>(rendW) * rendH * (m_renderedColor ? 4 : 1);
                 s_activeSurfaceCount.fetch_sub(1, std::memory_order_relaxed);
                 s_activeSurfaceBytes.fetch_sub(bytes, std::memory_order_relaxed);
             }
@@ -255,6 +262,9 @@ void FontGlyphs::RegisterDependencyProperties()
 
     if (_IsTextShapingEnabledProperty == nullptr)
         _IsTextShapingEnabledProperty = DependencyProperty::Register("IsTextShapingEnabled", bool::typeid, FontGlyphs::typeid, ref new PropertyMetadata((bool)false, layoutCallback));
+
+    if (_IsBackgroundRenderEnabledProperty == nullptr)
+        _IsBackgroundRenderEnabledProperty = DependencyProperty::Register("IsBackgroundRenderEnabled", bool::typeid, FontGlyphs::typeid, ref new PropertyMetadata((bool)false, layoutCallback));
 }
 
 void FontGlyphs::OnLoaded(Platform::Object^ sender, RoutedEventArgs^ e)
@@ -268,6 +278,7 @@ void FontGlyphs::OnLoaded(Platform::Object^ sender, RoutedEventArgs^ e)
 
 void FontGlyphs::OnUnloaded(Platform::Object^ sender, RoutedEventArgs^ e)
 {
+    ++m_renderGeneration;
     // Proactively release drawing surface and composition objects so off-tree controls
     // do not pin atlas pages, dedicated surfaces, or visual/brush allocations.
     ReleaseDrawingSurface();
@@ -295,6 +306,8 @@ void FontGlyphs::OnUnloaded(Platform::Object^ sender, RoutedEventArgs^ e)
     }
 
     m_colorBrush = nullptr;
+    m_dpiScale = 0.0f;
+    m_lastBgArrangeSize = { 0, 0 };
     m_isRenderDirty = true;
 }
 
@@ -349,7 +362,7 @@ void FontGlyphs::ReleaseDrawingSurface()
 
     if (!m_isUsingSharedAtlas && m_renderedWidth > 0 && m_renderedHeight > 0)
     {
-        uint64 bytes = static_cast<uint64>(m_renderedWidth) * m_renderedHeight * 4;
+        uint64 bytes = static_cast<uint64>(m_renderedWidth) * m_renderedHeight * (m_renderedColor ? 4 : 1);
         s_activeSurfaceCount.fetch_sub(1, std::memory_order_relaxed);
         s_activeSurfaceBytes.fetch_sub(bytes, std::memory_order_relaxed);
     }
@@ -412,6 +425,19 @@ void FontGlyphs::Update()
     InvalidateLayoutAndRender();
 }
 
+void FontGlyphs::CancelRender()
+{
+    ++m_renderGeneration;
+    if (m_spriteVisual != nullptr && IsBackgroundRenderEnabled)
+        m_spriteVisual->IsVisible = false;
+}
+
+void FontGlyphs::ShowVisualIfCurrent(uint64_t gen)
+{
+    if (IsGenerationCurrent(gen) && m_spriteVisual != nullptr)
+        m_spriteVisual->IsVisible = true;
+}
+
 
 
 void FontGlyphs::UpdateForground()
@@ -432,18 +458,20 @@ void FontGlyphs::UpdateForground()
 
 void FontGlyphs::InvalidateLayoutAndRender()
 {
+    ++m_renderGeneration;
+    if (m_spriteVisual != nullptr && IsBackgroundRenderEnabled)
+        m_spriteVisual->IsVisible = false;
     m_isLayoutDirty = true;
     m_isRenderDirty = true;
-    // Release unconditionally: shared-atlas references must be dropped here so that
-    // the old m_surfaceBrush->Surface doesn't hold an atlas page alive across a
-    // virtualised-container recycling cycle.
-    ReleaseDrawingSurface();
+    if (!IsBackgroundRenderEnabled)
+        ReleaseDrawingSurface();
     InvalidateMeasure();
     InvalidateArrange();
 }
 
 void FontGlyphs::InvalidateRenderOnly()
 {
+    ++m_renderGeneration;
     m_isRenderDirty = true;
     InvalidateArrange();
 }
@@ -1005,6 +1033,9 @@ Size FontGlyphs::ComputeScaleFactor(Size availableSize, Size contentSize)
 
 Size FontGlyphs::MeasureOverride(Size availableSize)
 {
+    if (IsBackgroundRenderEnabled)
+        return Size(static_cast<float>((std::max)(0.0, this->MinWidth)), static_cast<float>((std::max)(0.0, this->MinHeight)));
+
     if (m_isLayoutDirty)
     {
         m_isLayoutDirty = false;
@@ -1049,6 +1080,18 @@ Size FontGlyphs::MeasureOverride(Size availableSize)
 
 Size FontGlyphs::ArrangeOverride(Size finalSize)
 {
+    if (IsBackgroundRenderEnabled)
+    {
+        if (m_isLayoutDirty || m_isRenderDirty || m_lastBgArrangeSize.Width != finalSize.Width || m_lastBgArrangeSize.Height != finalSize.Height || m_drawingSurface == nullptr)
+        {
+            m_isLayoutDirty = false;
+            m_isRenderDirty = false;
+            m_lastBgArrangeSize = finalSize;
+            RenderGlyphsBackground(finalSize);
+        }
+        return finalSize;
+    }
+
     if (m_isLayoutDirty)
     {
         m_isLayoutDirty = false;
@@ -1158,6 +1201,732 @@ Size FontGlyphs::ArrangeOverride(Size finalSize)
     return finalSize;
 }
 
+namespace
+{
+    struct FontGlyphsRenderJob
+    {
+        const void* ControlKey = nullptr;
+        Platform::WeakReference WeakThis;
+        uint64_t Generation = 0;
+
+        DWriteFontFace^ FontFace = nullptr;
+        FLOAT FontSize = 24.0f;
+        Platform::String^ Indices = nullptr;
+        Platform::String^ UnicodeString = nullptr;
+        DWriteTypographyCollection^ Typography = nullptr;
+        bool IsTextShapingEnabled = false;
+        Windows::UI::Xaml::Media::StyleSimulations Simulations = Windows::UI::Xaml::Media::StyleSimulations::None;
+        Windows::UI::Xaml::Media::Stretch Stretch = Windows::UI::Xaml::Media::Stretch::Uniform;
+        Windows::UI::Xaml::Controls::StretchDirection StretchDirection = Windows::UI::Xaml::Controls::StretchDirection::DownOnly;
+        Windows::Foundation::Size FinalSize{};
+        float DpiScale = 1.0f;
+        bool RenderColor = false;
+        Windows::UI::Color ForegroundColor{};
+        LONG RequiredWidth = 0;
+        LONG RequiredHeight = 0;
+        CompositionDrawingSurface^ Surface = nullptr;
+    };
+
+    struct GlyphLayoutResult
+    {
+        std::vector<UINT16> Indices;
+        std::vector<FLOAT> Advances;
+        std::vector<DWRITE_GLYPH_OFFSET> Offsets;
+        Size ContentSize{ 0, 0 };
+        float Baseline = 0.0f;
+        float PadLeft = 0.0f;
+        float PadRight = 0.0f;
+        float PadTop = 0.0f;
+        float PadBottom = 0.0f;
+        bool HasInkBounds = false;
+        double DesignInkLeft = 0.0;
+        double DesignInkWidth = 0.0;
+        double DesignInkTop = 0.0;
+        double DesignInkHeight = 0.0;
+        double DesignUnitsPerEm = 0.0;
+    };
+
+    Size ComputeScaleFactorFor(
+        Windows::UI::Xaml::Media::Stretch stretch,
+        Windows::UI::Xaml::Controls::StretchDirection stretchDirection,
+        Size availableSize,
+        Size contentSize)
+    {
+        double scaleX = 1.0;
+        double scaleY = 1.0;
+
+        bool isConstrainedWidth = !std::isinf(availableSize.Width);
+        bool isConstrainedHeight = !std::isinf(availableSize.Height);
+
+        if ((stretch == Windows::UI::Xaml::Media::Stretch::Uniform ||
+             stretch == Windows::UI::Xaml::Media::Stretch::UniformToFill ||
+             stretch == Windows::UI::Xaml::Media::Stretch::Fill) &&
+            (isConstrainedWidth || isConstrainedHeight))
+        {
+            scaleX = (contentSize.Width <= REAL_EPSILON) ? 0.0 : availableSize.Width / contentSize.Width;
+            scaleY = (contentSize.Height <= REAL_EPSILON) ? 0.0 : availableSize.Height / contentSize.Height;
+
+            if (!isConstrainedWidth)
+                scaleX = scaleY;
+            else if (!isConstrainedHeight)
+                scaleY = scaleX;
+            else
+            {
+                switch (stretch)
+                {
+                case Windows::UI::Xaml::Media::Stretch::Uniform:
+                {
+                    double minScale = (std::min)(scaleX, scaleY);
+                    scaleX = scaleY = minScale;
+                    break;
+                }
+                case Windows::UI::Xaml::Media::Stretch::UniformToFill:
+                {
+                    double maxScale = (std::max)(scaleX, scaleY);
+                    scaleX = scaleY = maxScale;
+                    break;
+                }
+                case Windows::UI::Xaml::Media::Stretch::Fill:
+                default:
+                    break;
+                }
+            }
+
+            switch (stretchDirection)
+            {
+            case Windows::UI::Xaml::Controls::StretchDirection::UpOnly:
+                if (scaleX < 1.0) scaleX = 1.0;
+                if (scaleY < 1.0) scaleY = 1.0;
+                break;
+            case Windows::UI::Xaml::Controls::StretchDirection::DownOnly:
+                if (scaleX > 1.0) scaleX = 1.0;
+                if (scaleY > 1.0) scaleY = 1.0;
+                break;
+            case Windows::UI::Xaml::Controls::StretchDirection::Both:
+            default:
+                break;
+            }
+        }
+
+        return Size(static_cast<float>(scaleX), static_cast<float>(scaleY));
+    }
+
+    bool ComputeGlyphLayoutForJob(const FontGlyphsRenderJob& job, GlyphLayoutResult& out)
+    {
+        if (job.FontFace == nullptr)
+            return false;
+
+        auto rawFace = job.FontFace->GetFontFace();
+        if (rawFace == nullptr)
+            return false;
+
+        DWRITE_FONT_METRICS fontMetrics{};
+        rawFace->GetMetrics(&fontMetrics);
+
+        float emSize = job.FontSize > 0.0f ? job.FontSize : 24.0f;
+        float designUnitsPerEm = static_cast<float>(fontMetrics.designUnitsPerEm);
+        if (designUnitsPerEm <= 0.0f) designUnitsPerEm = 2048.0f;
+        float emScale = emSize / designUnitsPerEm;
+
+        float ascent = fontMetrics.ascent * emScale;
+        float descent = fontMetrics.descent * emScale;
+        out.Baseline = ascent;
+        float totalHeight = ascent + descent;
+
+        if (job.Indices != nullptr && job.Indices->Length() > 0)
+        {
+            const wchar_t* p = job.Indices->Data();
+            const wchar_t* end = p + job.Indices->Length();
+            while (p < end)
+            {
+                while (p < end && iswspace(*p)) p++;
+                if (p >= end) break;
+                if (*p == L'(')
+                {
+                    while (p < end && *p != L')') p++;
+                    if (p < end) p++;
+                }
+
+                wchar_t* next = nullptr;
+                long val = wcstol(p, &next, 10);
+                if (next == p) break;
+
+                UINT16 gid = static_cast<UINT16>(val);
+                p = next;
+
+                float adv = -1.0f;
+                if (p < end && *p == L',')
+                {
+                    p++;
+                    float advVal = wcstof(p, &next);
+                    if (next != p)
+                    {
+                        adv = advVal * (emSize / 100.0f);
+                        p = next;
+                    }
+                }
+
+                float uOff = 0.0f;
+                float vOff = 0.0f;
+                if (p < end && *p == L',')
+                {
+                    p++;
+                    uOff = wcstof(p, &next) * (emSize / 100.0f);
+                    p = next;
+                    if (p < end && *p == L',')
+                    {
+                        p++;
+                        vOff = wcstof(p, &next) * (emSize / 100.0f);
+                        p = next;
+                    }
+                }
+
+                if (adv < 0.0f)
+                {
+                    INT32 designAdvance = 0;
+                    rawFace->GetDesignGlyphAdvances(1, &gid, &designAdvance, FALSE);
+                    adv = designAdvance * emScale;
+                }
+
+                out.Indices.push_back(gid);
+                out.Advances.push_back(adv);
+                out.Offsets.push_back(DWRITE_GLYPH_OFFSET{ uOff, vOff });
+
+                while (p < end && (*p == L';' || iswspace(*p))) p++;
+            }
+        }
+        else if (job.UnicodeString != nullptr && job.UnicodeString->Length() > 0)
+        {
+            bool shouldShape = job.IsTextShapingEnabled || (job.Typography != nullptr && job.Typography->FeatureCount > 0);
+            bool shaped = false;
+
+            if (shouldShape)
+            {
+                std::vector<DWRITE_FONT_FEATURE> features;
+                if (job.Typography != nullptr && job.Typography->FeatureCount > 0)
+                    features = job.Typography->GetDWriteFontFeatures();
+
+                shaped = TypographyAnalyzer::ShapeGlyphs(
+                    rawFace.Get(),
+                    job.UnicodeString->Data(),
+                    job.UnicodeString->Length(),
+                    emSize,
+                    features,
+                    out.Indices,
+                    out.Advances,
+                    out.Offsets);
+            }
+
+            if (!shaped)
+            {
+                UINT32 len = job.UnicodeString->Length();
+                const wchar_t* strData = job.UnicodeString->Data();
+                std::vector<UINT32> codePoints;
+                codePoints.reserve(len);
+                for (UINT32 i = 0; i < len; i++)
+                {
+                    wchar_t ch = strData[i];
+                    if (ch >= 0xD800 && ch <= 0xDBFF && i + 1 < len && strData[i + 1] >= 0xDC00 && strData[i + 1] <= 0xDFFF)
+                    {
+                        codePoints.push_back(0x10000 + ((ch - 0xD800) << 10) + (strData[i + 1] - 0xDC00));
+                        i++;
+                    }
+                    else
+                        codePoints.push_back(ch);
+                }
+
+                size_t count = codePoints.size();
+                out.Indices.resize(count);
+                out.Advances.resize(count);
+                out.Offsets.resize(count, DWRITE_GLYPH_OFFSET{});
+                rawFace->GetGlyphIndices(codePoints.data(), static_cast<UINT32>(count), out.Indices.data());
+                for (size_t i = 0; i < count; i++)
+                {
+                    INT32 designAdvance = 0;
+                    rawFace->GetDesignGlyphAdvances(1, &out.Indices[i], &designAdvance, FALSE);
+                    out.Advances[i] = designAdvance * emScale;
+                }
+            }
+        }
+
+        if (out.Indices.empty())
+            return false;
+
+        float layoutLeft = 0.0f;
+        float layoutRight = 0.0f;
+        float currentX = 0.0f;
+        for (size_t i = 0; i < out.Indices.size(); i++)
+        {
+            float glyphX = currentX + out.Offsets[i].advanceOffset;
+            float adv = out.Advances[i];
+            if (i == 0)
+            {
+                layoutLeft = glyphX;
+                layoutRight = glyphX + adv;
+            }
+            else
+            {
+                if (glyphX < layoutLeft) layoutLeft = glyphX;
+                if (glyphX + adv > layoutRight) layoutRight = glyphX + adv;
+            }
+            currentX += adv;
+        }
+        float totalAdvance = currentX;
+
+        struct OutlineBoundsSink : public IDWriteGeometrySink
+        {
+            float minX = 1e9f, minY = 1e9f, maxX = -1e9f, maxY = -1e9f;
+            bool hasPoints = false;
+            ULONG STDMETHODCALLTYPE AddRef() override { return 1; }
+            ULONG STDMETHODCALLTYPE Release() override { return 1; }
+            HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppv) override
+            {
+                if (riid == __uuidof(IDWriteGeometrySink) || riid == __uuidof(ID2D1SimplifiedGeometrySink) || riid == __uuidof(IUnknown))
+                {
+                    *ppv = this;
+                    return S_OK;
+                }
+                *ppv = nullptr;
+                return E_NOINTERFACE;
+            }
+            void Update(float x, float y)
+            {
+                if (x < minX) minX = x;
+                if (x > maxX) maxX = x;
+                if (y < minY) minY = y;
+                if (y > maxY) maxY = y;
+                hasPoints = true;
+            }
+            void STDMETHODCALLTYPE SetFillMode(D2D1_FILL_MODE) override {}
+            void STDMETHODCALLTYPE SetSegmentFlags(D2D1_PATH_SEGMENT) override {}
+            void STDMETHODCALLTYPE BeginFigure(D2D1_POINT_2F startPoint, D2D1_FIGURE_BEGIN) override { Update(startPoint.x, startPoint.y); }
+            void STDMETHODCALLTYPE AddLines(const D2D1_POINT_2F* points, UINT32 pointsCount) override
+            {
+                for (UINT32 i = 0; i < pointsCount; ++i) Update(points[i].x, points[i].y);
+            }
+            void STDMETHODCALLTYPE AddBeziers(const D2D1_BEZIER_SEGMENT* beziers, UINT32 beziersCount) override
+            {
+                for (UINT32 i = 0; i < beziersCount; ++i)
+                {
+                    Update(beziers[i].point1.x, beziers[i].point1.y);
+                    Update(beziers[i].point2.x, beziers[i].point2.y);
+                    Update(beziers[i].point3.x, beziers[i].point3.y);
+                }
+            }
+            void STDMETHODCALLTYPE EndFigure(D2D1_FIGURE_END) override {}
+            HRESULT STDMETHODCALLTYPE Close() override { return S_OK; }
+        };
+
+        OutlineBoundsSink outlineSink;
+        rawFace->GetGlyphRunOutline(
+            emSize,
+            out.Indices.data(),
+            out.Advances.data(),
+            out.Offsets.data(),
+            static_cast<UINT32>(out.Indices.size()),
+            FALSE,
+            FALSE,
+            &outlineSink);
+
+        float minInkLeft = 0.0f;
+        float maxInkRight = totalAdvance;
+        float maxTopOverhang = 0.0f;
+        float maxBottomOverhang = 0.0f;
+
+        if (outlineSink.hasPoints && fontMetrics.designUnitsPerEm > 0)
+        {
+            out.HasInkBounds = true;
+            out.DesignInkLeft = outlineSink.minX / emScale;
+            out.DesignInkWidth = (outlineSink.maxX - outlineSink.minX) / emScale;
+            out.DesignInkTop = (ascent + outlineSink.minY) / emScale;
+            out.DesignInkHeight = (outlineSink.maxY - outlineSink.minY) / emScale;
+            out.DesignUnitsPerEm = fontMetrics.designUnitsPerEm;
+
+            if (totalAdvance <= 0.0f)
+                totalAdvance = static_cast<float>(outlineSink.maxX - outlineSink.minX);
+
+            minInkLeft = (std::min)(0.0f, outlineSink.minX);
+            maxInkRight = (std::max)(totalAdvance, outlineSink.maxX);
+            if (ascent + outlineSink.minY < 0.0f)
+                maxTopOverhang = -(ascent + outlineSink.minY);
+            if (outlineSink.maxY > descent)
+                maxBottomOverhang = outlineSink.maxY - descent;
+        }
+        else if (out.Indices.size() > 1)
+        {
+            Rect inkBounds = job.FontFace->GetDesignGlyphBounds(out.Indices[0]);
+            if (inkBounds.Width > 0 && fontMetrics.designUnitsPerEm > 0)
+            {
+                out.HasInkBounds = true;
+                out.DesignInkLeft = inkBounds.X;
+                out.DesignInkWidth = inkBounds.Width;
+                out.DesignInkTop = inkBounds.Y;
+                out.DesignInkHeight = inkBounds.Height;
+                out.DesignUnitsPerEm = fontMetrics.designUnitsPerEm;
+
+                if (totalAdvance <= 0.0f)
+                    totalAdvance = static_cast<float>(inkBounds.Width * emScale);
+
+                float inkL = static_cast<float>(inkBounds.X * emScale);
+                float inkR = static_cast<float>((inkBounds.X + inkBounds.Width) * emScale);
+                if (inkL < minInkLeft) minInkLeft = inkL;
+                if (inkR > maxInkRight) maxInkRight = inkR;
+            }
+        }
+
+        float totalWidth = (std::max)(totalAdvance, layoutRight - layoutLeft);
+        out.ContentSize = Size(totalWidth, totalHeight);
+
+        float extraPad = (std::max)(6.0f, emSize * 0.15f);
+        out.PadLeft = std::ceil(extraPad + (std::max)(0.0f, -minInkLeft));
+        out.PadRight = std::ceil(extraPad + (std::max)(0.0f, maxInkRight - totalWidth));
+        out.PadTop = std::ceil(extraPad + (std::max)({ 0.0f, maxTopOverhang, ascent * 0.20f }));
+        out.PadBottom = std::ceil(extraPad + (std::max)({ 0.0f, maxBottomOverhang, descent * 0.20f }));
+        return out.ContentSize.Width > 0 && out.ContentSize.Height > 0;
+    }
+
+    void ExecuteFontGlyphsJob(const FontGlyphsRenderJob& job)
+    {
+        auto pThis = job.WeakThis.Resolve<FontGlyphs>();
+        if (pThis == nullptr || !pThis->IsGenerationCurrent(job.Generation))
+            return;
+
+        GlyphLayoutResult layout;
+        if (!ComputeGlyphLayoutForJob(job, layout))
+            return;
+
+        auto pCheck = job.WeakThis.Resolve<FontGlyphs>();
+        if (pCheck == nullptr || !pCheck->IsGenerationCurrent(job.Generation))
+            return;
+
+        Size fitContentSize = layout.ContentSize;
+        if (layout.HasInkBounds && layout.DesignInkHeight > 0 && layout.DesignUnitsPerEm > 0)
+        {
+            double emScale = job.FontSize / layout.DesignUnitsPerEm;
+            double inkLeft = layout.DesignInkLeft * emScale;
+            double inkWidth = layout.DesignInkWidth * emScale;
+            double inkHeight = layout.DesignInkHeight * emScale;
+            double visualWidth = (layout.Advances.empty() || layout.Advances[0] <= 0.0f)
+                ? inkWidth
+                : (std::max)(static_cast<double>(layout.ContentSize.Width), (inkLeft + inkWidth) - (std::min)(0.0, inkLeft));
+            fitContentSize = Size(static_cast<float>(visualWidth), static_cast<float>(inkHeight));
+        }
+
+        Size scale = ComputeScaleFactorFor(job.Stretch, job.StretchDirection, job.FinalSize, fitContentSize);
+        if (job.StretchDirection == Windows::UI::Xaml::Controls::StretchDirection::DownOnly)
+        {
+            scale.Width = (std::min)(1.0f, scale.Width);
+            scale.Height = (std::min)(1.0f, scale.Height);
+        }
+
+        float scaleX = scale.Width > 0.0f ? scale.Width : 1.0f;
+        float scaleY = scale.Height > 0.0f ? scale.Height : 1.0f;
+
+        double scaledContentWidth = layout.ContentSize.Width * scaleX;
+        double scaledContentHeight = layout.ContentSize.Height * scaleY;
+        double scaledPadLeft = layout.PadLeft * scaleX;
+        double scaledPadTop = layout.PadTop * scaleY;
+
+        double originX = (job.FinalSize.Width - scaledContentWidth) / 2.0;
+        if (layout.HasInkBounds && layout.DesignUnitsPerEm > 0)
+        {
+            double emScale = job.FontSize / layout.DesignUnitsPerEm;
+            double inkLeft = layout.DesignInkLeft * emScale * scaleX;
+            double inkWidth = layout.DesignInkWidth * emScale * scaleX;
+
+            if (layout.Advances.empty() || layout.Advances[0] <= 0.0f)
+                originX = (job.FinalSize.Width - inkWidth) / 2.0 - inkLeft;
+            else
+            {
+                if (originX + inkLeft < 0) originX = -inkLeft;
+                if (originX + inkLeft + inkWidth > job.FinalSize.Width)
+                    originX = job.FinalSize.Width - (inkLeft + inkWidth);
+            }
+        }
+
+        double originY = (job.FinalSize.Height - scaledContentHeight) / 2.0;
+        if (layout.HasInkBounds && layout.DesignInkHeight > 0 && layout.DesignUnitsPerEm > 0)
+        {
+            double emScale = job.FontSize / layout.DesignUnitsPerEm;
+            double inkTop = layout.DesignInkTop * emScale * scaleY;
+            double inkHeight = layout.DesignInkHeight * emScale * scaleY;
+            if (originY + inkTop < 0) originY = -inkTop;
+            if (originY + inkTop + inkHeight > job.FinalSize.Height)
+                originY = job.FinalSize.Height - (inkTop + inkHeight);
+        }
+
+        float posX = static_cast<float>(originX - scaledPadLeft);
+        float posY = static_cast<float>(originY - scaledPadTop);
+
+        float dpiScale = job.DpiScale;
+        if (dpiScale != 1.0f)
+        {
+            for (float& a : layout.Advances) a *= dpiScale;
+            for (DWRITE_GLYPH_OFFSET& o : layout.Offsets)
+            {
+                o.advanceOffset *= dpiScale;
+                o.ascenderOffset *= dpiScale;
+            }
+        }
+
+        auto rawFace = job.FontFace->GetFontFace();
+        if (rawFace == nullptr)
+            return;
+
+        thread_local std::vector<uint8_t> offDevicePixels;
+        UINT32 offDevicePitch = 0;
+        UINT32 surfW = static_cast<UINT32>(job.RequiredWidth);
+        UINT32 surfH = static_cast<UINT32>(job.RequiredHeight);
+
+        bool hasOffDevicePixels = CoreDWTextServices::RenderOffDevice(
+            surfW,
+            surfH,
+            job.RenderColor,
+            [&](ID2D1DeviceContext* ctx)
+            {
+                ctx->SetTransform(
+                    D2D1::Matrix3x2F::Scale(scaleX, scaleY) *
+                    D2D1::Matrix3x2F::Translation(posX * dpiScale, posY * dpiScale));
+
+                DWRITE_GLYPH_RUN glyphRun{};
+                glyphRun.fontFace = rawFace.Get();
+                glyphRun.fontEmSize = static_cast<FLOAT>(job.FontSize * dpiScale);
+                glyphRun.glyphCount = static_cast<UINT32>(layout.Indices.size());
+                glyphRun.glyphIndices = layout.Indices.data();
+                glyphRun.glyphAdvances = layout.Advances.data();
+                glyphRun.glyphOffsets = layout.Offsets.data();
+                glyphRun.isSideways = FALSE;
+                glyphRun.bidiLevel = 0;
+
+                D2D1_POINT_2F baselineOrigin = D2D1::Point2F(layout.PadLeft * dpiScale, (layout.Baseline + layout.PadTop) * dpiScale);
+                D2D1_COLOR_F brushColor = job.RenderColor
+                    ? D2D1::ColorF(
+                        job.ForegroundColor.R / 255.0f,
+                        job.ForegroundColor.G / 255.0f,
+                        job.ForegroundColor.B / 255.0f,
+                        job.ForegroundColor.A / 255.0f)
+                    : D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f);
+
+                ComPtr<ID2D1SolidColorBrush> d2dBrush;
+                ctx->CreateSolidColorBrush(brushColor, &d2dBrush);
+
+                TextRenderParameters renderParams;
+                renderParams.ForegroundBrush = d2dBrush.Get();
+                renderParams.EnableColor = job.RenderColor;
+                renderParams.PreferredFormat = job.RenderColor ? GlyphImageFormat::None : GlyphImageFormat::TrueType;
+                renderParams.IsMaskSurface = !job.RenderColor;
+
+                CoreDWTextServices::DrawGlyphRun(ctx, baselineOrigin, &glyphRun, renderParams);
+            },
+            offDevicePixels,
+            offDevicePitch);
+
+        if (hasOffDevicePixels)
+        {
+            auto pCheck2 = job.WeakThis.Resolve<FontGlyphs>();
+            if (pCheck2 == nullptr || !pCheck2->IsGenerationCurrent(job.Generation))
+                return;
+
+            ComPtr<ICompositionDrawingSurfaceInterop> surfaceInterop;
+            if (job.Surface == nullptr ||
+                FAILED(reinterpret_cast<IUnknown*>(job.Surface)->QueryInterface(IID_PPV_ARGS(&surfaceInterop))))
+                return;
+
+            if (CoreDWTextServices::UploadOffDevicePixelsToSurface(surfaceInterop.Get(), surfW, surfH, offDevicePixels, offDevicePitch))
+            {
+                if (auto pDone = job.WeakThis.Resolve<FontGlyphs>())
+                    pDone->ShowVisualIfCurrent(job.Generation);
+            }
+        }
+        else
+        {
+            bool success = CompositionDeviceManager::RenderGlyphToSurface(
+                job.Surface,
+                job.RenderColor ? GlyphImageFormat::None : GlyphImageFormat::TrueType,
+                layout.PadLeft * dpiScale, layout.PadTop * dpiScale, layout.Baseline * dpiScale,
+                rawFace.Get(),
+                static_cast<FLOAT>(job.FontSize * dpiScale),
+                layout.Indices.data(),
+                layout.Advances.data(),
+                layout.Offsets.data(),
+                static_cast<UINT32>(layout.Indices.size()),
+                job.ForegroundColor,
+                job.Simulations,
+                job.RequiredWidth,
+                job.RequiredHeight,
+                scaleX, scaleY,
+                posX * dpiScale, posY * dpiScale);
+
+            if (success)
+            {
+                if (auto pDone = job.WeakThis.Resolve<FontGlyphs>())
+                    pDone->ShowVisualIfCurrent(job.Generation);
+            }
+        }
+    }
+}
+
+void FontGlyphs::RenderGlyphsBackground(Size finalSize)
+{
+    auto visual = ElementCompositionPreview::GetElementVisual(this);
+    if (visual == nullptr)
+        return;
+
+    auto compositor = visual->Compositor;
+    if (m_spriteVisual == nullptr)
+    {
+        m_spriteVisual = compositor->CreateSpriteVisual();
+        ElementCompositionPreview::SetElementChildVisual(this, m_spriteVisual);
+    }
+
+    if (finalSize.Width <= 0.0f || finalSize.Height <= 0.0f || FontFace == nullptr ||
+        ((Indices == nullptr || Indices->Length() == 0) && (UnicodeString == nullptr || UnicodeString->Length() == 0)))
+    {
+        m_spriteVisual->IsVisible = false;
+        return;
+    }
+
+    auto graphicsDevice = CompositionDeviceManager::GetGraphicsDevice(compositor);
+    if (graphicsDevice == nullptr)
+        return;
+
+    if (m_isUsingSharedAtlas)
+        ReleaseDrawingSurface();
+
+    bool renderColor = ShouldRenderColor();
+    if (m_dpiScale <= 0.0f)
+        m_dpiScale = CompositionDeviceManager::GetDpiScale(this->Dispatcher);
+    float dpiScale = m_dpiScale;
+    LONG requiredWidth = static_cast<LONG>((std::max)(1.0f, static_cast<float>(std::ceil(finalSize.Width * dpiScale))));
+    LONG requiredHeight = static_cast<LONG>((std::max)(1.0f, static_cast<float>(std::ceil(finalSize.Height * dpiScale))));
+
+    auto pixelFormat = renderColor
+        ? Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized
+        : Windows::Graphics::DirectX::DirectXPixelFormat::A8UIntNormalized;
+
+    bool needsSurfaceSetup = (m_surfaceBrush == nullptr || m_spriteVisual->Brush == nullptr);
+    bool needsCreateOrResize = (m_drawingSurface == nullptr || m_renderedColor != renderColor || m_renderedWidth != requiredWidth || m_renderedHeight != requiredHeight);
+
+    uint64 bpp = renderColor ? 4 : 1;
+    if (m_drawingSurface == nullptr || m_renderedColor != renderColor)
+    {
+        ReleaseDrawingSurface();
+        m_drawingSurface = graphicsDevice->CreateDrawingSurface(
+            Size(static_cast<float>(requiredWidth), static_cast<float>(requiredHeight)),
+            pixelFormat,
+            Windows::Graphics::DirectX::DirectXAlphaMode::Premultiplied);
+        m_renderedWidth = requiredWidth;
+        m_renderedHeight = requiredHeight;
+        m_renderedColor = renderColor;
+        needsSurfaceSetup = true;
+
+        if (m_drawingSurface != nullptr)
+        {
+            s_activeSurfaceCount.fetch_add(1, std::memory_order_relaxed);
+            s_activeSurfaceBytes.fetch_add(static_cast<uint64>(requiredWidth) * requiredHeight * bpp, std::memory_order_relaxed);
+        }
+    }
+    else if (m_renderedWidth != requiredWidth || m_renderedHeight != requiredHeight)
+    {
+        uint64 oldBytes = static_cast<uint64>(m_renderedWidth) * m_renderedHeight * bpp;
+        Microsoft::WRL::ComPtr<ICompositionDrawingSurfaceInterop> surfaceInterop;
+        if (SUCCEEDED(reinterpret_cast<IUnknown*>(m_drawingSurface)->QueryInterface(IID_PPV_ARGS(&surfaceInterop)))
+            && SUCCEEDED(surfaceInterop->Resize(SIZE{ requiredWidth, requiredHeight })))
+        {
+            m_renderedWidth = requiredWidth;
+            m_renderedHeight = requiredHeight;
+            uint64 newBytes = static_cast<uint64>(requiredWidth) * requiredHeight * bpp;
+            s_activeSurfaceBytes.fetch_sub(oldBytes, std::memory_order_relaxed);
+            s_activeSurfaceBytes.fetch_add(newBytes, std::memory_order_relaxed);
+        }
+        else
+        {
+            ReleaseDrawingSurface();
+            m_drawingSurface = graphicsDevice->CreateDrawingSurface(
+                Size(static_cast<float>(requiredWidth), static_cast<float>(requiredHeight)),
+                pixelFormat,
+                Windows::Graphics::DirectX::DirectXAlphaMode::Premultiplied);
+            m_renderedWidth = requiredWidth;
+            m_renderedHeight = requiredHeight;
+            m_renderedColor = renderColor;
+            needsSurfaceSetup = true;
+
+            if (m_drawingSurface != nullptr)
+            {
+                s_activeSurfaceCount.fetch_add(1, std::memory_order_relaxed);
+                s_activeSurfaceBytes.fetch_add(static_cast<uint64>(requiredWidth) * requiredHeight * bpp, std::memory_order_relaxed);
+            }
+        }
+    }
+
+    if (m_drawingSurface == nullptr)
+        return;
+
+    Windows::UI::Color foregroundColor = GetForegroundColor();
+    if (needsSurfaceSetup || needsCreateOrResize)
+    {
+        CompositionDeviceManager::EnsureSurfaceBrush(compositor, m_surfaceBrush, m_drawingSurface);
+        m_surfaceBrush->Scale = float2(1.0f / dpiScale, 1.0f / dpiScale);
+        m_surfaceBrush->Offset = float2(0.0f, 0.0f);
+        m_spriteVisual->Offset = float3(0.0f, 0.0f, 0.0f);
+        m_spriteVisual->Size = float2(finalSize.Width, finalSize.Height);
+
+        CompositionDeviceManager::ApplySurfaceOrMaskBrush(
+            compositor,
+            m_spriteVisual,
+            m_surfaceBrush,
+            m_maskBrush,
+            m_colorBrush,
+            !renderColor,
+            foregroundColor);
+    }
+    else if (!renderColor && m_maskBrush != nullptr)
+    {
+        auto colorBrush = CompositionDeviceManager::GetColorBrush(compositor, foregroundColor);
+        if (m_colorBrush != colorBrush)
+        {
+            m_colorBrush = colorBrush;
+            m_maskBrush->Source = m_colorBrush;
+        }
+    }
+
+    uint64_t gen = ++m_renderGeneration;
+    m_spriteVisual->IsVisible = false;
+
+    FontGlyphsRenderJob job;
+    job.ControlKey = reinterpret_cast<const void*>(this);
+    job.WeakThis = Platform::WeakReference(this);
+    job.Generation = gen;
+    job.FontFace = FontFace;
+    job.FontSize = static_cast<FLOAT>(FontSize);
+    job.Indices = Indices;
+    job.UnicodeString = UnicodeString;
+    job.Typography = Typography;
+    job.IsTextShapingEnabled = IsTextShapingEnabled;
+    job.Simulations = StyleSimulations;
+    job.Stretch = Stretch;
+    job.StretchDirection = StretchDirection;
+    job.FinalSize = finalSize;
+    job.DpiScale = dpiScale;
+    job.RenderColor = renderColor;
+    job.ForegroundColor = foregroundColor;
+    job.RequiredWidth = requiredWidth;
+    job.RequiredHeight = requiredHeight;
+    job.Surface = m_drawingSurface;
+
+    BackgroundRenderWorkItem workItem;
+    workItem.ControlKey = reinterpret_cast<const void*>(this);
+    workItem.Execute = [job = std::move(job)](bool)
+    {
+        ExecuteFontGlyphsJob(job);
+    };
+
+    auto& queue = renderColor
+        ? BackgroundRenderQueue::ColorInstance()
+        : BackgroundRenderQueue::MonoInstance();
+    queue.Enqueue(std::move(workItem));
+}
+
 void FontGlyphs::RenderGlyphs()
 {
     auto visual = ElementCompositionPreview::GetElementVisual(this);
@@ -1205,6 +1974,8 @@ void FontGlyphs::RenderGlyphs()
     if (graphicsDevice == nullptr)
         return;
 
+    Windows::UI::Color foregroundColor = GetForegroundColor();
+
     // Path 1: Single glyph rendering via Shared Atlas (Grid & list view optimization)
     bool useSharedAtlas = (m_glyphCount == 1 && requiredWidth <= 512 && requiredHeight <= 512);
     if (useSharedAtlas)
@@ -1222,7 +1993,7 @@ void FontGlyphs::RenderGlyphs()
             renderColor,
             m_padLeft * dpiScale, m_padTop * dpiScale, m_baseline * dpiScale,
             adv * dpiScale, DWRITE_GLYPH_OFFSET{ off.advanceOffset * dpiScale, off.ascenderOffset * dpiScale },
-            Foreground,
+            foregroundColor,
             requiredWidth, requiredHeight,
             scaleX, scaleY,
             typoKey);
@@ -1252,8 +2023,9 @@ void FontGlyphs::RenderGlyphs()
                 m_maskBrush,
                 m_colorBrush,
                 !renderColor,
-                GetForegroundColor());
+                foregroundColor);
 
+            m_spriteVisual->IsVisible = true;
             return;
         }
     }
@@ -1266,6 +2038,7 @@ void FontGlyphs::RenderGlyphs()
         ? Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized
         : Windows::Graphics::DirectX::DirectXPixelFormat::A8UIntNormalized;
 
+    uint64 bpp = renderColor ? 4 : 1;
     if (m_drawingSurface == nullptr || m_renderedColor != renderColor)
     {
         ReleaseDrawingSurface();
@@ -1280,19 +2053,19 @@ void FontGlyphs::RenderGlyphs()
         if (m_drawingSurface != nullptr)
         {
             s_activeSurfaceCount.fetch_add(1, std::memory_order_relaxed);
-            s_activeSurfaceBytes.fetch_add(static_cast<uint64>(requiredWidth) * requiredHeight * 4, std::memory_order_relaxed);
+            s_activeSurfaceBytes.fetch_add(static_cast<uint64>(requiredWidth) * requiredHeight * bpp, std::memory_order_relaxed);
         }
     }
     else if (m_renderedWidth != requiredWidth || m_renderedHeight != requiredHeight)
     {
-        uint64 oldBytes = static_cast<uint64>(m_renderedWidth) * m_renderedHeight * 4;
+        uint64 oldBytes = static_cast<uint64>(m_renderedWidth) * m_renderedHeight * bpp;
         Microsoft::WRL::ComPtr<ICompositionDrawingSurfaceInterop> surfaceInterop;
         if (SUCCEEDED(reinterpret_cast<IUnknown*>(m_drawingSurface)->QueryInterface(IID_PPV_ARGS(&surfaceInterop)))
             && SUCCEEDED(surfaceInterop->Resize(SIZE{ requiredWidth, requiredHeight })))
         {
             m_renderedWidth = requiredWidth;
             m_renderedHeight = requiredHeight;
-            uint64 newBytes = static_cast<uint64>(requiredWidth) * requiredHeight * 4;
+            uint64 newBytes = static_cast<uint64>(requiredWidth) * requiredHeight * bpp;
             s_activeSurfaceBytes.fetch_sub(oldBytes, std::memory_order_relaxed);
             s_activeSurfaceBytes.fetch_add(newBytes, std::memory_order_relaxed);
         }
@@ -1305,11 +2078,12 @@ void FontGlyphs::RenderGlyphs()
                 Windows::Graphics::DirectX::DirectXAlphaMode::Premultiplied);
             m_renderedWidth = requiredWidth;
             m_renderedHeight = requiredHeight;
+            m_renderedColor = renderColor;
 
             if (m_drawingSurface != nullptr)
             {
                 s_activeSurfaceCount.fetch_add(1, std::memory_order_relaxed);
-                s_activeSurfaceBytes.fetch_add(static_cast<uint64>(requiredWidth) * requiredHeight * 4, std::memory_order_relaxed);
+                s_activeSurfaceBytes.fetch_add(static_cast<uint64>(requiredWidth) * requiredHeight * bpp, std::memory_order_relaxed);
             }
         }
     }
@@ -1345,7 +2119,7 @@ void FontGlyphs::RenderGlyphs()
         pAdvances,
         pOffsets,
         static_cast<UINT32>(m_glyphCount),
-        Foreground,
+        foregroundColor,
         StyleSimulations,
         requiredWidth,
         requiredHeight,
@@ -1364,7 +2138,7 @@ void FontGlyphs::RenderGlyphs()
             if (m_drawingSurface != nullptr)
             {
                 s_activeSurfaceCount.fetch_add(1, std::memory_order_relaxed);
-                s_activeSurfaceBytes.fetch_add(static_cast<uint64>(requiredWidth) * requiredHeight * 4, std::memory_order_relaxed);
+                s_activeSurfaceBytes.fetch_add(static_cast<uint64>(requiredWidth) * requiredHeight * bpp, std::memory_order_relaxed);
                 m_renderedWidth = requiredWidth;
                 m_renderedHeight = requiredHeight;
                 m_renderedColor = renderColor;
@@ -1379,7 +2153,7 @@ void FontGlyphs::RenderGlyphs()
                     pAdvances,
                     pOffsets,
                     static_cast<UINT32>(m_glyphCount),
-                    Foreground,
+                    foregroundColor,
                     StyleSimulations,
                     requiredWidth,
                     requiredHeight,
@@ -1404,5 +2178,7 @@ void FontGlyphs::RenderGlyphs()
         m_maskBrush,
         m_colorBrush,
         !renderColor,
-        GetForegroundColor());
+        foregroundColor);
+
+    m_spriteVisual->IsVisible = true;
 }
