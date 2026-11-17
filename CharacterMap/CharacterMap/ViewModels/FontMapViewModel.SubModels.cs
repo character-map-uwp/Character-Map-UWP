@@ -44,6 +44,7 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
     public bool HasLigatures => Ligatures.Count > 0;
 
     public string LigaturesSummary => Localization.Get("LigaturesSummaryString", TotalLigaturesCount, LigatureFeatureCount);
+    public string OpenTypeSummary => Localization.Get("OpenTypeSummaryString", TotalOpenTypeSubstitutionsCount, OpenTypeFeatureCount);
 
     private IReadOnlyList<OpenTypeFeatureGroup> _openTypeFeatures;
     public IReadOnlyList<OpenTypeFeatureGroup> OpenTypeFeatures => _openTypeFeatures ??= (Face is not null ? TypographyAnalyzer.GetOpenTypeFeatures(this) : []);

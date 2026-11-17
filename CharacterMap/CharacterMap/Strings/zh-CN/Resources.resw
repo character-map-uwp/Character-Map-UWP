@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -2582,5 +2582,12 @@
   </data>
   <data name="SubsetterMetadataHeader" xml:space="preserve">
     <value>元数据</value>
+  </data>
+  <data name="OpenTypeSummaryString" xml:space="preserve">
+    <value>在 {1} 个 OpenType 功能中包含 {0} 个替换</value>
+    <comment>{0} = total number of substitutions across all features, {1} = number of features</comment>
+  </data>
+  <data name="NoOpenTypeFeatures" xml:space="preserve">
+    <value>此字体样式不包含可识别的 OpenType 功能</value>
   </data>
 </root>

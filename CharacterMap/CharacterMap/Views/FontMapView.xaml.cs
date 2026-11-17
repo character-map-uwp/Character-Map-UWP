@@ -41,7 +41,7 @@ public class VariantTemplateSelector : DataTemplateSelector
 [AttachedProperty<CharacterRenderingOptions>("GlyphRenderingOptions")]
 public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter, IPopoverPresenter, IWindowContent
 {
-    private BrushTransition t = new() { Duration = TimeSpan.FromSeconds(0.115) };
+    private BrushTransition _brushTransition = new();
 
     private Debouncer _sizeDebouncer { get; } = new();
 
@@ -133,6 +133,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         UpdatePaneAndGridSizing();
         UpdateCopyPane();
         UpdateItemsSource();
+        UpdateBrushTransition();
 
         PreviewColumn.Width = new GridLength(ViewModel.Settings.LastColumnWidth);
         _previewColumnToken = PreviewColumn.RegisterPropertyChangedCallback(ColumnDefinition.WidthProperty, (d, r) =>
@@ -388,8 +389,15 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                         ColrSelector.SelectedItem = CharacterAnalysisModel.MonoRenderOption;
                 }
                 break;
-           
+            case nameof(ViewModel.AllowAnimation):
+                UpdateBrushTransition();
+                break;
         }
+    }
+
+    private void UpdateBrushTransition()
+    {
+        _brushTransition.Duration = ViewModel.AllowAnimation ? TimeSpan.FromSeconds(0.115) : TimeSpan.Zero;
     }
 
     private void OnAppSettingsChanged(AppSettingsChangedMessage msg)
@@ -576,6 +584,8 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                     UpdateRepeaterToXTransition(GlyphRepeater, CharGrid, GlyphToGridTransition);
                 else if (MapDisplayStates.CurrentState == LigatureMapState)
                     UpdateRepeaterToXTransition(LigaturesRepeater, CharGrid, LigatureToGridTransition);
+                else if (MapDisplayStates.CurrentState == OpenTypeMapState)
+                    UpdateRepeaterToXTransition(OpenTypeRepeater, CharGrid, OpenTypeToGridTransition);
             }
             else if (CharGrid.ItemsPanelRoot is null)
                 CharGrid.Measure(CharGrid.DesiredSize);
@@ -586,50 +596,53 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         }
         else if (ViewModel.DisplayMode == FontDisplayMode.GlyphMapState)
         {
+            this.FindName(nameof(GlyphsRoot));
             if (animate)
             {
-                this.FindName(nameof(GlyphsRoot));
                 if (MapDisplayStates.CurrentState == CharacterMapState)
                     UpdateXToXTransition(CharGrid, GlyphRepeater, GridToGlyphTransition);
                 else if (MapDisplayStates.CurrentState == TypeRampState)
                     UpdateRampToGridTransition(GlyphRepeater, RampToGlyphTransition);
                 else if (MapDisplayStates.CurrentState == LigatureMapState)
                     UpdateRepeaterToXTransition(LigaturesRepeater, GlyphRepeater, LigatureToGlyphTransition);
+                else if (MapDisplayStates.CurrentState == OpenTypeMapState)
+                    UpdateRepeaterToXTransition(OpenTypeRepeater, GlyphRepeater, OpenTypeToGlyphTransition);
             }
 
-            this.FindName(nameof(GlyphsRoot));
             GoToState(GlyphMapState.Name, animate);
         }
         else if (ViewModel.DisplayMode == FontDisplayMode.LigaturesState)
         {
+            this.FindName(nameof(LigaturesRoot));
             if (animate)
             {
-                this.FindName(nameof(LigaturesRoot));
                 if (MapDisplayStates.CurrentState == CharacterMapState)
                     UpdateXToXTransition(CharGrid, LigaturesRepeater, GridToLigaturesTransition);
                 else if  (MapDisplayStates.CurrentState == GlyphMapState)
                     UpdateXToXTransition(GlyphRepeater, LigaturesRepeater, GlyphToLigaturesTransition);
+                else if (MapDisplayStates.CurrentState == OpenTypeMapState)
+                    UpdateRepeaterToXTransition(OpenTypeRepeater, LigaturesRepeater, OpenTypeToLigaturesTransition);
                 else if (MapDisplayStates.CurrentState == TypeRampState)
                     UpdateRampToGridTransition(LigaturesRepeater, RampToLigaturesTransition);
             }
 
-            this.FindName(nameof(LigaturesRoot));
             GoToState(LigatureMapState.Name, animate);
         }
         else if (ViewModel.DisplayMode == FontDisplayMode.OpenTypeState)
         {
-            //if (animate)
-            //{
-            //    this.FindName(nameof(LigaturesRoot));
-            //    if (MapDisplayStates.CurrentState == CharacterMapState)
-            //        UpdateXToXTransition(CharGrid, LigaturesRepeater, GridToLigaturesTransition);
-            //    else if (MapDisplayStates.CurrentState == GlyphMapState)
-            //        UpdateXToXTransition(GlyphRepeater, LigaturesRepeater, GlyphToLigaturesTransition);
-            //    else if (MapDisplayStates.CurrentState == TypeRampState)
-            //        UpdateRampToGridTransition(LigaturesRepeater, RampToLigaturesTransition);
-            //}
-
             this.FindName(nameof(OpenTypeRoot));
+            if (animate)
+            {
+                if (MapDisplayStates.CurrentState == CharacterMapState)
+                    UpdateXToXTransition(CharGrid, OpenTypeRepeater, GridToOpenTypeTransition);
+                else if (MapDisplayStates.CurrentState == GlyphMapState)
+                    UpdateXToXTransition(GlyphRepeater, OpenTypeRepeater, GlyphToOpenTypeTransition);
+                else if (MapDisplayStates.CurrentState == LigatureMapState)
+                    UpdateXToXTransition(LigaturesRepeater, OpenTypeRepeater, LigatureToOpenTypeTransition);
+                else if (MapDisplayStates.CurrentState == TypeRampState)
+                    UpdateRampToGridTransition(OpenTypeRepeater, RampToOpenTypeTransition);
+            }
+
             GoToState(OpenTypeMapState.Name, animate);
         }
         else if (ViewModel.DisplayMode == FontDisplayMode.TypeRampState)
@@ -642,6 +655,8 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                     UpdateGridToRampTransition(GlyphToRampTransition, GlyphRepeater);
                 else if (MapDisplayStates.CurrentState == LigatureMapState)
                     UpdateGridToRampTransition(LigatureToRampTransition, LigaturesRepeater);
+                else if (MapDisplayStates.CurrentState == OpenTypeMapState)
+                    UpdateGridToRampTransition(OpenTypeToRampTransition, OpenTypeRepeater);
             }
             GoToState(TypeRampState.Name, animate);
 
@@ -1128,16 +1143,16 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void CharGrid_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
     {
-        if (!args.InRecycleQueue && args.ItemContainer is not null)
-        {
-            //args.ItemContainer.ContextRequested -= Grid_ContextRequested;
-            //args.ItemContainer.ContextRequested += Grid_ContextRequested;
+        //if (!args.InRecycleQueue && args.ItemContainer is not null)
+        //{
+        //    //args.ItemContainer.ContextRequested -= Grid_ContextRequested;
+        //    //args.ItemContainer.ContextRequested += Grid_ContextRequested;
 
-            var c = VisualTreeHelper.GetChild(args.ItemContainer, 0);
-            var b = VisualTreeHelper.GetChild(c, 0);
-            if (b is Border br)
-                br.BackgroundTransition = ResourceHelper.AllowAnimation ? t : null;
-        }
+        //    var c = VisualTreeHelper.GetChild(args.ItemContainer, 0);
+        //    var b = VisualTreeHelper.GetChild(c, 0);
+        //    if (b is Border br)
+        //        br.BackgroundTransition = ResourceHelper.AllowAnimation ? _brushTransition : null;
+        //}
     }
 
     private void Grid_ContextRequested(UIElement sender, ContextRequestedEventArgs args)

@@ -1429,9 +1429,9 @@
                                                     Margin="{TemplateBinding Padding}"
                                                     Content="{TemplateBinding Content}"
                                                     ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                    FontSize="12"
+                                                    FontSize="13.333"
                                                     FontWeight="SemiBold"
-                                                    Opacity="0.6" />
+                                                    Opacity="0.7" />
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
@@ -1928,13 +1928,19 @@
                             </GroupStyle.HeaderContainerStyle>
                             <GroupStyle.HeaderTemplate>
                                 <DataTemplate>
-                                    <TextBlock
-                                        FontSize="12"
-                                        FontStretch="Normal"
-                                        FontStyle="Normal"
-                                        FontWeight="SemiBold"
-                                        Opacity="0.6"
-                                        Text="{Binding Key}" />
+                                    <Border
+                                        Padding="0 4 0 0"
+                                        HorizontalAlignment="Left"
+                                        Background="Transparent"
+                                        CornerRadius="4">
+                                        <TextBlock
+                                            FontSize="13.333"
+                                            FontStretch="Normal"
+                                            FontStyle="Normal"
+                                            FontWeight="SemiBold"
+                                            Opacity="0.7"
+                                            Text="{Binding Key}" />
+                                    </Border>
                                 </DataTemplate>
                             </GroupStyle.HeaderTemplate>
                         </GroupStyle>
@@ -2130,7 +2136,7 @@
                                 x:Name="NoOpenTypeFeraturesMessage"
                                 x:Load="{x:Bind core:Converters.False(ViewModel.SelectedFaceAnalysis.HasOpenTypeFeatures), Mode=OneWay, FallbackValue=False}"
                                 Margin="0 0 0 4"
-                                Content="n0 0p3n TyPe Feturreee"
+                                Content="{core:Localizer Key=NoOpenTypeFeatures}"
                                 FontStretch="Normal"
                                 FontStyle="Normal"
                                 FontWeight="Normal"
@@ -2143,7 +2149,7 @@
                                 FontStyle="Normal"
                                 FontWeight="Bold"
                                 Style="{ThemeResource SubtitleTextBlockStyle}"
-                                Text="{x:Bind ViewModel.SelectedFaceAnalysis.OpenTypeFeatureCount, Mode=OneWay}"
+                                Text="{x:Bind ViewModel.SelectedFaceAnalysis.OpenTypeSummary, Mode=OneWay}"
                                 TextWrapping="Wrap" />
                         </StackPanel>
                     </controls:ExtendedGridView.Header>
@@ -2179,13 +2185,20 @@
                             </GroupStyle.HeaderContainerStyle>
                             <GroupStyle.HeaderTemplate>
                                 <DataTemplate>
-                                    <TextBlock
-                                        FontSize="12"
-                                        FontStretch="Normal"
-                                        FontStyle="Normal"
-                                        FontWeight="SemiBold"
-                                        Opacity="0.6"
-                                        Text="{Binding Key}" />
+                                    <Border
+                                        Padding="0 4 0 0"
+                                        HorizontalAlignment="Left"
+                                        Background="Transparent"
+                                        CornerRadius="4">
+                                        <TextBlock
+                                            FontSize="13.333"
+                                            FontStretch="Normal"
+                                            FontStyle="Normal"
+                                            FontWeight="SemiBold"
+                                            Opacity="0.7"
+                                            Text="{Binding Key}" />
+                                    </Border>
+
                                 </DataTemplate>
                             </GroupStyle.HeaderTemplate>
                         </GroupStyle>
@@ -3226,6 +3239,11 @@
                         From="CharacterMapState"
                         To="LigatureMapState" />
                     <VisualTransition
+                        x:Name="GridToOpenTypeTransition"
+                        GeneratedDuration="00:00:00"
+                        From="CharacterMapState"
+                        To="OpenTypeMapState" />
+                    <VisualTransition
                         x:Name="GlyphToGridTransition"
                         GeneratedDuration="00:00:00"
                         From="GlyphMapState"
@@ -3240,6 +3258,11 @@
                         GeneratedDuration="00:00:00"
                         From="GlyphMapState"
                         To="LigatureMapState" />
+                    <VisualTransition
+                        x:Name="GlyphToOpenTypeTransition"
+                        GeneratedDuration="00:00:00"
+                        From="GlyphMapState"
+                        To="OpenTypeMapState" />
                     <VisualTransition
                         x:Name="RampToGlyphTransition"
                         GeneratedDuration="00:00:00"
@@ -3256,6 +3279,11 @@
                         From="TypeRampState"
                         To="LigatureMapState" />
                     <VisualTransition
+                        x:Name="RampToOpenTypeTransition"
+                        GeneratedDuration="00:00:00"
+                        From="TypeRampState"
+                        To="OpenTypeMapState" />
+                    <VisualTransition
                         x:Name="LigatureToGlyphTransition"
                         GeneratedDuration="00:00:00"
                         From="LigatureMapState"
@@ -3266,9 +3294,34 @@
                         From="LigatureMapState"
                         To="CharacterMapState" />
                     <VisualTransition
+                        x:Name="LigatureToOpenTypeTransition"
+                        GeneratedDuration="00:00:00"
+                        From="LigatureMapState"
+                        To="OpenTypeMapState" />
+                    <VisualTransition
                         x:Name="LigatureToRampTransition"
                         GeneratedDuration="00:00:00"
                         From="LigatureMapState"
+                        To="TypeRampState" />
+                    <VisualTransition
+                        x:Name="OpenTypeToGridTransition"
+                        GeneratedDuration="00:00:00"
+                        From="OpenTypeMapState"
+                        To="CharacterMapState" />
+                    <VisualTransition
+                        x:Name="OpenTypeToGlyphTransition"
+                        GeneratedDuration="00:00:00"
+                        From="OpenTypeMapState"
+                        To="GlyphMapState" />
+                    <VisualTransition
+                        x:Name="OpenTypeToLigaturesTransition"
+                        GeneratedDuration="00:00:00"
+                        From="OpenTypeMapState"
+                        To="LigatureMapState" />
+                    <VisualTransition
+                        x:Name="OpenTypeToRampTransition"
+                        GeneratedDuration="00:00:00"
+                        From="OpenTypeMapState"
                         To="TypeRampState" />
                 </VisualStateGroup.Transitions>
                 <VisualState x:Name="CharacterMapState" />

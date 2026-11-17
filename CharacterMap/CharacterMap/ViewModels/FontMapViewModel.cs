@@ -490,8 +490,9 @@ public partial class FontMapViewModel : ViewModelBase
         DisplayMode = DisplayMode switch
         {
             FontDisplayMode.CharacterMapState => FontDisplayMode.GlyphMapState,
-            FontDisplayMode.GlyphMapState => FontDisplayMode.TypeRampState,
-            FontDisplayMode.TypeRampState => FontDisplayMode.LigaturesState,
+            FontDisplayMode.GlyphMapState => FontDisplayMode.LigaturesState,
+            FontDisplayMode.LigaturesState => FontDisplayMode.OpenTypeState,
+            FontDisplayMode.OpenTypeState => FontDisplayMode.TypeRampState,
             _ => FontDisplayMode.CharacterMapState
         };
     }

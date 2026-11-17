@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -2566,5 +2566,12 @@
   </data>
   <data name="SubsetterMetadataHeader" xml:space="preserve">
     <value>மெட்டாடேட்டா</value>
+  </data>
+  <data name="OpenTypeSummaryString" xml:space="preserve">
+    <value>{1} OpenType அம்சங்களில் {0} மாற்றுகளைக் கொண்டுள்ளது</value>
+    <comment>{0} = total number of substitutions across all features, {1} = number of features</comment>
+  </data>
+  <data name="NoOpenTypeFeatures" xml:space="preserve">
+    <value>இந்த எழுத்துரு முகத்தில் அங்கீகரிக்கப்பட்ட OpenType அம்சங்கள் இல்லை</value>
   </data>
 </root>

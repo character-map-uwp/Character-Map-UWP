@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -2582,5 +2582,12 @@ Web 字體在安裝前將轉換為 OTF 格式。</value>
   </data>
   <data name="SubsetterMetadataHeader" xml:space="preserve">
     <value>中繼資料</value>
+  </data>
+  <data name="OpenTypeSummaryString" xml:space="preserve">
+    <value>在 {1} 個 OpenType 功能中包含 {0} 個替換</value>
+    <comment>{0} = total number of substitutions across all features, {1} = number of features</comment>
+  </data>
+  <data name="NoOpenTypeFeatures" xml:space="preserve">
+    <value>此字型樣式不包含可識別的 OpenType 功能</value>
   </data>
 </root>

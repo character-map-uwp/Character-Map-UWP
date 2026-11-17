@@ -21,6 +21,7 @@ public partial class FontItem : ObservableObject
     [NotifyPropertyChangedFor(nameof(IsGlyphMap))]
     [NotifyPropertyChangedFor(nameof(IsCharMap))]
     [NotifyPropertyChangedFor(nameof(IsLigatures))]
+    [NotifyPropertyChangedFor(nameof(IsOpenType))]
     [NotifyPropertyChangedFor(nameof(Index))]
     private FontDisplayMode _displayMode = FontDisplayMode.CharacterMapState;
 

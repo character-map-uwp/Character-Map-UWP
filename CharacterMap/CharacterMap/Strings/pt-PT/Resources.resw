@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -2576,5 +2576,12 @@ As variações não podem ser copiadas como texto, mas podem ser exportadas como
   </data>
   <data name="SubsetterMetadataHeader" xml:space="preserve">
     <value>Metadados</value>
+  </data>
+  <data name="OpenTypeSummaryString" xml:space="preserve">
+    <value>Contém {0} substituições em {1} funcionalidades OpenType</value>
+    <comment>{0} = total number of substitutions across all features, {1} = number of features</comment>
+  </data>
+  <data name="NoOpenTypeFeatures" xml:space="preserve">
+    <value>Este tipo de letra não contém funcionalidades OpenType reconhecidas</value>
   </data>
 </root>

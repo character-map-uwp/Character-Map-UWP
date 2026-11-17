@@ -1171,39 +1171,35 @@
 
                                                     <FontIcon
                                                         x:Name="CharMapIcon"
-                                                        x:Load="{x:Bind IsCharMap}"
+                                                        x:Load="{x:Bind IsCharMap, FallbackValue=False}"
                                                         Margin="0 2 0 0"
                                                         core:Properties.ThemeIcon="CharacterMapView"
                                                         FontSize="12" />
 
                                                     <FontIcon
                                                         x:Name="TypeRampIcon"
-                                                        x:Load="{x:Bind IsTypeRamp}"
+                                                        x:Load="{x:Bind IsTypeRamp, FallbackValue=False}"
                                                         Margin="0 2 0 0"
                                                         core:Properties.ThemeIcon="TypeRampView"
                                                         FontSize="11" />
 
                                                     <FontIcon
                                                         x:Name="GlyphMapIcon"
-                                                        x:Load="{x:Bind IsGlyphMap}"
+                                                        x:Load="{x:Bind IsGlyphMap, FallbackValue=False}"
                                                         Margin="0 2 0 0"
                                                         core:Properties.ThemeIcon="GlyphMapView"
                                                         FontSize="11" />
 
                                                     <FontIcon
                                                         x:Name="LigatureMapIcon"
-                                                        x:Load="{x:Bind IsLigatures}"
+                                                        x:Load="{x:Bind IsLigatures, FallbackValue=False}"
                                                         Margin="0 2 0 0"
-                                                        core:Properties.ThemeIcon="GlyphMapView"
-                                                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                                        FontSize="11"
-                                                        Glyph="ffi"
-                                                        Typography.ContextualLigatures="True"
-                                                        Typography.DiscretionaryLigatures="True" />
+                                                        core:Properties.ThemeIcon="LigatureMapView"
+                                                        FontSize="11" />
 
                                                     <FontIcon
                                                         x:Name="OpenTypeIcon"
-                                                        x:Load="{x:Bind IsOpenType}"
+                                                        x:Load="{x:Bind IsOpenType, FallbackValue=False}"
                                                         Margin="0 2 0 0"
                                                         core:Properties.ThemeIcon="OpenTypeView"
                                                         FontSize="11" />

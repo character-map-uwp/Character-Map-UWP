@@ -3492,4 +3492,11 @@ Variations cannot be copied as text, but can be exported as PNG or SVG.</value>
   <data name="SubsetterMetadataHeader" xml:space="preserve">
     <value>Metadata</value>
   </data>
+  <data name="OpenTypeSummaryString" xml:space="preserve">
+    <value>Contains {0} substitutions across {1} OpenType features</value>
+    <comment>{0} = total number of substitutions across all features, {1} = number of features</comment>
+  </data>
+  <data name="NoOpenTypeFeatures" xml:space="preserve">
+    <value>This font face contains no recognized OpenType features</value>
+  </data>
 </root>

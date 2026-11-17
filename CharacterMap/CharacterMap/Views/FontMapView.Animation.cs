@@ -76,10 +76,11 @@ public partial class FontMapView
             }
             else if (ViewModel.DisplayMode == FontDisplayMode.LigaturesState)
             {
-                if (LigaturesRoot != null)
-                {
-                    CompositionFactory.PlayEntrance(LigaturesRoot, offset * 2);
-                }
+                CompositionFactory.PlayEntrance(LigaturesRoot, offset * 2);
+            }
+            else if (ViewModel.DisplayMode == FontDisplayMode.OpenTypeState)
+            {
+                CompositionFactory.PlayEntrance(OpenTypeRoot, offset * 2);
             }
         }
     }
@@ -406,10 +407,12 @@ public partial class FontMapView
             return GlyphsRoot;
         if (f == LigaturesRepeater)
             return LigaturesRoot;
+        if (f == OpenTypeRepeater)
+            return OpenTypeRoot;
         if (f == CharGrid)
             return f;
 
-        throw new Exception("Unsupported Target");
+        return null;
     }
 
     void CreateGridOut(StoryboardBuilderArgs args, ListViewBase grid, bool toRamp)
@@ -463,6 +466,9 @@ public partial class FontMapView
         {
             if (grid != LigaturesRepeater && LigaturesRoot != null)
                 sb.CreateTimeline(LigaturesRoot, Visibility.Collapsed);
+
+            if (grid != OpenTypeRepeater && OpenTypeRoot != null)
+                sb.CreateTimeline(OpenTypeRoot, Visibility.Collapsed);
 
             if (grid != GlyphRepeater && GlyphsRoot != null)
                 sb.CreateTimeline(GlyphsRoot, Visibility.Collapsed);
@@ -557,11 +563,7 @@ public partial class FontMapView
 
         if (args.CurrentOffset.TotalSeconds > 0)
         {
-            FrameworkElement vt = grid;
-            if (vt == GlyphRepeater)
-                vt = GlyphsRoot;
-            else if (vt == LigaturesRepeater)
-                vt = LigaturesRoot;
+            FrameworkElement vt = GetGridTarget(grid);
 
             sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(vt, TargetProperty.Visibility)
                .AddKeyFrame(0, Visibility.Collapsed)
