@@ -1726,7 +1726,6 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
 
 
-
     //------------------------------------------------------
     //
     //  Ligatures Map
@@ -1762,6 +1761,28 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         }
     }
 
+
+
+
+
+    //------------------------------------------------------
+    //
+    //  OpenType Map
+    //
+    //------------------------------------------------------
+
+    private void OpenTypeRepeater_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (OpenTypeRepeater?.SelectedItem is OpenTypeSubstitutionModel model)
+        {
+            CompositionFactory.SetWithoutReposition(TxtPreview, _resizerBouncer, () =>
+            {
+                TxtPreview.GlyphIndex = (int)model.Substitute.GlyphIndex;
+                AnimateSelectionFromGlyph(OpenTypeRepeater);
+            });
+            UpdateColrSelector();
+        }
+    }
 }
 
 

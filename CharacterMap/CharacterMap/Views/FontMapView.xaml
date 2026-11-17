@@ -2083,7 +2083,7 @@
                     FontWeight="{x:Bind ViewModel.SelectedFace.DirectWriteProperties.Weight, Mode=OneWay}"
                     ItemContainerStyle="{StaticResource SmallCardGridViewItem}"
                     ItemsSource="{Binding Source={StaticResource OpenTypeSource}}"
-                    SelectionChanged="LigaturesRepeater_SelectionChanged"
+                    SelectionChanged="OpenTypeRepeater_SelectionChanged"
                     SelectionMode="Single"
                     StretchContainersForSingleRowEnabled="True"
                     Transform3D="{StaticResource Perspective}">
@@ -2221,7 +2221,6 @@
                                         </Grid.RowDefinitions>
 
                                         <Grid
-                                            x:Name="Target"
                                             Width="60"
                                             Height="60"
                                             VerticalAlignment="Top"
@@ -2261,7 +2260,7 @@
                                     <!--  Right: Details (Name & Component Badges)  -->
                                     <Grid Grid.Column="2" VerticalAlignment="Stretch">
                                         <Grid
-                                            x:Name="TargetOutput"
+                                            x:Name="Target"
                                             Width="84"
                                             Height="84"
                                             VerticalAlignment="Top"

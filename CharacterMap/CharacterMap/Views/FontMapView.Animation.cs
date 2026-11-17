@@ -102,7 +102,7 @@ public partial class FontMapView
             && container.GetFirstDescendantOfType<FontGlyphs>() is FontGlyphs t)
         {
             t.Measure(container.DesiredSize);
-            if (t.DesiredSize.Height != 0 && t.DesiredSize.Width != 0)
+            if (t.ActualSize.X > 0 && t.ActualSize.Y > 0)
             {
                 var ani = source.PrepareConnectedAnimation("PP", source.SelectedItem, "Target");
                 ani.TryStart(TxtPreview);
