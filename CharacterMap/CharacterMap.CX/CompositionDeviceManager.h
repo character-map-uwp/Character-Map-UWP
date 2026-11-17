@@ -76,6 +76,7 @@ namespace CharacterMapCX
     internal:
         static Microsoft::WRL::ComPtr<ID2D1Factory5> GetD2DFactory();
         static Microsoft::WRL::ComPtr<IDWriteFactory7> GetDWriteFactory();
+        static Microsoft::WRL::ComPtr<IDWriteFactory7>& GetDWriteFactoryRef();
         static Microsoft::WRL::ComPtr<ID2D1Device> GetD2DDevice();
         static Windows::UI::Composition::CompositionGraphicsDevice^ GetGraphicsDevice(Windows::UI::Composition::Compositor^ compositor);
         static Windows::UI::Composition::CompositionColorBrush^ GetColorBrush(Windows::UI::Composition::Compositor^ compositor, Windows::UI::Color color);

@@ -46,10 +46,19 @@ std::mutex& CompositionDeviceManager::GetRenderMutex()
     return s_renderMutex;
 }
 
+static std::once_flag s_dwriteFactoryOnce;
+
+void EnsureDWriteFactory()
+{
+    std::call_once(s_dwriteFactoryOnce, []()
+    {
+        DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory7), &CompositionDeviceManager::GetDWriteFactoryRef());
+    });
+}
+
 void CompositionDeviceManager::EnsureDevices()
 {
-    if (s_dwriteFactory == nullptr)
-        DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory7), &s_dwriteFactory);
+    EnsureDWriteFactory();
 
     if (s_d3dDevice != nullptr)
     {
@@ -130,10 +139,14 @@ ComPtr<ID2D1Factory5> CompositionDeviceManager::GetD2DFactory()
     return s_d2dFactory;
 }
 
+ComPtr<IDWriteFactory7>& CompositionDeviceManager::GetDWriteFactoryRef()
+{
+    return s_dwriteFactory;
+}
+
 ComPtr<IDWriteFactory7> CompositionDeviceManager::GetDWriteFactory()
 {
-    std::lock_guard<std::mutex> lock(s_mutex);
-    EnsureDevices();
+    EnsureDWriteFactory();
     return s_dwriteFactory;
 }
 

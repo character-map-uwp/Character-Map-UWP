@@ -1313,6 +1313,22 @@ namespace
 
     bool ComputeGlyphLayoutForJob(const FontGlyphsRenderJob& job, GlyphLayoutResult& out)
     {
+        out.Indices.clear();
+        out.Advances.clear();
+        out.Offsets.clear();
+        out.ContentSize = Size(0, 0);
+        out.Baseline = 0.0f;
+        out.PadLeft = 0.0f;
+        out.PadRight = 0.0f;
+        out.PadTop = 0.0f;
+        out.PadBottom = 0.0f;
+        out.HasInkBounds = false;
+        out.DesignInkLeft = 0.0;
+        out.DesignInkWidth = 0.0;
+        out.DesignInkTop = 0.0;
+        out.DesignInkHeight = 0.0;
+        out.DesignUnitsPerEm = 0.0;
+
         if (job.FontFace == nullptr)
             return false;
 
@@ -1591,7 +1607,7 @@ namespace
         if (pThis == nullptr || !pThis->IsGenerationCurrent(job.Generation))
             return;
 
-        GlyphLayoutResult layout;
+        thread_local GlyphLayoutResult layout;
         if (!ComputeGlyphLayoutForJob(job, layout))
             return;
 
@@ -1682,7 +1698,7 @@ namespace
             surfW,
             surfH,
             job.RenderColor,
-            [&](ID2D1DeviceContext* ctx)
+            [&](ID2D1DeviceContext* ctx, ID2D1SolidColorBrush* d2dBrush)
             {
                 ctx->SetTransform(
                     D2D1::Matrix3x2F::Scale(scaleX, scaleY) *
@@ -1707,11 +1723,10 @@ namespace
                         job.ForegroundColor.A / 255.0f)
                     : D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f);
 
-                ComPtr<ID2D1SolidColorBrush> d2dBrush;
-                ctx->CreateSolidColorBrush(brushColor, &d2dBrush);
+                d2dBrush->SetColor(brushColor);
 
                 TextRenderParameters renderParams;
-                renderParams.ForegroundBrush = d2dBrush.Get();
+                renderParams.ForegroundBrush = d2dBrush;
                 renderParams.EnableColor = job.RenderColor;
                 renderParams.PreferredFormat = job.RenderColor ? GlyphImageFormat::None : GlyphImageFormat::TrueType;
                 renderParams.IsMaskSurface = !job.RenderColor;

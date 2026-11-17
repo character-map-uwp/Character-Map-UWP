@@ -136,7 +136,7 @@ namespace CharacterMapCX
             UINT32 surfaceWidth,
             UINT32 surfaceHeight,
             bool useColorPool,
-            const std::function<void(ID2D1DeviceContext*)>& drawCallback,
+            const std::function<void(ID2D1DeviceContext*, ID2D1SolidColorBrush*)>& drawCallback,
             std::vector<uint8_t>& outPixels,
             UINT32& outPitch);
 

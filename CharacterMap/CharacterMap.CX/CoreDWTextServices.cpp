@@ -784,6 +784,7 @@ namespace
         ComPtr<ID2D1Factory5> D2DFactory;
         ComPtr<ID2D1Device> D2DDevice;
         ComPtr<ID2D1DeviceContext> D2DContext;
+        ComPtr<ID2D1SolidColorBrush> Brush;
         ComPtr<ID2D1Bitmap1> TargetBitmap;
         ComPtr<ID2D1Bitmap1> StagingBitmap;
         UINT32 BitmapWidth = 0;
@@ -800,6 +801,7 @@ namespace
         void ResetDeviceResources()
         {
             ResetBitmaps();
+            Brush.Reset();
             D2DContext.Reset();
             D2DDevice.Reset();
             D3DDevice.Reset();
@@ -808,7 +810,7 @@ namespace
         bool RenderLocked(
             UINT32 surfaceWidth,
             UINT32 surfaceHeight,
-            const std::function<void(ID2D1DeviceContext*)>& drawCallback,
+            const std::function<void(ID2D1DeviceContext*, ID2D1SolidColorBrush*)>& drawCallback,
             std::vector<uint8_t>& outPixels,
             UINT32& outPitch)
         {
@@ -849,6 +851,12 @@ namespace
                     return false;
             }
 
+            if (Brush == nullptr)
+            {
+                if (FAILED(D2DContext->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f), &Brush)) || Brush == nullptr)
+                    return false;
+            }
+
             // Always use BGRA8 off-device even if the final surface is A8: D2D1DeviceContext
             // does not support A8_UNORM with D2D1_BITMAP_OPTIONS_TARGET on many drivers.
             // Reuse grow-only target and staging bitmaps per slot to avoid per-item D3D texture allocations.
@@ -884,7 +892,7 @@ namespace
                 D2D1::RectF(0.0f, 0.0f, static_cast<FLOAT>(surfaceWidth), static_cast<FLOAT>(surfaceHeight)),
                 D2D1_ANTIALIAS_MODE_ALIASED);
             D2DContext->Clear(D2D1::ColorF(0, 0, 0, 0));
-            drawCallback(D2DContext.Get());
+            drawCallback(D2DContext.Get(), Brush.Get());
             D2DContext->SetTransform(D2D1::Matrix3x2F::Identity());
             D2DContext->PopAxisAlignedClip();
             HRESULT hr = D2DContext->EndDraw();
@@ -929,7 +937,7 @@ namespace
         bool Render(
             UINT32 surfaceWidth,
             UINT32 surfaceHeight,
-            const std::function<void(ID2D1DeviceContext*)>& drawCallback,
+            const std::function<void(ID2D1DeviceContext*, ID2D1SolidColorBrush*)>& drawCallback,
             std::vector<uint8_t>& outPixels,
             UINT32& outPitch)
         {
@@ -949,10 +957,13 @@ namespace
         {
             for (size_t i = 0; i < N; ++i)
             {
-                std::lock_guard<std::mutex> lock(m_slots[i].Mutex);
-                m_slots[i].ResetBitmaps();
-                if (m_slots[i].D2DDevice != nullptr)
-                    m_slots[i].D2DDevice->ClearResources(0);
+                std::unique_lock<std::mutex> lock(m_slots[i].Mutex, std::try_to_lock);
+                if (lock.owns_lock())
+                {
+                    m_slots[i].ResetBitmaps();
+                    if (m_slots[i].D2DDevice != nullptr)
+                        m_slots[i].D2DDevice->ClearResources(0);
+                }
             }
         }
 
@@ -1000,7 +1011,7 @@ bool CoreDWTextServices::RenderOffDevice(
     UINT32 surfaceWidth,
     UINT32 surfaceHeight,
     bool useColorPool,
-    const std::function<void(ID2D1DeviceContext*)>& drawCallback,
+    const std::function<void(ID2D1DeviceContext*, ID2D1SolidColorBrush*)>& drawCallback,
     std::vector<uint8_t>& outPixels,
     UINT32& outPitch)
 {
@@ -1016,8 +1027,9 @@ void CoreDWTextServices::TrimOffDeviceRenderers()
 {
     GetMonoOffDevicePool().Trim();
     GetColorOffDevicePool().Trim();
-    std::lock_guard<std::mutex> renderLock(CompositionDeviceManager::GetRenderMutex());
-    GetUploadBitmapCache().Reset();
+    std::unique_lock<std::mutex> renderLock(CompositionDeviceManager::GetRenderMutex(), std::try_to_lock);
+    if (renderLock.owns_lock())
+        GetUploadBitmapCache().Reset();
 }
 
 bool CoreDWTextServices::UploadOffDevicePixelsToSurface(

@@ -346,7 +346,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
     float availH = std::isinf(size.Height) ? static_cast<float>(m) : static_cast<float>((std::max)(1.0, static_cast<double>(size.Height) - padH));
 
     Windows::Foundation::Size fixedSurfaceSize = SurfaceSize;
-    if (IsBackgroundRenderEnabled && !IsCharacterFitEnabled && !IsOverwriteCompensationEnabled && GlyphIndex < 0 &&
+    if (IsBackgroundRenderEnabled && !IsCharacterFitEnabled && GlyphIndex < 0 &&
         fixedSurfaceSize.Width > 0.0f && fixedSurfaceSize.Height > 0.0f)
     {
         m_deferredLayout = true;
@@ -468,7 +468,8 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
                 if (SUCCEEDED(CoreDWTextServices::MeasureLayoutBounds(m_textLayout.Get(), &layoutBounds)))
                 {
-                    if (IsCharacterFitEnabled || IsOverwriteCompensationEnabled)
+                    bool skipOutlineOnUI = IsBackgroundRenderEnabled && !IsCharacterFitEnabled;
+                    if (!skipOutlineOnUI && (IsCharacterFitEnabled || IsOverwriteCompensationEnabled))
                     {
                         if (FAILED(CoreDWTextServices::MeasureInkBounds(m_textLayout.Get(), m_drawFontFace.Get(), &drawBounds)))
                             drawBounds = layoutBounds;
@@ -577,7 +578,8 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             }
 
             // Calculate DrawBounds
-            if (IsCharacterFitEnabled || IsOverwriteCompensationEnabled)
+            bool skipOutlineOnUI = IsBackgroundRenderEnabled && !IsCharacterFitEnabled;
+            if (!skipOutlineOnUI && (IsCharacterFitEnabled || IsOverwriteCompensationEnabled))
             {
                 hr = CoreDWTextServices::MeasureInkBounds(textLayout.Get(), m_drawFontFace.Get(), &drawBounds);
                 if (FAILED(hr))
@@ -753,7 +755,7 @@ namespace
         std::shared_ptr<DeferredLayoutCache> LayoutCache;
     };
 
-    void RenderSnapshotToContext(ID2D1DeviceContext* ctx, const DirectTextRenderSnapshot& snap, FLOAT offsetX, FLOAT offsetY)
+    void RenderSnapshotToContext(ID2D1DeviceContext* ctx, const DirectTextRenderSnapshot& snap, FLOAT offsetX, FLOAT offsetY, ID2D1SolidColorBrush* sharedBrush = nullptr)
     {
         auto db = snap.DrawBounds;
         auto lb = snap.LayoutBounds;
@@ -822,11 +824,19 @@ namespace
             ? CoreDWTextServices::ToPreferredFormat(color, snap.ColorRenderOption)
             : GlyphImageFormat::TrueType;
 
-        ComPtr<ID2D1SolidColorBrush> brush;
-        ctx->CreateSolidColorBrush(snap.RenderColor ? snap.ForegroundColor : D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f), &brush);
+        D2D1_COLOR_F brushColor = snap.RenderColor ? snap.ForegroundColor : D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f);
+        ComPtr<ID2D1SolidColorBrush> fallbackBrush;
+        ID2D1SolidColorBrush* activeBrush = sharedBrush;
+        if (activeBrush != nullptr)
+            activeBrush->SetColor(brushColor);
+        else
+        {
+            ctx->CreateSolidColorBrush(brushColor, &fallbackBrush);
+            activeBrush = fallbackBrush.Get();
+        }
 
         TextRenderParameters renderParams;
-        renderParams.ForegroundBrush = brush.Get();
+        renderParams.ForegroundBrush = activeBrush;
         renderParams.EnableColor = color;
         renderParams.PreferredFormat = preferredFormat;
         renderParams.OverrideFace = snap.DrawFontFace.Get();
@@ -864,9 +874,9 @@ namespace
             snap.SurfaceWidth,
             snap.SurfaceHeight,
             snap.RenderColor || snap.UseColorQueue,
-            [&snap](ID2D1DeviceContext* ctx)
+            [&snap](ID2D1DeviceContext* ctx, ID2D1SolidColorBrush* sharedBrush)
             {
-                RenderSnapshotToContext(ctx, snap, 0.0f, 0.0f);
+                RenderSnapshotToContext(ctx, snap, 0.0f, 0.0f, sharedBrush);
             },
             outPixels,
             outPitch);
@@ -1195,9 +1205,26 @@ void DirectText::RenderToSurface(Windows::Foundation::Size finalSize)
     if (FAILED(reinterpret_cast<IUnknown*>(m_drawingSurface)->QueryInterface(IID_PPV_ARGS(&surfaceInterop))))
         return;
 
-    CompositionDeviceManager::EnsureSurfaceBrush(compositor, m_surfaceBrush, m_drawingSurface);
-
-    wireBrushes();
+    bool needsBrushSetup = needNewSurface || m_surfaceBrush == nullptr || m_spriteVisual->Brush == nullptr;
+    if (needsBrushSetup)
+    {
+        CompositionDeviceManager::EnsureSurfaceBrush(compositor, m_surfaceBrush, m_drawingSurface);
+        wireBrushes();
+    }
+    else
+    {
+        m_spriteVisual->Size = float2(surfaceW, surfaceH);
+        m_spriteVisual->Offset = float3(-overL, -overT, 0.0f);
+        if (!renderColor && m_maskBrush != nullptr)
+        {
+            auto colorBrush = CompositionDeviceManager::GetColorBrush(compositor, GetForegroundColor());
+            if (m_colorBrush != colorBrush)
+            {
+                m_colorBrush = colorBrush;
+                m_maskBrush->Source = m_colorBrush;
+            }
+        }
+    }
 
     D2D1_COLOR_F actualFgColor = D2D1::ColorF(D2D1::ColorF::White);
     if (auto fgScb = dynamic_cast<SolidColorBrush^>(this->Foreground))
