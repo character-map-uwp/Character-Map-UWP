@@ -466,9 +466,14 @@
                 FontSize="8"
                 MaxColumns="1"
                 SelectedIndex="0"
-                SelectionChanged="UXRadioButtons_SelectionChanged"
+                SelectionChanged="NavSelector_SelectionChanged"
                 Visibility="Collapsed"
                 d:Visibility="Visible">
+                <controls:UXRadioButtons.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Vertical" Spacing="4" />
+                    </ItemsPanelTemplate>
+                </controls:UXRadioButtons.ItemsPanel>
                 <controls:SelectorVisualElement.ElementTemplate>
                     <DataTemplate>
                         <controls:SelectorVisualElement BarSize="3 16" Style="{StaticResource VerticalRadioSelectorElementStyle}" />
@@ -535,7 +540,10 @@
                         Icon="Calligraphy"
                         Id="CalligraphyView" />
                 </RadioButton>
-                <RadioButton Tag="SettingsView">
+                <RadioButton
+                    x:Name="NavItemSettings"
+                    x:Load="False"
+                    Tag="SettingsView">
                     <m:NamedIcon
                         DisplayName="Settings"
                         Icon="Settings"

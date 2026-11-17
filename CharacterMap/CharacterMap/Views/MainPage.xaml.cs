@@ -330,23 +330,6 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         }
     }
 
-    void UpdateMenuBar(bool animate = true)
-    {
-        if (ViewModel.Settings.UseMenuNavigationBar)
-        {
-            GoToState(nameof(MenuBarVisibleState), animate);
-            if (NavSelector is not null && NavSelector.SelectedIndex < 0)
-                NavSelector.SelectedIndex = 0;
-        }
-        else
-        {
-            GoToState(nameof(MenuBarHiddenState), animate);
-
-            if (animate)
-                ShowSettings(0);
-        }
-    }
-
     void ViewModel_FontListCreated(object sender, EventArgs e)
     {
         StartScrollSelectedIntoView();
@@ -379,12 +362,6 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             GoToState(nameof(DefaultViewState));
     }
 
-    void ShowPrint()
-    {
-        DismissMenu();
-        FlyoutHelper.PrintRequested();
-    }
-
     void SetSelectedItem(CMFontFamily font)
     {
         LstFontFamily.SelectedItem = font;
@@ -408,40 +385,6 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
     {
         if (sender is FrameworkElement f && f.DataContext is FontItem item)
             ViewModel.TryCloseTab(FontsTabBar.TabItems.IndexOf(item));
-    }
-
-    void BtnSettings_OnClick(object sender, RoutedEventArgs e) => ShowSettings();
-
-    void ShowAbout() => ShowSettings(10);
-
-    public void ShowSettings(int idx= 0)
-    {
-        if (idx == 0)
-            NavPresenter.Target = nameof(SettingsView);
-        else
-            NavPresenter.Target = $"{nameof(SettingsView)}{idx}";
-    }
-
-    public void ShowSettingsInternal(int idx = 0)
-    {
-        // Zune theme shows settings button early right now, so to avoid
-        // crashing do nothing until fonts are loaded
-        if (ViewModel.IsLoadingFonts)
-            return;
-
-        DismissMenu();
-
-        this.FindName(nameof(SettingsView));
-        SettingsView.Show(
-            FontMap.ViewModel.RenderingOptions, 
-            ViewModel.SelectedFont, idx);
-        OnModalOpened();
-    }
-
-    private void FontsTabBar_TabDroppedOutside(TabView sender, TabViewTabDroppedOutsideEventArgs args)
-    {
-        if (args.Item is FontItem font)
-            _ = FontMapView.CreateNewViewForFontAsync(font.Font);
     }
 
     async void OnModalOpened(bool hideFontMap = true)
@@ -481,7 +424,6 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         string state = open ? nameof(ModalOpenState) : nameof(NoModalOpenState);
         GoToState(state);
     }
-
 
     bool AreModalsOpen()
     {
@@ -581,11 +523,6 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         }
     }
 
-    void ShowCompare(List<CMFontFace> variants)
-    {
-        _ = QuickCompareView.CreateWindowAsync(new(false, new(variants)));
-    }
-
     void LstFontFamily_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (ViewModel.IsLoadingFonts is false &&
@@ -673,18 +610,6 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         }
     }
 
-    void FontCompareButton_Click(object sender, RoutedEventArgs e)
-    {
-        DismissMenu();
-
-        _ = QuickCompareView.CreateWindowAsync(new(false, ViewModel.Folder));
-    }
-
-    void CollectionCompareButton_Click(object sender, RoutedEventArgs e)
-    {
-        _ = QuickCompareView.CreateWindowAsync(new(false) { SelectedCollection = ViewModel.SelectedCollection });
-    }
-
     void LstFontFamily_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
     {
         args.ItemContainer.PointerPressed -= ItemContainer_PointerPressed;
@@ -760,6 +685,18 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         }
     }
 
+    private void FontsTabBar_TabDroppedOutside(TabView sender, TabViewTabDroppedOutsideEventArgs args)
+    {
+        if (args.Item is FontItem font)
+            _ = FontMapView.CreateNewViewForFontAsync(font.Font);
+    }
+
+    void ShowPrint()
+    {
+        DismissMenu();
+        FlyoutHelper.PrintRequested();
+    }
+
     void OpenFolder()
     {
         DismissMenu();
@@ -768,33 +705,31 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
     void DismissMenu() => AppMenuFlyout.Hide();
 
+    private void Button_Click(object sender, RoutedEventArgs e)
+    {
+        _ = SubsetterView.CreateWindowAsync(new());
+    }
+
+    void ShowCompare(List<CMFontFace> variants)
+    {
+        _ = QuickCompareView.CreateWindowAsync(new(false, new(variants)));
+    }
+
+    void FontCompareButton_Click(object sender, RoutedEventArgs e)
+    {
+        DismissMenu();
+        _ = QuickCompareView.CreateWindowAsync(new(false, ViewModel.Folder));
+    }
+
+    void CollectionCompareButton_Click(object sender, RoutedEventArgs e)
+    {
+        _ = QuickCompareView.CreateWindowAsync(new(false) { SelectedCollection = ViewModel.SelectedCollection });
+    }
+
     public void CharacterSearch(string s)
     {
         ViewModel.FontSearch = $"{Localization.Get("CharacterFilter")} {s}";
         FontListSearchBox.Focus(FocusState.Keyboard);
-    }
-
-    public void ShowEditSuggestions()
-    {
-        MainDispatcher.Enqueue(async () =>
-        {
-            await WindowService.ReactivateMainAsync();
-            ShowSettings(4);
-        });
-    }
-
-    public void ShowAdvancedOptions()
-    {
-        MainDispatcher.Enqueue(async () =>
-        {
-            await WindowService.ReactivateMainAsync();
-            ShowSettings(7);
-        });
-    }
-
-    private void Button_Click(object sender, RoutedEventArgs e)
-    {
-        _ = SubsetterView.CreateWindowAsync(new());
     }
 
     private void FontsTabBar_IsExpandedChanged(object sender, bool e)
@@ -810,16 +745,68 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         this.FindName(nameof(ZoomGridView));
     }
 
-    private void UXRadioButtons_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    void BtnSettings_OnClick(object sender, RoutedEventArgs e) => ShowSettings();
+
+    void ShowEditSuggestions()
     {
-        if (NavSelector.SelectedItem is RadioButton { Content: NamedIcon icon })
-            NavPresenter.Target = icon.Id;
+        MainDispatcher.Enqueue(async () =>
+        {
+            await WindowService.ReactivateMainAsync();
+            ShowSettings(4);
+        });
     }
 
-    private void SettingsView_Closed(object sender, EventArgs e)
+    void ShowAdvancedOptions()
     {
-        if (ViewModel.Settings.UseMenuNavigationBar is false)
-            NavPresenter.Target = nameof(MainPage);
+        MainDispatcher.Enqueue(async () =>
+        {
+            await WindowService.ReactivateMainAsync();
+            ShowSettings(7);
+        });
+    }
+
+    void ShowAbout() => ShowSettings(10);
+
+    internal void ShowSettingsInternal(int idx = 0)
+    {
+        // Zune theme shows settings button early right now, so to avoid
+        // crashing do nothing until fonts are loaded
+        if (ViewModel.IsLoadingFonts)
+            return;
+
+        DismissMenu();
+
+        this.FindName(nameof(SettingsView));
+        SettingsView.Show(
+            FontMap.ViewModel.RenderingOptions,
+            ViewModel.SelectedFont, idx);
+        OnModalOpened();
+    }
+
+
+
+
+
+
+    //------------------------------------------------------
+    //
+    //  Navigation Presenter
+    //
+    //------------------------------------------------------
+
+    private void NavSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.RemovedItems.Count == 0)
+        {
+            // This path is reach if the app is launched with nav bar turned off
+            if (SettingsView is not null && SettingsView.IsOpen)
+                this.Enqueue(()=>
+                {
+                    SelectNavSelectorItem(nameof(SettingsView));
+                });
+        }
+        else if (NavSelector.SelectedItem is RadioButton { Content: NamedIcon icon })
+            NavPresenter.Target = icon.Id;
     }
 
     private void OnPresenterNavigated(object sender, string e)
@@ -828,21 +815,70 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         if (ViewModel.Settings.UseMenuNavigationBar is false || NavSelector is null)
             return;
 
-        var items = NavSelector.GetFirstLevelDescendantsOfType<RadioButton>().ToList();
-        if (e.StartsWith(nameof(SettingsView)))
+        SelectNavSelectorItem(e);
+    }
+
+    void SelectNavSelectorItem(string tag)
+    {
+        var items = NavSelector.Items.OfType<RadioButton>().ToList();
+        if (items.Count == 0)
+            return;
+
+        if (tag.StartsWith(nameof(SettingsView)))
+            tag = "SettingsView";
+
+        int idx = items.IndexOf(items.FirstOrDefault(r => r.Tag is string s && s == tag));
+        if (idx >= 0)
+            NavSelector.SelectedIndex = idx;
+    }
+
+    public void ShowSettings(int idx = 0)
+    {
+        if (ViewModel.IsSecondaryView)
+            return; // Blocked m8
+
+        if (idx == 0)
+            NavPresenter.Target = nameof(SettingsView);
+        else
+            NavPresenter.Target = $"{nameof(SettingsView)}{idx}";
+    }
+
+    private void SettingsView_Closed(object sender, EventArgs e)
+    {
+        if (ViewModel.Settings.UseMenuNavigationBar is false)
+            NavPresenter.Target = nameof(MainPage);
+    }
+
+    void UpdateMenuBar(bool animate = true)
+    {
+        if (ViewModel.Settings.UseMenuNavigationBar)
         {
-            NavSelector.SelectedIndex = items.IndexOf(items.FirstOrDefault(r => r.Tag is string s && s == "SettingsView"));
+            GoToState(nameof(MenuBarVisibleState), animate);
+            if (NavItemSettings is null && !ViewModel.IsSecondaryView)
+                this.FindName(nameof(NavItemSettings));
+
+            if (NavSelector is not null && NavSelector.SelectedIndex < 0)
+                NavSelector.SelectedIndex = 0;
         }
         else
         {
-            NavSelector.SelectedIndex = items.IndexOf(items.FirstOrDefault(r => r.Tag is string s && s == e));
+            GoToState(nameof(MenuBarHiddenState), animate);
+
+            if (animate)
+                ShowSettings(0);
         }
     }
 
 
 
 
-    /* Font Collection management */
+
+
+    //------------------------------------------------------
+    //
+    //  Font Collection management
+    //
+    //------------------------------------------------------
 
     void RenameFontCollection_Click(object sender, RoutedEventArgs e)
     {
@@ -876,7 +912,13 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
 
 
-    /* Drag / Drop support */
+
+
+    //------------------------------------------------------
+    //
+    //  Drag / Drop support
+    //
+    //------------------------------------------------------
 
     void Grid_DragOver(object sender, DragEventArgs e)
     {
@@ -1000,7 +1042,12 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
 
 
-    /* Printing */
+
+    //------------------------------------------------------
+    //
+    //  Printing
+    //
+    //------------------------------------------------------
 
     public Border GetPresenter()
     {
@@ -1015,7 +1062,13 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
 
 
-    /* Notifications */
+
+
+    //------------------------------------------------------
+    //
+    //  Notifications
+    //
+    //------------------------------------------------------
 
     public InAppNotification GetNotifier()
     {
@@ -1044,7 +1097,13 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
 
 
-    /* Composition & Animation */
+
+
+    //------------------------------------------------------
+    //
+    //  Composition & Animation
+    //
+    //------------------------------------------------------
 
     void Grid_Loading(FrameworkElement sender, object args)
     {
