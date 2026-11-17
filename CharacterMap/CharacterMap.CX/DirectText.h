@@ -406,7 +406,7 @@ namespace CharacterMapCX
 			if (_IsOverwriteCompensationEnabledProperty == nullptr)
 			{
 				_IsOverwriteCompensationEnabledProperty = DependencyProperty::Register(
-					"IsOverwriteCompensationEnabled", bool::typeid, DirectText::typeid, ref new PropertyMetadata(false, callback));
+					"IsOverwriteCompensationEnabled", bool::typeid, DirectText::typeid, ref new PropertyMetadata(true, callback));
 			}
 
 			if (_IsColorFontEnabledProperty == nullptr)

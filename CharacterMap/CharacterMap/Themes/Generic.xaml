@@ -672,7 +672,18 @@
         <Setter Property="FontSize" Value="12" />
         <Setter Property="VerticalAlignment" Value="Bottom" />
         <Setter Property="Foreground" Value="{ThemeResource ComboBoxDropDownGlyphForeground}" />
-        <Setter Property="Content" Value="{core:ThemeIconElement Icon=Add}" />
+        <Setter Property="Content">
+            <Setter.Value>
+                <core:ThemeIcon>Add</core:ThemeIcon>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ContentTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <FontIcon core:Properties.ThemeIcon="Add" Style="{StaticResource ThemeFontIconStyle}" />
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:CharacterPickerButton">
@@ -685,6 +696,7 @@
                         BorderBrush="{Binding Target.BorderBrush, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         Content="{TemplateBinding Content}"
+                        ContentTemplate="{TemplateBinding ContentTemplate}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         FontSize="{TemplateBinding FontSize}"
                         Foreground="{TemplateBinding Foreground}"
@@ -956,10 +968,10 @@
     <Style TargetType="controls:InfoBar">
         <Setter Property="Background" Value="{ThemeResource InfoBarBackgroundBrush}" />
         <Setter Property="CornerRadius" Value="{StaticResource InfoBarCornerRadius}" />
-        <Setter Property="Padding" Value="8 4 8 6" />
+        <Setter Property="Padding" Value="12 8 12 10" />
         <Setter Property="Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
         <Setter Property="Margin" Value="6 12 0 0" />
-        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontSize" Value="13" />
         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
         <Setter Property="Foreground" Value="White" />
         <Setter Property="Template">
@@ -980,7 +992,7 @@
 
                             <FontIcon
                                 Margin="0 1 0 0"
-                                FontSize="13.333"
+                                FontSize="16.333"
                                 Glyph="{core:ThemeIconGlyph Icon=FontInfo}"
                                 Style="{StaticResource ThemeFontIconStyle}" />
 
@@ -1508,7 +1520,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:FontOptionsButton">
-                    <Button
+                    <controls:UXButton
                         x:Name="RootButton"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -1530,16 +1542,16 @@
                                 Opacity="0.7" />
                         </Grid>
 
-                        <Button.Resources>
+                        <controls:UXButton.Resources>
                             <Style x:Key="FontOptionsFlyoutStyle" BasedOn="{StaticResource ThemeFlyoutStyle}" TargetType="FlyoutPresenter">
                                 <Setter Property="Padding" Value="16" />
                                 <Setter Property="MinWidth" Value="300" />
                                 <Setter Property="MaxWidth" Value="360" />
                                 <Setter Property="IsDefaultShadowEnabled" Value="True" />
                             </Style>
-                        </Button.Resources>
+                        </controls:UXButton.Resources>
 
-                        <Button.Flyout>
+                        <controls:UXButton.Flyout>
                             <Flyout
                                 x:Name="OptionsFlyout"
                                 core:Properties.UseExpandContractAnimation="True"
@@ -1582,24 +1594,24 @@
                                                 </VisualStateManager.VisualStateGroups>
 
                                                 <StackPanel Spacing="12">
-                                                    <ComboBox
+                                                    <controls:UXComboBox
                                                         x:Name="FamilyComboBox"
                                                         HorizontalAlignment="Stretch"
                                                         Header="{core:Localizer Key=FontOptionsFamilyHeader}">
-                                                        <ComboBox.Resources>
+                                                        <controls:UXComboBox.Resources>
                                                             <converters:PreviewFontSourceConverter x:Key="PreviewFontSourceConverter" />
-                                                        </ComboBox.Resources>
-                                                        <ComboBox.ItemTemplate>
+                                                        </controls:UXComboBox.Resources>
+                                                        <controls:UXComboBox.ItemTemplate>
                                                             <DataTemplate>
                                                                 <TextBlock
                                                                     FontFamily="{Binding DefaultFace, Converter={StaticResource PreviewFontSourceConverter}}"
                                                                     Text="{Binding Name}"
                                                                     TextTrimming="CharacterEllipsis" />
                                                             </DataTemplate>
-                                                        </ComboBox.ItemTemplate>
-                                                    </ComboBox>
+                                                        </controls:UXComboBox.ItemTemplate>
+                                                    </controls:UXComboBox>
 
-                                                    <ComboBox
+                                                    <controls:UXComboBox
                                                         x:Name="FaceComboBox"
                                                         HorizontalAlignment="Stretch"
                                                         DisplayMemberPath="PreferredName"
@@ -1669,7 +1681,7 @@
                                                         d:OffContent="{core:Localizer Key=ColorGlyphToggle/OffContent}"
                                                         d:OnContent="{core:Localizer Key=ColorGlyphToggle/OnContent}" />
 
-                                                    <ComboBox
+                                                    <controls:UXComboBox
                                                         x:Name="TypographyComboBox"
                                                         HorizontalAlignment="Stretch"
                                                         DisplayMemberPath="DisplayName"
@@ -1681,8 +1693,8 @@
                                     </ContentControl.Template>
                                 </ContentControl>
                             </Flyout>
-                        </Button.Flyout>
-                    </Button>
+                        </controls:UXButton.Flyout>
+                    </controls:UXButton>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -478,14 +478,13 @@
                     <Style BasedOn="{StaticResource RadioButtonsButtonStyle}" TargetType="RadioButton">
                         <Setter Property="helpers:FluentAnimation.PointerOverOffset" Value="-2" />
                         <Setter Property="MinWidth" Value="40" />
-                        <Setter Property="Width" Value="68" />
+                        <Setter Property="Width" Value="64" />
                         <Setter Property="CornerRadius" Value="4" />
-                        <Setter Property="Height" Value="68" />
+                        <Setter Property="Height" Value="60" />
                         <Setter Property="Padding" Value="0 4" />
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         <Setter Property="VerticalContentAlignment" Value="Stretch" />
                         <Setter Property="VerticalAlignment" Value="Stretch" />
-                        <Setter Property="FontSize" Value="10.5" />
                         <Setter Property="Background" Value="{ThemeResource DefaultHostBrush}" />
                         <Setter Property="BorderBrush" Value="{ThemeResource ControlStrokeColorDefaultBrush}" />
                         <Setter Property="BorderThickness" Value="1" />
@@ -510,7 +509,7 @@
                                             Grid.Row="1"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Bottom"
-                                            FontSize="11"
+                                            FontSize="10.333"
                                             Text="{Binding DisplayName}" />
                                     </Grid>
                                 </DataTemplate>
@@ -634,6 +633,7 @@
                                     core:Properties.PointerAnimationOffset="2"
                                     core:Properties.PointerOverAnimation="DropDownGlyph"
                                     core:Properties.SupportAnimatedIcon="False"
+                                    IsActive="{x:Bind ViewModel.IsFiltered, Mode=OneWay}"
                                     IsEnabled="{x:Bind ViewModel.CanFilter, Mode=OneWay}"
                                     Style="{StaticResource TransparentHintButton}"
                                     ToolTipService.Placement="Bottom">
@@ -1200,6 +1200,13 @@
                                                         Glyph="ffi"
                                                         Typography.ContextualLigatures="True"
                                                         Typography.DiscretionaryLigatures="True" />
+
+                                                    <FontIcon
+                                                        x:Name="OpenTypeIcon"
+                                                        x:Load="{x:Bind IsOpenType}"
+                                                        Margin="0 2 0 0"
+                                                        core:Properties.ThemeIcon="OpenTypeView"
+                                                        FontSize="11" />
 
                                                     <TextBlock
                                                         x:Name="TitleText"

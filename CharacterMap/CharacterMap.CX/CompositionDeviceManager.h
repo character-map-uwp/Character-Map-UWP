@@ -56,6 +56,7 @@ namespace CharacterMapCX
         static void TrimWorkingSet();
         static void TrimD2DResources();
         static void CheckDeviceLost();
+        static void ReleaseGraphicsDevice(Windows::UI::Composition::Compositor^ compositor);
 
         static uint64 GetProcessHeapUsage();
         static int32 GetActiveSurfaceCount();
@@ -92,7 +93,6 @@ namespace CharacterMapCX
             Windows::UI::Composition::CompositionColorBrush^& colorBrush,
             bool useMask,
             Windows::UI::Color maskColor);
-        static void ReleaseGraphicsDevice(Windows::UI::Composition::Compositor^ compositor);
         static std::mutex& GetRenderMutex();
         static void HandleDeviceLost();
         static bool IsDeviceLostHResult(HRESULT hr);

@@ -127,6 +127,8 @@ public partial  class ExtendedListView : ListView
 {
     long token = 0;
 
+    public event TypedEventHandler<UIElement, ContextRequestedEventArgs> ItemContextRequested;
+
     protected virtual Type GetStyleKey() => typeof(ExtendedListView);
 
     protected XamlDirect _xamlDirect => field ??= XamlDirect.GetDefault();
@@ -137,12 +139,8 @@ public partial  class ExtendedListView : ListView
         this.Loaded += OnLoaded;
         this.Unloaded += ExtendedListView_Unloaded;
 
-        if (EnableRepositionAnimations)
-        {
-            this.ContainerContentChanging -= ExtendedListView_ContainerContentChanging;
-            this.ContainerContentChanging += ExtendedListView_ContainerContentChanging;
-        }
-
+        this.ContainerContentChanging -= ExtendedListView_ContainerContentChanging;
+        this.ContainerContentChanging += ExtendedListView_ContainerContentChanging;
         this.ItemClick += OnItemClick;
     }
 
@@ -167,6 +165,7 @@ public partial  class ExtendedListView : ListView
 
     protected override void OnItemsChanged(object e)
     {
+        base.OnItemsChanged(e);
         CheckSource(e);
     }
 
@@ -206,6 +205,11 @@ public partial  class ExtendedListView : ListView
         return item;
     }
 
+    private void ItemContainer_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+    {
+        ItemContextRequested?.Invoke(sender, args);
+    }
+
 
 
 
@@ -229,6 +233,9 @@ public partial  class ExtendedListView : ListView
         if (args.ItemContainer is ExtendedListViewItem i)
             i.IsInRecycleQueue = args.InRecycleQueue;
 
+        args.ItemContainer.ContextRequested -= ItemContainer_ContextRequested;
+        args.ItemContainer.ContextRequested += ItemContainer_ContextRequested;
+
         if (EnableRepositionAnimations)
         {
             if (args.InRecycleQueue)
@@ -243,7 +250,7 @@ public partial  class ExtendedListView : ListView
         }
     }
 
-   
+
 
 
 
@@ -339,7 +346,7 @@ public partial  class ExtendedListView : ListView
         {
             foreach (var item in e.OldItems)
             {
-                if (!SelectedItems.Contains(item))
+                if (SelectedItems.Contains(item))
                     SelectedItems.Remove(item);
             }
         }

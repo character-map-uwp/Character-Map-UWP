@@ -1843,6 +1843,7 @@
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}" />
         <Setter Property="Height" Value="42" />
         <Setter Property="MinWidth" Value="42" />
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="h:FluentAnimation.PointerOver" Value="DropDownGlyph" />
         <Setter Property="h:FluentAnimation.PointerOverOffset" Value="2" />
         <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.9" />

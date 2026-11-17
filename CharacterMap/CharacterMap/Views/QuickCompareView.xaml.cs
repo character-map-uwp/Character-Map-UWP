@@ -371,34 +371,6 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
         }
     }
 
-    private void Repeater_ElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
-    {
-        if (args.Element is SelectorItem b && b.Content is Panel g)
-        {
-            SetText(g, InputText.Text);
-            SetFlow(g, InputText.DetectedFlowDirection);
-            SetFontSize(g, FontSizeSlider.Value);
-        }
-        else if (args.Element is FrameworkElement p && GetTargets(p).FirstOrDefault() is DirectText d)
-        {
-            //if (t is DirectText d)
-            {
-                d.BlockUpdates = true;
-                SetText(d, InputText.Text);
-                SetFlow(d, InputText.DetectedFlowDirection);
-                d.FontSize = FontSizeSlider.Value;
-                d.SurfaceSize = GetTargetSurfaceSize(FontSizeSlider.Value);
-                d.Update();
-            }
-            //else
-            //{
-            //    SetText(t, InputText.Text);
-            //    SetFlow(t, InputText.DetectedFlowDirection);
-            //    SetFontSize(t, FontSizeSlider.Value);
-            //}
-        }
-    }
-
     private void Repeater_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
     {
         if (args.InRecycleQueue)
@@ -413,7 +385,14 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
         }
 
         args.Handled = true;
+        args.ItemContainer.Tag = args.Item; // ContextMenu needs the source FontFamily, though the template wants FontFace
         object item = args.Item is CMFontFamily family ? family.DefaultFace : args.Item;
+
+        if (sender == DetailsRepeater)
+        {
+            Properties.SetSetContextFlyoutContext(args.ItemContainer, true);
+            Properties.SetTargetContextFlyout(args.ItemContainer, FaceContextFlyout);
+        }
 
         if (args.Phase == 1)
         {
@@ -534,7 +513,7 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
             ContextFlyout.SetItemsDataContext(b.Content);
             ContextFlyout.ShowAt(b);
         }
-        else if (sender is Button bu && bu.Content is CMFontFamily font)
+        else if (sender is SelectorItem bu && bu.Tag is CMFontFamily font)
         {
             // 1. Clear the context menu
             while (MainContextFlyout.Items.Count > 2)
@@ -547,7 +526,7 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
                 MainContextFlyout, font, ViewModel.SelectedCollection, ViewModel.FontListFilter);
 
             // 3. Show Flyout
-            MainContextFlyout.SetItemsDataContext(bu.Content);
+            MainContextFlyout.SetItemsDataContext(font);
             if (args.TryGetPosition(bu, out Point p))
                 MainContextFlyout.ShowAt(bu, p);
             else

@@ -319,7 +319,7 @@
                         <controls:CharacterPickerButton
                             x:Name="PickerButton"
                             Grid.Column="1"
-                            Margin="-8 0 0 0"
+                            Margin="0 0 0 0"
                             Options="{x:Bind ViewModel.Options, Mode=OneWay}"
                             Target="{x:Bind InputBox}" />
                     </Grid>

@@ -17,12 +17,12 @@ class ButtonGroupBorderConverter : IValueConverter
         if (value is Thickness t && parameter is string s)
             return s switch
             {
-                "Left" => new Thickness(t.Left, t.Top, t.Right / 2d, t.Bottom),
-                "Right" => new Thickness(t.Left / 2d, t.Top, t.Right, t.Bottom),
-                "Top" => new Thickness(t.Left, t.Top, t.Right, t.Bottom / 2d),
-                "Bottom" => new Thickness(t.Left, t.Top / 2d, t.Right, t.Bottom),
-                "Vert" => new Thickness(t.Left, t.Top / 2d, t.Right, t.Bottom / 2d),
-                _ => new Thickness(t.Left / 2d, t.Top, t.Right / 2d, t.Bottom)
+                "Left" => new Thickness(t.Left, t.Top, 0, t.Bottom),
+                "Right" => new Thickness(t.Left, t.Top, t.Right, t.Bottom),
+                "Top" => new Thickness(t.Left, t.Top, t.Right, 0),
+                "Bottom" => new Thickness(t.Left, t.Top, t.Right, t.Bottom),
+                "Vert" => new Thickness(t.Left, t.Top, t.Right, 0),
+                _ => new Thickness(t.Left, t.Top, 0, t.Bottom)
             };
 
         return value;

@@ -118,7 +118,7 @@ public class ThemeIconGlyph : MarkupExtension
 {
     public ThemeIcon Icon { get; set; }
 
-    static string V(int i) => ((char)i).ToString();
+    static string V(int i) => char.ConvertFromUtf32(i);
     static string V(Symbol s) => V((int)s);
 
     /// <summary>
@@ -156,13 +156,13 @@ public class ThemeIconGlyph : MarkupExtension
         [ThemeIcon.Collections] = V(59165),
         [ThemeIcon.Remove] = V(0xe108),
         [ThemeIcon.CharacterMapView] = V(0xE8A9),
-        [ThemeIcon.TypeRampView] = V(0xEA37),
-        [ThemeIcon.GlyphMapView] = V(0xE8C1),
+        [ThemeIcon.GlyphMapView] = V(0xF0001),
         [ThemeIcon.LigatureMapView] = "ffi",
+        [ThemeIcon.OpenTypeView] = V(983040),
+        [ThemeIcon.TypeRampView] = V(0xEA37),
         [ThemeIcon.About] = V(0xE946),
         [ThemeIcon.Back] = V(0xE72B),
         [ThemeIcon.VariableAxis] = V(0xE9E9),
-        [ThemeIcon.OpenTypeView] = V(63162),
 
         [ThemeIcon.Fullscreen] = V(0xE740),
         [ThemeIcon.ExitFullscreen] = V(0xE73F),
@@ -350,6 +350,16 @@ public class ThemeIconGlyph : MarkupExtension
                 Typography.SetContextualLigatures(f, true);
                 Typography.SetDiscretionaryLigatures(f, true);
                 f.EnableCompositionTranslation(0, 1, 0);
+            }
+            else if (ti == ThemeIcon.GlyphMapView)
+            {
+                f.FontFamily = ResourceHelper.Get<FontFamily>("AppIcons");
+                f.EnableCompositionTranslation(0, 1, 0);
+            }
+            else if (ti == ThemeIcon.OpenTypeView)
+            {
+                f.FontFamily = ResourceHelper.Get<FontFamily>("AppIcons");
+                f.FontSize *= (16.666/20);
             }
             else if (ti == ThemeIcon.FilledSquareWhite)
             {

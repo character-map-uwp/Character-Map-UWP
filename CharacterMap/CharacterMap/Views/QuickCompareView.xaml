@@ -1,4 +1,3 @@
-
 <views:ViewBase
     x:Class="CharacterMap.Views.QuickCompareView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -237,17 +236,23 @@
             <controls:ContentGroup VerticalAlignment="Stretch">
                 <controls:ContentGroup.Text>
                     <TextBlock
-                        core:Properties.ToolTip="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}"
+                        x:Name="tb"
                         FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                         Text="{x:Bind GetName()}"
-                        TextTrimming="CharacterEllipsis" />
+                        TextTrimming="CharacterEllipsis">
+                        <core:Properties.LazyToolTipTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding ElementName=tb, Path=Text}" />
+                            </DataTemplate>
+                        </core:Properties.LazyToolTipTemplate>
+                    </TextBlock>
                 </controls:ContentGroup.Text>
                 <controls:ContentGroup.SecondaryContent>
                     <cx:DirectText
                         x:Name="NativeRender"
-                        x:Load="{x:Bind RequiresNativeRender, FallbackValue=False, TargetNullValue=False}"
-                        x:Phase="1"
                         core:Properties.Options="{x:Bind}"
+                        FallbackFont="{core:DefaultFallback}"
+                        IsBackgroundRenderEnabled="True"
                         IsTextWrappingEnabled="True"
                         Typography="{x:Bind DXTypography}" />
                 </controls:ContentGroup.SecondaryContent>
@@ -578,6 +583,7 @@
                                 ContainerContentChanging="Repeater_ContainerContentChanging"
                                 IsItemClickEnabled="True"
                                 ItemClick="Repeater_ItemClick"
+                                ItemContextRequested="ItemContextRequested"
                                 ItemTemplate="{StaticResource GridTemplate}"
                                 ItemsSource="{x:Bind ViewModel.ItemsSource, Mode=OneWay}"
                                 SelectionMode="None">

@@ -33,6 +33,16 @@ public static class Extensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool HasThreadAccess(this DependencyObject o) => o.GetDispatcherQueue().HasThreadAccess;
 
+    public static FrameworkElement GetContentChild(this FrameworkElement f)
+    {
+        if (f is Border b)
+            return b.Child as FrameworkElement;
+        if (f is ContentControl c)
+            return c.Content as FrameworkElement;
+
+        return null;
+    }
+
     public static void SetFontSize(this DependencyObject f, double size)
     {
         if (f is TextBlock t)

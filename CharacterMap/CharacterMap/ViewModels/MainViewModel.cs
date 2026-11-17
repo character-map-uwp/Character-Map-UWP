@@ -56,6 +56,7 @@ public partial class MainViewModel : ViewModelBase
     [ObservableProperty] BasicFontFilter _fontListFilter = BasicFontFilter.All;
     [ObservableProperty] List<CMFontFamily> _fontList;
     [ObservableProperty] bool _showVortex = false;
+    [ObservableProperty] bool _isFiltered = false;
     [ObservableProperty] List<CMFontFace> _vortexFaces = null;
 
     public FontItem CurrentFont => 
@@ -147,6 +148,7 @@ public partial class MainViewModel : ViewModelBase
             case nameof(FontListFilter):
                 Settings.LastSelectedCollection = FontListFilter?.DisplayTitle;
                 RefreshFontList();
+                OnPropertyChanged(nameof(IsFiltered));
                 break;
             case nameof(TabIndex) when TabIndex > -1 && IsSecondaryView is false:
                 Settings.LastTabIndex = TabIndex;
@@ -292,6 +294,7 @@ public partial class MainViewModel : ViewModelBase
             return;
         try
         {
+            bool filtered = true;
             IEnumerable<CMFontFamily> fontList = Folder?.Fonts ?? FontFinder.Fonts;
 
             if (collection != null)
@@ -315,7 +318,10 @@ public partial class MainViewModel : ViewModelBase
                         FontListFilter.RequiresAsync = false;
                     }
                     else
+                    {
                         fontList = FontListFilter.Query(fontList, FontCollections);
+                        filtered = FontListFilter != BasicFontFilter.All;
+                    }
                 }
             }
 
@@ -330,6 +336,7 @@ public partial class MainViewModel : ViewModelBase
                 IsSearchResults = false;
 
             FontList = fontList.ToList();
+            IsFiltered = filtered;
             VortexFaces = FontList.OrderBy(f => Utils.Random.NextDouble()).Take(40).Select(f => f.DefaultFace).ToList();
         }
         catch (Exception e)

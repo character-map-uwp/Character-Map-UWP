@@ -572,23 +572,57 @@ public partial class SubsetterViewModel : ViewModelBase
 
     private GlyphCollection GetExportChars()
     {
-        GlyphCollection chars = PreviewList is { Count: > 0 }
-                        ? [.. PreviewList]
-                        : [.. SelectedFaces.SelectMany(sf => sf.GetGlyphs())];
+        HashSet<(CMFontFace Face, uint UnicodeIndex)> selectedPhysical = [
+            .. SelectedFaces
+                .Where(sf => sf.IsPhysical)
+                .SelectMany(sf => sf.SelectedCharacters.Select(c => (sf.Face, c.UnicodeIndex)))
+        ];
+        HashSet<FontGlyph> selectedCustom = [.. SvgGlyphContainerFace.CustomGlyphs];
+
+        GlyphCollection chars = [];
+        HashSet<(CMFontFace Face, uint UnicodeIndex)> addedPhysical = [];
+        HashSet<FontGlyph> addedCustom = [];
+
+        // Preserve existing preview items (including edited glyph names) that are still selected
+        if (PreviewList is not null)
+        {
+            foreach (FontGlyph existing in PreviewList)
+            {
+                if (existing.IsPhysical)
+                {
+                    (CMFontFace Face, uint UnicodeIndex) key = (existing.FontFace, existing.Character.UnicodeIndex);
+                    if (selectedPhysical.Contains(key) && addedPhysical.Add(key))
+                        chars.Add(existing);
+                }
+                else if (selectedCustom.Contains(existing) && addedCustom.Add(existing))
+                    chars.Add(existing);
+            }
+        }
+
+        // Append newly selected physical glyphs
+        foreach (FaceSelectionModel sf in SelectedFaces.Where(sf => sf.IsPhysical))
+        {
+            foreach (FontGlyph glyph in sf.GetGlyphs())
+            {
+                if (addedPhysical.Add((glyph.FontFace, glyph.Character.UnicodeIndex)))
+                    chars.Add(glyph);
+            }
+        }
 
         // Handle custom SVGs
         uint exportPua = 0xF0000;
-        HashSet<uint> usedCodepoints = new(chars.Select(c => c.Character.UnicodeIndex));
+        HashSet<uint> usedCodepoints = [.. chars.Select(c => c.Character.UnicodeIndex)];
 
         foreach (FontGlyph custom in SvgGlyphContainerFace.CustomGlyphs)
         {
-            if (chars.Contains(custom))
+            if (!addedCustom.Add(custom))
                 continue;
 
             while (usedCodepoints.Contains(exportPua))
                 exportPua++;
 
-            custom.Character = new Character(exportPua);
+            custom.Character = new(exportPua);
+            usedCodepoints.Add(exportPua);
             chars.Add(custom);
             exportPua++;
         }

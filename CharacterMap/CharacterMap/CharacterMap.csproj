@@ -456,6 +456,7 @@
     <Content Include="Assets\FileAssociationTile.png" />
     <Content Include="Assets\RobotoFlex.ttf" />
     <Content Include="Assets\Material.otf" />
+    <Content Include="Assets\Character Map Icons.ttf" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\ZBG.png" />
     <Content Include="Assets\ZuneAssets\HoverOverlay.png" />

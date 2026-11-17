@@ -471,7 +471,12 @@ public partial class Properties : DependencyObject
             if (GetTargetContextFlyout(sender) is FlyoutBase f)
             {
                 if (GetSetContextFlyoutContext(sender) && f is MenuFlyout menu)
-                    menu.SetItemsDataContext(((FrameworkElement)sender).DataContext);
+                {
+                    object dataContext = ((FrameworkElement)sender).DataContext;
+                    if (dataContext is null && sender is SelectorItem item)
+                        dataContext = item.Content;
+                    menu.SetItemsDataContext(dataContext);
+                }
                 
                 args.TryGetPosition(sender, out Windows.Foundation.Point p);
                 f.ShowAt(sender, new() { Position = p });

@@ -1,4 +1,3 @@
-﻿using CharacterMap.Views;
 using System.Runtime.InteropServices;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -459,14 +458,15 @@ public class UWPWindowService : IViewService
                 GC.Collect();
             });
 
-            info.CoreView.CoreWindow.CustomProperties.Clear();
             Composition.ReleaseCache(Window.Current.Compositor);
+            CompositionDeviceManager.ReleaseGraphicsDevice(Window.Current.Compositor);
 
             // Allow dispatcher to process all marshaled COM releases
             await Task.Delay(250);
 
             GC.Collect();
 
+            info.CoreView.CoreWindow.CustomProperties.Clear();
             CoreWindowCleanupHelper.PrepareForClose(Window.Current.CoreWindow);
             Window.Current.Close();
         });

@@ -141,6 +141,12 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 ViewModel.Settings.LastColumnWidth = PreviewColumn.Width.Value;
         });
 
+        if (ViewModel.RenderingOptions is { } ops && ops.FontSize != ViewModel.Settings.GridSize / 2f)
+            UpdateGridSize();
+
+        CharGrid.EnableResizeAnimation = ViewModel.Settings.AllowExpensiveAnimations;
+        CharGrid.ItemAnnotation = ViewModel.Settings.GlyphAnnotation;
+
 #if DIAGNOSTIC
         _ = CharacterMap.Diagnostics.MemoryTracker.StartAsync(ViewModel.SelectedFont?.Font?.Name ?? "start");
 #endif
@@ -402,8 +408,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                     CharGrid.ItemAnnotation = ViewModel.Settings.GlyphAnnotation;
                     break;
                 case nameof(AppSettings.GridSize):
-                    ViewModel.UpdateRenderingOptions();
-                    UpdateDisplay();
+                    UpdateGridSize();
                     break;
                 case nameof(AppSettings.UseInstantSearch):
                     UpdateSearchStates();
@@ -424,7 +429,11 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         });
     }
 
-
+    private void UpdateGridSize()
+    {
+        ViewModel.UpdateRenderingOptions();
+        UpdateDisplay();
+    }
 
     public bool HandleInput(KeyRoutedEventArgs e)
     {

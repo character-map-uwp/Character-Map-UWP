@@ -503,10 +503,22 @@ void CompositionDeviceManager::Trim()
     if (s_d2dDevice != nullptr)
         s_d2dDevice->ClearResources(0);
 
-    for (const auto& pair : s_graphicsDevices)
+    for (auto it = s_graphicsDevices.begin(); it != s_graphicsDevices.end();)
     {
-        if (pair.second != nullptr)
-            pair.second->Trim();
+        if (it->second != nullptr)
+        {
+            try
+            {
+                it->second->Trim();
+                ++it;
+                continue;
+            }
+            catch (Platform::Exception^)
+            {
+                try { delete it->second; } catch (...) {}
+            }
+        }
+        it = s_graphicsDevices.erase(it);
     }
 
     // Release the isolated DWrite factory entirely. This is the only reliable way

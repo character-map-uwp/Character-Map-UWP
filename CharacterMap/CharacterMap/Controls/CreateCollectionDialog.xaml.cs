@@ -3,6 +3,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Controls;
 
+
 public partial class CreateCollectionDialogTemplateSettings : ViewModelBase
 {
     private string _collectionTitle;

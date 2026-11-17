@@ -35,8 +35,15 @@ public partial class MeasuredContentControl : ContentControl
     }
 }
 
+public enum PreviewTipContentTarget
+{
+    Self,
+    Child
+}
 
+[AttachedProperty<bool>("Ignore")]
 [AttachedProperty<PreviewTip>("RegisterWith")]
+[AttachedProperty<PreviewTipContentTarget>("ContentTarget", PreviewTipContentTarget.Self)]
 [AttachedProperty<object>("DisplayContent")]
 [AttachedProperty<double>("VerticalTranslation", 0d)]
 [AttachedProperty<FrameworkElement>("Ancestor", IsReadOnly =true)]
@@ -397,6 +404,9 @@ public partial class PreviewTip : ContentControl
 
     private void Item_PointerEntered(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
     {
+        if (sender is FrameworkElement fe && GetIgnore(fe))
+            return;
+
         FrameworkElement target = null;
         if (sender is FrameworkElement f && GetRegisterWith(f) == this)
             target = f;
@@ -406,6 +416,9 @@ public partial class PreviewTip : ContentControl
 
         if (target is null)
             target = GetAncestor((FrameworkElement)sender) ?? ((FrameworkElement)sender).GetFirstAncestorOfType<ContentControl>();
+
+        if (GetContentTarget(target) is PreviewTipContentTarget.Child && target.GetContentChild() is { } child)
+            target = child;
 
         Trigger(target);
     }

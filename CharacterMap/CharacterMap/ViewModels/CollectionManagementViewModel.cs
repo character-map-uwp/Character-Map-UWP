@@ -1,4 +1,4 @@
-﻿namespace CharacterMap.ViewModels;
+namespace CharacterMap.ViewModels;
 
 public partial class CollectionManagementViewModel : ViewModelBase
 {
@@ -47,6 +47,7 @@ public partial class CollectionManagementViewModel : ViewModelBase
 
     #endregion
 
+    private bool _pendingSave = false;
     private Debouncer _debouncer = new();
 
     partial void OnQueryChanged(string value)
@@ -120,10 +121,15 @@ public partial class CollectionManagementViewModel : ViewModelBase
         if (SelectedFonts is null || SelectedFonts.Count == 0)
             return;
 
-        var fonts = SelectedFonts.ToList();
-        foreach (var font in fonts)
+        List<CMFontFamily> fonts = SelectedFonts.ToList();
+        foreach (CMFontFamily font in fonts)
+        {
             if (FontList.Remove(font))
+            {
+                _systemFontList?.Remove(font);
                 CollectionFonts.AddSorted(font);
+            }
+        }
 
         StartSave();
     }
@@ -133,13 +139,16 @@ public partial class CollectionManagementViewModel : ViewModelBase
         if (SelectedCollectionFonts is null || SelectedCollectionFonts.Count == 0)
             return;
 
-        var fonts = SelectedCollectionFonts.ToList();
-        foreach (var font in fonts)
+        List<CMFontFamily> fonts = SelectedCollectionFonts.ToList();
+        foreach (CMFontFamily font in fonts)
+        {
             if (CollectionFonts.Remove(font))
             {
+                _systemFontList?.AddSorted(font);
                 if (string.IsNullOrWhiteSpace(Query) || font.Name.Contains(Query, StringComparison.InvariantCultureIgnoreCase))
                     FontList.AddSorted(font);
             }
+        }
 
         StartSave();
     }
@@ -151,18 +160,27 @@ public partial class CollectionManagementViewModel : ViewModelBase
 
     async Task SaveAsync()
     {
-        if (SelectedCollection is  null || IsSaving)
+        if (SelectedCollection is null)
             return;
+
+        if (IsSaving)
+        {
+            _pendingSave = true;
+            return;
+        }
 
         IsSaving = true;
 
         try
         {
-            if (SelectedCollection is UserFontCollection user)
+            do
             {
-                user.Fonts = [..CollectionFonts.Select(c => c.Name)];
+                _pendingSave = false;
+                if (SelectedCollection is UserFontCollection user)
+                    user.Fonts = [.. CollectionFonts.Select(c => c.Name)];
+                await CollectionService.SaveCollectionAsync(SelectedCollection);
             }
-            await CollectionService.SaveCollectionAsync(SelectedCollection);
+            while (_pendingSave && SelectedCollection is not null);
         }
         finally
         {

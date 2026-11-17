@@ -254,6 +254,10 @@
                                     Style="{StaticResource SectionHeaderTextBlockStyle}"
                                     d:Text="{core:Localizer Key=SettingsUIHeader/Text}" />
 
+                                <controls:SettingsPresenter Title="Navigation Menu Bar" Description="Toggle the application left navigation menu bar. Is disabled, Compare and Calligraphy can be accessed from the main application menu.">
+                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.UseMenuNavigationBar, Mode=TwoWay}" />
+                                </controls:SettingsPresenter>
+
                                 <controls:SettingsPresenter
                                     x:Uid="SettingsCharGrouping"
                                     d:Description="{core:Localizer Key=SettingsCharGrouping/Description}"
@@ -456,9 +460,6 @@
                                     <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.EnablePreviewPane, Mode=TwoWay}" />
                                 </controls:SettingsPresenter>
 
-                                <controls:SettingsPresenter Title="Navigation Menu Bar" Description="Toggle the application left navigation menu bar. Is disabled, Compare and Calligraphy can be accessed from the main application menu.">
-                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.UseMenuNavigationBar, Mode=TwoWay}" />
-                                </controls:SettingsPresenter>
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsLanguageHeader/Text}">
                                     <StackPanel>

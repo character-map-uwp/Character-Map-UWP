@@ -734,15 +734,17 @@
                     </FontIcon>
                 </controls:UXRadioButtons>
 
-                <Border Grid.Column="1" Style="{StaticResource ControlSurfaceBorderStyle}">
+                <Border
+                    Grid.Column="1"
+                    HorizontalAlignment="Center"
+                    Style="{StaticResource ControlSurfaceBorderStyle}">
                     <toolkit:WrapPanel
                         x:Name="OptionsPanel"
                         x:FieldModifier="public"
-                        HorizontalAlignment="Stretch"
+                        HorizontalAlignment="Right"
                         controls:PreviewTip.RegisterWith="{x:Bind PreviewTip}"
                         Background="Transparent"
                         ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
-                        HorizontalSpacing="4"
                         Orientation="Horizontal">
                         <controls:UXComboBox
                             x:Name="WeightSelector"
@@ -811,6 +813,8 @@
                             </ComboBox.ItemTemplateSelector>
                         </controls:UXComboBox>
 
+                        <AppBarSeparator controls:PreviewTip.Ignore="True" />
+
                         <controls:UXButton
                             x:Name="FontPropertiesButton"
                             VerticalAlignment="Stretch"
@@ -827,7 +831,7 @@
                                 Margin="0,0,-2,0"
                                 VerticalAlignment="Center"
                                 core:Properties.ThemeIcon="FontInfo"
-                                FontSize="18" />
+                                FontSize="16.333" />
 
                             <Button.Flyout>
                                 <Flyout
@@ -1063,7 +1067,7 @@
 
                             <FontIcon
                                 Margin="0,0,-2,0"
-                                FontSize="18"
+                                FontSize="16.333"
                                 Glyph="{core:ThemeIconGlyph Icon=RenderingOptions}"
                                 Style="{StaticResource ThemeFontIconStyle}" />
                             <Button.Flyout>
@@ -1137,14 +1141,13 @@
                             </Button.Flyout>
                         </controls:UXButton>
 
-                        <Border x:Name="VariationsButtonContainer">
+                        <Border x:Name="VariationsButtonContainer" controls:PreviewTip.ContentTarget="Child">
                             <controls:UXButton
                                 x:Name="VariationsButton"
                                 x:Load="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.HasVariationAxis, Mode=OneWay, FallbackValue=False, TargetNullValue=False}"
                                 controls:PreviewTip.RegisterWith="{x:Bind PreviewTip}"
                                 h:FluentAnimation.PointerOver="FluentContentPresenter"
                                 h:FluentAnimation.PointerOverOffset="-2"
-                                Loaded="{x:Bind h:CompositionFactory.SetStandardFadeInOut}"
                                 Style="{ThemeResource MapInfoButtonStyle}">
                                 <controls:PreviewTip.DisplayContent>
                                     <views:TitledDescription x:Uid="FaceVariationsDescription" />
@@ -1153,7 +1156,7 @@
                                 <FontIcon
                                     Margin="0,0,-2,0"
                                     core:Properties.ThemeIcon="VariableAxis"
-                                    FontSize="18"
+                                    FontSize="16.333"
                                     Style="{StaticResource ThemeFontIconStyle}" />
 
                                 <Button.Flyout>
@@ -1204,8 +1207,8 @@
                                 <views:TitledDescription x:Uid="CharacterFilterDescription" Title="{core:Localizer Key=CharacterFilterButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}" />
                             </controls:PreviewTip.DisplayContent>
                             <FontIcon
-                                Margin="0,0,-2,0"
-                                FontSize="18"
+                                Margin="0,0,0,0"
+                                FontSize="16.333"
                                 Glyph="{core:ThemeIconGlyph Icon=Filter}"
                                 Style="{StaticResource ThemeFontIconStyle}" />
                             <Button.Flyout>
@@ -1222,13 +1225,16 @@
                                 </Flyout>
                             </Button.Flyout>
                         </controls:UXButton>
+
                     </toolkit:WrapPanel>
                 </Border>
+
 
                 <controls:UXButton
                     x:Name="MoreOptionsButton"
                     x:Uid="BtnMoreIcon"
                     Grid.Column="2"
+                    Margin="-4 0 0 0"
                     VerticalAlignment="Top"
                     h:CompositionFactory.UseWindowAwareSynchronisedReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                     h:FluentAnimation.PointerOver="FluentContentPresenter"
@@ -1252,7 +1258,6 @@
                         Glyph="{core:ThemeIconGlyph Icon=More}"
                         Style="{StaticResource ThemeFontIconStyle}" />
                 </controls:UXButton>
-
 
                 <!--  Notifications  -->
                 <StackPanel
@@ -3002,7 +3007,7 @@
 
                             <Rectangle
                                 Height="1"
-                                Margin="0 6 0 0"
+                                Margin="0 6 4 0"
                                 HorizontalAlignment="Stretch"
                                 Fill="{ThemeResource ApplicationForegroundThemeBrush}"
                                 Opacity="0.15" />

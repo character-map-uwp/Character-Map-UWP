@@ -504,26 +504,30 @@
                             x:Name="RightColumnContent"
                             Grid.Row="1"
                             Grid.Column="2"
+                            RowSpacing="16"
                             Margin="0 0 0 0"
                             Padding="12 0 0 0"
-                            core:Properties.GridDefinitions="rAuto r rAuto rs16"
                             ChildrenTransitions="{StaticResource RepositionTransitions}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" MinHeight="200" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
 
-                            <StackPanel ChildrenTransitions="{StaticResource RepositionTransitions}" Spacing="16">
-                                <TextBox Header="{core:Localizer Key=FontFamilyName}" Text="{x:Bind ViewModel.FamilyName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <ScrollViewer MaxHeight="280" VerticalScrollBarVisibility="Auto">
 
-                                <TextBox
-                                    Grid.Row="1"
-                                    Header="{core:Localizer Key=FontVersion}"
-                                    Text="{x:Bind ViewModel.Version, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <StackPanel ChildrenTransitions="{StaticResource RepositionTransitions}" Spacing="16">
+                                    <TextBox Header="{core:Localizer Key=FontFamilyName}" Text="{x:Bind ViewModel.FamilyName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                                <muxc:Expander
-                                    Padding="8"
-                                    HorizontalAlignment="Stretch"
-                                    HorizontalContentAlignment="Stretch"
-                                    Header="{core:Localizer Key=SubsetterMetadataHeader}">
-                                    <ScrollViewer MaxHeight="280" VerticalScrollBarVisibility="Auto">
+                                    <muxc:Expander
+                                        Padding="8"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Stretch"
+                                        Header="{core:Localizer Key=SubsetterMetadataHeader}">
+
                                         <StackPanel Padding="0 0 12 0" Spacing="12">
+                                            <TextBox Header="{core:Localizer Key=FontVersion}" Text="{x:Bind ViewModel.Version, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                             <TextBox Header="{core:Localizer Key=CanvasFontInformationDesigner}" Text="{x:Bind ViewModel.MetaDesigner, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                             <TextBox Header="{core:Localizer Key=CanvasFontInformationDesignerUrl}" Text="{x:Bind ViewModel.MetaDesignerUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                             <TextBox Header="{core:Localizer Key=CanvasFontInformationManufacturer}" Text="{x:Bind ViewModel.MetaManufacturer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -546,18 +550,21 @@
                                                 Text="{x:Bind ViewModel.MetaDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                 TextWrapping="Wrap" />
                                         </StackPanel>
-                                    </ScrollViewer>
-                                </muxc:Expander>
+                                    </muxc:Expander>
 
-                                <TextBlock
-                                    x:Uid="SubSetterChosenGlyphsHeader"
-                                    Margin="0 0 0 -8"
-                                    Text="Glyphs" />
-                            </StackPanel>
+
+                                </StackPanel>
+                            </ScrollViewer>
+
+                            <TextBlock
+                                x:Uid="SubSetterChosenGlyphsHeader"
+                                Grid.Row="1"
+                                Margin="0 0 0 -8"
+                                Text="Glyphs" />
 
                             <ListView
                                 x:Name="HistoryList"
-                                Grid.Row="1"
+                                Grid.Row="2"
                                 core:Properties.ItemClickCommand="{x:Bind ViewModel.SetListItemCommand}"
                                 AllowDrop="True"
                                 CanReorderItems="True"
