@@ -21,6 +21,30 @@ using Windows.UI.Xaml.Media.Animation;
 
 namespace CharacterMap.Views;
 
+[DependencyProperty<bool>("IsEnabled", true)]
+[DependencyProperty<bool>("IsPaneOpen", true)]
+[DependencyProperty<double>("Opacity", 1d)]
+[DependencyProperty<Thickness>("Margin", "new Thickness()")]
+[DependencyProperty<Thickness>("FontsTabContainerMargin", "new Thickness()")]
+[DependencyProperty<Visibility>("Visibility", Visibility.Visible)]
+[DependencyProperty<Visibility>("TitleHidePaneVisibility", Visibility.Visible)]
+[DependencyProperty<Visibility>("TitleShowPaneVisibility", Visibility.Collapsed)]
+[DependencyProperty<Visibility>("SubMenuButtonVisibility", Visibility.Collapsed)]
+[DependencyProperty<Visibility>("OverlayPaneRootBackgroundVisibility", Visibility.Collapsed)]
+[DependencyProperty<Brush>("OverlayPaneRootBackground")]
+[DependencyProperty<SplitViewDisplayMode>("DisplayMode", SplitViewDisplayMode.Inline)]
+[DependencyProperty<GridLength>("CollapsedTabColumnWidth", "new GridLength(0)")]
+[DependencyProperty<DataTemplate>("FontListToolTipTemplate")]
+
+public partial class SplitViewSettings : DependencyObject
+{
+    /* 
+     * Main SplitView can be removed from the VisualTree, breaking any 
+     * VisualStates that directly target it. Instead we target this shim
+     * and SplitView binds to it.
+     */
+}
+
 [DependencyProperty<double>("FontListFontSize", 12d)]
 public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IPopoverPresenter
 {
@@ -207,6 +231,8 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         UpdateLoadingStates();
 
         FontMap.ViewModel.Folder = ViewModel.Folder;
+
+        UpdateMenuSize();
     }
 
     protected override void OnUnloaded(object sender, RoutedEventArgs e)
@@ -317,6 +343,8 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
                         BtnSettings
                     ],
                     content);
+
+                UpdateMenuSize();
             }
 
             // Allow initial layout, animations, and first frame to settle
@@ -879,7 +907,6 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             return;
 
         bool isCompact = this.ActualSize.X < 700;
-
         if (Properties.GetBoolean(NavSelector) == isCompact)
             return;
 
@@ -888,38 +915,46 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             return;
 
         foreach (var item in NavSelector.Items.OfType<RadioButton>())
-        {
-            if (item.ContentTemplateRoot is Grid g)
-            {
-                Storyboard compact = (Storyboard)g.Resources["CompactState"];
-                if (isCompact)
-                    compact.Begin();
-                else
-                    compact.Stop();
-            }
-
-            if (isCompact)
-            {
-                var s = new Storyboard();
-                s.CreateTimeline<DoubleAnimationUsingKeyFrames>(item, "Width")
-                    .AddKeyFrame(0, 40)
-                    .EnableDependentAnimations(true);
-                s.CreateTimeline<DoubleAnimationUsingKeyFrames>(item, "Height")
-                    .AddKeyFrame(0, 40)
-                    .EnableDependentAnimations(true);
-                s.Begin();
-            }
-            else
-            {
-                item.Width = (double)item.GetAnimationBaseValue(FrameworkElement.WidthProperty);
-                item.Height = (double)item.GetAnimationBaseValue(FrameworkElement.HeightProperty);
-            }
-
-        }
+            HandleCompact(item);
 
         Properties.SetBoolean(NavSelector, isCompact);
     }
 
+    private void NavSelector_ElementPrepared(UXRadioButtons sender, UXRadioButtonsElementPreparedEventArgs args)
+    {
+        if (args.Element is RadioButton item)
+            HandleCompact(item);
+    }
+
+    void HandleCompact(RadioButton item)
+    {
+        bool isCompact = this.ActualSize.X < 700;
+        if (item.Realize().ContentTemplateRoot is Grid g)
+        {
+            Storyboard compact = (Storyboard)g.Resources["CompactState"];
+            if (isCompact)
+                compact.Begin();
+            else
+                compact.Stop();
+        }
+
+        if (isCompact)
+        {
+            var s = new Storyboard();
+            s.CreateTimeline<DoubleAnimationUsingKeyFrames>(item, "Width")
+                .AddKeyFrame(0, 40)
+                .EnableDependentAnimations(true);
+            s.CreateTimeline<DoubleAnimationUsingKeyFrames>(item, "Height")
+                .AddKeyFrame(0, 40)
+                .EnableDependentAnimations(true);
+            s.Begin();
+        }
+        else
+        {
+            item.Width = (double)item.GetAnimationBaseValue(FrameworkElement.WidthProperty);
+            item.Height = (double)item.GetAnimationBaseValue(FrameworkElement.HeightProperty);
+        }
+    }
 
 
 

@@ -130,7 +130,7 @@
 
     <Style x:Key="ControlSurfaceBorderStyle" TargetType="Border" />
 
-    <Style x:Key="DefaultThemeGridViewItemStyle" TargetType="GridViewItem">
+    <Style x:Key="DefaultThemeGridViewItemStyle" TargetType="SelectorItem">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="2" />
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
@@ -146,7 +146,7 @@
         <Setter Property="FocusVisualMargin" Value="-2" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="GridViewItem">
+                <ControlTemplate TargetType="SelectorItem">
                     <ContentPresenter
                         x:Name="ContentPresenter"
                         Margin="{TemplateBinding Padding}"
@@ -220,13 +220,13 @@
         </Setter>
     </Style>
 
-    <Style BasedOn="{StaticResource DefaultThemeGridViewItemStyle}" TargetType="GridViewItem" />
+    <Style BasedOn="{StaticResource DefaultThemeGridViewItemStyle}" TargetType="SelectorItem" />
 
     <DataTemplate x:Key="DefaultControlHeaderTemplate">
         <ContentPresenter Margin="0 12 0 0" Content="{Binding}" />
     </DataTemplate>
 
-    <Style x:Key="QuickCompareContainerStyle" BasedOn="{StaticResource ChromelessButtonStyle}" TargetType="Button" />
+    <Style x:Key="QuickCompareContainerStyle" BasedOn="{StaticResource DefaultThemeGridViewItemStyle}" TargetType="controls:ExtendedGridViewItem" />
 
     <Style x:Key="FontListStyle" TargetType="Border" />
 

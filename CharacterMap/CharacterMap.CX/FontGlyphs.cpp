@@ -306,6 +306,8 @@ void FontGlyphs::OnUnloaded(Platform::Object^ sender, RoutedEventArgs^ e)
     }
 
     m_colorBrush = nullptr;
+    m_lastShownFamilyName = nullptr;
+    m_lastShownFaceName = nullptr;
     m_dpiScale = 0.0f;
     m_lastBgArrangeSize = { 0, 0 };
     m_isRenderDirty = true;
@@ -456,10 +458,26 @@ void FontGlyphs::UpdateForground()
     InvalidateRenderOnly();
 }
 
+bool FontGlyphs::HasFontChangedForVisibility()
+{
+    auto fontFace = FontFace;
+    Platform::String^ currentFamily = (fontFace != nullptr && fontFace->Properties != nullptr) ? fontFace->Properties->FamilyName : nullptr;
+    Platform::String^ currentFace = (fontFace != nullptr && fontFace->Properties != nullptr) ? fontFace->Properties->FaceName : nullptr;
+
+    bool sameFamily = (m_lastShownFamilyName == currentFamily) ||
+        (m_lastShownFamilyName != nullptr && currentFamily != nullptr &&
+         wcscmp(m_lastShownFamilyName->Data(), currentFamily->Data()) == 0);
+    bool sameFace = (m_lastShownFaceName == currentFace) ||
+        (m_lastShownFaceName != nullptr && currentFace != nullptr &&
+         wcscmp(m_lastShownFaceName->Data(), currentFace->Data()) == 0);
+
+    return !sameFamily || !sameFace;
+}
+
 void FontGlyphs::InvalidateLayoutAndRender()
 {
     ++m_renderGeneration;
-    if (m_spriteVisual != nullptr && IsBackgroundRenderEnabled)
+    if (m_spriteVisual != nullptr && IsBackgroundRenderEnabled && HasFontChangedForVisibility())
         m_spriteVisual->IsVisible = false;
     m_isLayoutDirty = true;
     m_isRenderDirty = true;
@@ -1601,7 +1619,7 @@ namespace
         return out.ContentSize.Width > 0 && out.ContentSize.Height > 0;
     }
 
-    void ExecuteFontGlyphsJob(const FontGlyphsRenderJob& job)
+    void ExecuteFontGlyphsJob(const FontGlyphsRenderJob& job, bool effectiveWasHidden)
     {
         auto pThis = job.WeakThis.Resolve<FontGlyphs>();
         if (pThis == nullptr || !pThis->IsGenerationCurrent(job.Generation))
@@ -1747,14 +1765,40 @@ namespace
                 FAILED(reinterpret_cast<IUnknown*>(job.Surface)->QueryInterface(IID_PPV_ARGS(&surfaceInterop))))
                 return;
 
+            auto curSize = job.Surface->Size;
+            if (static_cast<LONG>(std::round(curSize.Width)) != job.RequiredWidth ||
+                static_cast<LONG>(std::round(curSize.Height)) != job.RequiredHeight)
+            {
+                std::lock_guard<std::mutex> renderLock(CompositionDeviceManager::GetRenderMutex());
+                if (FAILED(surfaceInterop->Resize(SIZE{ job.RequiredWidth, job.RequiredHeight })))
+                    return;
+            }
+
             if (CoreDWTextServices::UploadOffDevicePixelsToSurface(surfaceInterop.Get(), surfW, surfH, offDevicePixels, offDevicePitch))
             {
-                if (auto pDone = job.WeakThis.Resolve<FontGlyphs>())
-                    pDone->ShowVisualIfCurrent(job.Generation);
+                if (effectiveWasHidden)
+                {
+                    if (auto pDone = job.WeakThis.Resolve<FontGlyphs>())
+                        pDone->ShowVisualIfCurrent(job.Generation);
+                }
             }
         }
         else
         {
+            ComPtr<ICompositionDrawingSurfaceInterop> surfaceInterop;
+            if (job.Surface != nullptr &&
+                SUCCEEDED(reinterpret_cast<IUnknown*>(job.Surface)->QueryInterface(IID_PPV_ARGS(&surfaceInterop))))
+            {
+                auto curSize = job.Surface->Size;
+                if (static_cast<LONG>(std::round(curSize.Width)) != job.RequiredWidth ||
+                    static_cast<LONG>(std::round(curSize.Height)) != job.RequiredHeight)
+                {
+                    std::lock_guard<std::mutex> renderLock(CompositionDeviceManager::GetRenderMutex());
+                    if (FAILED(surfaceInterop->Resize(SIZE{ job.RequiredWidth, job.RequiredHeight })))
+                        return;
+                }
+            }
+
             bool success = CompositionDeviceManager::RenderGlyphToSurface(
                 job.Surface,
                 job.RenderColor ? GlyphImageFormat::None : GlyphImageFormat::TrueType,
@@ -1772,7 +1816,7 @@ namespace
                 scaleX, scaleY,
                 posX * dpiScale, posY * dpiScale);
 
-            if (success)
+            if (success && effectiveWasHidden)
             {
                 if (auto pDone = job.WeakThis.Resolve<FontGlyphs>())
                     pDone->ShowVisualIfCurrent(job.Generation);
@@ -1843,35 +1887,14 @@ void FontGlyphs::RenderGlyphsBackground(Size finalSize)
     }
     else if (m_renderedWidth != requiredWidth || m_renderedHeight != requiredHeight)
     {
+        // Defer surface Resize until ExecuteFontGlyphsJob uploads the new pixels so the
+        // previous frame remains visible without blanking while the background job runs.
         uint64 oldBytes = static_cast<uint64>(m_renderedWidth) * m_renderedHeight * bpp;
-        Microsoft::WRL::ComPtr<ICompositionDrawingSurfaceInterop> surfaceInterop;
-        if (SUCCEEDED(reinterpret_cast<IUnknown*>(m_drawingSurface)->QueryInterface(IID_PPV_ARGS(&surfaceInterop)))
-            && SUCCEEDED(surfaceInterop->Resize(SIZE{ requiredWidth, requiredHeight })))
-        {
-            m_renderedWidth = requiredWidth;
-            m_renderedHeight = requiredHeight;
-            uint64 newBytes = static_cast<uint64>(requiredWidth) * requiredHeight * bpp;
-            s_activeSurfaceBytes.fetch_sub(oldBytes, std::memory_order_relaxed);
-            s_activeSurfaceBytes.fetch_add(newBytes, std::memory_order_relaxed);
-        }
-        else
-        {
-            ReleaseDrawingSurface();
-            m_drawingSurface = graphicsDevice->CreateDrawingSurface(
-                Size(static_cast<float>(requiredWidth), static_cast<float>(requiredHeight)),
-                pixelFormat,
-                Windows::Graphics::DirectX::DirectXAlphaMode::Premultiplied);
-            m_renderedWidth = requiredWidth;
-            m_renderedHeight = requiredHeight;
-            m_renderedColor = renderColor;
-            needsSurfaceSetup = true;
-
-            if (m_drawingSurface != nullptr)
-            {
-                s_activeSurfaceCount.fetch_add(1, std::memory_order_relaxed);
-                s_activeSurfaceBytes.fetch_add(static_cast<uint64>(requiredWidth) * requiredHeight * bpp, std::memory_order_relaxed);
-            }
-        }
+        m_renderedWidth = requiredWidth;
+        m_renderedHeight = requiredHeight;
+        uint64 newBytes = static_cast<uint64>(requiredWidth) * requiredHeight * bpp;
+        s_activeSurfaceBytes.fetch_sub(oldBytes, std::memory_order_relaxed);
+        s_activeSurfaceBytes.fetch_add(newBytes, std::memory_order_relaxed);
     }
 
     if (m_drawingSurface == nullptr)
@@ -1906,7 +1929,11 @@ void FontGlyphs::RenderGlyphsBackground(Size finalSize)
     }
 
     uint64_t gen = ++m_renderGeneration;
-    m_spriteVisual->IsVisible = false;
+    if (HasFontChangedForVisibility())
+        m_spriteVisual->IsVisible = false;
+    bool wasHidden = !m_spriteVisual->IsVisible;
+    m_lastShownFamilyName = (FontFace != nullptr && FontFace->Properties != nullptr) ? FontFace->Properties->FamilyName : nullptr;
+    m_lastShownFaceName = (FontFace != nullptr && FontFace->Properties != nullptr) ? FontFace->Properties->FaceName : nullptr;
 
     FontGlyphsRenderJob job;
     job.ControlKey = reinterpret_cast<const void*>(this);
@@ -1931,9 +1958,10 @@ void FontGlyphs::RenderGlyphsBackground(Size finalSize)
 
     BackgroundRenderWorkItem workItem;
     workItem.ControlKey = reinterpret_cast<const void*>(this);
-    workItem.Execute = [job = std::move(job)](bool)
+    workItem.WasHidden = wasHidden;
+    workItem.Execute = [job = std::move(job)](bool effectiveWasHidden)
     {
-        ExecuteFontGlyphsJob(job);
+        ExecuteFontGlyphsJob(job, effectiveWasHidden);
     };
 
     auto& queue = renderColor
@@ -2195,5 +2223,7 @@ void FontGlyphs::RenderGlyphs()
         !renderColor,
         foregroundColor);
 
+    m_lastShownFamilyName = (FontFace != nullptr && FontFace->Properties != nullptr) ? FontFace->Properties->FamilyName : nullptr;
+    m_lastShownFaceName = (FontFace != nullptr && FontFace->Properties != nullptr) ? FontFace->Properties->FaceName : nullptr;
     m_spriteVisual->IsVisible = true;
 }

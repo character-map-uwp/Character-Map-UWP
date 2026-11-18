@@ -1431,7 +1431,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="DefaultThemeGridViewItemStyle" TargetType="GridViewItem">
+    <Style x:Key="DefaultThemeGridViewItemStyle" TargetType="SelectorItem">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
@@ -1450,7 +1450,7 @@
         <Setter Property="FocusVisualMargin" Value="-2" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="GridViewItem">
+                <ControlTemplate TargetType="SelectorItem">
                     <ContentPresenter
                         x:Name="ContentPresenter"
                         Margin="{TemplateBinding Padding}"
@@ -1533,7 +1533,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="DefaultThemeGridViewItemStyle2" TargetType="GridViewItem">
+    <Style x:Key="DefaultThemeGridViewItemStyle2" TargetType="SelectorItem">
         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
         <Setter Property="Background" Value="{ThemeResource GridViewItemBackground}" />
@@ -1556,7 +1556,7 @@
         <Setter Property="h:FluentAnimation.PointerOverOffset" Value="-3" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="GridViewItem">
+                <ControlTemplate TargetType="SelectorItem">
                     <ListViewItemPresenter
                         x:Name="RootyTooty"
                         HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"

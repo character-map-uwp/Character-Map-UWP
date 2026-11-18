@@ -39,7 +39,7 @@
             <Flyout.FlyoutPresenterStyle>
                 <Style BasedOn="{StaticResource ThemeFlyoutStyle}" TargetType="FlyoutPresenter">
                     <Setter Property="RenderTransformOrigin" Value="0 0" />
-                    <Setter Property="Margin" Value="0 -4 0 0" />
+                    <Setter Property="Margin" Value="0 -8 0 0" />
                     <Setter Property="Width" Value="470" />
                     <Setter Property="MaxWidth" Value="470" />
                     <Setter Property="MinWidth" Value="470" />
@@ -463,6 +463,7 @@
                 core:Properties.CompositeTransform="True"
                 Background="Transparent"
                 BorderThickness="0"
+                ElementPrepared="NavSelector_ElementPrepared"
                 FontSize="8"
                 MaxColumns="1"
                 SelectedIndex="0"
@@ -481,6 +482,7 @@
                     <DataTemplate>
                         <controls:SelectorVisualElement
                             BarSize="3 16"
+                            OffsetTransition="{StaticResource StandardTransition}"
                             SizeTransition="{StaticResource StandardTransition}"
                             Style="{StaticResource VerticalRadioSelectorElementStyle}" />
                     </DataTemplate>
@@ -503,7 +505,7 @@
                         <Setter Property="ContentTemplate">
                             <Setter.Value>
                                 <DataTemplate>
-                                    <Grid ChildrenTransitions="{StaticResource RepositionTransitions}">
+                                    <Grid>
                                         <Grid.Resources>
                                             <Storyboard x:Name="CompactState">
                                                 <ObjectAnimationUsingKeyFrames core:Properties.Target="Label.Visibility" core:Properties.Value="Collapsed" />
@@ -519,7 +521,10 @@
                                             This Border container is required is Parent TransitionCollection will
                                             stomp all over our custom scale implicit animation collection
                                         -->
-                                        <Border HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Border
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Transitions="{StaticResource RepositionTransitions}">
                                             <FontIcon
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
@@ -581,18 +586,28 @@
                 Grid.Column="1"
                 core:Properties.UseStandardReposition="true"
                 Navigated="OnPresenterNavigated">
+                <Control.Resources>
+                    <views:SplitViewSettings
+                        x:Name="SplitViewShim"
+                        FontsTabContainerMargin="6 0 0 0"
+                        OverlayPaneRootBackground="{ThemeResource PaneCollapsedBackgroundBrush}" />
+                </Control.Resources>
                 <!--<ContentControl.ContentTransitions>
                     <EntranceThemeTransition FromHorizontalOffset="0" FromVerticalOffset="200" />
                 </ContentControl.ContentTransitions>-->
                 <controls:ExtendedSplitView
                     x:Name="SplitView"
                     x:FieldModifier="public"
+                    Margin="{Binding ElementName=SplitViewShim, Path=Margin}"
                     Background="{x:Null}"
-                    DisplayMode="Inline"
+                    DisplayMode="{Binding ElementName=SplitViewShim, Path=DisplayMode}"
                     EnableAnimation="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
-                    IsPaneOpen="True"
+                    IsEnabled="{Binding ElementName=SplitViewShim, Path=IsEnabled}"
+                    IsPaneOpen="{Binding ElementName=SplitViewShim, Path=IsPaneOpen}"
+                    Opacity="{Binding ElementName=SplitViewShim, Path=Opacity}"
                     OpenPaneLength="{StaticResource SplitViewPaneWidth}"
-                    PaneBackground="{x:Null}">
+                    PaneBackground="{x:Null}"
+                    Visibility="{Binding ElementName=SplitViewShim, Path=Visibility}">
                     <SplitView.Pane>
                         <Grid x:Name="PaneRoot">
                             <Grid.RowDefinitions>
@@ -617,9 +632,9 @@
                                 x:Name="OverlayPaneRootBackground"
                                 x:Load="False"
                                 Grid.RowSpan="5"
-                                Background="{ThemeResource PaneCollapsedBackgroundBrush}"
+                                Background="{Binding ElementName=SplitViewShim, Path=OverlayPaneRootBackground}"
                                 IsHitTestVisible="False"
-                                Visibility="Collapsed" />
+                                Visibility="{Binding ElementName=SplitViewShim, Path=OverlayPaneRootBackgroundVisibility}" />
 
                             <!--  Pane Header Commands  -->
                             <Grid
@@ -644,7 +659,7 @@
                                     Flyout="{StaticResource MainMenuFlyout}"
                                     Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
                                     Style="{StaticResource MapInfoButtonStyle}"
-                                    Visibility="Collapsed"
+                                    Visibility="{Binding ElementName=SplitViewShim, Path=SubMenuButtonVisibility}"
                                     d:Label="Open">
                                     <FontIcon
                                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -968,6 +983,7 @@
                                                 x:Name="LstFontFamily"
                                                 core:Properties.ItemContainerBackgroundTransition="{StaticResource BackgroundTransition}"
                                                 core:Properties.ToolTipPlacement="Bottom"
+                                                core:Properties.ToolTipTemplate="{Binding ElementName=SplitViewShim, Path=FontListToolTipTemplate}"
                                                 ContainerContentChanging="LstFontFamily_ContainerContentChanging"
                                                 FontSize="{x:Bind FontListFontSize, Mode=OneWay}"
                                                 IsItemClickEnabled="False"
@@ -1115,7 +1131,8 @@
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Stretch"
                                     Click="TogglePane_Click"
-                                    Style="{StaticResource DefaultThemeAppBarButtonStyle}">
+                                    Style="{StaticResource DefaultThemeAppBarButtonStyle}"
+                                    Visibility="{Binding ElementName=SplitViewShim, Path=TitleHidePaneVisibility}">
                                     <FontIcon core:Properties.ThemeIcon="ClosePane" FontSize="18" />
                                 </controls:UXButton>
 
@@ -1128,7 +1145,7 @@
                                     VerticalAlignment="Stretch"
                                     Click="TogglePane_Click"
                                     Style="{StaticResource DefaultThemeAppBarButtonStyle}"
-                                    Visibility="Collapsed">
+                                    Visibility="{Binding ElementName=SplitViewShim, Path=TitleShowPaneVisibility}">
                                     <FontIcon
                                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                         FontSize="18"
@@ -1148,7 +1165,7 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition x:Name="CollapsedTabColumn" Width="0" />
+                            <ColumnDefinition x:Name="CollapsedTabColumn" Width="{Binding ElementName=SplitViewShim, Path=CollapsedTabColumnWidth}" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="{x:Bind TitleBar.TemplateSettings.RightColumnWidth, Mode=OneWay, FallbackValue=0}" d:Width="150" />
                         </Grid.ColumnDefinitions>
@@ -1164,7 +1181,7 @@
                             x:Name="FontsTabContainer"
                             Grid.Row="1"
                             Grid.Column="1"
-                            Margin="6 0 0 0">
+                            Margin="{Binding ElementName=SplitViewShim, Path=FontsTabContainerMargin}">
                             <controls:ExtendedTabView
                                 x:Name="FontsTabBar"
                                 x:Load="False"
@@ -1353,6 +1370,7 @@
                             core:Properties.Tag="{x:Bind ViewModel}"
                             ContentTemplate="{StaticResource FontListToolTipTemplate}"
                             HorizontalOffset="4"
+                            IsEnabled="{Binding ElementName=SplitViewShim, Path=IsPaneOpen}"
                             Style="{StaticResource PreviewTipHighContrastStyle}"
                             Target="{x:Bind LstFontFamily}"
                             VerticalOffset="2" />
@@ -1549,65 +1567,65 @@
             <VisualStateGroup x:Name="ViewStates">
                 <VisualState x:Name="CompactViewState">
                     <VisualState.Setters>
-                        <Setter Target="SplitView.IsPaneOpen" Value="False" />
-                        <Setter Target="SplitView.DisplayMode" Value="Overlay" />
-                        <Setter Target="CollapsedTabColumn.Width" Value="40" />
-                        <Setter Target="FontsTabContainer.Margin" Value="0 0 -24 0" />
-                        <Setter Target="SubMenuButton.Visibility" Value="Visible" />
+                        <Setter Target="SplitViewShim.IsPaneOpen" Value="False" />
+                        <Setter Target="SplitViewShim.DisplayMode" Value="Overlay" />
+                        <Setter Target="SplitViewShim.CollapsedTabColumnWidth" Value="40" />
+                        <Setter Target="SplitViewShim.FontsTabContainerMargin" Value="0 0 -24 0" />
+                        <Setter Target="SplitViewShim.SubMenuButtonVisibility" Value="Visible" />
                         <Setter Target="MainMenuButton.Visibility" Value="Collapsed" />
                         <Setter Target="OpenFontPaneButton.Visibility" Value="Visible" />
-                        <Setter Target="TitleHidePaneButton.Visibility" Value="Collapsed" />
-                        <Setter Target="TitleShowPaneButton.Visibility" Value="Collapsed" />
-                        <Setter Target="OverlayPaneRootBackground.Visibility" Value="Visible" />
-                        <Setter Target="PreviewTip.IsEnabled" Value="False" />
-                        <Setter Target="LstFontFamily.(core:Properties.ToolTipTemplate)" Value="{StaticResource FontListToolTipTemplate}" />
+                        <Setter Target="SplitViewShim.TitleHidePaneVisibility" Value="Collapsed" />
+                        <Setter Target="SplitViewShim.TitleShowPaneVisibility" Value="Collapsed" />
+                        <Setter Target="SplitViewShim.OverlayPaneRootBackgroundVisibility" Value="Visible" />
+                        <!--<Setter Target="PreviewTip.IsEnabled" Value="False" />-->
+                        <Setter Target="SplitViewShim.FontListToolTipTemplate" Value="{StaticResource FontListToolTipTemplate}" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="CollapsedViewState">
                     <VisualState.Setters>
-                        <Setter Target="SplitView.IsPaneOpen" Value="False" />
-                        <Setter Target="SplitView.DisplayMode" Value="Overlay" />
-                        <Setter Target="CollapsedTabColumn.Width" Value="40" />
-                        <Setter Target="FontsTabContainer.Margin" Value="0 0 -12 0" />
+                        <Setter Target="SplitViewShim.IsPaneOpen" Value="False" />
+                        <Setter Target="SplitViewShim.DisplayMode" Value="Overlay" />
+                        <Setter Target="SplitViewShim.CollapsedTabColumnWidth" Value="40" />
+                        <Setter Target="SplitViewShim.FontsTabContainerMargin" Value="0 0 -12 0" />
                         <Setter Target="MainMenuButton.Visibility" Value="Collapsed" />
-                        <Setter Target="SubMenuButton.Visibility" Value="Visible" />
+                        <Setter Target="SplitViewShim.SubMenuButtonVisibility" Value="Visible" />
                         <Setter Target="OpenFontPaneButton.Visibility" Value="Visible" />
-                        <Setter Target="TitleHidePaneButton.Visibility" Value="Collapsed" />
-                        <Setter Target="TitleShowPaneButton.Visibility" Value="Visible" />
-                        <Setter Target="OverlayPaneRootBackground.Visibility" Value="Visible" />
-                        <Setter Target="PreviewTip.IsEnabled" Value="False" />
-                        <Setter Target="LstFontFamily.(core:Properties.ToolTipTemplate)" Value="{StaticResource FontListToolTipTemplate}" />
+                        <Setter Target="SplitViewShim.TitleHidePaneVisibility" Value="Collapsed" />
+                        <Setter Target="SplitViewShim.TitleShowPaneVisibility" Value="Visible" />
+                        <Setter Target="SplitViewShim.OverlayPaneRootBackgroundVisibility" Value="Visible" />
+                        <!--<Setter Target="PreviewTip.IsEnabled" Value="False" />-->
+                        <Setter Target="SplitViewShim.FontListToolTipTemplate" Value="{StaticResource FontListToolTipTemplate}" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="DefaultViewState">
                     <VisualState.Setters>
-                        <Setter Target="SplitView.IsPaneOpen" Value="True" />
-                        <Setter Target="SplitView.DisplayMode" Value="Inline" />
-                        <Setter Target="TitleHidePaneButton.Visibility" Value="Visible" />
-                        <Setter Target="TitleShowPaneButton.Visibility" Value="Collapsed" />
+                        <Setter Target="SplitViewShim.IsPaneOpen" Value="True" />
+                        <Setter Target="SplitViewShim.DisplayMode" Value="Inline" />
+                        <Setter Target="SplitViewShim.TitleHidePaneVisibility" Value="Visible" />
+                        <Setter Target="SplitViewShim.TitleShowPaneVisibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
             <VisualStateGroup x:Name="LoadingStates">
                 <VisualState x:Name="FontsLoadingState">
                     <VisualState.Setters>
-                        <Setter Target="SplitView.Opacity" Value="0" />
-                        <Setter Target="SplitView.IsEnabled" Value="False" />
+                        <Setter Target="SplitViewShim.Opacity" Value="0" />
+                        <Setter Target="SplitViewShim.IsEnabled" Value="False" />
                         <Setter Target="TitleButtonsPanel.Visibility" Value="Collapsed" />
-                        <Setter Target="TitleHidePaneButton.IsEnabled" Value="False" />
+                        <!--<Setter Target="TitleHidePaneButton.IsEnabled" Value="False" />
                         <Setter Target="TitleShowPaneButton.IsEnabled" Value="False" />
                         <Setter Target="TitleHidePaneButton.Opacity" Value="0" />
-                        <Setter Target="TitleShowPaneButton.Opacity" Value="0" />
+                        <Setter Target="TitleShowPaneButton.Opacity" Value="0" />-->
                         <Setter Target="TitleBar.(Canvas.ZIndex)" Value="9" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="FontsFailedState">
                     <VisualState.Setters>
-                        <Setter Target="SplitView.Visibility" Value="Collapsed" />
-                        <Setter Target="TitleHidePaneButton.IsEnabled" Value="False" />
+                        <Setter Target="SplitViewShim.Visibility" Value="Collapsed" />
+                        <!--<Setter Target="TitleHidePaneButton.IsEnabled" Value="False" />
                         <Setter Target="TitleShowPaneButton.IsEnabled" Value="False" />
                         <Setter Target="TitleHidePaneButton.Opacity" Value="0" />
-                        <Setter Target="TitleShowPaneButton.Opacity" Value="0" />
+                        <Setter Target="TitleShowPaneButton.Opacity" Value="0" />-->
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="FontsLoadedState">
@@ -1665,7 +1683,7 @@
                         <Setter Target="PageRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
                         <Setter Target="PaneRootBackground.Visibility" Value="Visible" />
                         <Setter Target="PaneRootBackground.CornerRadius" Value="0" />
-                        <Setter Target="OverlayPaneRootBackground.Background" Value="{ThemeResource SystemChromeMediumColor}" />
+                        <Setter Target="SplitViewShim.OverlayPaneRootBackground" Value="{ThemeResource SystemChromeMediumColor}" />
                         <Setter Target="FontMap.Margin" Value="0 0 2 0" />
                         <Setter Target="FontMap.Padding" Value="0 0 0 4" />
                         <Setter Target="FontsTabBar.ExpansionButtonVisibility" Value="Visible" />
@@ -1697,7 +1715,7 @@
                         <Setter Target="PaneTitleBarSpacer.MaxHeight" Value="0" />
                         <Setter Target="NoTabsTitleBarSpacer.MaxHeight" Value="0" />
                         <Setter Target="FontMap.Margin" Value="0 0 8 0" />
-                        <Setter Target="SplitView.Margin" Value="0 0 0 0" />
+                        <Setter Target="SplitViewShim.Margin" Value="0 0 0 0" />
                         <Setter Target="PaneRoot.Padding" Value="8 0 0 0" />
                         <Setter Target="ClassicTitleTextLabel.Visibility" Value="Visible" />
                         <Setter Target="InlineLabelCount.Visibility" Value="Collapsed" />
@@ -1726,7 +1744,7 @@
                         <Setter Target="InlineLabelCount.Margin" Value="0 6 0 0" />
                         <Setter Target="PaneRootBackground.Visibility" Value="Collapsed" />
                         <Setter Target="LayoutRoot.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
-                        <Setter Target="OverlayPaneRootBackground.Background" Value="White" />
+                        <Setter Target="SplitViewShim.OverlayPaneRootBackground" Value="White" />
                         <!--<Setter Target="FontListFilter.Foreground" Value="Black" />-->
                     </VisualState.Setters>
                 </VisualState>
@@ -1743,7 +1761,7 @@
                         <Setter Target="SettingsButtonIcon.Visibility" Value="Visible" />
                         <Setter Target="PaneRootBackground.Visibility" Value="Visible" />
                         <Setter Target="PaneRootBackground.CornerRadius" Value="0" />
-                        <Setter Target="OverlayPaneRootBackground.Background" Value="{ThemeResource SystemChromeMediumColor}" />
+                        <Setter Target="SplitViewShim.OverlayPaneRootBackground" Value="{ThemeResource SystemChromeMediumColor}" />
                         <Setter Target="FontMap.Margin" Value="0 0 2 0" />
                         <Setter Target="FontMap.Padding" Value="0 0 0 4" />
                         <Setter Target="FontListFilter.(core:Properties.MaterialCornerStyle)" Value="FlatLeft" />
@@ -1804,8 +1822,8 @@
                 <VisualState x:Name="WindowState" />
                 <VisualState x:Name="FullscreenState">
                     <VisualState.Setters>
-                        <Setter Target="ToggleFullscreenIcon.Glyph" Value="{core:ThemeIconGlyph Icon=ExitFullscreen}" />
-                        <Setter Target="FullscreenLabel.Glyph" Value="{core:ThemeIconGlyph Icon=ExitFullscreen}" />
+                        <Setter Target="ToggleFullscreenIcon.(core:Properties.ThemeIcon)" Value="50" />
+                        <Setter Target="FullscreenLabel.Icon" Value="50" />
                         <Setter Target="FullscreenLabel.Title" Value="{core:Localizer Key='RestoreLabel/Text'}" />
                     </VisualState.Setters>
                 </VisualState>

@@ -219,6 +219,10 @@ namespace CharacterMapCX
             Windows::UI::Color GetForegroundColor();
             UINT32 GetForegroundColorKey();
             bool ShouldRenderColor();
+            bool HasFontChangedForVisibility();
+
+            Platform::String^ m_lastShownFamilyName;
+            Platform::String^ m_lastShownFaceName;
 
             Windows::UI::Composition::SpriteVisual^ m_spriteVisual;
             Windows::UI::Composition::CompositionSurfaceBrush^ m_surfaceBrush;

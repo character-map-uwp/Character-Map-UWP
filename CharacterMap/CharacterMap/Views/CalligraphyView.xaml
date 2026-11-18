@@ -272,7 +272,10 @@
 
                 <Grid x:Name="TopRow" ColumnSpacing="8">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition
+                            Width="0.9*"
+                            MinWidth="120"
+                            MaxWidth="250" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="2*" />
                     </Grid.ColumnDefinitions>
@@ -283,27 +286,30 @@
                             FontWeight="{ThemeResource SliderHeaderThemeFontWeight}"
                             d:Text="{core:Localizer Key=FontFaceLabel/Text}" />
 
-                        <controls:FontOptionsButton
-                            Width="200"
-                            VerticalAlignment="Bottom"
-                            SelectedItem="{x:Bind ViewModel.Options, Mode=TwoWay}" />
+                        <controls:FontOptionsButton VerticalAlignment="Bottom" SelectedItem="{x:Bind ViewModel.Options, Mode=TwoWay}" />
                     </StackPanel>
 
-                    <Grid Grid.Column="1">
+                    <Grid Grid.Column="1" RowSpacing="6">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            x:Name="InputHeader"
+                            x:Uid="GuideHeaderLabel"
+                            Grid.ColumnSpan="2"
+                            FontWeight="{ThemeResource SliderHeaderThemeFontWeight}"
+                            d:Text="{core:Localizer Key=GuideHeaderLabel/Text}" />
                         <StackPanel
                             x:Name="InputContainer"
+                            Grid.Row="1"
                             VerticalAlignment="Bottom"
                             Spacing="6">
-                            <TextBlock
-                                x:Name="InputHeader"
-                                x:Uid="GuideHeaderLabel"
-                                FontWeight="{ThemeResource SliderHeaderThemeFontWeight}"
-                                d:Text="{core:Localizer Key=GuideHeaderLabel/Text}" />
+
                             <TextBox
                                 x:Name="InputBox"
                                 x:Uid="GuidePreviewInput"
@@ -318,6 +324,7 @@
 
                         <controls:CharacterPickerButton
                             x:Name="PickerButton"
+                            Grid.Row="1"
                             Grid.Column="1"
                             Margin="0 0 0 0"
                             Options="{x:Bind ViewModel.Options, Mode=OneWay}"

@@ -1702,7 +1702,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             t.Text = item.ToString();
     }
 
-    Debouncer _glyphDebouncer = new (250);
+    Debouncer _glyphDebouncer = new (200);
 
     static partial void OnGlyphRenderingOptionsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
