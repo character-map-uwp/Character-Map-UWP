@@ -9,21 +9,6 @@ using Windows.UI.Xaml.Media.Animation;
 
 namespace CharacterMap.Controls;
 
-[DependencyProperty<Duration>("Duration")]
-[DependencyProperty<KeySpline>("KeySpline")]
-public partial class CompositionTransition : DependencyObject
-{
-    public bool IsValid => Duration.HasTimeSpan && KeySpline is not null;
-
-    public CompositionEasingFunction GetEase(Compositor c)
-    {
-        return Composition.GetCached<CompositionEasingFunction>(c, $"__ctEa{KeySpline}", () =>
-        {
-            return c.CreateCubicBezierEasingFunction(KeySpline);
-        });
-    }
-}
-
 public enum SelectionVisualType
 {
     PointerOver, // Should render 
@@ -353,7 +338,7 @@ public partial class SelectorVisualElement : FrameworkElement
                 return;
 
             var ani = _containerShapes.CreateVector3KeyFrameAnimation("Offset")
-                    .AddKeyFrame(1, "this.FinalValue", OffsetTransition.GetEase(_containerShapes.Compositor))
+                    .AddKeyFrame(1, "this.FinalValue", OffsetTransition.GetEasingFunction(_containerShapes.Compositor))
                     .SetDuration(OffsetTransition.Duration.TimeSpan.TotalSeconds);
 
             _containerShapes.SetImplicitAnimation("Offset", ani);
@@ -375,7 +360,7 @@ public partial class SelectorVisualElement : FrameworkElement
 
             o.SetImplicitAnimation("Size",
                 o.CreateVector2KeyFrameAnimation("Size")
-                    .AddKeyFrame(1, "this.FinalValue", SizeTransition.GetEase(o.Compositor))
+                    .AddKeyFrame(1, "this.FinalValue", SizeTransition.GetEasingFunction(o.Compositor))
                     .SetDuration(SizeTransition.Duration.TimeSpan.TotalSeconds));
         }
         else

@@ -366,8 +366,8 @@
                                     <FontIcon
                                         x:Name="DownIcon"
                                         core:Properties.ThemeIcon="ChevronDown"
-                                        h:CompositionFactory.RelativeCenterPoint="0.5 0.5"
-                                        h:CompositionFactory.RotationAngleInDegreesTransition="{StaticResource ChevronTransition}"
+                                        h:ElementVisual.RelativeCenterPoint="0.5 0.5"
+                                        h:ElementVisual.RotationAngleInDegreesTransition="{StaticResource ChevronTransition}"
                                         FontSize="{ThemeResource TabViewItemAddButtonFontSize}" />
                                 </Button>
                                 <Button
@@ -413,7 +413,7 @@
                                 <VisualState x:Name="NotExpandedState" />
                                 <VisualState x:Name="ExpandedState">
                                     <VisualState.Setters>
-                                        <Setter Target="DownIcon.(h:CompositionFactory.RotationAngleInDegrees)" Value="-180" />
+                                        <Setter Target="DownIcon.(h:ElementVisual.RotationAngleInDegrees)" Value="-180" />
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>

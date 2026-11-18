@@ -5,6 +5,7 @@
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:converters="using:CharacterMap.Converters"
     xmlns:core="using:CharacterMap.Core"
+    xmlns:h="using:CharacterMap.Helpers"
     xmlns:styles="using:CharacterMap.Styles"
     xmlns:themes="using:CharacterMap.Themes"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)">
@@ -61,15 +62,21 @@
                     <BrushTransition x:Key="BackgroundTransition" Duration="0:0:0.15" />
                     <BrushTransition x:Key="QuickBrushTransition" Duration="0:0:0.06" />
 
-                    <controls:CompositionTransition
+                    <h:CompositionTransition
                         x:Key="DefaultSelectorTransition"
-                        KeySpline="0.8, 0, 0.2, 1"
+                        Spline="0.8, 0, 0.2, 1"
                         Duration="0:0:0.4" />
 
-                    <controls:CompositionTransition
+                    <h:CompositionTransition
                         x:Key="QuickCompositionTransition"
-                        KeySpline="0.395, 0.56, 0.06, 0.95"
+                        Spline="0.395, 0.56, 0.06, 0.95"
                         Duration="0:0:0.15" />
+
+                    <h:CompositionTransition
+                        x:Key="StandardTransition"
+                        Spline="{core:DefaultCompositionSpline}"
+                        Duration="{core:DefaultCompositionOffsetDuration}" />
+
 
                     <TransitionCollection x:Key="NoTransitions" />
                     <TransitionCollection x:Key="RepositionTransitions">

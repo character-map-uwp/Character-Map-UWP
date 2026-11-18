@@ -471,12 +471,18 @@
                 d:Visibility="Visible">
                 <controls:UXRadioButtons.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="Vertical" Spacing="4" />
+                        <StackPanel
+                            ChildrenTransitions="{StaticResource RepositionTransitions}"
+                            Orientation="Vertical"
+                            Spacing="4" />
                     </ItemsPanelTemplate>
                 </controls:UXRadioButtons.ItemsPanel>
                 <controls:SelectorVisualElement.ElementTemplate>
                     <DataTemplate>
-                        <controls:SelectorVisualElement BarSize="3 16" Style="{StaticResource VerticalRadioSelectorElementStyle}" />
+                        <controls:SelectorVisualElement
+                            BarSize="3 16"
+                            SizeTransition="{StaticResource StandardTransition}"
+                            Style="{StaticResource VerticalRadioSelectorElementStyle}" />
                     </DataTemplate>
                 </controls:SelectorVisualElement.ElementTemplate>
                 <Control.Resources>
@@ -497,17 +503,35 @@
                         <Setter Property="ContentTemplate">
                             <Setter.Value>
                                 <DataTemplate>
-                                    <Grid>
+                                    <Grid ChildrenTransitions="{StaticResource RepositionTransitions}">
+                                        <Grid.Resources>
+                                            <Storyboard x:Name="CompactState">
+                                                <ObjectAnimationUsingKeyFrames core:Properties.Target="Label.Visibility" core:Properties.Value="Collapsed" />
+                                                <ObjectAnimationUsingKeyFrames core:Properties.Target="Helper.ScaleXY" core:Properties.Value="0.8 0.8" />
+                                            </Storyboard>
+                                        </Grid.Resources>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="*" />
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
 
-                                        <FontIcon
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            core:Properties.ThemeIcon="{Binding Icon}"
-                                            Foreground="{Binding ElementName=Label, Path=Foreground}" />
+                                        <!--
+                                            This Border container is required is Parent TransitionCollection will
+                                            stomp all over our custom scale implicit animation collection
+                                        -->
+                                        <Border HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <FontIcon
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                core:Properties.ThemeIcon="{Binding Icon}"
+                                                helpers:ElementVisual.RelativeCenterPoint="0.5 0.5"
+                                                helpers:ElementVisual.ScaleTransition="{StaticResource StandardTransition}"
+                                                Foreground="{Binding ElementName=Label, Path=Foreground}">
+                                                <helpers:ElementVisual.Helper>
+                                                    <helpers:ElementVisualHelper x:Name="Helper" />
+                                                </helpers:ElementVisual.Helper>
+                                            </FontIcon>
+                                        </Border>
 
                                         <TextBlock
                                             x:Name="Label"

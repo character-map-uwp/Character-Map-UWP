@@ -1,5 +1,7 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Markup;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace CharacterMap.Core;
 
@@ -39,6 +41,19 @@ public class DefaultFallback : MarkupExtension
 {
     protected override object ProvideValue() => FontFinder.Fallback;
 }
+
+[MarkupExtensionReturnType(ReturnType = typeof(KeySpline))]
+public class DefaultCompositionSpline : MarkupExtension
+{
+    protected override object ProvideValue() => KeySplines.CompositionDefault;
+}
+
+[MarkupExtensionReturnType(ReturnType = typeof(Duration))]
+public class DefaultCompositionOffsetDuration : MarkupExtension
+{
+    protected override object ProvideValue() => new Duration(TimeSpan.FromSeconds(CompositionFactory.DefaultOffsetDuration));
+}
+
 
 [MarkupExtensionReturnType(ReturnType = typeof(TypographyFeatureInfo))]
 public class DefaultTypography : MarkupExtension

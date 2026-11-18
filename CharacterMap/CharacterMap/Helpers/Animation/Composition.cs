@@ -95,6 +95,14 @@ public static class Composition
         }
     }
 
+    public static CubicBezierEasingFunction GetCached(this Compositor c, KeySpline k)
+    {
+        return c.GetCached($"__ctEa{k.ControlPoint1.ToVector2()}{k.ControlPoint2.ToVector2()}", () =>
+        {
+            return c.CreateCubicBezierEasingFunction(k);
+        });
+    }
+
     public static T GetCached<T>(this Compositor c, string key, Func<T> create)
     {
 //#if DEBUG
@@ -135,6 +143,12 @@ public static class Composition
     {
         return c.GetCached<CubicBezierEasingFunction>("FluentEntranceEase",
             () => c.CreateFluentEntranceEasingFunction());
+    }
+
+    public static CubicBezierEasingFunction GetCachedDefaultEase(this Compositor c)
+    {
+        return c.GetCached<CubicBezierEasingFunction>("__COMP_FLUENT_DEFAULT",
+            () => c.CreateCubicBezierEasingFunction(KeySplines.CompositionDefault));
     }
 
     #endregion
@@ -1158,16 +1172,18 @@ public static class Composition
 [DependencyProperty<KeySpline>("Spline")]
 public partial class CompositionTransition : DependencyObject
 {
+    public bool IsValid => Duration.HasTimeSpan;// && KeySpline is not null;
+
     private Compositor _c => field ??= Composition.Compositor;
 
-    public CompositionEasingFunction GetEasingFunction()
+    public CompositionEasingFunction GetEasingFunction(Compositor c = null)
     {
         if (Ease is not null)
             return Ease.AsCompositionEase();
 
         if (Spline is not null)
-            return _c.CreateCubicBezierEasingFunction(Spline);
+            return (c ?? _c).GetCached(Spline);
 
-        return null;
+        return (c ?? _c).GetCachedDefaultEase();
     }
 }

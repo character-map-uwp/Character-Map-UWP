@@ -20,14 +20,127 @@ using Windows.UI.Xaml.Media;
 namespace CharacterMap.Helpers;
 
 [Bindable]
+[AttachedProperty<Point>("RelativeCenterPoint", "new Point()")]
+[AttachedProperty<Point>("ScaleXY", "new Point(1,1)")]
+[AttachedProperty<CompositionTransition>("ScaleTransition")]
+[AttachedProperty<CompositionTransition>("OffsetTransition")]
+[AttachedProperty<double>("RotationAngleInDegrees")]
+[AttachedProperty<CompositionTransition>("RotationAngleInDegreesTransition")]
+[AttachedProperty<ElementVisualHelper>("Helper")]
+public partial class ElementVisual
+{
+    static partial void OnRotationAngleInDegreesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is UIElement u && e.NewValue is double value)
+            u.GetElementVisual().RotationAngleInDegrees = (float)value;
+    }
+
+    static partial void OnRelativeCenterPointChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is UIElement u && e.NewValue is Point p)
+            CompositionFactory.StartCentering(u.GetElementVisual(), ((float)p.X), ((float)p.Y));
+    }
+
+    static partial void OnRotationAngleInDegreesTransitionChanged(DependencyObject f, DependencyPropertyChangedEventArgs v)
+    {
+        if (f is FrameworkElement element)
+            SetTransition<float>(
+                element, v.NewValue as CompositionTransition, nameof(Visual.RotationAngleInDegrees));
+    }
+
+    static partial void OnScaleXYChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is UIElement u && u.GetElementVisual() is { } v && e.NewValue is Point value)
+            v.Scale = new(value.ToVector2(), v.Scale.Z);
+    }
+
+    static partial void OnScaleTransitionChanged(DependencyObject f, DependencyPropertyChangedEventArgs v)
+    {
+        if (f is FrameworkElement element)
+            SetTransition<Vector3>(
+                element, v.NewValue as CompositionTransition, nameof(Visual.Scale));
+    }
+
+    static partial void OnOffsetTransitionChanged(DependencyObject f, DependencyPropertyChangedEventArgs v)
+    {
+        if (f is FrameworkElement element)
+            SetTransition<Vector3>(
+                element, v.NewValue as CompositionTransition, nameof(Visual.Offset));
+    }
+
+    static void SetTransition<T>(UIElement e, CompositionTransition t, string target, bool targetPropertySet = false)
+    {
+        Visual c = e.GetElementVisual();
+        CompositionObject cObj = targetPropertySet ? c.Properties : c;
+
+        if (t is not null && t.Duration.HasTimeSpan && t.Duration.TimeSpan.TotalMilliseconds > 0)
+        {
+            KeyFrameAnimation ani = null;
+
+            if (typeof(T) == typeof(float))
+                ani = c.CreateScalarKeyFrameAnimation();
+            else if (typeof(T) == typeof(Vector2))
+                ani = c.CreateVector2KeyFrameAnimation();
+            else if (typeof(T) == typeof(Vector3))
+                ani = c.CreateVector3KeyFrameAnimation();
+            else if (typeof(T) == typeof(Vector4))
+                ani = c.CreateVector4KeyFrameAnimation();
+
+            if (ani is not null)
+            {
+                ani.SetTarget(target)
+                    //.AddKeyFrame(0, CompositionFactory.STARTING_VALUE)
+                    .AddKeyFrame(1, CompositionFactory.FINAL_VALUE, t.GetEasingFunction(ani.Compositor))
+                    .SetDuration(t.Duration.TimeSpan); 
+
+                cObj.SetImplicitAnimation(target, ani);
+                return;
+            }
+        }
+
+        cObj.SetImplicitAnimation(target, null);
+    }
+
+    static partial void OnHelperChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement f)
+        {
+            if (e.OldValue is ElementVisualHelper h)
+                h.SetTarget(null);
+
+            if (e.NewValue is ElementVisualHelper n)
+                n.SetTarget(f);
+        }
+    }
+}
+
+[DependencyProperty<Point>("ScaleXY", "new Point(1,1)")]
+public partial class ElementVisualHelper : DependencyObject
+{
+    WeakReference<FrameworkElement> element;
+    public ElementVisualHelper() { }
+
+    public void SetTarget(FrameworkElement target)
+    {
+        if (target is null)
+            element = null;
+        else
+            element = new (target);
+    }
+
+    partial void OnScaleXYChanged(Point o, Point n)
+    {
+        if (element is not null && element.TryGetTarget(out FrameworkElement f))
+            ElementVisual.SetScaleXY(f, n);
+    }
+}
+
+[Bindable]
 [AttachedProperty<double>("BounceDuration", 0.15)]
 [AttachedProperty<bool>("EnableBounceScale")]
 [AttachedProperty<double>("CornerRadius", 0d)]
 [AttachedProperty<bool>("UseSynchronisedReposition")]
 [AttachedProperty<bool>("UseWindowAwareSynchronisedReposition")]
-[AttachedProperty<Point>("RelativeCenterPoint", "new Point()")]
-[AttachedProperty<double>("RotationAngleInDegrees")]
-[AttachedProperty<CompositionTransition>("RotationAngleInDegreesTransition")]
 [AttachedProperty<ResizeHelper>("ResizeHelper", IsReadOnly = true)]
 public partial class CompositionFactory : DependencyObject
 {
@@ -67,56 +180,7 @@ public partial class CompositionFactory : DependencyObject
         }
     }
 
-    static partial void OnRotationAngleInDegreesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is UIElement u && e.NewValue is double value)
-            u.GetElementVisual().RotationAngleInDegrees = (float)value;
-    }
-
-    static partial void OnRelativeCenterPointChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-    {
-        if (d is UIElement u && e.NewValue is Point p)
-            CompositionFactory.StartCentering(u.GetElementVisual(), ((float)p.X), ((float)p.Y));
-    }
-
-    static partial void OnRotationAngleInDegreesTransitionChanged(DependencyObject f, DependencyPropertyChangedEventArgs v)
-    {
-        if (f is FrameworkElement element)
-            SetTransition<float>(
-                element, v.NewValue as CompositionTransition, nameof(Visual.RotationAngleInDegrees));
-    }
-
-    static void SetTransition<T>(FrameworkElement e, CompositionTransition t, string target, bool targetPropertySet = false)
-    {
-        Visual c = e.GetElementVisual();
-        CompositionObject cObj = targetPropertySet ? c.Properties : c;
-
-        if (t is not null && t.Duration.HasTimeSpan && t.Duration.TimeSpan.TotalMilliseconds > 0)
-        {
-            KeyFrameAnimation ani = null;
-
-            if (typeof(T) == typeof(float))
-                ani = c.CreateScalarKeyFrameAnimation();
-            else if (typeof(T) == typeof(Vector2))
-                ani = c.CreateVector2KeyFrameAnimation();
-            else if (typeof(T) == typeof(Vector3))
-                ani = c.CreateVector3KeyFrameAnimation();
-            else if (typeof(T) == typeof(Vector4))
-                ani = c.CreateVector4KeyFrameAnimation();
-
-            if (ani is not null)
-            {
-                ani.SetTarget(target)
-                    .AddKeyFrame(1, FINAL_VALUE, t.GetEasingFunction())
-                    .SetDuration(t.Duration.TimeSpan);
-
-                cObj.SetImplicitAnimation(target, ani);
-                return;
-            }
-        }
-
-        cObj.SetImplicitAnimation(target, null);
-    }
+   
 
     static partial void OnUseSynchronisedRepositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -126,8 +190,9 @@ public partial class CompositionFactory : DependencyObject
                 v.SetImplicitAnimation(nameof(Visual.Offset), null);
             else
                 v.SetImplicitAnimation(nameof(Visual.Offset),
-                    v.CreateVector3KeyFrameAnimation(nameof(Visual.Offset))
-                     .UseOrchestration());
+                    v.GetCached("_OSRP", 
+                        () => v.CreateVector3KeyFrameAnimation(nameof(Visual.Offset))
+                         .UseOrchestration()));
         }
     }
 
@@ -533,11 +598,10 @@ public partial class CompositionFactory : DependencyObject
 
         Visual v = e.GetElementVisual();
 
-        var value = v.GetCached("DefaultOffsetAnimation",
-                        () => v.CreateVector3KeyFrameAnimation(nameof(Visual.Offset))
+        var value = v.CreateVector3KeyFrameAnimation(nameof(Visual.Offset))
                                 .AddKeyFrame(0, STARTING_VALUE)
-                                .AddKeyFrame(1, FINAL_VALUE)
-                                .SetDuration(DefaultOffsetDuration));
+                                .AddKeyFrame(1, FINAL_VALUE, KeySplines.CompositionDefault)
+                                .SetDuration(DefaultOffsetDuration);
 
         v.SetImplicitAnimation(nameof(Visual.Offset), value);
     }

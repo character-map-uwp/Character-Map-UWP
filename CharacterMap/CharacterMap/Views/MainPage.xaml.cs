@@ -15,7 +15,9 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace CharacterMap.Views;
 
@@ -249,6 +251,8 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             GoToState(nameof(FullscreenState));
         else
             GoToState(nameof(WindowState));
+
+        UpdateMenuSize();
     }
 
     void OnColorValuesChanged(UISettings settings, object e)
@@ -869,6 +873,52 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         }
     }
 
+    void UpdateMenuSize()
+    {
+        if (ViewModel.Settings.UseMenuNavigationBar is false || NavSelector is null)
+            return;
+
+        bool isCompact = this.ActualSize.X < 700;
+
+        if (Properties.GetBoolean(NavSelector) == isCompact)
+            return;
+
+        var items = NavSelector.Items.OfType<RadioButton>().ToList();
+        if (items.Count == 0)
+            return;
+
+        foreach (var item in NavSelector.Items.OfType<RadioButton>())
+        {
+            if (item.ContentTemplateRoot is Grid g)
+            {
+                Storyboard compact = (Storyboard)g.Resources["CompactState"];
+                if (isCompact)
+                    compact.Begin();
+                else
+                    compact.Stop();
+            }
+
+            if (isCompact)
+            {
+                var s = new Storyboard();
+                s.CreateTimeline<DoubleAnimationUsingKeyFrames>(item, "Width")
+                    .AddKeyFrame(0, 40)
+                    .EnableDependentAnimations(true);
+                s.CreateTimeline<DoubleAnimationUsingKeyFrames>(item, "Height")
+                    .AddKeyFrame(0, 40)
+                    .EnableDependentAnimations(true);
+                s.Begin();
+            }
+            else
+            {
+                item.Width = (double)item.GetAnimationBaseValue(FrameworkElement.WidthProperty);
+                item.Height = (double)item.GetAnimationBaseValue(FrameworkElement.HeightProperty);
+            }
+
+        }
+
+        Properties.SetBoolean(NavSelector, isCompact);
+    }
 
 
 

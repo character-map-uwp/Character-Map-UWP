@@ -455,10 +455,10 @@
                 <!--  Left Content  -->
                 <ColumnDefinition Width="Auto" />
                 <!--  Font Name  -->
-                <ColumnDefinition Width="*" />
-                <!--  Font Import Button (Stand-alone Window)  -->
                 <ColumnDefinition Width="Auto" />
                 <!--  Search Box & Right Content  -->
+                <ColumnDefinition Width="*" />
+                <!--  Font Import Button (Stand-alone Window)  -->
                 <ColumnDefinition Width="Auto" />
                 <!--    -->
                 <ColumnDefinition Width="Auto" />
@@ -496,7 +496,7 @@
                 x:Name="ExternalPanel"
                 x:Load="{x:Bind ViewModel.IsExternalFile}"
                 Grid.Row="1"
-                Grid.Column="2"
+                Grid.Column="3"
                 Height="{StaticResource TitleRowHeight}"
                 HorizontalAlignment="Right"
                 core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
@@ -554,8 +554,8 @@
             <Grid
                 x:Name="SearchContainer"
                 Grid.Row="1"
-                Grid.Column="3"
-                HorizontalAlignment="Right"
+                Grid.Column="2"
+                HorizontalAlignment="Center"
                 VerticalAlignment="Top">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
