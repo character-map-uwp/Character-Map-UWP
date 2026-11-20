@@ -1,4 +1,4 @@
-﻿using Windows.ApplicationModel;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
 using Windows.UI;
 using Windows.UI.Core;
@@ -324,6 +324,9 @@ public sealed partial class XamlTitleBar : ContentControl
 
     private void UpdateStates()
     {
+        if (_backgroundElement != null)
+            _backgroundElement.IsHitTestVisible = IsDragTarget;
+
         if (IsDragTarget)
             VisualStateManager.GoToState(this, "ActiveState", ResourceHelper.AllowAnimation);
         else

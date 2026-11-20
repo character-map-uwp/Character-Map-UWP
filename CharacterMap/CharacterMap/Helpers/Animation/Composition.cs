@@ -105,9 +105,9 @@ public static class Composition
 
     public static T GetCached<T>(this Compositor c, string key, Func<T> create)
     {
-//#if DEBUG
-//        return create();
-//#endif
+#if DEBUG
+        return create();
+#endif
 
         if (_objCache.TryGetValue(c, out Dictionary<string, object> dic) is false)
             _objCache[c] = dic = new();
@@ -1100,6 +1100,8 @@ public static class Composition
         return c.CreateCubicBezierEasingFunction(spline);
     }
 
+    public static CompositionEasingFunction CreateEase(this Compositor c, EasingFunctionBase ease)
+        => ease.AsCompositionEase(c);
 
     #endregion
 
@@ -1176,10 +1178,13 @@ public partial class CompositionTransition : DependencyObject
 
     private Compositor _c => field ??= Composition.Compositor;
 
+    public CompositionEasingFunction GetEasingFunction(CompositionObject c)
+        => GetEasingFunction(c.Compositor);
+
     public CompositionEasingFunction GetEasingFunction(Compositor c = null)
     {
         if (Ease is not null)
-            return Ease.AsCompositionEase();
+            return _c.CreateEase(Ease);
 
         if (Spline is not null)
             return (c ?? _c).GetCached(Spline);

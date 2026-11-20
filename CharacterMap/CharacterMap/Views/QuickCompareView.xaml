@@ -506,11 +506,18 @@
                                 SelectionChanged="RadioButtons_SelectionChanged">
                                 <RadioButton
                                     x:Uid="LayoutGridToggle"
+                                    Width="40"
+                                    Height="40"
                                     core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
                                     IsChecked="True">
                                     <FontIcon core:Properties.ThemeIcon="GridView" />
                                 </RadioButton>
-                                <RadioButton x:Uid="LayoutListToggle" core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle">
+
+                                <RadioButton
+                                    x:Uid="LayoutListToggle"
+                                    Width="40"
+                                    Height="40"
+                                    core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle">
                                     <FontIcon core:Properties.ThemeIcon="ListView" />
                                 </RadioButton>
                             </controls:UXRadioButtons>

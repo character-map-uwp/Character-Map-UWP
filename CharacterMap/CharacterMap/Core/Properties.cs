@@ -596,10 +596,12 @@ public partial class Properties : DependencyObject
             // 3. Create Expand animation and play it
             var popOpen = v.GetCached("UECPopupExpand", () =>
             {
+                BackEase ease = new BackEase { Amplitude = 0.2, EasingMode = EasingMode.EaseOut };
+
                 var scale = v.CreateVector3KeyFrameAnimation(nameof(Visual.Scale))
                         .AddKeyFrame(0.0f, "Vector3(Min(0.01, 20.0 / this.Target.Size.X), Min(0.01, 20.0 / this.Target.Size.Y), 1.0)")
-                        .AddScaleKeyFrame(1, 1, v.Compositor.GetCachedEntranceEase())
-                        .SetDuration(0.3);
+                        .AddScaleKeyFrame(1, 1, v.Compositor.CreateEase(ease))
+                        .SetDuration(0.35);
 
                 var op = v.CreateScalarKeyFrameAnimation(nameof(Visual.Opacity))
                     .SetDuration(0.1)

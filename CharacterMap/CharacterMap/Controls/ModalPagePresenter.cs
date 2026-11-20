@@ -1,4 +1,4 @@
-﻿using Windows.ApplicationModel.Core;
+using Windows.ApplicationModel.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -8,7 +8,7 @@ namespace CharacterMap.Controls;
 [DependencyProperty("TitleBarContent", null, nameof(OnTitleContentChanged))]
 [DependencyProperty("TitleRightContent")]
 [DependencyProperty<bool>("AllowShadows")]
-[DependencyProperty<bool>("IsWindowRoot")]
+[DependencyProperty<bool>("IsWindowRoot", false, nameof(UpdateTitleBarHitTest))]
 [DependencyProperty<string>("Title")]
 [DependencyProperty<string>("Description")]
 [DependencyProperty<Visibility>("CloseButtonVisibility")]
@@ -46,11 +46,7 @@ public sealed partial class ModalPagePresenter : ContentControl
             close.Click += Close_Click;
         }
 
-        if (this.GetTemplateChild("TitleBackground") is FrameworkElement f && IsWindowRoot)
-        {
-            TitleBarHelper.SetTitleBar(f);
-            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-        }
+        UpdateTitleBarHitTest();
 
         OnTitleContentChanged();
         OnTitleRightContentChanged(null, TitleRightContent);
@@ -84,7 +80,35 @@ public sealed partial class ModalPagePresenter : ContentControl
         this.ApplyTemplate();
         if (this.GetTemplateChild("TitleBackground") is FrameworkElement e)
         {
+            e.IsHitTestVisible = true;
             TitleBarHelper.SetTranisentTitleBar(e);
+        }
+    }
+
+    public void ClearTitleBar()
+    {
+        if (this.GetTemplateChild("TitleBackground") is FrameworkElement e)
+            e.IsHitTestVisible = false;
+    }
+
+    public void RestoreTitleBar()
+    {
+        if (this.GetTemplateChild("TitleBackground") is FrameworkElement e)
+            TitleBarHelper.RestoreDefaultTitleBar(e);
+    }
+
+    private void UpdateTitleBarHitTest()
+    {
+        if (this.GetTemplateChild("TitleBackground") is FrameworkElement f)
+        {
+            if (IsWindowRoot)
+            {
+                f.IsHitTestVisible = true;
+                TitleBarHelper.SetTitleBar(f);
+                CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+            }
+            else
+                f.IsHitTestVisible = false;
         }
     }
 
@@ -93,6 +117,7 @@ public sealed partial class ModalPagePresenter : ContentControl
         this.ApplyTemplate();
         if (this.GetTemplateChild("TitleBackground") is FrameworkElement e)
         {
+            e.IsHitTestVisible = true;
             e.Measure(new Windows.Foundation.Size(32, 32));
             TitleBarHelper.SetTitleBar(e);
         }

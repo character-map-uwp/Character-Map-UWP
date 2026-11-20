@@ -47,6 +47,7 @@ public enum PreviewTipContentTarget
 [AttachedProperty<object>("DisplayContent")]
 [AttachedProperty<double>("VerticalTranslation", 0d)]
 [AttachedProperty<FrameworkElement>("Ancestor", IsReadOnly =true)]
+[DependencyProperty<bool>("DelayHide")]
 public partial class PreviewTip : ContentControl
 {
     public double HorizontalOffset { get; set; }
@@ -198,7 +199,10 @@ public partial class PreviewTip : ContentControl
         {
             foreach (var child in p.Children.OfType<FrameworkElement>())
             {
+                if (child is UXRadioButtons)
+                    continue;
                 SetAncestor(child, child);
+
                 child.PointerEntered -= Item_PointerEntered;
                 child.PointerEntered += Item_PointerEntered;
             }
@@ -430,7 +434,8 @@ public partial class PreviewTip : ContentControl
 
     private void PointerHide(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
     {
-        if (sender is FrameworkElement f && GetRegisterWith(f) == this)
+        if (DelayHide || 
+            (sender is FrameworkElement f && GetRegisterWith(f) == this))
             _debouncer.Debounce(100, Hide);
         else
             Hide();

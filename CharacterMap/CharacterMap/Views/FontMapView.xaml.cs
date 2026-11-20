@@ -1323,7 +1323,12 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     private void PreviewTypographySelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (PreviewTypographySelector.SelectedItem is TypographyVariation tv)
-            UpdateTypography(tv, true);
+        {
+            CompositionFactory.SetWithoutReposition(TxtPreview, _resizerBouncer, () =>
+            {
+                UpdateTypography(tv, true);
+            });
+        }
         else if (PreviewTypographySelector.SelectedItem is TypographyFeatureInfo info)
         {
             Debugger.Break();
@@ -1397,6 +1402,11 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     private void ToolTip_Opened(object sender, RoutedEventArgs e)
     {
         //_ = ViewModel?.SelectedFaceAnalysis?.LoadGlyphFontAsync();
+    }
+
+    private void TxtPreview_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+    {
+        PreviewOptionsButton.Flyout.ShowAt(PreviewOptionsButton);
     }
 
 

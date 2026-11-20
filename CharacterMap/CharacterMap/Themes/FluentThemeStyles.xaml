@@ -53,6 +53,7 @@
 
     <Style x:Key="ThemeFontIconStyle" TargetType="FontIcon">
         <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+        <Setter Property="FontSize" Value="16" />
     </Style>
 
 
@@ -1557,7 +1558,7 @@
                         <Border
                             x:Name="Background"
                             Grid.ColumnSpan="2"
-                            Margin="2"
+                            Margin="0"
                             VerticalAlignment="Stretch"
                             Background="{TemplateBinding Background}"
                             BackgroundSizing="{TemplateBinding BackgroundSizing}"
@@ -1573,7 +1574,7 @@
                         <Border
                             x:Name="HighlightBackground"
                             Grid.ColumnSpan="2"
-                            Margin="2"
+                            Margin="0"
                             Background="{ThemeResource ComboBoxBackgroundUnfocused}"
                             BorderBrush="{ThemeResource ComboBoxBackgroundBorderBrushUnfocused}"
                             BorderThickness="{TemplateBinding BorderThickness}"
@@ -1841,8 +1842,8 @@
 
     <Style x:Key="MapInfoButtonStyle" BasedOn="{StaticResource TransparentButton}" TargetType="controls:UXButton">
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}" />
-        <Setter Property="Height" Value="42" />
-        <Setter Property="MinWidth" Value="42" />
+        <Setter Property="Height" Value="40" />
+        <Setter Property="MinWidth" Value="40" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="h:FluentAnimation.PointerOver" Value="DropDownGlyph" />
         <Setter Property="h:FluentAnimation.PointerOverOffset" Value="2" />

@@ -46,6 +46,12 @@ public class AppSettings : INotifyPropertyChanged
         set => Set(value);
     }
 
+    public bool DisplayGlyphBounds
+    {
+        get => Get(false);
+        set => Set(value);
+    }
+
     public bool UseMenuNavigationBar
     {
         get => Get(true);

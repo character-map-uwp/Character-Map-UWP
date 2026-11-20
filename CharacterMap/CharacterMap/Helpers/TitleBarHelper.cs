@@ -1,4 +1,4 @@
-﻿using CharacterMap.Controls;
+using CharacterMap.Controls;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
@@ -21,6 +21,13 @@ public class TitleBarHelper : DependencyObject
     public static readonly DependencyProperty DefaultTitleBarProperty =
         DependencyProperty.RegisterAttached("DefaultTitleBar", typeof(UIElement), typeof(TitleBarHelper), new PropertyMetadata(null));
 
+    private static UIElement GetCurrentTitleBar(DependencyObject obj) => (UIElement)obj.GetValue(CurrentTitleBarProperty);
+
+    private static void SetCurrentTitleBar(DependencyObject obj, UIElement value) => obj.SetValue(CurrentTitleBarProperty, value);
+
+    private static readonly DependencyProperty CurrentTitleBarProperty =
+        DependencyProperty.RegisterAttached("CurrentTitleBar", typeof(UIElement), typeof(TitleBarHelper), new PropertyMetadata(null));
+
 
 
     internal static void SetTitle(string name)
@@ -37,6 +44,7 @@ public class TitleBarHelper : DependencyObject
     internal static void SetTitleBar(UIElement e)
     {
         SetDefaultTitleBar(Window.Current.Content, e);
+        SetCurrentTitleBar(Window.Current.Content, e);
 
         if (e is XamlTitleBar bar)
             Window.Current.SetTitleBar(bar.GetDragElement());
@@ -49,11 +57,15 @@ public class TitleBarHelper : DependencyObject
         if (GetDefaultTitleBar(Window.Current.Content) is XamlTitleBar bar)
             bar.IsDragTarget = e == bar;
 
+        SetCurrentTitleBar(Window.Current.Content, e);
         Window.Current.SetTitleBar(e);
     }
 
-    internal static void RestoreDefaultTitleBar()
+    internal static void RestoreDefaultTitleBar(UIElement expectedCurrent = null)
     {
+        if (expectedCurrent is not null && GetCurrentTitleBar(Window.Current.Content) != expectedCurrent)
+            return;
+
         if (GetDefaultTitleBar(Window.Current.Content) is XamlTitleBar bar)
             bar.IsDragTarget = true;
 

@@ -3,14 +3,34 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CharacterMapCX.Controls">
 
+    <!--<controls:GlyphBoundsOptions
+        x:Key="DefaultGlyphBoundsOptions"
+        AdvanceBoundsBrush="#80808080"
+        AscentBrush="#FF107C10"
+        BaselineBrush="#FFE05286"
+        CapHeightBrush="#FF3B82F6"
+        DescentBrush="#FFF28C38"
+        DrawLinesOverGlyph="True"
+        InkBoundsBrush="#80E81123"
+        LineThickness="1.5"
+        ShowAdvanceBounds="False"
+        ShowAscent="True"
+        ShowBaseline="True"
+        ShowCapHeight="True"
+        ShowDescent="True"
+        ShowInkBounds="False"
+        ShowXHeight="False"
+        XHeightBrush="#FF00B7C3" />-->
+
     <Style TargetType="controls:DirectText">
         <Setter Property="MinHeight" Value="1" />
         <Setter Property="MinWidth" Value="1" />
         <Setter Property="FontSize" Value="12" />
+        <!--<Setter Property="GlyphBoundsOptions" Value="{StaticResource DefaultGlyphBoundsOptions}" />-->
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:DirectText">
-                    <Border x:Name="Root" />
+                    <Border x:Name="Root" Background="{TemplateBinding Background}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

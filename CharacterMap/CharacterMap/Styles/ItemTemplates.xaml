@@ -70,6 +70,8 @@
                 Text="{x:Bind Name}"
                 TextWrapping="Wrap" />
             <cx:DirectText
+                Margin="-8"
+                Padding="8"
                 core:Properties.PreviewStringTrigger="{x:Bind DefaultFace}"
                 FontFace="{x:Bind DefaultFace.Face}"
                 FontSize="32"
@@ -94,6 +96,8 @@
                 Text="{x:Bind Tooltip}"
                 TextWrapping="Wrap" />
             <cx:DirectText
+                Margin="-8"
+                Padding="8"
                 FontFace="{x:Bind Selected.Face}"
                 FontSize="32"
                 IsBackgroundRenderEnabled="True"

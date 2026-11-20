@@ -202,7 +202,7 @@ public partial class SelectorVisualElement : FrameworkElement
         var s = c.CreateSpriteShape(_rect);
 
         s.StrokeBrush = _strokeBrush;
-        s.StrokeThickness = (float)StrokeThickness;
+        s.StrokeThickness = (float)StrokeThickness / 2f;
         s.FillBrush = _fillBrush;
 
         _containerShapes = c.CreateShapeVisual();
@@ -338,7 +338,7 @@ public partial class SelectorVisualElement : FrameworkElement
                 return;
 
             var ani = _containerShapes.CreateVector3KeyFrameAnimation("Offset")
-                    .AddKeyFrame(1, "this.FinalValue", OffsetTransition.GetEasingFunction(_containerShapes.Compositor))
+                    .AddKeyFrame(1, "this.FinalValue", OffsetTransition.GetEasingFunction(_containerShapes))
                     .SetDuration(OffsetTransition.Duration.TimeSpan.TotalSeconds);
 
             _containerShapes.SetImplicitAnimation("Offset", ani);
@@ -360,7 +360,7 @@ public partial class SelectorVisualElement : FrameworkElement
 
             o.SetImplicitAnimation("Size",
                 o.CreateVector2KeyFrameAnimation("Size")
-                    .AddKeyFrame(1, "this.FinalValue", SizeTransition.GetEasingFunction(o.Compositor))
+                    .AddKeyFrame(1, "this.FinalValue", SizeTransition.GetEasingFunction(o))
                     .SetDuration(SizeTransition.Duration.TimeSpan.TotalSeconds));
         }
         else

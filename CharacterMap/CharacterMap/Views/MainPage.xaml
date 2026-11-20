@@ -345,7 +345,9 @@
                         <Button
                             x:Name="MainMenuButton"
                             x:Uid="MenuButton"
+                            CornerRadius="4"
                             Flyout="{StaticResource AppMenuFlyout}"
+                            FontSize="16"
                             Foreground="{Binding ElementName=TitleButtonsPresenter, Path=Foreground}"
                             Style="{StaticResource TitleBarButtonStyle}"
                             d:ToolTipService.ToolTip="{core:Localizer Key=MenuButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
@@ -531,6 +533,7 @@
                                                 core:Properties.ThemeIcon="{Binding Icon}"
                                                 helpers:ElementVisual.RelativeCenterPoint="0.5 0.5"
                                                 helpers:ElementVisual.ScaleTransition="{StaticResource StandardTransition}"
+                                                FontSize="20"
                                                 Foreground="{Binding ElementName=Label, Path=Foreground}">
                                                 <helpers:ElementVisual.Helper>
                                                     <helpers:ElementVisualHelper x:Name="Helper" />

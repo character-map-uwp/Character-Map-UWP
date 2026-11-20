@@ -94,10 +94,12 @@ public partial class FontMapView
 
     private void AnimateSelectionFromGlyph(ListViewBase source = null)
     {
+        source ??= GlyphRepeater;
+        
         // Empty glyphs will cause the connected animation service to crash, so manually
         // check if the rendered glyph contains content
-        source ??= GlyphRepeater;
         if (ResourceHelper.AllowAnimation
+            && ViewModel.Settings.DisplayGlyphBounds is false // We don't animate with glyph bounds on to allow comparison
             && source.ContainerFromItem(source.SelectedItem) is FrameworkElement container
             && container.GetFirstDescendantOfType<FontGlyphs>() is FontGlyphs t)
         {

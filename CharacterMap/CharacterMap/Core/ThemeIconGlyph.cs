@@ -360,7 +360,7 @@ public class ThemeIconGlyph : MarkupExtension
             else if (ti == ThemeIcon.OpenTypeView)
             {
                 f.FontFamily = ResourceHelper.Get<FontFamily>("AppIcons");
-                f.FontSize *= (16.666/20);
+                Properties.SetRenderScale(f, (16.666 / 20));
             }
             else if (ti == ThemeIcon.FilledSquareWhite)
             {

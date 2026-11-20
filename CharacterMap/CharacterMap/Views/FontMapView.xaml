@@ -555,7 +555,7 @@
                 x:Name="SearchContainer"
                 Grid.Row="1"
                 Grid.Column="2"
-                HorizontalAlignment="Center"
+                HorizontalAlignment="Right"
                 VerticalAlignment="Top">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -681,8 +681,8 @@
                 VerticalAlignment="Top"
                 Canvas.ZIndex="12">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
@@ -690,68 +690,32 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <controls:UXRadioButtons
-                    x:Name="ViewSelector"
-                    ColumnSpacing="0"
-                    Margin="12 0 0 0"
-                    VerticalAlignment="Center"
-                    MaxColumns="5"
-                    SelectedIndex="{x:Bind ToInt(ViewModel.DisplayMode), Mode=OneWay}"
-                    SelectedIndexChangedCommand="{x:Bind ViewModel.SetDisplayModeCommand}">
-                    <Control.Resources>
-                        <Style BasedOn="{StaticResource RadioButtonsButtonStyle}" TargetType="RadioButton">
-                            <Setter Property="h:FluentAnimation.PointerOverOffset" Value="-2" />
-                            <Setter Property="MinHeight" Value="40" />
-                            <Setter Property="MinWidth" Value="40" />
-                            <Setter Property="VerticalAlignment" Value="Stretch" />
-                            <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}" />
-                        </Style>
-                    </Control.Resources>
-                    <FontIcon core:Properties.ThemeIcon="CharacterMapView">
-                        <FontIcon.Tag>
-                            <views:TitledDescription x:Uid="CharacterMapDescription" />
-                        </FontIcon.Tag>
-                    </FontIcon>
-                    <FontIcon core:Properties.ThemeIcon="GlyphMapView">
-                        <FontIcon.Tag>
-                            <views:TitledDescription x:Uid="GlyphMapDescription" />
-                        </FontIcon.Tag>
-                    </FontIcon>
-                    <FontIcon core:Properties.ThemeIcon="LigatureMapView">
-                        <FontIcon.Tag>
-                            <views:TitledDescription x:Uid="LigatureMapDescription" />
-                        </FontIcon.Tag>
-                    </FontIcon>
-                    <FontIcon core:Properties.ThemeIcon="OpenTypeView">
-                        <FontIcon.Tag>
-                            <views:TitledDescription Title="OpenType Substitutions" Description="See the OpenType glyph substitutions supported by this Font Face" />
-                        </FontIcon.Tag>
-                    </FontIcon>
-                    <FontIcon core:Properties.ThemeIcon="TypeRampView">
-                        <FontIcon.Tag>
-                            <views:TitledDescription x:Uid="TypeRampDescription" />
-                        </FontIcon.Tag>
-                    </FontIcon>
-                </controls:UXRadioButtons>
 
-                <Border
-                    Grid.Column="1"
-                    HorizontalAlignment="Center"
-                    Style="{StaticResource ControlSurfaceBorderStyle}">
+
+                <controls:SmoothBorder
+                    Grid.Column="0"
+                    Margin="12 0 0 0"
+                    HorizontalAlignment="Left"
+                    Background="{ThemeResource DefaultHostBrush}"
+                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="{ThemeResource ControlCornerRadius}">
+
                     <toolkit:WrapPanel
                         x:Name="OptionsPanel"
                         x:FieldModifier="public"
-                        HorizontalAlignment="Right"
+                        HorizontalAlignment="Left"
                         controls:PreviewTip.RegisterWith="{x:Bind PreviewTip}"
                         Background="Transparent"
                         ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
                         Orientation="Horizontal">
+
                         <controls:UXComboBox
                             x:Name="WeightSelector"
+                            Height="40"
                             MinWidth="160"
                             VerticalAlignment="Center"
                             VerticalContentAlignment="Center"
-                            controls:PreviewTip.VerticalTranslation="2"
                             FontSize="12"
                             FontWeight="SemiBold"
                             IsEnabled="{Binding SelectedFont.Font.HasMultipleFaces}"
@@ -815,10 +779,58 @@
 
                         <AppBarSeparator controls:PreviewTip.Ignore="True" />
 
+                        <controls:UXRadioButtons
+                            x:Name="ViewSelector"
+                            ColumnSpacing="0"
+                            Margin="4 0 0 0"
+                            VerticalAlignment="Center"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            MaxColumns="5"
+                            SelectedIndex="{x:Bind ToInt(ViewModel.DisplayMode), Mode=OneWay}"
+                            SelectedIndexChangedCommand="{x:Bind ViewModel.SetDisplayModeCommand}">
+                            <Control.Resources>
+                                <Style BasedOn="{StaticResource RadioButtonsButtonStyle}" TargetType="RadioButton">
+                                    <Setter Property="h:FluentAnimation.PointerOverOffset" Value="-2" />
+                                    <Setter Property="core:Properties.Color" Value="{ThemeResource SystemAccentColor}" />
+                                    <Setter Property="MinHeight" Value="40" />
+                                    <Setter Property="MinWidth" Value="40" />
+                                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                                    <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}" />
+                                </Style>
+                            </Control.Resources>
+                            <FontIcon core:Properties.ThemeIcon="CharacterMapView" FontSize="16">
+                                <FontIcon.Tag>
+                                    <views:TitledDescription x:Uid="CharacterMapDescription" />
+                                </FontIcon.Tag>
+                            </FontIcon>
+                            <FontIcon core:Properties.ThemeIcon="GlyphMapView" FontSize="16">
+                                <FontIcon.Tag>
+                                    <views:TitledDescription x:Uid="GlyphMapDescription" />
+                                </FontIcon.Tag>
+                            </FontIcon>
+                            <FontIcon core:Properties.ThemeIcon="LigatureMapView" FontSize="16">
+                                <FontIcon.Tag>
+                                    <views:TitledDescription x:Uid="LigatureMapDescription" />
+                                </FontIcon.Tag>
+                            </FontIcon>
+                            <FontIcon core:Properties.ThemeIcon="OpenTypeView" FontSize="16">
+                                <FontIcon.Tag>
+                                    <views:TitledDescription Title="OpenType Substitutions" Description="See the OpenType glyph substitutions supported by this Font Face" />
+                                </FontIcon.Tag>
+                            </FontIcon>
+                            <FontIcon core:Properties.ThemeIcon="TypeRampView" FontSize="16">
+                                <FontIcon.Tag>
+                                    <views:TitledDescription x:Uid="TypeRampDescription" />
+                                </FontIcon.Tag>
+                            </FontIcon>
+                        </controls:UXRadioButtons>
+
+                        <AppBarSeparator controls:PreviewTip.Ignore="True" />
+
                         <controls:UXButton
                             x:Name="FontPropertiesButton"
                             VerticalAlignment="Stretch"
-                            controls:PreviewTip.VerticalTranslation="2"
                             Style="{ThemeResource MapInfoButtonStyle}"
                             ToolTipService.ToolTip="{x:Null}"
                             d:Label="Info"
@@ -1051,10 +1063,62 @@
                             </Button.Flyout>
                         </controls:UXButton>
 
+                        <Border x:Name="VariationsButtonContainer" controls:PreviewTip.ContentTarget="Child">
+                            <controls:UXButton
+                                x:Name="VariationsButton"
+                                x:Load="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.HasVariationAxis, Mode=OneWay, FallbackValue=False, TargetNullValue=False}"
+                                controls:PreviewTip.RegisterWith="{x:Bind PreviewTip}"
+                                h:FluentAnimation.PointerOver="FluentContentPresenter"
+                                h:FluentAnimation.PointerOverOffset="-2"
+                                Style="{ThemeResource MapInfoButtonStyle}">
+                                <controls:PreviewTip.DisplayContent>
+                                    <views:TitledDescription x:Uid="FaceVariationsDescription" />
+                                </controls:PreviewTip.DisplayContent>
+
+                                <FontIcon
+                                    Margin="0,0,-2,0"
+                                    core:Properties.ThemeIcon="VariableAxis"
+                                    Style="{StaticResource ThemeFontIconStyle}" />
+
+                                <Button.Flyout>
+                                    <Flyout
+                                        core:Properties.UseExpandContractAnimation="True"
+                                        win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
+                                        Opened="InfoFlyout_Opened"
+                                        Opening="InfoFlyout_Opening"
+                                        Placement="Bottom">
+                                        <ScrollViewer
+                                            x:Name="VariationScrollerPopup"
+                                            MinWidth="400"
+                                            MaxWidth="440">
+                                            <StackPanel Padding="8 16 8 8" Spacing="12">
+                                                <TextBlock
+                                                    FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                                    FontWeight="Bold"
+                                                    Text="Variable Font Axis" />
+
+                                                <ItemsControl
+                                                    x:Name="VariableAxisPopup"
+                                                    Padding="12"
+                                                    Background="LightGray"
+                                                    ItemTemplate="{StaticResource AxisItemTemplate}"
+                                                    ItemsSource="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.VariableAxis, Mode=OneWay}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <StackPanel Spacing="8" />
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                </ItemsControl>
+                                            </StackPanel>
+                                        </ScrollViewer>
+                                    </Flyout>
+                                </Button.Flyout>
+                            </controls:UXButton>
+                        </Border>
+
                         <controls:UXButton
                             x:Name="FontOptionsButton"
                             VerticalAlignment="Stretch"
-                            controls:PreviewTip.VerticalTranslation="2"
                             h:FluentAnimation.PointerOver="DropDownGlyph"
                             Style="{ThemeResource MapInfoButtonStyle}"
                             Visibility="Collapsed"
@@ -1067,7 +1131,7 @@
 
                             <FontIcon
                                 Margin="0,0,-2,0"
-                                FontSize="16.333"
+                                FontSize="16"
                                 Glyph="{core:ThemeIconGlyph Icon=RenderingOptions}"
                                 Style="{StaticResource ThemeFontIconStyle}" />
                             <Button.Flyout>
@@ -1141,64 +1205,9 @@
                             </Button.Flyout>
                         </controls:UXButton>
 
-                        <Border x:Name="VariationsButtonContainer" controls:PreviewTip.ContentTarget="Child">
-                            <controls:UXButton
-                                x:Name="VariationsButton"
-                                x:Load="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.HasVariationAxis, Mode=OneWay, FallbackValue=False, TargetNullValue=False}"
-                                controls:PreviewTip.RegisterWith="{x:Bind PreviewTip}"
-                                h:FluentAnimation.PointerOver="FluentContentPresenter"
-                                h:FluentAnimation.PointerOverOffset="-2"
-                                Style="{ThemeResource MapInfoButtonStyle}">
-                                <controls:PreviewTip.DisplayContent>
-                                    <views:TitledDescription x:Uid="FaceVariationsDescription" />
-                                </controls:PreviewTip.DisplayContent>
-
-                                <FontIcon
-                                    Margin="0,0,-2,0"
-                                    core:Properties.ThemeIcon="VariableAxis"
-                                    FontSize="16.333"
-                                    Style="{StaticResource ThemeFontIconStyle}" />
-
-                                <Button.Flyout>
-                                    <Flyout
-                                        core:Properties.UseExpandContractAnimation="True"
-                                        win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
-                                        Opened="InfoFlyout_Opened"
-                                        Opening="InfoFlyout_Opening"
-                                        Placement="Bottom">
-                                        <ScrollViewer
-                                            x:Name="VariationScrollerPopup"
-                                            MinWidth="400"
-                                            MaxWidth="440">
-                                            <StackPanel Padding="8 16 8 8" Spacing="12">
-                                                <TextBlock
-                                                    FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                                    FontWeight="Bold"
-                                                    Text="Variable Font Axis" />
-
-                                                <ItemsControl
-                                                    x:Name="VariableAxisPopup"
-                                                    Padding="12"
-                                                    Background="LightGray"
-                                                    ItemTemplate="{StaticResource AxisItemTemplate}"
-                                                    ItemsSource="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.VariableAxis, Mode=OneWay}">
-                                                    <ItemsControl.ItemsPanel>
-                                                        <ItemsPanelTemplate>
-                                                            <StackPanel Spacing="8" />
-                                                        </ItemsPanelTemplate>
-                                                    </ItemsControl.ItemsPanel>
-                                                </ItemsControl>
-                                            </StackPanel>
-                                        </ScrollViewer>
-                                    </Flyout>
-                                </Button.Flyout>
-                            </controls:UXButton>
-                        </Border>
-
                         <controls:UXButton
                             x:Name="CharacterFilterButton"
                             VerticalAlignment="Stretch"
-                            controls:PreviewTip.VerticalTranslation="2"
                             IsActive="{x:Bind ViewModel.IsFiltered, Mode=OneWay}"
                             Style="{ThemeResource MapInfoButtonStyle}"
                             d:Label="{core:Localizer Key=CharacterFilterButton/Label}"
@@ -1227,7 +1236,7 @@
                         </controls:UXButton>
 
                     </toolkit:WrapPanel>
-                </Border>
+                </controls:SmoothBorder>
 
 
                 <controls:UXButton
@@ -1278,11 +1287,12 @@
                 Width="Auto"
                 MaxWidth="350"
                 Canvas.ZIndex="40"
+                DelayHide="True"
                 HorizontalOffset="24"
                 Placement="BottomEdgeLeftAligned"
                 Style="{StaticResource PreviewTipHighContrastStyle}"
                 Target="{x:Bind ViewSelector}"
-                VerticalOffset="44">
+                VerticalOffset="42">
                 <controls:PreviewTip.ContentTemplate>
                     <DataTemplate>
                         <StackPanel Margin="0 2 0 0" Spacing="4">
@@ -2234,7 +2244,6 @@
                                                 FontSize="30"
                                                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                                                 Indices="{x:Bind Input.GlyphIndex}"
-                                                IsBackgroundRenderEnabled="True"
                                                 IsColorFontEnabled="{Binding ElementName=OpenTypeRepeater, Path=(core:Properties.Boolean)}"
                                                 Opacity="0.6"
                                                 StyleSimulations="{Binding ElementName=OpenTypeRepeater, Path=(core:Properties.Tag)}" />
@@ -2274,7 +2283,6 @@
                                                 FontSize="44"
                                                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                                                 Indices="{x:Bind Substitute.GlyphIndex}"
-                                                IsBackgroundRenderEnabled="True"
                                                 IsColorFontEnabled="{Binding ElementName=OpenTypeRepeater, Path=(core:Properties.Boolean)}"
                                                 StyleSimulations="{Binding ElementName=OpenTypeRepeater, Path=(core:Properties.Tag)}" />
                                         </Grid>
@@ -2385,34 +2393,151 @@
 
                     <!--  Character Preview  -->
                     <Grid Grid.Row="0">
-                        <Border x:Name="PreviewBorder" />
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <controls:UXButton
+                            x:Name="PreviewOptionsButton"
+                            HorizontalAlignment="Center"
+                            IsLabelVisible="True"
+                            Style="{StaticResource MapInfoButtonStyle}">
+                            <StackPanel
+                                HorizontalAlignment="Center"
+                                Orientation="Horizontal"
+                                Spacing="8">
+                                <SymbolIcon Symbol="View" />
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontSize="12"
+                                    Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
+                                    Text="Display Options"
+                                    TextLineBounds="Tight" />
+                            </StackPanel>
+
+                            <controls:UXButton.Flyout>
+                                <Flyout
+                                    core:Properties.UseExpandContractAnimation="True"
+                                    win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
+                                    Placement="Bottom">
+                                    <StackPanel Padding="8">
+                                        <StackPanel.Resources>
+                                            <Style BasedOn="{StaticResource LongToggleSwitchStyle}" TargetType="ToggleSwitch" />
+                                        </StackPanel.Resources>
+                                        <ToggleSwitch
+                                            x:Name="GlyphBoundsToggle"
+                                            FontWeight="Bold"
+                                            Header="Show Glyph Metrics"
+                                            IsOn="{x:Bind ViewModel.Settings.DisplayGlyphBounds, Mode=TwoWay}" />
+
+                                        <controls:LayoutPanel Width="320">
+                                            <controls:LayoutPanel.Layout>
+                                                <muxc:UniformGridLayout
+                                                    ItemsStretch="Fill"
+                                                    MaximumRowsOrColumns="2"
+                                                    MinColumnSpacing="8"
+                                                    MinRowSpacing="0" />
+                                            </controls:LayoutPanel.Layout>
+                                            <ToggleSwitch
+                                                x:Name="AscentToggle"
+                                                Header="Ascent"
+                                                IsEnabled="{Binding ElementName=GlyphBoundsToggle, Path=IsOn}"
+                                                IsOn="True" />
+                                            <ToggleSwitch
+                                                x:Name="CapHeightToggle"
+                                                Header="Cap Height"
+                                                IsEnabled="{Binding ElementName=GlyphBoundsToggle, Path=IsOn}"
+                                                IsOn="True" />
+                                            <!--<ToggleSwitch
+                                                x:Name="BaselineToggle"
+                                                Header="Baseline"
+                                                IsEnabled="{Binding ElementName=GlyphBoundsToggle, Path=IsOn}"
+                                                IsOn="True" />-->
+                                            <ToggleSwitch
+                                                x:Name="DescentToggle"
+                                                Header="Descent"
+                                                IsEnabled="{Binding ElementName=GlyphBoundsToggle, Path=IsOn}"
+                                                IsOn="True" />
+                                            <ToggleSwitch
+                                                x:Name="XHeightToggle"
+                                                Header="X Height"
+                                                IsEnabled="{Binding ElementName=GlyphBoundsToggle, Path=IsOn}"
+                                                IsOn="False" />
+                                            <ToggleSwitch
+                                                x:Name="AdvanceToggle"
+                                                Header="Layout Bounds"
+                                                IsEnabled="{Binding ElementName=GlyphBoundsToggle, Path=IsOn}"
+                                                IsOn="False" />
+                                            <ToggleSwitch
+                                                x:Name="InkToggle"
+                                                Header="Draw Bounds"
+                                                IsEnabled="{Binding ElementName=GlyphBoundsToggle, Path=IsOn}"
+                                                IsOn="False" />
+                                        </controls:LayoutPanel>
+
+
+
+                                    </StackPanel>
+                                </Flyout>
+                            </controls:UXButton.Flyout>
+                        </controls:UXButton>
+
+
+
+                        <Border x:Name="PreviewBorder" Grid.Row="1" />
                         <Border
                             x:Name="TxtPreviewViewBox"
                             x:FieldModifier="public"
+                            Grid.Row="1"
                             Margin="24 12 24 4"
                             Padding="24 12"
                             HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            IsHitTestVisible="False">
+                            VerticalAlignment="Stretch">
                             <cxc:DirectText
                                 x:Name="TxtPreview"
                                 VerticalAlignment="Center"
+                                Background="Transparent"
                                 ColorRenderOption="{Binding ElementName=ColrSelector, Path=SelectedItem.Tag, FallbackValue=Default, TargetNullValue=Default}"
+                                ContextRequested="TxtPreview_ContextRequested"
                                 FontFace="{Binding SelectedFaceAnalysis.ActiveFace}"
                                 FontSize="48"
                                 Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                 IsCharacterFitEnabled="True"
                                 IsOverwriteCompensationEnabled="True"
                                 IsTextScaleFactorEnabled="False"
+                                RenderGlyphBounds="{Binding ElementName=GlyphBoundsToggle, Path=IsOn}"
                                 Text="{Binding SelectedChar.Char}"
+                                TrimLeadingLineGap="True"
                                 Typography="{Binding SelectedCharTypography}"
-                                d:Text="a" />
+                                d:Text="a">
+                                <cxc:DirectText.GlyphBoundsOptions>
+                                    <cxc:GlyphBoundsOptions
+                                        x:Name="PreviewGlyphBoundsOptions"
+                                        AdvanceBoundsBrush="#80808080"
+                                        AscentBrush="#FF107C10"
+                                        BaselineBrush="#FFE05286"
+                                        CapHeightBrush="#FF3B82F6"
+                                        DescentBrush="#FFF28C38"
+                                        DrawLinesOverGlyph="True"
+                                        InkBoundsBrush="#80E81123"
+                                        LineThickness="1.5"
+                                        ShowAdvanceBounds="{Binding ElementName=AdvanceToggle, Path=IsOn}"
+                                        ShowAscent="{Binding ElementName=AscentToggle, Path=IsOn}"
+                                        ShowBaseline="{Binding ElementName=BaselineToggle, Path=IsOn}"
+                                        ShowCapHeight="{Binding ElementName=CapHeightToggle, Path=IsOn}"
+                                        ShowDescent="{Binding ElementName=DescentToggle, Path=IsOn}"
+                                        ShowInkBounds="{Binding ElementName=InkToggle, Path=IsOn}"
+                                        ShowXHeight="{Binding ElementName=XHeightToggle, Path=IsOn}"
+                                        XHeightBrush="#FF00B7C3" />
+                                </cxc:DirectText.GlyphBoundsOptions>
+                            </cxc:DirectText>
                         </Border>
 
                         <Border
                             x:Name="BorderCopiedMessage"
                             x:Load="False"
-                            Grid.Row="0"
+                            Grid.Row="1"
                             Grid.RowSpan="5"
                             Margin="12 12 12 12"
                             Padding="12"

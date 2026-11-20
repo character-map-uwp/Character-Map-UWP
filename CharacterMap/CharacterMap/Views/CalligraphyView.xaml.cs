@@ -50,6 +50,8 @@ public sealed partial class CalligraphyView : ViewBase, IInAppNotificationPresen
             TitleBarHelper.SetTitle(Presenter.Title);
             Register<AppNotificationMessage>(OnNotificationMessage);
         }
+        else
+            Presenter.SetTitleBar();
 
         Ink.InkPresenter.StrokesCollected -= InkPresenter_StrokesCollected;
         Ink.InkPresenter.StrokesCollected += InkPresenter_StrokesCollected;
@@ -70,6 +72,9 @@ public sealed partial class CalligraphyView : ViewBase, IInAppNotificationPresen
     protected override void OnUnloaded(object sender, RoutedEventArgs e)
     {
         base.OnUnloaded(sender, e);
+
+        if (IsStandalone is false)
+            Presenter.RestoreTitleBar();
 
         this.Bindings.StopTracking();
         Ink.InkPresenter.StrokesCollected -= InkPresenter_StrokesCollected;

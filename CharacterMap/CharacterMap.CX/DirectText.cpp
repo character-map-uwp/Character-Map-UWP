@@ -38,6 +38,73 @@ using namespace Windows::Graphics::DirectX;
 using namespace Windows::Graphics::DirectX::Direct3D11;
 using namespace Windows::ApplicationModel;
 
+DependencyProperty^ GlyphBoundsOptions::_ShowAscentProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_ShowCapHeightProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_ShowXHeightProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_ShowBaselineProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_ShowDescentProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_ShowAdvanceBoundsProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_ShowInkBoundsProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_AscentBrushProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_CapHeightBrushProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_XHeightBrushProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_BaselineBrushProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_DescentBrushProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_AdvanceBoundsBrushProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_InkBoundsBrushProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_LineThicknessProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_DrawLinesOverGlyphProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_AscentLabelProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_CapHeightLabelProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_XHeightLabelProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_BaselineLabelProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_DescentLabelProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_AdvanceBoundsLabelProperty = nullptr;
+DependencyProperty^ GlyphBoundsOptions::_InkBoundsLabelProperty = nullptr;
+
+GlyphBoundsOptions::GlyphBoundsOptions()
+{
+    RegisterDependencyProperties();
+}
+
+void GlyphBoundsOptions::RegisterDependencyProperties()
+{
+    static bool registered = false;
+    if (registered)
+        return;
+
+    registered = true;
+
+    auto cb = ref new PropertyChangedCallback(&GlyphBoundsOptions::OnOptionChanged);
+
+    _ShowAscentProperty = DependencyProperty::Register("ShowAscent", bool::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(true, cb));
+    _ShowCapHeightProperty = DependencyProperty::Register("ShowCapHeight", bool::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(true, cb));
+    _ShowXHeightProperty = DependencyProperty::Register("ShowXHeight", bool::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(false, cb));
+    _ShowBaselineProperty = DependencyProperty::Register("ShowBaseline", bool::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(true, cb));
+    _ShowDescentProperty = DependencyProperty::Register("ShowDescent", bool::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(true, cb));
+    _ShowAdvanceBoundsProperty = DependencyProperty::Register("ShowAdvanceBounds", bool::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(false, cb));
+    _ShowInkBoundsProperty = DependencyProperty::Register("ShowInkBounds", bool::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(false, cb));
+
+    _AscentBrushProperty = DependencyProperty::Register("AscentBrush", SolidColorBrush::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(nullptr, cb));
+    _CapHeightBrushProperty = DependencyProperty::Register("CapHeightBrush", SolidColorBrush::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(nullptr, cb));
+    _XHeightBrushProperty = DependencyProperty::Register("XHeightBrush", SolidColorBrush::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(nullptr, cb));
+    _BaselineBrushProperty = DependencyProperty::Register("BaselineBrush", SolidColorBrush::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(nullptr, cb));
+    _DescentBrushProperty = DependencyProperty::Register("DescentBrush", SolidColorBrush::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(nullptr, cb));
+    _AdvanceBoundsBrushProperty = DependencyProperty::Register("AdvanceBoundsBrush", SolidColorBrush::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(nullptr, cb));
+    _InkBoundsBrushProperty = DependencyProperty::Register("InkBoundsBrush", SolidColorBrush::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(nullptr, cb));
+
+    _LineThicknessProperty = DependencyProperty::Register("LineThickness", double::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(1.5, cb));
+    _DrawLinesOverGlyphProperty = DependencyProperty::Register("DrawLinesOverGlyph", bool::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(true, cb));
+
+    _AscentLabelProperty = DependencyProperty::Register("AscentLabel", Platform::String::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(ref new Platform::String(L"Ascent"), cb));
+    _CapHeightLabelProperty = DependencyProperty::Register("CapHeightLabel", Platform::String::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(ref new Platform::String(L"Cap Height"), cb));
+    _XHeightLabelProperty = DependencyProperty::Register("XHeightLabel", Platform::String::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(ref new Platform::String(L"x-Height"), cb));
+    _BaselineLabelProperty = DependencyProperty::Register("BaselineLabel", Platform::String::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(ref new Platform::String(L"Baseline"), cb));
+    _DescentLabelProperty = DependencyProperty::Register("DescentLabel", Platform::String::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(ref new Platform::String(L"Descent"), cb));
+    _AdvanceBoundsLabelProperty = DependencyProperty::Register("AdvanceBoundsLabel", Platform::String::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(ref new Platform::String(L"Advance Bounds"), cb));
+    _InkBoundsLabelProperty = DependencyProperty::Register("InkBoundsLabel", Platform::String::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(ref new Platform::String(L"Ink Bounds"), cb));
+}
+
 DependencyProperty^ DirectText::_FallbackFontProperty = nullptr;
 DependencyProperty^ DirectText::_ColorRenderOptionProperty = nullptr;
 DependencyProperty^ DirectText::_IsColorFontEnabledProperty = nullptr;
@@ -53,6 +120,9 @@ DependencyProperty^ DirectText::_IsCharacterFitEnabledProperty = nullptr;
 DependencyProperty^ DirectText::_StyleSimulationsProperty = nullptr;
 DependencyProperty^ DirectText::_IsBackgroundRenderEnabledProperty = nullptr;
 DependencyProperty^ DirectText::_SurfaceSizeProperty = nullptr;
+DependencyProperty^ DirectText::_RenderGlyphBoundsProperty = nullptr;
+DependencyProperty^ DirectText::_GlyphBoundsOptionsProperty = nullptr;
+DependencyProperty^ DirectText::_TrimLeadingLineGapProperty = nullptr;
 
 // Caches the background-created IDWriteTextLayout across size-only updates (e.g., FontSize slider
 // or container resize) so layout properties can be mutated in-place via SetFontSize/SetMaxWidth/etc.
@@ -126,6 +196,7 @@ DirectText::~DirectText()
         this->UnregisterPropertyChangedCallback(DirectText::PaddingProperty, m_paddingToken);
         this->Loaded -= m_loadedToken;
         this->Unloaded -= m_unloadedToken;
+        UpdateGlyphBoundsOptionsSubscription(nullptr);
     }
     catch (...) {}
 
@@ -172,6 +243,47 @@ void CharacterMapCX::Controls::DirectText::ClearLayoutCache()
     m_lastAxisValues.clear();
     m_lastShownFontFace = nullptr;
     m_deferredLayoutCache = std::make_shared<DeferredLayoutCache>();
+}
+
+void DirectText::OnGlyphBoundsOptionsChanged(DependencyObject^ d, DependencyPropertyChangedEventArgs^ e)
+{
+    if (auto c = dynamic_cast<DirectText^>(d))
+    {
+        c->UpdateGlyphBoundsOptionsSubscription(dynamic_cast<Controls::GlyphBoundsOptions^>(e->NewValue));
+        if (!c->BlockUpdates && c->RenderGlyphBounds)
+            c->Update();
+    }
+}
+
+void DirectText::UpdateGlyphBoundsOptionsSubscription(Controls::GlyphBoundsOptions^ newOptions)
+{
+    if (m_subscribedBoundsOptions == newOptions)
+        return;
+
+    if (m_subscribedBoundsOptions != nullptr)
+    {
+        try { m_subscribedBoundsOptions->Changed -= m_glyphBoundsOptionsToken; }
+        catch (...) {}
+        m_subscribedBoundsOptions = nullptr;
+    }
+
+    if (newOptions != nullptr)
+    {
+        auto weakThis = Platform::WeakReference(this);
+        m_glyphBoundsOptionsToken = newOptions->Changed += ref new Windows::Foundation::EventHandler<Platform::Object^>(
+            [weakThis](Platform::Object^, Platform::Object^)
+            {
+                if (auto pThis = weakThis.Resolve<DirectText>())
+                {
+                    if (!pThis->BlockUpdates && pThis->RenderGlyphBounds)
+                    {
+                        pThis->m_needsRender = true;
+                        pThis->InvalidateArrange();
+                    }
+                }
+            });
+        m_subscribedBoundsOptions = newOptions;
+    }
 }
 
 void DirectText::OnPropChanged(DependencyObject^ d, DependencyProperty^ p)
@@ -224,9 +336,179 @@ void CharacterMapCX::Controls::DirectText::OnUnloaded(Platform::Object^ sender, 
 
     m_colorBrush = nullptr;
     m_surfaceBrush = nullptr;
+    HideBoundsToolTip();
+    m_boundsHitTargets.clear();
     ClearLayoutCache();
     m_isStale = true;
     m_needsRender = true;
+}
+
+void DirectText::CancelHideBoundsToolTip()
+{
+    if (m_toolTipHideTimer != nullptr && m_toolTipHideTimer->IsEnabled)
+        m_toolTipHideTimer->Stop();
+}
+
+void DirectText::HideBoundsToolTip()
+{
+    CancelHideBoundsToolTip();
+    if (m_boundsToolTip != nullptr && m_boundsToolTip->IsOpen)
+        m_boundsToolTip->IsOpen = false;
+    m_activeBoundsLabel = nullptr;
+}
+
+void DirectText::ScheduleHideBoundsToolTip()
+{
+    if (m_boundsToolTip == nullptr || !m_boundsToolTip->IsOpen)
+        return;
+
+    if (m_toolTipHideTimer == nullptr)
+    {
+        m_toolTipHideTimer = ref new DispatcherTimer();
+        TimeSpan interval{};
+        interval.Duration = 100LL * 10000LL; // 100 ms
+        m_toolTipHideTimer->Interval = interval;
+
+        auto weakThis = Platform::WeakReference(this);
+        m_toolTipHideTimer->Tick += ref new EventHandler<Platform::Object^>(
+            [weakThis](Platform::Object^, Platform::Object^)
+            {
+                if (auto pThis = weakThis.Resolve<DirectText>())
+                    pThis->HideBoundsToolTip();
+            });
+    }
+
+    if (!m_toolTipHideTimer->IsEnabled)
+        m_toolTipHideTimer->Start();
+}
+
+void DirectText::UpdateRootHitTestBackground()
+{
+    if (m_rootBorder == nullptr)
+        return;
+
+    if (RenderGlyphBounds)
+    {
+      /*  if (m_rootBorder->Background == nullptr)
+            m_rootBorder->Background = ref new SolidColorBrush(Windows::UI::Colors::Transparent);*/
+    }
+    else
+    {
+       /* if (m_rootBorder->Background != nullptr)
+            m_rootBorder->Background = nullptr;*/
+        HideBoundsToolTip();
+    }
+}
+
+void DirectText::OnPointerMoved(Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+    Control::OnPointerMoved(e);
+
+    if (!RenderGlyphBounds || m_boundsHitTargets.empty() || e == nullptr)
+    {
+        HideBoundsToolTip();
+        return;
+    }
+
+    Point pt = e->GetCurrentPoint(this)->Position;
+    double tol = m_boundsHitTolerance;
+    double bestDist = tol + 1.0;
+    const BoundsHitTarget* bestTarget = nullptr;
+
+    for (const auto& t : m_boundsHitTargets)
+    {
+        double dist = tol + 1.0;
+        if (t.Kind == 0)
+        {
+            dist = std::abs(static_cast<double>(pt.Y) - t.Pos);
+        }
+        else if (t.Kind == 1)
+        {
+            dist = std::abs(static_cast<double>(pt.X) - t.Pos);
+        }
+        else if (t.Kind == 2)
+        {
+            Rect box = t.Box;
+            double l = box.Left, r = box.Right, top = box.Top, b = box.Bottom;
+            if (pt.X >= l - tol && pt.X <= r + tol && pt.Y >= top - tol && pt.Y <= b + tol)
+            {
+                double dx = (std::min)(std::abs(pt.X - l), std::abs(pt.X - r));
+                double dy = (std::min)(std::abs(pt.Y - top), std::abs(pt.Y - b));
+                dist = (std::min)(dx, dy);
+            }
+        }
+
+        if (dist <= tol && dist < bestDist)
+        {
+            bestDist = dist;
+            bestTarget = &t;
+        }
+    }
+
+    if (bestTarget != nullptr && bestTarget->Label != nullptr)
+    {
+        CancelHideBoundsToolTip();
+
+        if (m_boundsToolTip == nullptr)
+        {
+            m_boundsToolTip = ref new ToolTip();
+            m_boundsToolTip->Placement = Primitives::PlacementMode::Top;
+            m_boundsToolTip->PlacementTarget = this;
+            m_boundsToolTip->RenderTransform = ref new TranslateTransform();
+            ToolTipService::SetToolTip(this, m_boundsToolTip);
+        }
+
+        auto ttTransform = dynamic_cast<TranslateTransform^>(m_boundsToolTip->RenderTransform);
+
+        Platform::String^ bestLabel = bestTarget->Label;
+        double lineAnchorY = static_cast<double>(pt.Y);
+        if (bestTarget->Kind == 0)
+            lineAnchorY = bestTarget->Pos;
+        else if (bestTarget->Kind == 2)
+        {
+            Rect box = bestTarget->Box;
+            lineAnchorY = box.Top;
+        }
+
+        bool labelChanged = (m_activeBoundsLabel != bestLabel);
+        bool anchorYChanged = std::abs(m_toolTipAnchorY - lineAnchorY) > 0.5;
+        bool wasOpen = m_boundsToolTip->IsOpen;
+
+        if (!wasOpen || labelChanged || (bestTarget->Kind != 1 && anchorYChanged))
+        {
+            if (wasOpen)
+                m_boundsToolTip->IsOpen = false;
+
+            m_activeBoundsLabel = bestLabel;
+            m_boundsToolTip->Content = bestLabel;
+            m_toolTipAnchorX = pt.X;
+            m_toolTipAnchorY = lineAnchorY;
+            m_boundsToolTip->PlacementRect = Rect(pt.X - 1.0f, static_cast<float>(lineAnchorY) - 12.0f, 2.0f, 2.0f);
+            m_boundsToolTip->HorizontalOffset = 0.0;
+            m_boundsToolTip->VerticalOffset = 0.0;
+            if (ttTransform != nullptr)
+            {
+                ttTransform->X = 0.0;
+                ttTransform->Y = 0.0;
+            }
+            m_boundsToolTip->IsOpen = true;
+        }
+        else if (ttTransform != nullptr)
+        {
+            ttTransform->X = pt.X - m_toolTipAnchorX;
+            ttTransform->Y = (bestTarget->Kind == 1) ? (pt.Y - m_toolTipAnchorY) : 0.0;
+        }
+    }
+    else
+    {
+        ScheduleHideBoundsToolTip();
+    }
+}
+
+void DirectText::OnPointerExited(Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+    Control::OnPointerExited(e);
+    ScheduleHideBoundsToolTip();
 }
 
 Windows::UI::Color DirectText::GetForegroundColor()
@@ -283,6 +565,9 @@ namespace
 
 bool DirectText::ShouldRenderColor()
 {
+    if (RenderGlyphBounds)
+        return true;
+
     if (!IsColorFontEnabled || ColorRenderOption == DWriteColorRenderOption::Monochrome)
         return false;
 
@@ -311,6 +596,8 @@ void DirectText::OnApplyTemplate()
     if (DesignMode::DesignModeEnabled)
         return;
 
+    m_rootBorder = dynamic_cast<Border^>(GetTemplateChild("Root"));
+    UpdateRootHitTestBackground();
     Update();
 }
 
@@ -345,8 +632,12 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
     float availW = std::isinf(size.Width) ? static_cast<float>(m) : static_cast<float>((std::max)(1.0, static_cast<double>(size.Width) - padW));
     float availH = std::isinf(size.Height) ? static_cast<float>(m) : static_cast<float>((std::max)(1.0, static_cast<double>(size.Height) - padH));
 
+    bool renderBounds = RenderGlyphBounds;
+    bool trimLeading = TrimLeadingLineGap;
+    bool fitToBounds = IsCharacterFitEnabled || renderBounds;
+
     Windows::Foundation::Size fixedSurfaceSize = SurfaceSize;
-    if (IsBackgroundRenderEnabled && !IsCharacterFitEnabled && GlyphIndex < 0 &&
+    if (IsBackgroundRenderEnabled && !fitToBounds && GlyphIndex < 0 &&
         fixedSurfaceSize.Width > 0.0f && fixedSurfaceSize.Height > 0.0f)
     {
         m_deferredLayout = true;
@@ -405,7 +696,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         bool sameFallback = (m_lastFallbackFont == FallbackFont);
         bool sameFlow = (m_lastFlowDirection == this->FlowDirection);
         bool sameWrap = (m_lastWordWrapping == IsTextWrappingEnabled);
-        bool sameFit = (m_lastIsCharacterFit == IsCharacterFitEnabled);
+        bool sameFit = (m_lastIsCharacterFit == fitToBounds);
         bool sameText = (m_lastText == currentText) ||
             (m_lastText != nullptr && currentText != nullptr &&
              wcscmp(m_lastText->Data(), currentText->Data()) == 0);
@@ -468,8 +759,8 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
                 if (SUCCEEDED(CoreDWTextServices::MeasureLayoutBounds(m_textLayout.Get(), &layoutBounds)))
                 {
-                    bool skipOutlineOnUI = IsBackgroundRenderEnabled && !IsCharacterFitEnabled;
-                    if (!skipOutlineOnUI && (IsCharacterFitEnabled || IsOverwriteCompensationEnabled))
+                    bool skipOutlineOnUI = IsBackgroundRenderEnabled && !fitToBounds;
+                    if (!skipOutlineOnUI && (fitToBounds || IsOverwriteCompensationEnabled))
                     {
                         if (FAILED(CoreDWTextServices::MeasureInkBounds(m_textLayout.Get(), m_drawFontFace.Get(), &drawBounds)))
                             drawBounds = layoutBounds;
@@ -557,7 +848,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             params.FlowDirection = this->FlowDirection;
             params.WordWrapping = IsTextWrappingEnabled;
             params.EnableTrimming = IsTextWrappingEnabled;
-            params.IsCharacterFit = IsCharacterFitEnabled;
+            params.IsCharacterFit = fitToBounds;
             params.MaxWidth = lwidth;
             params.MaxHeight = lheight;
 
@@ -578,8 +869,8 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             }
 
             // Calculate DrawBounds
-            bool skipOutlineOnUI = IsBackgroundRenderEnabled && !IsCharacterFitEnabled;
-            if (!skipOutlineOnUI && (IsCharacterFitEnabled || IsOverwriteCompensationEnabled))
+            bool skipOutlineOnUI = IsBackgroundRenderEnabled && !fitToBounds;
+            if (!skipOutlineOnUI && (fitToBounds || IsOverwriteCompensationEnabled))
             {
                 hr = CoreDWTextServices::MeasureInkBounds(textLayout.Get(), m_drawFontFace.Get(), &drawBounds);
                 if (FAILED(hr))
@@ -601,7 +892,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             m_lastFallbackFont = FallbackFont;
             m_lastFlowDirection = this->FlowDirection;
             m_lastWordWrapping = IsTextWrappingEnabled;
-            m_lastIsCharacterFit = IsCharacterFitEnabled;
+            m_lastIsCharacterFit = fitToBounds;
             m_lastText = text;
             m_lastFontSize = fontSize;
             m_lastMaxWidth = lwidth;
@@ -625,16 +916,70 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
     }
 
 
+    bool isSingleChar = (GlyphIndex >= 0);
+    if (!isSingleChar && Text != nullptr)
+    {
+        UINT32 len = Text->Length();
+        const wchar_t* data = Text->Data();
+        isSingleChar = (len == 1) ||
+            (len == 2 && data[0] >= 0xD800 && data[0] <= 0xDBFF && data[1] >= 0xDC00 && data[1] <= 0xDFFF);
+    }
+    m_isSingleChar = isSingleChar;
+
+    if ((renderBounds || trimLeading) && FontFace != nullptr)
+    {
+        double effectiveFontSize = 8.0 > FontSize ? 8.0 : FontSize;
+        DWRITE_FONT_METRICS1 fm = FontFace->GetMetrics();
+        double emScale = (fm.designUnitsPerEm > 0)
+            ? (effectiveFontSize / static_cast<double>(fm.designUnitsPerEm))
+            : (effectiveFontSize / 1000.0);
+
+        double ascentDip = fm.ascent * emScale;
+        double descentDip = fm.descent * emScale;
+        double capHeightDip = fm.capHeight * emScale;
+        double xHeightDip = fm.xHeight * emScale;
+
+        double baselineY = 0.0;
+        if (GlyphIndex < 0 && m_textLayout != nullptr)
+        {
+            DWRITE_LINE_METRICS lineMetrics{};
+            UINT32 lineCount = 0;
+            if (SUCCEEDED(m_textLayout->GetLineMetrics(&lineMetrics, 1, &lineCount)) && lineCount > 0)
+                baselineY = lineMetrics.baseline;
+            else
+                baselineY = ascentDip;
+        }
+
+        m_metricBaselineY = baselineY;
+        m_metricAscentY = baselineY - ascentDip;
+        m_metricCapHeightY = baselineY - capHeightDip;
+        m_metricXHeightY = baselineY - xHeightDip;
+        m_metricDescentY = baselineY + descentDip;
+        m_hasCapHeight = (fm.capHeight > 0);
+        m_hasXHeight = (fm.xHeight > 0);
+    }
+
     double minh = layoutBounds.Top;
     double maxh = layoutBounds.Bottom;
     double minw = layoutBounds.Left;
     double maxw = layoutBounds.Right;
-    if (IsCharacterFitEnabled || GlyphIndex >= 0)
+    if (fitToBounds || GlyphIndex >= 0)
     {
         minh = min(drawBounds.Top, layoutBounds.Top);
         maxh = max(drawBounds.Bottom, layoutBounds.Bottom);
         minw = min(drawBounds.Left, layoutBounds.Left);
         maxw = max(drawBounds.Right, layoutBounds.Right);
+    }
+
+    if (trimLeading)
+    {
+        minh = (std::min)(static_cast<double>(drawBounds.Top), m_metricAscentY);
+        maxh = (std::max)(static_cast<double>(drawBounds.Bottom), m_metricDescentY);
+    }
+    else if (renderBounds)
+    {
+        minh = (std::min)(minh, m_metricAscentY);
+        maxh = (std::max)(maxh, m_metricDescentY);
     }
 
     double h = maxh - minh;
@@ -644,17 +989,29 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
     auto targetsize = Size(min(m, ceil(w + padW)), min(m, ceil(h + padH)));
 
-    if (IsCharacterFitEnabled)
+    if (fitToBounds)
     {
         bool hasConstrainedW = !std::isinf(size.Width);
         bool hasConstrainedH = !std::isinf(size.Height);
 
         if (hasConstrainedW || hasConstrainedH)
         {
-            m_minWidth = FontSize / 2.2;
+            double effectiveFontSize = 8.0 > FontSize ? 8.0 : FontSize;
+            m_minWidth = (renderBounds && isSingleChar)
+                ? (effectiveFontSize * 1.15)
+                : (FontSize / 2.2);
             auto totalW = (std::max)({ m_minWidth, static_cast<double>(layoutBounds.Width), static_cast<double>(drawBounds.Width), static_cast<double>(drawBounds.Right - (std::min)(0.0f, drawBounds.Left)) });
-            auto totalTop = (std::min)(static_cast<double>(layoutBounds.Top), static_cast<double>(drawBounds.Top));
-            auto totalBottom = (std::max)(static_cast<double>(layoutBounds.Bottom), static_cast<double>(drawBounds.Bottom));
+            auto totalTop = trimLeading
+                ? (std::min)(static_cast<double>(drawBounds.Top), m_metricAscentY)
+                : (std::min)(static_cast<double>(layoutBounds.Top), static_cast<double>(drawBounds.Top));
+            auto totalBottom = trimLeading
+                ? (std::max)(static_cast<double>(drawBounds.Bottom), m_metricDescentY)
+                : (std::max)(static_cast<double>(layoutBounds.Bottom), static_cast<double>(drawBounds.Bottom));
+            if (renderBounds && !trimLeading)
+            {
+                totalTop = (std::min)(totalTop, m_metricAscentY);
+                totalBottom = (std::max)(totalBottom, m_metricDescentY);
+            }
             auto totalH = (std::max)(1.0, totalBottom - totalTop);
 
             double scaleW = hasConstrainedW ? (size.Width / totalW) : 1.0;
@@ -742,10 +1099,40 @@ namespace
         double PadBottom = 0.0;
         int GlyphIndex = -1;
         bool IsCharacterFitEnabled = false;
+        bool RenderGlyphBounds = false;
+        bool TrimLeadingLineGap = false;
+        bool IsSingleChar = false;
         bool RenderColor = true;
         bool UseColorQueue = false;
         bool DeferredLayout = false;
         bool IsColorFontEnabled = true;
+
+        struct GlyphBoundsRenderData
+        {
+            bool ShowAscent = true;
+            bool ShowCapHeight = true;
+            bool ShowXHeight = false;
+            bool ShowBaseline = true;
+            bool ShowDescent = true;
+            bool ShowAdvanceBounds = false;
+            bool ShowInkBounds = false;
+            bool DrawLinesOverGlyph = true;
+            bool HasCapHeight = false;
+            bool HasXHeight = false;
+            double LineThickness = 1.5;
+            double BaselineY = 0.0;
+            double AscentY = 0.0;
+            double CapHeightY = 0.0;
+            double XHeightY = 0.0;
+            double DescentY = 0.0;
+            D2D1_COLOR_F AscentColor = D2D1::ColorF(16.0f / 255.0f, 124.0f / 255.0f, 16.0f / 255.0f, 1.0f);
+            D2D1_COLOR_F CapHeightColor = D2D1::ColorF(59.0f / 255.0f, 130.0f / 255.0f, 246.0f / 255.0f, 1.0f);
+            D2D1_COLOR_F XHeightColor = D2D1::ColorF(0.0f / 255.0f, 183.0f / 255.0f, 195.0f / 255.0f, 1.0f);
+            D2D1_COLOR_F BaselineColor = D2D1::ColorF(224.0f / 255.0f, 82.0f / 255.0f, 134.0f / 255.0f, 1.0f);
+            D2D1_COLOR_F DescentColor = D2D1::ColorF(242.0f / 255.0f, 140.0f / 255.0f, 56.0f / 255.0f, 1.0f);
+            D2D1_COLOR_F AdvanceBoundsColor = D2D1::ColorF(0.5f, 0.5f, 0.5f, 0.5f);
+            D2D1_COLOR_F InkBoundsColor = D2D1::ColorF(232.0f / 255.0f, 17.0f / 255.0f, 35.0f / 255.0f, 0.5f);
+        } Bounds;
         Windows::UI::Xaml::FlowDirection FlowDirection = Windows::UI::Xaml::FlowDirection::LeftToRight;
         DWriteColorRenderOption ColorRenderOption = DWriteColorRenderOption::Default;
         D2D1_COLOR_F ForegroundColor = D2D1::ColorF(D2D1::ColorF::White);
@@ -760,7 +1147,9 @@ namespace
         auto db = snap.DrawBounds;
         auto lb = snap.LayoutBounds;
         double left = -min(db.Left, lb.Left) + snap.PadLeft;
-        double top = -min(db.Top, lb.Top) + snap.PadTop;
+        double top = snap.TrimLeadingLineGap
+            ? -(std::min)(static_cast<double>(db.Top), snap.Bounds.AscentY) + snap.PadTop
+            : -min(db.Top, lb.Top) + snap.PadTop;
         double scale = 1.0;
 
         if (snap.IsCharacterFitEnabled)
@@ -771,8 +1160,17 @@ namespace
             double availH = (std::max)(1.0, snap.ActualH - padY * 2.0);
 
             double totalW = (std::max)({ snap.MinWidth, static_cast<double>(lb.Width), static_cast<double>(db.Width), static_cast<double>(db.Right - (std::min)(0.0f, db.Left)) });
-            double totalTop = (std::min)(static_cast<double>(lb.Top), static_cast<double>(db.Top));
-            double totalBottom = (std::max)(static_cast<double>(lb.Bottom), static_cast<double>(db.Bottom));
+            double totalTop = snap.TrimLeadingLineGap
+                ? (std::min)(static_cast<double>(db.Top), snap.Bounds.AscentY)
+                : (std::min)(static_cast<double>(lb.Top), static_cast<double>(db.Top));
+            double totalBottom = snap.TrimLeadingLineGap
+                ? (std::max)(static_cast<double>(db.Bottom), snap.Bounds.DescentY)
+                : (std::max)(static_cast<double>(lb.Bottom), static_cast<double>(db.Bottom));
+            if (snap.RenderGlyphBounds && !snap.TrimLeadingLineGap)
+            {
+                totalTop = (std::min)(totalTop, snap.Bounds.AscentY);
+                totalBottom = (std::max)(totalBottom, snap.Bounds.DescentY);
+            }
             double totalH = (std::max)(1.0, totalBottom - totalTop);
 
             // Glyphs scale to fit available size (both scaling up and down) while maintaining baseline positioning
@@ -783,16 +1181,21 @@ namespace
             double boxW = snap.ActualW / scale;
             double boxH = snap.ActualH / scale;
 
+            double padLeftUnits = padX / scale;
+            double padTopUnits = padY / scale;
+            double maxRightUnits = boxW - padLeftUnits;
+            double maxBottomUnits = boxH - padTopUnits;
+
             // Horizontal positioning:
             // Center within advance width for regular characters.
             // Center ink bounds for zero-advance characters (combining marks / diacritics).
             if (lb.Width > 0)
             {
                 left = (boxW - lb.Width) / 2.0 - lb.Left;
-                if (left + db.Left < 0)
-                    left = -db.Left;
-                if (left + db.Right > boxW)
-                    left = boxW - db.Right;
+                if (left + db.Left < padLeftUnits)
+                    left = padLeftUnits - db.Left;
+                if (left + db.Right > maxRightUnits)
+                    left = maxRightUnits - db.Right;
             }
             else
             {
@@ -800,14 +1203,30 @@ namespace
             }
 
             // Vertical positioning:
-            // Center the font line box so all characters share the exact same baseline.
-            top = (boxH - lb.Height) / 2.0 - lb.Top;
+            // Center the font line box (or ascent-to-descent metrics when rendering glyph bounds)
+            // so all characters share the exact same baseline and guide-line positions.
+            if (snap.TrimLeadingLineGap)
+            {
+                double refTop = snap.Bounds.AscentY;
+                double refBottom = snap.Bounds.DescentY;
+                top = (boxH - (refBottom - refTop)) / 2.0 - refTop;
+            }
+            else if (snap.RenderGlyphBounds && snap.IsSingleChar)
+            {
+                double refTop = (std::min)(static_cast<double>(lb.Top), snap.Bounds.AscentY);
+                double refBottom = (std::max)(static_cast<double>(lb.Bottom), snap.Bounds.DescentY);
+                top = (boxH - (refBottom - refTop)) / 2.0 - refTop;
+            }
+            else
+            {
+                top = (boxH - lb.Height) / 2.0 - lb.Top;
+            }
 
-            // Prevent clipping if extreme ascenders/descenders extend outside box
-            if (top + db.Top < 0)
-                top = -db.Top;
-            if (top + db.Bottom > boxH)
-                top = boxH - db.Bottom;
+            // Prevent clipping if extreme ascenders/descenders extend outside padded box
+            if (top + db.Top < padTopUnits)
+                top = padTopUnits - db.Top;
+            if (top + db.Bottom > maxBottomUnits)
+                top = maxBottomUnits - db.Bottom;
         }
         else if (snap.FlowDirection == Windows::UI::Xaml::FlowDirection::RightToLeft)
         {
@@ -817,9 +1236,8 @@ namespace
         D2D1::Matrix3x2F transform =
             D2D1::Matrix3x2F::Scale(static_cast<float>(scale * snap.DpiScale), static_cast<float>(scale * snap.DpiScale)) *
             D2D1::Matrix3x2F::Translation(offsetX, offsetY);
-        ctx->SetTransform(transform);
 
-        bool color = snap.RenderColor && snap.ColorRenderOption != DWriteColorRenderOption::Monochrome;
+        bool color = snap.RenderColor && snap.IsColorFontEnabled && snap.ColorRenderOption != DWriteColorRenderOption::Monochrome;
         GlyphImageFormat preferredFormat = snap.RenderColor
             ? CoreDWTextServices::ToPreferredFormat(color, snap.ColorRenderOption)
             : GlyphImageFormat::TrueType;
@@ -834,6 +1252,78 @@ namespace
             ctx->CreateSolidColorBrush(brushColor, &fallbackBrush);
             activeBrush = fallbackBrush.Get();
         }
+
+        auto drawGlyphBounds = [&]()
+        {
+            if (!snap.RenderGlyphBounds || activeBrush == nullptr)
+                return;
+
+            ctx->SetTransform(D2D1::Matrix3x2F::Translation(offsetX, offsetY));
+            float strokeW = (std::max)(1.0f, static_cast<float>(snap.Bounds.LineThickness * snap.DpiScale));
+            float surfW = static_cast<float>(snap.ActualW * snap.DpiScale);
+            float surfH = static_cast<float>(snap.ActualH * snap.DpiScale);
+            double pxScale = scale * snap.DpiScale;
+
+            auto drawHLine = [&](double layoutY, const D2D1_COLOR_F& lineColor)
+            {
+                if (lineColor.a <= 0.0f)
+                    return;
+                float py = static_cast<float>((top + layoutY) * pxScale);
+                if (strokeW <= 2.0f)
+                    py = std::floor(py) + 0.5f;
+                activeBrush->SetColor(lineColor);
+                ctx->DrawLine(D2D1::Point2F(0.0f, py), D2D1::Point2F(surfW, py), activeBrush, strokeW);
+            };
+
+            if (snap.Bounds.ShowAscent)
+                drawHLine(snap.Bounds.AscentY, snap.Bounds.AscentColor);
+            if (snap.Bounds.ShowCapHeight && snap.Bounds.HasCapHeight)
+                drawHLine(snap.Bounds.CapHeightY, snap.Bounds.CapHeightColor);
+            if (snap.Bounds.ShowXHeight && snap.Bounds.HasXHeight)
+                drawHLine(snap.Bounds.XHeightY, snap.Bounds.XHeightColor);
+            if (snap.Bounds.ShowBaseline)
+                drawHLine(snap.Bounds.BaselineY, snap.Bounds.BaselineColor);
+            if (snap.Bounds.ShowDescent)
+                drawHLine(snap.Bounds.DescentY, snap.Bounds.DescentColor);
+
+            if (snap.Bounds.ShowAdvanceBounds && snap.Bounds.AdvanceBoundsColor.a > 0.0f)
+            {
+                activeBrush->SetColor(snap.Bounds.AdvanceBoundsColor);
+                float x0 = static_cast<float>((left + lb.Left) * pxScale);
+                float x1 = static_cast<float>((left + lb.Right) * pxScale);
+                if (strokeW <= 2.0f)
+                {
+                    x0 = std::floor(x0) + 0.5f;
+                    x1 = std::floor(x1) + 0.5f;
+                }
+                ctx->DrawLine(D2D1::Point2F(x0, 0.0f), D2D1::Point2F(x0, surfH), activeBrush, strokeW);
+                ctx->DrawLine(D2D1::Point2F(x1, 0.0f), D2D1::Point2F(x1, surfH), activeBrush, strokeW);
+            }
+
+            if (snap.Bounds.ShowInkBounds && snap.Bounds.InkBoundsColor.a > 0.0f)
+            {
+                activeBrush->SetColor(snap.Bounds.InkBoundsColor);
+                float rx0 = static_cast<float>((left + db.Left) * pxScale);
+                float ry0 = static_cast<float>((top + db.Top) * pxScale);
+                float rx1 = static_cast<float>((left + db.Right) * pxScale);
+                float ry1 = static_cast<float>((top + db.Bottom) * pxScale);
+                if (strokeW <= 2.0f)
+                {
+                    rx0 = std::floor(rx0) + 0.5f;
+                    ry0 = std::floor(ry0) + 0.5f;
+                    rx1 = std::floor(rx1) + 0.5f;
+                    ry1 = std::floor(ry1) + 0.5f;
+                }
+                ctx->DrawRectangle(D2D1::RectF(rx0, ry0, rx1, ry1), activeBrush, strokeW);
+            }
+
+            activeBrush->SetColor(brushColor);
+        };
+
+        if (snap.RenderGlyphBounds && !snap.Bounds.DrawLinesOverGlyph)
+            drawGlyphBounds();
+
+        ctx->SetTransform(transform);
 
         TextRenderParameters renderParams;
         renderParams.ForegroundBrush = activeBrush;
@@ -866,6 +1356,9 @@ namespace
         {
             CoreDWTextServices::DrawTextLayout(ctx, snap.TextLayout.Get(), { static_cast<float>(left), static_cast<float>(top) }, renderParams);
         }
+
+        if (snap.RenderGlyphBounds && snap.Bounds.DrawLinesOverGlyph)
+            drawGlyphBounds();
     }
 
     bool RenderSnapshotOffDevice(const DirectTextRenderSnapshot& snap, std::vector<uint8_t>& outPixels, UINT32& outPitch)
@@ -1120,8 +1613,13 @@ void DirectText::RenderToSurface(Windows::Foundation::Size finalSize)
 
     float dpiScale = CompositionDeviceManager::GetDpiScale(this->Dispatcher);
 
+    bool renderBounds = RenderGlyphBounds;
+    bool trimLeading = TrimLeadingLineGap;
+    bool fitToBounds = IsCharacterFitEnabled || renderBounds;
+    UpdateRootHitTestBackground();
+
     float overL = 0.0f, overT = 0.0f, overR = 0.0f, overB = 0.0f;
-    if (IsOverwriteCompensationEnabled && !IsCharacterFitEnabled && GlyphIndex < 0)
+    if (IsOverwriteCompensationEnabled && !fitToBounds && GlyphIndex < 0)
     {
         overL = (std::max)(0.0f, layoutBounds.Left - drawBounds.Left);
         overT = (std::max)(0.0f, layoutBounds.Top - drawBounds.Top);
@@ -1155,7 +1653,12 @@ void DirectText::RenderToSurface(Windows::Foundation::Size finalSize)
             GetForegroundColor());
     };
 
-    if (!m_needsRender && m_drawingSurface != nullptr && m_renderedColor == renderColor &&
+    bool sizeChangedForFit = fitToBounds &&
+        (m_spriteVisual == nullptr ||
+         std::abs(m_spriteVisual->Size.x - surfaceW) > 0.25f ||
+         std::abs(m_spriteVisual->Size.y - surfaceH) > 0.25f);
+
+    if (!m_needsRender && !sizeChangedForFit && m_drawingSurface != nullptr && m_renderedColor == renderColor &&
         m_renderedWidth >= requiredWidth && m_renderedHeight >= requiredHeight &&
         m_renderedWidth <= requiredWidth + 64 && m_renderedHeight <= requiredHeight + 64)
     {
@@ -1253,8 +1756,158 @@ void DirectText::RenderToSurface(Windows::Foundation::Size finalSize)
     snapshot.PadRight = (std::max)(0.0, padding.Right);
     snapshot.PadBottom = (std::max)(0.0, padding.Bottom);
     snapshot.GlyphIndex = GlyphIndex;
-    snapshot.IsCharacterFitEnabled = IsCharacterFitEnabled;
+    snapshot.IsCharacterFitEnabled = fitToBounds;
+    snapshot.RenderGlyphBounds = renderBounds;
+    snapshot.TrimLeadingLineGap = trimLeading;
+    snapshot.IsSingleChar = m_isSingleChar;
     snapshot.RenderColor = renderColor;
+
+    if (renderBounds || trimLeading)
+    {
+        snapshot.Bounds.BaselineY = m_metricBaselineY;
+        snapshot.Bounds.AscentY = m_metricAscentY;
+        snapshot.Bounds.CapHeightY = m_metricCapHeightY;
+        snapshot.Bounds.XHeightY = m_metricXHeightY;
+        snapshot.Bounds.DescentY = m_metricDescentY;
+        snapshot.Bounds.HasCapHeight = m_hasCapHeight;
+        snapshot.Bounds.HasXHeight = m_hasXHeight;
+    }
+
+    if (renderBounds)
+    {
+        auto extractBrushColor = [](SolidColorBrush^ brush, const D2D1_COLOR_F& fallback) -> D2D1_COLOR_F
+        {
+            if (brush == nullptr)
+                return fallback;
+            auto c = brush->Color;
+            return D2D1::ColorF(c.R / 255.0f, c.G / 255.0f, c.B / 255.0f, (c.A / 255.0f) * static_cast<float>(brush->Opacity));
+        };
+
+        auto opts = GlyphBoundsOptions;
+
+        if (opts != nullptr)
+        {
+            snapshot.Bounds.ShowAscent = opts->ShowAscent;
+            snapshot.Bounds.ShowCapHeight = opts->ShowCapHeight;
+            snapshot.Bounds.ShowXHeight = opts->ShowXHeight;
+            snapshot.Bounds.ShowBaseline = opts->ShowBaseline;
+            snapshot.Bounds.ShowDescent = opts->ShowDescent;
+            snapshot.Bounds.ShowAdvanceBounds = opts->ShowAdvanceBounds;
+            snapshot.Bounds.ShowInkBounds = opts->ShowInkBounds;
+            snapshot.Bounds.DrawLinesOverGlyph = opts->DrawLinesOverGlyph;
+            snapshot.Bounds.LineThickness = opts->LineThickness > 0.0 ? opts->LineThickness : 1.0;
+
+            snapshot.Bounds.AscentColor = extractBrushColor(opts->AscentBrush, snapshot.Bounds.AscentColor);
+            snapshot.Bounds.CapHeightColor = extractBrushColor(opts->CapHeightBrush, snapshot.Bounds.CapHeightColor);
+            snapshot.Bounds.XHeightColor = extractBrushColor(opts->XHeightBrush, snapshot.Bounds.XHeightColor);
+            snapshot.Bounds.BaselineColor = extractBrushColor(opts->BaselineBrush, snapshot.Bounds.BaselineColor);
+            snapshot.Bounds.DescentColor = extractBrushColor(opts->DescentBrush, snapshot.Bounds.DescentColor);
+            snapshot.Bounds.AdvanceBoundsColor = extractBrushColor(opts->AdvanceBoundsBrush, snapshot.Bounds.AdvanceBoundsColor);
+            snapshot.Bounds.InkBoundsColor = extractBrushColor(opts->InkBoundsBrush, snapshot.Bounds.InkBoundsColor);
+        }
+
+        // Compute DIP-space hit targets matching RenderSnapshotToContext so pointer hover tooltips
+        // accurately identify each visible measurement line.
+        m_boundsHitTargets.clear();
+        m_boundsHitTolerance = (std::max)(6.0, snapshot.Bounds.LineThickness * 2.0);
+
+        double padX = (std::max)(6.0, static_cast<double>(actualW) * 0.04);
+        double padY = (std::max)(6.0, static_cast<double>(actualH) * 0.04);
+        double availW = (std::max)(1.0, static_cast<double>(actualW) - padX * 2.0);
+        double availH = (std::max)(1.0, static_cast<double>(actualH) - padY * 2.0);
+
+        double totalW = (std::max)({ m_minWidth, static_cast<double>(layoutBounds.Width), static_cast<double>(drawBounds.Width), static_cast<double>(drawBounds.Right - (std::min)(0.0f, drawBounds.Left)) });
+        double totalTop = trimLeading
+            ? (std::min)(static_cast<double>(drawBounds.Top), snapshot.Bounds.AscentY)
+            : (std::min)({ static_cast<double>(layoutBounds.Top), static_cast<double>(drawBounds.Top), snapshot.Bounds.AscentY });
+        double totalBottom = trimLeading
+            ? (std::max)(static_cast<double>(drawBounds.Bottom), snapshot.Bounds.DescentY)
+            : (std::max)({ static_cast<double>(layoutBounds.Bottom), static_cast<double>(drawBounds.Bottom), snapshot.Bounds.DescentY });
+        double totalH = (std::max)(1.0, totalBottom - totalTop);
+
+        double scale = (std::min)(availW / totalW, availH / totalH);
+        if (scale <= 0.0)
+            scale = 1.0;
+
+        double boxW = actualW / scale;
+        double boxH = actualH / scale;
+        double padLeftUnits = padX / scale;
+        double padTopUnits = padY / scale;
+        double maxRightUnits = boxW - padLeftUnits;
+        double maxBottomUnits = boxH - padTopUnits;
+
+        double left = 0.0;
+        if (layoutBounds.Width > 0)
+        {
+            left = (boxW - layoutBounds.Width) / 2.0 - layoutBounds.Left;
+            if (left + drawBounds.Left < padLeftUnits)
+                left = padLeftUnits - drawBounds.Left;
+            if (left + drawBounds.Right > maxRightUnits)
+                left = maxRightUnits - drawBounds.Right;
+        }
+        else
+        {
+            left = -drawBounds.Left + (boxW - drawBounds.Width) / 2.0;
+        }
+
+        double top = 0.0;
+        if (trimLeading)
+        {
+            double refTop = snapshot.Bounds.AscentY;
+            double refBottom = snapshot.Bounds.DescentY;
+            top = (boxH - (refBottom - refTop)) / 2.0 - refTop;
+        }
+        else if (m_isSingleChar)
+        {
+            double refTop = (std::min)(static_cast<double>(layoutBounds.Top), snapshot.Bounds.AscentY);
+            double refBottom = (std::max)(static_cast<double>(layoutBounds.Bottom), snapshot.Bounds.DescentY);
+            top = (boxH - (refBottom - refTop)) / 2.0 - refTop;
+        }
+        else
+        {
+            top = (boxH - layoutBounds.Height) / 2.0 - layoutBounds.Top;
+        }
+
+        if (top + drawBounds.Top < padTopUnits)
+            top = padTopUnits - drawBounds.Top;
+        if (top + drawBounds.Bottom > maxBottomUnits)
+            top = maxBottomUnits - drawBounds.Bottom;
+
+        auto getLabel = [&](Platform::String^ custom, const wchar_t* fallback) -> Platform::String^
+        {
+            return (custom != nullptr && custom->Length() > 0) ? custom : ref new Platform::String(fallback);
+        };
+
+        if (snapshot.Bounds.ShowAscent && snapshot.Bounds.AscentColor.a > 0.0f)
+            m_boundsHitTargets.push_back({ 0, (top + snapshot.Bounds.AscentY) * scale, {}, getLabel(opts != nullptr ? opts->AscentLabel : nullptr, L"Ascent") });
+        if (snapshot.Bounds.ShowCapHeight && snapshot.Bounds.HasCapHeight && snapshot.Bounds.CapHeightColor.a > 0.0f)
+            m_boundsHitTargets.push_back({ 0, (top + snapshot.Bounds.CapHeightY) * scale, {}, getLabel(opts != nullptr ? opts->CapHeightLabel : nullptr, L"Cap Height") });
+        if (snapshot.Bounds.ShowXHeight && snapshot.Bounds.HasXHeight && snapshot.Bounds.XHeightColor.a > 0.0f)
+            m_boundsHitTargets.push_back({ 0, (top + snapshot.Bounds.XHeightY) * scale, {}, getLabel(opts != nullptr ? opts->XHeightLabel : nullptr, L"x-Height") });
+        if (snapshot.Bounds.ShowBaseline && snapshot.Bounds.BaselineColor.a > 0.0f)
+            m_boundsHitTargets.push_back({ 0, (top + snapshot.Bounds.BaselineY) * scale, {}, getLabel(opts != nullptr ? opts->BaselineLabel : nullptr, L"Baseline") });
+        if (snapshot.Bounds.ShowDescent && snapshot.Bounds.DescentColor.a > 0.0f)
+            m_boundsHitTargets.push_back({ 0, (top + snapshot.Bounds.DescentY) * scale, {}, getLabel(opts != nullptr ? opts->DescentLabel : nullptr, L"Descent") });
+        if (snapshot.Bounds.ShowAdvanceBounds && snapshot.Bounds.AdvanceBoundsColor.a > 0.0f)
+        {
+            auto advLabel = getLabel(opts != nullptr ? opts->AdvanceBoundsLabel : nullptr, L"Advance Bounds");
+            m_boundsHitTargets.push_back({ 1, (left + layoutBounds.Left) * scale, {}, advLabel });
+            m_boundsHitTargets.push_back({ 1, (left + layoutBounds.Right) * scale, {}, advLabel });
+        }
+        if (snapshot.Bounds.ShowInkBounds && snapshot.Bounds.InkBoundsColor.a > 0.0f)
+        {
+            float rx0 = static_cast<float>((left + drawBounds.Left) * scale);
+            float ry0 = static_cast<float>((top + drawBounds.Top) * scale);
+            float rw = static_cast<float>(drawBounds.Width * scale);
+            float rh = static_cast<float>(drawBounds.Height * scale);
+            m_boundsHitTargets.push_back({ 2, 0.0, Rect(rx0, ry0, (std::max)(0.0f, rw), (std::max)(0.0f, rh)), getLabel(opts != nullptr ? opts->InkBoundsLabel : nullptr, L"Ink Bounds") });
+        }
+    }
+    else
+    {
+        m_boundsHitTargets.clear();
+        HideBoundsToolTip();
+    }
     snapshot.UseColorQueue = renderColor || (FontFace != nullptr && FontFace->Properties != nullptr && FontFace->Properties->IsExpensive);
     snapshot.DeferredLayout = m_deferredLayout;
     snapshot.IsColorFontEnabled = IsColorFontEnabled;

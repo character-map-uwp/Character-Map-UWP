@@ -1,4 +1,4 @@
-﻿using CharacterMap.Controls;
+using CharacterMap.Controls;
 using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -111,7 +111,7 @@ public sealed partial class SettingsView : ViewBase
         UpdateAnimation();
         _navHelper.Deactivate();
 
-        TitleBarHelper.RestoreDefaultTitleBar();
+        Presenter.RestoreTitleBar();
         IsOpen = false;
         this.Visibility = Visibility.Collapsed;
         ViewMessenger.Send(new ModalClosedMessage());

@@ -77,6 +77,8 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
             TitleBarHelper.SetTitle(Presenter.Title);
             Register<AppNotificationMessage>(OnNotificationMessage);
         }
+        else
+            Presenter.SetTitleBar();
         
         Register<CollectionsUpdatedMessage>(HandleMessage);
         Register<CollectionRequestedMessage>(HandleMessage);
@@ -151,7 +153,7 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
 
         // 10. Title bar cleanup
         if (IsStandalone is false)
-            TitleBarHelper.RestoreDefaultTitleBar();
+            Presenter.RestoreTitleBar();
 
         // 11. Teardown ViewModel
         if (ViewModel is not null)

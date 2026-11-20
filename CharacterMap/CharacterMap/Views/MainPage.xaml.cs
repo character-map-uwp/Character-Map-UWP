@@ -1283,6 +1283,7 @@ public partial class MainPresenter : ContentControl
         if (newValue == nameof(MainPage))
         {
             Content = _mainContent;
+            TitleBarHelper.RestoreDefaultTitleBar();
             CompositionFactory.PlayEntrance([_mainContent], 0, 200);
         }
         else if (newValue == nameof(QuickCompareView))
