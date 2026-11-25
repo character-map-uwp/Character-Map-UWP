@@ -72,9 +72,11 @@ public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPrese
         VisualStateManager.GoToState(this, NormalState.Name, false);
         _navHelper.Activate();
 
+        ViewModel.WindowTitle = Presenter.Title;
+
         if (IsStandalone)
         {
-            TitleBarHelper.SetTitle(Presenter.Title);
+            //TitleBarHelper.SetTitle(Presenter.Title);
             Register<AppNotificationMessage>(OnNotificationMessage);
         }
         else

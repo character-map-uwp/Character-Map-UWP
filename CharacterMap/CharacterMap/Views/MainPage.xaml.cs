@@ -1261,13 +1261,12 @@ public partial class MainPage
 
 [DependencyProperty<string>("Target")]
 [DependencyProperty<MainViewModel>("ViewModel")]
+[DependencyProperty<MainPage>]
 public partial class MainPresenter : ContentControl
 {
     public ICommand SettingsRequestedCommand;
 
     private FrameworkElement _mainContent = null;
-
-    private MainPage MainPage => field ??= this.GetAncestorsOfType<MainPage>().FirstOrDefault();
 
     public event EventHandler<string> Navigated;
 
@@ -1276,6 +1275,12 @@ public partial class MainPresenter : ContentControl
         HorizontalContentAlignment = HorizontalAlignment.Stretch;
         VerticalContentAlignment = VerticalAlignment.Stretch;
         Properties.SetClipToBounds(this, true);
+    }
+
+    partial void OnMainPageChanged(MainPage o, MainPage n)
+    {
+        _mainContent = n.GetFirstDescendantOfType<ExtendedSplitView>();
+        n.ViewModel.IsActiveView = true;
     }
 
     partial void OnTargetChanged(string oldValue, string newValue)
@@ -1317,15 +1322,31 @@ public partial class MainPresenter : ContentControl
     protected override void OnContentChanged(object oldContent, object newContent)
     {
         if (oldContent is null && newContent is ExtendedSplitView nc)
-        {
-            _mainContent = nc;
-        }
+            _mainContent ??= nc;
 
         if (oldContent is ExtendedSplitView esv)
-        {
             esv.UpdateAnimationStates(false);
-        }
+
+        if (GetVM(oldContent) is { } ov)
+            ov.IsActiveView = false;
 
         base.OnContentChanged(oldContent, newContent);
+
+        if (GetVM(newContent) is { } nv)
+            nv.IsActiveView = true;
+
+
+
+
+        ViewModelBase GetVM(object obj)
+        {
+            if (obj is ExtendedSplitView e)
+                return MainPage?.ViewModel;
+
+            if (obj is ViewBase view)
+                return view.GetViewModel();
+
+            return null;
+        }
     }
 }

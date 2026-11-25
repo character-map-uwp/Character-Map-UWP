@@ -26,6 +26,8 @@ public sealed partial class CalligraphyView : ViewBase, IInAppNotificationPresen
             return;
 
         ContentRoot.Opacity = 0;
+
+        ViewModel.WindowTitle = Presenter.Title;
     }
 
     protected override void OnLoading()
@@ -47,7 +49,6 @@ public sealed partial class CalligraphyView : ViewBase, IInAppNotificationPresen
 
         if (IsStandalone)
         {
-            TitleBarHelper.SetTitle(Presenter.Title);
             Register<AppNotificationMessage>(OnNotificationMessage);
         }
         else

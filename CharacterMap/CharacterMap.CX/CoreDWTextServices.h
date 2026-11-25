@@ -21,6 +21,54 @@ struct ICompositionDrawingSurfaceInterop;
 
 namespace CharacterMapCX
 {
+    namespace Controls
+    {
+        ref class GlyphBoundsOptions;
+    }
+
+    struct GlyphBoundsRenderData
+    {
+        bool ShowAscent = true;
+        bool ShowCapHeight = true;
+        bool ShowXHeight = false;
+        bool ShowBaseline = true;
+        bool ShowDescent = true;
+        bool ShowAdvanceBounds = false;
+        bool ShowInkBounds = false;
+        bool DrawLinesOverGlyph = true;
+        bool HasCapHeight = false;
+        bool HasXHeight = false;
+        double LineThickness = 1.5;
+        double BaselineY = 0.0;
+        double AscentY = 0.0;
+        double CapHeightY = 0.0;
+        double XHeightY = 0.0;
+        double DescentY = 0.0;
+        D2D1_COLOR_F AscentColor = D2D1::ColorF(16.0f / 255.0f, 124.0f / 255.0f, 16.0f / 255.0f, 1.0f);
+        D2D1_COLOR_F CapHeightColor = D2D1::ColorF(59.0f / 255.0f, 130.0f / 255.0f, 246.0f / 255.0f, 1.0f);
+        D2D1_COLOR_F XHeightColor = D2D1::ColorF(0.0f / 255.0f, 183.0f / 255.0f, 195.0f / 255.0f, 1.0f);
+        D2D1_COLOR_F BaselineColor = D2D1::ColorF(224.0f / 255.0f, 82.0f / 255.0f, 134.0f / 255.0f, 1.0f);
+        D2D1_COLOR_F DescentColor = D2D1::ColorF(242.0f / 255.0f, 140.0f / 255.0f, 56.0f / 255.0f, 1.0f);
+        D2D1_COLOR_F AdvanceBoundsColor = D2D1::ColorF(0.5f, 0.5f, 0.5f, 0.5f);
+        D2D1_COLOR_F InkBoundsColor = D2D1::ColorF(232.0f / 255.0f, 17.0f / 255.0f, 35.0f / 255.0f, 0.5f);
+    };
+
+    struct GlyphBoundsDrawContext
+    {
+        float OffsetX = 0.0f;
+        float OffsetY = 0.0f;
+        float SurfaceWidthPx = 0.0f;
+        float SurfaceHeightPx = 0.0f;
+        float DpiScale = 1.0f;
+        double OriginX = 0.0;
+        double OriginY = 0.0;
+        double ScaleX = 1.0;
+        double ScaleY = 1.0;
+        Windows::Foundation::Rect AdvanceBounds{};
+        Windows::Foundation::Rect InkBounds{};
+        bool HasInkBounds = true;
+    };
+
     struct TextLayoutParameters
     {
         Platform::String^ Text = nullptr;
@@ -150,6 +198,40 @@ namespace CharacterMapCX
 
         // Releases cached off-device target/staging bitmaps across all pooled renderers
         static void TrimOffDeviceRenderers();
+
+        // Extracts FamilyName and FaceName from a DWriteFontFace^ (nullptr if unavailable).
+        static void GetFontIdentity(
+            DWriteFontFace^ fontFace,
+            Platform::String^* outFamilyName,
+            Platform::String^* outFaceName);
+
+        // Compares a previously shown (FamilyName, FaceName) pair against a current DWriteFontFace^.
+        // Returns true when FamilyName or FaceName differs, ignoring variable-axis variants of the same face.
+        static bool HasFontIdentityChanged(
+            Platform::String^ lastFamilyName,
+            Platform::String^ lastFaceName,
+            DWriteFontFace^ currentFontFace);
+
+        // Populates visibility, thickness, draw order, and colors from a GlyphBoundsOptions^ object.
+        static void PopulateGlyphBoundsOptions(
+            Controls::GlyphBoundsOptions^ options,
+            GlyphBoundsRenderData& outData);
+
+        // Populates Ascent/CapHeight/x-Height/Baseline/Descent Y positions (in layout DIPs relative to ascent top)
+        // from DWRITE_FONT_METRICS and fontSize.
+        static void PopulateGlyphBoundsMetrics(
+            const DWRITE_FONT_METRICS& fontMetrics,
+            float fontSize,
+            double baselineY,
+            GlyphBoundsRenderData& outData);
+
+        // Renders glyph metric guide lines, advance bounds, and ink bounds onto a D2D1 device context.
+        static void DrawGlyphBounds(
+            ID2D1DeviceContext* context,
+            ID2D1SolidColorBrush* brush,
+            const D2D1_COLOR_F& restoreColor,
+            const GlyphBoundsRenderData& bounds,
+            const GlyphBoundsDrawContext& drawCtx);
     };
 
     struct BackgroundRenderWorkItem

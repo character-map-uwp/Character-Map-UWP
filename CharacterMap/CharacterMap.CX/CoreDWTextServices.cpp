@@ -1189,3 +1189,158 @@ void BackgroundRenderQueue::SpawnWorker()
         }
     });
 }
+
+void CoreDWTextServices::GetFontIdentity(
+    DWriteFontFace^ fontFace,
+    Platform::String^* outFamilyName,
+    Platform::String^* outFaceName)
+{
+    if (outFamilyName != nullptr)
+        *outFamilyName = (fontFace != nullptr && fontFace->Properties != nullptr) ? fontFace->Properties->FamilyName : nullptr;
+    if (outFaceName != nullptr)
+        *outFaceName = (fontFace != nullptr && fontFace->Properties != nullptr) ? fontFace->Properties->FaceName : nullptr;
+}
+
+bool CoreDWTextServices::HasFontIdentityChanged(
+    Platform::String^ lastFamilyName,
+    Platform::String^ lastFaceName,
+    DWriteFontFace^ currentFontFace)
+{
+    Platform::String^ currentFamily = nullptr;
+    Platform::String^ currentFace = nullptr;
+    GetFontIdentity(currentFontFace, &currentFamily, &currentFace);
+
+    bool sameFamily = (lastFamilyName == currentFamily) ||
+        (lastFamilyName != nullptr && currentFamily != nullptr &&
+         wcscmp(lastFamilyName->Data(), currentFamily->Data()) == 0);
+    bool sameFace = (lastFaceName == currentFace) ||
+        (lastFaceName != nullptr && currentFace != nullptr &&
+         wcscmp(lastFaceName->Data(), currentFace->Data()) == 0);
+
+    return !sameFamily || !sameFace;
+}
+
+void CoreDWTextServices::PopulateGlyphBoundsOptions(
+    Controls::GlyphBoundsOptions^ options,
+    GlyphBoundsRenderData& outData)
+{
+    if (options == nullptr)
+        return;
+
+    auto extractBrushColor = [](Windows::UI::Xaml::Media::SolidColorBrush^ brush, const D2D1_COLOR_F& fallback) -> D2D1_COLOR_F
+    {
+        if (brush == nullptr)
+            return fallback;
+        auto c = brush->Color;
+        return D2D1::ColorF(c.R / 255.0f, c.G / 255.0f, c.B / 255.0f, (c.A / 255.0f) * static_cast<float>(brush->Opacity));
+    };
+
+    outData.ShowAscent = options->ShowAscent;
+    outData.ShowCapHeight = options->ShowCapHeight;
+    outData.ShowXHeight = options->ShowXHeight;
+    outData.ShowBaseline = options->ShowBaseline;
+    outData.ShowDescent = options->ShowDescent;
+    outData.ShowAdvanceBounds = options->ShowAdvanceBounds;
+    outData.ShowInkBounds = options->ShowInkBounds;
+    outData.DrawLinesOverGlyph = options->DrawLinesOverGlyph;
+    outData.LineThickness = options->LineThickness > 0.0 ? options->LineThickness : 1.0;
+
+    outData.AscentColor = extractBrushColor(options->AscentBrush, outData.AscentColor);
+    outData.CapHeightColor = extractBrushColor(options->CapHeightBrush, outData.CapHeightColor);
+    outData.XHeightColor = extractBrushColor(options->XHeightBrush, outData.XHeightColor);
+    outData.BaselineColor = extractBrushColor(options->BaselineBrush, outData.BaselineColor);
+    outData.DescentColor = extractBrushColor(options->DescentBrush, outData.DescentColor);
+    outData.AdvanceBoundsColor = extractBrushColor(options->AdvanceBoundsBrush, outData.AdvanceBoundsColor);
+    outData.InkBoundsColor = extractBrushColor(options->InkBoundsBrush, outData.InkBoundsColor);
+}
+
+void CoreDWTextServices::PopulateGlyphBoundsMetrics(
+    const DWRITE_FONT_METRICS& fontMetrics,
+    float fontSize,
+    double baselineY,
+    GlyphBoundsRenderData& outData)
+{
+    double designUnitsPerEm = fontMetrics.designUnitsPerEm > 0 ? static_cast<double>(fontMetrics.designUnitsPerEm) : 2048.0;
+    double emScale = static_cast<double>(fontSize) / designUnitsPerEm;
+
+    outData.BaselineY = baselineY;
+    outData.AscentY = baselineY - static_cast<double>(fontMetrics.ascent) * emScale;
+    outData.DescentY = baselineY + static_cast<double>(fontMetrics.descent) * emScale;
+    outData.HasCapHeight = fontMetrics.capHeight > 0;
+    outData.CapHeightY = outData.HasCapHeight ? (baselineY - static_cast<double>(fontMetrics.capHeight) * emScale) : outData.AscentY;
+    outData.HasXHeight = fontMetrics.xHeight > 0;
+    outData.XHeightY = outData.HasXHeight ? (baselineY - static_cast<double>(fontMetrics.xHeight) * emScale) : outData.BaselineY;
+}
+
+void CoreDWTextServices::DrawGlyphBounds(
+    ID2D1DeviceContext* context,
+    ID2D1SolidColorBrush* brush,
+    const D2D1_COLOR_F& restoreColor,
+    const GlyphBoundsRenderData& bounds,
+    const GlyphBoundsDrawContext& drawCtx)
+{
+    if (context == nullptr || brush == nullptr)
+        return;
+
+    context->SetTransform(D2D1::Matrix3x2F::Translation(drawCtx.OffsetX, drawCtx.OffsetY));
+    float strokeW = (std::max)(1.0f, static_cast<float>(bounds.LineThickness * drawCtx.DpiScale));
+    float surfW = drawCtx.SurfaceWidthPx;
+    float surfH = drawCtx.SurfaceHeightPx;
+
+    auto drawHLine = [&](double layoutY, const D2D1_COLOR_F& lineColor)
+    {
+        if (lineColor.a <= 0.0f)
+            return;
+        float py = static_cast<float>((drawCtx.OriginY + layoutY) * drawCtx.ScaleY);
+        if (strokeW <= 2.0f)
+            py = std::floor(py) + 0.5f;
+        brush->SetColor(lineColor);
+        context->DrawLine(D2D1::Point2F(0.0f, py), D2D1::Point2F(surfW, py), brush, strokeW);
+    };
+
+    if (bounds.ShowAscent)
+        drawHLine(bounds.AscentY, bounds.AscentColor);
+    if (bounds.ShowCapHeight && bounds.HasCapHeight)
+        drawHLine(bounds.CapHeightY, bounds.CapHeightColor);
+    if (bounds.ShowXHeight && bounds.HasXHeight)
+        drawHLine(bounds.XHeightY, bounds.XHeightColor);
+    if (bounds.ShowBaseline)
+        drawHLine(bounds.BaselineY, bounds.BaselineColor);
+    if (bounds.ShowDescent)
+        drawHLine(bounds.DescentY, bounds.DescentColor);
+
+    if (bounds.ShowAdvanceBounds && bounds.AdvanceBoundsColor.a > 0.0f)
+    {
+        Windows::Foundation::Rect adv = drawCtx.AdvanceBounds;
+        brush->SetColor(bounds.AdvanceBoundsColor);
+        float x0 = static_cast<float>((drawCtx.OriginX + adv.Left) * drawCtx.ScaleX);
+        float x1 = static_cast<float>((drawCtx.OriginX + adv.Right) * drawCtx.ScaleX);
+        if (strokeW <= 2.0f)
+        {
+            x0 = std::floor(x0) + 0.5f;
+            x1 = std::floor(x1) + 0.5f;
+        }
+        context->DrawLine(D2D1::Point2F(x0, 0.0f), D2D1::Point2F(x0, surfH), brush, strokeW);
+        context->DrawLine(D2D1::Point2F(x1, 0.0f), D2D1::Point2F(x1, surfH), brush, strokeW);
+    }
+
+    if (bounds.ShowInkBounds && drawCtx.HasInkBounds && bounds.InkBoundsColor.a > 0.0f)
+    {
+        Windows::Foundation::Rect ink = drawCtx.InkBounds;
+        brush->SetColor(bounds.InkBoundsColor);
+        float rx0 = static_cast<float>((drawCtx.OriginX + ink.Left) * drawCtx.ScaleX);
+        float ry0 = static_cast<float>((drawCtx.OriginY + ink.Top) * drawCtx.ScaleY);
+        float rx1 = static_cast<float>((drawCtx.OriginX + ink.Right) * drawCtx.ScaleX);
+        float ry1 = static_cast<float>((drawCtx.OriginY + ink.Bottom) * drawCtx.ScaleY);
+        if (strokeW <= 2.0f)
+        {
+            rx0 = std::floor(rx0) + 0.5f;
+            ry0 = std::floor(ry0) + 0.5f;
+            rx1 = std::floor(rx1) + 0.5f;
+            ry1 = std::floor(ry1) + 0.5f;
+        }
+        context->DrawRectangle(D2D1::RectF(rx0, ry0, rx1, ry1), brush, strokeW);
+    }
+
+    brush->SetColor(restoreColor);
+}

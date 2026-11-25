@@ -37,6 +37,7 @@ DependencyProperty^ FontGlyphs::_StretchDirectionProperty = nullptr;
 DependencyProperty^ FontGlyphs::_TypographyProperty = nullptr;
 DependencyProperty^ FontGlyphs::_IsTextShapingEnabledProperty = nullptr;
 DependencyProperty^ FontGlyphs::_IsBackgroundRenderEnabledProperty = nullptr;
+DependencyProperty^ FontGlyphs::_GlyphBoundsOptionsProperty = nullptr;
 
 static std::atomic<int32> s_activeSurfaceCount{ 0 };
 static std::atomic<uint64> s_activeSurfaceBytes{ 0 };
@@ -108,6 +109,8 @@ FontGlyphs::~FontGlyphs()
     ++m_renderGeneration;
     try
     {
+        UpdateGlyphBoundsOptionsSubscription(nullptr);
+
         if (m_unloadedToken.Value != 0)
         {
             this->Unloaded -= m_unloadedToken;
@@ -265,6 +268,11 @@ void FontGlyphs::RegisterDependencyProperties()
 
     if (_IsBackgroundRenderEnabledProperty == nullptr)
         _IsBackgroundRenderEnabledProperty = DependencyProperty::Register("IsBackgroundRenderEnabled", bool::typeid, FontGlyphs::typeid, ref new PropertyMetadata((bool)false, layoutCallback));
+
+    if (_GlyphBoundsOptionsProperty == nullptr)
+        _GlyphBoundsOptionsProperty = DependencyProperty::Register("GlyphBoundsOptions", Controls::GlyphBoundsOptions::typeid, FontGlyphs::typeid, ref new PropertyMetadata(nullptr, ref new PropertyChangedCallback(&FontGlyphs::OnGlyphBoundsOptionsChanged)));
+
+    Controls::GlyphBoundsOptions::RegisterDependencyProperties();
 }
 
 void FontGlyphs::OnLoaded(Platform::Object^ sender, RoutedEventArgs^ e)
@@ -310,6 +318,7 @@ void FontGlyphs::OnUnloaded(Platform::Object^ sender, RoutedEventArgs^ e)
     m_lastShownFaceName = nullptr;
     m_dpiScale = 0.0f;
     m_lastBgArrangeSize = { 0, 0 };
+    m_lastSyncArrangeSize = { 0, 0 };
     m_isRenderDirty = true;
 }
 
@@ -389,7 +398,7 @@ UINT32 FontGlyphs::GetForegroundColorKey()
         | static_cast<UINT32>(c.B);
 }
 
-bool FontGlyphs::ShouldRenderColor()
+bool FontGlyphs::ShouldEnableColorGlyphs()
 {
     if (!IsColorFontEnabled)
         return false;
@@ -398,6 +407,52 @@ bool FontGlyphs::ShouldRenderColor()
         return FontFace->Properties->IsColorFont;
 
     return false;
+}
+
+bool FontGlyphs::ShouldRenderColor()
+{
+    if (GlyphBoundsOptions != nullptr)
+        return true;
+
+    return ShouldEnableColorGlyphs();
+}
+
+void FontGlyphs::OnGlyphBoundsOptionsChanged(DependencyObject^ d, DependencyPropertyChangedEventArgs^ e)
+{
+    if (auto glyphs = dynamic_cast<FontGlyphs^>(d))
+    {
+        glyphs->UpdateGlyphBoundsOptionsSubscription(dynamic_cast<Controls::GlyphBoundsOptions^>(e->NewValue));
+        if (!glyphs->BlockUpdates)
+            glyphs->InvalidateRenderOnly();
+    }
+}
+
+void FontGlyphs::UpdateGlyphBoundsOptionsSubscription(Controls::GlyphBoundsOptions^ newOptions)
+{
+    if (m_subscribedBoundsOptions == newOptions)
+        return;
+
+    if (m_subscribedBoundsOptions != nullptr && m_glyphBoundsOptionsToken.Value != 0)
+    {
+        try { m_subscribedBoundsOptions->Changed -= m_glyphBoundsOptionsToken; }
+        catch (...) {}
+        m_glyphBoundsOptionsToken.Value = 0;
+    }
+
+    m_subscribedBoundsOptions = newOptions;
+    if (newOptions != nullptr)
+    {
+        Platform::WeakReference weakThis(this);
+        m_glyphBoundsOptionsToken = newOptions->Changed += ref new Windows::Foundation::EventHandler<Platform::Object^>(
+            [weakThis](Platform::Object^, Platform::Object^)
+            {
+                if (auto p = weakThis.Resolve<FontGlyphs>())
+                {
+                    if (!p->BlockUpdates)
+                        p->InvalidateRenderOnly();
+                }
+            });
+    }
 }
 
 void FontGlyphs::OnPropertyChanged(DependencyObject^ d, DependencyPropertyChangedEventArgs^ e)
@@ -444,7 +499,7 @@ void FontGlyphs::ShowVisualIfCurrent(uint64_t gen)
 
 void FontGlyphs::UpdateForground()
 {
-    if (m_maskBrush != nullptr && m_colorBrush != nullptr)
+    if (!ShouldRenderColor() && !m_renderedColor && m_maskBrush != nullptr && m_colorBrush != nullptr)
     {
         auto visual = ElementCompositionPreview::GetElementVisual(this);
         if (visual != nullptr)
@@ -460,18 +515,7 @@ void FontGlyphs::UpdateForground()
 
 bool FontGlyphs::HasFontChangedForVisibility()
 {
-    auto fontFace = FontFace;
-    Platform::String^ currentFamily = (fontFace != nullptr && fontFace->Properties != nullptr) ? fontFace->Properties->FamilyName : nullptr;
-    Platform::String^ currentFace = (fontFace != nullptr && fontFace->Properties != nullptr) ? fontFace->Properties->FaceName : nullptr;
-
-    bool sameFamily = (m_lastShownFamilyName == currentFamily) ||
-        (m_lastShownFamilyName != nullptr && currentFamily != nullptr &&
-         wcscmp(m_lastShownFamilyName->Data(), currentFamily->Data()) == 0);
-    bool sameFace = (m_lastShownFaceName == currentFace) ||
-        (m_lastShownFaceName != nullptr && currentFace != nullptr &&
-         wcscmp(m_lastShownFaceName->Data(), currentFace->Data()) == 0);
-
-    return !sameFamily || !sameFace;
+    return CoreDWTextServices::HasFontIdentityChanged(m_lastShownFamilyName, m_lastShownFaceName, FontFace);
 }
 
 void FontGlyphs::InvalidateLayoutAndRender()
@@ -517,6 +561,7 @@ void FontGlyphs::ParseAndLayoutGlyphs()
 
     DWRITE_FONT_METRICS fontMetrics;
     rawFace->GetMetrics(&fontMetrics);
+    m_fontMetrics = fontMetrics;
 
     float emSize = static_cast<float>(FontSize);
     if (emSize <= 0) emSize = 24.0f;
@@ -1149,12 +1194,6 @@ Size FontGlyphs::ArrangeOverride(Size finalSize)
         m_scale.Height = (std::min)(1.0f, m_scale.Height);
     }
 
-    if (m_isRenderDirty || m_renderedScaleX != m_scale.Width || m_renderedScaleY != m_scale.Height)
-    {
-        m_isRenderDirty = false;
-        RenderGlyphs();
-    }
-
     float scaleX = m_scale.Width > 0.0f ? m_scale.Width : 1.0f;
     float scaleY = m_scale.Height > 0.0f ? m_scale.Height : 1.0f;
 
@@ -1170,7 +1209,7 @@ Size FontGlyphs::ArrangeOverride(Size finalSize)
     // For normal glyphs with advance > 0, center within advance width to preserve natural bearings.
     // For zero-advance glyphs (combining marks / diacritics), center ink bounds so they remain visible.
     double originX = (finalSize.Width - scaledContentWidth) / 2.0;
-    if (m_hasInkBounds)
+    if (m_hasInkBounds && m_designUnitsPerEm > 0)
     {
         double emScale = FontSize / m_designUnitsPerEm;
         double inkLeft = m_designInkLeft * emScale * scaleX;
@@ -1194,7 +1233,7 @@ Size FontGlyphs::ArrangeOverride(Size finalSize)
     // This ensures every glyph shares the exact same baseline (originY + ascent * scaleY),
     // preserving superscripts, subscripts, periods, and descenders in their true typographic positions.
     double originY = (finalSize.Height - scaledContentHeight) / 2.0;
-    if (m_hasInkBounds && m_designInkHeight > 0)
+    if (m_hasInkBounds && m_designInkHeight > 0 && m_designUnitsPerEm > 0)
     {
         double emScale = FontSize / m_designUnitsPerEm;
         double inkTop = m_designInkTop * emScale * scaleY;
@@ -1207,13 +1246,41 @@ Size FontGlyphs::ArrangeOverride(Size finalSize)
             originY = finalSize.Height - (inkTop + inkHeight);
     }
 
-    float posX = (float)(originX - scaledPadLeft);
-    float posY = (float)(originY - scaledPadTop);
+    float dpiScale = CompositionDeviceManager::GetDpiScale(this->Dispatcher);
+    float posX = static_cast<float>(std::round((originX - scaledPadLeft) * dpiScale) / dpiScale);
+    float posY = static_cast<float>(std::round((originY - scaledPadTop) * dpiScale) / dpiScale);
 
-    if (m_spriteVisual != nullptr)
+    if (GlyphBoundsOptions != nullptr)
     {
-        m_spriteVisual->Offset = float3(posX, posY, 0.0f);
-        m_spriteVisual->Size = float2(static_cast<float>(scaledLogicalWidth), static_cast<float>(scaledLogicalHeight));
+        if (m_isRenderDirty || m_renderedScaleX != m_scale.Width || m_renderedScaleY != m_scale.Height ||
+            m_lastSyncArrangeSize.Width != finalSize.Width || m_lastSyncArrangeSize.Height != finalSize.Height ||
+            m_drawingSurface == nullptr || !m_renderedColor)
+        {
+            m_isRenderDirty = false;
+            m_lastSyncArrangeSize = finalSize;
+            RenderGlyphsWithBounds(finalSize, originX, originY);
+        }
+
+        if (m_spriteVisual != nullptr)
+        {
+            m_spriteVisual->Offset = float3(0.0f, 0.0f, 0.0f);
+            m_spriteVisual->Size = float2(finalSize.Width, finalSize.Height);
+        }
+    }
+    else
+    {
+        if (m_isRenderDirty || m_renderedScaleX != m_scale.Width || m_renderedScaleY != m_scale.Height || m_lastSyncArrangeSize.Width > 0.0f)
+        {
+            m_isRenderDirty = false;
+            m_lastSyncArrangeSize = { 0, 0 };
+            RenderGlyphs();
+        }
+
+        if (m_spriteVisual != nullptr)
+        {
+            m_spriteVisual->Offset = float3(posX, posY, 0.0f);
+            m_spriteVisual->Size = float2(static_cast<float>(scaledLogicalWidth), static_cast<float>(scaledLogicalHeight));
+        }
     }
 
     return finalSize;
@@ -1239,6 +1306,9 @@ namespace
         Windows::Foundation::Size FinalSize{};
         float DpiScale = 1.0f;
         bool RenderColor = false;
+        bool EnableColorGlyphs = false;
+        bool HasGlyphBounds = false;
+        GlyphBoundsRenderData Bounds;
         Windows::UI::Color ForegroundColor{};
         LONG RequiredWidth = 0;
         LONG RequiredHeight = 0;
@@ -1250,6 +1320,7 @@ namespace
         std::vector<UINT16> Indices;
         std::vector<FLOAT> Advances;
         std::vector<DWRITE_GLYPH_OFFSET> Offsets;
+        DWRITE_FONT_METRICS FontMetrics{};
         Size ContentSize{ 0, 0 };
         float Baseline = 0.0f;
         float PadLeft = 0.0f;
@@ -1356,6 +1427,7 @@ namespace
 
         DWRITE_FONT_METRICS fontMetrics{};
         rawFace->GetMetrics(&fontMetrics);
+        out.FontMetrics = fontMetrics;
 
         float emSize = job.FontSize > 0.0f ? job.FontSize : 24.0f;
         float designUnitsPerEm = static_cast<float>(fontMetrics.designUnitsPerEm);
@@ -1712,44 +1784,85 @@ namespace
         UINT32 surfW = static_cast<UINT32>(job.RequiredWidth);
         UINT32 surfH = static_cast<UINT32>(job.RequiredHeight);
 
+        GlyphBoundsRenderData boundsData = job.Bounds;
+        GlyphBoundsDrawContext boundsDrawCtx;
+        if (job.HasGlyphBounds)
+        {
+            CoreDWTextServices::PopulateGlyphBoundsMetrics(layout.FontMetrics, job.FontSize, layout.Baseline, boundsData);
+            boundsDrawCtx.SurfaceWidthPx = static_cast<float>(surfW);
+            boundsDrawCtx.SurfaceHeightPx = static_cast<float>(surfH);
+            boundsDrawCtx.DpiScale = dpiScale;
+            boundsDrawCtx.OriginX = originX / scaleX;
+            boundsDrawCtx.OriginY = originY / scaleY;
+            boundsDrawCtx.ScaleX = scaleX * dpiScale;
+            boundsDrawCtx.ScaleY = scaleY * dpiScale;
+            boundsDrawCtx.AdvanceBounds = Rect(0.0f, 0.0f, layout.ContentSize.Width, layout.ContentSize.Height);
+            boundsDrawCtx.HasInkBounds = layout.HasInkBounds && layout.DesignUnitsPerEm > 0;
+            if (boundsDrawCtx.HasInkBounds)
+            {
+                double emScale = job.FontSize / layout.DesignUnitsPerEm;
+                boundsDrawCtx.InkBounds = Rect(
+                    static_cast<float>(layout.DesignInkLeft * emScale),
+                    static_cast<float>(layout.DesignInkTop * emScale),
+                    static_cast<float>(layout.DesignInkWidth * emScale),
+                    static_cast<float>(layout.DesignInkHeight * emScale));
+            }
+        }
+
+        auto drawToContext = [&](ID2D1DeviceContext* ctx, ID2D1SolidColorBrush* d2dBrush, float offsetX, float offsetY)
+        {
+            D2D1_COLOR_F brushColor = job.RenderColor
+                ? D2D1::ColorF(
+                    job.ForegroundColor.R / 255.0f,
+                    job.ForegroundColor.G / 255.0f,
+                    job.ForegroundColor.B / 255.0f,
+                    job.ForegroundColor.A / 255.0f)
+                : D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f);
+
+            d2dBrush->SetColor(brushColor);
+
+            GlyphBoundsDrawContext localBoundsCtx = boundsDrawCtx;
+            localBoundsCtx.OffsetX = offsetX;
+            localBoundsCtx.OffsetY = offsetY;
+
+            if (job.HasGlyphBounds && !boundsData.DrawLinesOverGlyph)
+                CoreDWTextServices::DrawGlyphBounds(ctx, d2dBrush, brushColor, boundsData, localBoundsCtx);
+
+            ctx->SetTransform(
+                D2D1::Matrix3x2F::Scale(scaleX, scaleY) *
+                D2D1::Matrix3x2F::Translation(offsetX + posX * dpiScale, offsetY + posY * dpiScale));
+
+            DWRITE_GLYPH_RUN glyphRun{};
+            glyphRun.fontFace = rawFace.Get();
+            glyphRun.fontEmSize = static_cast<FLOAT>(job.FontSize * dpiScale);
+            glyphRun.glyphCount = static_cast<UINT32>(layout.Indices.size());
+            glyphRun.glyphIndices = layout.Indices.data();
+            glyphRun.glyphAdvances = layout.Advances.data();
+            glyphRun.glyphOffsets = layout.Offsets.data();
+            glyphRun.isSideways = FALSE;
+            glyphRun.bidiLevel = 0;
+
+            D2D1_POINT_2F baselineOrigin = D2D1::Point2F(layout.PadLeft * dpiScale, (layout.Baseline + layout.PadTop) * dpiScale);
+
+            TextRenderParameters renderParams;
+            renderParams.ForegroundBrush = d2dBrush;
+            renderParams.EnableColor = job.EnableColorGlyphs;
+            renderParams.PreferredFormat = job.EnableColorGlyphs ? GlyphImageFormat::None : GlyphImageFormat::TrueType;
+            renderParams.IsMaskSurface = !job.RenderColor;
+
+            CoreDWTextServices::DrawGlyphRun(ctx, baselineOrigin, &glyphRun, renderParams);
+
+            if (job.HasGlyphBounds && boundsData.DrawLinesOverGlyph)
+                CoreDWTextServices::DrawGlyphBounds(ctx, d2dBrush, brushColor, boundsData, localBoundsCtx);
+        };
+
         bool hasOffDevicePixels = CoreDWTextServices::RenderOffDevice(
             surfW,
             surfH,
             job.RenderColor,
             [&](ID2D1DeviceContext* ctx, ID2D1SolidColorBrush* d2dBrush)
             {
-                ctx->SetTransform(
-                    D2D1::Matrix3x2F::Scale(scaleX, scaleY) *
-                    D2D1::Matrix3x2F::Translation(posX * dpiScale, posY * dpiScale));
-
-                DWRITE_GLYPH_RUN glyphRun{};
-                glyphRun.fontFace = rawFace.Get();
-                glyphRun.fontEmSize = static_cast<FLOAT>(job.FontSize * dpiScale);
-                glyphRun.glyphCount = static_cast<UINT32>(layout.Indices.size());
-                glyphRun.glyphIndices = layout.Indices.data();
-                glyphRun.glyphAdvances = layout.Advances.data();
-                glyphRun.glyphOffsets = layout.Offsets.data();
-                glyphRun.isSideways = FALSE;
-                glyphRun.bidiLevel = 0;
-
-                D2D1_POINT_2F baselineOrigin = D2D1::Point2F(layout.PadLeft * dpiScale, (layout.Baseline + layout.PadTop) * dpiScale);
-                D2D1_COLOR_F brushColor = job.RenderColor
-                    ? D2D1::ColorF(
-                        job.ForegroundColor.R / 255.0f,
-                        job.ForegroundColor.G / 255.0f,
-                        job.ForegroundColor.B / 255.0f,
-                        job.ForegroundColor.A / 255.0f)
-                    : D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f);
-
-                d2dBrush->SetColor(brushColor);
-
-                TextRenderParameters renderParams;
-                renderParams.ForegroundBrush = d2dBrush;
-                renderParams.EnableColor = job.RenderColor;
-                renderParams.PreferredFormat = job.RenderColor ? GlyphImageFormat::None : GlyphImageFormat::TrueType;
-                renderParams.IsMaskSurface = !job.RenderColor;
-
-                CoreDWTextServices::DrawGlyphRun(ctx, baselineOrigin, &glyphRun, renderParams);
+                drawToContext(ctx, d2dBrush, 0.0f, 0.0f);
             },
             offDevicePixels,
             offDevicePitch);
@@ -1799,22 +1912,44 @@ namespace
                 }
             }
 
-            bool success = CompositionDeviceManager::RenderGlyphToSurface(
-                job.Surface,
-                job.RenderColor ? GlyphImageFormat::None : GlyphImageFormat::TrueType,
-                layout.PadLeft * dpiScale, layout.PadTop * dpiScale, layout.Baseline * dpiScale,
-                rawFace.Get(),
-                static_cast<FLOAT>(job.FontSize * dpiScale),
-                layout.Indices.data(),
-                layout.Advances.data(),
-                layout.Offsets.data(),
-                static_cast<UINT32>(layout.Indices.size()),
-                job.ForegroundColor,
-                job.Simulations,
-                job.RequiredWidth,
-                job.RequiredHeight,
-                scaleX, scaleY,
-                posX * dpiScale, posY * dpiScale);
+            bool success = false;
+            if (job.HasGlyphBounds && surfaceInterop != nullptr)
+            {
+                POINT updateOffset{};
+                ComPtr<ID2D1DeviceContext> ctx;
+                std::lock_guard<std::mutex> renderLock(CompositionDeviceManager::GetRenderMutex());
+                HRESULT hr = surfaceInterop->BeginDraw(nullptr, IID_PPV_ARGS(&ctx), &updateOffset);
+                if (SUCCEEDED(hr) && ctx != nullptr)
+                {
+                    ctx->Clear(D2D1::ColorF(0, 0, 0, 0));
+                    ComPtr<ID2D1SolidColorBrush> d2dBrush;
+                    if (SUCCEEDED(ctx->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f), &d2dBrush)) && d2dBrush != nullptr)
+                    {
+                        drawToContext(ctx.Get(), d2dBrush.Get(), static_cast<float>(updateOffset.x), static_cast<float>(updateOffset.y));
+                        success = true;
+                    }
+                    surfaceInterop->EndDraw();
+                }
+            }
+            else
+            {
+                success = CompositionDeviceManager::RenderGlyphToSurface(
+                    job.Surface,
+                    job.EnableColorGlyphs ? GlyphImageFormat::None : GlyphImageFormat::TrueType,
+                    layout.PadLeft * dpiScale, layout.PadTop * dpiScale, layout.Baseline * dpiScale,
+                    rawFace.Get(),
+                    static_cast<FLOAT>(job.FontSize * dpiScale),
+                    layout.Indices.data(),
+                    layout.Advances.data(),
+                    layout.Offsets.data(),
+                    static_cast<UINT32>(layout.Indices.size()),
+                    job.ForegroundColor,
+                    job.Simulations,
+                    job.RequiredWidth,
+                    job.RequiredHeight,
+                    scaleX, scaleY,
+                    posX * dpiScale, posY * dpiScale);
+            }
 
             if (success && effectiveWasHidden)
             {
@@ -1932,8 +2067,7 @@ void FontGlyphs::RenderGlyphsBackground(Size finalSize)
     if (HasFontChangedForVisibility())
         m_spriteVisual->IsVisible = false;
     bool wasHidden = !m_spriteVisual->IsVisible;
-    m_lastShownFamilyName = (FontFace != nullptr && FontFace->Properties != nullptr) ? FontFace->Properties->FamilyName : nullptr;
-    m_lastShownFaceName = (FontFace != nullptr && FontFace->Properties != nullptr) ? FontFace->Properties->FaceName : nullptr;
+    CoreDWTextServices::GetFontIdentity(FontFace, &m_lastShownFamilyName, &m_lastShownFaceName);
 
     FontGlyphsRenderJob job;
     job.ControlKey = reinterpret_cast<const void*>(this);
@@ -1950,7 +2084,12 @@ void FontGlyphs::RenderGlyphsBackground(Size finalSize)
     job.StretchDirection = StretchDirection;
     job.FinalSize = finalSize;
     job.DpiScale = dpiScale;
+    auto boundsOpts = GlyphBoundsOptions;
     job.RenderColor = renderColor;
+    job.EnableColorGlyphs = ShouldEnableColorGlyphs();
+    job.HasGlyphBounds = (boundsOpts != nullptr);
+    if (boundsOpts != nullptr)
+        CoreDWTextServices::PopulateGlyphBoundsOptions(boundsOpts, job.Bounds);
     job.ForegroundColor = foregroundColor;
     job.RequiredWidth = requiredWidth;
     job.RequiredHeight = requiredHeight;
@@ -1968,6 +2107,231 @@ void FontGlyphs::RenderGlyphsBackground(Size finalSize)
         ? BackgroundRenderQueue::ColorInstance()
         : BackgroundRenderQueue::MonoInstance();
     queue.Enqueue(std::move(workItem));
+}
+
+void FontGlyphs::RenderGlyphsWithBounds(Size finalSize, double originX, double originY)
+{
+    auto visual = ElementCompositionPreview::GetElementVisual(this);
+    if (visual == nullptr)
+        return;
+
+    auto compositor = visual->Compositor;
+    if (m_spriteVisual == nullptr)
+    {
+        m_spriteVisual = compositor->CreateSpriteVisual();
+        ElementCompositionPreview::SetElementChildVisual(this, m_spriteVisual);
+    }
+
+    if (m_glyphCount == 0 || m_contentSize.Width <= 0 || m_contentSize.Height <= 0 ||
+        finalSize.Width <= 0 || finalSize.Height <= 0 || FontFace == nullptr)
+    {
+        if (m_spriteVisual != nullptr)
+            m_spriteVisual->Brush = nullptr;
+        ReleaseDrawingSurface();
+        return;
+    }
+
+    auto rawFace = FontFace->GetFontFace();
+    if (rawFace == nullptr)
+        return;
+
+    auto graphicsDevice = CompositionDeviceManager::GetGraphicsDevice(compositor);
+    if (graphicsDevice == nullptr)
+        return;
+
+    if (m_isUsingSharedAtlas)
+        ReleaseDrawingSurface();
+
+    float scaleX = m_scale.Width > 0.0f ? m_scale.Width : 1.0f;
+    float scaleY = m_scale.Height > 0.0f ? m_scale.Height : 1.0f;
+    m_renderedScaleX = scaleX;
+    m_renderedScaleY = scaleY;
+
+    float dpiScale = CompositionDeviceManager::GetDpiScale(this->Dispatcher);
+    LONG requiredWidth = static_cast<LONG>((std::max)(1.0f, static_cast<float>(std::ceil(finalSize.Width * dpiScale))));
+    LONG requiredHeight = static_cast<LONG>((std::max)(1.0f, static_cast<float>(std::ceil(finalSize.Height * dpiScale))));
+
+    bool renderColor = true;
+    uint64 bpp = 4;
+    if (m_drawingSurface == nullptr || !m_renderedColor)
+    {
+        ReleaseDrawingSurface();
+        m_drawingSurface = graphicsDevice->CreateDrawingSurface(
+            Size(static_cast<float>(requiredWidth), static_cast<float>(requiredHeight)),
+            Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized,
+            Windows::Graphics::DirectX::DirectXAlphaMode::Premultiplied);
+        m_renderedWidth = requiredWidth;
+        m_renderedHeight = requiredHeight;
+        m_renderedColor = renderColor;
+
+        if (m_drawingSurface != nullptr)
+        {
+            s_activeSurfaceCount.fetch_add(1, std::memory_order_relaxed);
+            s_activeSurfaceBytes.fetch_add(static_cast<uint64>(requiredWidth) * requiredHeight * bpp, std::memory_order_relaxed);
+        }
+    }
+    else if (m_renderedWidth != requiredWidth || m_renderedHeight != requiredHeight)
+    {
+        uint64 oldBytes = static_cast<uint64>(m_renderedWidth) * m_renderedHeight * bpp;
+        ComPtr<ICompositionDrawingSurfaceInterop> resizeInterop;
+        if (SUCCEEDED(reinterpret_cast<IUnknown*>(m_drawingSurface)->QueryInterface(IID_PPV_ARGS(&resizeInterop)))
+            && SUCCEEDED(resizeInterop->Resize(SIZE{ requiredWidth, requiredHeight })))
+        {
+            m_renderedWidth = requiredWidth;
+            m_renderedHeight = requiredHeight;
+            uint64 newBytes = static_cast<uint64>(requiredWidth) * requiredHeight * bpp;
+            s_activeSurfaceBytes.fetch_sub(oldBytes, std::memory_order_relaxed);
+            s_activeSurfaceBytes.fetch_add(newBytes, std::memory_order_relaxed);
+        }
+        else
+        {
+            ReleaseDrawingSurface();
+            m_drawingSurface = graphicsDevice->CreateDrawingSurface(
+                Size(static_cast<float>(requiredWidth), static_cast<float>(requiredHeight)),
+                Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized,
+                Windows::Graphics::DirectX::DirectXAlphaMode::Premultiplied);
+            m_renderedWidth = requiredWidth;
+            m_renderedHeight = requiredHeight;
+            m_renderedColor = renderColor;
+
+            if (m_drawingSurface != nullptr)
+            {
+                s_activeSurfaceCount.fetch_add(1, std::memory_order_relaxed);
+                s_activeSurfaceBytes.fetch_add(static_cast<uint64>(requiredWidth) * requiredHeight * bpp, std::memory_order_relaxed);
+            }
+        }
+    }
+
+    if (m_drawingSurface == nullptr)
+        return;
+
+    ComPtr<ICompositionDrawingSurfaceInterop> surfaceInterop;
+    if (FAILED(reinterpret_cast<IUnknown*>(m_drawingSurface)->QueryInterface(IID_PPV_ARGS(&surfaceInterop))))
+        return;
+
+    std::vector<FLOAT> scaledAdvances;
+    std::vector<DWRITE_GLYPH_OFFSET> scaledOffsets;
+    if (dpiScale != 1.0f)
+    {
+        scaledAdvances.reserve(m_glyphCount);
+        for (size_t i = 0; i < m_glyphCount; i++) scaledAdvances.push_back(GetGlyphAdvance(i) * dpiScale);
+
+        scaledOffsets.reserve(m_glyphCount);
+        for (size_t i = 0; i < m_glyphCount; i++)
+        {
+            auto off = GetGlyphOffset(i);
+            scaledOffsets.push_back(DWRITE_GLYPH_OFFSET{ off.advanceOffset * dpiScale, off.ascenderOffset * dpiScale });
+        }
+    }
+
+    const FLOAT* pAdvances = (dpiScale != 1.0f) ? scaledAdvances.data() : GlyphAdvancesData();
+    const DWRITE_GLYPH_OFFSET* pOffsets = (dpiScale != 1.0f) ? scaledOffsets.data() : GlyphOffsetsData();
+
+    Windows::UI::Color foregroundColor = GetForegroundColor();
+    D2D1_COLOR_F brushColor = D2D1::ColorF(
+        foregroundColor.R / 255.0f,
+        foregroundColor.G / 255.0f,
+        foregroundColor.B / 255.0f,
+        foregroundColor.A / 255.0f);
+
+    GlyphBoundsRenderData boundsData;
+    CoreDWTextServices::PopulateGlyphBoundsOptions(GlyphBoundsOptions, boundsData);
+    CoreDWTextServices::PopulateGlyphBoundsMetrics(m_fontMetrics, static_cast<float>(FontSize), m_baseline, boundsData);
+
+    GlyphBoundsDrawContext boundsDrawCtx;
+    boundsDrawCtx.SurfaceWidthPx = static_cast<float>(requiredWidth);
+    boundsDrawCtx.SurfaceHeightPx = static_cast<float>(requiredHeight);
+    boundsDrawCtx.DpiScale = dpiScale;
+    boundsDrawCtx.OriginX = originX / scaleX;
+    boundsDrawCtx.OriginY = originY / scaleY;
+    boundsDrawCtx.ScaleX = scaleX * dpiScale;
+    boundsDrawCtx.ScaleY = scaleY * dpiScale;
+    boundsDrawCtx.AdvanceBounds = Rect(0.0f, 0.0f, m_contentSize.Width, m_contentSize.Height);
+    boundsDrawCtx.HasInkBounds = m_hasInkBounds && m_designUnitsPerEm > 0;
+    if (boundsDrawCtx.HasInkBounds)
+    {
+        double emScale = FontSize / m_designUnitsPerEm;
+        boundsDrawCtx.InkBounds = Rect(
+            static_cast<float>(m_designInkLeft * emScale),
+            static_cast<float>(m_designInkTop * emScale),
+            static_cast<float>(m_designInkWidth * emScale),
+            static_cast<float>(m_designInkHeight * emScale));
+    }
+
+    float posX = static_cast<float>(originX - m_padLeft * scaleX);
+    float posY = static_cast<float>(originY - m_padTop * scaleY);
+    bool enableColorGlyphs = ShouldEnableColorGlyphs();
+
+    {
+        POINT updateOffset{};
+        ComPtr<ID2D1DeviceContext> ctx;
+        std::lock_guard<std::mutex> renderLock(CompositionDeviceManager::GetRenderMutex());
+        HRESULT hr = surfaceInterop->BeginDraw(nullptr, IID_PPV_ARGS(&ctx), &updateOffset);
+        if (SUCCEEDED(hr) && ctx != nullptr)
+        {
+            ctx->Clear(D2D1::ColorF(0, 0, 0, 0));
+            ComPtr<ID2D1SolidColorBrush> d2dBrush;
+            if (SUCCEEDED(ctx->CreateSolidColorBrush(brushColor, &d2dBrush)) && d2dBrush != nullptr)
+            {
+                boundsDrawCtx.OffsetX = static_cast<float>(updateOffset.x);
+                boundsDrawCtx.OffsetY = static_cast<float>(updateOffset.y);
+
+                if (!boundsData.DrawLinesOverGlyph)
+                    CoreDWTextServices::DrawGlyphBounds(ctx.Get(), d2dBrush.Get(), brushColor, boundsData, boundsDrawCtx);
+
+                ctx->SetTransform(
+                    D2D1::Matrix3x2F::Scale(scaleX, scaleY) *
+                    D2D1::Matrix3x2F::Translation(static_cast<float>(updateOffset.x) + posX * dpiScale, static_cast<float>(updateOffset.y) + posY * dpiScale));
+
+                DWRITE_GLYPH_RUN glyphRun{};
+                glyphRun.fontFace = rawFace.Get();
+                glyphRun.fontEmSize = static_cast<FLOAT>(FontSize * dpiScale);
+                glyphRun.glyphCount = static_cast<UINT32>(m_glyphCount);
+                glyphRun.glyphIndices = GlyphIndicesData();
+                glyphRun.glyphAdvances = pAdvances;
+                glyphRun.glyphOffsets = pOffsets;
+                glyphRun.isSideways = FALSE;
+                glyphRun.bidiLevel = 0;
+
+                D2D1_POINT_2F baselineOrigin = D2D1::Point2F(m_padLeft * dpiScale, (m_baseline + m_padTop) * dpiScale);
+
+                TextRenderParameters renderParams;
+                renderParams.ForegroundBrush = d2dBrush.Get();
+                renderParams.EnableColor = enableColorGlyphs;
+                renderParams.PreferredFormat = enableColorGlyphs ? GlyphImageFormat::None : GlyphImageFormat::TrueType;
+                renderParams.IsMaskSurface = false;
+
+                CoreDWTextServices::DrawGlyphRun(ctx.Get(), baselineOrigin, &glyphRun, renderParams);
+
+                if (boundsData.DrawLinesOverGlyph)
+                    CoreDWTextServices::DrawGlyphBounds(ctx.Get(), d2dBrush.Get(), brushColor, boundsData, boundsDrawCtx);
+            }
+            surfaceInterop->EndDraw();
+        }
+        else if (CompositionDeviceManager::IsDeviceLostHResult(hr))
+        {
+            CompositionDeviceManager::HandleDeviceLost();
+            return;
+        }
+    }
+
+    CompositionDeviceManager::EnsureSurfaceBrush(compositor, m_surfaceBrush, m_drawingSurface);
+    m_surfaceBrush->Scale = float2(1.0f / dpiScale, 1.0f / dpiScale);
+    m_surfaceBrush->Offset = float2(0.0f, 0.0f);
+    m_spriteVisual->Offset = float3(0.0f, 0.0f, 0.0f);
+    m_spriteVisual->Size = float2(finalSize.Width, finalSize.Height);
+
+    CompositionDeviceManager::ApplySurfaceOrMaskBrush(
+        compositor,
+        m_spriteVisual,
+        m_surfaceBrush,
+        m_maskBrush,
+        m_colorBrush,
+        false,
+        foregroundColor);
+
+    CoreDWTextServices::GetFontIdentity(FontFace, &m_lastShownFamilyName, &m_lastShownFaceName);
+    m_spriteVisual->IsVisible = true;
 }
 
 void FontGlyphs::RenderGlyphs()
@@ -2223,7 +2587,6 @@ void FontGlyphs::RenderGlyphs()
         !renderColor,
         foregroundColor);
 
-    m_lastShownFamilyName = (FontFace != nullptr && FontFace->Properties != nullptr) ? FontFace->Properties->FamilyName : nullptr;
-    m_lastShownFaceName = (FontFace != nullptr && FontFace->Properties != nullptr) ? FontFace->Properties->FaceName : nullptr;
+    CoreDWTextServices::GetFontIdentity(FontFace, &m_lastShownFamilyName, &m_lastShownFaceName);
     m_spriteVisual->IsVisible = true;
 }

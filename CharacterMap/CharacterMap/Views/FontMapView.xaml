@@ -1463,6 +1463,7 @@
                                     x:Load="False"
                                     Margin="0 -2 0 8"
                                     Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                    IsBackgroundRenderEnabled="True"
                                     IsTextShapingEnabled="True" />
                                 <TextBlock Style="{StaticResource CharItemUnicodeStyle}" />
                             </Grid>
@@ -1785,6 +1786,7 @@
                                         x:Load="{x:Bind Option.RequiresNativeRender, FallbackValue=False, Mode=OneWay}"
                                         core:Properties.Options="{x:Bind Option, Mode=OneWay}"
                                         FontSize="{Binding FontSize, TargetNullValue=12.0, FallbackValue=12.0}"
+                                        IsBackgroundRenderEnabled="True"
                                         IsOverwriteCompensationEnabled="True"
                                         Text="{Binding ElementName=TypeRampRoot, Path=DataContext.TypeRampText}" />
                                 </StackPanel>
@@ -1981,6 +1983,7 @@
                                             FontSize="44"
                                             Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                                             Indices="{x:Bind LigatureGlyph}"
+                                            IsBackgroundRenderEnabled="True"
                                             IsColorFontEnabled="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Boolean)}"
                                             StyleSimulations="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Tag)}" />
                                         <!--  Bottom-Left: 0 (left bearing indicator)  -->
@@ -2244,6 +2247,7 @@
                                                 FontSize="30"
                                                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                                                 Indices="{x:Bind Input.GlyphIndex}"
+                                                IsBackgroundRenderEnabled="True"
                                                 IsColorFontEnabled="{Binding ElementName=OpenTypeRepeater, Path=(core:Properties.Boolean)}"
                                                 Opacity="0.6"
                                                 StyleSimulations="{Binding ElementName=OpenTypeRepeater, Path=(core:Properties.Tag)}" />
@@ -2283,6 +2287,7 @@
                                                 FontSize="44"
                                                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                                                 Indices="{x:Bind Substitute.GlyphIndex}"
+                                                IsBackgroundRenderEnabled="True"
                                                 IsColorFontEnabled="{Binding ElementName=OpenTypeRepeater, Path=(core:Properties.Boolean)}"
                                                 StyleSimulations="{Binding ElementName=OpenTypeRepeater, Path=(core:Properties.Tag)}" />
                                         </Grid>

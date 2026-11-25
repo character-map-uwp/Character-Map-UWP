@@ -102,7 +102,7 @@ public partial class MainViewModel : ViewModelBase
             else
                 TitlePrefix = string.Empty;
 
-            TitleBarHelper.SetTitle(value?.Name);
+            WindowTitle = value?.Name;
             OnPropertyChanged();
         }
     }

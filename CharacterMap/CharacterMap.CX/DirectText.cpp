@@ -241,8 +241,14 @@ void CharacterMapCX::Controls::DirectText::ClearLayoutCache()
     m_lastFamilyName = nullptr;
     m_lastFaceName = nullptr;
     m_lastAxisValues.clear();
-    m_lastShownFontFace = nullptr;
+    m_lastShownFamilyName = nullptr;
+    m_lastShownFaceName = nullptr;
     m_deferredLayoutCache = std::make_shared<DeferredLayoutCache>();
+}
+
+bool DirectText::HasContentChangedForVisibility()
+{
+    return CoreDWTextServices::HasFontIdentityChanged(m_lastShownFamilyName, m_lastShownFaceName, FontFace);
 }
 
 void DirectText::OnGlyphBoundsOptionsChanged(DependencyObject^ d, DependencyPropertyChangedEventArgs^ e)
@@ -1081,6 +1087,7 @@ namespace
 {
     struct DirectTextRenderSnapshot
     {
+        Windows::UI::Composition::CompositionDrawingSurface^ Surface;
         ComPtr<ICompositionDrawingSurfaceInterop> SurfaceInterop;
         ComPtr<IDWriteTextLayout> TextLayout;
         ComPtr<IDWriteFontFace3> DrawFontFace;
@@ -1107,32 +1114,7 @@ namespace
         bool DeferredLayout = false;
         bool IsColorFontEnabled = true;
 
-        struct GlyphBoundsRenderData
-        {
-            bool ShowAscent = true;
-            bool ShowCapHeight = true;
-            bool ShowXHeight = false;
-            bool ShowBaseline = true;
-            bool ShowDescent = true;
-            bool ShowAdvanceBounds = false;
-            bool ShowInkBounds = false;
-            bool DrawLinesOverGlyph = true;
-            bool HasCapHeight = false;
-            bool HasXHeight = false;
-            double LineThickness = 1.5;
-            double BaselineY = 0.0;
-            double AscentY = 0.0;
-            double CapHeightY = 0.0;
-            double XHeightY = 0.0;
-            double DescentY = 0.0;
-            D2D1_COLOR_F AscentColor = D2D1::ColorF(16.0f / 255.0f, 124.0f / 255.0f, 16.0f / 255.0f, 1.0f);
-            D2D1_COLOR_F CapHeightColor = D2D1::ColorF(59.0f / 255.0f, 130.0f / 255.0f, 246.0f / 255.0f, 1.0f);
-            D2D1_COLOR_F XHeightColor = D2D1::ColorF(0.0f / 255.0f, 183.0f / 255.0f, 195.0f / 255.0f, 1.0f);
-            D2D1_COLOR_F BaselineColor = D2D1::ColorF(224.0f / 255.0f, 82.0f / 255.0f, 134.0f / 255.0f, 1.0f);
-            D2D1_COLOR_F DescentColor = D2D1::ColorF(242.0f / 255.0f, 140.0f / 255.0f, 56.0f / 255.0f, 1.0f);
-            D2D1_COLOR_F AdvanceBoundsColor = D2D1::ColorF(0.5f, 0.5f, 0.5f, 0.5f);
-            D2D1_COLOR_F InkBoundsColor = D2D1::ColorF(232.0f / 255.0f, 17.0f / 255.0f, 35.0f / 255.0f, 0.5f);
-        } Bounds;
+        GlyphBoundsRenderData Bounds;
         Windows::UI::Xaml::FlowDirection FlowDirection = Windows::UI::Xaml::FlowDirection::LeftToRight;
         DWriteColorRenderOption ColorRenderOption = DWriteColorRenderOption::Default;
         D2D1_COLOR_F ForegroundColor = D2D1::ColorF(D2D1::ColorF::White);
@@ -1258,66 +1240,21 @@ namespace
             if (!snap.RenderGlyphBounds || activeBrush == nullptr)
                 return;
 
-            ctx->SetTransform(D2D1::Matrix3x2F::Translation(offsetX, offsetY));
-            float strokeW = (std::max)(1.0f, static_cast<float>(snap.Bounds.LineThickness * snap.DpiScale));
-            float surfW = static_cast<float>(snap.ActualW * snap.DpiScale);
-            float surfH = static_cast<float>(snap.ActualH * snap.DpiScale);
-            double pxScale = scale * snap.DpiScale;
+            GlyphBoundsDrawContext drawCtx;
+            drawCtx.OffsetX = offsetX;
+            drawCtx.OffsetY = offsetY;
+            drawCtx.SurfaceWidthPx = static_cast<float>(snap.ActualW * snap.DpiScale);
+            drawCtx.SurfaceHeightPx = static_cast<float>(snap.ActualH * snap.DpiScale);
+            drawCtx.DpiScale = snap.DpiScale;
+            drawCtx.OriginX = left;
+            drawCtx.OriginY = top;
+            drawCtx.ScaleX = scale * snap.DpiScale;
+            drawCtx.ScaleY = scale * snap.DpiScale;
+            drawCtx.AdvanceBounds = lb;
+            drawCtx.InkBounds = db;
+            drawCtx.HasInkBounds = true;
 
-            auto drawHLine = [&](double layoutY, const D2D1_COLOR_F& lineColor)
-            {
-                if (lineColor.a <= 0.0f)
-                    return;
-                float py = static_cast<float>((top + layoutY) * pxScale);
-                if (strokeW <= 2.0f)
-                    py = std::floor(py) + 0.5f;
-                activeBrush->SetColor(lineColor);
-                ctx->DrawLine(D2D1::Point2F(0.0f, py), D2D1::Point2F(surfW, py), activeBrush, strokeW);
-            };
-
-            if (snap.Bounds.ShowAscent)
-                drawHLine(snap.Bounds.AscentY, snap.Bounds.AscentColor);
-            if (snap.Bounds.ShowCapHeight && snap.Bounds.HasCapHeight)
-                drawHLine(snap.Bounds.CapHeightY, snap.Bounds.CapHeightColor);
-            if (snap.Bounds.ShowXHeight && snap.Bounds.HasXHeight)
-                drawHLine(snap.Bounds.XHeightY, snap.Bounds.XHeightColor);
-            if (snap.Bounds.ShowBaseline)
-                drawHLine(snap.Bounds.BaselineY, snap.Bounds.BaselineColor);
-            if (snap.Bounds.ShowDescent)
-                drawHLine(snap.Bounds.DescentY, snap.Bounds.DescentColor);
-
-            if (snap.Bounds.ShowAdvanceBounds && snap.Bounds.AdvanceBoundsColor.a > 0.0f)
-            {
-                activeBrush->SetColor(snap.Bounds.AdvanceBoundsColor);
-                float x0 = static_cast<float>((left + lb.Left) * pxScale);
-                float x1 = static_cast<float>((left + lb.Right) * pxScale);
-                if (strokeW <= 2.0f)
-                {
-                    x0 = std::floor(x0) + 0.5f;
-                    x1 = std::floor(x1) + 0.5f;
-                }
-                ctx->DrawLine(D2D1::Point2F(x0, 0.0f), D2D1::Point2F(x0, surfH), activeBrush, strokeW);
-                ctx->DrawLine(D2D1::Point2F(x1, 0.0f), D2D1::Point2F(x1, surfH), activeBrush, strokeW);
-            }
-
-            if (snap.Bounds.ShowInkBounds && snap.Bounds.InkBoundsColor.a > 0.0f)
-            {
-                activeBrush->SetColor(snap.Bounds.InkBoundsColor);
-                float rx0 = static_cast<float>((left + db.Left) * pxScale);
-                float ry0 = static_cast<float>((top + db.Top) * pxScale);
-                float rx1 = static_cast<float>((left + db.Right) * pxScale);
-                float ry1 = static_cast<float>((top + db.Bottom) * pxScale);
-                if (strokeW <= 2.0f)
-                {
-                    rx0 = std::floor(rx0) + 0.5f;
-                    ry0 = std::floor(ry0) + 0.5f;
-                    rx1 = std::floor(rx1) + 0.5f;
-                    ry1 = std::floor(ry1) + 0.5f;
-                }
-                ctx->DrawRectangle(D2D1::RectF(rx0, ry0, rx1, ry1), activeBrush, strokeW);
-            }
-
-            activeBrush->SetColor(brushColor);
+            CoreDWTextServices::DrawGlyphBounds(ctx, activeBrush, brushColor, snap.Bounds, drawCtx);
         };
 
         if (snap.RenderGlyphBounds && !snap.Bounds.DrawLinesOverGlyph)
@@ -1516,6 +1453,7 @@ namespace
                     if (!pThis->UpgradeToColorSurface(gen, colorSurface))
                         return false;
 
+                    snap.Surface = colorSurface;
                     snap.SurfaceInterop = colorInterop;
                     snap.RenderColor = true;
                     snap.ForegroundColor = snap.ActualForegroundColor;
@@ -1542,22 +1480,71 @@ namespace
         UINT32 offDevicePitch = 0;
         bool hasOffDevicePixels = offDevice && RenderSnapshotOffDevice(snap, offDevicePixels, offDevicePitch);
 
+        if (gen != 0)
+        {
+            auto pThis = weakThis.Resolve<DirectText>();
+            if (pThis == nullptr || !pThis->IsGenerationCurrent(gen))
+                return false;
+        }
+
+        // Determine if the surface dimensions need to change.
+        // For background renders, never call Resize() in-place on the live attached surface:
+        // Composition commits Resize() immediately (clearing the surface) before EndDraw(),
+        // which causes a 1-frame blank flash on larger surfaces. Instead, draw into a fresh
+        // unattached surface and atomically swap m_surfaceBrush->Surface after EndDraw().
+        bool needsResize = false;
+        if (snap.Surface != nullptr)
+        {
+            auto curSize = snap.Surface->Size;
+            needsResize = (static_cast<UINT32>(std::round(curSize.Width)) != snap.SurfaceWidth ||
+                           static_cast<UINT32>(std::round(curSize.Height)) != snap.SurfaceHeight);
+        }
+
+        Windows::UI::Composition::CompositionDrawingSurface^ pendingSwapSurface = nullptr;
+        ComPtr<ICompositionDrawingSurfaceInterop> drawInterop = snap.SurfaceInterop;
+        if (needsResize && offDevice && snap.GraphicsDevice != nullptr && gen != 0)
+        {
+            auto pixelFormat = snap.RenderColor
+                ? Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized
+                : Windows::Graphics::DirectX::DirectXPixelFormat::A8UIntNormalized;
+            auto newSurface = snap.GraphicsDevice->CreateDrawingSurface(
+                Size(static_cast<float>(snap.SurfaceWidth), static_cast<float>(snap.SurfaceHeight)),
+                pixelFormat,
+                Windows::Graphics::DirectX::DirectXAlphaMode::Premultiplied);
+            ComPtr<ICompositionDrawingSurfaceInterop> newInterop;
+            if (newSurface != nullptr &&
+                SUCCEEDED(reinterpret_cast<IUnknown*>(newSurface)->QueryInterface(IID_PPV_ARGS(&newInterop))) &&
+                newInterop != nullptr)
+            {
+                pendingSwapSurface = newSurface;
+                drawInterop = newInterop;
+                needsResize = false;
+            }
+        }
+
         if (hasOffDevicePixels)
         {
-            if (gen != 0)
+            if (needsResize)
             {
-                auto pThis = weakThis.Resolve<DirectText>();
-                if (pThis == nullptr || !pThis->IsGenerationCurrent(gen))
+                std::lock_guard<std::mutex> renderLock(CompositionDeviceManager::GetRenderMutex());
+                if (FAILED(drawInterop->Resize(SIZE{ static_cast<LONG>(snap.SurfaceWidth), static_cast<LONG>(snap.SurfaceHeight) })))
                     return false;
             }
 
             if (CoreDWTextServices::UploadOffDevicePixelsToSurface(
-                snap.SurfaceInterop.Get(),
+                drawInterop.Get(),
                 snap.SurfaceWidth,
                 snap.SurfaceHeight,
                 offDevicePixels,
                 offDevicePitch))
+            {
+                if (pendingSwapSurface != nullptr)
+                {
+                    if (auto pThis = weakThis.Resolve<DirectText>())
+                        pThis->SwapDrawingSurface(gen, pendingSwapSurface);
+                }
                 return false;
+            }
         }
 
         POINT updateOffset{};
@@ -1565,7 +1552,13 @@ namespace
 
         std::lock_guard<std::mutex> renderLock(CompositionDeviceManager::GetRenderMutex());
 
-        HRESULT hr = snap.SurfaceInterop->BeginDraw(nullptr, IID_PPV_ARGS(&ctx), &updateOffset);
+        if (needsResize)
+        {
+            if (FAILED(drawInterop->Resize(SIZE{ static_cast<LONG>(snap.SurfaceWidth), static_cast<LONG>(snap.SurfaceHeight) })))
+                return false;
+        }
+
+        HRESULT hr = drawInterop->BeginDraw(nullptr, IID_PPV_ARGS(&ctx), &updateOffset);
         if (FAILED(hr))
         {
             if (CompositionDeviceManager::IsDeviceLostHResult(hr))
@@ -1577,7 +1570,13 @@ namespace
         {
             ctx->Clear(D2D1::ColorF(0, 0, 0, 0));
             RenderSnapshotToContext(ctx.Get(), snap, static_cast<FLOAT>(updateOffset.x), static_cast<FLOAT>(updateOffset.y));
-            snap.SurfaceInterop->EndDraw();
+            drawInterop->EndDraw();
+
+            if (pendingSwapSurface != nullptr)
+            {
+                if (auto pThis = weakThis.Resolve<DirectText>())
+                    pThis->SwapDrawingSurface(gen, pendingSwapSurface);
+            }
         }
 
         return false;
@@ -1660,7 +1659,7 @@ void DirectText::RenderToSurface(Windows::Foundation::Size finalSize)
 
     if (!m_needsRender && !sizeChangedForFit && m_drawingSurface != nullptr && m_renderedColor == renderColor &&
         m_renderedWidth >= requiredWidth && m_renderedHeight >= requiredHeight &&
-        m_renderedWidth <= requiredWidth + 64 && m_renderedHeight <= requiredHeight + 64)
+        m_renderedWidth <= requiredWidth + 128 && m_renderedHeight <= requiredHeight + 128)
     {
         wireBrushes();
         return;
@@ -1670,48 +1669,68 @@ void DirectText::RenderToSurface(Windows::Foundation::Size finalSize)
     if (graphicsDevice == nullptr)
         return;
 
-    // Reuse the existing surface if it fits within a 64px slack window to avoid
-    // reallocating CompositionDrawingSurface on every FontSize slider tick.
-    bool needNewSurface = m_drawingSurface == nullptr ||
-        m_renderedColor != renderColor ||
+    // Bucket width and height to 64px multiples (when not fixed) with 128px shrink hysteresis
+    // so dragging FontSize or variable-axis sliders rarely triggers a surface resize.
+    LONG allocW = (fixedSurfaceSize.Width > 0.0f)
+        ? requiredWidth
+        : (std::min)(8192L, ((requiredWidth + 63L) / 64L) * 64L);
+    LONG allocH = (fixedSurfaceSize.Height > 0.0f)
+        ? requiredHeight
+        : (std::min)(8192L, ((requiredHeight + 63L) / 64L) * 64L);
+
+    Windows::UI::Composition::CompositionDrawingSurface^ currentSurface = nullptr;
+    bool needCreateSurface = false;
+    {
+        std::lock_guard<std::mutex> lock(m_surfaceMutex);
+        currentSurface = m_drawingSurface;
+        needCreateSurface = currentSurface == nullptr || m_renderedColor != renderColor;
+    }
+
+    bool needResizeSurface = !needCreateSurface && (
         m_renderedWidth < requiredWidth ||
         m_renderedHeight < requiredHeight ||
-        m_renderedWidth > requiredWidth + 64 ||
-        m_renderedHeight > requiredHeight + 64;
+        m_renderedWidth > requiredWidth + 128 ||
+        m_renderedHeight > requiredHeight + 128);
 
-    if (needNewSurface)
+    if (needCreateSurface)
     {
         ReleaseDrawingSurface();
-        LONG allocW = requiredWidth;
-        // Bucket height to 64px multiples (when not fixed) so growing text doesn't reallocate every step.
-        LONG allocH = (fixedSurfaceSize.Height > 0.0f)
-            ? requiredHeight
-            : (std::min)(8192L, ((requiredHeight + 63L) / 64L) * 64L);
         // Monochrome text uses an A8 mask + CompositionMaskBrush (4x less VRAM, instant color changes);
         // color/SVG/COLR fonts require full BGRA8.
         auto pixelFormat = renderColor
             ? Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized
             : Windows::Graphics::DirectX::DirectXPixelFormat::A8UIntNormalized;
-        m_drawingSurface = graphicsDevice->CreateDrawingSurface(
+        currentSurface = graphicsDevice->CreateDrawingSurface(
             Size(static_cast<float>(allocW), static_cast<float>(allocH)),
             pixelFormat,
             Windows::Graphics::DirectX::DirectXAlphaMode::Premultiplied);
+        {
+            std::lock_guard<std::mutex> lock(m_surfaceMutex);
+            m_drawingSurface = currentSurface;
+        }
         m_renderedWidth = allocW;
         m_renderedHeight = allocH;
         m_renderedColor = renderColor;
     }
+    else if (needResizeSurface)
+    {
+        // Defer surface resize/swap until DrawSnapshotToSurface finishes rendering the new frame
+        // so the previous frame remains visible without blanking while the background job runs.
+        m_renderedWidth = allocW;
+        m_renderedHeight = allocH;
+    }
 
-    if (m_drawingSurface == nullptr)
+    if (currentSurface == nullptr)
         return;
 
     ComPtr<ICompositionDrawingSurfaceInterop> surfaceInterop;
-    if (FAILED(reinterpret_cast<IUnknown*>(m_drawingSurface)->QueryInterface(IID_PPV_ARGS(&surfaceInterop))))
+    if (FAILED(reinterpret_cast<IUnknown*>(currentSurface)->QueryInterface(IID_PPV_ARGS(&surfaceInterop))))
         return;
 
-    bool needsBrushSetup = needNewSurface || m_surfaceBrush == nullptr || m_spriteVisual->Brush == nullptr;
+    bool needsBrushSetup = needCreateSurface || m_surfaceBrush == nullptr || m_spriteVisual->Brush == nullptr;
     if (needsBrushSetup)
     {
-        CompositionDeviceManager::EnsureSurfaceBrush(compositor, m_surfaceBrush, m_drawingSurface);
+        CompositionDeviceManager::EnsureSurfaceBrush(compositor, m_surfaceBrush, currentSurface);
         wireBrushes();
     }
     else
@@ -1739,7 +1758,9 @@ void DirectText::RenderToSurface(Windows::Foundation::Size finalSize)
 
     Thickness padding = this->Padding;
     DirectTextRenderSnapshot snapshot;
+    snapshot.Surface = currentSurface;
     snapshot.SurfaceInterop = surfaceInterop;
+    snapshot.GraphicsDevice = graphicsDevice;
     snapshot.TextLayout = m_textLayout;
     snapshot.DrawFontFace = m_drawFontFace;
     snapshot.DrawBounds = drawBounds;
@@ -1775,36 +1796,8 @@ void DirectText::RenderToSurface(Windows::Foundation::Size finalSize)
 
     if (renderBounds)
     {
-        auto extractBrushColor = [](SolidColorBrush^ brush, const D2D1_COLOR_F& fallback) -> D2D1_COLOR_F
-        {
-            if (brush == nullptr)
-                return fallback;
-            auto c = brush->Color;
-            return D2D1::ColorF(c.R / 255.0f, c.G / 255.0f, c.B / 255.0f, (c.A / 255.0f) * static_cast<float>(brush->Opacity));
-        };
-
         auto opts = GlyphBoundsOptions;
-
-        if (opts != nullptr)
-        {
-            snapshot.Bounds.ShowAscent = opts->ShowAscent;
-            snapshot.Bounds.ShowCapHeight = opts->ShowCapHeight;
-            snapshot.Bounds.ShowXHeight = opts->ShowXHeight;
-            snapshot.Bounds.ShowBaseline = opts->ShowBaseline;
-            snapshot.Bounds.ShowDescent = opts->ShowDescent;
-            snapshot.Bounds.ShowAdvanceBounds = opts->ShowAdvanceBounds;
-            snapshot.Bounds.ShowInkBounds = opts->ShowInkBounds;
-            snapshot.Bounds.DrawLinesOverGlyph = opts->DrawLinesOverGlyph;
-            snapshot.Bounds.LineThickness = opts->LineThickness > 0.0 ? opts->LineThickness : 1.0;
-
-            snapshot.Bounds.AscentColor = extractBrushColor(opts->AscentBrush, snapshot.Bounds.AscentColor);
-            snapshot.Bounds.CapHeightColor = extractBrushColor(opts->CapHeightBrush, snapshot.Bounds.CapHeightColor);
-            snapshot.Bounds.XHeightColor = extractBrushColor(opts->XHeightBrush, snapshot.Bounds.XHeightColor);
-            snapshot.Bounds.BaselineColor = extractBrushColor(opts->BaselineBrush, snapshot.Bounds.BaselineColor);
-            snapshot.Bounds.DescentColor = extractBrushColor(opts->DescentBrush, snapshot.Bounds.DescentColor);
-            snapshot.Bounds.AdvanceBoundsColor = extractBrushColor(opts->AdvanceBoundsBrush, snapshot.Bounds.AdvanceBoundsColor);
-            snapshot.Bounds.InkBoundsColor = extractBrushColor(opts->InkBoundsBrush, snapshot.Bounds.InkBoundsColor);
-        }
+        CoreDWTextServices::PopulateGlyphBoundsOptions(opts, snapshot.Bounds);
 
         // Compute DIP-space hit targets matching RenderSnapshotToContext so pointer hover tooltips
         // accurately identify each visible measurement line.
@@ -1963,7 +1956,7 @@ void DirectText::RenderToSurface(Windows::Foundation::Size finalSize)
         if (hideVisual)
             m_spriteVisual->IsVisible = false;
         bool wasHidden = !m_spriteVisual->IsVisible;
-        m_lastShownFontFace = FontFace;
+        CoreDWTextServices::GetFontIdentity(FontFace, &m_lastShownFamilyName, &m_lastShownFaceName);
         bool useColorQueue = snapshot.UseColorQueue;
         Platform::WeakReference weakThis(this);
         BackgroundRenderWorkItem workItem;
@@ -2001,7 +1994,7 @@ void DirectText::RenderToSurface(Windows::Foundation::Size finalSize)
     }
     else
     {
-        m_lastShownFontFace = FontFace;
+        CoreDWTextServices::GetFontIdentity(FontFace, &m_lastShownFamilyName, &m_lastShownFaceName);
         DrawSnapshotToSurface(snapshot);
         if (m_spriteVisual != nullptr)
             m_spriteVisual->IsVisible = true;

@@ -274,6 +274,18 @@ public abstract partial class ViewModelBaseInternal : BaseNotifyingModel
 
 public partial class ViewModelBase : ViewModelBaseInternal
 {
+    public bool IsActiveView
+    {
+        get => GetV(false);
+        set { if (Set(value) && value) UpdateWindowTitle(); }
+    }
+
+    public string WindowTitle
+    {
+        get => Get<string>();
+        set { if (Set(value)) UpdateWindowTitle(); }
+    }
+
     public string ViewState
     {
         get => Get<string>();
@@ -289,5 +301,13 @@ public partial class ViewModelBase : ViewModelBaseInternal
     protected override void SendPropertyChanged(string propertyName)
     {
         OnPropertyChanged(propertyName);
+    }
+
+    public void UpdateWindowTitle()
+    {
+        if (!IsActiveView)
+            return;
+
+        TitleBarHelper.SetTitle(WindowTitle);
     }
 }

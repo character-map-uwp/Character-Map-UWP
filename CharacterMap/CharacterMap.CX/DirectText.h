@@ -305,6 +305,16 @@ namespace CharacterMapCX
 					m_spriteVisual->Brush = m_surfaceBrush;
 				return true;
 			}
+			bool SwapDrawingSurface(uint64_t gen, Windows::UI::Composition::CompositionDrawingSurface^ newSurface)
+			{
+				std::lock_guard<std::mutex> lock(m_surfaceMutex);
+				if (!IsGenerationCurrent(gen))
+					return false;
+				m_drawingSurface = newSurface;
+				if (m_surfaceBrush != nullptr)
+					m_surfaceBrush->Surface = newSurface;
+				return true;
+			}
 
 		public:
 
@@ -619,12 +629,10 @@ namespace CharacterMapCX
 			Windows::UI::Xaml::FlowDirection m_lastFlowDirection = Windows::UI::Xaml::FlowDirection::LeftToRight;
 			bool m_lastWordWrapping = false;
 			bool m_lastIsCharacterFit = false;
-			DWriteFontFace^ m_lastShownFontFace;
+			Platform::String^ m_lastShownFamilyName;
+			Platform::String^ m_lastShownFaceName;
 
-			bool HasContentChangedForVisibility()
-			{
-				return m_lastShownFontFace != FontFace;
-			}
+			bool HasContentChangedForVisibility();
 
 
 			void OnPropChanged(DependencyObject^ d, DependencyProperty^ p);

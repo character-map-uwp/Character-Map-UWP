@@ -19,7 +19,7 @@ public abstract partial class ViewBase : Page
 
     List<string> _trackedStates => field ??= [];
 
-    protected virtual ViewModelBase GetViewModel() => null;
+    public virtual ViewModelBase GetViewModel() => null;
 
     public Compositor Compositor => field ??= Composition.Compositor;
 

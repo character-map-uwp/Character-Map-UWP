@@ -756,6 +756,7 @@ void CompositionDeviceManager::EnsureSurfaceBrush(
     {
         surfaceBrush = compositor->CreateSurfaceBrush(surface);
         surfaceBrush->Stretch = CompositionStretch::None;
+        surfaceBrush->BitmapInterpolationMode = CompositionBitmapInterpolationMode::NearestNeighbor;
         surfaceBrush->HorizontalAlignmentRatio = 0.0f;
         surfaceBrush->VerticalAlignmentRatio = 0.0f;
     }

@@ -588,6 +588,7 @@
                 Grid.RowSpan="2"
                 Grid.Column="1"
                 core:Properties.UseStandardReposition="true"
+                MainPage="{Binding ElementName=PageRoot}"
                 Navigated="OnPresenterNavigated">
                 <Control.Resources>
                     <views:SplitViewSettings

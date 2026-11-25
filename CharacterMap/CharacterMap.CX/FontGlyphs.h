@@ -9,6 +9,7 @@
 
 #include "DWriteFontFace.h"
 #include "DWriteTypographyCollection.h"
+#include "DirectText.h"
 
 namespace CharacterMapCX
 {
@@ -96,6 +97,11 @@ namespace CharacterMapCX
                 Windows::UI::Xaml::DependencyProperty^ get() { return _IsBackgroundRenderEnabledProperty; }
             }
 
+            static property Windows::UI::Xaml::DependencyProperty^ GlyphBoundsOptionsProperty
+            {
+                Windows::UI::Xaml::DependencyProperty^ get() { return _GlyphBoundsOptionsProperty; }
+            }
+
             #pragma endregion
 
             #pragma region Properties
@@ -174,6 +180,12 @@ namespace CharacterMapCX
                 void set(bool value) { SetValue(IsBackgroundRenderEnabledProperty, value); }
             }
 
+            property Controls::GlyphBoundsOptions^ GlyphBoundsOptions
+            {
+                Controls::GlyphBoundsOptions^ get() { return (Controls::GlyphBoundsOptions^)GetValue(GlyphBoundsOptionsProperty); }
+                void set(Controls::GlyphBoundsOptions^ value) { SetValue(GlyphBoundsOptionsProperty, value); }
+            }
+
             #pragma endregion
 
             virtual Windows::Foundation::Size MeasureOverride(Windows::Foundation::Size availableSize) override;
@@ -202,27 +214,36 @@ namespace CharacterMapCX
             static Windows::UI::Xaml::DependencyProperty^ _TypographyProperty;
             static Windows::UI::Xaml::DependencyProperty^ _IsTextShapingEnabledProperty;
             static Windows::UI::Xaml::DependencyProperty^ _IsBackgroundRenderEnabledProperty;
+            static Windows::UI::Xaml::DependencyProperty^ _GlyphBoundsOptionsProperty;
 
             static void OnPropertyChanged(Windows::UI::Xaml::DependencyObject^ d, Windows::UI::Xaml::DependencyPropertyChangedEventArgs^ e);
             static void OnFontSizeChanged(Windows::UI::Xaml::DependencyObject^ d, Windows::UI::Xaml::DependencyPropertyChangedEventArgs^ e);
             static void OnForegroundChanged(Windows::UI::Xaml::DependencyObject^ d, Windows::UI::Xaml::DependencyPropertyChangedEventArgs^ e);
+            static void OnGlyphBoundsOptionsChanged(Windows::UI::Xaml::DependencyObject^ d, Windows::UI::Xaml::DependencyPropertyChangedEventArgs^ e);
+            void UpdateGlyphBoundsOptionsSubscription(Controls::GlyphBoundsOptions^ newOptions);
             void UpdateForground();
 
             void InvalidateRenderOnly();
             void ParseAndLayoutGlyphs();
             Windows::Foundation::Size ComputeScaleFactor(Windows::Foundation::Size availableSize, Windows::Foundation::Size contentSize);
             void RenderGlyphs();
+            void RenderGlyphsWithBounds(Windows::Foundation::Size finalSize, double originX, double originY);
             void RenderGlyphsBackground(Windows::Foundation::Size finalSize);
             void ReleaseDrawingSurface();
             void OnLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
             void OnUnloaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
             Windows::UI::Color GetForegroundColor();
             UINT32 GetForegroundColorKey();
+            bool ShouldEnableColorGlyphs();
             bool ShouldRenderColor();
             bool HasFontChangedForVisibility();
 
             Platform::String^ m_lastShownFamilyName;
             Platform::String^ m_lastShownFaceName;
+            Windows::Foundation::EventRegistrationToken m_glyphBoundsOptionsToken{};
+            Controls::GlyphBoundsOptions^ m_subscribedBoundsOptions = nullptr;
+            DWRITE_FONT_METRICS m_fontMetrics{};
+            Windows::Foundation::Size m_lastSyncArrangeSize{ 0, 0 };
 
             Windows::UI::Composition::SpriteVisual^ m_spriteVisual;
             Windows::UI::Composition::CompositionSurfaceBrush^ m_surfaceBrush;

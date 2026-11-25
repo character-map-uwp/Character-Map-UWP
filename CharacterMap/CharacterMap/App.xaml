@@ -444,13 +444,24 @@
 
                                                 <VisualState x:Name="Disabled">
                                                     <VisualState.Setters>
-                                                        <Setter Target="TemplateRoot.Opacity" Value="0.6" />
-                                                        <Setter Target="SwitchKnobBounds.Fill" Value="{ThemeResource ToggleSwitchFillOnDisabled}" />
+                                                        <Setter Target="TemplateRoot.Opacity" Value="0.55" />
+                                                        <!--<Setter Target="SwitchKnobBounds.Fill" Value="{ThemeResource ToggleSwitchFillOnDisabled}" />
                                                         <Setter Target="SwitchKnobBounds.Stroke" Value="{ThemeResource ToggleSwitchStrokeOnDisabled}" />
                                                         <Setter Target="SwitchKnobOff.Fill" Value="{ThemeResource ToggleSwitchKnobFillOffDisabled}" />
-                                                        <Setter Target="SwitchKnobOn.Background" Value="{ThemeResource ToggleSwitchKnobFillOnDisabled}" />
+                                                        <Setter Target="SwitchKnobOn.Background" Value="{ThemeResource ToggleSwitchKnobFillOnDisabled}" />-->
                                                     </VisualState.Setters>
                                                 </VisualState>
+
+                                                <VisualStateGroup.Transitions>
+                                                    <VisualTransition
+                                                        GeneratedDuration="0:0:0.1"
+                                                        From="*"
+                                                        To="Disabled" />
+                                                    <VisualTransition
+                                                        GeneratedDuration="0:0:0.1"
+                                                        From="Disabled"
+                                                        To="*" />
+                                                </VisualStateGroup.Transitions>
                                             </VisualStateGroup>
                                             <VisualStateGroup x:Name="ToggleStates">
                                                 <VisualStateGroup.Transitions>

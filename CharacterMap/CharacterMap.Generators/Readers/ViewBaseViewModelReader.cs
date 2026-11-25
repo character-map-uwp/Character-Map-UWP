@@ -109,7 +109,7 @@ namespace {ns};
 
 partial class {className}
 {{
-    protected override ViewModelBase GetViewModel() => ViewModel;
+    public override ViewModelBase GetViewModel() => ViewModel;
 }}";
 
                 spc.AddSource($"{className}.g.vm.cs", SourceText.From(code, Encoding.UTF8));
