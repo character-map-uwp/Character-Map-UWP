@@ -64,8 +64,8 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                     <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
+                    <!--<ColumnDefinition />
+                    <ColumnDefinition />-->
                 </Grid.ColumnDefinitions>
                 <!--<AppBarButton
                     x:Name="MoreSwitchView"
@@ -103,24 +103,11 @@
                     core:Properties.ThemeIcon="EnableGrouping"
                     IsChecked="{x:Bind ViewModel.Settings.GroupCharacters, Mode=TwoWay}"
                     d:ToolTipService.ToolTip="{core:Localizer Key=CharacterGroupingToggle/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}" />
-                <AppBarButton
-                    x:Name="IncreaseSizeButton"
-                    x:Uid="IncreaseSizeButton"
-                    Grid.Column="1"
-                    core:Properties.ThemeIcon="IncreaseFontSize"
-                    Click="{x:Bind ViewModel.IncreaseCharacterSize}"
-                    d:ToolTipService.ToolTip="{core:Localizer Key=IncreaseSizeButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}" />
-                <AppBarButton
-                    x:Name="DecreaseSizeButton"
-                    x:Uid="DecreaseSizeButton"
-                    Grid.Column="2"
-                    core:Properties.ThemeIcon="DecreaseFontSize"
-                    Click="{x:Bind ViewModel.DecreaseCharacterSize}"
-                    d:ToolTipService.ToolTip="{core:Localizer Key=DecreaseSizeButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}" />
+
                 <AppBarToggleButton
                     x:Name="ToggleCopyPaneButton"
                     x:Uid="ToggleCopyPaneButton"
-                    Grid.Column="3"
+                    Grid.Column="1"
                     core:Properties.ThemeIcon="BottomPane"
                     Checked="{x:Bind ViewModel.ShowCopyPane}"
                     Loaded="ToggleCopyPaneButton_Loaded"
@@ -129,7 +116,7 @@
                 <AppBarToggleButton
                     x:Name="TogglePaneButton"
                     x:Uid="TogglePaneButton"
-                    Grid.Column="4"
+                    Grid.Column="2"
                     core:Properties.ThemeIcon="RightPane"
                     Checked="{x:Bind ViewModel.ShowPane}"
                     Loaded="PaneButton_Loaded"
@@ -157,6 +144,7 @@
             DrawLinesOverGlyph="False"
             InkBoundsBrush="#80E81123"
             InkBoundsLabel="{core:Localizer Key=GlyphBoundsInkBoundsLabel}"
+            IsEnabled="{x:Bind ViewModel.Settings.DisplayMapGlyphBounds, Mode=TwoWay}"
             LineThickness="1.5"
             XHeightBrush="#FF00B7C3"
             XHeightLabel="{core:Localizer Key=GlyphBoundsXHeightLabel}" />
@@ -1136,11 +1124,113 @@
                         </Border>
 
                         <controls:UXButton
-                            x:Name="FontOptionsButton"
+                            x:Name="DisplayOptionsButton"
                             VerticalAlignment="Stretch"
                             h:FluentAnimation.PointerOver="DropDownGlyph"
                             Style="{ThemeResource MapInfoButtonStyle}"
                             Visibility="Visible"
+                            d:Label="{core:Localizer Key=FontOptionsButton/Label}"
+                            d:Visibility="Visible">
+
+                            <controls:PreviewTip.DisplayContent>
+                                <views:TitledDescription Title="Display Options" Description="Render Options" />
+                            </controls:PreviewTip.DisplayContent>
+
+                            <SymbolIcon Symbol="View" />
+
+                            <!--<FontIcon
+                                Margin="0,0,-2,0"
+                                FontSize="16"
+                                Glyph="{core:ThemeIconGlyph Icon=RenderingOptions}"
+                                Style="{StaticResource ThemeFontIconStyle}" />-->
+                            <Button.Flyout>
+                                <Flyout
+                                    core:Properties.UseExpandContractAnimation="True"
+                                    Placement="Bottom"
+                                    ShouldConstrainToRootBounds="False">
+                                    <Flyout.FlyoutPresenterStyle>
+                                        <Style BasedOn="{StaticResource ThemeFlyoutStyle}" TargetType="FlyoutPresenter">
+                                            <Setter Property="MaxWidth" Value="360" />
+                                        </Style>
+                                    </Flyout.FlyoutPresenterStyle>
+                                    <StackPanel
+                                        Margin="12,4"
+                                        ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
+                                        Spacing="12">
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.Resources>
+                                                <Style BasedOn="{StaticResource CommandBarFlyoutAppBarButtonStyle}" TargetType="AppBarButton">
+                                                    <Setter Property="Background" Value="Transparent" />
+                                                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                                                    <Setter Property="Height" Value="60" />
+                                                    <Setter Property="Width" Value="Auto" />
+                                                    <Setter Property="h:FluentAnimation.PointerOver" Value="ContentViewbox" />
+                                                    <Setter Property="h:FluentAnimation.PointerOverOffset" Value="-3" />
+                                                    <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Vertical" />
+                                                    <Setter Property="h:FluentAnimation.Pressed" Value="ContentViewbox" />
+                                                    <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.95" />
+                                                </Style>
+                                            </Grid.Resources>
+
+                                            <AppBarButton
+                                                x:Name="IncreaseSizeButton"
+                                                x:Uid="IncreaseSizeButton"
+                                                Grid.Column="0"
+                                                core:Properties.ThemeIcon="IncreaseFontSize"
+                                                Click="{x:Bind ViewModel.IncreaseCharacterSize}"
+                                                Label="{core:Localizer Key=IncreaseSizeButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}"
+                                                LabelPosition="Default"
+                                                d:ToolTipService.ToolTip="{core:Localizer Key=IncreaseSizeButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}" />
+                                            <AppBarButton
+                                                x:Name="DecreaseSizeButton"
+                                                x:Uid="DecreaseSizeButton"
+                                                Grid.Column="1"
+                                                core:Properties.ThemeIcon="DecreaseFontSize"
+                                                Click="{x:Bind ViewModel.DecreaseCharacterSize}"
+                                                Label="{core:Localizer Key=DecreaseSizeButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}"
+                                                LabelPosition="Default"
+                                                d:ToolTipService.ToolTip="{core:Localizer Key=DecreaseSizeButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}" />
+                                        </Grid>
+
+                                        <StackPanel
+                                            x:Name="ColorPanel"
+                                            x:Load="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.ContainsVectorColorGlyphs, Mode=OneWay}"
+                                            Spacing="12">
+                                            <TextBlock
+                                                x:Name="ColorHeader"
+                                                x:Uid="FontDisplayHeader"
+                                                Margin="0,12,0,0"
+                                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                                FontSize="14"
+                                                FontWeight="Bold"
+                                                d:Text="{core:Localizer Key=FontDisplayHeader/Text}" />
+                                            <ToggleSwitch
+                                                x:Name="ColorGlyphToggle"
+                                                x:Uid="ColorGlyphToggle"
+                                                VerticalAlignment="Bottom"
+                                                IsOn="{Binding ShowColorGlyphs, Mode=TwoWay}"
+                                                d:OffContent="{core:Localizer Key=ColorGlyphToggle/OffContent}"
+                                                d:OnContent="{core:Localizer Key=ColorGlyphToggle/OnContent}" />
+                                        </StackPanel>
+
+                                        <controls:GlyphBoundsSelector Options="{StaticResource MapGlyphBoundsOptions}" />
+                                    </StackPanel>
+                                </Flyout>
+                            </Button.Flyout>
+                        </controls:UXButton>
+
+                        <controls:UXButton
+                            x:Name="FontOptionsButton"
+                            VerticalAlignment="Stretch"
+                            h:FluentAnimation.PointerOver="DropDownGlyph"
+                            Style="{ThemeResource MapInfoButtonStyle}"
+                            Visibility="Collapsed"
                             d:Label="{core:Localizer Key=FontOptionsButton/Label}"
                             d:Visibility="Visible">
 
@@ -1176,68 +1266,10 @@
                                             SelectionMode="Single"
                                             ShowsScrollingPlaceholders="False"
                                             SingleSelectionFollowsFocus="True">
-                                            <!--<ListView.ItemContainerStyle>
-                                            <Style BasedOn="{StaticResource DefaultThemeListViewItemStyle}" TargetType="ListViewItem">
-                                                <Setter Property="core:Properties.PointerOverAnimation" Value="Name" />
-                                                <Setter Property="VerticalContentAlignment" Value="Center" />
-                                            </Style>
-                                        </ListView.ItemContainerStyle>-->
                                             <ListView.Header>
-                                                <StackPanel
-                                                    Margin="12,4"
-                                                    ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
-                                                    Spacing="12">
-
-                                                    <controls:GlyphBoundsSelector Options="{StaticResource MapGlyphBoundsOptions}" />
-
-                                                    <!--<StackPanel>
-                                                        <StackPanel.Resources>
-                                                            <Style BasedOn="{StaticResource LongToggleSwitchStyle}" TargetType="ToggleSwitch" />
-                                                        </StackPanel.Resources>
-                                                        <ToggleSwitch
-                                                            x:Name="MapGlyphBoundsToggle"
-                                                            FontSize="14"
-                                                            FontWeight="Bold"
-                                                            Header="Show Glyph Metrics"
-                                                            IsOn="{x:Bind MapGlyphBoundsOptions.DrawLinesOverGlyph, Mode=TwoWay}" />
-
-                                                        <controls:LayoutPanel Margin="0 0 0 12" Visibility="{x:Bind MapGlyphBoundsToggle.IsOn, Mode=OneWay}">
-                                                            <controls:LayoutPanel.Layout>
-                                                                <muxc:UniformGridLayout
-                                                                    ItemsStretch="Fill"
-                                                                    MaximumRowsOrColumns="2"
-                                                                    MinColumnSpacing="8"
-                                                                    MinRowSpacing="0" />
-                                                            </controls:LayoutPanel.Layout>
-                                                            <ToggleSwitch Header="{core:Localizer Key=GlyphBoundsAscentLabel}" IsOn="{x:Bind MapGlyphBoundsOptions.ShowAscent, Mode=TwoWay}" />
-                                                            <ToggleSwitch Header="{core:Localizer Key=GlyphBoundsCapHeightLabel}" IsOn="{x:Bind MapGlyphBoundsOptions.ShowCapHeight, Mode=TwoWay}" />
-                                                            <ToggleSwitch Header="{core:Localizer Key=GlyphBoundsDescentLabel}" IsOn="{x:Bind MapGlyphBoundsOptions.ShowDescent, Mode=TwoWay}" />
-                                                            <ToggleSwitch Header="{core:Localizer Key=GlyphBoundsXHeightLabel}" IsOn="{x:Bind MapGlyphBoundsOptions.ShowXHeight, Mode=TwoWay}" />
-                                                            <ToggleSwitch Header="{core:Localizer Key=GlyphBoundsLayoutBoundsLabel}" IsOn="{x:Bind MapGlyphBoundsOptions.ShowAdvanceBounds, Mode=TwoWay}" />
-                                                            <ToggleSwitch Header="{core:Localizer Key=GlyphBoundsInkBoundsLabel}" IsOn="{x:Bind MapGlyphBoundsOptions.ShowInkBounds, Mode=TwoWay}" />
-                                                        </controls:LayoutPanel>
-                                                    </StackPanel>-->
-
-                                                    <TextBlock
-                                                        x:Name="ColorHeader"
-                                                        x:Load="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.ContainsVectorColorGlyphs, Mode=OneWay}"
-                                                        x:Uid="FontDisplayHeader"
-                                                        Margin="0,12,0,0"
-                                                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                                        FontSize="14"
-                                                        FontWeight="Bold"
-                                                        d:Text="{core:Localizer Key=FontDisplayHeader/Text}" />
-                                                    <ToggleSwitch
-                                                        x:Name="ColorGlyphToggle"
-                                                        x:Load="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.ContainsVectorColorGlyphs, Mode=OneWay}"
-                                                        x:Uid="ColorGlyphToggle"
-                                                        VerticalAlignment="Bottom"
-                                                        IsOn="{Binding ShowColorGlyphs, Mode=TwoWay}"
-                                                        d:OffContent="{core:Localizer Key=ColorGlyphToggle/OffContent}"
-                                                        d:OnContent="{core:Localizer Key=ColorGlyphToggle/OnContent}" />
+                                                <StackPanel Margin="12,4">
                                                     <TextBlock
                                                         x:Uid="TypographyVariantsHeader"
-                                                        Margin="0,12,0,0"
                                                         FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                                         FontSize="14"
                                                         FontWeight="Bold"
@@ -1258,6 +1290,8 @@
                                 </Flyout>
                             </Button.Flyout>
                         </controls:UXButton>
+
+
 
                         <controls:UXButton
                             x:Name="CharacterFilterButton"
@@ -1308,11 +1342,14 @@
                     <Button.Flyout>
                         <MenuFlyout
                             x:Name="MoreMenu"
-                            AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
+                            core:Properties.UseExpandContractAnimation="True"
+                            AreOpenCloseAnimationsEnabled="False"
                             Opening="MenuFlyout_Opening"
                             Placement="BottomEdgeAlignedRight">
                             <MenuFlyout.MenuFlyoutPresenterStyle>
-                                <Style BasedOn="{StaticResource DefaultFlyoutStyle}" TargetType="MenuFlyoutPresenter" />
+                                <Style BasedOn="{StaticResource DefaultFlyoutStyle}" TargetType="MenuFlyoutPresenter">
+                                    <Setter Property="RenderTransformOrigin" Value="1 0" />
+                                </Style>
                             </MenuFlyout.MenuFlyoutPresenterStyle>
                         </MenuFlyout>
                     </Button.Flyout>
@@ -3746,7 +3783,7 @@
             <VisualStateGroup x:Name="OptionsStates">
                 <VisualState x:Name="HasOptionsState">
                     <VisualState.StateTriggers>
-                        <StateTrigger IsActive="{x:Bind core:Converters.TrueFalseFalse(ViewModel.SelectedFaceAnalysis.HasFontOptions, ViewModel.SelectedFont.IsGlyphMap, ViewModel.SelectedFont.IsLigatures), FallbackValue=False, Mode=OneWay}" />
+                        <StateTrigger IsActive="{x:Bind core:Converters.TrueFalseFalseFalse(ViewModel.SelectedFaceAnalysis.HasFontOptions, ViewModel.SelectedFont.IsGlyphMap, ViewModel.SelectedFont.IsLigatures, ViewModel.SelectedFont.IsOpenType), FallbackValue=False, Mode=OneWay}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="FontOptionsButton.Visibility" Value="Visible" />

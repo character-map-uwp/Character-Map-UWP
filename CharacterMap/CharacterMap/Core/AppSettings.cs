@@ -52,6 +52,12 @@ public class AppSettings : INotifyPropertyChanged
         set => Set(value);
     }
 
+    public bool DisplayMapGlyphBounds
+    {
+        get => Get(false);
+        set => Set(value);
+    }
+
     public bool UseMenuNavigationBar
     {
         get => Get(true);
@@ -382,7 +388,7 @@ public class AppSettings : INotifyPropertyChanged
         lock (_lock)
             handlers = _handlerCache.ToArray();
 
-        PropertyChangedEventArgs eventArgs = new(propertyName);
+        PropertyChangedEventArgs eventArgs = PropertyChangedCache.Get(propertyName);
         foreach (var handler in handlers)
         {
             void Do() => handler.Value(this, eventArgs);

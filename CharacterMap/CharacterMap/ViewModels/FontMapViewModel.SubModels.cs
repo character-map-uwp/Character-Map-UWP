@@ -83,7 +83,7 @@ public partial class FaceAnalysisModel : ViewModelBase, IFaceSearchSource
 
         IsMDL2Font = FontFinder.IsMDL2(face);
         FontFamily = new(face.Source);
-        HasFontOptions = Analysis.ContainsVectorColorGlyphs || face.HasXamlTypographyFeatures;
+        HasFontOptions = face.HasXamlTypographyFeatures; //  || sAnalysis.ContainsVectorColorGlyphs;
         UpdateVariations();
         UpdateRampOptions();
     }
