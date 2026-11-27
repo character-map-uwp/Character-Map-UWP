@@ -1235,6 +1235,7 @@ void CoreDWTextServices::PopulateGlyphBoundsOptions(
         return D2D1::ColorF(c.R / 255.0f, c.G / 255.0f, c.B / 255.0f, (c.A / 255.0f) * static_cast<float>(brush->Opacity));
     };
 
+    outData.IsEnabled = options->IsEnabled;
     outData.ShowAscent = options->ShowAscent;
     outData.ShowCapHeight = options->ShowCapHeight;
     outData.ShowXHeight = options->ShowXHeight;
@@ -1279,7 +1280,7 @@ void CoreDWTextServices::DrawGlyphBounds(
     const GlyphBoundsRenderData& bounds,
     const GlyphBoundsDrawContext& drawCtx)
 {
-    if (context == nullptr || brush == nullptr)
+    if (!bounds.IsEnabled || context == nullptr || brush == nullptr)
         return;
 
     context->SetTransform(D2D1::Matrix3x2F::Translation(drawCtx.OffsetX, drawCtx.OffsetY));

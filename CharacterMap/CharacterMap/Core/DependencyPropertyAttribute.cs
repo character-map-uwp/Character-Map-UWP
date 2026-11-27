@@ -67,3 +67,8 @@ public class DependencyPropertyAttribute : DependencyPropertyAttribute<object>
         Callback = callback;
     }
 }
+
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+public class DependencyPropertyChangedAttribute : Attribute
+{
+}

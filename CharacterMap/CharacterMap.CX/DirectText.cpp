@@ -38,6 +38,7 @@ using namespace Windows::Graphics::DirectX;
 using namespace Windows::Graphics::DirectX::Direct3D11;
 using namespace Windows::ApplicationModel;
 
+DependencyProperty^ GlyphBoundsOptions::_IsEnabledProperty = nullptr;
 DependencyProperty^ GlyphBoundsOptions::_ShowAscentProperty = nullptr;
 DependencyProperty^ GlyphBoundsOptions::_ShowCapHeightProperty = nullptr;
 DependencyProperty^ GlyphBoundsOptions::_ShowXHeightProperty = nullptr;
@@ -77,6 +78,7 @@ void GlyphBoundsOptions::RegisterDependencyProperties()
 
     auto cb = ref new PropertyChangedCallback(&GlyphBoundsOptions::OnOptionChanged);
 
+    _IsEnabledProperty = DependencyProperty::Register("IsEnabled", bool::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(true, cb));
     _ShowAscentProperty = DependencyProperty::Register("ShowAscent", bool::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(true, cb));
     _ShowCapHeightProperty = DependencyProperty::Register("ShowCapHeight", bool::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(true, cb));
     _ShowXHeightProperty = DependencyProperty::Register("ShowXHeight", bool::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(false, cb));
@@ -101,7 +103,7 @@ void GlyphBoundsOptions::RegisterDependencyProperties()
     _XHeightLabelProperty = DependencyProperty::Register("XHeightLabel", Platform::String::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(ref new Platform::String(L"x-Height"), cb));
     _BaselineLabelProperty = DependencyProperty::Register("BaselineLabel", Platform::String::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(ref new Platform::String(L"Baseline"), cb));
     _DescentLabelProperty = DependencyProperty::Register("DescentLabel", Platform::String::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(ref new Platform::String(L"Descent"), cb));
-    _AdvanceBoundsLabelProperty = DependencyProperty::Register("AdvanceBoundsLabel", Platform::String::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(ref new Platform::String(L"Advance Bounds"), cb));
+    _AdvanceBoundsLabelProperty = DependencyProperty::Register("AdvanceBoundsLabel", Platform::String::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(ref new Platform::String(L"Layout Bounds"), cb));
     _InkBoundsLabelProperty = DependencyProperty::Register("InkBoundsLabel", Platform::String::typeid, GlyphBoundsOptions::typeid, ref new PropertyMetadata(ref new Platform::String(L"Ink Bounds"), cb));
 }
 
@@ -393,7 +395,7 @@ void DirectText::UpdateRootHitTestBackground()
     if (m_rootBorder == nullptr)
         return;
 
-    if (RenderGlyphBounds)
+    if (ShouldRenderGlyphBounds())
     {
       /*  if (m_rootBorder->Background == nullptr)
             m_rootBorder->Background = ref new SolidColorBrush(Windows::UI::Colors::Transparent);*/
@@ -410,7 +412,7 @@ void DirectText::OnPointerMoved(Windows::UI::Xaml::Input::PointerRoutedEventArgs
 {
     Control::OnPointerMoved(e);
 
-    if (!RenderGlyphBounds || m_boundsHitTargets.empty() || e == nullptr)
+    if (!ShouldRenderGlyphBounds() || m_boundsHitTargets.empty() || e == nullptr)
     {
         HideBoundsToolTip();
         return;
@@ -571,7 +573,7 @@ namespace
 
 bool DirectText::ShouldRenderColor()
 {
-    if (RenderGlyphBounds)
+    if (ShouldRenderGlyphBounds())
         return true;
 
     if (!IsColorFontEnabled || ColorRenderOption == DWriteColorRenderOption::Monochrome)
@@ -638,7 +640,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
     float availW = std::isinf(size.Width) ? static_cast<float>(m) : static_cast<float>((std::max)(1.0, static_cast<double>(size.Width) - padW));
     float availH = std::isinf(size.Height) ? static_cast<float>(m) : static_cast<float>((std::max)(1.0, static_cast<double>(size.Height) - padH));
 
-    bool renderBounds = RenderGlyphBounds;
+    bool renderBounds = ShouldRenderGlyphBounds();
     bool trimLeading = TrimLeadingLineGap;
     bool fitToBounds = IsCharacterFitEnabled || renderBounds;
 
@@ -956,11 +958,19 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
                 baselineY = ascentDip;
         }
 
+        double upem = (fm.designUnitsPerEm > 0) ? static_cast<double>(fm.designUnitsPerEm) : 1000.0;
         m_metricBaselineY = baselineY;
         m_metricAscentY = baselineY - ascentDip;
         m_metricCapHeightY = baselineY - capHeightDip;
         m_metricXHeightY = baselineY - xHeightDip;
         m_metricDescentY = baselineY + descentDip;
+        m_metricAscentEm = static_cast<double>(fm.ascent) / upem;
+        m_metricCapHeightEm = static_cast<double>(fm.capHeight) / upem;
+        m_metricXHeightEm = static_cast<double>(fm.xHeight) / upem;
+        m_metricDescentEm = static_cast<double>(fm.descent) / upem;
+        m_metricBaselineEm = (GlyphIndex < 0 && effectiveFontSize > 0.0)
+            ? (baselineY / effectiveFontSize)
+            : m_metricAscentEm;
         m_hasCapHeight = (fm.capHeight > 0);
         m_hasXHeight = (fm.xHeight > 0);
     }
@@ -1612,7 +1622,7 @@ void DirectText::RenderToSurface(Windows::Foundation::Size finalSize)
 
     float dpiScale = CompositionDeviceManager::GetDpiScale(this->Dispatcher);
 
-    bool renderBounds = RenderGlyphBounds;
+    bool renderBounds = ShouldRenderGlyphBounds();
     bool trimLeading = TrimLeadingLineGap;
     bool fitToBounds = IsCharacterFitEnabled || renderBounds;
     UpdateRootHitTestBackground();
@@ -1870,20 +1880,36 @@ void DirectText::RenderToSurface(Windows::Foundation::Size finalSize)
         {
             return (custom != nullptr && custom->Length() > 0) ? custom : ref new Platform::String(fallback);
         };
+        auto formatValue = [](Platform::String^ label, double val) -> Platform::String^
+        {
+            wchar_t buf[64];
+            swprintf_s(buf, L" (%.2f)", val);
+            return label + ref new Platform::String(buf);
+        };
+        auto formatSize = [](Platform::String^ label, double w, double h) -> Platform::String^
+        {
+            wchar_t buf[80];
+            swprintf_s(buf, L" (%.2f \u00D7 %.2f)", w, h);
+            return label + ref new Platform::String(buf);
+        };
+        double effectiveEmSize = 8.0 > FontSize ? 8.0 : FontSize;
 
         if (snapshot.Bounds.ShowAscent && snapshot.Bounds.AscentColor.a > 0.0f)
-            m_boundsHitTargets.push_back({ 0, (top + snapshot.Bounds.AscentY) * scale, {}, getLabel(opts != nullptr ? opts->AscentLabel : nullptr, L"Ascent") });
+            m_boundsHitTargets.push_back({ 0, (top + snapshot.Bounds.AscentY) * scale, {}, formatValue(getLabel(opts != nullptr ? opts->AscentLabel : nullptr, L"Ascent"), m_metricAscentEm) });
         if (snapshot.Bounds.ShowCapHeight && snapshot.Bounds.HasCapHeight && snapshot.Bounds.CapHeightColor.a > 0.0f)
-            m_boundsHitTargets.push_back({ 0, (top + snapshot.Bounds.CapHeightY) * scale, {}, getLabel(opts != nullptr ? opts->CapHeightLabel : nullptr, L"Cap Height") });
+            m_boundsHitTargets.push_back({ 0, (top + snapshot.Bounds.CapHeightY) * scale, {}, formatValue(getLabel(opts != nullptr ? opts->CapHeightLabel : nullptr, L"Cap Height"), m_metricCapHeightEm) });
         if (snapshot.Bounds.ShowXHeight && snapshot.Bounds.HasXHeight && snapshot.Bounds.XHeightColor.a > 0.0f)
-            m_boundsHitTargets.push_back({ 0, (top + snapshot.Bounds.XHeightY) * scale, {}, getLabel(opts != nullptr ? opts->XHeightLabel : nullptr, L"x-Height") });
+            m_boundsHitTargets.push_back({ 0, (top + snapshot.Bounds.XHeightY) * scale, {}, formatValue(getLabel(opts != nullptr ? opts->XHeightLabel : nullptr, L"x-Height"), m_metricXHeightEm) });
         if (snapshot.Bounds.ShowBaseline && snapshot.Bounds.BaselineColor.a > 0.0f)
-            m_boundsHitTargets.push_back({ 0, (top + snapshot.Bounds.BaselineY) * scale, {}, getLabel(opts != nullptr ? opts->BaselineLabel : nullptr, L"Baseline") });
+            m_boundsHitTargets.push_back({ 0, (top + snapshot.Bounds.BaselineY) * scale, {}, formatValue(getLabel(opts != nullptr ? opts->BaselineLabel : nullptr, L"Baseline"), m_metricBaselineEm) });
         if (snapshot.Bounds.ShowDescent && snapshot.Bounds.DescentColor.a > 0.0f)
-            m_boundsHitTargets.push_back({ 0, (top + snapshot.Bounds.DescentY) * scale, {}, getLabel(opts != nullptr ? opts->DescentLabel : nullptr, L"Descent") });
+            m_boundsHitTargets.push_back({ 0, (top + snapshot.Bounds.DescentY) * scale, {}, formatValue(getLabel(opts != nullptr ? opts->DescentLabel : nullptr, L"Descent"), m_metricDescentEm) });
         if (snapshot.Bounds.ShowAdvanceBounds && snapshot.Bounds.AdvanceBoundsColor.a > 0.0f)
         {
-            auto advLabel = getLabel(opts != nullptr ? opts->AdvanceBoundsLabel : nullptr, L"Advance Bounds");
+            auto advLabel = formatSize(
+                getLabel(opts != nullptr ? opts->AdvanceBoundsLabel : nullptr, L"Layout Bounds"),
+                static_cast<double>(layoutBounds.Width) / effectiveEmSize,
+                static_cast<double>(layoutBounds.Height) / effectiveEmSize);
             m_boundsHitTargets.push_back({ 1, (left + layoutBounds.Left) * scale, {}, advLabel });
             m_boundsHitTargets.push_back({ 1, (left + layoutBounds.Right) * scale, {}, advLabel });
         }
@@ -1893,7 +1919,11 @@ void DirectText::RenderToSurface(Windows::Foundation::Size finalSize)
             float ry0 = static_cast<float>((top + drawBounds.Top) * scale);
             float rw = static_cast<float>(drawBounds.Width * scale);
             float rh = static_cast<float>(drawBounds.Height * scale);
-            m_boundsHitTargets.push_back({ 2, 0.0, Rect(rx0, ry0, (std::max)(0.0f, rw), (std::max)(0.0f, rh)), getLabel(opts != nullptr ? opts->InkBoundsLabel : nullptr, L"Ink Bounds") });
+            auto inkLabel = formatSize(
+                getLabel(opts != nullptr ? opts->InkBoundsLabel : nullptr, L"Ink Bounds"),
+                static_cast<double>(drawBounds.Width) / effectiveEmSize,
+                static_cast<double>(drawBounds.Height) / effectiveEmSize);
+            m_boundsHitTargets.push_back({ 2, 0.0, Rect(rx0, ry0, (std::max)(0.0f, rw), (std::max)(0.0f, rh)), inkLabel });
         }
     }
     else

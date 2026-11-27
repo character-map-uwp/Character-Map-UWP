@@ -236,6 +236,7 @@ namespace CharacterMapCX
             UINT32 GetForegroundColorKey();
             bool ShouldEnableColorGlyphs();
             bool ShouldRenderColor();
+            bool HasActiveGlyphBounds();
             bool HasFontChangedForVisibility();
 
             Platform::String^ m_lastShownFamilyName;

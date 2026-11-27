@@ -611,7 +611,9 @@
                     Opacity="{Binding ElementName=SplitViewShim, Path=Opacity}"
                     OpenPaneLength="{StaticResource SplitViewPaneWidth}"
                     PaneBackground="{x:Null}"
-                    Visibility="{Binding ElementName=SplitViewShim, Path=Visibility}">
+                    Visibility="{Binding ElementName=SplitViewShim, Path=Visibility}"
+                    d:IsPaneOpen="True"
+                    d:Visibility="Visible">
                     <SplitView.Pane>
                         <Grid x:Name="PaneRoot">
                             <Grid.RowDefinitions>

@@ -41,6 +41,7 @@ namespace CharacterMapCX
 
 			static void RegisterDependencyProperties();
 
+			static property DependencyProperty^ IsEnabledProperty { DependencyProperty^ get() { return _IsEnabledProperty; } }
 			static property DependencyProperty^ ShowAscentProperty { DependencyProperty^ get() { return _ShowAscentProperty; } }
 			static property DependencyProperty^ ShowCapHeightProperty { DependencyProperty^ get() { return _ShowCapHeightProperty; } }
 			static property DependencyProperty^ ShowXHeightProperty { DependencyProperty^ get() { return _ShowXHeightProperty; } }
@@ -67,6 +68,12 @@ namespace CharacterMapCX
 			static property DependencyProperty^ DescentLabelProperty { DependencyProperty^ get() { return _DescentLabelProperty; } }
 			static property DependencyProperty^ AdvanceBoundsLabelProperty { DependencyProperty^ get() { return _AdvanceBoundsLabelProperty; } }
 			static property DependencyProperty^ InkBoundsLabelProperty { DependencyProperty^ get() { return _InkBoundsLabelProperty; } }
+
+			property bool IsEnabled
+			{
+				bool get() { return (bool)GetValue(IsEnabledProperty); }
+				void set(bool value) { SetValue(IsEnabledProperty, value); }
+			}
 
 			property bool ShowAscent
 			{
@@ -207,6 +214,7 @@ namespace CharacterMapCX
 			}
 
 		private:
+			static DependencyProperty^ _IsEnabledProperty;
 			static DependencyProperty^ _ShowAscentProperty;
 			static DependencyProperty^ _ShowCapHeightProperty;
 			static DependencyProperty^ _ShowXHeightProperty;
@@ -586,6 +594,11 @@ namespace CharacterMapCX
 			double m_metricCapHeightY = 0.0;
 			double m_metricXHeightY = 0.0;
 			double m_metricDescentY = 0.0;
+			double m_metricBaselineEm = 0.0;
+			double m_metricAscentEm = 0.0;
+			double m_metricCapHeightEm = 0.0;
+			double m_metricXHeightEm = 0.0;
+			double m_metricDescentEm = 0.0;
 			bool m_hasCapHeight = false;
 			bool m_hasXHeight = false;
 			bool m_isSingleChar = false;
@@ -633,6 +646,13 @@ namespace CharacterMapCX
 			Platform::String^ m_lastShownFaceName;
 
 			bool HasContentChangedForVisibility();
+			bool ShouldRenderGlyphBounds()
+			{
+				if (!RenderGlyphBounds)
+					return false;
+				auto opts = GlyphBoundsOptions;
+				return opts == nullptr || opts->IsEnabled;
+			}
 
 
 			void OnPropChanged(DependencyObject^ d, DependencyProperty^ p);

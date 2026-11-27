@@ -78,12 +78,12 @@
                         Spline="{core:DefaultCompositionSpline}"
                         Duration="{core:DefaultCompositionOffsetDuration}" />
 
-
                     <TransitionCollection x:Key="NoTransitions" />
+
                     <TransitionCollection x:Key="RepositionTransitions">
+                        <!--  Dynamically modified by ResourceHelper  -->
                         <RepositionThemeTransition IsStaggeringEnabled="False" />
                     </TransitionCollection>
-
 
 
                     <SolidColorBrush x:Key="WhiteBrush" Color="White" />
@@ -195,6 +195,7 @@
                                             IsHitTestVisible="False"
                                             TextWrapping="Wrap" />
                                         <Grid
+                                            x:Name="SwitchRoot"
                                             Grid.Column="1"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Stretch">
@@ -444,7 +445,8 @@
 
                                                 <VisualState x:Name="Disabled">
                                                     <VisualState.Setters>
-                                                        <Setter Target="TemplateRoot.Opacity" Value="0.55" />
+                                                        <Setter Target="TemplateRoot.Opacity" Value="0.6" />
+                                                        <Setter Target="SwitchRoot.Opacity" Value="0.2" />
                                                         <!--<Setter Target="SwitchKnobBounds.Fill" Value="{ThemeResource ToggleSwitchFillOnDisabled}" />
                                                         <Setter Target="SwitchKnobBounds.Stroke" Value="{ThemeResource ToggleSwitchStrokeOnDisabled}" />
                                                         <Setter Target="SwitchKnobOff.Fill" Value="{ThemeResource ToggleSwitchKnobFillOffDisabled}" />

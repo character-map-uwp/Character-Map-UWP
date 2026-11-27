@@ -1683,25 +1683,30 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
             // x:Bind & Binding were causing memory issues. Handle it manually for now.
             if (args.ItemContainer.ContentTemplateRoot is Grid g && args.Item is UInt32 item)
+            {
+                
                 SetGlyphContainer(
                     ViewModel, 
-                    g, 
+                    args.ItemContainer, 
                     item, 
                     ViewModel.RenderingOptions);
+            }
         }
     }
 
-    static void SetGlyphContainer(FontMapViewModel viewModel, Grid g, UInt32 item, CharacterRenderingOptions options)
+    static void SetGlyphContainer(FontMapViewModel viewModel, SelectorItem s, UInt32 item, CharacterRenderingOptions options)
     {
-        g.Height = viewModel.Settings.GridSize;
-        g.Width = viewModel.Settings.GridSize;
+        s.Height = viewModel.Settings.GridSize;
+        s.Width = viewModel.Settings.GridSize;
+
+        Grid g = (Grid)s.ContentTemplateRoot;
         g.Tag = item;
 
         if (g.Children[0] is FontGlyphs f)
         {
             f.BlockUpdates = true;
             f.FontFace = options.ActiveFontFace;
-            f.FontSize = options.FontSize;
+            f.FontSize = viewModel.Settings.GridSize /2f;
             f.IsColorFontEnabled = options.IsColorRenderingEnabled;
             f.StyleSimulations = options.ActiveFontFace.Properties.Simulations;
             f.Indices = item.ToString();
@@ -1726,7 +1731,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 {
                     foreach (var c in containers)
                         if (c.ContentTemplateRoot is Grid g && c.Content is UInt32 item)
-                            SetGlyphContainer(view.ViewModel, g, item, o);
+                            SetGlyphContainer(view.ViewModel, c, item, o);
                 }
             });
         }

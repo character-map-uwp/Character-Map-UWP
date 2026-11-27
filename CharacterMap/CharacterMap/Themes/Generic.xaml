@@ -8,6 +8,7 @@
     xmlns:h="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:CharacterMap.Models"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d">
 
@@ -1700,4 +1701,72 @@
         </Setter>
     </Style>
 
+
+    <Style TargetType="controls:GlyphBoundsSelector">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:GlyphBoundsSelector">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <StackPanel>
+                            <StackPanel.Resources>
+                                <Style BasedOn="{StaticResource LongToggleSwitchStyle}" TargetType="ToggleSwitch" />
+                            </StackPanel.Resources>
+
+                            <ToggleSwitch
+                                x:Name="MapGlyphBoundsToggle"
+                                FontSize="14"
+                                FontWeight="Bold"
+                                Header="Show Glyph Metrics"
+                                IsOn="{Binding Options.IsEnabled, RelativeSource={RelativeSource Mode=TemplatedParent}, Mode=TwoWay, FallbackValue=False}" />
+
+                            <controls:LayoutPanel Margin="0 0 0 12" Visibility="{Binding TemplateSettings.OptionsVisibility, RelativeSource={RelativeSource Mode=TemplatedParent}, FallbackValue=Visible, TargetNullValue=Visible}">
+                                <controls:LayoutPanel.Layout>
+                                    <muxc:UniformGridLayout
+                                        ItemsStretch="Fill"
+                                        MaximumRowsOrColumns="2"
+                                        MinColumnSpacing="8"
+                                        MinRowSpacing="0" />
+                                </controls:LayoutPanel.Layout>
+                                <ToggleSwitch
+                                    Header="{Binding Options.AscentLabel, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                    IsEnabled="{Binding TemplateSettings.ToggleIsEnabled, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                    IsOn="{Binding Options.ShowAscent, RelativeSource={RelativeSource Mode=TemplatedParent}, Mode=TwoWay, FallbackValue=False}" />
+                                <ToggleSwitch
+                                    Header="{Binding Options.CapHeightLabel, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                    IsEnabled="{Binding TemplateSettings.ToggleIsEnabled, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                    IsOn="{Binding Options.ShowCapHeight, RelativeSource={RelativeSource Mode=TemplatedParent}, Mode=TwoWay, FallbackValue=False}" />
+                                <ToggleSwitch
+                                    Header="{Binding Options.DescentLabel, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                    IsEnabled="{Binding TemplateSettings.ToggleIsEnabled, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                    IsOn="{Binding Options.ShowDescent, RelativeSource={RelativeSource Mode=TemplatedParent}, Mode=TwoWay, FallbackValue=False}" />
+                                <ToggleSwitch
+                                    Header="{Binding Options.XHeightLabel, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                    IsEnabled="{Binding TemplateSettings.ToggleIsEnabled, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                    IsOn="{Binding Options.ShowXHeight, RelativeSource={RelativeSource Mode=TemplatedParent}, Mode=TwoWay, FallbackValue=False}" />
+                                <ToggleSwitch
+                                    Header="{Binding Options.AdvanceBoundsLabel, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                    IsEnabled="{Binding TemplateSettings.ToggleIsEnabled, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                    IsOn="{Binding Options.ShowAdvanceBounds, RelativeSource={RelativeSource Mode=TemplatedParent}, Mode=TwoWay, FallbackValue=False}" />
+                                <ToggleSwitch
+                                    Header="{Binding Options.InkBoundsLabel, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                    IsEnabled="{Binding TemplateSettings.ToggleIsEnabled, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                    IsOn="{Binding Options.ShowInkBounds, RelativeSource={RelativeSource Mode=TemplatedParent}, Mode=TwoWay, FallbackValue=False}" />
+                            </controls:LayoutPanel>
+
+                            <!--<ToggleSwitch
+                                FontSize="14"
+                                FontWeight="Bold"
+                                Header="Enabled children"
+                                IsOn="{Binding TemplateSettings.ToggleIsEnabled, RelativeSource={RelativeSource Mode=TemplatedParent}, Mode=TwoWay, FallbackValue=False}" />-->
+
+                        </StackPanel>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

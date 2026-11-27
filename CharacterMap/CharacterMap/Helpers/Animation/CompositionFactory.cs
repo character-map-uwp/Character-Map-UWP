@@ -22,6 +22,7 @@ namespace CharacterMap.Helpers;
 [Bindable]
 [AttachedProperty<Point>("RelativeCenterPoint", "new Point()")]
 [AttachedProperty<Point>("ScaleXY", "new Point(1,1)")]
+[AttachedProperty<Point>("TranslationXY", "new Point(0,0)")]
 [AttachedProperty<CompositionTransition>("ScaleTransition")]
 [AttachedProperty<CompositionTransition>("OffsetTransition")]
 [AttachedProperty<double>("RotationAngleInDegrees")]
@@ -46,6 +47,12 @@ public partial class ElementVisual
         if (f is FrameworkElement element)
             SetTransition<float>(
                 element, v.NewValue as CompositionTransition, nameof(Visual.RotationAngleInDegrees));
+    }
+
+    static partial void OnTranslationXYChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is UIElement u && u.EnableCompositionTranslation().GetElementVisual() is { } v && e.NewValue is Point value)
+            v.SetTranslation(new(value.ToVector2(), v.GetTranslation().Z));
     }
 
     static partial void OnScaleXYChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

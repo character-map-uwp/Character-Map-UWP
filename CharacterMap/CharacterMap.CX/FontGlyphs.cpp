@@ -409,9 +409,15 @@ bool FontGlyphs::ShouldEnableColorGlyphs()
     return false;
 }
 
+bool FontGlyphs::HasActiveGlyphBounds()
+{
+    auto opts = GlyphBoundsOptions;
+    return opts != nullptr && opts->IsEnabled;
+}
+
 bool FontGlyphs::ShouldRenderColor()
 {
-    if (GlyphBoundsOptions != nullptr)
+    if (HasActiveGlyphBounds())
         return true;
 
     return ShouldEnableColorGlyphs();
@@ -1097,7 +1103,13 @@ Size FontGlyphs::ComputeScaleFactor(Size availableSize, Size contentSize)
 Size FontGlyphs::MeasureOverride(Size availableSize)
 {
     if (IsBackgroundRenderEnabled)
-        return Size(static_cast<float>((std::max)(0.0, this->MinWidth)), static_cast<float>((std::max)(0.0, this->MinHeight)));
+    {
+        float minW = static_cast<float>((std::max)(0.0, this->MinWidth));
+        float minH = static_cast<float>((std::max)(0.0, this->MinHeight));
+        float w = std::isinf(availableSize.Width) ? minW : availableSize.Width;
+        float h = std::isinf(availableSize.Height) ? minH : availableSize.Height;
+        return Size((std::max)(w, minW), (std::max)(h, minH));
+    }
 
     if (m_isLayoutDirty)
     {
@@ -1250,7 +1262,7 @@ Size FontGlyphs::ArrangeOverride(Size finalSize)
     float posX = static_cast<float>(std::round((originX - scaledPadLeft) * dpiScale) / dpiScale);
     float posY = static_cast<float>(std::round((originY - scaledPadTop) * dpiScale) / dpiScale);
 
-    if (GlyphBoundsOptions != nullptr)
+    if (HasActiveGlyphBounds())
     {
         if (m_isRenderDirty || m_renderedScaleX != m_scale.Width || m_renderedScaleY != m_scale.Height ||
             m_lastSyncArrangeSize.Width != finalSize.Width || m_lastSyncArrangeSize.Height != finalSize.Height ||
@@ -1980,6 +1992,12 @@ void FontGlyphs::RenderGlyphsBackground(Size finalSize)
         return;
     }
 
+    // Ensure the underlying IDWriteFontFace3 is materialized on the UI thread before
+    // multiple background worker threads read it concurrently.
+    /*auto rawFace = FontFace->GetFontFace();
+    if (rawFace == nullptr)
+        return;*/
+
     auto graphicsDevice = CompositionDeviceManager::GetGraphicsDevice(compositor);
     if (graphicsDevice == nullptr)
         return;
@@ -2085,10 +2103,11 @@ void FontGlyphs::RenderGlyphsBackground(Size finalSize)
     job.FinalSize = finalSize;
     job.DpiScale = dpiScale;
     auto boundsOpts = GlyphBoundsOptions;
+    bool hasBounds = boundsOpts != nullptr && boundsOpts->IsEnabled;
     job.RenderColor = renderColor;
     job.EnableColorGlyphs = ShouldEnableColorGlyphs();
-    job.HasGlyphBounds = (boundsOpts != nullptr);
-    if (boundsOpts != nullptr)
+    job.HasGlyphBounds = hasBounds;
+    if (hasBounds)
         CoreDWTextServices::PopulateGlyphBoundsOptions(boundsOpts, job.Bounds);
     job.ForegroundColor = foregroundColor;
     job.RequiredWidth = requiredWidth;

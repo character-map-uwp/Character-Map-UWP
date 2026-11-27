@@ -75,6 +75,7 @@ public static class TypographyAnalyzer
 
         CMFontFace fontFace = model.Face;
         List<OpenTypeFeatureGroup> groups = [];
+        OpenTypeFeatureGroup aaltGroup = null;
         Dictionary<ushort, OpenTypeGlyphInfo> glyphCache = [];
 
         OpenTypeGlyphInfo GetOrCreateGlyphInfo(ushort glyphId)
@@ -134,8 +135,17 @@ public static class TypographyAnalyzer
             }
 
             if (substitutions.Count > 0)
-                groups.Add(new(title, tag, rawGroup.FeatureName, rawGroup.Description, feature, substitutions));
+            {
+                OpenTypeFeatureGroup group = new(title, tag, rawGroup.FeatureName, rawGroup.Description, feature, substitutions);
+                if (string.Equals(tag, "aalt", StringComparison.OrdinalIgnoreCase))
+                    aaltGroup = group;
+                else
+                    groups.Add(group);
+            }
         }
+
+        if (aaltGroup is not null)
+            groups.Add(aaltGroup);
 
         return groups;
     }

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -3498,5 +3498,33 @@ Variations cannot be copied as text, but can be exported as PNG or SVG.</value>
   </data>
   <data name="NoOpenTypeFeatures" xml:space="preserve">
     <value>This font face contains no recognized OpenType features</value>
+  </data>
+  <data name="GlyphBoundsAscentLabel" xml:space="preserve">
+    <value>Ascent</value>
+    <comment>Typography metric line label for font ascent</comment>
+  </data>
+  <data name="GlyphBoundsCapHeightLabel" xml:space="preserve">
+    <value>Cap Height</value>
+    <comment>Typography metric line label for font cap height</comment>
+  </data>
+  <data name="GlyphBoundsXHeightLabel" xml:space="preserve">
+    <value>x-Height</value>
+    <comment>Typography metric line label for font x-height</comment>
+  </data>
+  <data name="GlyphBoundsBaselineLabel" xml:space="preserve">
+    <value>Baseline</value>
+    <comment>Typography metric line label for font baseline</comment>
+  </data>
+  <data name="GlyphBoundsDescentLabel" xml:space="preserve">
+    <value>Descent</value>
+    <comment>Typography metric line label for font descent</comment>
+  </data>
+  <data name="GlyphBoundsLayoutBoundsLabel" xml:space="preserve">
+    <value>Layout Bounds</value>
+    <comment>Typography metric label for glyph advance / layout bounds</comment>
+  </data>
+  <data name="GlyphBoundsInkBoundsLabel" xml:space="preserve">
+    <value>Ink Bounds</value>
+    <comment>Typography metric label for glyph ink / draw bounds</comment>
   </data>
 </root>

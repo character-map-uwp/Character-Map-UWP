@@ -28,6 +28,7 @@ namespace CharacterMapCX
 
     struct GlyphBoundsRenderData
     {
+        bool IsEnabled = true;
         bool ShowAscent = true;
         bool ShowCapHeight = true;
         bool ShowXHeight = false;

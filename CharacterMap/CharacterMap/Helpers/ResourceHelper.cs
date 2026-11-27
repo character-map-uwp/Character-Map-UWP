@@ -3,6 +3,7 @@ using Windows.ApplicationModel;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace CharacterMap.Helpers;
 
@@ -164,6 +165,47 @@ public static class ResourceHelper
     public static bool UsePointerOverAnimations => AppSettings.UseFluentPointerOverAnimations1;
 
 
+    public static void UpdateAnimations()
+    {
+        Ioc.Default.ViewService().RunOnViewsAsync(v =>
+        {
+            bool ani = AllowAnimation;
+
+            // 1. Update transition collection
+            if (Get<TransitionCollection>("RepositionTransitions") is { } c)
+            {
+                if (ani && c.Count == 0)
+                    c.Add(new RepositionThemeTransition { IsStaggeringEnabled = false });
+                else if (!ani)
+                    c.RemoveAt(0);
+            }
+
+            // 2. Update CompositionBrushTransitions
+            Do("DefaultSelectorTransition", CompositionTransition.DurationProperty, "Duration");
+            Do("QuickCompositionTransition", CompositionTransition.DurationProperty, "Duration");
+            Do("StandardTransition", CompositionTransition.DurationProperty, "Duration");
+                  
+
+            void Do(string name, DependencyProperty p, string path)
+            {
+                if (App.Current.Resources.TryGetValue(name, out object obj) && obj is DependencyObject o)
+                    if (ani) Stop(o, p); else Start(o, path);
+            }
+
+            void Start(DependencyObject o, string path)
+            {
+                Storyboard sb = new();
+                sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(o, path)
+                    .AddKeyFrame(0, new Duration(TimeSpan.Zero));
+                sb.Begin();
+            }
+
+            void Stop(DependencyObject o, DependencyProperty p)
+            {
+                o.SetValue(p, o.GetAnimationBaseValue(p));
+            }
+        });
+    }
 
 
     /* Dynamic theme-ability */

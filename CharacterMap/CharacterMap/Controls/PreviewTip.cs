@@ -123,7 +123,7 @@ public partial class PreviewTip : ContentControl
     {
         FrameworkElement target = null;
 
-        if (Target is UXRadioButtons or RadioButtons)
+        if (Target is UXRadioButtons or RadioButtons or Panel)
             target = Target;
         else
         {
@@ -197,10 +197,14 @@ public partial class PreviewTip : ContentControl
         }
         else if (target is Panel p)
         {
-            foreach (var child in p.Children.OfType<FrameworkElement>())
+            foreach (FrameworkElement child in p.Children.OfType<FrameworkElement>())
             {
                 if (child is UXRadioButtons)
+                {
+                    AttachTo(child, false);
                     continue;
+                }
+
                 SetAncestor(child, child);
 
                 child.PointerEntered -= Item_PointerEntered;
@@ -274,9 +278,12 @@ public partial class PreviewTip : ContentControl
         }
         else
         {
-            // This path is used for the main view TabBar
-            var rect = item.GetBoundingRect((FrameworkElement)Target);
-            t = new Vector3((float)(rect.Value.Left + HorizontalOffset), (float)vertical, 0f);
+            // Position relative to PreviewTip's own layout parent so items from any attached
+            // target or RegisterWith panel align accurately in PreviewTip's coordinate space.
+            FrameworkElement reference = this.Parent as FrameworkElement ?? Target;
+            Rect? rect = item.GetBoundingRect(reference);
+            double x = Math.Max(0d, (rect?.Left ?? 0d) + HorizontalOffset);
+            t = new((float)x, (float)vertical, 0f);
 
             // TODO: Create an automatic placement mode that displays at bottom left for pointer
             //       and at top left for touch

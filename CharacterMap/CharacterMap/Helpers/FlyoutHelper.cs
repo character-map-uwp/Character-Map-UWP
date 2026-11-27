@@ -1115,67 +1115,82 @@ public static class FlyoutHelper
 
     public static void ShowLigatureFlyout(UIElement sender, ContextRequestedEventArgs args, FontMapView view)
     {
-        if (sender is ContentPresenter { Content: LigatureModel target })
+        if (sender is not ContentPresenter presenter)
+            return;
+
+        LigatureModel ligature = presenter.Content as LigatureModel;
+        OpenTypeSubstitutionModel substitution = presenter.Content as OpenTypeSubstitutionModel;
+
+        if (ligature is null && substitution?.Substitute is null)
+            return;
+
+        #region handlers
+
+        static void NavigateToGlyphHandler(object s, RoutedEventArgs e)
         {
-            #region handlers
-
-            static void NavigateToGlyphHandler(object s, RoutedEventArgs e)
-            {
-                if (s is FrameworkElement f && f.Tag is LigatureModel lig && Properties.GetTag(f) is FontMapView view)
-                    view.NavigateToGlyph((ushort)lig.LigatureGlyph);
-            }
-
-            #endregion
-
-
-            var viewModel = view.ViewModel;
-
-            MenuFlyoutFactory factory = new(new FlyoutArgs { Standalone = true, ShowAdvanced = true });
-
-            if (!string.IsNullOrEmpty(target.CombinedString))
-            {
-                factory.Create("CopySequenceMessage", target.CombinedString, ThemeIcon.Copy, MenuFlyoutFactory.CopyHandler, new () { Tag = target, PropertyTag = view });
-                factory.AddSeparator(out _);
-            }
-
-            ushort glyphIndex = (ushort)target.LigatureGlyph;
-            GlyphCharacter gc = viewModel.SelectedFace is not null && viewModel.SelectedFace.TryGetCharacterForGlyph(glyphIndex, out Character mapped)
-                ? new(glyphIndex, mapped.UnicodeIndex)
-                : new(glyphIndex);
-
-            DWriteTextLayoutAnalysis analysis = Utils.GetInterop().AnalyzeGlyphLayout(viewModel.SelectedFace.Face, gc.GlyphIndex);
-            FlyoutContextArg arg = new() { ParentView = view, Character = gc, Ligature = target, Analysis = analysis };
-
-            var copyAsImage = factory
-                .CreateSubItem(ThemeIcon.Copy, "CopyAsImageItem/Text")
-                .AddHeader("CopyAsPngItem/Text", "Ctrl+Alt+C")
-                .AddColorOptions(analysis, true, arg with { CopyType = CopyDataType.PNG });
-
-            if (analysis.IsFullVectorBased)
-            {
-                copyAsImage
-                    .AddHeader("CopyAsSvgItem/Text", "Ctrl+Shift+C")
-                    .AddColorOptions(analysis, true, arg with { CopyType = CopyDataType.SVG });
-            }
-
-            var saveAsImage = factory
-              .CreateSubItem(ThemeIcon.Save, "ExportImageLabel/Text")
-              .AddHeader("ExportPNGLabel/Text")
-              .AddColorOptions(analysis, false, arg with { CopyType = CopyDataType.PNG });
-
-            if (analysis.IsFullVectorBased)
-            {
-                saveAsImage
-                    .AddHeader("ExportSVGLabel/Text")
-                    .AddColorOptions(analysis, false, arg with { CopyType = CopyDataType.SVG });
-            }
-
-            factory
-                .AddSeparator(out _)
-                .Create("ViewInGlyphMapMessage", target.LigatureGlyph, ThemeIcon.GlyphMapView, NavigateToGlyphHandler, new() { Tag = target, PropertyTag = view });
-
-            factory.Show(sender, args);
+            if (s is FrameworkElement f && f.Tag is ushort glyph && Properties.GetTag(f) is FontMapView v)
+                v.NavigateToGlyph(glyph);
         }
+
+        #endregion
+
+        FontMapViewModel viewModel = view.ViewModel;
+        if (viewModel?.SelectedFace is null)
+            return;
+
+        MenuFlyoutFactory factory = new(new() { Standalone = true, ShowAdvanced = true });
+
+        ushort glyphIndex = ligature is not null
+            ? (ushort)ligature.LigatureGlyph
+            : (ushort)substitution.Substitute.GlyphIndex;
+
+        GlyphCharacter gc = viewModel.SelectedFace.TryGetCharacterForGlyph(glyphIndex, out Character mapped)
+            ? new(glyphIndex, mapped.UnicodeIndex)
+            : new(glyphIndex);
+
+        DWriteTextLayoutAnalysis analysis = Utils.GetInterop().AnalyzeGlyphLayout(viewModel.SelectedFace.Face, gc.GlyphIndex);
+        FlyoutContextArg arg = new() { ParentView = view, Character = gc, Ligature = ligature, Analysis = analysis };
+
+        if (ligature is not null && !string.IsNullOrEmpty(ligature.CombinedString))
+        {
+            factory.Create("CopySequenceMessage", ligature.CombinedString, ThemeIcon.Copy, MenuFlyoutFactory.CopyHandler, new() { Tag = ligature, PropertyTag = view });
+            factory.AddSeparator(out _);
+        }
+        else if (substitution is not null && gc.IsValidUnicode)
+        {
+            factory.Create("BtnCopy/Text", ThemeIcon.Copy, MenuFlyoutFactory.CopyHandler, new() { Tag = arg, PropertyTag = view });
+            factory.AddSeparator(out _);
+        }
+
+        MenuFlyoutFactory copyAsImage = factory
+            .CreateSubItem(ThemeIcon.Copy, "CopyAsImageItem/Text")
+            .AddHeader("CopyAsPngItem/Text", "Ctrl+Alt+C")
+            .AddColorOptions(analysis, true, arg with { CopyType = CopyDataType.PNG });
+
+        if (analysis.IsFullVectorBased)
+        {
+            copyAsImage
+                .AddHeader("CopyAsSvgItem/Text", "Ctrl+Shift+C")
+                .AddColorOptions(analysis, true, arg with { CopyType = CopyDataType.SVG });
+        }
+
+        MenuFlyoutFactory saveAsImage = factory
+            .CreateSubItem(ThemeIcon.Save, "ExportImageLabel/Text")
+            .AddHeader("ExportPNGLabel/Text")
+            .AddColorOptions(analysis, false, arg with { CopyType = CopyDataType.PNG });
+
+        if (analysis.IsFullVectorBased)
+        {
+            saveAsImage
+                .AddHeader("ExportSVGLabel/Text")
+                .AddColorOptions(analysis, false, arg with { CopyType = CopyDataType.SVG });
+        }
+
+        factory
+            .AddSeparator(out _)
+            .Create("ViewInGlyphMapMessage", (uint)glyphIndex, ThemeIcon.GlyphMapView, NavigateToGlyphHandler, new() { Tag = glyphIndex, PropertyTag = view });
+
+        factory.Show(sender, args);
     }
 }
 

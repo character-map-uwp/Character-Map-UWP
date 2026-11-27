@@ -141,6 +141,26 @@
 
     <Control.Resources>
 
+        <cxc:GlyphBoundsOptions
+            x:Key="MapGlyphBoundsOptions"
+            x:Name="MapGlyphBoundsOptions"
+            AdvanceBoundsBrush="#80808080"
+            AdvanceBoundsLabel="{core:Localizer Key=GlyphBoundsLayoutBoundsLabel}"
+            AscentBrush="#FF107C10"
+            AscentLabel="{core:Localizer Key=GlyphBoundsAscentLabel}"
+            BaselineBrush="#FFE05286"
+            BaselineLabel="{core:Localizer Key=GlyphBoundsBaselineLabel}"
+            CapHeightBrush="#FF3B82F6"
+            CapHeightLabel="{core:Localizer Key=GlyphBoundsCapHeightLabel}"
+            DescentBrush="#FFF28C38"
+            DescentLabel="{core:Localizer Key=GlyphBoundsDescentLabel}"
+            DrawLinesOverGlyph="False"
+            InkBoundsBrush="#80E81123"
+            InkBoundsLabel="{core:Localizer Key=GlyphBoundsInkBoundsLabel}"
+            LineThickness="1.5"
+            XHeightBrush="#FF00B7C3"
+            XHeightLabel="{core:Localizer Key=GlyphBoundsXHeightLabel}" />
+
         <DataTemplate x:Key="AxisItemTemplate" x:DataType="cx:DWriteFontAxis">
             <Grid Margin="0 0 0 2">
                 <Grid.ColumnDefinitions>
@@ -705,7 +725,6 @@
                         x:Name="OptionsPanel"
                         x:FieldModifier="public"
                         HorizontalAlignment="Left"
-                        controls:PreviewTip.RegisterWith="{x:Bind PreviewTip}"
                         Background="Transparent"
                         ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
                         Orientation="Horizontal">
@@ -1121,7 +1140,7 @@
                             VerticalAlignment="Stretch"
                             h:FluentAnimation.PointerOver="DropDownGlyph"
                             Style="{ThemeResource MapInfoButtonStyle}"
-                            Visibility="Collapsed"
+                            Visibility="Visible"
                             d:Label="{core:Localizer Key=FontOptionsButton/Label}"
                             d:Visibility="Visible">
 
@@ -1150,7 +1169,7 @@
                                             Grid.Row="1"
                                             Width="300"
                                             Padding="0"
-                                            ItemContainerTransitions="{StaticResource NoTransitions}"
+                                            ItemContainerTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
                                             ItemsSource="{x:Bind ViewModel.TypographyFeatures, Mode=OneWay}"
                                             SelectedItem="{Binding SelectedTypography, Mode=TwoWay}"
                                             SelectionMode="Single"
@@ -1163,7 +1182,41 @@
                                             </Style>
                                         </ListView.ItemContainerStyle>-->
                                             <ListView.Header>
-                                                <StackPanel Margin="12,4" Spacing="12">
+                                                <StackPanel
+                                                    Margin="12,4"
+                                                    ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
+                                                    Spacing="12">
+
+                                                    <controls:GlyphBoundsSelector Options="{StaticResource MapGlyphBoundsOptions}" />
+
+                                                    <!--<StackPanel>
+                                                        <StackPanel.Resources>
+                                                            <Style BasedOn="{StaticResource LongToggleSwitchStyle}" TargetType="ToggleSwitch" />
+                                                        </StackPanel.Resources>
+                                                        <ToggleSwitch
+                                                            x:Name="MapGlyphBoundsToggle"
+                                                            FontSize="14"
+                                                            FontWeight="Bold"
+                                                            Header="Show Glyph Metrics"
+                                                            IsOn="{x:Bind MapGlyphBoundsOptions.DrawLinesOverGlyph, Mode=TwoWay}" />
+
+                                                        <controls:LayoutPanel Margin="0 0 0 12" Visibility="{x:Bind MapGlyphBoundsToggle.IsOn, Mode=OneWay}">
+                                                            <controls:LayoutPanel.Layout>
+                                                                <muxc:UniformGridLayout
+                                                                    ItemsStretch="Fill"
+                                                                    MaximumRowsOrColumns="2"
+                                                                    MinColumnSpacing="8"
+                                                                    MinRowSpacing="0" />
+                                                            </controls:LayoutPanel.Layout>
+                                                            <ToggleSwitch Header="{core:Localizer Key=GlyphBoundsAscentLabel}" IsOn="{x:Bind MapGlyphBoundsOptions.ShowAscent, Mode=TwoWay}" />
+                                                            <ToggleSwitch Header="{core:Localizer Key=GlyphBoundsCapHeightLabel}" IsOn="{x:Bind MapGlyphBoundsOptions.ShowCapHeight, Mode=TwoWay}" />
+                                                            <ToggleSwitch Header="{core:Localizer Key=GlyphBoundsDescentLabel}" IsOn="{x:Bind MapGlyphBoundsOptions.ShowDescent, Mode=TwoWay}" />
+                                                            <ToggleSwitch Header="{core:Localizer Key=GlyphBoundsXHeightLabel}" IsOn="{x:Bind MapGlyphBoundsOptions.ShowXHeight, Mode=TwoWay}" />
+                                                            <ToggleSwitch Header="{core:Localizer Key=GlyphBoundsLayoutBoundsLabel}" IsOn="{x:Bind MapGlyphBoundsOptions.ShowAdvanceBounds, Mode=TwoWay}" />
+                                                            <ToggleSwitch Header="{core:Localizer Key=GlyphBoundsInkBoundsLabel}" IsOn="{x:Bind MapGlyphBoundsOptions.ShowInkBounds, Mode=TwoWay}" />
+                                                        </controls:LayoutPanel>
+                                                    </StackPanel>-->
+
                                                     <TextBlock
                                                         x:Name="ColorHeader"
                                                         x:Load="{x:Bind ViewModel.SelectedFaceAnalysis.Analysis.ContainsVectorColorGlyphs, Mode=OneWay}"
@@ -1288,10 +1341,10 @@
                 MaxWidth="350"
                 Canvas.ZIndex="40"
                 DelayHide="True"
-                HorizontalOffset="24"
+                HorizontalOffset="0"
                 Placement="BottomEdgeLeftAligned"
                 Style="{StaticResource PreviewTipHighContrastStyle}"
-                Target="{x:Bind ViewSelector}"
+                Target="{x:Bind OptionsPanel}"
                 VerticalOffset="42">
                 <controls:PreviewTip.ContentTemplate>
                     <DataTemplate>
@@ -1652,6 +1705,7 @@
                                 <cxc:FontGlyphs
                                     x:Name="Text"
                                     Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                    GlyphBoundsOptions="{StaticResource MapGlyphBoundsOptions}"
                                     IsBackgroundRenderEnabled="True" />
                                 <TextBlock Style="{StaticResource CharItemUnicodeStyle}" />
                             </Grid>
@@ -1979,6 +2033,7 @@
                                         CornerRadius="{ThemeResource ControlCornerRadius}">
                                         <!--  Center: Ligature Glyph  -->
                                         <cxc:FontGlyphs
+                                            Margin="2"
                                             FontFace="{Binding ElementName=LigaturesRepeater, Path=(core:Properties.Footer)}"
                                             FontSize="44"
                                             Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
@@ -2276,6 +2331,7 @@
                                             x:Name="Target"
                                             Width="84"
                                             Height="84"
+                                            Padding="2"
                                             VerticalAlignment="Top"
                                             Background="{ThemeResource LayerFillColorDefaultBrush}"
                                             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
@@ -2424,9 +2480,19 @@
                             <controls:UXButton.Flyout>
                                 <Flyout
                                     core:Properties.UseExpandContractAnimation="True"
-                                    win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
                                     Placement="Bottom">
-                                    <StackPanel Padding="8">
+                                    <Flyout.FlyoutPresenterStyle>
+                                        <Style BasedOn="{StaticResource ThemeFlyoutStyle}" TargetType="FlyoutPresenter">
+                                            <Setter Property="h:ElementVisual.TranslationXY" Value="-16 0" />
+                                        </Style>
+                                    </Flyout.FlyoutPresenterStyle>
+
+                                    <controls:GlyphBoundsSelector
+                                        MaxWidth="300"
+                                        Margin="12"
+                                        Options="{x:Bind TxtPreview.GlyphBoundsOptions, Mode=OneWay}" />
+
+                                    <!--<StackPanel Padding="8">
                                         <StackPanel.Resources>
                                             <Style BasedOn="{StaticResource LongToggleSwitchStyle}" TargetType="ToggleSwitch" />
                                         </StackPanel.Resources>
@@ -2446,44 +2512,43 @@
                                             </controls:LayoutPanel.Layout>
                                             <ToggleSwitch
                                                 x:Name="AscentToggle"
-                                                Header="Ascent"
+                                                Header="{core:Localizer Key=GlyphBoundsAscentLabel}"
                                                 IsEnabled="{Binding ElementName=GlyphBoundsToggle, Path=IsOn}"
                                                 IsOn="True" />
                                             <ToggleSwitch
                                                 x:Name="CapHeightToggle"
-                                                Header="Cap Height"
+                                                Header="{core:Localizer Key=GlyphBoundsCapHeightLabel}"
                                                 IsEnabled="{Binding ElementName=GlyphBoundsToggle, Path=IsOn}"
                                                 IsOn="True" />
-                                            <!--<ToggleSwitch
+                                    -->
+                                    <!--<ToggleSwitch
                                                 x:Name="BaselineToggle"
-                                                Header="Baseline"
+                                                Header="{core:Localizer Key=GlyphBoundsBaselineLabel}"
                                                 IsEnabled="{Binding ElementName=GlyphBoundsToggle, Path=IsOn}"
                                                 IsOn="True" />-->
+                                    <!--
                                             <ToggleSwitch
                                                 x:Name="DescentToggle"
-                                                Header="Descent"
+                                                Header="{core:Localizer Key=GlyphBoundsDescentLabel}"
                                                 IsEnabled="{Binding ElementName=GlyphBoundsToggle, Path=IsOn}"
                                                 IsOn="True" />
                                             <ToggleSwitch
                                                 x:Name="XHeightToggle"
-                                                Header="X Height"
+                                                Header="{core:Localizer Key=GlyphBoundsXHeightLabel}"
                                                 IsEnabled="{Binding ElementName=GlyphBoundsToggle, Path=IsOn}"
                                                 IsOn="False" />
                                             <ToggleSwitch
                                                 x:Name="AdvanceToggle"
-                                                Header="Layout Bounds"
+                                                Header="{core:Localizer Key=GlyphBoundsLayoutBoundsLabel}"
                                                 IsEnabled="{Binding ElementName=GlyphBoundsToggle, Path=IsOn}"
                                                 IsOn="False" />
                                             <ToggleSwitch
                                                 x:Name="InkToggle"
-                                                Header="Draw Bounds"
+                                                Header="{core:Localizer Key=GlyphBoundsInkBoundsLabel}"
                                                 IsEnabled="{Binding ElementName=GlyphBoundsToggle, Path=IsOn}"
                                                 IsOn="False" />
                                         </controls:LayoutPanel>
-
-
-
-                                    </StackPanel>
+                                    </StackPanel>-->
                                 </Flyout>
                             </controls:UXButton.Flyout>
                         </controls:UXButton>
@@ -2511,7 +2576,7 @@
                                 IsCharacterFitEnabled="True"
                                 IsOverwriteCompensationEnabled="True"
                                 IsTextScaleFactorEnabled="False"
-                                RenderGlyphBounds="{Binding ElementName=GlyphBoundsToggle, Path=IsOn}"
+                                RenderGlyphBounds="True"
                                 Text="{Binding SelectedChar.Char}"
                                 TrimLeadingLineGap="True"
                                 Typography="{Binding SelectedCharTypography}"
@@ -2520,21 +2585,21 @@
                                     <cxc:GlyphBoundsOptions
                                         x:Name="PreviewGlyphBoundsOptions"
                                         AdvanceBoundsBrush="#80808080"
+                                        AdvanceBoundsLabel="{core:Localizer Key=GlyphBoundsLayoutBoundsLabel}"
                                         AscentBrush="#FF107C10"
+                                        AscentLabel="{core:Localizer Key=GlyphBoundsAscentLabel}"
                                         BaselineBrush="#FFE05286"
+                                        BaselineLabel="{core:Localizer Key=GlyphBoundsBaselineLabel}"
                                         CapHeightBrush="#FF3B82F6"
+                                        CapHeightLabel="{core:Localizer Key=GlyphBoundsCapHeightLabel}"
                                         DescentBrush="#FFF28C38"
+                                        DescentLabel="{core:Localizer Key=GlyphBoundsDescentLabel}"
                                         DrawLinesOverGlyph="True"
                                         InkBoundsBrush="#80E81123"
+                                        InkBoundsLabel="{core:Localizer Key=GlyphBoundsInkBoundsLabel}"
                                         LineThickness="1.5"
-                                        ShowAdvanceBounds="{Binding ElementName=AdvanceToggle, Path=IsOn}"
-                                        ShowAscent="{Binding ElementName=AscentToggle, Path=IsOn}"
-                                        ShowBaseline="{Binding ElementName=BaselineToggle, Path=IsOn}"
-                                        ShowCapHeight="{Binding ElementName=CapHeightToggle, Path=IsOn}"
-                                        ShowDescent="{Binding ElementName=DescentToggle, Path=IsOn}"
-                                        ShowInkBounds="{Binding ElementName=InkToggle, Path=IsOn}"
-                                        ShowXHeight="{Binding ElementName=XHeightToggle, Path=IsOn}"
-                                        XHeightBrush="#FF00B7C3" />
+                                        XHeightBrush="#FF00B7C3"
+                                        XHeightLabel="{core:Localizer Key=GlyphBoundsXHeightLabel}" />
                                 </cxc:DirectText.GlyphBoundsOptions>
                             </cxc:DirectText>
                         </Border>
