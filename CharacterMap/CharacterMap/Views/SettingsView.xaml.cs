@@ -64,6 +64,7 @@ public sealed partial class SettingsView : ViewBase
 
     public void Show(CharacterRenderingOptions options, CMFontFamily font, int idx = 0)
     {
+        ViewModel.IsActiveView = true;
         if (IsOpen)
         {
             SetIndex(idx);
@@ -108,6 +109,7 @@ public sealed partial class SettingsView : ViewBase
 
     public void Hide()
     {
+        ViewModel.IsActiveView = false;
         UpdateAnimation();
         _navHelper.Deactivate();
 

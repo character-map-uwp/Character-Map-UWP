@@ -111,7 +111,7 @@
 
         <controls:ModalPagePresenter
             x:Name="Presenter"
-            Title="{core:Localizer Key=SettingsHeader/Text}"
+            Title="{x:Bind ViewModel.WindowTitle}"
             CloseClicked="{x:Bind Hide}"
             TitleBarHeight="{x:Bind TitleBarHeight, Mode=OneWay}">
             <Grid>

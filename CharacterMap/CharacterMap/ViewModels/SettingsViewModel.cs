@@ -57,6 +57,7 @@ public partial class SettingsViewModel : ViewModelBase
     public SettingsViewModel()
     {
         _originalDesign = Settings.ApplicationDesignTheme;
+        WindowTitle = Localization.Get("SettingsHeader/Text");
     }
 
     public void UpdatePreviews(CMFontFamily font, CharacterRenderingOptions options)
