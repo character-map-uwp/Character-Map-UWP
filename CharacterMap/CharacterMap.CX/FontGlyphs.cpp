@@ -544,6 +544,79 @@ void FontGlyphs::InvalidateRenderOnly()
     InvalidateArrange();
 }
 
+static bool IsUnicodeControlCodePoint(UINT32 cp)
+{
+    return cp <= 0x001F || (cp >= 0x007F && cp <= 0x009F);
+}
+
+static bool IsUnicodeDefaultIgnorableStandalone(UINT32 cp)
+{
+    return IsUnicodeControlCodePoint(cp)
+        || cp == 0x00AD
+        || (cp >= 0x200B && cp <= 0x200F)
+        || (cp >= 0x202A && cp <= 0x202E)
+        || (cp >= 0x2060 && cp <= 0x206F)
+        || cp == 0xFEFF
+        || (cp >= 0xFE00 && cp <= 0xFE0F)
+        || (cp >= 0xE0100 && cp <= 0xE01EF);
+}
+
+static bool FilterUnicodeTextForLayout(
+    const wchar_t* src,
+    UINT32 srcLen,
+    std::wstring& storage,
+    const wchar_t*& outData,
+    UINT32& outLen)
+{
+    if (src == nullptr || srcLen == 0)
+        return false;
+
+    if (srcLen == 1 || (srcLen == 2 && src[0] >= 0xD800 && src[0] <= 0xDBFF && src[1] >= 0xDC00 && src[1] <= 0xDFFF))
+    {
+        UINT32 cp = srcLen == 1
+            ? static_cast<UINT32>(src[0])
+            : (0x10000u + ((static_cast<UINT32>(src[0]) - 0xD800u) << 10) + (static_cast<UINT32>(src[1]) - 0xDC00u));
+        if (IsUnicodeDefaultIgnorableStandalone(cp))
+            return false;
+
+        outData = src;
+        outLen = srcLen;
+        return true;
+    }
+
+    bool hasControl = false;
+    for (UINT32 i = 0; i < srcLen; ++i)
+    {
+        if (IsUnicodeControlCodePoint(static_cast<UINT32>(src[i])))
+        {
+            hasControl = true;
+            break;
+        }
+    }
+
+    if (!hasControl)
+    {
+        outData = src;
+        outLen = srcLen;
+        return true;
+    }
+
+    storage.clear();
+    storage.reserve(srcLen);
+    for (UINT32 i = 0; i < srcLen; ++i)
+    {
+        if (!IsUnicodeControlCodePoint(static_cast<UINT32>(src[i])))
+            storage.push_back(src[i]);
+    }
+
+    if (storage.empty())
+        return false;
+
+    outData = storage.data();
+    outLen = static_cast<UINT32>(storage.size());
+    return true;
+}
+
 void FontGlyphs::ParseAndLayoutGlyphs()
 {
     m_glyphCount = 0;
@@ -677,6 +750,12 @@ void FontGlyphs::ParseAndLayoutGlyphs()
     }
     else if (UnicodeString != nullptr && UnicodeString->Length() > 0)
     {
+        std::wstring filteredStorage;
+        const wchar_t* strData = nullptr;
+        UINT32 len = 0;
+        if (!FilterUnicodeTextForLayout(UnicodeString->Data(), UnicodeString->Length(), filteredStorage, strData, len))
+            return;
+
         auto typography = Typography;
         bool shouldShape = IsTextShapingEnabled || (typography != nullptr && typography->FeatureCount > 0);
         bool shaped = false;
@@ -686,9 +765,6 @@ void FontGlyphs::ParseAndLayoutGlyphs()
             std::vector<DWRITE_FONT_FEATURE> features;
             if (typography != nullptr && typography->FeatureCount > 0)
                 features = typography->GetDWriteFontFeatures();
-
-            UINT32 len = UnicodeString->Length();
-            const wchar_t* strData = UnicodeString->Data();
 
             // Zero-allocation stack fast path for single code point (single character or surrogate pair)
             if (len == 1 || (len == 2 && strData[0] >= 0xD800 && strData[0] <= 0xDBFF && strData[1] >= 0xDC00 && strData[1] <= 0xDFFF))
@@ -715,8 +791,8 @@ void FontGlyphs::ParseAndLayoutGlyphs()
             {
                 shaped = TypographyAnalyzer::ShapeGlyphs(
                     rawFace.Get(),
-                    UnicodeString->Data(),
-                    UnicodeString->Length(),
+                    strData,
+                    len,
                     static_cast<FLOAT>(emSize),
                     features,
                     m_heapIndices,
@@ -744,9 +820,6 @@ void FontGlyphs::ParseAndLayoutGlyphs()
 
         if (!shaped)
         {
-            UINT32 len = UnicodeString->Length();
-            const wchar_t* strData = UnicodeString->Data();
-
             // Fast path for single code point (single character or surrogate pair) - eliminates 4 heap allocations
             if (len == 1 || (len == 2 && strData[0] >= 0xD800 && strData[0] <= 0xDBFF && strData[1] >= 0xDC00 && strData[1] <= 0xDFFF))
             {
@@ -1174,7 +1247,12 @@ Size FontGlyphs::ArrangeOverride(Size finalSize)
     }
 
     if (m_contentSize.Width <= 0 || m_contentSize.Height <= 0)
+    {
+        if (m_spriteVisual != nullptr)
+            m_spriteVisual->Brush = nullptr;
+        ReleaseDrawingSurface();
         return finalSize;
+    }
 
     Size fitContentSize;
     if (m_hasInkBounds && m_designInkHeight > 0)
@@ -1515,6 +1593,12 @@ namespace
         }
         else if (job.UnicodeString != nullptr && job.UnicodeString->Length() > 0)
         {
+            std::wstring filteredStorage;
+            const wchar_t* strData = nullptr;
+            UINT32 len = 0;
+            if (!FilterUnicodeTextForLayout(job.UnicodeString->Data(), job.UnicodeString->Length(), filteredStorage, strData, len))
+                return false;
+
             bool shouldShape = job.IsTextShapingEnabled || (job.Typography != nullptr && job.Typography->FeatureCount > 0);
             bool shaped = false;
 
@@ -1526,8 +1610,8 @@ namespace
 
                 shaped = TypographyAnalyzer::ShapeGlyphs(
                     rawFace.Get(),
-                    job.UnicodeString->Data(),
-                    job.UnicodeString->Length(),
+                    strData,
+                    len,
                     emSize,
                     features,
                     out.Indices,
@@ -1537,8 +1621,6 @@ namespace
 
             if (!shaped)
             {
-                UINT32 len = job.UnicodeString->Length();
-                const wchar_t* strData = job.UnicodeString->Data();
                 std::vector<UINT32> codePoints;
                 codePoints.reserve(len);
                 for (UINT32 i = 0; i < len; i++)
@@ -1703,6 +1785,26 @@ namespace
         return out.ContentSize.Width > 0 && out.ContentSize.Height > 0;
     }
 
+    void ClearJobSurface(const FontGlyphsRenderJob& job)
+    {
+        if (job.Surface == nullptr)
+            return;
+
+        ComPtr<ICompositionDrawingSurfaceInterop> surfaceInterop;
+        if (FAILED(reinterpret_cast<IUnknown*>(job.Surface)->QueryInterface(IID_PPV_ARGS(&surfaceInterop))))
+            return;
+
+        POINT updateOffset{};
+        ComPtr<ID2D1DeviceContext> ctx;
+        std::lock_guard<std::mutex> renderLock(CompositionDeviceManager::GetRenderMutex());
+        HRESULT hr = surfaceInterop->BeginDraw(nullptr, IID_PPV_ARGS(&ctx), &updateOffset);
+        if (SUCCEEDED(hr) && ctx != nullptr)
+        {
+            ctx->Clear(D2D1::ColorF(0, 0, 0, 0));
+            surfaceInterop->EndDraw();
+        }
+    }
+
     void ExecuteFontGlyphsJob(const FontGlyphsRenderJob& job, bool effectiveWasHidden)
     {
         auto pThis = job.WeakThis.Resolve<FontGlyphs>();
@@ -1711,7 +1813,11 @@ namespace
 
         thread_local GlyphLayoutResult layout;
         if (!ComputeGlyphLayoutForJob(job, layout))
+        {
+            if (pThis->IsGenerationCurrent(job.Generation))
+                ClearJobSurface(job);
             return;
+        }
 
         auto pCheck = job.WeakThis.Resolve<FontGlyphs>();
         if (pCheck == nullptr || !pCheck->IsGenerationCurrent(job.Generation))

@@ -1558,7 +1558,7 @@
                                 core:Properties.UseExpandContractAnimation="True"
                                 FlyoutPresenterStyle="{StaticResource FontOptionsFlyoutStyle}"
                                 Placement="BottomEdgeAlignedLeft"
-                                ShouldConstrainToRootBounds="True">
+                                ShouldConstrainToRootBounds="False">
                                 <ContentControl
                                     x:Name="FlyoutHost"
                                     HorizontalAlignment="Stretch"

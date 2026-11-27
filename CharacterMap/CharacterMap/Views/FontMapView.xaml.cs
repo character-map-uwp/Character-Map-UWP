@@ -1406,7 +1406,10 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void TxtPreview_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
     {
-        PreviewOptionsButton.Flyout.ShowAt(PreviewOptionsButton);
+        Point? pos = null;
+        //if (args.TryGetPosition(sender, out Point p))
+        //    pos = p;
+        PreviewOptionsButton.Flyout.ShowAt((FrameworkElement)sender, new FlyoutShowOptions() { Position = pos });
     }
 
 

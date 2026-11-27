@@ -1157,7 +1157,8 @@
                                 <Flyout
                                     core:Properties.UseExpandContractAnimation="True"
                                     win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
-                                    Placement="Bottom">
+                                    Placement="Bottom"
+                                    ShouldConstrainToRootBounds="False">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto" />
@@ -1388,6 +1389,7 @@
                     ContainerContentChanging="CharGrid_ContainerContentChanging"
                     ContextRequested="Grid_ContextRequested"
                     EnableResizeAnimation="{x:Bind ViewModel.AllowExpensiveAnimation, Mode=OneWay}"
+                    GlyphBoundsOptions="{StaticResource MapGlyphBoundsOptions}"
                     IsItemClickEnabled="False"
                     ItemAnnotation="{x:Bind ViewModel.Settings.GlyphAnnotation, Mode=OneTime}"
                     ItemContainerTransitions="{StaticResource NoTransitions}"
@@ -1516,6 +1518,7 @@
                                     x:Load="False"
                                     Margin="0 -2 0 8"
                                     Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                                    GlyphBoundsOptions="{StaticResource MapGlyphBoundsOptions}"
                                     IsBackgroundRenderEnabled="True"
                                     IsTextShapingEnabled="True" />
                                 <TextBlock Style="{StaticResource CharItemUnicodeStyle}" />
@@ -1679,6 +1682,9 @@
                     ShowsScrollingPlaceholders="False"
                     Tag="{x:Bind ViewRoot}"
                     Transform3D="{StaticResource Perspective}">
+                    <core:Properties.ZoomHelper>
+                        <h:ZoomHelper ZoomInRequested="{x:Bind ViewModel.IncreaseCharacterSize}" ZoomOutRequested="{x:Bind ViewModel.DecreaseCharacterSize}" />
+                    </core:Properties.ZoomHelper>
                     <ListViewBase.ItemContainerStyle>
                         <Style BasedOn="{StaticResource SmallCardGridViewItem}" TargetType="controls:ExtendedGridViewItem">
                             <Setter Property="Padding" Value="0" />
@@ -1890,7 +1896,6 @@
                     SelectionMode="Single"
                     StretchContainersForSingleRowEnabled="True"
                     Transform3D="{StaticResource Perspective}">
-
                     <ListViewBase.Resources>
                         <DataTemplate x:Key="GlyphComponentToolTipTemplate" x:DataType="models:LigatureComponent">
                             <StackPanel Orientation="Vertical" Spacing="4">
@@ -2480,7 +2485,8 @@
                             <controls:UXButton.Flyout>
                                 <Flyout
                                     core:Properties.UseExpandContractAnimation="True"
-                                    Placement="Bottom">
+                                    Placement="Bottom"
+                                    ShouldConstrainToRootBounds="False">
                                     <Flyout.FlyoutPresenterStyle>
                                         <Style BasedOn="{StaticResource ThemeFlyoutStyle}" TargetType="FlyoutPresenter">
                                             <Setter Property="h:ElementVisual.TranslationXY" Value="-16 0" />
@@ -2597,6 +2603,7 @@
                                         DrawLinesOverGlyph="True"
                                         InkBoundsBrush="#80E81123"
                                         InkBoundsLabel="{core:Localizer Key=GlyphBoundsInkBoundsLabel}"
+                                        IsEnabled="{x:Bind ViewModel.Settings.DisplayGlyphBounds, Mode=TwoWay}"
                                         LineThickness="1.5"
                                         XHeightBrush="#FF00B7C3"
                                         XHeightLabel="{core:Localizer Key=GlyphBoundsXHeightLabel}" />

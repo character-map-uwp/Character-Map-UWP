@@ -492,6 +492,8 @@ public partial class Properties : DependencyObject
     {
         if (d is FlyoutBase f)
         {
+            f.ShouldConstrainToRootBounds = false;
+
             f.Opened -= F_Opened;
             f.Opened += F_Opened;
 
@@ -526,7 +528,8 @@ public partial class Properties : DependencyObject
 
             p.Tag = "Closing";
 
-            Visual v = p.GetElementVisual();
+            var target = (FrameworkElement)VisualTreeHelper.GetChild(p, 0);
+            Visual v = target.GetElementVisual();
 
             v.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation,
                 b =>
@@ -570,7 +573,10 @@ public partial class Properties : DependencyObject
                 return;
 
             Visual v = presenter.GetElementVisual();
-            presenter.Tag = "Opening";
+            presenter.Tag = "Opening"; 
+            
+            var target = (FrameworkElement)VisualTreeHelper.GetChild(presenter, 0);
+            v = target.GetElementVisual();
 
             // 1. Disable animation if turned off
             if (GetUseExpandContractAnimation(flyout) is false
@@ -592,6 +598,8 @@ public partial class Properties : DependencyObject
                         v, (float)presenter.RenderTransformOrigin.X, (float)presenter.RenderTransformOrigin.Y);
                 }
             }
+            
+           
 
             // 3. Create Expand animation and play it
             var popOpen = v.GetCached("UECPopupExpand", () =>
@@ -612,6 +620,27 @@ public partial class Properties : DependencyObject
             });
 
             v.StartAnimation(popOpen);
+
+
+            //double startScaleX = target.ActualWidth > 0 ? Math.Min(0.01, 20.0 / target.ActualWidth) : 0.01;
+            //double startScaleY = target.ActualHeight > 0 ? Math.Min(0.01, 20.0 / target.ActualHeight) : 0.01;
+
+            //BackEase ease = new() { Amplitude = 0.2, EasingMode = EasingMode.EaseOut };
+
+            //Storyboard sb = new();
+            //sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, Helpers.TargetProperty.CompositeTransform.ScaleX)
+            //    .AddKeyFrame(0, startScaleX)
+            //    .AddKeyFrame(0.35, 1, ease);
+
+            //sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, Helpers.TargetProperty.CompositeTransform.ScaleY)
+            //    .AddKeyFrame(0, startScaleY)
+            //    .AddKeyFrame(0.35, 1, ease);
+
+            //sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, Helpers.TargetProperty.Opacity)
+            //    .AddKeyFrame(0, 1)
+            //    .AddKeyFrame(0.1, 1);
+
+            //sb.Begin();
         }
     }
 

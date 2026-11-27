@@ -66,6 +66,7 @@ internal class CharacterGridViewTemplateSettings
 [DependencyProperty<bool>("IsSelectionBindingEnabled")]
 [DependencyProperty<int>("SelectionCount")]
 [DependencyProperty<INotifyCollectionChanged>("BindableSelectedItems")]
+[DependencyProperty<GlyphBoundsOptions>]
 public partial class CharacterGridView : GridView
 {
     public event EventHandler<Character> ItemDoubleTapped;
@@ -184,7 +185,7 @@ public partial class CharacterGridView : GridView
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void RealizeGlyphTarget(SelectorItem itemContainer, FaceAnalysisModel analysis, bool force = false)
+    public void RealizeGlyphTarget(SelectorItem itemContainer, FaceAnalysisModel analysis, bool force = false)
     {
         if (itemContainer.ContentTemplateRoot is Grid g)
         {
@@ -200,7 +201,7 @@ public partial class CharacterGridView : GridView
             // variable axis support than the DirectText control for some reason, even though
             // they're built on the same axis creation techniques.
 
-            bool needsGlyphs = force || analysis is { ShouldUseDWriteRendering: true };
+            bool needsGlyphs = force || analysis is { ShouldUseDWriteRendering: true } || GlyphBoundsOptions is { IsEnabled: true };
 
             // 1. Unload existing presenter if necessary
             if (!force && g.Children[0] is FrameworkElement f)
@@ -230,8 +231,6 @@ public partial class CharacterGridView : GridView
 
             Character c = ((Character)args.Item);
             RealizeGlyphTarget(args.ItemContainer, ItemFaceAnalysis, ForceFontGlyphs);
-            
-
             UpdateContainer(item.ContentTemplateRoot, c);
             args.Handled = true;
 
@@ -363,6 +362,33 @@ public partial class CharacterGridView : GridView
         if (sender is GridViewItem item)
         {
             ItemDoubleTapped?.Invoke(sender, item.DataContext as Character);
+        }
+    }
+
+    partial void OnGlyphBoundsOptionsChanged(GlyphBoundsOptions o, GlyphBoundsOptions n)
+    {
+        if (o is not null)
+            o.Changed -= Options_Changed;
+
+        if (n is not null)
+        {
+            n.Changed -= Options_Changed;
+            n.Changed += Options_Changed;
+        }
+    }
+
+    private void Options_Changed(object sender, object e)
+    {
+        if (this.GetActiveContainers<GridViewItem>() is not { } containers)
+            return;
+
+        foreach (var c in containers)
+        {
+            if (c.ContentTemplateRoot is Grid { DataContext: Character cr } g)
+            {
+                RealizeGlyphTarget(c, ItemFaceAnalysis);
+                UpdateContainer(g, cr);
+            }
         }
     }
 
